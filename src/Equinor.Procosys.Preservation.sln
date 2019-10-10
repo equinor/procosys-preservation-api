@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29403.142
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.WebApi", "Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj", "{41238CAE-6367-4F5C-B20D-D99B12FEF49B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.Procosys.Preservation.Domain", "Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj", "{1DBA25BE-197F-4748-846B-970E50B67BEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.Procosys.Preservation.Infrastructure", "Equinor.Procosys.Preservation.Infrastructure\Equinor.Procosys.Preservation.Infrastructure.csproj", "{D95EDBEF-BCE7-4DF5-963F-6CE7AFB61B1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.Procosys.Preservation.Command", "Equinor.Procosys.Preservation.Command\Equinor.Procosys.Preservation.Command.csproj", "{296F1764-9FF9-4ABF-BF47-D447E249BFAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.Procosys.Preservation.Query", "Equinor.Procosys.Preservation.Query\Equinor.Procosys.Preservation.Query.csproj", "{79C78589-9C5E-4B7E-AFFF-63E9FD6AEDD4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{41238CAE-6367-4F5C-B20D-D99B12FEF49B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41238CAE-6367-4F5C-B20D-D99B12FEF49B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41238CAE-6367-4F5C-B20D-D99B12FEF49B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41238CAE-6367-4F5C-B20D-D99B12FEF49B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DBA25BE-197F-4748-846B-970E50B67BEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DBA25BE-197F-4748-846B-970E50B67BEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DBA25BE-197F-4748-846B-970E50B67BEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DBA25BE-197F-4748-846B-970E50B67BEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D95EDBEF-BCE7-4DF5-963F-6CE7AFB61B1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D95EDBEF-BCE7-4DF5-963F-6CE7AFB61B1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D95EDBEF-BCE7-4DF5-963F-6CE7AFB61B1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D95EDBEF-BCE7-4DF5-963F-6CE7AFB61B1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{296F1764-9FF9-4ABF-BF47-D447E249BFAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{296F1764-9FF9-4ABF-BF47-D447E249BFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{296F1764-9FF9-4ABF-BF47-D447E249BFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{296F1764-9FF9-4ABF-BF47-D447E249BFAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79C78589-9C5E-4B7E-AFFF-63E9FD6AEDD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79C78589-9C5E-4B7E-AFFF-63E9FD6AEDD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79C78589-9C5E-4B7E-AFFF-63E9FD6AEDD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79C78589-9C5E-4B7E-AFFF-63E9FD6AEDD4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C79730D0-E4C2-474A-9D04-1C07256B6DF3}
+	EndGlobalSection
+EndGlobal
