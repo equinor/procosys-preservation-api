@@ -8,7 +8,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="8.5.0" />
+    <PackageReference Include="MediatR" Version="7.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Equinor.Procosys.Preservation.Command\Equinor.Procosys.Preservation.Command.csproj" />
+    <ProjectReference Include="..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
+    <ProjectReference Include="..\Equinor.Procosys.Preservation.Infrastructure\Equinor.Procosys.Preservation.Infrastructure.csproj" />
+    <ProjectReference Include="..\Equinor.Procosys.Preservation.Query\Equinor.Procosys.Preservation.Query.csproj" />
   </ItemGroup>
 
 </Project>
