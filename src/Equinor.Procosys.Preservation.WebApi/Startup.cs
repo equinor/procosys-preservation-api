@@ -1,15 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command;
+using Equinor.Procosys.Preservation.Query;
+using Equinor.Procosys.Preservation.WebApi.Behaviors;
+using Equinor.Procosys.Preservation.WebApi.DiModules;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Reflection;
 
 namespace Equinor.Procosys.Preservation.WebApi
 {
@@ -26,6 +27,13 @@ namespace Equinor.Procosys.Preservation.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
+            });
+
+            MediatorModule.Load(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -35,6 +43,13 @@ namespace Equinor.Procosys.Preservation.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProCoSys Preservation API V1");
+                c.DocExpansion(DocExpansion.List);
+            });
 
             app.UseHttpsRedirection();
 
