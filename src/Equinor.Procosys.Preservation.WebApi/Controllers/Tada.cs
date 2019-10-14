@@ -1,21 +1,28 @@
-﻿using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using FluentValidation;
+using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers
 {
-    public class Tada : IRequest<Unit>
+    public class TadaRequestValidator : AbstractValidator<TadaRequest>
     {
+        public TadaRequestValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0);
+        }
     }
 
-    public class TadaHandler : IRequestHandler<Tada>
+    public class TadaRequest : IRequest<int>
     {
-        public Task<Unit> Handle(Tada request, CancellationToken cancellationToken)
+        public int Id { get; set; }
+    }
+
+    public class TadaRequestHandler : IRequestHandler<TadaRequest, int>
+    {
+        public Task<int> Handle(TadaRequest request, CancellationToken cancellationToken)
         {
-            return Task.FromResult(Unit.Value);
+            return Task.FromResult(1337);
         }
     }
 }

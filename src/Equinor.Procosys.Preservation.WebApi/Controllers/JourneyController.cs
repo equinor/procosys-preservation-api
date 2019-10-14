@@ -21,8 +21,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            await mediator.Send(new Tada());
-            return Ok(1337);
+            int res = await mediator.Send(new TadaRequest() { Id = 5 });
+            return Ok(res);
         }
     }
 }

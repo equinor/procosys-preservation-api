@@ -1,8 +1,7 @@
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Query;
-using Equinor.Procosys.Preservation.WebApi.Behaviors;
 using Equinor.Procosys.Preservation.WebApi.DiModules;
-using MediatR;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Equinor.Procosys.Preservation.WebApi
@@ -26,14 +26,27 @@ namespace Equinor.Procosys.Preservation.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers()
+                .AddFluentValidation(fv =>
+                {
+                    fv.RegisterValidatorsFromAssemblies
+                    (
+                        new List<Assembly>
+                        {
+                            typeof(IQueryMarker).GetTypeInfo().Assembly,
+                            typeof(ICommandMarker).GetTypeInfo().Assembly,
+                            typeof(Startup).Assembly,
+                        }
+                    );
+                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
+                });
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
             });
 
-            MediatorModule.Load(services);
+            services.AddMediatrModules();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

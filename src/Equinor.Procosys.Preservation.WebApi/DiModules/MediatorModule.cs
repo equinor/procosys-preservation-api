@@ -7,9 +7,9 @@ using System.Reflection;
 
 namespace Equinor.Procosys.Preservation.WebApi.DiModules
 {
-    public class MediatorModule
+    public static class MediatorModule
     {
-        public static void Load(IServiceCollection services)
+        public static void AddMediatrModules(this IServiceCollection services)
         {
             services.AddMediatR(
                 typeof(MediatorModule).GetTypeInfo().Assembly,
