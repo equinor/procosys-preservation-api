@@ -1,6 +1,6 @@
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Query;
-using Equinor.Procosys.Preservation.WebApi.DiModules;
+using Equinor.Procosys.Preservation.WebApi.DIModules;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

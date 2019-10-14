@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace Equinor.Procosys.Preservation.WebApi.DiModules
+namespace Equinor.Procosys.Preservation.WebApi.DIModules
 {
     public static class MediatorModule
     {
