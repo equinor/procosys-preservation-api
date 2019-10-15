@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Equinor.Procosys.Preservation.WebApi.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("Journey")]
     public class JourneyController : ControllerBase
     {
         private readonly ILogger<JourneyController> _logger;
