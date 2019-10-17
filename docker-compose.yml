@@ -1,0 +1,12 @@
+version: "3"
+
+services: 
+  web:
+    build: ./src
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+    volumes:
+      - ./src:/app
+      - /app/Equinor.Procosys.Preservation.WebApi/bin
+      - /app/Equinor.Procosys.Preservation.WebApi/obj
