@@ -1,0 +1,14 @@
+version: "3"
+
+services: 
+  api:
+    container_name: preservationapi
+    image: preservationapi
+    build:
+      context: .
+      dockerfile: Equinor.Procosys.Preservation.WebApi/Dockerfile
+      args:
+        http_proxy: http://www-proxy.statoil.no:80
+        https_proxy: http://www-proxy.statoil.no:80
+    ports:
+      - "8080:80"

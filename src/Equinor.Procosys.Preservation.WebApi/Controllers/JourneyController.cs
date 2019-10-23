@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers
 {
@@ -19,7 +18,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
             return Ok(1337);
         }
