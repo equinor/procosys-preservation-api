@@ -10,18 +10,26 @@ namespace Equinor.Procosys.Preservation.Infrastructure
     public class PreservationContext : DbContext, IReadOnlyContext, IUnitOfWork
     {
         private readonly IEventDispatcher eventDispatcher;
+        private readonly IPlantProvider plantProvider;
 
         public PreservationContext(
             DbContextOptions<PreservationContext> options,
-            IEventDispatcher eventDispatcher)
+            IEventDispatcher eventDispatcher,
+            IPlantProvider plantProvider)
             : base(options)
         {
             this.eventDispatcher = eventDispatcher;
+            this.plantProvider = plantProvider;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder
+                .Entity<Entity>()
+                .HasQueryFilter(e =>
+                    EF.Property<string>(e, "Plant") == plantProvider.Plant //TODO: Should there be an "EntityWithPlant" that will always have the "Plant" property? Or perhaps a marker interface to allow shadow properties?
+                );
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

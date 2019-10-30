@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Domain
         IUnitOfWork UnitOfWork { get; }
 
         void Add(TEntity item);
-        Task<TEntity> GetByIdAsync(int id);
+        ValueTask<TEntity> GetByIdAsync(int id);
         void Remove(TEntity entity);
     }
 }

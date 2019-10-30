@@ -8,8 +8,4 @@
     <PackageReference Include="MediatR" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="AggregateModels\" />
-  </ItemGroup>
-
 </Project>

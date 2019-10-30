@@ -3,6 +3,7 @@ using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -19,11 +20,17 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
                 options.UseSqlServer(dbConnectionString);
             });
 
-            services.AddTransient<IReadOnlyContext, PreservationContext>();
-            services.AddTransient<IUnitOfWork, PreservationContext>();
-            services.AddTransient<IEventDispatcher, EventDispatcher>();
-            services.AddTransient<ITimeService, TimeService>();
+            // Transient - Created each time it is requested from the service container
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IPlantProvider, PlantProvider>();
+
+            // Scoped - Created once per client request (connection)
+            services.AddScoped<IReadOnlyContext, PreservationContext>();
+            services.AddScoped<IUnitOfWork, PreservationContext>();
+            services.AddScoped<IEventDispatcher, EventDispatcher>();
+
+            // Singleton - Created the first time they are requested
+            services.AddSingleton<ITimeService, TimeService>();
         }
     }
 }

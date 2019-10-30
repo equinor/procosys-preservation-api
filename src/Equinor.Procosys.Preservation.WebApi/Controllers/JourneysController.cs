@@ -5,13 +5,13 @@ using Microsoft.Extensions.Logging;
 namespace Equinor.Procosys.Preservation.WebApi.Controllers
 {
     [ApiController]
-    [Route("Journey")]
-    public class JourneyController : ControllerBase
+    [Route("Journeys")]
+    public class JourneysController : ControllerBase
     {
-        private readonly ILogger<JourneyController> _logger;
+        private readonly ILogger<JourneysController> _logger;
         private readonly IMediator mediator;
 
-        public JourneyController(ILogger<JourneyController> logger, IMediator mediator)
+        public JourneysController(ILogger<JourneysController> logger, IMediator mediator)
         {
             _logger = logger;
             this.mediator = mediator;
