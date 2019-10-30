@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,12 +10,7 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
     {
         public Task<List<ResponsibleDto>> Handle(AllResponsiblesQuery request, CancellationToken cancellationToken)
         {
-            // TODO: This is hard-coded test data.
-            return Task.FromResult(new List<ResponsibleDto>
-            {
-                new ResponsibleDto { Name = "ABC" },
-                new ResponsibleDto { Name = "DEF" }
-            });
+            throw new NotImplementedException();
         }
     }
 }
