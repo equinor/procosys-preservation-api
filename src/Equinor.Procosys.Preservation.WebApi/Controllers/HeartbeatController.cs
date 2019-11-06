@@ -1,4 +1,5 @@
 ﻿using Equinor.Procosys.Preservation.Command;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers
