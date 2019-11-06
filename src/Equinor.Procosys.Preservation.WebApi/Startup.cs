@@ -60,8 +60,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 });
 
-            // Defining the scopes has no impact - using an empty list for now.
-            Dictionary<string, string> scopes = new Dictionary<string, string>(); //Configuration.GetSection("Swagger:Scopes").Get<Dictionary<string, string>>();
+            Dictionary<string, string> scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
