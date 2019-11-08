@@ -15,6 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
             this.timeService = timeService;
         }
 
+        [AllowAnonymous]
         [HttpGet("IsAlive")]
         public IActionResult IsAlive()
         {
