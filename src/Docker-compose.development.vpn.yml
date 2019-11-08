@@ -1,0 +1,12 @@
+version: "3"
+
+services: 
+  api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    build:
+      args:
+        http_proxy: http://www-proxy.statoil.no:80
+        https_proxy: http://www-proxy.statoil.no:80
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets/e47b709b-5c82-4a61-935c-823e332955f9/:/root/.microsoft/usersecrets/e47b709b-5c82-4a61-935c-823e332955f9/

@@ -7,8 +7,6 @@ services:
     build:
       context: .
       dockerfile: Equinor.Procosys.Preservation.WebApi/Dockerfile
-      args:
-        http_proxy: http://www-proxy.statoil.no:80
-        https_proxy: http://www-proxy.statoil.no:80
     ports:
-      - "8080:80"
+      - "80:80"
+      - "443:443"

@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
 
-                // Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
+                //Define the OAuth2.0 scheme that's in use (i.e. Implicit Flow)
                 c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     Type = SecuritySchemeType.OAuth2,
@@ -118,7 +118,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                 c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["API:Audience"] } });
             });
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 
