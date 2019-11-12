@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - pipeline-build
+      - pipeline
 
 resources:
 - repo: self
@@ -12,7 +12,6 @@ variables:
   imageName: 'api'
   dockerRegistryServiceConnection: 'ACR - pcspreservation'
   containerRegistry: 'pcspreservation.azurecr.io'
-  dockerfilePath: '$(Build.SourcesDirectory)/.docker/Dockerfile'
 
 
 stages:
@@ -31,4 +30,4 @@ stages:
         action: Build services
         azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
         azureContainerRegistry: $(containerRegistry)
-        dockerComposeFile: 'src/docker-compose.yml'
+        dockerComposeFile: '**/docker-compose.yml'
