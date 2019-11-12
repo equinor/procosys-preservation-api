@@ -41,4 +41,4 @@ stages:
         dockerComposeFile: '$(Build.SourcesDirectory)/src/Docker-compose.yml'
         projectName: $(Build.Repository.Name)
         qualifyImageNames: true
-        additionalImageTags: $(Build.BuildId):api
+        additionalImageTags: $(Build.BuildId)
