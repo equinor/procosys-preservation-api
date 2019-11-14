@@ -2,7 +2,6 @@ parameters:
   deploymentName: ''
   dependsOn: ''
   env: ''
-  serviceConnection: ''
 
 jobs:
 - deployment: ${{ parameters.deploymentName }}
@@ -20,7 +19,7 @@ jobs:
           displayName: Build
           inputs:
             action: Build services
-            azureSubscriptionEndpoint: '${{ variables.serviceConnectionTest }}'
+            azureSubscriptionEndpoint: '${{ variables.serviceConnection }}'
             azureContainerRegistry: '$(containerRegistry)'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
             additionalImageTags: $(Build.BuildId)
@@ -29,9 +28,9 @@ jobs:
           displayName: Push services
           inputs:
             action: Push services
-            azureSubscriptionEndpoint: ${{ parameters.serviceConnection }}
-            azureContainerRegistry: '${{ variables.containerRegistry }}'
-            dockerComposeFile: '$(Build.SourcesDirectory)${{ variables.composeFilePath }}'
-            projectName: '${{ variables.projectName }}/$(Build.Repository.Name)'
+            azureSubscriptionEndpoint: ${{ variables.serviceConnection }}
+            azureContainerRegistry: '$(containerRegistry)'
+            dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
+            projectName: '$(projectName)/$(Build.Repository.Name)'
             qualifyImageNames: true
             additionalImageTags: $(Build.BuildId)

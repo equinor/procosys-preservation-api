@@ -20,7 +20,7 @@ stages:
   displayName: 'Build and publish to Dev'
   variables:
     envName: 'dev'
-    serviceConnectionTest: '${{ variables.nonProdServiceConnection }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
   jobs:
   - template: /pipelines/build-template.yml
