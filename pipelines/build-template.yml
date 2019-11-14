@@ -1,0 +1,38 @@
+parameters:
+  deploymentName: ''
+  dependsOn: ''
+  env: ''
+
+jobs:
+- deployment: ${{ parameters.deploymentName }}
+  dependsOn: ${{ parameters.dependsOn }}
+  displayName: '${{ parameters.deploymentName }}'
+  variables:
+  - group: ${{ parameters.env }}
+  pool: 
+    vmImage: ${{ variables.vmImageName }}
+  environment: '${{ parameters.env }}'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - checkout: self
+        - task: DockerCompose@0
+          displayName: Build
+          inputs:
+            action: Build services
+            azureSubscriptionEndpoint: ${{ variables.serviceConnection }}
+            azureContainerRegistry: '${{ variables.containerRegistry }}'
+            dockerComposeFile: '$(Build.SourcesDirectory)${{ variables.composeFilePath }}'
+            additionalImageTags: $(Build.BuildId)
+
+        - task: DockerCompose@0
+          displayName: Push services
+          inputs:
+            action: Push services
+            azureSubscriptionEndpoint: ${{ variables.serviceConnection }}
+            azureContainerRegistry: '${{ variables.containerRegistry }}'
+            dockerComposeFile: '$(Build.SourcesDirectory)${{ variables.composeFilePath }}'
+            projectName: '${{ variables.projectName }}/$(Build.Repository.Name)'
+            qualifyImageNames: true
+            additionalImageTags: $(Build.BuildId)
