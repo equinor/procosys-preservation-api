@@ -19,7 +19,7 @@ jobs:
           displayName: Build
           inputs:
             action: Build services
-            azureSubscriptionEndpoint: '${{ variables.serviceConnection }}'
+            azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
             azureContainerRegistry: 'pcspreservation.azurecr.io'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
             additionalImageTags: $(Build.BuildId)
