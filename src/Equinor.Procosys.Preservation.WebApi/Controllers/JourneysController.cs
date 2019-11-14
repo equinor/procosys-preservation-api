@@ -21,7 +21,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            throw new NotImplementedException();
+            return new OkObjectResult(new System.Collections.Generic.List<string>
+            {
+                "Transport",
+                "Hookup",
+                "Commissioning",
+                "Operation"
+            });
         }
     }
 }

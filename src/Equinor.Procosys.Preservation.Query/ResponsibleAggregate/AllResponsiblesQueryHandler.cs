@@ -10,7 +10,15 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
     {
         public Task<List<ResponsibleDto>> Handle(AllResponsiblesQuery request, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            List<ResponsibleDto> responsibles = new List<ResponsibleDto>
+            {
+                new ResponsibleDto { Name = "ASHS" },
+                new ResponsibleDto { Name = "KSI" },
+                new ResponsibleDto { Name = "EQLC" },
+                new ResponsibleDto { Name = "ACPI" },
+            };
+
+            return Task.FromResult(responsibles);
         }
     }
 }
