@@ -19,7 +19,6 @@ stages:
 - stage: Dev
   displayName: 'Build and publish to Dev'
   variables:
-    vmImageName: 'windows-latest'
     envName: 'dev'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
