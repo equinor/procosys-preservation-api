@@ -9,7 +9,7 @@ jobs:
   dependsOn: ${{ parameters.dependsOn }}
   displayName: '${{ parameters.deploymentName }}'
   pool: 
-    vmImage: '${{ variables.vmImageName }}'
+    vmImage: '$(vmImageName)'
   environment: '${{ parameters.env }}'
   strategy:
     runOnce:
