@@ -8,7 +8,8 @@ jobs:
   dependsOn: ${{ parameters.dependsOn }}
   displayName: '${{ parameters.deploymentName }}'
   pool: 
-    vmImage: ${{ variables.vmImageName }}
+    vmImage: 'windows-latest'
+    # vmImage: ${{ variables.vmImageName }} windows-latest
   environment: '${{ parameters.env }}'
   strategy:
     runOnce:
