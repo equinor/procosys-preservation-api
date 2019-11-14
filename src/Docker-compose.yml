@@ -2,8 +2,8 @@ version: "3"
 
 services: 
   api:
-    container_name: preservationapi
-    image: preservationapi
+    container_name: apitestproject
+    image: apitestproject
     build:
       context: .
       dockerfile: Equinor.Procosys.Preservation.WebApi/Dockerfile
