@@ -8,7 +8,7 @@ resources:
 
 variables:
   System.Debug: 'true'
-  vmImageName: 'ubuntu-latest'
+  vmImageName: 'windows-latest'
   containerRegistry: 'pcspreservation.azurecr.io'
   nonProdServiceConnection: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
   composeFilePath: '/src/Docker-compose.yml'
