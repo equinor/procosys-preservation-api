@@ -20,9 +20,9 @@ jobs:
           displayName: Build
           inputs:
             action: Build services
-            azureSubscriptionEndpoint: ${{ parameters.serviceConnection }}
-            azureContainerRegistry: '${{ variables.containerRegistry }}'
-            dockerComposeFile: '$(Build.SourcesDirectory)${{ variables.composeFilePath }}'
+            azureSubscriptionEndpoint: '$(serviceConnectionTest)'
+            azureContainerRegistry: '$(containerRegistry)'
+            dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
             additionalImageTags: $(Build.BuildId)
 
         - task: DockerCompose@0
