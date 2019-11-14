@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - InitialSetup
+      - build-test
 
 resources:
 - repo: self
@@ -23,7 +23,7 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
   jobs:
-  - template: pipelines/build-template.yml
+  - template: /pipelines/build-template.yml
     parameters:
       deploymentName: 'Deploy_API'
       dependsOn:
