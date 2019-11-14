@@ -16,16 +16,6 @@ resources:
 variables:
  - template: templates/globalvariables.yml@templates
 
-  #  - name: serviceConnectionName
-  #    value: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
-  # System.Debug: 'true'
-  # vmImageName: 'ubuntu-latest'
-  # containerRegistry: 'pcspreservation.azurecr.io'
-  # nonProdServiceConnection: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
-  # composeFilePath: '/src/Docker-compose.yml'
-  # projectName: 'API'
-
-
 stages:
 - stage: Dev
   displayName: 'Build and publish to Dev'
@@ -40,32 +30,3 @@ stages:
       dependsOn:
       env: 'pcs-${{ variables.envName }}'
       serviceConnection: '${{ variables.nonProdServiceConnection }}'
-
-
-  # - job: Build
-  #   displayName: Build
-  #   pool:
-  #     vmImage: $(vmImageName)
-  #   steps:
-  #   - checkout: self
-  #   - task: DockerCompose@0
-  #     displayName: Build
-  #     inputs:
-  #       action: Build services
-  #       azureSubscriptionEndpoint: ${{ variables.serviceConnection }}
-  #       azureContainerRegistry: $(containerRegistry)
-  #       dockerComposeFile: '$(Build.SourcesDirectory)/src/Docker-compose.yml'
-  #       additionalImageTags: $(Build.BuildId)
-
-  #   - task: DockerCompose@0
-  #     displayName: Push services
-  #     inputs:
-  #       action: Push services
-  #       azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
-  #       azureContainerRegistry: $(containerRegistry)
-  #       dockerComposeFile: '$(Build.SourcesDirectory)/src/Docker-compose.yml'
-  #       projectName: $(Build.Repository.Name)
-  #       qualifyImageNames: true
-  #       additionalImageTags: $(Build.BuildId)
-
-    
