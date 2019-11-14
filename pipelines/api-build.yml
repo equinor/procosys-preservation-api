@@ -9,7 +9,7 @@ resources:
   - repository: self
   - repository: templates
     type: github
-    name: Contoso/BuildTemplates
+    name: equinor/procosys-preservation-infra
 
 
 variables:
