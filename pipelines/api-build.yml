@@ -20,13 +20,13 @@ stages:
 - stage: Dev
   displayName: 'Build and publish to Dev'
   variables:
-   - name: envName
-     value: 'dev'
+    envName: 'dev'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
   jobs:
   - template: /pipelines/build-template.yml
     parameters:
       deploymentName: 'Deploy_API'
       dependsOn:
+      serviceConnection: ${{ variables.serviceConnection }}
       env: 'pcs-${{ variables.envName }}'
-      serviceConnection: '${{ variables.nonProdServiceConnection }}'

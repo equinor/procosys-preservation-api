@@ -1,8 +1,8 @@
 parameters:
   deploymentName: ''
   dependsOn: ''
-  env: ''
   serviceConnection: ''
+  env: ''
 
 jobs:
 - deployment: ${{ parameters.deploymentName }}
