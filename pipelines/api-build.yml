@@ -3,16 +3,23 @@ trigger:
     include:
       - build-test
 
+
 resources:
-- repo: self
+  repositories:
+  - repository: self
+  - repository: templates
+    type: github
+    name: Contoso/BuildTemplates
+
 
 variables:
-  System.Debug: 'true'
-  vmImageName: 'ubuntu-latest'
-  containerRegistry: 'pcspreservation.azurecr.io'
-  nonProdServiceConnection: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
-  composeFilePath: '/src/Docker-compose.yml'
-  projectName: 'API'
+ - template: templates/globalvariables.yml@templates
+  # System.Debug: 'true'
+  # vmImageName: 'ubuntu-latest'
+  # containerRegistry: 'pcspreservation.azurecr.io'
+  # nonProdServiceConnection: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
+  # composeFilePath: '/src/Docker-compose.yml'
+  # projectName: 'API'
 
 
 stages:
