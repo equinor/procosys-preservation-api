@@ -15,13 +15,17 @@ resources:
 
 variables:
  - template: templates/globalvariables.yml@templates
+ - name: webAppName
+   value: 'pcs-pres-$(envName)-api'
 
 stages:
 - stage: Dev
   displayName: 'Build and publish to Dev'
   variables:
     envName: 'dev'
+    envRg: 'pcs-preservation-dev-rg'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServiceName: $(nonProdappServicePlanName)
 
   jobs:
   - template: /pipelines/build-template.yml
@@ -30,3 +34,12 @@ stages:
       dependsOn:
       serviceConnection: ${{ variables.serviceConnection }}
       env: 'pcs-${{ variables.envName }}'
+
+  - template: /templates/pipelines/webappcontainer.yml@templates
+    parameters:
+      deploymentName: 'Update_Web_App'
+      dependsOn: 'Deploy_API'
+      serviceConnection: ${{ variables.serviceConnection }}
+      env: 'pcs-${{ variables.envName }}'
+      webAppName: '${{ variables.webAppName }}'
+      appServicePlanName: $(appServiceName)
