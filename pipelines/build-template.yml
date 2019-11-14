@@ -31,6 +31,6 @@ jobs:
             azureSubscriptionEndpoint: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
             azureContainerRegistry: 'pcspreservation.azurecr.io'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
-            projectName: 'apitestproject'
+            projectName: $(Build.Repository.Name)
             qualifyImageNames: true
             additionalImageTags: $(Build.BuildId)
