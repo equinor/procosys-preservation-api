@@ -2,14 +2,14 @@ parameters:
   deploymentName: ''
   dependsOn: ''
   env: ''
+  serviceConnection: ''
 
 jobs:
 - deployment: ${{ parameters.deploymentName }}
   dependsOn: ${{ parameters.dependsOn }}
   displayName: '${{ parameters.deploymentName }}'
   pool: 
-    vmImage: 'windows-latest'
-    # vmImage: ${{ variables.vmImageName }} windows-latest
+    vmImage: '${{ variables.vmImageName }}'
   environment: '${{ parameters.env }}'
   strategy:
     runOnce:
@@ -20,7 +20,7 @@ jobs:
           displayName: Build
           inputs:
             action: Build services
-            azureSubscriptionEndpoint: ${{ variables.serviceConnection }}
+            azureSubscriptionEndpoint: ${{ parameters.serviceConnection }}
             azureContainerRegistry: '${{ variables.containerRegistry }}'
             dockerComposeFile: '$(Build.SourcesDirectory)${{ variables.composeFilePath }}'
             additionalImageTags: $(Build.BuildId)
@@ -29,7 +29,7 @@ jobs:
           displayName: Push services
           inputs:
             action: Push services
-            azureSubscriptionEndpoint: ${{ variables.serviceConnection }}
+            azureSubscriptionEndpoint: ${{ parameters.serviceConnection }}
             azureContainerRegistry: '${{ variables.containerRegistry }}'
             dockerComposeFile: '$(Build.SourcesDirectory)${{ variables.composeFilePath }}'
             projectName: '${{ variables.projectName }}/$(Build.Repository.Name)'
