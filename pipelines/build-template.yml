@@ -8,7 +8,6 @@ jobs:
   dependsOn: ${{ parameters.dependsOn }}
   displayName: '${{ parameters.deploymentName }}'
   variables:
-  - group: ${{ parameters.env }}
   pool: 
     vmImage: ${{ variables.vmImageName }}
   environment: '${{ parameters.env }}'
