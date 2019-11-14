@@ -10,6 +10,7 @@ resources:
   - repository: templates
     type: github
     name: equinor/procosys-preservation-infra
+    endpoint: Preservation - Frontend
 
 
 variables:
