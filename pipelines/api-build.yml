@@ -15,6 +15,9 @@ resources:
 
 variables:
  - template: templates/globalvariables.yml@templates
+
+ - name: serviceConnectionName
+   value: 'IT PLA LCI - Procosys (343069e3-ceaa-4256-bdc8-49fa3646c1c4)'
   # System.Debug: 'true'
   # vmImageName: 'ubuntu-latest'
   # containerRegistry: 'pcspreservation.azurecr.io'
@@ -27,8 +30,8 @@ stages:
 - stage: Dev
   displayName: 'Build and publish to Dev'
   variables:
-    envName: 'dev'
-    serviceConnection: '$(nonProdServiceConnection)'
+   - name: envName
+     value: 'dev'
 
   jobs:
   - template: /pipelines/build-template.yml
@@ -36,7 +39,7 @@ stages:
       deploymentName: 'Deploy_API'
       dependsOn:
       env: 'pcs-${{ variables.envName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
+      #serviceConnection: '${{ variables.serviceConnection }}'
 
 
   # - job: Build
