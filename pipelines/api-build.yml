@@ -12,9 +12,9 @@ resources:
     name: equinor/procosys-preservation-infra
     endpoint: Preservation - Frontend
 
-
+# Global variables for the pipeline
 variables:
- - template: templates/globalvariables.yml@templates
+ - template: templates/preservation-variables.yml@templates
  - name: webAppName
    value: 'pcs-pres-$(envName)-api'
 
@@ -25,7 +25,7 @@ stages:
     envName: 'dev'
     envRg: 'pcs-preservation-dev-rg'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServiceName: $(nonProdappServicePlanName)
+    appServicePlan: $(nonProdappServicePlanName)
 
   jobs:
   - template: /pipelines/build-template.yml
@@ -42,4 +42,3 @@ stages:
       serviceConnection: ${{ variables.serviceConnection }}
       env: 'pcs-${{ variables.envName }}'
       webAppName: '${{ variables.webAppName }}'
-      appServicePlanName: $(appServiceName)
