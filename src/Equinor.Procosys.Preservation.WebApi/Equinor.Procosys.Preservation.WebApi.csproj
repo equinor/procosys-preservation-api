@@ -4,12 +4,15 @@
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UserSecretsId>e47b709b-5c82-4a61-935c-823e332955f9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <ApplicationInsightsResourceId>/subscriptions/343069e3-ceaa-4256-bdc8-49fa3646c1c4/resourcegroups/pcs-preservation-dev-rg/providers/microsoft.insights/components/pcs-pres-dev-ai</ApplicationInsightsResourceId>
+    <ApplicationInsightsAnnotationResourceId>/subscriptions/343069e3-ceaa-4256-bdc8-49fa3646c1c4/resourcegroups/pcs-preservation-dev-rg/providers/microsoft.insights/components/pcs-pres-dev-ai</ApplicationInsightsAnnotationResourceId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.5.1" />
     <PackageReference Include="MediatR" Version="7.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.8.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="3.0.0" />
@@ -23,6 +26,10 @@
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Infrastructure\Equinor.Procosys.Preservation.Infrastructure.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Query\Equinor.Procosys.Preservation.Query.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
 
 </Project>
