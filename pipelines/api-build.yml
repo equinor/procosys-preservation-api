@@ -39,7 +39,7 @@ stages:
 
 
   jobs:
-  - template: /pipelines/dockerbuild.yml@
+  - template: /pipelines/dockerbuild.yml@templates
     parameters:
         deploymentName: 'docker_build_push'
         dependsOn: ''
@@ -56,10 +56,10 @@ stages:
   #     serviceConnection: ${{ variables.serviceConnection }}
   #     env: 'pcs-${{ variables.envName }}'
 
-  - template: /templates/pipelines/webappcontainer.yml@templates
-    parameters:
-      deploymentName: 'Update_Web_App'
-      dependsOn: 'Build_and_push_docker_image'
-      serviceConnection: ${{ variables.serviceConnection }}
-      env: 'pcs-${{ variables.envName }}'
-      webAppName: '${{ variables.webAppName }}'
+  # - template: /templates/pipelines/webappcontainer.yml@templates
+  #   parameters:
+  #     deploymentName: 'Update_Web_App'
+  #     dependsOn: 'Build_and_push_docker_image'
+  #     serviceConnection: ${{ variables.serviceConnection }}
+  #     env: 'pcs-${{ variables.envName }}'
+  #     webAppName: '${{ variables.webAppName }}'
