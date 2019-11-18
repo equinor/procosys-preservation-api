@@ -1,7 +1,6 @@
 version: "3"
 
 services: 
-  api:
     container_name: apitestprojectcontainer
     build:
       context: .
