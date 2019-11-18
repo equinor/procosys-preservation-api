@@ -24,6 +24,7 @@ jobs:
             azureContainerRegistry: '$(containerRegistry)'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
             additionalImageTags: $(Build.BuildId)
+            projectName: 'apitestproject'
 
         - task: DockerCompose@0
           displayName: Push services

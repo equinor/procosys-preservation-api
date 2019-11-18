@@ -15,6 +15,7 @@ resources:
 # Global variables for the pipeline
 variables:
  - template: templates/preservation-variables.yml@templates
+
  - name: webAppName
    value: 'pcs-pres-$(envName)-api'
 
@@ -25,7 +26,7 @@ stages:
     envName: 'dev'
     envRg: 'pcs-preservation-dev-rg'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: $(nonProdappServicePlanName)
+    appServicePlan: 'pcs-pres-non-prod-app-service-plan'
 
   jobs:
   - template: /pipelines/build-template.yml
