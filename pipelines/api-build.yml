@@ -34,7 +34,7 @@ stages:
     appServicePlan: 'pcs-pres-non-prod-app-service-plan'
     containerRegistry: $(containerRegistry)
     #dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
-    dockerfilePath: /src/Equinor.Procosys.Preservation.WebApi\Dockerfile
+    dockerfilePath: /src/Equinor.Procosys.Preservation.WebApi/Dockerfile
 
 
 
