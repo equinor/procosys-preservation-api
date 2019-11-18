@@ -23,8 +23,8 @@ jobs:
             azureSubscriptionEndpoint: '${{ parameters.serviceConnection }}'
             azureContainerRegistry: '$(containerRegistry)'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
-            additionalImageTags: $(Build.BuildId)
             projectName: 'apitestproject'
+            additionalImageTags: $(Build.BuildId)
 
         - task: DockerCompose@0
           displayName: Push services
