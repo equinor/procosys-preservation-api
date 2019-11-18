@@ -42,7 +42,7 @@ stages:
   - template: /templates/pipelines/webappcontainer.yml@templates
     parameters:
       deploymentName: 'Update_Web_App'
-      dependsOn: 'Deploy_API'
+      dependsOn: 'Build_and_push_docker_image'
       serviceConnection: ${{ variables.serviceConnection }}
       env: 'pcs-${{ variables.envName }}'
       webAppName: '${{ variables.webAppName }}'

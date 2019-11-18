@@ -30,7 +30,7 @@ jobs:
           inputs:
             action: Push services
             azureSubscriptionEndpoint: '${{ parameters.serviceConnection }}'
-            azureContainerRegistry: 'pcspreservation.azurecr.io'
+            azureContainerRegistry: '$(containerRegistry)'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
             qualifyImageNames: true
             additionalImageTags: $(Build.BuildId)
