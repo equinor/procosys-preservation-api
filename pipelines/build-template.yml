@@ -23,7 +23,6 @@ jobs:
             azureSubscriptionEndpoint: '${{ parameters.serviceConnection }}'
             azureContainerRegistry: '$(containerRegistry)'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
-            projectName: 'apitestproject'
             additionalImageTags: $(Build.BuildId)
 
         - task: DockerCompose@0
@@ -33,6 +32,5 @@ jobs:
             azureSubscriptionEndpoint: '${{ parameters.serviceConnection }}'
             azureContainerRegistry: 'pcspreservation.azurecr.io'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
-            projectName: $(Build.Repository.Name)
             qualifyImageNames: true
             additionalImageTags: $(Build.BuildId)

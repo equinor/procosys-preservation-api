@@ -34,7 +34,7 @@ stages:
   jobs:
   - template: /pipelines/build-template.yml
     parameters:
-      deploymentName: 'Deploy_API'
+      deploymentName: 'Build_and_push_docker_image'
       dependsOn:
       serviceConnection: ${{ variables.serviceConnection }}
       env: 'pcs-${{ variables.envName }}'
