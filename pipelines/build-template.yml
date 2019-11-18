@@ -24,7 +24,7 @@ jobs:
             azureContainerRegistry: '$(containerRegistry)'
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
             additionalImageTags: $(Build.BuildId)
-            projectName: 'newimagetestnameapi'
+            projectName: '$(projectName)'
 
         - task: DockerCompose@0
           displayName: Push services
@@ -35,3 +35,4 @@ jobs:
             dockerComposeFile: '$(Build.SourcesDirectory)$(composeFilePath)'
             qualifyImageNames: true
             additionalImageTags: $(Build.BuildId)
+            projectName: '$(projectName)'
