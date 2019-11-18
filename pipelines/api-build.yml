@@ -19,6 +19,9 @@ variables:
  - name: webAppName
    value: 'pcs-pres-$(envName)-api'
 
+ - name: projectName
+   value: 'apitestproject'
+
 stages:
 - stage: Dev
   displayName: 'Build and publish to Dev'
