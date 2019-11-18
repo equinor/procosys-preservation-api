@@ -20,7 +20,7 @@ variables:
    value: 'pcs-pres-$(envName)-api'
 
  - name: projectName
-   value: 'apitestproject'
+   value: 'apitestproject_new'
 
 stages:
 - stage: Dev
