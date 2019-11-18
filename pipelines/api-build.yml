@@ -32,7 +32,7 @@ stages:
     envRg: 'pcs-preservation-dev-rg'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: 'pcs-pres-non-prod-app-service-plan'
-    containerRegistry: $(containerRegistry)
+    containerRegistry: pcspreservation
     #dockerRegistryServiceConnection: $(dockerRegistryServiceConnection)
     dockerfilePath: /src/Equinor.Procosys.Preservation.WebApi/Dockerfile
 
