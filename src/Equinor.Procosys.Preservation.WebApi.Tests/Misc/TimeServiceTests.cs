@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
     public class TimeServiceTests
     {
         [TestMethod]
-        public void ReturnsUtcTime()
+        public void ReturnsTimeAsUtc()
         {
             DateTime time = (new TimeService()).GetCurrentTimeUTC();
             Assert.AreEqual(DateTimeKind.Utc, time.Kind);
