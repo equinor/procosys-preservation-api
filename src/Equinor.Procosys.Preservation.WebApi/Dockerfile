@@ -1,8 +1,9 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 COPY . .
+RUN ls
 WORKDIR "src/Equinor.Procosys.Preservation.WebApi"
-
+RUN ls
 FROM build AS publish
 RUN dotnet publish "Equinor.Procosys.Preservation.WebApi.csproj" -c Release -o /app/publish
 
