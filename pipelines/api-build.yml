@@ -9,7 +9,7 @@ resources:
   - repository: templates
     type: github
     name: equinor/procosys-templates
-    endpoint: Preservation - Frontend
+    endpoint: 'Preservation - Frontend'
 
 # Global variables for the pipeline
 variables:
@@ -43,7 +43,7 @@ stages:
         envName: 'pcs-${{ variables.envName }}'
         dockerfilePath: ${{ variables.dockerfilePath }}
         repositoryName: 'api/dev'
-        dockerRegistryServiceConnection: ${{ variables.dockerRegistryServiceConnection }}
+        dockerRegistryServiceConnection: ${{ variables.dockerRegistryServiceConnectionName }}
 
 
   # jobs:
