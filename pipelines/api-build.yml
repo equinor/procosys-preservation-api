@@ -13,7 +13,7 @@ resources:
 
 # Global variables for the pipeline
 variables:
- - template: variables/preservation-variables1.yml@templates
+ - template: variables/preservation-variables.yml@templates
 
  - name: webAppName
    value: 'pcs-pres-$(envName)-api'
