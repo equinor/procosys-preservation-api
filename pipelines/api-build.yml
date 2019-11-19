@@ -3,7 +3,6 @@ trigger:
     include:
       - build-test
 
-
 resources:
   repositories:
   - repository: self
@@ -19,8 +18,6 @@ variables:
  - name: webAppName
    value: 'pcs-pres-$(envName)-api'
 
-
-
 #  - name: projectName
 #    value: 'apitestproject_new'
 
@@ -33,7 +30,7 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: 'pcs-pres-non-prod-app-service-plan'
     containerRegistry: 'pcspreservation'
-    dockerRegistryServiceConnection: 'ACR - pcspreservation'
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
     dockerfilePath: /src/Equinor.Procosys.Preservation.WebApi/Dockerfile
 
 
@@ -45,6 +42,7 @@ stages:
         dependsOn: ''
         envName: 'pcs-${{ variables.envName }}'
         dockerfilePath: ${{ variables.dockerfilePath }}
+        repositoryName: 'api/dev'
         dockerRegistryServiceConnection: ${{ variables.dockerRegistryServiceConnection }}
 
 
