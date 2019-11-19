@@ -43,7 +43,7 @@ stages:
         envName: 'pcs-${{ variables.envName }}'
         dockerfilePath: ${{ variables.dockerfilePath }}
         repositoryName: 'api/dev'
-        dockerRegistryServiceConnection: ${{ variables.dockerRegistryServiceConnectionName }}
+        dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 
   # jobs:
