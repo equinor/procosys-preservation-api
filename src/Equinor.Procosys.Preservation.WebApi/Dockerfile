@@ -1,5 +1,6 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
+RUN ls
 COPY . .
 RUN ls
 WORKDIR "src/Equinor.Procosys.Preservation.WebApi"
