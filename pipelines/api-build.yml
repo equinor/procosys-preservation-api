@@ -14,14 +14,16 @@ resources:
 # Global variables for the pipeline
 variables:
  - template: variables/preservation-variables.yml@templates
+ - template: variables/procosys-global-variables.yml@templates
 
- - name: webAppName
-   value: 'pcs-pres-$(envName)-api'
+ - name: apiWebAppName
+   value: '$(globalPrefix)-$(shortAppName)-$(envName)-api'
 
 #  - name: projectName
 #    value: 'apitestproject_new'
 
 stages:
+# Dev stage
 - stage: Dev
   displayName: 'Build and publish to Dev'
   variables:
@@ -34,6 +36,29 @@ stages:
     dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
     repositoryName: 'api'
 
+  jobs:
+  - template: /pipelines/dockerbuild.yml@templates
+    parameters:
+        deploymentName: 'docker_build_push'
+        dependsOn: ''
+        envName: 'pcs-${{ variables.envName }}'
+        dockerfilePath: ${{ variables.dockerfilePath }}
+        repository: ${{ variables.repositoryName }}
+        dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+        tag: ''
+
+# Test stage
+- stage: Test
+  displayName: 'Build and publish to Dev'
+  variables:
+    envName: 'test'
+    envRg: '${{ variables.envRgName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+    dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
+    repositoryName: 'api'
 
 
   jobs:
@@ -45,20 +70,5 @@ stages:
         dockerfilePath: ${{ variables.dockerfilePath }}
         repository: ${{ variables.repositoryName }}
         dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+        tag: '${{ variables.envName }}-latest'
 
-
-  # jobs:
-  # - template: /pipelines/build-template.yml
-  #   parameters:
-  #     deploymentName: 'Build_and_push_docker_image'
-  #     dependsOn:
-  #     serviceConnection: ${{ variables.serviceConnection }}
-  #     env: 'pcs-${{ variables.envName }}'
-
-  # - template: /templates/pipelines/webappcontainer.yml@templates
-  #   parameters:
-  #     deploymentName: 'Update_Web_App'
-  #     dependsOn: 'Build_and_push_docker_image'
-  #     serviceConnection: ${{ variables.serviceConnection }}
-  #     env: 'pcs-${{ variables.envName }}'
-  #     webAppName: '${{ variables.webAppName }}'
