@@ -50,7 +50,7 @@ stages:
 - stage: dev
   displayName: 'Dev'
   variables:
-    envName: 'pcs-dev'
+    envName: 'dev'
     envRg: '${{ variables.envRgName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
@@ -59,3 +59,12 @@ stages:
     dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
     repositoryName: 'api'
 
+  jobs:
+  - template: /pipelines/dockerbuild.yml@templates
+    parameters:
+        deploymentName: 'docker_build_push'
+        dependsOn: ''
+        envName: 'pcs-${{ variables.envName }}'
+        dockerfilePath: ${{ variables.dockerfilePath }}
+        repository: ${{ variables.repositoryName }}
+        dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
