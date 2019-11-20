@@ -23,8 +23,31 @@ variables:
 #    value: 'apitestproject_new'
 
 stages:
-# Dev stage
-- stage: Dev
+# common stage. Docker build, tag and push
+- stage: common
+  displayName: 'Common'
+  variables:
+    envName: 'common'
+    envRg: '${{ variables.envRgName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+    dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
+    repositoryName: 'api'
+
+  jobs:
+  - template: /pipelines/dockerbuild.yml@templates
+    parameters:
+        deploymentName: 'docker_build_push'
+        dependsOn: ''
+        envName: 'pcs-${{ variables.envName }}'
+        dockerfilePath: ${{ variables.dockerfilePath }}
+        repository: ${{ variables.repositoryName }}
+        dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+
+# Dev deploy stage
+- stage: dev
   displayName: 'Dev'
   variables:
     envName: 'dev'
@@ -36,39 +59,4 @@ stages:
     dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
     repositoryName: 'api'
 
-  jobs:
-  - template: /pipelines/dockerbuild.yml@templates
-    parameters:
-        deploymentName: 'docker_build_push'
-        dependsOn: ''
-        envName: 'pcs-${{ variables.envName }}'
-        dockerfilePath: ${{ variables.dockerfilePath }}
-        repository: ${{ variables.repositoryName }}
-        dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
-        tag: ''
-
-# Test stage
-- stage: Test
-  displayName: 'Test'
-  variables:
-    envName: 'test'
-    envRg: '${{ variables.envRgName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
-    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-    dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
-    repositoryName: 'api'
-
-
-  jobs:
-  - template: /pipelines/dockerbuild.yml@templates
-    parameters:
-        deploymentName: 'docker_build_push'
-        dependsOn: ''
-        envName: 'pcs-${{ variables.envName }}'
-        dockerfilePath: ${{ variables.dockerfilePath }}
-        repository: ${{ variables.repositoryName }}
-        dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
-        tag: '${{ variables.envName }}-latest'
-
+    
