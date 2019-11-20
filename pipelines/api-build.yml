@@ -26,10 +26,10 @@ stages:
   displayName: 'Build and publish to Dev'
   variables:
     envName: 'dev'
-    envRg: 'pcs-preservation-dev-rg'
+    envRg: '${{ variables.envRgName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: 'pcs-pres-non-prod-app-service-plan'
-    containerRegistry: 'pcspreservation'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
     dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
     repositoryName: 'api'
