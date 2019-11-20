@@ -1,0 +1,40 @@
+trigger:
+  branches:
+    include:
+      - build-test
+
+resources:
+  repositories:
+  - repository: self
+  - repository: templates
+    type: github
+    name: equinor/procosys-templates
+    endpoint: 'Preservation - Frontend'
+
+# Global variables for the pipeline
+variables:
+ - template: variables/preservation-variables.yml@templates
+
+ - name: webAppName
+   value: 'pcs-pres-$(envName)-api'
+
+#  - name: projectName
+#    value: 'apitestproject_new'
+
+stages:
+- stage: Dev
+  displayName: 'Build and publish to Dev'
+  variables:
+    envName: 'dev'
+    envRg: 'pcs-preservation-dev-rg'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: 'pcs-pres-non-prod-app-service-plan'
+    containerRegistry: 'pcspreservation'
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+    dockerfilePath: /src/Equinor.Procosys.Preservation.WebApi/Dockerfile
+
+  jobs:
+    - job: 
+      steps:
+        - script: |
+          echo $(vmImageName)
