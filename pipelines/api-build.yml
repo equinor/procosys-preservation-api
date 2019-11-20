@@ -50,7 +50,7 @@ stages:
 - stage: dev
   displayName: 'Dev'
   variables:
-    envName: 'dev'
+    envName: 'pcs-dev'
     envRg: '${{ variables.envRgName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
@@ -59,4 +59,3 @@ stages:
     dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
     repositoryName: 'api'
 
-    
