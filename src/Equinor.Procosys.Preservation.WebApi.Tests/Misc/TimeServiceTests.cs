@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.WebApi.Misc;
+﻿using System;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 
 namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
 {

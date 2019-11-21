@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers
 {

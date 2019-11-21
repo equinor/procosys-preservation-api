@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Command;
+﻿using System.Reflection;
+using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.WebApi.Behaviors;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 
 namespace Equinor.Procosys.Preservation.WebApi.DIModules
 {
