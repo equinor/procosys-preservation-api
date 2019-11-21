@@ -13,11 +13,14 @@ COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservatio
 COPY Equinor.Procosys.Preservation.Query.Tests/*.csproj ./Equinor.Procosys.Preservation.Query.Tests/
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
 COPY Equinor.Procosys.Preservation.WebApi.Tests/*.csproj ./Equinor.Procosys.Preservation.WebApi.Tests/
+
+# Restore NuGet packages
 RUN dotnet restore
 
 # Copy full solution
 COPY . .
 
+# Build
 RUN dotnet build -c Release --no-restore
 
 # Test runner target
