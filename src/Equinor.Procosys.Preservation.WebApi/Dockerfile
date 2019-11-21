@@ -35,8 +35,5 @@ RUN dotnet publish "Equinor.Procosys.Preservation.WebApi.csproj" -c Release --no
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS base
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
-ENV ASPNETCORE_HTTPS_PORT 443
-
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Equinor.Procosys.Preservation.WebApi.dll"]
