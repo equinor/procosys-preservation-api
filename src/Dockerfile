@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
 WORKDIR /src
 
 # Copy solution and project files separately and restore NuGet packages to create layers
@@ -32,7 +32,7 @@ WORKDIR "/src/Equinor.Procosys.Preservation.WebApi"
 RUN dotnet publish "Equinor.Procosys.Preservation.WebApi.csproj" -c Release --no-restore -o /app/publish
 
 # Create a runtime image and copy the application over
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
