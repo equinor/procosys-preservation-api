@@ -2,12 +2,12 @@
 
 Backend .Net Core 3 application for Preservation module in Project Completion System (ProCoSys).
 
-## Run in Visual Studio
+## How to run in Visual Studio
 Choose to run as *Equinor.ProcoSys.Preservation.WebApi* in the dropdown menu and hit F5.
 
-## Run from command line
+## How to run from command line
 In folder
-```console
+```
 src\Equinor.Procosys.Preservation.WebApi\
 ```
 run
@@ -15,9 +15,9 @@ run
 dotnet run
 ```
 
-## Run in Docker
+## How to run in Docker
 In folder
-```console
+```
 src\
 ```
 run
