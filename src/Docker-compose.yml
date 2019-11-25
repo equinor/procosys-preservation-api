@@ -1,0 +1,11 @@
+version: "3"
+
+services: 
+  api:
+    container_name: preservationapi
+    image: preservationapi
+    build:
+      context: .
+      dockerfile: Equinor.Procosys.Preservation.WebApi/Dockerfile
+    ports:
+      - "8080:80"
