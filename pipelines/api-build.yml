@@ -25,7 +25,8 @@ stages:
     envRg: '${{ variables.envRgName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
+    containerRegistry: '${{ variables.containerRegistryName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
     dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
     repositoryName: 'api'
@@ -33,12 +34,13 @@ stages:
   jobs:
   - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:
-        deploymentName: 'docker_build_push'
-        dependsOn: ''
-        envName: 'pcs-${{ variables.envName }}'
-        dockerfilePath: ${{ variables.dockerfilePath }}
-        repository: ${{ variables.repositoryName }}
-        dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+      deploymentName: 'docker_build_push'
+      dependsOn: ''
+      envName: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: ${{ variables.dockerfilePath }}
+      repository: ${{ variables.repositoryName }}
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 # Dev deploy stage
 - stage: dev
