@@ -13,8 +13,8 @@ resources:
 
 # Global variables for the pipeline
 variables:
- - template: variables/preservation-variables.yml@templates
- - template: variables/procosys-global-variables.yml@templates
+ - template: templates/variables/preservation-variables.yml@templates
+ - template: templates/procosys-global-variables.yml@templates
 
 stages:
 # common stage. Docker build, tag and push
@@ -31,7 +31,7 @@ stages:
     repositoryName: 'api'
 
   jobs:
-  - template: /pipelines/dockerbuild.yml@templates
+  - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:
         deploymentName: 'docker_build_push'
         dependsOn: ''
@@ -55,7 +55,7 @@ stages:
     repositoryName: 'api'
 
   jobs:
-  - template: /pipelines/dockerbuild.yml@templates
+  - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:
       dependsOn: ''
       deploymentName: 'web app for containers'
