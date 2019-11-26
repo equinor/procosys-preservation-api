@@ -8,19 +8,13 @@ resources:
   - repository: self
   - repository: templates
     type: github
-    name: equinor/procosys-templates
+    name: equinor/procosys-preservation-infra
     endpoint: 'Preservation - Frontend'
 
 # Global variables for the pipeline
 variables:
  - template: variables/preservation-variables.yml@templates
  - template: variables/procosys-global-variables.yml@templates
-
- - name: apiWebAppName
-   value: '$(globalPrefix)-$(shortAppName)-$(envName)-api'
-
-#  - name: projectName
-#    value: 'apitestproject_new'
 
 stages:
 # common stage. Docker build, tag and push
@@ -52,6 +46,7 @@ stages:
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
@@ -62,9 +57,13 @@ stages:
   jobs:
   - template: /pipelines/dockerbuild.yml@templates
     parameters:
-        deploymentName: 'docker_build_push'
-        dependsOn: ''
-        envName: 'pcs-${{ variables.envName }}'
-        dockerfilePath: ${{ variables.dockerfilePath }}
-        repository: ${{ variables.repositoryName }}
-        dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+      dependsOn: ''
+      deploymentName: 'web app for containers'
+      serviceConnection: ${{ variables.serviceConnection }}
+      env: '${{ variables.envName }}'
+      envRg: '${{ variables.envRg }}'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: '${{ variables.dockerfilePath }}'
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: '${{ variables.dockerRegistryServiceConnection }}'
+      tag: ''
