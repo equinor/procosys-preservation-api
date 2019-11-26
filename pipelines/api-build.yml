@@ -14,7 +14,7 @@ resources:
 # Global variables for the pipeline
 variables:
  - template: templates/variables/preservation-variables.yml@templates
- - template: templates/procosys-global-variables.yml@templates
+ - template: templates/variables/procosys-global-variables.yml@templates
 
 stages:
 # common stage. Docker build, tag and push
