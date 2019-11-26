@@ -60,7 +60,7 @@ stages:
   - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:
       dependsOn: ''
-      deploymentName: 'web app for containers'
+      deploymentName: 'web_app_for_containers'
       serviceConnection: ${{ variables.serviceConnection }}
       env: '${{ variables.envName }}'
       envRg: '${{ variables.envRg }}'
