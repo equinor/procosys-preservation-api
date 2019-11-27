@@ -64,6 +64,6 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       envRg: '${{ variables.envRg }}'
       env: '${{ variables.envName }}'
-      appServicePlan: '${{ variables.serviceConnection }}'
+      appServicePlan: '${{ variables.appServicePlan }}'
       containerRegistry: '${{ variables.containerRegistry }}'
       repository: '${{ variables.repositoryName }}'
