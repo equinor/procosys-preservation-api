@@ -36,7 +36,7 @@ stages:
     parameters:
       deploymentName: 'docker_build_push'
       dependsOn: ''
-      envName: 'pcs-${{ variables.envName }}'
+      env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       dockerfilePath: ${{ variables.dockerfilePath }}
       repository: ${{ variables.repositoryName }}
@@ -52,20 +52,18 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
-    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-    dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
     repositoryName: 'api'
 
   jobs:
-  - template: /templates/pipelines/dockerbuild.yml@templates
+  - template: /templates/pipelines/webappcontainer.yml@templates
     parameters:
-      dependsOn: ''
-      deploymentName: 'web_app_for_containers'
-      serviceConnection: ${{ variables.serviceConnection }}
-      env: '${{ variables.envName }}'
-      envRg: '${{ variables.envRg }}'
+      dependsOn: '${{ variables.serviceConnection }}'
+      deploymentName: 'Publish_container_to_webapp'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      webApp: '${{ variables.apiWebAppName }}'
       envGroup: '${{ variables.envGroupName }}'
-      dockerfilePath: '${{ variables.dockerfilePath }}'
+      envRg: '${{ variables.envRg }}'
+      env: '${{ variables.envName }}'
+      appServicePlan: '${{ variables.serviceConnection }}'
+      containerRegistry: '${{ variables.containerRegistry }}'
       repository: '${{ variables.repositoryName }}'
-      dockerRegistryServiceConnection: '${{ variables.dockerRegistryServiceConnection }}'
-      tag: ''
