@@ -57,11 +57,11 @@ stages:
   - template: /templates/pipelines/webapprelease.yml@templates
     parameters:
       dependsOn: ''
-      deploymentName: 'Publish_container_to_webapp'
+      deploymentName: 'publish_container_to_webapp'
       serviceConnection: '${{ variables.serviceConnection }}'
       webApp: '${{ variables.apiWebAppName }}'
       envGroup: '${{ variables.envGroupName }}'
       envRg: '${{ variables.envRg }}'
       env: '${{ variables.envName }}'
       containerRegistry: '${{ variables.containerRegistry }}'
-      repository: '${{ variables.repository }}'
+      repository: 'preservation/api'
