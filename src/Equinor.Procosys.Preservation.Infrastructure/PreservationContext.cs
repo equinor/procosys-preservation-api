@@ -1,7 +1,9 @@
 ﻿using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,12 +27,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            // Global query filter
             modelBuilder
-                .Entity<Entity>()
+                .Entity<SchemaEntity>()
                 .HasQueryFilter(e =>
-                    EF.Property<string>(e, "Plant") == plantProvider.Plant //TODO: Should there be an "EntityWithPlant" that will always have the "Plant" property? Or perhaps a marker interface to allow shadow properties?
+                    EF.Property<string>(e, nameof(SchemaEntity.Schema)) == plantProvider.Plant
                 );
         }
+
+        public virtual DbSet<Tag> Tags { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

@@ -1,8 +1,10 @@
 ﻿using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
@@ -28,6 +30,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IReadOnlyContext, PreservationContext>();
             services.AddScoped<IUnitOfWork, PreservationContext>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
+            services.AddScoped<ITagRepository, TagRepository>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();
