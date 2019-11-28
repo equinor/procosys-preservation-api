@@ -23,8 +23,6 @@ stages:
   variables:
     envName: 'common'
     envRg: '${{ variables.envRgName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
