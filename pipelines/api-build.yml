@@ -16,6 +16,9 @@ variables:
  - template: templates/variables/preservation-variables.yml@templates
  - template: templates/variables/procosys-global-variables.yml@templates
 
+ - name: 'repositoryName'
+   value: 'preservation/api'
+
 stages:
 # common stage. Docker build, tag and push
 - stage: common
@@ -27,7 +30,6 @@ stages:
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
     dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
-    repositoryName: 'api'
 
   jobs:
   - template: /templates/pipelines/dockerbuild.yml@templates
@@ -50,10 +52,9 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
-    repositoryName: 'api'
 
   jobs:
-  - template: /templates/pipelines/webappcontainer.yml@templates
+  - template: /templates/pipelines/webapprelease.yml@templates
     parameters:
       dependsOn: ''
       deploymentName: 'Publish_container_to_webapp'
@@ -62,6 +63,5 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       envRg: '${{ variables.envRg }}'
       env: '${{ variables.envName }}'
-      appServicePlan: '${{ variables.appServicePlan }}'
       containerRegistry: '${{ variables.containerRegistry }}'
       repository: '${{ variables.repositoryName }}'
