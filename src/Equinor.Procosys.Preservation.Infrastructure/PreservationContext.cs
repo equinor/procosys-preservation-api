@@ -3,6 +3,8 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
@@ -37,6 +39,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure
                 );
         }
 
+        public virtual DbSet<Journey> Journeys { get; set; }
+        public virtual DbSet<JourneyStep> JourneyStep { get; set; }
+        public virtual DbSet<JourneyMode> JourneyModes { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
