@@ -13,8 +13,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 {
     public class PreservationContext : DbContext, IReadOnlyContext, IUnitOfWork
     {
-        private readonly IEventDispatcher eventDispatcher;
-        private readonly IPlantProvider plantProvider;
+        private readonly IEventDispatcher _eventDispatcher;
+        private readonly IPlantProvider _plantProvider;
 
         public PreservationContext(
             DbContextOptions<PreservationContext> options,
@@ -22,8 +22,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             IPlantProvider plantProvider)
             : base(options)
         {
-            this.eventDispatcher = eventDispatcher;
-            this.plantProvider = plantProvider;
+            _eventDispatcher = eventDispatcher;
+            _plantProvider = plantProvider;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -31,12 +31,15 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            // Global query filter
-            modelBuilder
-                .Entity<SchemaEntity>()
-                .HasQueryFilter(e =>
-                    EF.Property<string>(e, nameof(SchemaEntity.Schema)) == plantProvider.Plant
-                );
+            // Set global query filter on entities inheriting from SchemaEntityBase
+            // https://gunnarpeipman.com/ef-core-global-query-filters/
+            foreach (var type in TypeProvider.GetEntityTypes(typeof(IDomainMarker).GetTypeInfo().Assembly, typeof(SchemaEntityBase)))
+            {
+                typeof(PreservationContext)
+                .GetMethod(nameof(PreservationContext.SetGlobalQuery))
+                .MakeGenericMethod(type)
+                .Invoke(this, new object[] { modelBuilder });
+            }
         }
 
         public virtual DbSet<Journey> Journeys { get; set; }
@@ -53,16 +56,21 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         private async Task DispatchEvents()
         {
             var entities = ChangeTracker
-                .Entries<Entity>()
+                .Entries<EntityBase>()
                 .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
                 .Select(x => x.Entity);
-            await eventDispatcher.DispatchAsync(entities);
+            await _eventDispatcher.DispatchAsync(entities);
         }
 
         public IQueryable<TQuery> ReadOnlySet<TQuery>() where TQuery : class
         {
             return Set<TQuery>()
                 .AsNoTracking();
+        }
+
+        public void SetGlobalQuery<T>(ModelBuilder builder) where T : SchemaEntityBase
+        {
+            builder.Entity<T>().HasQueryFilter(e => e.Schema == _plantProvider.Plant);
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 {
-    public class Tag : SchemaEntity, IAggregateRoot
+    public class Tag : SchemaEntityBase, IAggregateRoot
     {
         public string Description { get; set; }
         public bool IsAreaTag { get; private set; }
@@ -15,10 +15,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         }
 
         public Tag(string tagNo, string projectNo, string schema)
-            : base(schema)
         {
             TagNo = tagNo;
             ProjectNo = projectNo;
+            Schema = schema;
         }
     }
 }

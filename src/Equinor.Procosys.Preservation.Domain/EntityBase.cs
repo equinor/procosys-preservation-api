@@ -3,12 +3,12 @@ using MediatR;
 
 namespace Equinor.Procosys.Preservation.Domain
 {
-    public abstract class Entity
+    public abstract class EntityBase
     {
         private List<INotification> domainEvents;
 
         // Needed for EF Core
-        protected Entity()
+        protected EntityBase()
         {
         }
 

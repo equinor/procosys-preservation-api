@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.Domain
 {
@@ -7,7 +8,8 @@ namespace Equinor.Procosys.Preservation.Domain
         IUnitOfWork UnitOfWork { get; }
 
         void Add(TEntity item);
-        ValueTask<TEntity> GetByIdAsync(int id);
+        Task<TEntity> GetByIdAsync(int id);
         void Remove(TEntity entity);
+        Task<List<TEntity>> GetAllAsync();
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate
 {
-    public class Responsible : Entity, IAggregateRoot
+    public class Responsible : EntityBase, IAggregateRoot
     {
         public string Name { get; set; }
     }

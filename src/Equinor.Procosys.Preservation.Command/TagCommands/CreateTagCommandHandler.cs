@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands
 {
     public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, int>
     {
-        private ITagRepository _tagRepository;
+        private readonly ITagRepository _tagRepository;
 
         public CreateTagCommandHandler(ITagRepository tagRepository)
         {

@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public class JourneyRepository : RepositoryBase<Journey>, IJourneyRepository
     {
         public JourneyRepository(PreservationContext context)
-            : base(context)
+            : base(context.Set<Journey>(), context)
         {
         }
     }

@@ -1,13 +1,12 @@
 ﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyModeAggregate
 {
-    public class JourneyMode : SchemaEntity, IAggregateRoot
+    public class JourneyMode : EntityBase, IAggregateRoot
     {
         protected JourneyMode()
         {
         }
 
         public JourneyMode(string name, string schema)
-            : base(schema)
         {
             Name = name;
         }

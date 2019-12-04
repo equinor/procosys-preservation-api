@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
-    public class Journey : SchemaEntity, IAggregateRoot
+    public class Journey : SchemaEntityBase, IAggregateRoot
     {
         private List<JourneyStep> _steps = new List<JourneyStep>();
         

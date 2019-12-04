@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers
             this._mediator = mediator;
         }
 
-        public async Task DispatchAsync(IEnumerable<Entity> entities)
+        public async Task DispatchAsync(IEnumerable<EntityBase> entities)
         {
             var domainEvents = entities
                 .SelectMany(x => x.DomainEvents)
