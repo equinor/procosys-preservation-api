@@ -33,11 +33,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                     await context.Response.WriteAsync(ve.Errors.ElementAt(i).ErrorMessage + ((i < errorCount - 1) ? Environment.NewLine : null));
                 }
             }
-            catch (ProcosysEntityNotFoundException)
+            catch (ProcosysEntityNotFoundException penfe)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 context.Response.ContentType = "application/text";
-                await context.Response.WriteAsync($"The entity could not be found");
+                await context.Response.WriteAsync(penfe.Message);
+                //await context.Response.WriteAsync($"The entity could not be found");
             }
             catch (ProcosysException)
             {

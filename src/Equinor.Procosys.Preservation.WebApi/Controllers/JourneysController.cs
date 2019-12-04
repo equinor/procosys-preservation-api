@@ -33,5 +33,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
             int id = await _mediator.Send(new CreateJourneyCommand(dto.Title));
             return CreatedAtAction(nameof(JourneysController.GetJourney), id);
         }
+
+        [HttpPost("{id}/AddStep")]
+        public async Task<IActionResult> AddStep([FromRoute] int id, [FromBody] CreateStepDto dto)
+        {
+            await _mediator.Send(new CreateStepCommand(id, dto.ModeId, dto.TagId, dto.ResponsibleId));
+            return NoContent();
+        }
     }
 }

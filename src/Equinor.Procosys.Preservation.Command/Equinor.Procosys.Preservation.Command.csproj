@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="ResponsibleCommands\" />
+    <Folder Include="StepCommands\" />
   </ItemGroup>
 
 </Project>
