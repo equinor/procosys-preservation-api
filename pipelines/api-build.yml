@@ -64,4 +64,4 @@ stages:
       envRg: '${{ variables.envRg }}'
       env: '${{ variables.envName }}'
       containerRegistry: '${{ variables.containerRegistry }}'
-      repository: 'preservation/api'
+      repository: ${{ variables.repositoryName }}

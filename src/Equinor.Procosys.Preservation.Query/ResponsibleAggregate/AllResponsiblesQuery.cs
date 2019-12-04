@@ -1,6 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+﻿using System.Collections.Generic;
 using MediatR;
-using System.Collections.Generic;
 
 namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
 {

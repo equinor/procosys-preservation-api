@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {

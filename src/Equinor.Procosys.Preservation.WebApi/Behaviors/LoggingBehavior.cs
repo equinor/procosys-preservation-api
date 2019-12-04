@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.WebApi.Misc;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.Extensions.Logging;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.WebApi.Behaviors
 {

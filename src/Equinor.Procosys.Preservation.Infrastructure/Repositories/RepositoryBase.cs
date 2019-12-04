@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {

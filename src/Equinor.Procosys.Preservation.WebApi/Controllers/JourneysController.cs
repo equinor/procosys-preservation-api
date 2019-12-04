@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers
 {
@@ -21,7 +20,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            throw new NotImplementedException();
+            return new OkObjectResult(new System.Collections.Generic.List<string>
+            {
+                "Transport",
+                "Hookup",
+                "Commissioning",
+                "Operation"
+            });
         }
     }
 }

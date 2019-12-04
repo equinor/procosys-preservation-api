@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.Events;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.Events;
+using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure
 {

@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.WebApi.DIModules;
@@ -12,10 +16,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 
 namespace Equinor.Procosys.Preservation.WebApi
 {
@@ -93,6 +93,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration.GetConnectionString("PreservationContext"));
+            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,14 +112,12 @@ namespace Equinor.Procosys.Preservation.WebApi
                 c.DisplayRequestDuration();
 
                 c.OAuthClientId(Configuration["Swagger:ClientId"]);
-                //c.OAuthClientSecret(Configuration["Swagger:ClientSecret"]);
-                c.OAuthRealm(Configuration["API:Audience"]);
                 c.OAuthAppName("ProCoSys Preservation API V1");
                 c.OAuthScopeSeparator(" ");
                 c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["API:Audience"] } });
             });
 
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 
