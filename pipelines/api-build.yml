@@ -29,7 +29,7 @@ stages:
     containerRegistry: '${{ variables.containerRegistryName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-    dockerfilePath: '/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
+    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
 
   jobs:
   - template: /templates/pipelines/dockerbuild.yml@templates
@@ -39,7 +39,7 @@ stages:
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       dockerfilePath: ${{ variables.dockerfilePath }}
-      buildContext: 'src'
+      buildContext: '$(Build.SourcesDirectory)/src'
       repository: ${{ variables.repositoryName }}
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
