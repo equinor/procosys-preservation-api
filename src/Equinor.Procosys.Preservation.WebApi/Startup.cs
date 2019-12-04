@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.WebApi.DIModules;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -103,6 +104,8 @@ namespace Equinor.Procosys.Preservation.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.AddGlobalExtensionHandling();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

@@ -1,6 +1,8 @@
 ﻿using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -31,6 +33,8 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IUnitOfWork, PreservationContext>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IModeRepository, ModeRepository>();
+            services.AddScoped<IJourneyRepository, JourneyRepository>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();

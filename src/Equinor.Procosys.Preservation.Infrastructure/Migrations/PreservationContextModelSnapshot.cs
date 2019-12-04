@@ -29,12 +29,15 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<string>("Schema")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Journeys");
                 });
 
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.JourneyStep", b =>
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Step", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -44,10 +47,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int?>("JourneyId")
                         .HasColumnType("int");
 
-                    b.Property<int>("JourneyModeId")
+                    b.Property<int>("ModeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Order")
+                    b.Property<int>("ResponsibleId")
                         .HasColumnType("int");
 
                     b.Property<string>("Schema")
@@ -57,10 +60,28 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("JourneyId");
 
-                    b.ToTable("JourneyStep");
+                    b.ToTable("Step");
                 });
 
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyModeAggregate.JourneyMode", b =>
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate.Mode", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Schema")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Modes");
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,9 +91,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Schema")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
-                    b.ToTable("JourneyModes");
+                    b.ToTable("Responsibles");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Tag", b =>
@@ -102,14 +126,25 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("StepId");
+
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.JourneyStep", b =>
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Step", b =>
                 {
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", null)
                         .WithMany("Steps")
                         .HasForeignKey("JourneyId");
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Tag", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Step", null)
+                        .WithMany()
+                        .HasForeignKey("StepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,7 @@
-﻿using MediatR;
+﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.JourneyCommands;
+using Equinor.Procosys.Preservation.Query.JourneyAggregate;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -9,24 +12,26 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
     public class JourneysController : ControllerBase
     {
         private readonly ILogger<JourneysController> _logger;
-        private readonly IMediator mediator;
+        private readonly IMediator _mediator;
 
         public JourneysController(ILogger<JourneysController> logger, IMediator mediator)
         {
             _logger = logger;
-            this.mediator = mediator;
+            _mediator = mediator;
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> GetJourney([FromQuery] int id)
         {
-            return new OkObjectResult(new System.Collections.Generic.List<string>
-            {
-                "Transport",
-                "Hookup",
-                "Commissioning",
-                "Operation"
-            });
+            JourneyDto dto = await _mediator.Send(new GetJourneyByIdQuery(id));
+            return Ok(dto);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddJourney([FromBody] CreateJourneyDto dto)
+        {
+            int id = await _mediator.Send(new CreateJourneyCommand(dto.Title));
+            return CreatedAtAction(nameof(JourneysController.GetJourney), id);
         }
     }
 }

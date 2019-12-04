@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands
 
         public async Task<int> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
-            var tagToAdd = new Tag(request.TagNo, request.ProjectNo, request.Schema);
+            var tagToAdd = new Tag(request.Schema, request.TagNo, request.ProjectNo);
             _tagRepository.Add(tagToAdd);
             await _tagRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
             return tagToAdd.Id;

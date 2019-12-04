@@ -1,15 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
     public class Journey : SchemaEntityBase, IAggregateRoot
     {
-        private List<JourneyStep> _steps = new List<JourneyStep>();
-        
-        public Journey()
+        private readonly List<Step> _steps = new List<Step>();
+
+        private Journey()
+            : base(null)
         {
         }
 
-        public IReadOnlyCollection<JourneyStep> Steps => _steps.AsReadOnly();
+        public Journey(string schema, string title)
+            : base(schema)
+        {
+            Title = title;
+        }
+
+        public IReadOnlyCollection<Step> Steps => _steps.AsReadOnly();
+        public string Title { get; private set; }
+
+        public void AddStep(Step step)
+        {
+            if (step == null)
+                throw new ArgumentNullException($"{nameof(step)} cannot be null");
+
+            _steps.Add(step);
+        }
     }
 }

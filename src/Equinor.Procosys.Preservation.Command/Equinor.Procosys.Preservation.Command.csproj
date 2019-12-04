@@ -13,4 +13,8 @@
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ResponsibleCommands\" />
+  </ItemGroup>
+
 </Project>

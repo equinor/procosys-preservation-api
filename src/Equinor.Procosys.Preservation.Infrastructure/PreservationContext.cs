@@ -4,7 +4,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +31,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            NewMethod(modelBuilder);
+        }
 
+        private void NewMethod(ModelBuilder modelBuilder)
+        {
             // Set global query filter on entities inheriting from SchemaEntityBase
             // https://gunnarpeipman.com/ef-core-global-query-filters/
             foreach (var type in TypeProvider.GetEntityTypes(typeof(IDomainMarker).GetTypeInfo().Assembly, typeof(SchemaEntityBase)))
@@ -42,10 +47,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             }
         }
 
-        public virtual DbSet<Journey> Journeys { get; set; }
-        public virtual DbSet<JourneyStep> JourneyStep { get; set; }
-        public virtual DbSet<JourneyMode> JourneyModes { get; set; }
-        public virtual DbSet<Tag> Tags { get; set; }
+        public DbSet<Journey> Journeys { get; set; }
+        public DbSet<Step> Step { get; set; }
+        public DbSet<Mode> Modes { get; set; }
+        public DbSet<Responsible> Responsibles { get; set; }
+        public DbSet<Tag> Tags { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

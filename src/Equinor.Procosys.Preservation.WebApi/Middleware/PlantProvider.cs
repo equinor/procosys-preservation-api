@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
-using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Domain;
 using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Middleware
