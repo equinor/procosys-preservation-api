@@ -3,6 +3,9 @@ using MediatR;
 
 namespace Equinor.Procosys.Preservation.Domain
 {
+    /// <summary>
+    /// Base class for all entities
+    /// </summary>
     public abstract class EntityBase
     {
         private List<INotification> domainEvents;
