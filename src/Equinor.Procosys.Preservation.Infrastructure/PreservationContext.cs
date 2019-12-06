@@ -55,17 +55,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            await DispatchEvents();
+            await DispatchEvents(cancellationToken);
             return await base.SaveChangesAsync(cancellationToken);
         }
 
-        private async Task DispatchEvents()
+        private async Task DispatchEvents(CancellationToken cancellationToken = default)
         {
             var entities = ChangeTracker
                 .Entries<EntityBase>()
                 .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
                 .Select(x => x.Entity);
-            await _eventDispatcher.DispatchAsync(entities);
+            await _eventDispatcher.DispatchAsync(entities, cancellationToken);
         }
 
         public IQueryable<TQuery> ReadOnlySet<TQuery>() where TQuery : class

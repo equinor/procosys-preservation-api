@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.Events;
@@ -13,11 +15,14 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers
 
         public EventDispatcher(IMediator mediator)
         {
-            this._mediator = mediator;
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        public async Task DispatchAsync(IEnumerable<EntityBase> entities)
+        public async Task DispatchAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default)
         {
+            if (entities == null)
+                throw new ArgumentNullException(nameof(entities));
+
             var domainEvents = entities
                 .SelectMany(x => x.DomainEvents)
                 .ToList();
@@ -29,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers
             var tasks = domainEvents
                 .Select(async (domainEvent) =>
                 {
-                    await _mediator.Publish(domainEvent);
+                    await _mediator.Publish(domainEvent, cancellationToken);
                 });
 
             await Task.WhenAll(tasks);

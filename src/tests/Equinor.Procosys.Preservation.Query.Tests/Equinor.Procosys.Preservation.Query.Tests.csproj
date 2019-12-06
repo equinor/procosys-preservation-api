@@ -16,4 +16,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Query\Equinor.Procosys.Preservation.Query.csproj" />
+  </ItemGroup>
+
 </Project>

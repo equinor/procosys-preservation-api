@@ -24,8 +24,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Journey dut = new Journey("", "");
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                dut.AddStep(null)
-                );
+                dut.AddStep(null));
         }
 
         [TestMethod]
