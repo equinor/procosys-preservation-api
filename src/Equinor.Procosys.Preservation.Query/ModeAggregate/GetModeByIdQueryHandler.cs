@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
             Mode mode = await _modeRepository.GetByIdAsync(request.Id);
             if (mode == null)
                 throw new ProcosysEntityNotFoundException($"{nameof(Mode)} with ID {request.Id} not found");
-            return new ModeDto { Id = mode.Id, Title = mode.Title };
+            return new ModeDto(mode.Id, mode.Title);
         }
     }
 }

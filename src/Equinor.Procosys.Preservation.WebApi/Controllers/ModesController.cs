@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands;
 using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
@@ -22,17 +23,31 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMode([FromQuery] int id)
+        public async Task<ActionResult<IEnumerable<ModeDto>>> GetModes()
         {
-            ModeDto dto = await _mediator.Send(new GetModeByIdQuery(id));
+            var modes = await _mediator.Send(new GetAllModesQuery());
+            return Ok(modes);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetMode([FromRoute] int id)
+        {
+            var dto = await _mediator.Send(new GetModeByIdQuery(id));
             return Ok(dto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddMode([FromBody] CreateModeDto dto)
+        public async Task<ActionResult> AddMode([FromBody] CreateModeDto dto)
         {
-            int id = await _mediator.Send(new CreateModeCommand { Title = dto.Title });
-            return CreatedAtAction(nameof(ModesController.GetMode), id);
+            var id = await _mediator.Send(new CreateModeCommand { Title = dto.Title });
+            return CreatedAtAction(nameof(GetMode), new { id }, new { id });
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteMode([FromRoute] int id)
+        {
+            await _mediator.Send(new DeleteModeCommand(id));
+            return NoContent();
         }
     }
 }

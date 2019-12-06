@@ -4,15 +4,17 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands
 {
     public class CreateTagCommand : IRequest<int>
     {
-        public string TagNo { get; private set; }
-        public string ProjectNo { get; private set; }
-        public string Schema { get; private set; }
-
-        public CreateTagCommand(string tagNo, string projectNo, string schema)
+        public CreateTagCommand(string tagNo, string projectNo, int journeyId, int stepId)
         {
             TagNo = tagNo;
             ProjectNo = projectNo;
-            Schema = schema;
+            JourneyId = journeyId;
+            StepId = stepId;
         }
+
+        public string TagNo { get; private set; }
+        public string ProjectNo { get; private set; }
+        public int JourneyId { get; }
+        public int StepId { get; private set; }
     }
 }

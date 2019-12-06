@@ -16,18 +16,22 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         {
         }
 
-        public Tag(string schema, string tagNo, string projectNo)
+        public Tag(string schema, string tagNo, string projectNo, Step step)
             : base(schema)
         {
+            if (step == null)
+                throw new ArgumentNullException(nameof(step));
+
             TagNo = tagNo;
             ProjectNo = projectNo;
             Schema = schema;
+            StepId = step.Id;
         }
 
         public void SetStep(Step step)
         {
             if (step == null)
-                throw new ArgumentNullException($"{nameof(step)} cannot be null");
+                throw new ArgumentNullException(nameof(step));
             StepId = step.Id;
         }
     }

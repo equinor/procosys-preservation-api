@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public void AddStep(Step step)
         {
             if (step == null)
-                throw new ArgumentNullException($"{nameof(step)} cannot be null");
+                throw new ArgumentNullException(nameof(step));
 
             _steps.Add(step);
         }

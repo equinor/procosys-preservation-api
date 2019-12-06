@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Domain
         }
 
         public IReadOnlyCollection<INotification> DomainEvents => domainEvents?.AsReadOnly();
-        public int Id { get; protected set; }
+        public virtual int Id { get; protected set; }
 
         public void AddDomainEvent(INotification eventItem)
         {

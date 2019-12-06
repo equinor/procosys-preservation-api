@@ -2,7 +2,7 @@
 {
     public class Responsible : SchemaEntityBase, IAggregateRoot
     {
-        private Responsible()
+        protected Responsible()
             : base(null)
         {
         }

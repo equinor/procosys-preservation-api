@@ -8,7 +8,6 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands
         {
             RuleFor(x => x.JourneyId).GreaterThan(0);
             RuleFor(x => x.ModeId).GreaterThan(0);
-            RuleFor(x => x.TagId).GreaterThan(0);
         }
     }
 }

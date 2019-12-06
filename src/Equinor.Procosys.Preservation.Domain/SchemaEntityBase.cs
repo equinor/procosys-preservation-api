@@ -10,6 +10,6 @@
             Schema = schema;
         }
 
-        public string Schema { get; protected set; }
+        public virtual string Schema { get; protected set; }
     }
 }
