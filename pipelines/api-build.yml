@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - build-test
+      - master
 
 resources:
   repositories:
