@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Security.Claims;
 using Equinor.Procosys.Preservation.Domain;
 using Microsoft.AspNetCore.Http;
 
@@ -15,6 +13,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
             this.accessor = accessor;
         }
 
-        public string Plant => accessor?.HttpContext?.User?.Claims.SingleOrDefault(x => x.Type == ClaimTypes.Name)?.Value ?? throw new ArgumentException("Could not determine current plant");
+        public string Plant => accessor?.HttpContext?.Request?.Headers["x-plant"] ?? throw new ArgumentException("Could not determine current plant");
     }
 }

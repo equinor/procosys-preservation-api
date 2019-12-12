@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 });
 
-            Dictionary<string, string> scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
+            var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
@@ -90,6 +90,8 @@ namespace Equinor.Procosys.Preservation.WebApi
                         scopes.Keys.ToArray()
                     }
                 });
+
+                c.OperationFilter<AddSchemaHeaderParameter>();
             });
 
             services.AddMediatrModules();
@@ -105,7 +107,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.AddGlobalExtensionHandling();
+            app.AddGlobalExceptionHandling();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

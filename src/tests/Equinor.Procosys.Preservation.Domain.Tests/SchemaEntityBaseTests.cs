@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             : base(schema)
         {
         }
-        
+
         // The base class is abstract, therefor a sub class is needed to test it.
     }
 }

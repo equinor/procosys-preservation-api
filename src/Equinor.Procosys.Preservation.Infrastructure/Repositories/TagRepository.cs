@@ -1,5 +1,4 @@
 ﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
-using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
