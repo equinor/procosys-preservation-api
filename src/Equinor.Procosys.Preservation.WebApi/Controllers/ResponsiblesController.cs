@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers
 {
@@ -11,19 +10,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
     [Route("Responsibles")]
     public class ResponsiblesController : ControllerBase
     {
-        private readonly ILogger<JourneysController> _logger;
-        private readonly IMediator mediator;
+        private readonly IMediator _mediator;
 
-        public ResponsiblesController(ILogger<JourneysController> logger, IMediator mediator)
+        public ResponsiblesController(IMediator mediator)
         {
-            _logger = logger;
-            this.mediator = mediator;
+            this._mediator = mediator;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ResponsibleDto>>> GetAllResponsibles()
         {
-            List<ResponsibleDto> res = await mediator.Send(new AllResponsiblesQuery());
+            var res = await _mediator.Send(new AllResponsiblesQuery());
             return Ok(res);
         }
     }

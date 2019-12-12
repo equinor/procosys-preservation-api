@@ -6,13 +6,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
 {
     public class PlantProvider : IPlantProvider
     {
-        private readonly IHttpContextAccessor accessor;
+        private readonly IHttpContextAccessor _accessor;
 
         public PlantProvider(IHttpContextAccessor accessor)
         {
-            this.accessor = accessor;
+            this._accessor = accessor;
         }
 
-        public string Plant => accessor?.HttpContext?.Request?.Headers["x-plant"] ?? throw new ArgumentException("Could not determine current plant");
+        public string Plant => _accessor?.HttpContext?.Request?.Headers["x-plant"] ?? throw new Exception("Could not determine current plant");
     }
 }

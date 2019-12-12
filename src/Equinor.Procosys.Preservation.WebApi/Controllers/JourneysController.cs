@@ -23,14 +23,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetJourney([FromQuery] int id)
         {
-            JourneyDto dto = await _mediator.Send(new GetJourneyByIdQuery(id));
+            var dto = await _mediator.Send(new GetJourneyByIdQuery(id));
             return Ok(dto);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddJourney([FromBody] CreateJourneyDto dto)
         {
-            int id = await _mediator.Send(new CreateJourneyCommand(dto.Title));
+            var id = await _mediator.Send(new CreateJourneyCommand(dto.Title));
             return CreatedAtAction(nameof(JourneysController.GetJourney), id);
         }
 
