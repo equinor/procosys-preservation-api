@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands
 
         public async Task<int> Handle(CreateJourneyCommand request, CancellationToken cancellationToken)
         {
-            Journey newJourney = new Journey(_plantProvider.Plant, request.Title);
+            var newJourney = new Journey(_plantProvider.Plant, request.Title);
             _journeyRepository.Add(newJourney);
             await _journeyRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
             return newJourney.Id;

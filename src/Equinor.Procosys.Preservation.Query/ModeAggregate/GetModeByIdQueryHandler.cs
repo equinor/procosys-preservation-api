@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
 
         public async Task<ModeDto> Handle(GetModeByIdQuery request, CancellationToken cancellationToken)
         {
-            Mode mode = await _modeRepository.GetByIdAsync(request.Id);
+            var mode = await _modeRepository.GetByIdAsync(request.Id);
             if (mode == null)
                 throw new ProcosysEntityNotFoundException($"{nameof(Mode)} with ID {request.Id} not found");
             return new ModeDto(mode.Id, mode.Title);

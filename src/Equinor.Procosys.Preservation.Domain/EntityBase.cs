@@ -8,30 +8,30 @@ namespace Equinor.Procosys.Preservation.Domain
     /// </summary>
     public abstract class EntityBase
     {
-        private List<INotification> domainEvents;
+        private List<INotification> _domainEvents;
 
         // Needed for EF Core
         protected EntityBase()
         {
         }
 
-        public IReadOnlyCollection<INotification> DomainEvents => domainEvents?.AsReadOnly() ?? (domainEvents = new List<INotification>()).AsReadOnly();
+        public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly() ?? (_domainEvents = new List<INotification>()).AsReadOnly();
         public virtual int Id { get; protected set; }
 
         public void AddDomainEvent(INotification eventItem)
         {
-            domainEvents = domainEvents ?? new List<INotification>();
-            domainEvents.Add(eventItem);
+            _domainEvents ??= new List<INotification>();
+            _domainEvents.Add(eventItem);
         }
 
         public void RemoveDomainEvent(INotification eventItem)
         {
-            domainEvents?.Remove(eventItem);
+            _domainEvents?.Remove(eventItem);
         }
 
         public void ClearDomainEvents()
         {
-            domainEvents.Clear();
+            _domainEvents.Clear();
         }
     }
 }

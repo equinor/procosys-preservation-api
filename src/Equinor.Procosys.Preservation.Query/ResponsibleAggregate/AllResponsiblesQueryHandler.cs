@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
     {
         public Task<List<ResponsibleDto>> Handle(AllResponsiblesQuery request, CancellationToken cancellationToken)
         {
-            List<ResponsibleDto> responsibles = new List<ResponsibleDto>
+            var responsibles = new List<ResponsibleDto>
             {
                 new ResponsibleDto { Name = "ASHS" },
                 new ResponsibleDto { Name = "KSI" },

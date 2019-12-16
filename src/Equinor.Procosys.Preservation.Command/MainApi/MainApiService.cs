@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.MainApi
             _logger = logger;
         }
 
-        public async Task<IEnumerable<MainTagDto>> GetTags(string startsWithTagNo)
+        public async Task<IEnumerable<MainTagDto>> GetTags(string startsWithTagNo) // TODO: Use paging to get all results
         {
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerTokenProvider.GetBearerToken());
 

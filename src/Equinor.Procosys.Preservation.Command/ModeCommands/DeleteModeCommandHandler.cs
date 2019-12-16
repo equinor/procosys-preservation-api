@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands
 
         public async Task<Unit> Handle(DeleteModeCommand request, CancellationToken cancellationToken)
         {
-            Mode mode = await _modeRepository.GetByIdAsync(request.ModeId) ?? throw new ProcosysEntityNotFoundException($"{nameof(Mode)} with ID not found");
+            var mode = await _modeRepository.GetByIdAsync(request.ModeId) ?? throw new ProcosysEntityNotFoundException($"{nameof(Mode)} with ID not found");
             _modeRepository.Remove(mode);
             await _modeRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
             return Unit.Value;

@@ -21,8 +21,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands
 
         public async Task<Unit> Handle(SetStepCommand request, CancellationToken cancellationToken)
         {
-            Tag tag = await _tagRepository.GetByIdAsync(request.TagId) ?? throw new ProcosysEntityNotFoundException($"{nameof(Tag)} with ID {request.TagId} not found");
-            Journey journey = await _journeyRepository.GetByIdAsync(request.JourneyId) ?? throw new ProcosysEntityNotFoundException($"{nameof(Journey)} with ID {request.JourneyId} not found");
+            var tag = await _tagRepository.GetByIdAsync(request.TagId) ?? throw new ProcosysEntityNotFoundException($"{nameof(Tag)} with ID {request.TagId} not found");
+            var journey = await _journeyRepository.GetByIdAsync(request.JourneyId) ?? throw new ProcosysEntityNotFoundException($"{nameof(Journey)} with ID {request.JourneyId} not found");
             tag.SetStep(journey.Steps.FirstOrDefault(step => step.Id == request.StepId));
             await _tagRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
             return Unit.Value;
