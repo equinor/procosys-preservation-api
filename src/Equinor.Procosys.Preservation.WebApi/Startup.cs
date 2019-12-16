@@ -94,6 +94,11 @@ namespace Equinor.Procosys.Preservation.WebApi
                 c.OperationFilter<AddSchemaHeaderParameter>();
             });
 
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+            });
+
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration.GetConnectionString("PreservationContext"), Configuration["MainApiBaseUrl"]);
             services.AddApplicationInsightsTelemetry();
@@ -128,6 +133,8 @@ namespace Equinor.Procosys.Preservation.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseResponseCompression();
 
             app.UseEndpoints(endpoints =>
             {
