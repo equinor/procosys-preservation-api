@@ -25,7 +25,7 @@ RUN dotnet build -c Release --no-restore
 
 # Test runner target
 FROM build AS testrunner
-WORKDIR /src/tests
+WORKDIR /src
 RUN dotnet test -c Release --no-build --no-restore
 #CMD ["dotnet", "test", "-c Release", "--no-build", "--no-restore"]
 
