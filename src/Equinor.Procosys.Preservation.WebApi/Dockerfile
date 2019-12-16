@@ -4,15 +4,15 @@ WORKDIR /src
 # Copy solution and project files separately and restore NuGet packages to create layers
 COPY *.sln .
 COPY Equinor.Procosys.Preservation.Command/*.csproj ./Equinor.Procosys.Preservation.Command/
-COPY Equinor.Procosys.Preservation.Command.Tests/*.csproj ./Equinor.Procosys.Preservation.Command.Tests/
+COPY tests/Equinor.Procosys.Preservation.Command.Tests/*.csproj ./Equinor.Procosys.Preservation.Command.Tests/
 COPY Equinor.Procosys.Preservation.Domain/*.csproj ./Equinor.Procosys.Preservation.Domain/
-COPY Equinor.Procosys.Preservation.Domain.Tests/*.csproj ./Equinor.Procosys.Preservation.Domain.Tests/
+COPY tests/Equinor.Procosys.Preservation.Domain.Tests/*.csproj ./Equinor.Procosys.Preservation.Domain.Tests/
 COPY Equinor.Procosys.Preservation.Infrastructure/*.csproj ./Equinor.Procosys.Preservation.Infrastructure/
-COPY Equinor.Procosys.Preservation.Infrastructure.Tests/*.csproj ./Equinor.Procosys.Preservation.Infrastructure.Tests/
+COPY tests/Equinor.Procosys.Preservation.Infrastructure.Tests/*.csproj ./Equinor.Procosys.Preservation.Infrastructure.Tests/
 COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservation.Query/
-COPY Equinor.Procosys.Preservation.Query.Tests/*.csproj ./Equinor.Procosys.Preservation.Query.Tests/
+COPY tests/Equinor.Procosys.Preservation.Query.Tests/*.csproj ./Equinor.Procosys.Preservation.Query.Tests/
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
-COPY Equinor.Procosys.Preservation.WebApi.Tests/*.csproj ./Equinor.Procosys.Preservation.WebApi.Tests/
+COPY tests/Equinor.Procosys.Preservation.WebApi.Tests/*.csproj ./Equinor.Procosys.Preservation.WebApi.Tests/
 
 # Restore NuGet packages
 RUN dotnet restore
@@ -25,7 +25,7 @@ RUN dotnet build -c Release --no-restore
 
 # Test runner target
 FROM build AS testrunner
-WORKDIR /src
+WORKDIR /src/tests
 RUN dotnet test -c Release --no-build --no-restore
 #CMD ["dotnet", "test", "-c Release", "--no-build", "--no-restore"]
 
