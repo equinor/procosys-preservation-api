@@ -21,13 +21,13 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers
             {
                 throw new ArgumentNullException(nameof(entities));
             }
+            var entityList = entities.ToList();
 
-            var domainEvents = entities
+            var domainEvents = entityList
                 .SelectMany(x => x.DomainEvents)
                 .ToList();
 
-            entities
-                .ToList()
+            entityList
                 .ForEach(entity => entity.ClearDomainEvents());
 
             var tasks = domainEvents
