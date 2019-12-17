@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.MainApi;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Exceptions;
+using Equinor.Procosys.Preservation.MainApi;
 using MediatR;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands
@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands
                 throw new ProcosysEntityNotFoundException($"{nameof(Journey)} with ID {request.JourneyId} not found");
             }
 
-            var result = await _mainApiService.GetTags("1");
+            var result = await _mainApiService.GetTags(_plantProvider.Plant, "1");
 
             var tagToAdd = new Tag(_plantProvider.Plant, request.TagNo, request.ProjectNo, journey.Steps.FirstOrDefault(step => step.Id == request.StepId));
             _tagRepository.Add(tagToAdd);

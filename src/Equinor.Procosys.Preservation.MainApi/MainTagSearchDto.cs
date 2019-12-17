@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Equinor.Procosys.Preservation.Command.MainApi
+namespace Equinor.Procosys.Preservation.MainApi
 {
     public class MainTagSearchDto
     {

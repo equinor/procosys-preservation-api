@@ -1,7 +1,6 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
-using Equinor.Procosys.Preservation.Command.MainApi;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -10,6 +9,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
+using Equinor.Procosys.Preservation.MainApi;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;

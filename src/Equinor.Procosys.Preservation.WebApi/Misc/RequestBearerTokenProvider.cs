@@ -1,4 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Command.MainApi;
+﻿using Equinor.Procosys.Preservation.MainApi;
 using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Misc

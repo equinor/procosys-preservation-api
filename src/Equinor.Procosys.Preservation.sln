@@ -30,6 +30,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.WebApi.Tests", "tests\Equinor.Procosys.Preservation.WebApi.Tests\Equinor.Procosys.Preservation.WebApi.Tests.csproj", "{065C9A62-0885-4238-8893-B10BE15E5201}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.Procosys.Preservation.MainApi", "Equinor.Procosys.Preservation.MainApi\Equinor.Procosys.Preservation.MainApi.csproj", "{CFF1281F-84A3-4A73-B32E-ED6A666C187F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -76,6 +78,10 @@ Global
 		{065C9A62-0885-4238-8893-B10BE15E5201}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{065C9A62-0885-4238-8893-B10BE15E5201}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{065C9A62-0885-4238-8893-B10BE15E5201}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFF1281F-84A3-4A73-B32E-ED6A666C187F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFF1281F-84A3-4A73-B32E-ED6A666C187F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFF1281F-84A3-4A73-B32E-ED6A666C187F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFF1281F-84A3-4A73-B32E-ED6A666C187F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
