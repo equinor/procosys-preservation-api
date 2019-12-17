@@ -11,7 +11,6 @@
             : base(schema)
         {
             Title = title;
-            Schema = schema;
         }
 
         public string Title { get; private set; }

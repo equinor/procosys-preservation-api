@@ -26,7 +26,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 
             TagNo = tagNo;
             ProjectNo = projectNo;
-            Schema = schema;
             StepId = step.Id;
         }
 
