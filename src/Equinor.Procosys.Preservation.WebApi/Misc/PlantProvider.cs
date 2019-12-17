@@ -2,7 +2,7 @@
 using Equinor.Procosys.Preservation.Domain;
 using Microsoft.AspNetCore.Http;
 
-namespace Equinor.Procosys.Preservation.WebApi.Middleware
+namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public class PlantProvider : IPlantProvider
     {
