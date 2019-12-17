@@ -28,6 +28,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .FindAsync(id)
                 .AsTask();
 
+        public Task<List<TEntity>> GetByIdsAsync(IEnumerable<int> ids) =>
+            Set.Where(x => ids.Contains(x.Id)).ToListAsync();
+
         public virtual void Remove(TEntity entity) => Set.Remove(entity);
     }
 }

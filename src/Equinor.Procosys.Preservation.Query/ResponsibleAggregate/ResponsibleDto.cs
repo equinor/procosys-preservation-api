@@ -2,6 +2,12 @@
 {
     public class ResponsibleDto
     {
-        public string Name { get; set; }
+        public ResponsibleDto(int id, string name)        {
+            Id = id;
+            Name = name;
+        }
+
+        public int Id { get; }
+        public string Name { get; }
     }
 }

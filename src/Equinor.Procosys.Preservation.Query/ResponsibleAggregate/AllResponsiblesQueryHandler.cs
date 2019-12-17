@@ -11,10 +11,10 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
         {
             var responsibles = new List<ResponsibleDto>
             {
-                new ResponsibleDto { Name = "ASHS" },
-                new ResponsibleDto { Name = "KSI" },
-                new ResponsibleDto { Name = "EQLC" },
-                new ResponsibleDto { Name = "ACPI" },
+                new ResponsibleDto(1, "ASHS"),
+                new ResponsibleDto(2, "KSI"),
+                new ResponsibleDto(3, "EQLC"),
+                new ResponsibleDto(4, "ACPI"),
             };
 
             return Task.FromResult(responsibles);
