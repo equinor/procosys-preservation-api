@@ -37,15 +37,16 @@ namespace Equinor.Procosys.Preservation.Command.MainApi
             var response = await _httpClient.GetAsync($"Tag/Search?plantid=PCS${_plantProvider.Plant}&startsWithTagNo={startsWithTagNo}&api-version={ApiVersion}");
             stopWatch.Stop();
 
-            if (response.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
-                _logger.LogDebug($"MainApi tag search was successful and took {stopWatch.Elapsed.TotalSeconds}s.");
-                var jsonResult = await response.Content.ReadAsStringAsync();
-                var tagSearchResult = JsonSerializer.Deserialize<MainTagSearchDto>(jsonResult);
-                return tagSearchResult.Items;
+                _logger.LogDebug($"MainApi tag search was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
+                return new List<MainTagDto>();
             }
-            _logger.LogDebug($"MainApi tag search was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
-            return new List<MainTagDto>();
+
+            _logger.LogDebug($"MainApi tag search was successful and took {stopWatch.Elapsed.TotalSeconds}s.");
+            var jsonResult = await response.Content.ReadAsStringAsync();
+            var tagSearchResult = JsonSerializer.Deserialize<MainTagSearchDto>(jsonResult);
+            return tagSearchResult.Items;
         }
     }
 }
