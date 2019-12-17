@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command.ModeCommands
+﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Mode
 {
     public class CreateModeDto
     {

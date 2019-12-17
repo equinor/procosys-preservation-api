@@ -5,7 +5,7 @@ using Equinor.Procosys.Preservation.Query.TagAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tag
 {
     [ApiController]
     [Route("Tags")]

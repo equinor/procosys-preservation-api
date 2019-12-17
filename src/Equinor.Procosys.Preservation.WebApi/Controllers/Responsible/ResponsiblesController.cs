@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsible
 {
     [ApiController]
     [Route("Responsibles")]

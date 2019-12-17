@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Heartbeat
 {
     [ApiController]
     [Route("Heartbeat")]

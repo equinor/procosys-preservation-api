@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command.JourneyCommands
+﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journey
 {
     public class CreateJourneyDto
     {
