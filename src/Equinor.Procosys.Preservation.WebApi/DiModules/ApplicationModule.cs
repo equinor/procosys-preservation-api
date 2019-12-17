@@ -41,10 +41,13 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IReadOnlyContext, PreservationContext>();
             services.AddScoped<IUnitOfWork, PreservationContext>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
+
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
             services.AddScoped<IJourneyRepository, JourneyRepository>();
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
+
+            services.AddScoped<IJourneyService, JourneyService>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();

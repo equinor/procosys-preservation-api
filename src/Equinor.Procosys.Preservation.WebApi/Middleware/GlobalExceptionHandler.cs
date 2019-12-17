@@ -36,6 +36,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 context.Response.ContentType = "application/text";
                 await context.Response.WriteAsync(penfe.Message);
             }
+            catch (ProcosysEntityValidationException peve)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                context.Response.ContentType = "application/text";
+                await context.Response.WriteAsync(peve.Message);
+            }
             catch (ProcosysException)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
