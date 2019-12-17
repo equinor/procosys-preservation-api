@@ -3,6 +3,5 @@
     public class TagDto
     {
         public int Id { get; set; }
-        public string Schema { get; set; }
     }
 }

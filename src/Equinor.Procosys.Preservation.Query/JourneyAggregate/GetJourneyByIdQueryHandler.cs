@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                 throw new ProcosysEntityNotFoundException($"{nameof(Journey)} with ID {request.Id} not found");
             }
 
-            return new JourneyDto(journey.Id, journey.Title, journey.Steps.Select(step => new StepDto(step.Id, step.ModeId, step.ResponsibleId, step.Schema)));
+            return new JourneyDto(journey.Id, journey.Title, journey.Steps.Select(step => new StepDto(step.Id, step.ModeId, step.ResponsibleId)));
         }
     }
 }
