@@ -2,7 +2,8 @@
 {
     public class ResponsibleDto
     {
-        public ResponsibleDto(int id, string name)        {
+        public ResponsibleDto(int id, string name)
+        {
             Id = id;
             Name = name;
         }

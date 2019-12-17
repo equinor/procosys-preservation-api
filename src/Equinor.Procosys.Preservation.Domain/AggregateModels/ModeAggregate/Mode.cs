@@ -8,10 +8,7 @@
         }
 
         public Mode(string schema, string title)
-            : base(schema)
-        {
-            Title = title;
-        }
+            : base(schema) => Title = title;
 
         public string Title { get; private set; }
     }
