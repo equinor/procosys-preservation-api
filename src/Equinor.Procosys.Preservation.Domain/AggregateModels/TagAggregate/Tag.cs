@@ -20,7 +20,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             : base(schema)
         {
             if (step == null)
+            {
                 throw new ArgumentNullException(nameof(step));
+            }
 
             TagNo = tagNo;
             ProjectNo = projectNo;
@@ -31,7 +33,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public void SetStep(Step step)
         {
             if (step == null)
+            {
                 throw new ArgumentNullException(nameof(step));
+            }
+
             StepId = step.Id;
         }
     }

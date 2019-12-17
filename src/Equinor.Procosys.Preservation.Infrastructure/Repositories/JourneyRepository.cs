@@ -11,11 +11,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         {
         }
 
-        public override Task<Journey> GetByIdAsync(int id)
-        {
-            return Set
+        public override Task<Journey> GetByIdAsync(int id) => Set
                 .Include(x => x.Steps)
                 .FirstOrDefaultAsync(x => x.Id == id);
-        }
     }
 }

@@ -8,10 +8,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
     {
         private readonly IHttpContextAccessor _accessor;
 
-        public PlantProvider(IHttpContextAccessor accessor)
-        {
-            this._accessor = accessor;
-        }
+        public PlantProvider(IHttpContextAccessor accessor) => _accessor = accessor;
 
         public string Plant => _accessor?.HttpContext?.Request?.Headers["x-plant"] ?? throw new Exception("Could not determine current plant");
     }

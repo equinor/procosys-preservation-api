@@ -5,9 +5,6 @@
         public string TagNo { get; set; }
         public string Description { get; set; }
 
-        public override string ToString()
-        {
-            return TagNo;
-        }
+        public override string ToString() => TagNo;
     }
 }

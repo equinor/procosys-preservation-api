@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         {
             var step = new Mock<Step>();
             step.SetupGet(x => x.Id).Returns(3);
-            Tag dut = new Tag("SchemaA", "TagNoA", "ProjectNoA", step.Object);
+            var dut = new Tag("SchemaA", "TagNoA", "ProjectNoA", step.Object);
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual("TagNoA", dut.TagNo);
@@ -23,16 +23,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void ConstructorThrowsExceptionIsStepIsNotSetTest()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => new Tag("", "", "", null));
-        }
+        public void ConstructorThrowsExceptionIsStepIsNotSetTest() => Assert.ThrowsException<ArgumentNullException>(() => new Tag("", "", "", null));
 
         [TestMethod]
         public void SetStepSetsStepIdTest()
         {
             var step = new Mock<Step>();
-            Tag dut = new Tag("", "", "", step.Object);
+            var dut = new Tag("", "", "", step.Object);
 
             var newStep = new Mock<Step>();
             newStep.SetupGet(x => x.Id).Returns(3);
@@ -45,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         public void SetStepThrowsExceptionIfStepIsNullTest()
         {
             var step = new Mock<Step>();
-            Tag dut = new Tag("", "", "", step.Object);
+            var dut = new Tag("", "", "", step.Object);
 
             Assert.ThrowsException<ArgumentNullException>(() => dut.SetStep(null));
         }

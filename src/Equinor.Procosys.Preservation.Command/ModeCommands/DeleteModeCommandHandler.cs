@@ -10,10 +10,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands
     {
         private readonly IModeRepository _modeRepository;
 
-        public DeleteModeCommandHandler(IModeRepository modeRepository)
-        {
-            _modeRepository = modeRepository;
-        }
+        public DeleteModeCommandHandler(IModeRepository modeRepository) => _modeRepository = modeRepository;
 
         public async Task<Unit> Handle(DeleteModeCommand request, CancellationToken cancellationToken)
         {

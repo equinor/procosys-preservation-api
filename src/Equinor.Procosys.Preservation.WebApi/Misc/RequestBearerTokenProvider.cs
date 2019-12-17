@@ -7,10 +7,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RequestBearerTokenProvider(IHttpContextAccessor httpContextAccessor)
-        {
-            _httpContextAccessor = httpContextAccessor;
-        }
+        public RequestBearerTokenProvider(IHttpContextAccessor httpContextAccessor) => _httpContextAccessor = httpContextAccessor;
 
         public string GetBearerToken()
         {

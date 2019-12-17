@@ -15,9 +15,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             : base(schema)
         {
             if (mode == null)
+            {
                 throw new ArgumentNullException(nameof(mode));
+            }
+
             if (responsible == null)
+            {
                 throw new ArgumentNullException(nameof(responsible));
+            }
 
             ModeId = mode.Id;
             ResponsibleId = responsible.Id;

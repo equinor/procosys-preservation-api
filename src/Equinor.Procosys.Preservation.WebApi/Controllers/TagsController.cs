@@ -13,10 +13,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
     {
         private readonly IMediator _mediator;
 
-        public TagsController(IMediator mediator)
-        {
-            this._mediator = mediator;
-        }
+        public TagsController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TagDto>>> GetAll()

@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers
 
         public HeartbeatController(ITimeService timeService, ILogger<HeartbeatController> logger)
         {
-            this._timeService = timeService;
+            _timeService = timeService;
             _logger = logger;
         }
 

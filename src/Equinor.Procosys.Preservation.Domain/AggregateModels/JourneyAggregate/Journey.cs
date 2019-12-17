@@ -13,10 +13,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         }
 
         public Journey(string schema, string title)
-            : base(schema)
-        {
-            Title = title;
-        }
+            : base(schema) => Title = title;
 
         public IReadOnlyCollection<Step> Steps => _steps.AsReadOnly();
         public string Title { get; private set; }
@@ -24,7 +21,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public void AddStep(Step step)
         {
             if (step == null)
+            {
                 throw new ArgumentNullException(nameof(step));
+            }
 
             _steps.Add(step);
         }

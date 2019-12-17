@@ -10,16 +10,16 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
     {
         private readonly IModeRepository _modeRepository;
 
-        public GetModeByIdQueryHandler(IModeRepository modeRepository)
-        {
-            _modeRepository = modeRepository;
-        }
+        public GetModeByIdQueryHandler(IModeRepository modeRepository) => _modeRepository = modeRepository;
 
         public async Task<ModeDto> Handle(GetModeByIdQuery request, CancellationToken cancellationToken)
         {
             var mode = await _modeRepository.GetByIdAsync(request.Id);
             if (mode == null)
+            {
                 throw new ProcosysEntityNotFoundException($"{nameof(Mode)} with ID {request.Id} not found");
+            }
+
             return new ModeDto(mode.Id, mode.Title);
         }
     }

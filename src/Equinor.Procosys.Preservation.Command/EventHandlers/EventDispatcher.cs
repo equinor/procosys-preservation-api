@@ -13,15 +13,14 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers
     {
         private readonly IMediator _mediator;
 
-        public EventDispatcher(IMediator mediator)
-        {
-            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-        }
+        public EventDispatcher(IMediator mediator) => _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
         public async Task DispatchAsync(IEnumerable<EntityBase> entities, CancellationToken cancellationToken = default)
         {
             if (entities == null)
+            {
                 throw new ArgumentNullException(nameof(entities));
+            }
 
             var domainEvents = entities
                 .SelectMany(x => x.DomainEvents)

@@ -8,9 +8,6 @@ namespace Equinor.Procosys.Preservation.Command.MainApi
         public int MaxAvailable { get; set; }
         public IEnumerable<MainTagDto> Items { get; set; }
 
-        public override string ToString()
-        {
-            return $"{Items.Count()} of {MaxAvailable} available tags";
-        }
+        public override string ToString() => $"{Items.Count()} of {MaxAvailable} available tags";
     }
 }

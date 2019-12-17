@@ -11,10 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
     {
         private readonly IModeRepository _modeRepository;
 
-        public GetAllModesQueryHandler(IModeRepository modeRepository)
-        {
-            _modeRepository = modeRepository;
-        }
+        public GetAllModesQueryHandler(IModeRepository modeRepository) => _modeRepository = modeRepository;
 
         public async Task<IEnumerable<ModeDto>> Handle(GetAllModesQuery request, CancellationToken cancellationToken)
         {

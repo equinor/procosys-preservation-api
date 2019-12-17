@@ -32,13 +32,21 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
             if (journey == null)
+            {
                 throw new ProcosysEntityNotFoundException($"{nameof(Journey)} with ID {request.JourneyId} not found");
+            }
+
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
             if (mode == null)
+            {
                 throw new ProcosysEntityNotFoundException($"{nameof(Mode)} with ID {request.ModeId} not found");
+            }
+
             var responsible = await _responsibleRepository.GetByIdAsync(request.ResponsibleId);
             if (responsible == null)
+            {
                 throw new ProcosysEntityNotFoundException($"{nameof(Responsible)} with ID {request.ResponsibleId} not found");
+            }
 
             journey.AddStep(new Step(_plantProvider.Plant, mode, responsible));
             await _journeyRepository.UnitOfWork.SaveChangesAsync(cancellationToken);

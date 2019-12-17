@@ -11,10 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
     {
         private readonly RequestDelegate _next;
 
-        public GlobalExceptionHandler(RequestDelegate next)
-        {
-            _next = next;
-        }
+        public GlobalExceptionHandler(RequestDelegate next) => _next = next;
 
         public async Task InvokeAsync(HttpContext context)
         {

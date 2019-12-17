@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Responsible
         [TestMethod]
         public void ConstructorSetsPropertiesTest()
         {
-            Responsible dut = new Responsible("SchemaA", "NameA");
+            var dut = new Responsible("SchemaA", "NameA");
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual("NameA", dut.Name);

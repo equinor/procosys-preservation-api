@@ -17,26 +17,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 
         public IUnitOfWork UnitOfWork { get; }
 
-        public virtual void Add(TEntity entity)
-        {
-            Set.Add(entity);
-        }
+        public virtual void Add(TEntity entity) => Set.Add(entity);
 
-        public Task<List<TEntity>> GetAllAsync()
-        {
-            return Set.ToListAsync();
-        }
+        public Task<List<TEntity>> GetAllAsync() => Set.ToListAsync();
 
-        public virtual Task<TEntity> GetByIdAsync(int id)
-        {
-            return Set
+        public virtual Task<TEntity> GetByIdAsync(int id) => Set
                 .FindAsync(id)
                 .AsTask();
-        }
 
-        public virtual void Remove(TEntity entity)
-        {
-            Set.Remove(entity);
-        }
+        public virtual void Remove(TEntity entity) => Set.Remove(entity);
     }
 }

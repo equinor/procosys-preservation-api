@@ -12,14 +12,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         [TestMethod]
         public void ReturningEmptyDomainEventsListTest()
         {
-            TestableEntityBase dut = new TestableEntityBase();
+            var dut = new TestableEntityBase();
             Assert.IsNotNull(dut.DomainEvents);
         }
 
         [TestMethod]
         public void DomainEventIsAddedToListTest()
         {
-            TestableEntityBase dut = new TestableEntityBase();
+            var dut = new TestableEntityBase();
             var domainEvent = new Mock<INotification>();
             dut.AddDomainEvent(domainEvent.Object);
 
@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         [TestMethod]
         public void DomainEventIsRemovedFromListTest()
         {
-            TestableEntityBase dut = new TestableEntityBase();
+            var dut = new TestableEntityBase();
             var domainEvent = new Mock<INotification>();
             dut.AddDomainEvent(domainEvent.Object);
             dut.RemoveDomainEvent(domainEvent.Object);
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         [TestMethod]
         public void DomainEventsAreClearedTest()
         {
-            TestableEntityBase dut = new TestableEntityBase();
+            var dut = new TestableEntityBase();
             var domainEvent1 = new Mock<INotification>();
             dut.AddDomainEvent(domainEvent1.Object);
             var domainEvent2 = new Mock<INotification>();

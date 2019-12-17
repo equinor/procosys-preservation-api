@@ -8,10 +8,7 @@
         }
 
         public Responsible(string schema, string name)
-            : base(schema)
-        {
-            Name = name;
-        }
+            : base(schema) => Name = name;
 
         public string Name { get; private set; }
     }

@@ -24,14 +24,8 @@ namespace Equinor.Procosys.Preservation.Domain
             _domainEvents.Add(eventItem);
         }
 
-        public void RemoveDomainEvent(INotification eventItem)
-        {
-            _domainEvents?.Remove(eventItem);
-        }
+        public void RemoveDomainEvent(INotification eventItem) => _domainEvents?.Remove(eventItem);
 
-        public void ClearDomainEvents()
-        {
-            _domainEvents.Clear();
-        }
+        public void ClearDomainEvents() => _domainEvents.Clear();
     }
 }

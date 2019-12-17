@@ -11,10 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
     {
         private readonly ITagRepository _tagRepository;
 
-        public AllTagsQueryHandler(ITagRepository tagRepository)
-        {
-            _tagRepository = tagRepository;
-        }
+        public AllTagsQueryHandler(ITagRepository tagRepository) => _tagRepository = tagRepository;
 
         public async Task<IEnumerable<TagDto>> Handle(AllTagsQuery request, CancellationToken cancellationToken)
         {

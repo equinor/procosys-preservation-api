@@ -29,7 +29,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
             if (journey == null)
+            {
                 throw new ProcosysEntityNotFoundException($"{nameof(Journey)} with ID {request.JourneyId} not found");
+            }
 
             var result = await _mainApiService.GetTags("1");
 

@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ModeAggrega
         [TestMethod]
         public void ConstructorSetsPropertiesTest()
         {
-            Mode dut = new Mode("SchemaA", "TitleA");
+            var dut = new Mode("SchemaA", "TitleA");
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual("TitleA", dut.Title);

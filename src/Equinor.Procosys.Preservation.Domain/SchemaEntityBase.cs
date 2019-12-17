@@ -5,10 +5,7 @@
     /// </summary>
     public abstract class SchemaEntityBase : EntityBase
     {
-        protected SchemaEntityBase(string schema)
-        {
-            Schema = schema;
-        }
+        protected SchemaEntityBase(string schema) => Schema = schema;
 
         public virtual string Schema { get; protected set; }
     }

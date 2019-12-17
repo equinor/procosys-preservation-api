@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var responsible = new Mock<Responsible>();
             responsible.SetupGet(x => x.Id).Returns(4);
 
-            Step dut = new Step("SchemaA", mode.Object, responsible.Object);
+            var dut = new Step("SchemaA", mode.Object, responsible.Object);
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual(dut.ModeId, mode.Object.Id);
