@@ -71,6 +71,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public IQueryable<TQuery> ReadOnlySet<TQuery>() where TQuery : class => Set<TQuery>()
                 .AsNoTracking();
 
-        public void SetGlobalQuery<T>(ModelBuilder builder) where T : SchemaEntityBase => builder.Entity<T>().HasQueryFilter(e => e.Schema == _plantProvider.Plant);
+        public void SetGlobalQuery<T>(ModelBuilder builder) where T : SchemaEntityBase =>
+            builder
+            .Entity<T>()
+            .HasQueryFilter(e => e.Schema == _plantProvider.Plant);
     }
 }
