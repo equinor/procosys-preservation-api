@@ -12,9 +12,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands
             StepId = stepId;
         }
 
-        public string TagNo { get; private set; }
-        public string ProjectNo { get; private set; }
+        public string TagNo { get; }
+        public string ProjectNo { get; }
         public int JourneyId { get; }
-        public int StepId { get; private set; }
+        public int StepId { get; }
     }
 }
