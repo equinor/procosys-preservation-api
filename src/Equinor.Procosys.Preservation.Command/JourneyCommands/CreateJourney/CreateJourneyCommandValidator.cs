@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands
+namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
 {
     public class CreateJourneyCommandValidator : AbstractValidator<CreateJourneyCommand>
     {

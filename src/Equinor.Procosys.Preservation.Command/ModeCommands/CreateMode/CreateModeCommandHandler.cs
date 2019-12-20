@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands
+namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
 {
     public class CreateModeCommandHandler : IRequestHandler<CreateModeCommand, int>
     {

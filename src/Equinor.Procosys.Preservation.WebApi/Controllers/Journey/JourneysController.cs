@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.JourneyCommands;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Query.JourneyAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

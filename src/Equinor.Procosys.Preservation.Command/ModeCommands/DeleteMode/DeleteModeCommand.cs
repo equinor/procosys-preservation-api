@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands
+namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
 {
     public class DeleteModeCommand : IRequest<Unit>
     {

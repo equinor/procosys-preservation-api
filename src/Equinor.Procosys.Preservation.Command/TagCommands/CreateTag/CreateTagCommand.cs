@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
     public class CreateTagCommand : IRequest<int>
     {

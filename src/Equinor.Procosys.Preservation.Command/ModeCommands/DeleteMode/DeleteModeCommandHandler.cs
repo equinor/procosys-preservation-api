@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.Exceptions;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands
+namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
 {
     public class DeleteModeCommandHandler : IRequestHandler<DeleteModeCommand, Unit>
     {

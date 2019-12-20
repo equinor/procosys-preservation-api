@@ -8,7 +8,7 @@ using Equinor.Procosys.Preservation.Domain.Exceptions;
 using Equinor.Procosys.Preservation.MainApi;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
     public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, int>
     {

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands
+namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
 {
     public class CreateModeCommandValidator : AbstractValidator<CreateModeCommand>
     {

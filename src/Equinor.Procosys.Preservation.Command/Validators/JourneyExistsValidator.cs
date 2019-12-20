@@ -4,21 +4,8 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using FluentValidation;
 using FluentValidation.Validators;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands
+namespace Equinor.Procosys.Preservation.Command.Validators
 {
-    public class CreateTagCommandValidator : AbstractValidator<CreateTagCommand>
-    {
-        private readonly IJourneyRepository _journeyRepository;
-
-        public CreateTagCommandValidator(IJourneyRepository journeyRepository)
-        {
-            _journeyRepository = journeyRepository;
-
-            RuleFor(x => x.JourneyId)
-                .JourneyMustExist(_journeyRepository);
-        }
-    }
-
     public class JourneyExistsValidator : AsyncValidatorBase
     {
         private readonly IJourneyRepository _journeyRepository;
@@ -42,12 +29,5 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands
             }
             return false;
         }
-    }
-
-    public static class RuleBuilderExtensions
-    {
-        public static IRuleBuilder<T, int> JourneyMustExist<T>(this IRuleBuilder<T, int> ruleBuilder, IJourneyRepository journeyRepository) =>
-            ruleBuilder
-                .SetValidator(new JourneyExistsValidator(journeyRepository));
     }
 }

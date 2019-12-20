@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands
+namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
 {
     public class CreateJourneyCommandHandler : IRequestHandler<CreateJourneyCommand, int>
     {

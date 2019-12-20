@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands
+namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 {
     public class CreateStepCommand : IRequest<Unit>
     {
