@@ -28,11 +28,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         public async Task<int> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
-            if (journey == null)
-            {
-                throw new ProcosysEntityNotFoundException($"{nameof(Journey)} with ID {request.JourneyId} not found");
-            }
-
             var result = await _mainApiService.GetTags(_plantProvider.Plant, "1");
 
             var tagToAdd = new Tag(_plantProvider.Plant, request.TagNo, request.ProjectNo, journey.Steps.FirstOrDefault(step => step.Id == request.StepId));

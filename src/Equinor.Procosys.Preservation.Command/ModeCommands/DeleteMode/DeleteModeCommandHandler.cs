@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Domain.Exceptions;
 using MediatR;
 
 namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
@@ -14,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
 
         public async Task<Unit> Handle(DeleteModeCommand request, CancellationToken cancellationToken)
         {
-            var mode = await _modeRepository.GetByIdAsync(request.ModeId) ?? throw new ProcosysEntityNotFoundException($"{nameof(Mode)} with ID not found");
+            var mode = await _modeRepository.GetByIdAsync(request.ModeId);
             _modeRepository.Remove(mode);
             await _modeRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
             return Unit.Value;

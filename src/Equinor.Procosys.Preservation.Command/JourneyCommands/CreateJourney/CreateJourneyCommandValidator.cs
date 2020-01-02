@@ -6,6 +6,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
     {
         public CreateJourneyCommandValidator()
         {
+            RuleFor(x => x.Title)
+                .NotEmpty();
         }
     }
 }

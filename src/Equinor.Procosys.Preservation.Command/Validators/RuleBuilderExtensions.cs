@@ -1,4 +1,6 @@
 ﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using FluentValidation;
 
@@ -14,12 +16,16 @@ namespace Equinor.Procosys.Preservation.Command.Validators
             ruleBuilder
                 .SetValidator(new TagExistsValidator(tagRepository));
 
-        public static IRuleBuilder<T, StepExistsValidator.JourneyStep> StepMustExist<T>(this IRuleBuilder<T, StepExistsValidator.JourneyStep> ruleBuilder, IJourneyRepository journeyRepository) =>
+        public static IRuleBuilder<T, int> StepMustExist<T>(this IRuleBuilder<T, int> ruleBuilder, IJourneyRepository journeyRepository) =>
             ruleBuilder
                 .SetValidator(new StepExistsValidator(journeyRepository));
 
-        public static IRuleBuilder<T, int> StepMustExist2<T>(this IRuleBuilder<T, int> ruleBuilder, IJourneyRepository journeyRepository) =>
+        public static IRuleBuilder<T, int> ModeMustExist<T>(this IRuleBuilder<T, int> ruleBuilder, IModeRepository modeRepository) =>
             ruleBuilder
-                .SetValidator(new StepExistsValidator(journeyRepository));
+                .SetValidator(new ModeExistsValidator(modeRepository));
+
+        public static IRuleBuilder<T, int> ResponsibleMustExist<T>(this IRuleBuilder<T, int> ruleBuilder, IResponsibleRepository responsibleRepository) =>
+            ruleBuilder
+                .SetValidator(new ResponsibleExistsValidator(responsibleRepository));
     }
 }

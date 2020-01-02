@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.Exceptions;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
 
@@ -26,11 +25,6 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
         public async Task<JourneyDto> Handle(GetJourneyByIdQuery request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.Id);
-            if (journey == null)
-            {
-                throw new ProcosysEntityNotFoundException($"{nameof(Journey)} with ID {request.Id} not found");
-            }
-
             var modeIds = journey.Steps.Select(x => x.ModeId);
             var responsibleIds = journey.Steps.Select(x => x.ResponsibleId);
 

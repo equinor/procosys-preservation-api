@@ -28,18 +28,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 var response = new ValidationErrorResponse(ve.Errors.Count(), ve.Errors.Select(x => new ValidationError(x.PropertyName, x.ErrorMessage, x.AttemptedValue)));
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
-            catch (ProcosysEntityNotFoundException penfe)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                context.Response.ContentType = "application/text";
-                await context.Response.WriteAsync(penfe.Message);
-            }
-            catch (ProcosysEntityValidationException peve)
-            {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/text";
-                await context.Response.WriteAsync(peve.Message);
-            }
             catch (ProcosysException)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;

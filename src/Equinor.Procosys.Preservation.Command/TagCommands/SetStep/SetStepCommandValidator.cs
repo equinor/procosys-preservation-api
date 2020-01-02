@@ -15,15 +15,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.SetStep
             RuleFor(x => x.TagId)
                 .TagMustExist(tagRepository);
 
-            RuleFor(x => new StepExistsValidator.JourneyStep(x.JourneyId, x.StepId))
-                .StepMustExist(journeyRepository);
-
             RuleFor(x => x.StepId)
-                .Custom((dto, context) =>
-                {
-
-                })
-                .StepMustExist2(journeyRepository);
+                .StepMustExist(journeyRepository);
         }
     }
 }

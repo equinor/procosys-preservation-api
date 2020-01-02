@@ -46,8 +46,6 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IJourneyRepository, JourneyRepository>();
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
 
-            services.AddScoped<IJourneyService, JourneyService>();
-
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();
         }

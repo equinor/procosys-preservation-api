@@ -6,6 +6,8 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
     {
         public CreateModeCommandValidator()
         {
+            RuleFor(x => x.Title)
+                .NotEmpty();
         }
     }
 }

@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators
         private readonly IJourneyRepository _journeyRepository;
 
         public JourneyExistsValidator(IJourneyRepository journeyRepository)
-            : base("{PropertyName} with ID {JourneyId} not found") => _journeyRepository = journeyRepository;
+            : base("Journey with ID {JourneyId} not found") => _journeyRepository = journeyRepository;
 
         public override bool ShouldValidateAsync(ValidationContext context) => true;
 
