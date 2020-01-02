@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                             typeof(Startup).Assembly,
                         }
                     );
-                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = true;
+                    fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 });
 
             var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
