@@ -1,35 +1,30 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
-    public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : class, IAggregateRoot
+    public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase, IAggregateRoot
     {
-        protected readonly PreservationContext context;
+        protected readonly DbSet<TEntity> Set;
 
-        protected RepositoryBase(PreservationContext context)
-        {
-            this.context = context ?? throw new ArgumentNullException(nameof(context));
-        }
+        protected RepositoryBase(DbSet<TEntity> set) => Set = set;
 
-        public IUnitOfWork UnitOfWork => context;
+        public virtual void Add(TEntity entity) => Set.Add(entity);
 
-        public void Add(TEntity entity)
-        {
-            context.Add(entity);
-        }
+        public Task<bool> Exists(int id) => Set.AnyAsync(x => x.Id == id);
 
-        public ValueTask<TEntity> GetByIdAsync(int id)
-        {
-            return context
-                .Set<TEntity>()
-                .FindAsync(id);
-        }
+        public Task<List<TEntity>> GetAllAsync() => Set.ToListAsync();
 
-        public void Remove(TEntity entity)
-        {
-            context.Remove(entity);
-        }
+        public virtual Task<TEntity> GetByIdAsync(int id) => Set
+                .FindAsync(id)
+                .AsTask();
+
+        public Task<List<TEntity>> GetByIdsAsync(IEnumerable<int> ids) =>
+            Set.Where(x => ids.Contains(x.Id)).ToListAsync();
+
+        public virtual void Remove(TEntity entity) => Set.Remove(entity);
     }
 }

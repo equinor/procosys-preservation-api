@@ -5,7 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="7.0.0" />
+    <PackageReference Include="MediatR" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AggregateModels\ProjectAggregate\" />
   </ItemGroup>
 
 </Project>

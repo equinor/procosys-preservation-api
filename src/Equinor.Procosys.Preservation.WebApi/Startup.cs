@@ -1,10 +1,11 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.WebApi.DIModules;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,10 +22,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+        public Startup(IConfiguration configuration) => Configuration = configuration;
 
         public IConfiguration Configuration { get; }
 
@@ -60,7 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                     fv.RunDefaultMvcValidationAfterFluentValidationExecutes = false;
                 });
 
-            Dictionary<string, string> scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
+            var scopes = Configuration.GetSection("Swagger:Scopes")?.Get<Dictionary<string, string>>() ?? new Dictionary<string, string>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProCoSys Preservation API", Version = "v1" });
@@ -89,10 +87,17 @@ namespace Equinor.Procosys.Preservation.WebApi
                         scopes.Keys.ToArray()
                     }
                 });
+
+                c.OperationFilter<AddSchemaHeaderParameter>();
+            });
+
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
             });
 
             services.AddMediatrModules();
-            services.AddApplicationModules(Configuration.GetConnectionString("PreservationContext"));
+            services.AddApplicationModules(Configuration.GetConnectionString("PreservationContext"), Configuration["MainApiBaseUrl"]);
             services.AddApplicationInsightsTelemetry();
         }
 
@@ -103,6 +108,8 @@ namespace Equinor.Procosys.Preservation.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.AddGlobalExceptionHandling();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
@@ -123,6 +130,8 @@ namespace Equinor.Procosys.Preservation.WebApi
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseResponseCompression();
 
             app.UseEndpoints(endpoints =>
             {

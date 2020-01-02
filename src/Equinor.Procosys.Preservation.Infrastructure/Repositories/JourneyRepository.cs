@@ -1,27 +1,31 @@
-﻿using System;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
-    public class JourneyRepository : IJourneyRepository
+    public class JourneyRepository : RepositoryBase<Journey>, IJourneyRepository
     {
-        public IUnitOfWork UnitOfWork => throw new NotImplementedException();
-
-        public void Add(Journey item)
+        public JourneyRepository(PreservationContext context)
+            : base(context.Set<Journey>())
         {
-            throw new NotImplementedException();
         }
 
-        public ValueTask<Journey> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
+        public override Task<Journey> GetByIdAsync(int id) =>
+                Set
+                .Include(x => x.Steps)
+                .FirstOrDefaultAsync(x => x.Id == id);
 
-        public void Remove(Journey entity)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<Journey> GetByStepId(int stepId) =>
+            Set
+                .Include(x => x.Steps)
+                .Where(journey => journey.Steps.Any(step => step.Id == stepId))
+                .FirstOrDefaultAsync();
+
+        public Task<Journey> GetByTitleAsync(string title) =>
+            Set
+            .Include(x => x.Steps)
+            .FirstOrDefaultAsync(x => x.Title == title);
     }
 }

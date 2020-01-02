@@ -5,9 +5,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public class TimeService : ITimeService
     {
-        public DateTime GetCurrentTimeUTC()
-        {
-            return DateTime.UtcNow;
-        }
+        public DateTime GetCurrentTimeUTC() => DateTime.UtcNow;
     }
 }

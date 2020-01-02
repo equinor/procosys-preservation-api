@@ -161,8 +161,8 @@ csharp_style_var_when_type_is_apparent = true:suggestion
 csharp_style_var_elsewhere = true:suggestion
 
 # Prefer method-like constructs to have a block body
-csharp_style_expression_bodied_methods = false:none
-csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_methods = true:suggestion
+csharp_style_expression_bodied_constructors = true:suggestion
 csharp_style_expression_bodied_operators = false:none
 
 # Prefer property-like constructs to have an expression-body
@@ -202,6 +202,6 @@ csharp_space_between_parentheses = false
 csharp_space_between_square_brackets = false
 
 # Blocks are allowed
-csharp_prefer_braces = true:silent
+csharp_prefer_braces = true:suggestion
 csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = true

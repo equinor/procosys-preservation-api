@@ -25,8 +25,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Behaviors
 
             _logger.LogInformation("----- Validating command {CommandType}", typeName);
 
-            var failures = _validator
-                .Validate(request)
+            var failures = (await _validator
+                .ValidateAsync(request))
                 .Errors
                 .Where(error => error != null)
                 .ToList();
