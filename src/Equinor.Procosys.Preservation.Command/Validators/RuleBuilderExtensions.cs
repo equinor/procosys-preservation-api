@@ -12,6 +12,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators
             ruleBuilder
                 .SetValidator(new JourneyExistsValidator(journeyRepository));
 
+        public static IRuleBuilder<T, string> JourneyTitleIsUnique<T>(this IRuleBuilder<T, string> ruleBuilder, IJourneyRepository journeyRepository) =>
+            ruleBuilder
+                .SetValidator(new JourneyTitleIsUniqueValidator(journeyRepository));
+
         public static IRuleBuilder<T, int> TagMustExist<T>(this IRuleBuilder<T, int> ruleBuilder, ITagRepository tagRepository) =>
             ruleBuilder
                 .SetValidator(new TagExistsValidator(tagRepository));

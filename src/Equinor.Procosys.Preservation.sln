@@ -30,9 +30,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.WebApi.Tests", "tests\Equinor.Procosys.Preservation.WebApi.Tests\Equinor.Procosys.Preservation.WebApi.Tests.csproj", "{065C9A62-0885-4238-8893-B10BE15E5201}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.Procosys.Preservation.MainApi", "Equinor.Procosys.Preservation.MainApi\Equinor.Procosys.Preservation.MainApi.csproj", "{CFF1281F-84A3-4A73-B32E-ED6A666C187F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.MainApi", "Equinor.Procosys.Preservation.MainApi\Equinor.Procosys.Preservation.MainApi.csproj", "{CFF1281F-84A3-4A73-B32E-ED6A666C187F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.Procosys.Preservation.MainApi.Tests", "Equinor.Procosys.Preservation.MainApi.Tests\Equinor.Procosys.Preservation.MainApi.Tests.csproj", "{FD6C2F8C-DABE-4A32-B008-B1F697789D1C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.MainApi.Tests", "tests\Equinor.Procosys.Preservation.MainApi.Tests\Equinor.Procosys.Preservation.MainApi.Tests.csproj", "{3628443D-47B4-4D7A-AB08-3E0F613E5015}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -84,10 +84,10 @@ Global
 		{CFF1281F-84A3-4A73-B32E-ED6A666C187F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CFF1281F-84A3-4A73-B32E-ED6A666C187F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CFF1281F-84A3-4A73-B32E-ED6A666C187F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD6C2F8C-DABE-4A32-B008-B1F697789D1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD6C2F8C-DABE-4A32-B008-B1F697789D1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD6C2F8C-DABE-4A32-B008-B1F697789D1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD6C2F8C-DABE-4A32-B008-B1F697789D1C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3628443D-47B4-4D7A-AB08-3E0F613E5015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3628443D-47B4-4D7A-AB08-3E0F613E5015}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3628443D-47B4-4D7A-AB08-3E0F613E5015}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3628443D-47B4-4D7A-AB08-3E0F613E5015}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,7 +98,7 @@ Global
 		{8AEAA372-6AE4-46F4-9CBD-BC46B722CC79} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
 		{F8610A00-6320-46AD-AC74-70F2311DC062} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
 		{065C9A62-0885-4238-8893-B10BE15E5201} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
-		{FD6C2F8C-DABE-4A32-B008-B1F697789D1C} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
+		{3628443D-47B4-4D7A-AB08-3E0F613E5015} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C79730D0-E4C2-474A-9D04-1C07256B6DF3}

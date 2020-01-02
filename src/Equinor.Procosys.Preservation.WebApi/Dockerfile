@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
 WORKDIR /src
 
 # Copy solution and project files separately and restore NuGet packages to create layers
@@ -9,6 +9,8 @@ COPY Equinor.Procosys.Preservation.Domain/*.csproj ./Equinor.Procosys.Preservati
 COPY tests/Equinor.Procosys.Preservation.Domain.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Domain.Tests/
 COPY Equinor.Procosys.Preservation.Infrastructure/*.csproj ./Equinor.Procosys.Preservation.Infrastructure/
 COPY tests/Equinor.Procosys.Preservation.Infrastructure.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Infrastructure.Tests/
+COPY Equinor.Procosys.Preservation.MainApi/*.csproj ./Equinor.Procosys.Preservation.MainApi/
+COPY tests/Equinor.Procosys.Preservation.MainApi.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.MainApi.Tests/
 COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservation.Query/
 COPY tests/Equinor.Procosys.Preservation.Query.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Query.Tests/
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
@@ -35,7 +37,7 @@ WORKDIR "/src/Equinor.Procosys.Preservation.WebApi"
 RUN dotnet publish "Equinor.Procosys.Preservation.WebApi.csproj" -c Release --no-restore -o /app/publish
 
 # Create a runtime image and copy the application over
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.0 AS base
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
 WORKDIR /app
 EXPOSE 80
 COPY --from=publish /app/publish .
