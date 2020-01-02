@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public class TagRepository : RepositoryBase<Tag>, ITagRepository
     {
         public TagRepository(PreservationContext context)
-            : base(context.Tags, context)
+            : base(context.Tags)
         {
         }
     }

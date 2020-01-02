@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public class ModeRepository : RepositoryBase<Mode>, IModeRepository
     {
         public ModeRepository(PreservationContext context)
-            : base(context.Modes, context)
+            : base(context.Modes)
         {
         }
     }

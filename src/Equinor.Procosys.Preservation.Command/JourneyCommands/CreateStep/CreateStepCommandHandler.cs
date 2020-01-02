@@ -13,17 +13,20 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
         private readonly IJourneyRepository _journeyRepository;
         private readonly IModeRepository _modeRepository;
         private readonly IResponsibleRepository _responsibleRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
 
         public CreateStepCommandHandler(
             IJourneyRepository journeyRepository,
             IModeRepository modeRepository,
             IResponsibleRepository responsibleRepository,
+            IUnitOfWork unitOfWork,
             IPlantProvider plantProvider)
         {
             _journeyRepository = journeyRepository;
             _modeRepository = modeRepository;
             _responsibleRepository = responsibleRepository;
+            _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
         }
 
@@ -34,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
             var responsible = await _responsibleRepository.GetByIdAsync(request.ResponsibleId);
 
             journey.AddStep(new Step(_plantProvider.Plant, mode, responsible));
-            await _journeyRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
     }

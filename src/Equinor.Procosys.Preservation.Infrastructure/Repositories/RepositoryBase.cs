@@ -10,13 +10,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     {
         protected readonly DbSet<TEntity> Set;
 
-        protected RepositoryBase(DbSet<TEntity> set, IUnitOfWork unitOfWork)
-        {
-            Set = set;
-            UnitOfWork = unitOfWork;
-        }
-
-        public IUnitOfWork UnitOfWork { get; }
+        protected RepositoryBase(DbSet<TEntity> set) => Set = set;
 
         public virtual void Add(TEntity entity) => Set.Add(entity);
 

@@ -9,11 +9,13 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
     public class CreateModeCommandHandler : IRequestHandler<CreateModeCommand, int>
     {
         private readonly IModeRepository _modeRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
 
-        public CreateModeCommandHandler(IModeRepository modeRepository, IPlantProvider plantProvider)
+        public CreateModeCommandHandler(IModeRepository modeRepository, IUnitOfWork unitOfWork, IPlantProvider plantProvider)
         {
             _modeRepository = modeRepository;
+            _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
         }
 
@@ -21,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
         {
             var newMode = new Mode(_plantProvider.Plant, request.Title);
             _modeRepository.Add(newMode);
-            await _modeRepository.UnitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return newMode.Id;
         }
     }

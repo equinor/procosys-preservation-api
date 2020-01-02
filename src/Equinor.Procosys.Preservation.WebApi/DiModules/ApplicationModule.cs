@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddDbContext<PreservationContext>(options =>
             {
                 options.UseSqlServer(dbConnectionString);
-            });
+            }, ServiceLifetime.Scoped);
 
             services.AddHttpClient<IMainApiService, MainApiService>(client =>
             {
@@ -38,8 +38,8 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             // Scoped - Created once per client request (connection)
             services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();
             services.AddScoped<IReadOnlyContext, PreservationContext>();
-            services.AddScoped<IUnitOfWork, PreservationContext>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
