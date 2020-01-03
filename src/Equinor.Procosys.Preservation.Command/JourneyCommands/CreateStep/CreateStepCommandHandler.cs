@@ -5,10 +5,11 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 {
-    public class CreateStepCommandHandler : IRequestHandler<CreateStepCommand, Unit>
+    public class CreateStepCommandHandler : IRequestHandler<CreateStepCommand, Result<Unit>>
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IModeRepository _modeRepository;
@@ -30,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
             _plantProvider = plantProvider;
         }
 
-        public async Task<Unit> Handle(CreateStepCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(CreateStepCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
@@ -38,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 
             journey.AddStep(new Step(_plantProvider.Plant, mode, responsible));
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return new SuccessResult<Unit>(Unit.Value);
         }
     }
 }

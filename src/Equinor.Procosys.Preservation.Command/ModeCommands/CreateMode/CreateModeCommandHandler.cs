@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
 {
-    public class CreateModeCommandHandler : IRequestHandler<CreateModeCommand, int>
+    public class CreateModeCommandHandler : IRequestHandler<CreateModeCommand, Result<int>>
     {
         private readonly IModeRepository _modeRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -19,12 +20,12 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
             _plantProvider = plantProvider;
         }
 
-        public async Task<int> Handle(CreateModeCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(CreateModeCommand request, CancellationToken cancellationToken)
         {
             var newMode = new Mode(_plantProvider.Plant, request.Title);
             _modeRepository.Add(newMode);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return newMode.Id;
+            return new SuccessResult<int>(newMode.Id);
         }
     }
 }

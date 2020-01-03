@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
 using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
-using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Mode
 {
@@ -14,41 +12,36 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Mode
     [Route("Modes")]
     public class ModesController : ControllerBase
     {
-        private readonly ILogger<ModesController> _logger;
         private readonly IMediator _mediator;
 
-        public ModesController(ILogger<ModesController> logger, IMediator mediator)
-        {
-            _logger = logger;
-            _mediator = mediator;
-        }
+        public ModesController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ModeDto>>> GetModes()
+        public async Task<IActionResult> GetModes()
         {
-            var modes = await _mediator.Send(new GetAllModesQuery());
-            return Ok(modes);
+            var result = await _mediator.Send(new GetAllModesQuery());
+            return this.FromResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetMode([FromRoute] int id)
+        public async Task<IActionResult> GetMode([FromRoute] int id)
         {
-            var dto = await _mediator.Send(new GetModeByIdQuery(id));
-            return Ok(dto);
+            var result = await _mediator.Send(new GetModeByIdQuery(id));
+            return this.FromResult(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddMode([FromBody] CreateModeDto dto)
+        public async Task<IActionResult> AddMode([FromBody] CreateModeDto dto)
         {
-            var id = await _mediator.Send(new CreateModeCommand { Title = dto.Title });
-            return CreatedAtAction(nameof(GetMode), new { id }, new { id });
+            var result = await _mediator.Send(new CreateModeCommand { Title = dto.Title });
+            return this.FromResult(result);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteMode([FromRoute] int id)
+        public async Task<IActionResult> DeleteMode([FromRoute] int id)
         {
-            await _mediator.Send(new DeleteModeCommand(id));
-            return NoContent();
+            var result = await _mediator.Send(new DeleteModeCommand(id));
+            return this.FromResult(result);
         }
     }
 }

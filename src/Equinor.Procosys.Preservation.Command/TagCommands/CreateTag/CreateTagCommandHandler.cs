@@ -6,10 +6,11 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.MainApi;
 using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
-    public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, int>
+    public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<int>>
     {
         private readonly ITagRepository _tagRepository;
         private readonly IJourneyRepository _journeyRepository;
@@ -31,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             _mainApiService = mainApiService;
         }
 
-        public async Task<int> Handle(CreateTagCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
             var result = await _mainApiService.GetTags(_plantProvider.Plant, "1");
@@ -39,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             var tagToAdd = new Tag(_plantProvider.Plant, request.TagNo, request.ProjectNo, journey.Steps.FirstOrDefault(step => step.Id == request.StepId));
             _tagRepository.Add(tagToAdd);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return tagToAdd.Id;
+            return new SuccessResult<int>(tagToAdd.Id);
         }
     }
 }
