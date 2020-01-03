@@ -1,18 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.WebApi.Middleware
 {
     public class GlobalExceptionHandler
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<GlobalExceptionHandler> _logger;
 
-        public GlobalExceptionHandler(RequestDelegate next) => _next = next;
+        public GlobalExceptionHandler(RequestDelegate next, ILogger<GlobalExceptionHandler> logger)
+        {
+            _next = next;
+            _logger = logger;
+        }
 
         public async Task InvokeAsync(HttpContext context)
         {
@@ -28,8 +35,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 var response = new ValidationErrorResponse(ve.Errors.Count(), ve.Errors.Select(x => new ValidationError(x.PropertyName, x.ErrorMessage, x.AttemptedValue)));
                 await context.Response.WriteAsync(JsonSerializer.Serialize(response));
             }
-            catch (ProcosysException)
+            catch (Exception ex)
             {
+                _logger.LogError(ex, "An exception occured");
+
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 context.Response.ContentType = "application/text";
                 await context.Response.WriteAsync($"Something went wrong!");
