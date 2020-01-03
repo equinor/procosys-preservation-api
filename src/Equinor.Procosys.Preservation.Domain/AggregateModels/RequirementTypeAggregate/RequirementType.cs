@@ -19,9 +19,9 @@
             SortKey = sortKey;
         }
 
-        public string Code { get; }
-        public string Title { get; }
-        public bool IsVoided { get; }
-        public int SortKey { get; }
+        public string Code { get; private set; }
+        public string Title { get; private set; }
+        public bool IsVoided { get; private set; }
+        public int SortKey { get; private set; }
     }
 }
