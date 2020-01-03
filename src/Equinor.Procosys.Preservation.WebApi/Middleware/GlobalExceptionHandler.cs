@@ -30,10 +30,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
             }
             catch (FluentValidation.ValidationException ve)
             {
+                //context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                //context.Response.ContentType = "application/text";
+                //var response = new ValidationErrorResponse(ve.Errors.Count(), ve.Errors.Select(x => new ValidationError(x.PropertyName, x.ErrorMessage, x.AttemptedValue)));
+                //await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/text";
-                var response = new ValidationErrorResponse(ve.Errors.Count(), ve.Errors.Select(x => new ValidationError(x.PropertyName, x.ErrorMessage, x.AttemptedValue)));
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync(ve.Message);
             }
             catch (Exception ex)
             {

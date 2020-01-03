@@ -2,6 +2,9 @@
 {
     public class Mode : SchemaEntityBase, IAggregateRoot
     {
+        public const int TitleMinLength = 3;
+        public const int TitleLengthMax = 255;
+
         protected Mode()
             : base(null)
         {

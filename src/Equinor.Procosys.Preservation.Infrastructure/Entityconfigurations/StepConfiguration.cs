@@ -10,6 +10,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
     {
         public void Configure(EntityTypeBuilder<Step> builder)
         {
+            builder.Property(x => x.Schema)
+                .HasMaxLength(Step.SchemaLengthMax)
+                .IsRequired();
+
             builder.HasOne<Mode>();
             builder.HasMany<Tag>();
         }

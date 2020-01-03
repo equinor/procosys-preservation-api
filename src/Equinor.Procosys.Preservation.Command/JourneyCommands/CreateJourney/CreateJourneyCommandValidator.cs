@@ -6,11 +6,10 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
 {
     public class CreateJourneyCommandValidator : AbstractValidator<CreateJourneyCommand>
     {
-        public CreateJourneyCommandValidator(IJourneyRepository journeyRepository)
-        {
+        public CreateJourneyCommandValidator(IJourneyRepository journeyRepository) =>
             RuleFor(x => x.Title)
-                .NotEmpty()
+                .MinimumLength(3)
+                .MaximumLength(10)
                 .JourneyTitleIsUnique(journeyRepository);
-        }
     }
 }

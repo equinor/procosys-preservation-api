@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journey
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 {
     public class CreateStepDto
     {
