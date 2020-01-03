@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.Domain.Exceptions
 {
-    public class NotFoundException : ProcosysException
+    public class NotFoundException : ProcosysNotFoundException
     {
         public NotFoundException()
         {
