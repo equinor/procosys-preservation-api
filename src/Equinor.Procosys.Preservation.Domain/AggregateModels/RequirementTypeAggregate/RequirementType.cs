@@ -2,8 +2,8 @@
 {
     public class RequirementType : SchemaEntityBase, IAggregateRoot
     {
-        public const int CodeMax = 32;
-        public const int TitleMax = 64;
+        public const int CodeLengthMax = 32;
+        public const int TitleLengthMax = 64;
 
         protected RequirementType()
             : base(null)
