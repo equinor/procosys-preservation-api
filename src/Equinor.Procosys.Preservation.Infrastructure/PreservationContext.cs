@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,9 +42,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             foreach (var type in TypeProvider.GetEntityTypes(typeof(IDomainMarker).GetTypeInfo().Assembly, typeof(SchemaEntityBase)))
             {
                 typeof(PreservationContext)
-                ?.GetMethod(nameof(PreservationContext.SetGlobalQuery))
+                .GetMethod(nameof(PreservationContext.SetGlobalQuery))
                 ?.MakeGenericMethod(type)
-                ?.Invoke(this, new object[] { modelBuilder });
+                .Invoke(this, new object[] { modelBuilder });
             }
         }
 
@@ -52,6 +53,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public DbSet<Mode> Modes { get; set; }
         public DbSet<Responsible> Responsibles { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<RequirementType> RequirementTypes { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
