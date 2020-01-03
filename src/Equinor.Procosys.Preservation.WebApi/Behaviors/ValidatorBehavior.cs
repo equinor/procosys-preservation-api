@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -8,14 +9,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.WebApi.Behaviors
 {
-    public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+    public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> where TRequest : IRequest<TResponse>
     {
         private readonly ILogger<ValidatorBehavior<TRequest, TResponse>> _logger;
-        private readonly IValidator<TRequest> _validator;
+        private readonly IEnumerable<IValidator<TRequest>> _validators;
 
-        public ValidatorBehavior(IValidator<TRequest> validator, ILogger<ValidatorBehavior<TRequest, TResponse>> logger)
+        public ValidatorBehavior(IEnumerable<IValidator<TRequest>> validators, ILogger<ValidatorBehavior<TRequest, TResponse>> logger)
         {
-            _validator = validator;
+            _validators = validators;
             _logger = logger;
         }
 
@@ -25,9 +26,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Behaviors
 
             _logger.LogInformation("----- Validating command {CommandType}", typeName);
 
-            var failures = (await _validator
-                .ValidateAsync(request))
-                .Errors
+            var failures = _validators
+                .Select(v => v.Validate(request))
+                .SelectMany(result => result.Errors)
                 .Where(error => error != null)
                 .ToList();
 
