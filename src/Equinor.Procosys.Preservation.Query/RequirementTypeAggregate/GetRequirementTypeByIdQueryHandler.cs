@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Exceptions;
@@ -19,7 +20,10 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             {
                 throw new NotFoundException($"RequirementType with id {request.Id} not found");
             }
-            return new RequirementTypeDto(rt.Id, rt.Code, rt.Title, rt.IsVoided, rt.SortKey);
+
+            return new RequirementTypeDto(rt.Id, rt.Code, rt.Title, rt.IsVoided, rt.SortKey,
+                rt.RequirementDefinitions.Select(rd =>
+                    new RequirementDefinitionDto(rd.Id, rd.Title, rd.IsVoided, rd.DefaultInterval, rd.SortKey)));
         }
     }
 }

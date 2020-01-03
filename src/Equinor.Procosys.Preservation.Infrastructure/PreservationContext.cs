@@ -54,6 +54,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public DbSet<Responsible> Responsibles { get; set; }
         public DbSet<Tag> Tags { get; set; }
         public DbSet<RequirementType> RequirementTypes { get; set; }
+        public DbSet<RequirementDefinition> RequirementDefinitions { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

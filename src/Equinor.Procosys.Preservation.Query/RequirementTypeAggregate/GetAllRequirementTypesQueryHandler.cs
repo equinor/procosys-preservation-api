@@ -16,7 +16,10 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public async Task<IEnumerable<RequirementTypeDto>> Handle(GetAllRequirementTypesQuery request, CancellationToken cancellationToken)
         {
             var requirementTypes = await _requirementTypeRepository.GetAllAsync();
-            return requirementTypes.Select(rt => new RequirementTypeDto(rt.Id, rt.Code, rt.Title, rt.IsVoided, rt.SortKey));
+            return requirementTypes.Select(rt => new RequirementTypeDto(rt.Id, rt.Code, rt.Title, rt.IsVoided,
+                rt.SortKey,
+                rt.RequirementDefinitions.Select(rd =>
+                    new RequirementDefinitionDto(rd.Id, rd.Title, rd.IsVoided, rd.DefaultInterval, rd.SortKey))));
         }
     }
 }
