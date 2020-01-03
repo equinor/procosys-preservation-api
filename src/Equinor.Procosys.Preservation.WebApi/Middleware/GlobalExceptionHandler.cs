@@ -33,12 +33,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.Response.ContentType = "application/text";
                 var response = new ValidationErrorResponse(ve.Errors.Count(), ve.Errors.Select(x => new ValidationError(x.PropertyName, x.ErrorMessage, x.AttemptedValue)));
-                await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+                var json = JsonSerializer.Serialize(response);
+                _logger.LogInformation(json);
+                await context.Response.WriteAsync(json);
+            }
+            catch (NotFoundException nfe)
+            {
+                _logger.LogWarning(nfe.Message);
+                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.ContentType = "application/text";
+                await context.Response.WriteAsync(nfe.Message);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An exception occured");
-
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 context.Response.ContentType = "application/text";
                 await context.Response.WriteAsync($"Something went wrong!");
