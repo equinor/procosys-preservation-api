@@ -5,16 +5,20 @@ Backend .Net Core 3 application for Preservation module in Project Completion Sy
 Note: Before running the application, the secret-file need to be updated (right-click 'Equinor.Procosys.Preservation.WebApi' and select 'Manage User Secrets'). 
 
      {
-        "API": {
-          "Authority": "<find in Azure Key Vaults>",
-          "Audience": "<find in Azure Key Vaults>"
-        },
-        "Swagger": {
-           "AuthorizationUrl": "<find in Azure Key Vaults>",
-           "ClientId": "<find in Azure Key Vaults>",
-           "Scopes": {
-           }
-        }
+       "API": {
+         "Authority": "",
+         "Audience": ""
+       },
+       "Swagger": {
+         "AuthorizationUrl": "",
+         "ClientId": "",
+         "Scopes": {
+         }
+       },
+       "ConnectionStrings": {
+         "PreservationContext": ""
+       },
+       "MainApiBaseUrl": ""
      }
 
 ## How to run in Visual Studio

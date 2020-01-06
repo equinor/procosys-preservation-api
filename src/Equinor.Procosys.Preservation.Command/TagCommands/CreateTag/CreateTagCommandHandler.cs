@@ -16,20 +16,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
-        private readonly IMainApiService _mainApiService;
+        private readonly ITagApiService _tagApiService;
 
         public CreateTagCommandHandler(
             ITagRepository tagRepository,
             IJourneyRepository journeyRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
-            IMainApiService mainApiService)
+            ITagApiService tagApiService)
         {
             _tagRepository = tagRepository;
             _journeyRepository = journeyRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
-            _mainApiService = mainApiService;
+            _tagApiService = tagApiService;
         }
 
         public async Task<Result<int>> Handle(CreateTagCommand request, CancellationToken cancellationToken)

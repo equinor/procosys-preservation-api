@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.MainApi
 {
-    public interface IMainApiService
+    public interface ITagApiService
     {
         Task<IEnumerable<MainTagDto>> GetTags(string plant, string searchString);
     }
