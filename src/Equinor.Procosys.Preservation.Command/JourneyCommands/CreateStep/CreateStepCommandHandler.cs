@@ -34,11 +34,26 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
         public async Task<Result<Unit>> Handle(CreateStepCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
+            if (journey == null)
+            {
+                return new NotFoundResult<Unit>(Strings.EntityNotFound(nameof(Journey), request.JourneyId));
+            }
+
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
+            if (mode == null)
+            {
+                return new NotFoundResult<Unit>(Strings.EntityNotFound(nameof(Mode), request.ModeId));
+            }
+
             var responsible = await _responsibleRepository.GetByIdAsync(request.ResponsibleId);
+            if (responsible == null)
+            {
+                return new NotFoundResult<Unit>(Strings.EntityNotFound(nameof(Responsible), request.ResponsibleId));
+            }
 
             journey.AddStep(new Step(_plantProvider.Plant, mode, responsible));
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
             return new SuccessResult<Unit>(Unit.Value);
         }
     }

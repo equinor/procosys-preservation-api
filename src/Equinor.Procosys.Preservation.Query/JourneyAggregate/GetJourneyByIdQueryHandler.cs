@@ -28,8 +28,9 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
             var journey = await _journeyRepository.GetByIdAsync(request.Id);
             if (journey == null)
             {
-                return new NotFoundResult<JourneyDto>($"{nameof(Journey)} with ID {request.Id} not found");
+                return new NotFoundResult<JourneyDto>(Strings.EntityNotFound(nameof(Journey), request.Id));
             }
+
             var modeIds = journey.Steps.Select(x => x.ModeId);
             var responsibleIds = journey.Steps.Select(x => x.ResponsibleId);
 
