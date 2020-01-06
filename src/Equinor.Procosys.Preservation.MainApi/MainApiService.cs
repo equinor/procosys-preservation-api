@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.MainApi
 {
-    public class MainApiService : IMainApiService
+    public class MainApiService : ITagApiService
     {
         private readonly HttpClient _httpClient;
         private readonly IBearerTokenProvider _bearerTokenProvider;
