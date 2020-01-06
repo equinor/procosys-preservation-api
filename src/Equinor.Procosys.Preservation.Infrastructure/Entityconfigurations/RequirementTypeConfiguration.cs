@@ -21,7 +21,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(RequirementType.TitleLengthMax);
             
-            builder.HasMany<RequirementDefinition>();
+            builder
+                .HasMany<RequirementDefinition>();
         }
     }
 }
