@@ -11,16 +11,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public Field(string schema, RequirementDefinition requirementDefinition, string label, string unit,
+        public Field(string schema, string label, string unit,
             bool isVoided, bool showPrevious, int sortKey)
             : base(schema)
         {
-            if (requirementDefinition == null)
-            {
-                throw new ArgumentNullException(nameof(requirementDefinition));
-            }
-
-            RequirementDefId = requirementDefinition.Id;
             Label = label;
             Unit = unit;
             IsVoided = isVoided;
@@ -28,7 +22,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             SortKey = sortKey;
         }
 
-        public int RequirementDefId { get; private set; }
         public string Label { get; private set; }
         public string Unit { get; private set; }
         public bool IsVoided { get; private set; }
