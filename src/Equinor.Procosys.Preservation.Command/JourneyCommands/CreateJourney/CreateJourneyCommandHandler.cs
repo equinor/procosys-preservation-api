@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
 {
-    public class CreateJourneyCommandHandler : IRequestHandler<CreateJourneyCommand, int>
+    public class CreateJourneyCommandHandler : IRequestHandler<CreateJourneyCommand, Result<int>>
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -19,14 +20,14 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
             _plantProvider = plantProvider;
         }
 
-        public async Task<int> Handle(CreateJourneyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(CreateJourneyCommand request, CancellationToken cancellationToken)
         {
             var newJourney = new Journey(_plantProvider.Plant, request.Title);
 
             _journeyRepository.Add(newJourney);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return newJourney.Id;
+            return new SuccessResult<int>(newJourney.Id);
         }
     }
 }

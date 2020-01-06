@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Query.JourneyAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 {
@@ -12,34 +12,29 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
     [Route("Journeys")]
     public class JourneysController : ControllerBase
     {
-        private readonly ILogger<JourneysController> _logger;
         private readonly IMediator _mediator;
 
-        public JourneysController(ILogger<JourneysController> logger, IMediator mediator)
-        {
-            _logger = logger;
-            _mediator = mediator;
-        }
+        public JourneysController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetJourney([FromRoute] int id)
         {
-            var dto = await _mediator.Send(new GetJourneyByIdQuery(id));
-            return Ok(dto);
+            var result = await _mediator.Send(new GetJourneyByIdQuery(id));
+            return this.FromResult(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddJourney([FromBody] CreateJourneyDto dto)
         {
-            var id = await _mediator.Send(new CreateJourneyCommand(dto.Title));
-            return CreatedAtAction(nameof(JourneysController.GetJourney), id);
+            var result = await _mediator.Send(new CreateJourneyCommand(dto.Title));
+            return this.FromResult(result);
         }
 
         [HttpPost("{id}/AddStep")]
         public async Task<IActionResult> AddStep([FromRoute] int id, [FromBody] CreateStepDto dto)
         {
-            await _mediator.Send(new CreateStepCommand(id, dto.ModeId, dto.ResponsibleId));
-            return NoContent();
+            var result = await _mediator.Send(new CreateStepCommand(id, dto.ModeId, dto.ResponsibleId));
+            return this.FromResult(result);
         }
     }
 }

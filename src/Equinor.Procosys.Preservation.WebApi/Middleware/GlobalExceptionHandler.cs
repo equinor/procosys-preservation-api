@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -36,13 +35,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 var json = JsonSerializer.Serialize(response);
                 _logger.LogInformation(json);
                 await context.Response.WriteAsync(json);
-            }
-            catch (NotFoundException nfe)
-            {
-                _logger.LogWarning(nfe.Message);
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
-                context.Response.ContentType = "application/text";
-                await context.Response.WriteAsync(nfe.Message);
             }
             catch (Exception ex)
             {

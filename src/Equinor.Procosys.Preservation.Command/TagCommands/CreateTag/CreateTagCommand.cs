@@ -1,8 +1,9 @@
 ﻿using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
-    public class CreateTagCommand : IRequest<int>
+    public class CreateTagCommand : IRequest<Result<int>>
     {
         public CreateTagCommand(string tagNo, string projectNo, int journeyId, int stepId, string description)
         {

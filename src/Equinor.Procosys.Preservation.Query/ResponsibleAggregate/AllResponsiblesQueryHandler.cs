@@ -2,12 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
 {
-    public class AllResponsiblesQueryHandler : IRequestHandler<AllResponsiblesQuery, List<ResponsibleDto>>
+    public class AllResponsiblesQueryHandler : IRequestHandler<AllResponsiblesQuery, Result<List<ResponsibleDto>>>
     {
-        public Task<List<ResponsibleDto>> Handle(AllResponsiblesQuery request, CancellationToken cancellationToken)
+        public Task<Result<List<ResponsibleDto>>> Handle(AllResponsiblesQuery request, CancellationToken cancellationToken)
         {
             var responsibles = new List<ResponsibleDto>
             {
@@ -17,7 +18,8 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
                 new ResponsibleDto(4, "ACPI"),
             };
 
-            return Task.FromResult(responsibles);
+            var ras = new SuccessResult<List<ResponsibleDto>>(responsibles);
+            return Task.FromResult(ras as Result<List<ResponsibleDto>>);
         }
     }
 }

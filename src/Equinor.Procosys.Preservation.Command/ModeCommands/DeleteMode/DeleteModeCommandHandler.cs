@@ -3,10 +3,11 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
 {
-    public class DeleteModeCommandHandler : IRequestHandler<DeleteModeCommand, Unit>
+    public class DeleteModeCommandHandler : IRequestHandler<DeleteModeCommand, Result<Unit>>
     {
         private readonly IModeRepository _modeRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -17,12 +18,12 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Unit> Handle(DeleteModeCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(DeleteModeCommand request, CancellationToken cancellationToken)
         {
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
             _modeRepository.Remove(mode);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Unit.Value;
+            return new SuccessResult<Unit>(Unit.Value);
         }
     }
 }

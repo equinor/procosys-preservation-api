@@ -1,8 +1,9 @@
 ﻿using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 {
-    public class CreateStepCommand : IRequest<Unit>
+    public class CreateStepCommand : IRequest<Result<Unit>>
     {
         public CreateStepCommand(int journeyId, int modeId, int responsibleId)
         {
