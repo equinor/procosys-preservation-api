@@ -26,6 +26,10 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
         public async Task<Result<JourneyDto>> Handle(GetJourneyByIdQuery request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.Id);
+            if (journey == null)
+            {
+                return new NotFoundResult<JourneyDto>($"{nameof(Journey)} with ID {request.Id} not found");
+            }
             var modeIds = journey.Steps.Select(x => x.ModeId);
             var responsibleIds = journey.Steps.Select(x => x.ResponsibleId);
 
