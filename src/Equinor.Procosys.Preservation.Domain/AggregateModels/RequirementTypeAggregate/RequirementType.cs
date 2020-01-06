@@ -15,12 +15,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public RequirementType(string schema, string code, string title, bool isVoided, int sortKey)
+        public RequirementType(string schema, string code, string title, int sortKey)
             : base(schema)
         {
             Code = code;
             Title = title;
-            IsVoided = isVoided;
+            IsVoided = false;
             SortKey = sortKey;
         }
 

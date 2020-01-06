@@ -14,11 +14,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public RequirementDefinition(string schema, string title, bool isVoided, int defaultInterval, int sortKey)
+        public RequirementDefinition(string schema, string title, int defaultInterval, int sortKey)
             : base(schema)
         {
             Title = title;
-            IsVoided = isVoided;
+            IsVoided = false;
             DefaultInterval = defaultInterval;
             SortKey = sortKey;
         }

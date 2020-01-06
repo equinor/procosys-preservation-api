@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
+﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
     public class Field : SchemaEntityBase
     {
@@ -12,12 +10,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         }
 
         public Field(string schema, string label, string unit,
-            bool isVoided, bool showPrevious, int sortKey)
+            bool showPrevious, int sortKey)
             : base(schema)
         {
             Label = label;
             Unit = unit;
-            IsVoided = isVoided;
+            IsVoided = false;
             ShowPrevious = showPrevious;
             SortKey = sortKey;
         }
