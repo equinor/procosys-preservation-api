@@ -8,6 +8,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
     {
         public void Configure(EntityTypeBuilder<Tag> builder)
         {
+            builder.Property(x => x.Schema)
+                .HasMaxLength(Tag.SchemaLengthMax)
+                .IsRequired();
+
+            builder.Property(x => x.Description)
+                .HasMaxLength(Tag.DescriptionLengthMax);
+
+            builder.Property(x => x.ProjectNo)
+                .HasMaxLength(Tag.ProjectNoLengthMax)
+                .IsRequired();
+
+            builder.Property(x => x.TagNo)
+                .HasMaxLength(Tag.TagNoLengthMax)
+                .IsRequired();
         }
     }
 }

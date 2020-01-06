@@ -5,6 +5,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
     public class Journey : SchemaEntityBase, IAggregateRoot
     {
+        public const int TitleLengthMin = 3;
+        public const int TitleLengthMax = 255;
+
         private readonly List<Step> _steps = new List<Step>();
 
         private Journey()

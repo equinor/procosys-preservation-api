@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tag
+﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
     public class SetStepDto
     {
