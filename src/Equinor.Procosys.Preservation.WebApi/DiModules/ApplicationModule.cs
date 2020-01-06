@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
@@ -24,7 +25,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddDbContext<PreservationContext>(options =>
             {
                 options.UseSqlServer(dbConnectionString);
-            }, ServiceLifetime.Scoped);
+            });
 
             services.AddHttpClient<IMainApiService, MainApiService>(client =>
             {
@@ -45,6 +46,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IModeRepository, ModeRepository>();
             services.AddScoped<IJourneyRepository, JourneyRepository>();
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
+            services.AddScoped<IRequirementTypeRepository, RequirementTypeRepository>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();

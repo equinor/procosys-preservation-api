@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journey
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 {
     [ApiController]
     [Route("Journeys")]

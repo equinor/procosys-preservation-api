@@ -7,7 +7,8 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
         public CreateModeCommandValidator()
         {
             RuleFor(x => x.Title)
-                .NotEmpty();
+                .MinimumLength(3)
+                .MaximumLength(255);
         }
     }
 }

@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Query.TagAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tag
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
     [ApiController]
     [Route("Tags")]
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tag
         [HttpPost]
         public async Task<IActionResult> CreateTag([FromBody] CreateTagDto dto)
         {
-            var tagId = await _mediator.Send(new CreateTagCommand(dto.TagNo, dto.ProjectNo, dto.JourneyId, dto.StepId));
+            var tagId = await _mediator.Send(new CreateTagCommand(dto.TagNo, dto.ProjectNo, dto.JourneyId, dto.StepId, dto.Description));
             return Ok(tagId);
         }
 

@@ -6,7 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Mode
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
 {
     [ApiController]
     [Route("Modes")]
