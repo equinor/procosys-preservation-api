@@ -8,24 +8,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public class JourneyRepository : RepositoryBase<Journey>, IJourneyRepository
     {
         public JourneyRepository(PreservationContext context)
-            : base(context.Set<Journey>())
+            : base(context.Set<Journey>(), context.Set<Journey>().Include(x => x.Steps))
         {
         }
 
-        public override Task<Journey> GetByIdAsync(int id) =>
-                Set
-                .Include(x => x.Steps)
-                .FirstOrDefaultAsync(x => x.Id == id);
-
         public Task<Journey> GetByStepId(int stepId) =>
-            Set
-                .Include(x => x.Steps)
-                .Where(journey => journey.Steps.Any(step => step.Id == stepId))
-                .FirstOrDefaultAsync();
+            DefaultQuery
+            .Where(journey => journey.Steps.Any(step => step.Id == stepId))
+            .FirstOrDefaultAsync();
 
         public Task<Journey> GetByTitleAsync(string title) =>
-            Set
-            .Include(x => x.Steps)
+            DefaultQuery
             .FirstOrDefaultAsync(x => x.Title == title);
     }
 }
