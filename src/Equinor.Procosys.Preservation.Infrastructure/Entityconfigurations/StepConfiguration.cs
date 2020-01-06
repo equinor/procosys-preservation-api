@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+﻿using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
         public void Configure(EntityTypeBuilder<Step> builder)
         {
             builder.Property(x => x.Schema)
-                .HasMaxLength(Step.SchemaLengthMax)
+                .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
 
             builder.HasOne<Mode>();

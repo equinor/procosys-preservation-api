@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
     public class RequirementDefinition : SchemaEntityBase
     {
+        private readonly List<Field> _fields = new List<Field>();
+        
         public const int TitleLengthMax = 64;
 
         protected RequirementDefinition()
@@ -30,5 +33,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public bool IsVoided { get; private set; }
         public int DefaultInterval { get; private set; }
         public int SortKey { get; private set; }
+        public IReadOnlyCollection<Field> Fields => _fields.AsReadOnly();
+
+        public void AddRequirementDefinition(Field field)
+        {
+            if (field == null)
+            {
+                throw new ArgumentNullException(nameof(field));
+            }
+
+            _fields.Add(field);
+        }
     }
 }

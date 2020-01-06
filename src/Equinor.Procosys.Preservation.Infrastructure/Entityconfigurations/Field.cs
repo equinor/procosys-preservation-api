@@ -5,23 +5,21 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class RequirementTypeConfiguration : IEntityTypeConfiguration<RequirementType>
+    internal class FieldConfiguration : IEntityTypeConfiguration<Field>
     {
-        public void Configure(EntityTypeBuilder<RequirementType> builder)
+        public void Configure(EntityTypeBuilder<Field> builder)
         {
             builder.Property(x => x.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
 
-            builder.Property(rt => rt.Code)
+            builder.Property(rt => rt.Label)
                 .IsRequired()
-                .HasMaxLength(RequirementType.CodeLengthMax);
+                .HasMaxLength(Field.LabelLengthMax);
 
-            builder.Property(rt => rt.Title)
+            builder.Property(rt => rt.Unit)
                 .IsRequired()
-                .HasMaxLength(RequirementType.TitleLengthMax);
-            
-            builder.HasMany<RequirementDefinition>();
+                .HasMaxLength(Field.UnitLengthMax);
         }
     }
 }

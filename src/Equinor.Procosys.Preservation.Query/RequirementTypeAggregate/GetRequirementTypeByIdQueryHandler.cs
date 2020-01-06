@@ -21,9 +21,24 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                 throw new NotFoundException($"RequirementType with id {request.Id} not found");
             }
 
-            return new RequirementTypeDto(rt.Id, rt.Code, rt.Title, rt.IsVoided, rt.SortKey,
+            return new RequirementTypeDto(rt.Id,
+                rt.Code,
+                rt.Title,
+                rt.IsVoided,
+                rt.SortKey,
                 rt.RequirementDefinitions.Select(rd =>
-                    new RequirementDefinitionDto(rd.Id, rd.Title, rd.IsVoided, rd.DefaultInterval, rd.SortKey)));
+                    new RequirementDefinitionDto(rd.Id,
+                        rd.Title,
+                        rd.IsVoided,
+                        rd.DefaultInterval,
+                        rd.SortKey,
+                        rd.Fields.Select(f => new FieldDto(
+                            f.Id,
+                            f.Label,
+                            f.Unit,
+                            f.IsVoided,
+                            f.ShowPrevious,
+                            f.SortKey)))));
         }
     }
 }
