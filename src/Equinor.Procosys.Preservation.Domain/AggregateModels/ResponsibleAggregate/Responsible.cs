@@ -2,6 +2,8 @@
 {
     public class Responsible : SchemaEntityBase, IAggregateRoot
     {
+        public const int NameLengthMax = 255;
+
         protected Responsible()
             : base(null)
         {
