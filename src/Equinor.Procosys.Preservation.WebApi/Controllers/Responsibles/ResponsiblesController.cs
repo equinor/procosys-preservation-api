@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsible
 {
@@ -17,8 +18,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsible
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ResponsibleDto>>> GetAllResponsibles()
         {
-            var res = await _mediator.Send(new AllResponsiblesQuery());
-            return Ok(res);
+            var result = await _mediator.Send(new AllResponsiblesQuery());
+            return this.FromResult(result);
         }
     }
 }
