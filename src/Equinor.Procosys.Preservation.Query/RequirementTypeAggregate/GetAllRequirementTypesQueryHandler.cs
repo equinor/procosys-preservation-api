@@ -4,24 +4,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
-    public class
-        GetAllRequirementTypesQueryHandler : IRequestHandler<GetAllRequirementTypesQuery,
-            IEnumerable<RequirementTypeDto>>
+    public class GetAllRequirementTypesQueryHandler : IRequestHandler<GetAllRequirementTypesQuery, Result<IEnumerable<RequirementTypeDto>>>
     {
         private readonly IRequirementTypeRepository _requirementTypeRepository;
 
         public GetAllRequirementTypesQueryHandler(IRequirementTypeRepository requirementTypeRepository) =>
             _requirementTypeRepository = requirementTypeRepository;
 
-        public async Task<IEnumerable<RequirementTypeDto>> Handle(GetAllRequirementTypesQuery request,
-            CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<RequirementTypeDto>>> Handle(GetAllRequirementTypesQuery request, CancellationToken cancellationToken)
         {
             var requirementTypes = await _requirementTypeRepository.GetAllAsync();
 
-            return requirementTypes.Where(rt => rt.IsVoided == false || request.IncludeVoided).Select(rt =>
+            var dtos = 
+                requirementTypes.Where(rt => rt.IsVoided == false || request.IncludeVoided).Select(rt =>
                 new RequirementTypeDto(rt.Id,
                     rt.Code,
                     rt.Title,
@@ -40,6 +39,8 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                 f.IsVoided,
                                 f.ShowPrevious,
                                 f.SortKey))))));
+
+            return new SuccessResult<IEnumerable<RequirementTypeDto>>(dtos);
         }
     }
 }

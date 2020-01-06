@@ -1,8 +1,9 @@
 ﻿using MediatR;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.SetStep
 {
-    public class SetStepCommand : IRequest<Unit>
+    public class SetStepCommand : IRequest<Result<Unit>>
     {
         public SetStepCommand(int tagId, int journeyId, int stepId)
         {
