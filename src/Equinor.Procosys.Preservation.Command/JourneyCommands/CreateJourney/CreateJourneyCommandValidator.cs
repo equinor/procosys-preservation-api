@@ -8,8 +8,6 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
     {
         public CreateJourneyCommandValidator(IJourneyRepository journeyRepository) =>
             RuleFor(x => x.Title)
-                .MinimumLength(3)
-                .MaximumLength(10)
                 .JourneyTitleIsUnique(journeyRepository);
     }
 }
