@@ -9,22 +9,35 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase, IAggregateRoot
     {
         protected readonly DbSet<TEntity> Set;
+        protected readonly IQueryable<TEntity> DefaultQuery;
 
-        protected RepositoryBase(DbSet<TEntity> set) => Set = set;
+        protected RepositoryBase(DbSet<TEntity> set)
+            : this(set, set)
+        {
+        }
 
-        public virtual void Add(TEntity entity) => Set.Add(entity);
+        protected RepositoryBase(DbSet<TEntity> set, IQueryable<TEntity> defaultQuery)
+        {
+            Set = set;
+            DefaultQuery = defaultQuery;
+        }
 
-        public Task<bool> Exists(int id) => Set.AnyAsync(x => x.Id == id);
+        public virtual void Add(TEntity entity) =>
+            Set.Add(entity);
 
-        public virtual Task<List<TEntity>> GetAllAsync() => Set.ToListAsync();
+        public Task<bool> Exists(int id) =>
+            DefaultQuery.AnyAsync(x => x.Id == id);
 
-        public virtual Task<TEntity> GetByIdAsync(int id) => Set
-                .FindAsync(id)
-                .AsTask();
+        public virtual Task<List<TEntity>> GetAllAsync() =>
+            DefaultQuery.ToListAsync();
+
+        public virtual Task<TEntity> GetByIdAsync(int id) =>
+            DefaultQuery.FirstOrDefaultAsync(x => x.Id == id);
 
         public Task<List<TEntity>> GetByIdsAsync(IEnumerable<int> ids) =>
-            Set.Where(x => ids.Contains(x.Id)).ToListAsync();
+            DefaultQuery.Where(x => ids.Contains(x.Id)).ToListAsync();
 
-        public virtual void Remove(TEntity entity) => Set.Remove(entity);
+        public virtual void Remove(TEntity entity) =>
+            Set.Remove(entity);
     }
 }
