@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                     .RequireAuthenticatedUser()
                     .Build();
                 config.Filters.Add(new AuthorizeFilter(policy));
-            }).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));;
+            }).AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
             services.AddControllers()
                 .AddFluentValidation(fv =>
