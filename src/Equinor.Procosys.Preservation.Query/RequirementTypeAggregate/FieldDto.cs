@@ -1,8 +1,10 @@
-﻿namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+
+namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
     public class FieldDto
     {
-        public FieldDto(int id, string label, string unit, bool isVoided, bool showPrevious, int sortKey)
+        public FieldDto(int id, string label, string unit, bool isVoided, bool showPrevious, int sortKey, FieldType fieldType)
         {
             Id = id;
             Label = label;
@@ -10,6 +12,7 @@
             IsVoided = isVoided;
             ShowPrevious = showPrevious;
             SortKey = sortKey;
+            FieldType = fieldType;
         }
 
         public int Id { get; }
@@ -18,5 +21,6 @@
         public bool IsVoided { get; }
         public bool ShowPrevious { get; private set; }
         public int SortKey { get; }
+        public FieldType FieldType { get; }
     }
 }
