@@ -9,6 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
     [TestClass]
     public class TagTests
     {
+        /*
         [TestMethod]
         public void ConstructorSetsPropertiesTest()
         {
@@ -47,5 +48,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
 
             Assert.ThrowsException<ArgumentNullException>(() => dut.SetStep(null));
         }
+        */
     }
 }

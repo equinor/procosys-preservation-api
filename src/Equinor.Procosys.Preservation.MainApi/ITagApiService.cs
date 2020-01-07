@@ -5,6 +5,7 @@ namespace Equinor.Procosys.Preservation.MainApi
 {
     public interface ITagApiService
     {
-        Task<IEnumerable<MainTagDto>> GetTags(string plant, string searchString);
+        Task<ProcosysTagDetails> GetTagDetails(string plant, string projectName, string tagNumber);
+        Task<IEnumerable<ProcosysTagOverview>> GetTags(string plant, string projectName, string searchString);
     }
 }
