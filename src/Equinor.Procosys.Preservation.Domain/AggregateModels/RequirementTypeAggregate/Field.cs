@@ -9,14 +9,19 @@
         {
         }
 
-        public Field(string schema, string label, string unit,
-            bool showPrevious, int sortKey)
+        public Field(string schema,
+            string label,
+            string unit,
+            bool showPrevious,
+            FieldType fieldType,
+            int sortKey)
             : base(schema)
         {
             Label = label;
             Unit = unit;
             IsVoided = false;
             ShowPrevious = showPrevious;
+            FieldType = fieldType;
             SortKey = sortKey;
         }
 
@@ -25,5 +30,6 @@
         public bool IsVoided { get; private set; }
         public bool ShowPrevious { get; private set; }
         public int SortKey { get; private set; }
+        public FieldType FieldType { get; private set; }
     }
 }
