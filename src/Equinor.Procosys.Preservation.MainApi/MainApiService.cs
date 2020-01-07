@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
@@ -10,7 +11,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.MainApi
 {
-    public class MainApiService : ITagApiService
+    public class MainApiService : ITagApiService, IPlantApiService
     {
         private readonly HttpClient _httpClient;
         private readonly IBearerTokenProvider _bearerTokenProvider;
@@ -49,6 +50,11 @@ namespace Equinor.Procosys.Preservation.MainApi
 
         public async Task<ProcosysTagDetails> GetTagDetails(string plant, string projectName, string tagNumber)
         {
+            if (!await IsPlantValidAsync(plant))
+            {
+                throw new ArgumentException($"Invalid plant: {plant}");
+            }
+
             var tags = await GetTags(plant, projectName, tagNumber);
             if (tags.Count() != 1)
             {
@@ -67,6 +73,11 @@ namespace Equinor.Procosys.Preservation.MainApi
 
         public async Task<IEnumerable<ProcosysTagOverview>> GetTags(string plant, string projectName, string startsWithTagNo) // TODO: Use paging to get all results
         {
+            if (!await IsPlantValidAsync(plant))
+            {
+                throw new ArgumentException($"Invalid plant: {plant}");
+            }
+
             var url = $"Tag/Search?plantid=PCS${plant}&startsWithTagNo={startsWithTagNo}&projectName={projectName}&api-version={ApiVersion}";
             var tagSearchResult = await QueryAndDeserialize<ProcosysTagSearchResult>(url);
             if (tagSearchResult == null)
@@ -74,6 +85,14 @@ namespace Equinor.Procosys.Preservation.MainApi
                 throw new InvalidResultException($"Tag search returned no data. URL: {url}");
             }
             return tagSearchResult.Items;
+        }
+
+        public Task<IEnumerable<ProcosysPlant>> GetPlants() => QueryAndDeserialize<IEnumerable<ProcosysPlant>>($"Plants?api-version={ApiVersion}");
+
+        public async Task<bool> IsPlantValidAsync(string plant)
+        {
+            var plants = await GetPlants();
+            return plants.Any(p => p.Id == $"PCS${plant}");
         }
     }
 }

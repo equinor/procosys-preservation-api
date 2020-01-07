@@ -27,7 +27,8 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
                 options.UseSqlServer(dbConnectionString);
             });
 
-            services.AddHttpClient<ITagApiService, MainApiService>(client =>
+            // Transient
+            services.AddHttpClient<MainApiService>(client =>
             {
                 client.BaseAddress = new Uri(mainApiAddress);
             });
@@ -35,6 +36,8 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             // Transient - Created each time it is requested from the service container
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IPlantProvider, PlantProvider>();
+            services.AddTransient<ITagApiService>(x => x.GetRequiredService<MainApiService>());
+            services.AddTransient<IPlantApiService>(x => x.GetRequiredService<MainApiService>());
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();
