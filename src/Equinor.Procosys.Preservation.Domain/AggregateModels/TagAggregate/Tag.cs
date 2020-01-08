@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public string PurchaseOrderNumber { get; private set; }
         public int StepId { get; private set; }
         public string TagFunctionCode { get; private set; }
-        public string TagNo { get; private set; }
+        public string TagNumber { get; private set; }
 
         protected Tag()
             : base(null)
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
                 throw new ArgumentNullException(nameof(step));
             }
 
-            TagNo = tagNumber;
+            TagNumber = tagNumber;
             ProjectNumber = projectNumber;
             Description = description;
             AreaCode = areaCode;
