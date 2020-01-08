@@ -46,14 +46,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 _plantProvider.Plant,
                 request.TagNo,
                 request.ProjectNo,
-                journey.Steps.FirstOrDefault(step => step.Id == request.StepId),
                 tagDetails.Description,
-                tagDetails.McPkgNo,
-                tagDetails.TagFunctionCode,
                 tagDetails.AreaCode,
+                tagDetails.CallOffNo,
                 tagDetails.DisciplineCode,
+                tagDetails.McPkgNo,
                 tagDetails.PurchaseOrderNo,
-                tagDetails.CallOffNo);
+                tagDetails.TagFunctionCode,
+                journey.Steps.FirstOrDefault(step => step.Id == request.StepId));
             _tagRepository.Add(tagToAdd);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
