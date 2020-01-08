@@ -19,27 +19,28 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         {
             var requirementTypes = await _requirementTypeRepository.GetAllAsync();
 
-            var dtos = 
-                requirementTypes.Where(rt => rt.IsVoided == false || request.IncludeVoided).Select(rt =>
-                new RequirementTypeDto(rt.Id,
-                    rt.Code,
-                    rt.Title,
-                    rt.IsVoided,
-                    rt.SortKey,
-                    rt.RequirementDefinitions.Where(rd => rd.IsVoided == false || request.IncludeVoided).Select(rd =>
-                        new RequirementDefinitionDto(rd.Id,
-                            rd.Title,
-                            rd.IsVoided,
-                            rd.DefaultInterval,
-                            rd.SortKey,
-                            rd.Fields.Where(f => f.IsVoided == false || request.IncludeVoided).Select(f => new FieldDto(
-                                f.Id,
-                                f.Label,
-                                f.Unit,
-                                f.IsVoided,
-                                f.ShowPrevious,
-                                f.SortKey,
-                                f.FieldType))))));
+            var dtos =
+                requirementTypes.Where(rt => !rt.IsVoided || request.IncludeVoided).Select(rt
+                    => new RequirementTypeDto(rt.Id,
+                        rt.Code,
+                        rt.Title,
+                        rt.IsVoided,
+                        rt.SortKey,
+                        rt.RequirementDefinitions.Where(rd => !rd.IsVoided || request.IncludeVoided).Select(rd
+                            => new RequirementDefinitionDto(rd.Id,
+                                rd.Title,
+                                rd.IsVoided,
+                                rd.DefaultInterval,
+                                rd.SortKey,
+                                rd.Fields.Where(f => !f.IsVoided || request.IncludeVoided).Select(f
+                                    => new FieldDto(
+                                        f.Id,
+                                        f.Label,
+                                        f.Unit,
+                                        f.IsVoided,
+                                        f.ShowPrevious,
+                                        f.SortKey,
+                                        f.FieldType))))));
 
             return new SuccessResult<IEnumerable<RequirementTypeDto>>(dtos);
         }

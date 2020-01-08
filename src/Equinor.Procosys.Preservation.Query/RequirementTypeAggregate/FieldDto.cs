@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public string Label { get; }
         public string Unit { get; }
         public bool IsVoided { get; }
-        public bool ShowPrevious { get; private set; }
+        public bool ShowPrevious { get; }
         public int SortKey { get; }
         public FieldType FieldType { get; }
     }

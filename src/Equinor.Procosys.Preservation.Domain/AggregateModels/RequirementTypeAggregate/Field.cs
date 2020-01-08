@@ -19,7 +19,6 @@
         {
             Label = label;
             Unit = unit;
-            IsVoided = false;
             ShowPrevious = showPrevious;
             FieldType = fieldType;
             SortKey = sortKey;

@@ -18,7 +18,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             : base(schema)
         {
             Title = title;
-            IsVoided = false;
             DefaultInterval = defaultInterval;
             SortKey = sortKey;
         }
@@ -29,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public int SortKey { get; private set; }
         public IReadOnlyCollection<Field> Fields => _fields.AsReadOnly();
 
-        public void AddRequirementDefinition(Field field)
+        public void AddField(Field field)
         {
             if (field == null)
             {

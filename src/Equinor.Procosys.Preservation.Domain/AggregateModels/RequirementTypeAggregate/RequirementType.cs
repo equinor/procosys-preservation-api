@@ -20,7 +20,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
             Code = code;
             Title = title;
-            IsVoided = false;
             SortKey = sortKey;
         }
 
