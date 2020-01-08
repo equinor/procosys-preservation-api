@@ -39,8 +39,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             string mcPkcNumber,
             string purchaseOrderNumber,
             string tagFunctionCode,
-            Step step
-            )
+            Step step)
             : base(schema)
         {
             if (step == null)
