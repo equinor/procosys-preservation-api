@@ -27,8 +27,10 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
                 options.UseSqlServer(dbConnectionString);
             });
 
+            services.AddHttpClient();
+
             // Transient
-            services.AddHttpClient<MainApiService>(client =>
+            services.AddHttpClient<MainApiService>(MainApiService.Name, client =>
             {
                 client.BaseAddress = new Uri(mainApiAddress);
             });

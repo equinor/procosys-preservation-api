@@ -13,27 +13,31 @@ namespace Equinor.Procosys.Preservation.MainApi
 {
     public class MainApiService : ITagApiService, IPlantApiService
     {
-        private readonly HttpClient _httpClient;
+        public static string Name => "MainApi";
+
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IBearerTokenProvider _bearerTokenProvider;
         private readonly ILogger<MainApiService> _logger;
         private const string ApiVersion = "4.0";
 
+
         public MainApiService(
-            HttpClient httpClient,
+            IHttpClientFactory httpClientFactory,
             IBearerTokenProvider bearerTokenProvider,
             ILogger<MainApiService> logger)
         {
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _bearerTokenProvider = bearerTokenProvider;
             _logger = logger;
         }
 
         private async Task<T> QueryAndDeserialize<T>(string url)
         {
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerTokenProvider.GetBearerToken());
+            var httpClient = _httpClientFactory.CreateClient(Name);
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerTokenProvider.GetBearerToken());
 
             var stopWatch = Stopwatch.StartNew();
-            var response = await _httpClient.GetAsync(url);
+            var response = await httpClient.GetAsync(url);
             stopWatch.Stop();
 
             if (!response.IsSuccessStatusCode)
