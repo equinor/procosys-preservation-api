@@ -37,6 +37,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             string calloffNumber,
             string disciplineCode,
             string mcPkcNumber,
+            string commPkgNumber,
             string purchaseOrderNumber,
             string tagFunctionCode,
             Step step)
@@ -54,6 +55,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             CalloffNumber = calloffNumber;
             DisciplineCode = disciplineCode;
             McPkcNumber = mcPkcNumber;
+            CommPkgNumber = commPkgNumber;
             PurchaseOrderNumber = purchaseOrderNumber;
             TagFunctionCode = tagFunctionCode;
             StepId = step.Id;

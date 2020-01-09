@@ -40,17 +40,18 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 return new NotFoundResult<int>(Strings.EntityNotFound(nameof(Journey), request.JourneyId));
             }
 
-            var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectNo, request.TagNo);
+            var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectNumber, request.TagNumber);
 
             var tagToAdd = new Tag(
                 _plantProvider.Plant,
-                request.TagNo,
-                request.ProjectNo,
+                request.TagNumber,
+                request.ProjectNumber,
                 tagDetails.Description,
                 tagDetails.AreaCode,
                 tagDetails.CallOffNo,
                 tagDetails.DisciplineCode,
                 tagDetails.McPkgNo,
+                tagDetails.CommPkgNo,
                 tagDetails.PurchaseOrderNo,
                 tagDetails.TagFunctionCode,
                 journey.Steps.FirstOrDefault(step => step.Id == request.StepId));
