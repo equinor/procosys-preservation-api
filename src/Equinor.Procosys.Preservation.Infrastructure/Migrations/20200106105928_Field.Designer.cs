@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200106105928_Field")]
+    partial class Field
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,12 +102,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("FieldType")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Info");
-
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 
@@ -114,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.Property<int>("RequirementDefinitionId")
+                    b.Property<int?>("RequirementDefinitionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Schema")
@@ -138,8 +134,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("RequirementDefinitionId");
 
                     b.ToTable("Fields");
-
-                    b.HasCheckConstraint("constraint_field_check_valid_fieldtype", "FieldType in ('Info','Number','CheckBox','Attachment')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", b =>
@@ -155,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 
-                    b.Property<int>("RequirementTypeId")
+                    b.Property<int?>("RequirementTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Schema")
@@ -289,18 +283,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 {
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", null)
                         .WithMany("Fields")
-                        .HasForeignKey("RequirementDefinitionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RequirementDefinitionId");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", b =>
                 {
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType", null)
                         .WithMany("RequirementDefinitions")
-                        .HasForeignKey("RequirementTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("RequirementTypeId");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Tag", b =>

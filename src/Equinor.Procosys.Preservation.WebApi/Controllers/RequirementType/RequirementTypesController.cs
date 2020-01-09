@@ -16,9 +16,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
         public RequirementTypesController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RequirementTypeDto>>> GetRequirementTypes()
+        public async Task<ActionResult<IEnumerable<RequirementTypeDto>>> GetRequirementTypes([FromQuery] bool includeVoided = false)
         {
-            var result = await _mediator.Send(new GetAllRequirementTypesQuery());
+            var result = await _mediator.Send(new GetAllRequirementTypesQuery(includeVoided));
             return this.FromResult(result);
         }
 
