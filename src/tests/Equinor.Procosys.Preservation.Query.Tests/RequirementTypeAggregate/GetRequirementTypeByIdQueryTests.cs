@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 {
     [TestClass]
-    public class GetRequirementTypesByIdQueryTests
+    public class GetRequirementTypeByIdQueryTests
     {
         [TestMethod]
         public void ConstructorSetsPropertiesTest()

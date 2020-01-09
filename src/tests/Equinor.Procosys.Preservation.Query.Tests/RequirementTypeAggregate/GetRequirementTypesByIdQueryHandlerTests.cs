@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllNonVoidedRequirementTypesQueryTest()
+        public void HandleGetRequirementTypeByIdQueryTest()
         {
             var handler = new GetRequirementTypeByIdQueryHandler(_repoMock.Object);
 

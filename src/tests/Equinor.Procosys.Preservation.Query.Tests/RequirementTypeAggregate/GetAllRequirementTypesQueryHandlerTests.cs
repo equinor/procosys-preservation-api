@@ -98,9 +98,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             var requirementDefinitions = requirementTypes.First().RequirementDefinitions.ToList();
             var fields = requirementDefinitions.First().Fields.ToList();
 
-            Assert.IsTrue(requirementTypes.Count > 1);
-            Assert.IsTrue(requirementDefinitions.Count > 1);
-            Assert.IsTrue(fields.Count > 1);
+            Assert.AreEqual(2, requirementTypes.Count);
+            Assert.AreEqual(2, requirementDefinitions.Count);
+            Assert.AreEqual(2, fields.Count);
         }
     }
 }
