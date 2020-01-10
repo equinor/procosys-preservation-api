@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
@@ -20,5 +21,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public int DefaultInterval { get; }
         public int SortKey { get; }
         public IEnumerable<FieldDto> Fields { get; }
+
+        public bool NeedUserInput => Fields != null && Fields.Any(f => f.NeedUserInput);
     }
 }
