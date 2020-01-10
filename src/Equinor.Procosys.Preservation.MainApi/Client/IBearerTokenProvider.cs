@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.MainApi
+﻿namespace Equinor.Procosys.Preservation.MainApi.Client
 {
     public interface IBearerTokenProvider
     {

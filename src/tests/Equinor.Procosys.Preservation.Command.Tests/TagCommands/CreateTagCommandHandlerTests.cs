@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.MainApi;
+using Equinor.Procosys.Preservation.MainApi.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

@@ -4,13 +4,15 @@ using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Equinor.Procosys.Preservation.MainApi;
+using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -30,7 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddHttpClient();
 
             // Transient
-            services.AddHttpClient<MainApiService>(MainApiService.Name, client =>
+            services.AddHttpClient<MainApiClient>(MainApiClient.Name, client =>
             {
                 client.BaseAddress = new Uri(mainApiAddress);
             });
@@ -38,8 +40,9 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             // Transient - Created each time it is requested from the service container
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IPlantProvider, PlantProvider>();
-            services.AddTransient<ITagApiService>(x => x.GetRequiredService<MainApiService>());
-            services.AddTransient<IPlantApiService>(x => x.GetRequiredService<MainApiService>());
+            services.AddTransient<IMainApiClient>(x => x.GetRequiredService<MainApiClient>());
+            services.AddTransient<ITagApiService, MainApiTagService>();
+            services.AddTransient<IPlantApiService, MainApiPlantService>();
 
             // Scoped - Created once per client request (connection)
             services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();

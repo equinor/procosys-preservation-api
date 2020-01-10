@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Equinor.Procosys.Preservation.MainApi
+namespace Equinor.Procosys.Preservation.MainApi.Tag
 {
     public class ProcosysTagSearchResult
     {
         public int MaxAvailable { get; set; }
-        public IEnumerable<ProcosysTagOverview> Items { get; set; }
+        public List<ProcosysTagOverview> Items { get; set; }
 
         public override string ToString() => $"{Items.Count()} of {MaxAvailable} available tags";
     }

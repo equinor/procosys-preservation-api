@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
-using Equinor.Procosys.Preservation.MainApi;
+using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using ServiceResult;
 
