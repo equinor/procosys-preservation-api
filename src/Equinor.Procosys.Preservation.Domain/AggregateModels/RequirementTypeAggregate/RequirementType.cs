@@ -38,5 +38,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
             _requirementDefinitions.Add(requirementDefinition);
         }
+
+        public void Void() => IsVoided = true;
+        public void UnVoid() => IsVoided = false;
     }
 }

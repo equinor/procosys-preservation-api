@@ -5,7 +5,7 @@
         public const int LabelLengthMax = 255;
         public const int UnitLengthMax = 32;
         
-        protected Field(string schema) : base(schema)
+        protected Field() : base(null)
         {
         }
 
@@ -30,5 +30,8 @@
         public bool ShowPrevious { get; private set; }
         public int SortKey { get; private set; }
         public FieldType FieldType { get; private set; }
+
+        public void Void() => IsVoided = true;
+        public void UnVoid() => IsVoided = false;
     }
 }
