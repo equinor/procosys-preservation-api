@@ -23,6 +23,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
             builder.Property(x => x.TagNo)
                 .HasMaxLength(Tag.TagNoLengthMax)
                 .IsRequired();
+
+            builder
+                .HasMany(x => x.Requirements)
+                .WithOne()
+                .IsRequired();
         }
     }
 }

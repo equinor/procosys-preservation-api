@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 {
     public class Tag : SchemaEntityBase, IAggregateRoot
     {
+        private readonly List<Requirement> _requirements = new List<Requirement>();
+
         public const int DescriptionLengthMax = 1000;
         public const int TagNoLengthMax = 255;
         public const int ProjectNoLengthMax = 255;
@@ -14,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public string ProjectNo { get; private set; }
         public string TagNo { get; private set; }
         public int StepId { get; set; }
+        public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
 
         protected Tag()
             : base(null)
@@ -42,6 +46,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             }
 
             StepId = step.Id;
+        }
+
+        public void AddRequirement(Requirement requirement)
+        {
+            if (requirement == null)
+            {
+                throw new ArgumentNullException(nameof(requirement));
+            }
+
+            _requirements.Add(requirement);
         }
     }
 }
