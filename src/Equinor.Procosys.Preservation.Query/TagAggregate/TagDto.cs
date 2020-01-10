@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Equinor.Procosys.Preservation.Query.TagAggregate
 {
@@ -6,6 +7,11 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
     {
         public TagDto(int id, IEnumerable<RequirementDto> requirements)
         {
+            if (requirements == null)
+            {
+                throw new ArgumentNullException(nameof(requirements));
+            }
+            
             Id = id;
             Requirements = requirements;
         }

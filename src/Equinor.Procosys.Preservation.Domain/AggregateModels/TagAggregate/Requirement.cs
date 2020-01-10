@@ -8,8 +8,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         protected Requirement()
             : base(null)
         {
-            
         }
+
         public Requirement(string schema, int interval, RequirementDefinition requirementDefinition)
             : base(schema)
         {
