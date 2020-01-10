@@ -1,6 +1,7 @@
 ﻿using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .IsRequired();
 
             builder.HasOne<Mode>();
+            builder.HasOne<Responsible>();
             builder.HasMany<Tag>();
         }
     }
