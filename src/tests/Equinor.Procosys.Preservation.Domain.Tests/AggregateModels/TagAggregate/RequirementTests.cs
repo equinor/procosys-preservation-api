@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             var rd = new Mock<RequirementDefinition>();
             rd.SetupGet(x => x.Id).Returns(3);
 
-            var req = new Requirement("SchemaA", 14, rd.Object);
+            var req = new Requirement("SchemaA", 24, rd.Object);
 
             Assert.AreEqual("SchemaA", req.Schema);
             Assert.AreEqual(rd.Object.Id, req.RequirementDefinitionId);
