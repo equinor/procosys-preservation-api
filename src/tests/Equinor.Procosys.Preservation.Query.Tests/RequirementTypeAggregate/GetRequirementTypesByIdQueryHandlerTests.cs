@@ -33,10 +33,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             _checkboxField = new Field("SchemaC", "LabelC", "UnitC", false, FieldType.CheckBox, 30);
             _attachmentField = new Field("SchemaD", "LabelD", "UnitD", false, FieldType.Attachment, 40);
 
-            _requirementDefWithInfo = new RequirementDefinition("SchemaA", "TitleA", 8, 110);
-            _requirementDefWithNumber = new RequirementDefinition("SchemaB", "TitleB", 8, 120);
-            _requirementDefWithCheckbox = new RequirementDefinition("SchemaC", "TitleC", 8, 130);
-            _requirementDefWithAttachment = new RequirementDefinition("SchemaD", "TitleD", 8, 140);
+            _requirementDefWithInfo = new RequirementDefinition("SchemaA", "DefWithInfo", 8, 140);
+            _requirementDefWithNumber = new RequirementDefinition("SchemaB", "DefWithNumber", 8, 130);
+            _requirementDefWithCheckbox = new RequirementDefinition("SchemaC", "DefWithCheckbox", 8, 120);
+            _requirementDefWithAttachment = new RequirementDefinition("SchemaD", "DefWithAttachment", 8, 110);
 
             _requirementType = new RequirementType("SchemaA", "CodeA", "TitleA", 10);
 
@@ -69,16 +69,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             var requirementDefinitions = requirementType.RequirementDefinitions.ToList();
             Assert.AreEqual(4, requirementDefinitions.Count);
 
-            var requirementDefWithInfo = requirementDefinitions[0];
+            var requirementDefWithInfo = requirementDefinitions.Single(rd => rd.Title == "DefWithInfo");
             AssertRequirementDefinition(requirementDefWithInfo, _requirementDefWithInfo, _infoField, false);
 
-            var requirementDefWithNumber = requirementDefinitions[1];
+            var requirementDefWithNumber = requirementDefinitions.Single(rd => rd.Title == "DefWithNumber");
             AssertRequirementDefinition(requirementDefWithNumber, _requirementDefWithNumber, _numberField, true);
 
-            var requirementDefWithCheckbox = requirementDefinitions[2];
+            var requirementDefWithCheckbox = requirementDefinitions.Single(rd => rd.Title == "DefWithCheckbox");
             AssertRequirementDefinition(requirementDefWithCheckbox, _requirementDefWithCheckbox, _checkboxField, true);
 
-            var requirementDefWithAttachment = requirementDefinitions[3];
+            var requirementDefWithAttachment = requirementDefinitions.Single(rd => rd.Title == "DefWithAttachment");
             AssertRequirementDefinition(requirementDefWithAttachment, _requirementDefWithAttachment, _attachmentField, true);
         }
 

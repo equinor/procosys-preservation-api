@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
@@ -6,12 +8,16 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
     {
         public RequirementTypeDto(int id, string code, string title, bool isVoided, int sortKey, IEnumerable<RequirementDefinitionDto> requirementDefinitions)
         {
+            if (requirementDefinitions == null)
+            {
+                throw new ArgumentNullException(nameof(requirementDefinitions));
+            }
             Id = id;
             Code = code;
             Title = title;
             IsVoided = isVoided;
             SortKey = sortKey;
-            RequirementDefinitions = requirementDefinitions;
+            RequirementDefinitions = requirementDefinitions.OrderBy(rd => rd.NeedUserInput).ThenBy(rd => rd.SortKey);
         }
 
         public int Id { get; }
