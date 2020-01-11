@@ -16,11 +16,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .NotEmpty()
                 .MaximumLength(Tag.ProjectNoLengthMax);
 
-            RuleFor(tag => tag.RequirementDefinitionIds)
+            RuleFor(tag => tag.Requirements)
                 .NotNull();
 
-            RuleFor(tag => tag.RequirementDefinitionIds.Count())
-                .GreaterThan(1);
+            RuleFor(tag => tag.Requirements.Count())
+                .GreaterThan(0);
         }
     }
 }

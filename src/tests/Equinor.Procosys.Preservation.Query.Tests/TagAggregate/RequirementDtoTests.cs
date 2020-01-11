@@ -9,9 +9,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
         [TestMethod]
         public void ConstructorSetsPropertiesTest()
         {
-            var r = new RequirementDto(1, true, 4);
+            var r = new RequirementDto(1, 2, true, 4);
 
             Assert.AreEqual(1, r.Id);
+            Assert.AreEqual(2, r.RequirementDefinitionId);
             Assert.AreEqual(4, r.Interval);
             Assert.IsTrue(r.IsVoided);
         }

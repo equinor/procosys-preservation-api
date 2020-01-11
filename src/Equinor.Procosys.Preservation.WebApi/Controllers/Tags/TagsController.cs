@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
@@ -26,7 +27,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpPost]
         public async Task<IActionResult> CreateTag([FromBody] CreateTagDto dto)
         {
-            var tagId = await _mediator.Send(new CreateTagCommand(dto.TagNo, dto.ProjectNo, dto.JourneyId, dto.StepId, dto.RequirementDefinitionIds));
+            var tagId = await _mediator.Send(
+                new CreateTagCommand(dto.TagNo,
+                    dto.ProjectNo,
+                    dto.StepId,
+                    dto.Requirements.Select(r =>
+                        new Command.TagCommands.CreateTag.RequirementDto(
+                            r.RequirementDefinitionId,
+                            r.Interval))));
             return Ok(tagId);
         }
 

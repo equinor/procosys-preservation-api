@@ -12,10 +12,18 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         {
         }
 
-        public Task<Journey> GetByStepId(int stepId) =>
+        public Task<Journey> GetJourneyByStepIdAsync(int stepId) =>
             DefaultQuery
-            .Where(journey => journey.Steps.Any(step => step.Id == stepId))
-            .FirstOrDefaultAsync();
+                .Where(journey => journey.Steps.Any(step => step.Id == stepId))
+                .FirstOrDefaultAsync();
+
+        public Step GetStepByStepId(int stepId)
+        {
+            var journey = GetJourneyByStepIdAsync(stepId).Result;
+            return journey
+                ?.Steps
+                .FirstOrDefault(step => step.Id == stepId);
+        }
 
         public Task<Journey> GetByTitleAsync(string title) =>
             DefaultQuery

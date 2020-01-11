@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators
         {
             if (context.PropertyValue is int stepId)
             {
-                var journey = await _journeyRepository.GetByStepId(stepId);
+                var journey = await _journeyRepository.GetJourneyByStepIdAsync(stepId);
                 if (journey != null)
                 {
                     return true;

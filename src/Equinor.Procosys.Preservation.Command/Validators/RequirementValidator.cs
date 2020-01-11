@@ -10,6 +10,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators
             => _requirementTypeRepository = requirementTypeRepository;
 
         public bool Exists(int requirementDefinitionId)
-            => _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirementDefinitionId).Result != null;
+            => _requirementTypeRepository.GetRequirementDefinitionById(requirementDefinitionId) != null;
     }
 }

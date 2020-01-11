@@ -39,28 +39,34 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
         public async Task<Result<int>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
-            var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
-            if (journey == null)
+            var step = _journeyRepository.GetStepByStepId(request.StepId);
+            if (step == null)
             {
-                return new NotFoundResult<int>(Strings.EntityNotFound(nameof(Journey), request.JourneyId));
+                return new NotFoundResult<int>(Strings.EntityNotFound(nameof(Step), request.StepId));
             }
 
             var requirements = new List<Requirement>();
-            foreach (var requirementDefinitionId in request.RequirementDefinitionIds)
+            foreach (var requirement in request.Requirements)
             {
-                var requirementDefinition = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirementDefinitionId);
+                var requirementDefinition =
+                    _requirementTypeRepository.GetRequirementDefinitionById(requirement.RequirementDefinitionId);
                 if (requirementDefinition == null)
                 {
-                    return new NotFoundResult<int>(Strings.EntityNotFound(nameof(RequirementDefinition),
-                        requirementDefinitionId));
+                    return new NotFoundResult<int>(Strings.EntityNotFound(
+                        nameof(RequirementDefinition),
+                        requirement.RequirementDefinitionId));
                 }
 
-                requirements.Add(new Requirement(_plantProvider.Plant, requirementDefinition.DefaultInterval, requirementDefinition));
+                requirements.Add(new Requirement(_plantProvider.Plant, requirement.Interval, requirementDefinition));
             }
 
             var result = await _tagApiService.GetTags(_plantProvider.Plant, "1"); //TODO: Use this to enrich the tag.
 
-            var tagToAdd = new Tag(_plantProvider.Plant, request.TagNo, request.ProjectNo, journey.Steps.FirstOrDefault(step => step.Id == request.StepId), requirements);
+            var tagToAdd = new Tag(_plantProvider.Plant, 
+                request.TagNo, 
+                request.ProjectNo,
+                step,
+                requirements);
             _tagRepository.Add(tagToAdd);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
