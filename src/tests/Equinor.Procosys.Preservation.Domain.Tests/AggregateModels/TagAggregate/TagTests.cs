@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,43 +10,74 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
     [TestClass]
     public class TagTests
     {
-        [TestMethod]
-        public void ConstructorSetsPropertiesTest()
-        {
-            var step = new Mock<Step>();
-            step.SetupGet(x => x.Id).Returns(3);
-            var dut = new Tag("SchemaA", "TagNoA", "ProjectNoA", step.Object, "DescA");
+        private Mock<Step> _stepMock;
+        private Mock<Requirement> _requirementMock;
+        // ReSharper disable once CollectionNeverUpdated.Local
+        readonly List<Requirement> _emptyRequirements = new List<Requirement>();
+        readonly List<Requirement> _requirements = new List<Requirement>();
 
-            Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual("TagNoA", dut.TagNo);
-            Assert.AreEqual("ProjectNoA", dut.ProjectNo);
-            Assert.AreEqual(step.Object.Id, dut.StepId);
-            Assert.AreEqual("DescA", dut.Description);
+        [TestInitialize]
+        public void Setup()
+        {
+            _stepMock = new Mock<Step>();
+            _stepMock.SetupGet(x => x.Id).Returns(3);
+            _requirementMock = new Mock<Requirement>();
+            _requirements.Add(_requirementMock.Object);
         }
 
         [TestMethod]
-        public void ConstructorThrowsExceptionIsStepIsNotSetTest() => Assert.ThrowsException<ArgumentNullException>(() => new Tag("", "", "", null, ""));
+        public void ConstructorSetsPropertiesTest()
+        {
+            var tag = new Tag("SchemaA", "TagNoA", "ProjectNoA", _stepMock.Object, _requirements);
+
+            Assert.AreEqual("SchemaA", tag.Schema);
+            Assert.AreEqual("TagNoA", tag.TagNo);
+            Assert.AreEqual("ProjectNoA", tag.ProjectNo);
+            Assert.AreEqual(_stepMock.Object.Id, tag.StepId);
+            Assert.AreEqual(1, tag.Requirements.Count);
+        }
+
+        [TestMethod]
+        public void ConstructorThrowsExceptionIfStepIsNotSetTest()
+            => Assert.ThrowsException<ArgumentNullException>(()
+                => new Tag("", "", "", null, _requirements));
+
+        [TestMethod]
+        public void ConstructorThrowsExceptionIfRequirementIsNotSetTest()
+            => Assert.ThrowsException<ArgumentNullException>(()
+                => new Tag("", "", "", _stepMock.Object, null));
+
+        [TestMethod]
+        public void ConstructorThrowsExceptionIfNoRequirementsTest()
+            => Assert.ThrowsException<Exception>(()
+                => new Tag("", "", "", _stepMock.Object, _emptyRequirements));
 
         [TestMethod]
         public void SetStepSetsStepIdTest()
         {
-            var step = new Mock<Step>();
-            var dut = new Tag("", "", "", step.Object, "");
+            var tag = new Tag("", "", "", _stepMock.Object, _requirements);
 
             var newStep = new Mock<Step>();
-            newStep.SetupGet(x => x.Id).Returns(3);
-            dut.SetStep(newStep.Object);
+            newStep.SetupGet(x => x.Id).Returns(4);
+            tag.SetStep(newStep.Object);
 
-            Assert.AreEqual(newStep.Object.Id, dut.StepId);
+            Assert.AreEqual(newStep.Object.Id, tag.StepId);
         }
 
         [TestMethod]
         public void SetStepThrowsExceptionIfStepIsNullTest()
         {
-            var step = new Mock<Step>();
-            var dut = new Tag("", "", "", step.Object, "");
+            var tag = new Tag("", "", "", _stepMock.Object, _requirements);
 
-            Assert.ThrowsException<ArgumentNullException>(() => dut.SetStep(null));
+            Assert.ThrowsException<ArgumentNullException>(() => tag.SetStep(null));
+        }
+
+        [TestMethod]
+        public void AddRequirementThrowsExceptionIfRequirementIsNullTest()
+        {
+            var tag = new Tag("", "", "", _stepMock.Object, _requirements);
+
+            Assert.ThrowsException<ArgumentNullException>(() => tag.AddRequirement(null));
         }
     }
 }

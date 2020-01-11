@@ -1,6 +1,7 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -47,6 +48,8 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IJourneyRepository, JourneyRepository>();
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
             services.AddScoped<IRequirementTypeRepository, RequirementTypeRepository>();
+            
+            services.AddScoped<IRequirementValidator, RequirementValidator>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();

@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpPost]
         public async Task<IActionResult> CreateTag([FromBody] CreateTagDto dto)
         {
-            var tagId = await _mediator.Send(new CreateTagCommand(dto.TagNo, dto.ProjectNo, dto.JourneyId, dto.StepId, dto.Description));
+            var tagId = await _mediator.Send(new CreateTagCommand(dto.TagNo, dto.ProjectNo, dto.JourneyId, dto.StepId, dto.RequirementDefinitionIds));
             return Ok(tagId);
         }
 

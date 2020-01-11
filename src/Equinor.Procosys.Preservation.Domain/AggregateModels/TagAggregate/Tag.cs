@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
@@ -13,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public const int ProjectNoLengthMax = 255;
 
         public string Description { get; set; }
-        public bool IsAreaTag { get; private set; }
+        public bool IsAreaTag { get; set; }
         public string ProjectNo { get; private set; }
         public string TagNo { get; private set; }
         public int StepId { get; set; }
@@ -24,18 +25,28 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         {
         }
 
-        public Tag(string schema, string tagNo, string projectNo, Step step, string description)
+        public Tag(string schema, string tagNo, string projectNo, Step step, IEnumerable<Requirement> requirements)
             : base(schema)
         {
             if (step == null)
             {
                 throw new ArgumentNullException(nameof(step));
             }
+            if (requirements == null)
+            {
+                throw new ArgumentNullException(nameof(requirements));
+            }
+
+            var reqList = requirements.ToList();
+            if (reqList.Count < 1)
+            {
+                throw new Exception("Must have at least one requirement");
+            }
 
             TagNo = tagNo;
             ProjectNo = projectNo;
             StepId = step.Id;
-            Description = description;
+            _requirements.AddRange(reqList);
         }
 
         public void SetStep(Step step)

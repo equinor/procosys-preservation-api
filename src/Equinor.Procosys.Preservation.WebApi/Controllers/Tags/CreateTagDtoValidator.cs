@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+﻿using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
@@ -7,9 +8,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     {
         public CreateTagDtoValidator()
         {
-            RuleFor(x => x.Description)
-                .MaximumLength(Tag.DescriptionLengthMax);
-
             RuleFor(x => x.TagNo)
                 .NotEmpty()
                 .MaximumLength(Tag.TagNoLengthMax);
@@ -17,6 +15,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             RuleFor(x => x.ProjectNo)
                 .NotEmpty()
                 .MaximumLength(Tag.ProjectNoLengthMax);
+
+            RuleFor(tag => tag.RequirementDefinitionIds)
+                .NotNull();
+
+            RuleFor(tag => tag.RequirementDefinitionIds.Count())
+                .GreaterThan(1);
         }
     }
 }
