@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             RuleForEach(tag => tag.Requirements)
                 .Must(BeAnExistingRequirement)
-                .WithMessage("Requirement don't exists");
+                .WithMessage((tag, req) => $"Requirement {req.RequirementDefinitionId} for tag {tag.TagNo} don't exists");
 
             bool BeAnExistingRequirement(RequirementDto requirement)
                 => requirementValidator.Exists(requirement.RequirementDefinitionId);
