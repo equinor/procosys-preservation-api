@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             _repoMock = new Mock<IRequirementTypeRepository>();
 
-            _fieldVoided = new Field("SchemaB", "LabelB", "UnitB", false, FieldType.Number, 20);
+            _fieldVoided = new Field("SchemaB", "LabelB", FieldType.Number, 20, "UnitB", false);
             _fieldVoided.Void();
 
             _requirementDefinitionVoided = new RequirementDefinition("SchemaB", "TitleB", 8, 20);

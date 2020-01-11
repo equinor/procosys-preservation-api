@@ -25,8 +25,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             _repoMock = new Mock<IRequirementTypeRepository>();
 
-            _field = new Field("SchemaA", "LabelA", "UnitA", true, FieldType.Attachment, 10);
-            _fieldVoided = new Field("SchemaB", "LabelB", "UnitB", false, FieldType.Number, 20);
+            _field = new Field("SchemaA", "LabelA", FieldType.Attachment, 10, "UnitA", true);
+            _fieldVoided = new Field("SchemaB", "LabelB", FieldType.Number, 20, "UnitB", false);
             _fieldVoided.Void();
 
             _requirementDefinition = new RequirementDefinition("SchemaA", "TitleA", 4, 10);

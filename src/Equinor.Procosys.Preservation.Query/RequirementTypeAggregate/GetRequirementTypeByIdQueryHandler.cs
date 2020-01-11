@@ -35,11 +35,11 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                         rd.Fields.Select(f => new FieldDto(
                             f.Id,
                             f.Label,
-                            f.Unit,
                             f.IsVoided,
-                            f.ShowPrevious,
                             f.SortKey,
-                            f.FieldType)))));
+                            f.FieldType,
+                            f.Unit,
+                            f.ShowPrevious)))));
 
             return new SuccessResult<RequirementTypeDto>(dto);
         }
