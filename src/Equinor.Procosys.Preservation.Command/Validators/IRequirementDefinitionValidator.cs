@@ -1,6 +1,6 @@
 ﻿namespace Equinor.Procosys.Preservation.Command.Validators
 {
-    public interface IRequirementValidator
+    public interface IRequirementDefinitionValidator
     {
         bool Exists(int requirementDefinitionId);
     }

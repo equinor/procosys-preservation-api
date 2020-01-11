@@ -2,11 +2,11 @@
 
 namespace Equinor.Procosys.Preservation.Command.Validators
 {
-    public class RequirementValidator : IRequirementValidator
+    public class RequirementDefinitionValidator : IRequirementDefinitionValidator
     {
         private readonly IRequirementTypeRepository _requirementTypeRepository;
 
-        public RequirementValidator(IRequirementTypeRepository requirementTypeRepository)
+        public RequirementDefinitionValidator(IRequirementTypeRepository requirementTypeRepository)
             => _requirementTypeRepository = requirementTypeRepository;
 
         public bool Exists(int requirementDefinitionId)

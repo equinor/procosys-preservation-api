@@ -15,6 +15,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 
         public string Description { get; set; }
         public bool IsAreaTag { get; set; }
+        
+        // todo make ProjectNo to ProjectId (Foreign key to Project table which has ProjectNo)
         public string ProjectNo { get; private set; }
         public string TagNo { get; private set; }
         public int StepId { get; set; }

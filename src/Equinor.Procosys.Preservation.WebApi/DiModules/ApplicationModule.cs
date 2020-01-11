@@ -49,7 +49,9 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
             services.AddScoped<IRequirementTypeRepository, RequirementTypeRepository>();
             
-            services.AddScoped<IRequirementValidator, RequirementValidator>();
+            services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
+            services.AddScoped<ITagValidator, TagValidator>();
+            services.AddScoped<IProjectValidator, ProjectValidator>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();
