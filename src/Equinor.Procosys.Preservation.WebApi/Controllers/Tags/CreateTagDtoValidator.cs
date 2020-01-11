@@ -17,10 +17,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .MaximumLength(Tag.ProjectNoLengthMax);
 
             RuleFor(tag => tag.Requirements)
-                .NotNull();
+                .Must(r => r != null && r.Any())
+                .WithMessage($"{nameof(CreateTagDto.Requirements)} must have at least one element");
 
-            RuleFor(tag => tag.Requirements.Count())
-                .GreaterThan(0);
+            RuleForEach(x => x.Requirements)
+                .Must(RequirementMustHaveInterval)
+                .WithMessage($"{nameof(TagRequirementDto.Interval)} must be positive");
+            
+            bool RequirementMustHaveInterval(TagRequirementDto dto) => dto.Interval > 0;
         }
     }
 }
