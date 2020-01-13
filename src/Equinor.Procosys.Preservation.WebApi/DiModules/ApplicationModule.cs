@@ -1,5 +1,4 @@
-﻿using System;
-using Equinor.Procosys.Preservation.Command;
+﻿using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -15,24 +14,24 @@ using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Equinor.Procosys.Preservation.WebApi.DIModules
 {
     public static class ApplicationModule
     {
-        public static void AddApplicationModules(this IServiceCollection services, string dbConnectionString, string mainApiAddress)
+        public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
+            services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
+
             services.AddDbContext<PreservationContext>(options =>
             {
-                options.UseSqlServer(dbConnectionString);
+                options.UseSqlServer(configuration.GetConnectionString("PreservationContext"));
             });
 
             services.AddHttpContextAccessor();
-            services.AddHttpClient(MainApiClient.Name, client =>
-            {
-                client.BaseAddress = new Uri(mainApiAddress);
-            });
+            services.AddHttpClient();
 
             // Transient - Created each time it is requested from the service container
 
