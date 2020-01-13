@@ -13,17 +13,17 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
 
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IBearerTokenProvider _bearerTokenProvider;
-        private readonly ILogger _logger;
+        private readonly ILogger<MainApiClient> _logger;
 
         public MainApiClient(
             IHttpClientFactory httpClientFactory,
             IBearerTokenProvider bearerTokenProvider,
-            ILogger logger)
+            ILogger<MainApiClient> logger)
         {
             _httpClientFactory = httpClientFactory;
             _bearerTokenProvider = bearerTokenProvider;
             _logger = logger;
-        }
+    }
 
         public async Task<T> QueryAndDeserialize<T>(string url)
         {

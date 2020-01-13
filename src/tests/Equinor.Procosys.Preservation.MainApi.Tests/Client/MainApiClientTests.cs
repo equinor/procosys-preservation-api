@@ -12,17 +12,17 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
     public class MainApiClientTests
     {
         private Mock<IBearerTokenProvider> _bearerTokenProvider;
-        private Mock<ILogger> _logger;
+        private Mock<ILogger<MainApiClient>> _logger;
 
         [TestInitialize]
         public void Setup()
         {
             _bearerTokenProvider = new Mock<IBearerTokenProvider>();
-            _logger = new Mock<ILogger>();
+            _logger = new Mock<ILogger<MainApiClient>>();
         }
 
         [TestMethod]
-        public async Task QueryAndDeserializeReturnsDeserializedObjectAsync()
+        public async Task QueryAndDeserialize_ReturnsDeserialized_Object_TestAsync()
         {
             var httpClientFactory = HttpHelper.GetHttpClientFactory(HttpStatusCode.OK, "{\"Id\": 123}");
             var dut = new MainApiClient(httpClientFactory, _bearerTokenProvider.Object, _logger.Object);
@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
         }
 
         [TestMethod]
-        public async Task QueryAndDeserializeReturnsDefaultObjectIfRequestIsNotSuccessfulAsync()
+        public async Task QueryAndDeserializeReturnsDefaultObject_WhenRequestIsNotSuccessful_TestAsync()
         {
             var httpClientFactory = HttpHelper.GetHttpClientFactory(HttpStatusCode.BadGateway, "");
             var dut = new MainApiClient(httpClientFactory, _bearerTokenProvider.Object, _logger.Object);
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
         }
 
         [TestMethod]
-        public async Task QueryAndDeserializeThrowsExceptionIfInvalidResponseIsReceivedAsync()
+        public async Task QueryAndDeserialize_ThrowsException_WhenInvalidResponseIsReceived_TestAsync()
         {
             var httpClientFactory = HttpHelper.GetHttpClientFactory(HttpStatusCode.OK, "");
             var dut = new MainApiClient(httpClientFactory, _bearerTokenProvider.Object, _logger.Object);

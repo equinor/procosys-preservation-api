@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Exceptions;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.MainApi.Tag
 {
@@ -13,13 +14,16 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         protected const string ApiVersion = "4.0";
         private readonly IMainApiClient _mainApiClient;
         private readonly IPlantApiService _plantApiService;
+        private readonly ILogger<MainApiTagService> _logger;
 
         public MainApiTagService(
             IMainApiClient mainApiClient,
-            IPlantApiService plantApiService)
+            IPlantApiService plantApiService,
+            ILogger<MainApiTagService> logger)
         {
             _mainApiClient = mainApiClient;
             _plantApiService = plantApiService;
+            _logger = logger;
         }
 
         public async Task<ProcosysTagDetails> GetTagDetails(string plant, string projectName, string tagNumber)
@@ -40,7 +44,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             var tagDetailsResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagDetailsResult>(url);
             if (tagDetailsResult == null)
             {
-                throw new InvalidResultException($"Tag details returned no data. URL: {url}");
+                _logger.LogWarning($"Tag details returned no data. URL: {url}");
+                return default;
             }
             return tagDetailsResult.Tag;
         }
@@ -56,7 +61,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             var tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
             if (tagSearchResult == null)
             {
-                throw new InvalidResultException($"Tag search returned no data. URL: {url}");
+                _logger.LogWarning($"Tag search returned no data. URL: {url}");
+                return default;
             }
             return tagSearchResult.Items;
         }

@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
     public class MainApiPlantServiceTests
     {
         [TestMethod]
-        public async Task Get_plants_returns_correct_number_or_plants_test_async()
+        public async Task GetPlants_ReturnsCorrectNumberOfPlants_TestAsync()
         {
             // Arrange
             var mainApiClient = new Mock<IMainApiClient>();
@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
         }
 
         [TestMethod]
-        public async Task Get_plants_sets_correct_properties_test_async()
+        public async Task GetPlants_SetsCorrectProperties_TestAsync()
         {
             // Arrange
             var mainApiClient = new Mock<IMainApiClient>();

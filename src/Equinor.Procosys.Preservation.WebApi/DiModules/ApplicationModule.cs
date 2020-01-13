@@ -14,7 +14,6 @@ using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.WebApi.Misc;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,23 +28,21 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
                 options.UseSqlServer(dbConnectionString);
             });
 
-            services.AddHttpClient();
-
-            // Transient
-            services.AddHttpClient<MainApiClient>(MainApiClient.Name, client =>
+            services.AddHttpContextAccessor();
+            services.AddHttpClient(MainApiClient.Name, client =>
             {
                 client.BaseAddress = new Uri(mainApiAddress);
             });
 
             // Transient - Created each time it is requested from the service container
-            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
-            services.AddTransient<IPlantProvider, PlantProvider>();
-            services.AddTransient<IMainApiClient>(x => x.GetRequiredService<MainApiClient>());
-            services.AddTransient<ITagApiService, MainApiTagService>();
-            services.AddTransient<IPlantApiService, MainApiPlantService>();
+
 
             // Scoped - Created once per client request (connection)
+            services.AddScoped<IPlantProvider, PlantProvider>();
             services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();
+            services.AddScoped<IMainApiClient, MainApiClient>();
+            services.AddScoped<ITagApiService, MainApiTagService>();
+            services.AddScoped<IPlantApiService, MainApiPlantService>();
             services.AddScoped<IReadOnlyContext, PreservationContext>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();

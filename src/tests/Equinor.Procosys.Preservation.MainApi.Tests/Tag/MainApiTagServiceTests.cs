@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Exceptions;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Tag;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -14,6 +15,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
     [TestClass]
     public class MainApiTagServiceTests
     {
+        private Mock<ILogger<MainApiTagService>> _logger;
         private Mock<IMainApiClient> _mainApiClient;
         private Mock<IPlantApiService> _plantApiService;
         private ProcosysTagSearchResult _searchResultWithOneItem;
@@ -23,6 +25,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         [TestInitialize]
         public void Setup()
         {
+            _logger = new Mock<ILogger<MainApiTagService>>();
             _mainApiClient = new Mock<IMainApiClient>();
             _plantApiService = new Mock<IPlantApiService>();
             _plantApiService
@@ -87,13 +90,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         }
 
         [TestMethod]
-        public async Task GetTagsReturnsCorrectNumberOfTagsTestAsync()
+        public async Task GetTags_ReturnsCorrectNumberOfTags_TestAsync()
         {
             // Arrange
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_searchResultWithThreeItems));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object);
+            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _logger.Object);
 
             // Act
             var result = await dut.GetTags("PCS$TESTPLANT", "TestProject", "A");
@@ -103,32 +106,34 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         }
 
         [TestMethod]
-        public async Task GetTagsThrowsExceptionIfPlantIsInvalidTestAsync()
+        public async Task GetTags_ThrowsException_WhenPlantIsInvalid_TestAsync()
         {
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object);
+            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _logger.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetTags("INVALIDPLANT", "TestProject", "A"));
         }
 
         [TestMethod]
-        public async Task GetTagsThrowsExceptionIfResultIsInvalidTestAsync()
+        public async Task GetTags_ReturnsNull_WhenResultIsInvalid_TestAsync()
         {
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object);
+            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _logger.Object);
 
-            await Assert.ThrowsExceptionAsync<InvalidResultException>(async () => await dut.GetTags("PCS$TESTPLANT", "TestProject", "A"));
+            var result = await dut.GetTags("PCS$TESTPLANT", "TestProject", "A");
+
+            Assert.IsNull(result);
         }
 
         [TestMethod]
-        public async Task GetTagsReturnsCorrectPropertiesTestAsync()
+        public async Task GetTags_ReturnsCorrectProperties_TestAsync()
         {
             // Arrange
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_searchResultWithThreeItems));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object);
+            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _logger.Object);
 
             // Act
             var result = await dut.GetTags("PCS$TESTPLANT", "TestProject", "TagNo");
@@ -141,7 +146,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         }
 
         [TestMethod]
-        public async Task GetTagDetailsSetsCorrectPropertiesTestAsync()
+        public async Task GetTagDetails_SetsCorrectProperties_TestAsync()
         {
             // Arrange
             _mainApiClient
@@ -150,7 +155,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<ProcosysTagDetailsResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_tagDetailsResult));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object);
+            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _logger.Object);
 
             // Act
             var result = await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", "111111111");
@@ -169,27 +174,27 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         }
 
         [TestMethod]
-        public async Task GetTagDetailsThrowsExceptionIfPlantIsInvalidTestAsync()
+        public async Task GetTagDetails_ThrowsException_IfPlantIsInvalid_TestAsync()
         {
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object);
+            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _logger.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetTagDetails("INVALIDPLANT", "TestProject", "TagNo1"));
         }
 
         [TestMethod]
-        public async Task GetTagDetailsThrowsExceptionIfResultContainsMultipleElementsTestAsync()
+        public async Task GetTagDetails_ThrowsException_WhenResultContainsMultipleElements_TestAsync()
         {
             // Arrange
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_searchResultWithThreeItems));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object);
+            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _logger.Object);
 
             await Assert.ThrowsExceptionAsync<InvalidResultException>(async () => await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", "TagNo1"));
         }
 
         [TestMethod]
-        public async Task GetTagDetailsThrowsExceptionIfResultIsNullTestAsync()
+        public async Task GetTagDetails_ReturnsNull_WhenResultIsNull_TestAsync()
         {
             // Arrange
             _mainApiClient
@@ -198,9 +203,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<ProcosysTagDetailsResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult<ProcosysTagDetailsResult>(null));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object);
+            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _logger.Object);
 
-            await Assert.ThrowsExceptionAsync<InvalidResultException>(async () => await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", "TagNo1"));
+            var result = await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", "TagNo1");
+
+            Assert.IsNull(result);
         }
     }
 }
