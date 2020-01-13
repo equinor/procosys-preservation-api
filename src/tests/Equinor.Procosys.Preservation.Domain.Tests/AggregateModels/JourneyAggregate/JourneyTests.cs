@@ -12,30 +12,33 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         [TestMethod]
         public void ConstructorSetsPropertiesTest()
         {
-            var dut = new Journey("SchemaA", "TitleA");
+            var j = new Journey("SchemaA", "TitleA");
 
-            Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual("SchemaA", j.Schema);
+            Assert.AreEqual("TitleA", j.Title);
+            Assert.AreEqual(0, j.Steps.Count);
         }
 
         [TestMethod]
         public void AddingEmptyStepThrowsExceptionTest()
         {
-            var dut = new Journey("", "");
+            var j = new Journey("", "");
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                dut.AddStep(null));
+                j.AddStep(null));
+            Assert.AreEqual(0, j.Steps.Count);
         }
 
         [TestMethod]
         public void StepIsAddedToStepsListTest()
         {
-            var dut = new Journey("", "");
+            var j = new Journey("", "");
             var step = new Mock<Step>();
 
-            dut.AddStep(step.Object);
+            j.AddStep(step.Object);
 
-            Assert.IsTrue(dut.Steps.Contains(step.Object));
+            Assert.AreEqual(1, j.Steps.Count);
+            Assert.IsTrue(j.Steps.Contains(step.Object));
         }
     }
 }

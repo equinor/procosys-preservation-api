@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200106112423_RequiredForeignKeys")]
+    partial class RequiredForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,12 +102,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("FieldType")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("Info");
-
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 
@@ -138,8 +134,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("RequirementDefinitionId");
 
                     b.ToTable("Fields");
-
-                    b.HasCheckConstraint("constraint_field_check_valid_fieldtype", "FieldType in ('Info','Number','CheckBox','Attachment')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", b =>
@@ -240,38 +234,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("AreaCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CalloffNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CommPkgNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
 
-                    b.Property<string>("DisciplineCode")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<bool>("IsAreaTag")
                         .HasColumnType("bit");
 
-                    b.Property<string>("McPkcNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("NextDueTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ProjectNumber")
+                    b.Property<string>("ProjectNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
-
-                    b.Property<string>("PurchaseOrderNumber")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Schema")
                         .IsRequired()
@@ -281,10 +254,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("StepId")
                         .HasColumnType("int");
 
-                    b.Property<string>("TagFunctionCode")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("TagNumber")
+                    b.Property<string>("TagNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);

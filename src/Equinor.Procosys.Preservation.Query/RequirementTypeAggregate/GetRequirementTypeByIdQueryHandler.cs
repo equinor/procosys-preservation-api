@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
@@ -19,7 +20,28 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             {
                 return new NotFoundResult<RequirementTypeDto>(Strings.EntityNotFound(nameof(RequirementType), request.Id));
             }
-            return new SuccessResult<RequirementTypeDto>(new RequirementTypeDto(rt.Id, rt.Code, rt.Title, rt.IsVoided, rt.SortKey));
+
+            var dto = new RequirementTypeDto(rt.Id,
+                rt.Code,
+                rt.Title,
+                rt.IsVoided,
+                rt.SortKey,
+                rt.RequirementDefinitions.Select(rd =>
+                    new RequirementDefinitionDto(rd.Id,
+                        rd.Title,
+                        rd.IsVoided,
+                        rd.DefaultInterval,
+                        rd.SortKey,
+                        rd.Fields.Select(f => new FieldDto(
+                            f.Id,
+                            f.Label,
+                            f.Unit,
+                            f.IsVoided,
+                            f.ShowPrevious,
+                            f.FieldType,
+                            f.SortKey)))));
+
+            return new SuccessResult<RequirementTypeDto>(dto);
         }
     }
 }

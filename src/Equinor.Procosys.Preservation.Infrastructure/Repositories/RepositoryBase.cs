@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         public Task<bool> Exists(int id) =>
             DefaultQuery.AnyAsync(x => x.Id == id);
 
-        public Task<List<TEntity>> GetAllAsync() =>
+        public virtual Task<List<TEntity>> GetAllAsync() =>
             DefaultQuery.ToListAsync();
 
         public virtual Task<TEntity> GetByIdAsync(int id) =>

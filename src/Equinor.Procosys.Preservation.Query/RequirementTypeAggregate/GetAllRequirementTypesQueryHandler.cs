@@ -12,12 +12,38 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
     {
         private readonly IRequirementTypeRepository _requirementTypeRepository;
 
-        public GetAllRequirementTypesQueryHandler(IRequirementTypeRepository requirementTypeRepository) => _requirementTypeRepository = requirementTypeRepository;
+        public GetAllRequirementTypesQueryHandler(IRequirementTypeRepository requirementTypeRepository) =>
+            _requirementTypeRepository = requirementTypeRepository;
 
         public async Task<Result<IEnumerable<RequirementTypeDto>>> Handle(GetAllRequirementTypesQuery request, CancellationToken cancellationToken)
         {
             var requirementTypes = await _requirementTypeRepository.GetAllAsync();
-            return new SuccessResult<IEnumerable<RequirementTypeDto>>(requirementTypes.Select(rt => new RequirementTypeDto(rt.Id, rt.Code, rt.Title, rt.IsVoided, rt.SortKey)));
+
+            var dtos =
+                requirementTypes.Where(rt => !rt.IsVoided || request.IncludeVoided).Select(rt
+                    => new RequirementTypeDto(rt.Id,
+                        rt.Code,
+                        rt.Title,
+                        rt.IsVoided,
+                        rt.SortKey,
+                        rt.RequirementDefinitions.Where(rd => !rd.IsVoided || request.IncludeVoided).Select(rd
+                            => new RequirementDefinitionDto(rd.Id,
+                                rd.Title,
+                                rd.IsVoided,
+                                rd.DefaultInterval,
+                                rd.SortKey,
+                                rd.Fields.Where(f => !f.IsVoided || request.IncludeVoided).Select(f
+                                    => new FieldDto(
+                                        f.Id,
+                                        f.Label,
+                                        f.Unit,
+                                        f.IsVoided,
+                                        f.ShowPrevious,
+                                        f.FieldType,
+                                        f.SortKey))))))
+                    .OrderBy(rt => rt.SortKey);
+
+            return new SuccessResult<IEnumerable<RequirementTypeDto>>(dtos);
         }
     }
 }
