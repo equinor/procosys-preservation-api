@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllNonVoidedRequirementTypesQueryTest()
+        public void HandleGetAllNonVoidedRequirementTypesQuery_ShouldGetNonVoidedOnly()
         {
             var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
 
@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllInclVoidedRequirementTypesQueryTest()
+        public void HandleGetAllInclVoidedRequirementTypesQuery_ShouldGetVoidedAlso()
         {
             var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
 
@@ -101,6 +101,30 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             Assert.AreEqual(2, requirementTypes.Count);
             Assert.AreEqual(2, requirementDefinitions.Count);
             Assert.AreEqual(2, fields.Count);
+        }
+
+        [TestMethod]
+        public void HandleGetAllInclVoidedRequirementTypesQuery_ShouldReturnTypesSortedBySortKey()
+        {
+            var requirementTypes = new List<RequirementType>
+            {
+                new RequirementType("", "", "", 999),
+                new RequirementType("", "", "", 7),
+                new RequirementType("", "", "", 10000),
+                new RequirementType("", "", "", 1)
+            };
+            _repoMock.Setup(r => r.GetAllAsync()).Returns(Task.FromResult(requirementTypes));
+
+            var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
+
+            var result = handler.Handle(new GetAllRequirementTypesQuery(true), new CancellationToken()).Result;
+
+            var dtos = result.Data.ToList();
+            Assert.AreEqual(4, dtos.Count);
+            Assert.AreEqual(1, dtos[0].SortKey);
+            Assert.AreEqual(7, dtos[1].SortKey);
+            Assert.AreEqual(999, dtos[2].SortKey);
+            Assert.AreEqual(10000, dtos[3].SortKey);
         }
     }
 }

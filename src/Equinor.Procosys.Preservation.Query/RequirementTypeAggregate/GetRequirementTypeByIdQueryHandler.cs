@@ -36,8 +36,8 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                             f.Id,
                             f.Label,
                             f.IsVoided,
-                            f.SortKey,
                             f.FieldType,
+                            f.SortKey,
                             f.Unit,
                             f.ShowPrevious)))));
 
