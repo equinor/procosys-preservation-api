@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpPost("{id}/SetStep")]
         public async Task<IActionResult> SetStep([FromRoute] int id, [FromBody] SetStepDto dto)
         {
-            await _mediator.Send(new SetStepCommand(id, dto.JourneyId, dto.StepId));
+            await _mediator.Send(new SetStepCommand(id, dto.StepId));
             return NoContent();
         }
     }

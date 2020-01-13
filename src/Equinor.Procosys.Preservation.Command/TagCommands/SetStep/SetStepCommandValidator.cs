@@ -1,22 +1,29 @@
-﻿using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+﻿using Equinor.Procosys.Preservation.Command.Validators.Step;
+using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.SetStep
 {
     public class SetStepCommandValidator : AbstractValidator<SetStepCommand>
     {
-        public SetStepCommandValidator(IJourneyRepository journeyRepository, ITagRepository tagRepository)
+        public SetStepCommandValidator(
+            ITagValidator tagValidator,
+            IStepValidator stepValidator
+            )
         {
-            RuleFor(x => x.JourneyId)
-                .JourneyMustExist(journeyRepository);
+            RuleFor(s => s.TagId)
+                .Must(NotBeAnExistingTag)
+                .WithMessage(s => $"Tag {s.TagId} don't exists");
 
-            RuleFor(x => x.TagId)
-                .TagMustExist(tagRepository);
+            RuleFor(t => t.StepId)
+                .Must(BeAnExistingStep)
+                .WithMessage(s => $"Step {s.StepId} don't exists");
 
-            RuleFor(x => x.StepId)
-                .StepMustExist(journeyRepository);
+            bool NotBeAnExistingTag(int tagId)
+                => !tagValidator.Exists(tagId);
+
+            bool BeAnExistingStep(int stepId)
+                => stepValidator.Exists(stepId);
         }
     }
 }
