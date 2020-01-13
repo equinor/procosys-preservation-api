@@ -12,15 +12,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         {
         }
 
-        public RequirementDefinition GetRequirementDefinitionById(int requirementDefinitionId)
-        {
-            var requirementType = DefaultQuery
+        public Task<RequirementDefinition> GetRequirementDefinitionByIdAsync(int requirementDefinitionId)
+            => DefaultQuery
                 .Where(rt => rt.RequirementDefinitions.Any(rd => rd.Id == requirementDefinitionId))
-                .FirstOrDefaultAsync().Result;
-                
-            return requirementType
-                ?.RequirementDefinitions
-                .FirstOrDefault(rd => rd.Id == requirementDefinitionId);
-        }
+                .SelectMany(rt => rt.RequirementDefinitions)
+                .Where(rd => rd.Id == requirementDefinitionId)
+                .FirstOrDefaultAsync();
     }
 }

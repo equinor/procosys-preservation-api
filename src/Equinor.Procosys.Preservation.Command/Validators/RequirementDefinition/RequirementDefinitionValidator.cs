@@ -1,6 +1,6 @@
 ﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Command.Validators
+namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
 {
     public class RequirementDefinitionValidator : IRequirementDefinitionValidator
     {
@@ -10,6 +10,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators
             => _requirementTypeRepository = requirementTypeRepository;
 
         public bool Exists(int requirementDefinitionId)
-            => _requirementTypeRepository.GetRequirementDefinitionById(requirementDefinitionId) != null;
+            => _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirementDefinitionId).Result != null;
     }
 }

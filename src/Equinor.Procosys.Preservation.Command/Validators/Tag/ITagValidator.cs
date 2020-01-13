@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command.Validators
+﻿namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 {
     public interface ITagValidator
     {

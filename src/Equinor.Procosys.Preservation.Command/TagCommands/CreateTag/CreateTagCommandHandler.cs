@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
         public async Task<Result<int>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
-            var step = _journeyRepository.GetStepByStepId(request.StepId);
+            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             if (step == null)
             {
                 return new NotFoundResult<int>(Strings.EntityNotFound(nameof(Step), request.StepId));
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             foreach (var requirement in request.Requirements)
             {
                 var requirementDefinition =
-                    _requirementTypeRepository.GetRequirementDefinitionById(requirement.RequirementDefinitionId);
+                    await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
                 if (requirementDefinition == null)
                 {
                     return new NotFoundResult<int>(Strings.EntityNotFound(
