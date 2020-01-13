@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetsProperties()
         {
             var rt = new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, new List<RequirementDefinitionDto>());
 
@@ -39,13 +39,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorWithNullModeThrowsExceptionTest()
+        public void Constructor_ShouldThrowsException_WhenDefinitionsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, null)
             );
 
         [TestMethod]
-        public void DefinitionsNotNeedingInputShouldBeSortedBySortKey()
+        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedBySortKey_WhenFieldsNotNeedInput()
         {
             var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void DefinitionsNeedingInputShouldBeSortedBySortKey()
+        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedBySortKey_WhenFieldsNeedInput()
         {
             var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void DefinitionShouldFirstBeSortedByNotNeedingInputThenBySortKey()
+        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedByNeedingInputThenBySortKey_WhenFieldsBothNeedInputAndNotNeedInput()
         {
             var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {

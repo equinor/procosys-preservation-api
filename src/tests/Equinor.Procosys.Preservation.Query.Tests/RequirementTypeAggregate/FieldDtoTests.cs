@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
     public class FieldDtoTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTestForInfo()
+        public void ConstructorForInfoField_ShouldSetProperties()
         {
             var fieldType = FieldType.Info;
 
@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTestForAttachment()
+        public void ConstructorForAttachmentField_ShouldSetProperties()
         {
             var fieldType = FieldType.Attachment;
 
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTestForNumber()
+        public void ConstructorForNumberField_ShouldSetProperties()
         {
             var fieldType = FieldType.Number;
 
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTestForCheckbox()
+        public void ConstructorForCheckBoxField_ShouldSetProperties()
         {
             var fieldType = FieldType.CheckBox;
 

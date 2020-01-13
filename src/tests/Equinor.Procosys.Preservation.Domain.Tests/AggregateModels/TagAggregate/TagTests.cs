@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var tag = new Tag("SchemaA", "TagNoA", "ProjectNoA", _stepMock.Object, _requirements);
 
@@ -38,22 +38,22 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void ConstructorThrowsExceptionIfStepIsNotSetTest()
+        public void Constructor_ShouldThrowException_WhenStepNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(()
                 => new Tag("", "", "", null, _requirements));
 
         [TestMethod]
-        public void ConstructorThrowsExceptionIfRequirementIsNotSetTest()
+        public void Constructor_ShouldThrowException_WhenRequirementsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(()
                 => new Tag("", "", "", _stepMock.Object, null));
 
         [TestMethod]
-        public void ConstructorThrowsExceptionIfNoRequirementsTest()
+        public void Constructor_ShouldThrowException_WhenEmptyListOfRequirementsNotGiven()
             => Assert.ThrowsException<Exception>(()
                 => new Tag("", "", "", _stepMock.Object, _emptyRequirements));
 
         [TestMethod]
-        public void SetStepSetsStepIdTest()
+        public void SetStep_ShouldSetStepId()
         {
             var tag = new Tag("", "", "", _stepMock.Object, _requirements);
 
@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void SetStepThrowsExceptionIfStepIsNullTest()
+        public void SetStep_ShouldThrowException_WhenStepNotGiven()
         {
             var tag = new Tag("", "", "", _stepMock.Object, _requirements);
 
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void AddRequirementThrowsExceptionIfRequirementIsNullTest()
+        public void SetRequirement_ShouldThrowException_WhenRequirementNotGiven()
         {
             var tag = new Tag("", "", "", _stepMock.Object, _requirements);
 

@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
     public class FieldTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var f = new Field("SchemaA", "LabelA", FieldType.Attachment, 10, "UnitA", true);
 
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
-        public void ConstructorSetsNullPropertiesTest()
+        public void Constructor_ShouldSetDefaulValuesForUnitAndShowPrevious_WhenNotGivenAsArgument()
         {
             var f = new Field("SchemaA", "LabelA", FieldType.Info, 10);
 
@@ -33,11 +33,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
-        public void MissingUnitForNumberFieldThrowsExceptionTest()
+        public void ConstructorForNumberField_ShouldThrowException_WhenUnitNotGiven()
             => Assert.ThrowsException<ArgumentException>(() => new Field("", "", FieldType.Number, 10, showPrevious: true));
 
         [TestMethod]
-        public void MissingShowPreviousForNumberFieldThrowsExceptionTest()
+        public void ConstructorForNumberField_ShouldThrowException_WhenShowPreviousNotGiven()
             => Assert.ThrowsException<ArgumentException>(() => new Field("", "", FieldType.Number, 10, "UnitA"));
     }
 }

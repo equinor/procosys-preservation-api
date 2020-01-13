@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
     public class RequirementDefTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var rd = new RequirementDefinition("SchemaA", "TitleA", 4, 10);
 
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
-        public void AddingEmptyFieldThrowsExceptionTest()
+        public void AddField_ShouldThrowExceptionTest_ForNullField()
         {
             var rd = new RequirementDefinition("", "", 0, 0);
 
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
-        public void FieldIsAddedToFieldsListTest()
+        public void AddField_ShouldAddFieldToFieldsList()
         {
             var rd = new RequirementDefinition("", "", 0, 0);
             var f = new Mock<Field>();

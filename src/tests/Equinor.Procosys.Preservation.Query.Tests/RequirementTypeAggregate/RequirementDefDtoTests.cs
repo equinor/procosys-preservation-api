@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
     public class RequirementDefDtoTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetsProperties()
         {
             var rd = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, new List<FieldDto>());
 
@@ -24,13 +24,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorWithNullModeThrowsExceptionTest()
+        public void Constructor_ShouldThrowsException_WhenModeNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new RequirementDefinitionDto(1, "TitleA", true, 4, 10, null)
             );
 
         [TestMethod]
-        public void FieldsShouldBeSortedBySortKey()
+        public void ConstructorWithFields_ShouldCreateDtoWithFieldsSortedBySortKey()
         {
             var rd = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, new List<FieldDto>
             {

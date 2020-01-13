@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllNonVoidedRequirementTypesQuery_ShouldGetNonVoidedOnly()
+        public void HandleGetAllRequirementTypesQuery_ShouldGetNonVoidedRequirementTypesOnly_WhenNotGettingVoided()
         {
             var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
 
@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllInclVoidedRequirementTypesQuery_ShouldGetVoidedAlso()
+        public void HandleGetAllRequirementTypesQuery_ShoudlncludeVoidedRequirementTypes_WhenGettingVoided()
         {
             var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
 
@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllInclVoidedRequirementTypesQuery_ShouldReturnTypesSortedBySortKey()
+        public void HandleGetAllRequirementTypesQuery_ShouldReturnRequirementTypesSortedBySortKey()
         {
             var requirementTypes = new List<RequirementType>
             {

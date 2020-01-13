@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
     public class RequirementTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var rd = new Mock<RequirementDefinition>();
             rd.SetupGet(x => x.Id).Returns(3);
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void ConstructorWithNullRequirementDefinitionThrowsExceptionTest()
+        public void Constructor_ShouldThrowException_WhenRequirementDefinitionNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new Requirement("SchemaA", 4, null)
             );
