@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 {
     public class Startup
     {
-        private const string CorsPolicy = "SpecificAllowedOrigins";
+        private const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
 
         public Startup(IConfiguration configuration) => Configuration = configuration;
 
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 
             services.AddCors(options =>
             {
-                options.AddPolicy(CorsPolicy,
+                options.AddPolicy(AllowAllOriginsCorsPolicy,
                     builder =>
                     {
                         builder.AllowAnyOrigin();
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                 c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["API:Audience"] } });
             });
 
-            app.UseCors(CorsPolicy);
+            app.UseCors(AllowAllOriginsCorsPolicy);
 
             app.UseHttpsRedirection();
 
