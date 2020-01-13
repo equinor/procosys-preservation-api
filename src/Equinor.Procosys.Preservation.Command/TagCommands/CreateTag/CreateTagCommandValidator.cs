@@ -16,20 +16,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         {
             RuleFor(tag => tag)
                 .Must(NotBeAnExistingTag)
-                .WithMessage(tag => $"Tag {tag.TagNo} for project {tag.ProjectNo} already exists in scope");
+                .WithMessage(tag => $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectNo}");
 
             RuleFor(tag => tag.ProjectNo)
                 .Must(NotBeAClosedProject)
                 .When(tag => ProjectExists(tag.ProjectNo))
-                .WithMessage(tag => $"Project {tag.ProjectNo} is closed for tag {tag.TagNo}");
+                .WithMessage(tag => $"Project is closed! Project={tag.ProjectNo}");
 
             RuleFor(tag => tag.StepId)
                 .Must(BeAnExistingStep)
-                .WithMessage(tag => $"Step {tag.StepId} for tag {tag.TagNo} don't exists");
+                .WithMessage(tag => $"Step don't exists! Step={tag.StepId}");
 
             RuleForEach(tag => tag.Requirements)
                 .Must(BeAnExistingRequirementDefinition)
-                .WithMessage((tag, req) => $"Requirement definition {req.RequirementDefinitionId} for tag {tag.TagNo} don't exists");
+                .WithMessage((tag, req) => $"Requirement definition don't exists! {req.RequirementDefinitionId} ");
 
             bool NotBeAnExistingTag(CreateTagCommand tag)
                 => !tagValidator.Exists(tag.TagNo, tag.ProjectNo);

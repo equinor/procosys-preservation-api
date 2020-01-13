@@ -21,8 +21,4 @@
     <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Command\Equinor.Procosys.Preservation.Command.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="TagCommands\" />
-  </ItemGroup>
-
 </Project>
