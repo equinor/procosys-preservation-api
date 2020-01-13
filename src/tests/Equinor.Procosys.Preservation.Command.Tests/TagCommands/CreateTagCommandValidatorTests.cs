@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
         private int _rd2Id = 3;
 
         [TestInitialize]
-        public void Setup()
+        public void Setup_OkState()
         {
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(false);
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldBeOk_WhenOkState()
+        public void WhenValidate_ShouldBeValid_WhenOkState()
         {
             var result = _validator.Validate(_command);
 
@@ -71,6 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
         public void WhenValidate_ShouldFail_WhenTagAlreadyExists()
         {
             _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(true);
+            
             var result = _validator.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -79,19 +80,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldBeOk_WhenProjectExists_AndProjectNotClosed()
+        public void WhenValidate_ShouldBeValid_WhenProjectExistsAndProjectNotClosed()
         {
             _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
+
             var result = _validator.Validate(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenProjectExists_ButClosed()
+        public void WhenValidate_ShouldFail_WhenProjectExistsButClosed()
         {
             _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
             _projectValidatorMock.Setup(r => r.IsClosed(_projectNo)).Returns(true);
+            
             var result = _validator.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -103,6 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
         public void WhenValidate_ShouldFail_WhenStepNotExists()
         {
             _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(false);
+            
             var result = _validator.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
@@ -114,6 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
         public void WhenValidate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
         {
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
+            
             var result = _validator.Validate(_command);
 
             Assert.IsFalse(result.IsValid);

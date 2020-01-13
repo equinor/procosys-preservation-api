@@ -39,6 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
         public async Task<Result<int>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
+            // todo Unit test
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             if (step == null)
             {
