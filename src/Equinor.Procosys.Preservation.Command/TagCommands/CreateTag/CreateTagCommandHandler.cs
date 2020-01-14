@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Requirement;
 using Equinor.Procosys.Preservation.MainApi;
 using MediatR;
 using ServiceResult;
@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 return new NotFoundResult<int>(Strings.EntityNotFound(nameof(Step), request.StepId));
             }
 
-            var requirements = new List<Requirement>();
+            var requirements = new List<TagRequirement>();
             foreach (var requirement in request.Requirements)
             {
                 var requirementDefinition =
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                         requirement.RequirementDefinitionId));
                 }
 
-                requirements.Add(new Requirement(_plantProvider.Plant, requirement.Interval, requirementDefinition));
+                requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, requirementDefinition));
             }
 
             var result = await _tagApiService.GetTags(_plantProvider.Plant, "1"); //TODO: Use this to enrich the tag.

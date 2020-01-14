@@ -52,10 +52,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
                 _tagNo,
                 _projectNo,
                 _stepId,
-                new List<RequirementDto>
+                new List<Requirement>
                 {
-                    new RequirementDto(_rd1Id, 1),
-                    new RequirementDto(_rd2Id, 1)
+                    new Requirement(_rd1Id, 1),
+                    new Requirement(_rd2Id, 1)
                 });
         }
 
@@ -111,7 +111,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains("Step don't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains("Step doesn't exists!"));
         }
 
         [TestMethod]
@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains("Requirement definition don't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains("Requirement definition doesn't exists!"));
             Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(_rd2Id.ToString()));
         }
     }

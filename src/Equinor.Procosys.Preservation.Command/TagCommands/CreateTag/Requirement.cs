@@ -1,14 +1,14 @@
 ﻿namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
-    public class RequirementDto
+    public class Requirement
     {
-        public RequirementDto(int requirementDefinitionId, int interval)
+        public Requirement(int requirementDefinitionId, int intervalWeeks)
         {
             RequirementDefinitionId = requirementDefinitionId;
-            Interval = interval;
+            IntervalWeeks = intervalWeeks;
         }
 
         public int RequirementDefinitionId { get;  }
-        public int Interval { get; }
+        public int IntervalWeeks { get; }
     }
 }

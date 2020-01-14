@@ -32,9 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     dto.ProjectNo,
                     dto.StepId,
                     dto.Requirements.Select(r =>
-                        new Command.TagCommands.CreateTag.RequirementDto(
-                            r.RequirementDefinitionId,
-                            r.Interval))));
+                        new Requirement(r.RequirementDefinitionId, r.Interval))));
             return Ok(tagId);
         }
 

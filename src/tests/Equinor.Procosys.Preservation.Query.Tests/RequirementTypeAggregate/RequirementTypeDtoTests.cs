@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void Constructor_ShouldSetsProperties()
+        public void Constructor_ShouldSetProperties()
         {
             var rt = new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, new List<RequirementDefinitionDto>());
 
@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void Constructor_ShouldThrowsException_WhenDefinitionsNotGiven()
+        public void Constructor_ShouldThrowException_WhenDefinitionsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, null)
             );

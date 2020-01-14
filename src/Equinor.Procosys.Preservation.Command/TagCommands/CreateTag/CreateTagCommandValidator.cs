@@ -25,11 +25,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             RuleFor(tag => tag.StepId)
                 .Must(BeAnExistingStep)
-                .WithMessage(tag => $"Step don't exists! Step={tag.StepId}");
+                .WithMessage(tag => $"Step doesn't exists! Step={tag.StepId}");
 
             RuleForEach(tag => tag.Requirements)
                 .Must(BeAnExistingRequirementDefinition)
-                .WithMessage((tag, req) => $"Requirement definition don't exists! {req.RequirementDefinitionId} ");
+                .WithMessage((tag, req) => $"Requirement definition doesn't exists! {req.RequirementDefinitionId} ");
 
             bool NotBeAnExistingTag(CreateTagCommand tag)
                 => !tagValidator.Exists(tag.TagNo, tag.ProjectNo);
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             bool NotBeAClosedProject(string projectNo) => !projectValidator.IsClosed(projectNo);
 
-            bool BeAnExistingRequirementDefinition(RequirementDto requirement)
+            bool BeAnExistingRequirementDefinition(Requirement requirement)
                 => requirementDefinitionValidator.Exists(requirement.RequirementDefinitionId);
         }
     }
