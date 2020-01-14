@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
     public class RequirementDtoTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var r = new RequirementDto(1, 2, true, 4);
 

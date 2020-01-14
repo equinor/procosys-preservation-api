@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
-        public void Constructor_ShouldSetDefaulValuesForUnitAndShowPrevious_WhenNotGivenAsArgument()
+        public void Constructor_ShouldSetDefaultValuesForUnitAndShowPrevious_WhenNotGivenAsArgument()
         {
             var f = new Field("SchemaA", "LabelA", FieldType.Info, 10);
 
