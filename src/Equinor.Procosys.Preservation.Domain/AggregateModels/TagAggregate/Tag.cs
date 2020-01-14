@@ -6,8 +6,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
     public class Tag : SchemaEntityBase, IAggregateRoot
     {
         public const int DescriptionLengthMax = 1000;
-        public const int TagNoLengthMax = 255;
-        public const int ProjectNoLengthMax = 255;
+        public const int TagNumberLengthMax = 255;
+        public const int ProjectNumberLengthMax = 255;
 
         public string AreaCode { get; private set; }
         public string CalloffNumber { get; private set; }
