@@ -2,21 +2,24 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
+using Microsoft.Extensions.Options;
 
 namespace Equinor.Procosys.Preservation.MainApi.Plant
 {
     public class MainApiPlantService : IPlantApiService
     {
-        private const string ApiVersion = "4.0";
+        private readonly string _apiVersion;
         private readonly IMainApiClient _mainApiClient;
 
         public MainApiPlantService(
-            IMainApiClient mainApiClient)
+            IMainApiClient mainApiClient,
+            IOptionsMonitor<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
+            _apiVersion = options.CurrentValue.ApiVersion;
         }
 
-        public Task<List<ProcosysPlant>> GetPlants() => _mainApiClient.QueryAndDeserialize<List<ProcosysPlant>>($"Plants?api-version={ApiVersion}");
+        public Task<List<ProcosysPlant>> GetPlants() => _mainApiClient.QueryAndDeserialize<List<ProcosysPlant>>($"Plants?api-version={_apiVersion}");
 
         public async Task<bool> IsPlantValidAsync(string plant)
         {
