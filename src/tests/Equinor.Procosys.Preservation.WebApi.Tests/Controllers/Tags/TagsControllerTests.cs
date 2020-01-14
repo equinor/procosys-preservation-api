@@ -86,6 +86,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             var dto = new Mock<CreateTagDto>();
 
             var result = await dut.CreateTag(dto.Object);
+
+            Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
         }
     }
 }
