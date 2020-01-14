@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -15,6 +16,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
         public async Task GetPlants_ReturnsCorrectNumberOfPlants_TestAsync()
         {
             // Arrange
+            var mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
+            mainApiOptions
+                .Setup(x => x.CurrentValue)
+                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseUrl = "http://example.com" });
             var mainApiClient = new Mock<IMainApiClient>();
             mainApiClient
                 .Setup(x => x.QueryAndDeserialize<List<ProcosysPlant>>(It.IsAny<string>()))
@@ -25,7 +30,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
                     new ProcosysPlant { Id = "PCS$ASGARD_A", Title = "ÅsgardA" },
                     new ProcosysPlant { Id = "PCS$ASGARD_B", Title = "ÅsgardB" },
                 }));
-            var dut = new MainApiPlantService(mainApiClient.Object);
+            var dut = new MainApiPlantService(mainApiClient.Object, mainApiOptions.Object);
 
             // Act
             var result = await dut.GetPlants();
@@ -38,6 +43,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
         public async Task GetPlants_SetsCorrectProperties_TestAsync()
         {
             // Arrange
+            var mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
+            mainApiOptions
+                .Setup(x => x.CurrentValue)
+                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseUrl = "http://example.com" });
             var mainApiClient = new Mock<IMainApiClient>();
             mainApiClient
                 .Setup(x => x.QueryAndDeserialize<List<ProcosysPlant>>(It.IsAny<string>()))
@@ -45,7 +54,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
                 {
                     new ProcosysPlant { Id = "PCS$AASTA_HANSTEEN", Title = "AastaHansteen" }
                 }));
-            var dut = new MainApiPlantService(mainApiClient.Object);
+            var dut = new MainApiPlantService(mainApiClient.Object, mainApiOptions.Object);
 
             // Act
             var result = await dut.GetPlants();
