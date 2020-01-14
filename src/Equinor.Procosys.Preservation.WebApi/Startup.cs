@@ -43,7 +43,9 @@ namespace Equinor.Procosys.Preservation.WebApi
                 options.AddPolicy(AllowAllOriginsCorsPolicy,
                     builder =>
                     {
-                        builder.AllowAnyOrigin();
+                        builder
+                        .AllowAnyOrigin()
+                        .WithHeaders("x-plant");
                     });
             });
 
