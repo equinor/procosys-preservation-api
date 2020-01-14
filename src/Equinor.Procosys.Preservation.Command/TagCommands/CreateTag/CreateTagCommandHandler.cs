@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
-using Equinor.Procosys.Preservation.MainApi;
+using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using ServiceResult;
 
@@ -40,9 +40,21 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 return new NotFoundResult<int>(Strings.EntityNotFound(nameof(Journey), request.JourneyId));
             }
 
-            var result = await _tagApiService.GetTags(_plantProvider.Plant, "1"); //TODO: Use this to enrich the tag.
+            var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectNumber, request.TagNumber);
 
-            var tagToAdd = new Tag(_plantProvider.Plant, request.TagNo, request.ProjectNo, journey.Steps.FirstOrDefault(step => step.Id == request.StepId), request.Description);
+            var tagToAdd = new Tag(
+                _plantProvider.Plant,
+                request.TagNumber,
+                request.ProjectNumber,
+                tagDetails.Description,
+                tagDetails.AreaCode,
+                tagDetails.CallOffNo,
+                tagDetails.DisciplineCode,
+                tagDetails.McPkgNo,
+                tagDetails.CommPkgNo,
+                tagDetails.PurchaseOrderNo,
+                tagDetails.TagFunctionCode,
+                journey.Steps.FirstOrDefault(step => step.Id == request.StepId));
             _tagRepository.Add(tagToAdd);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

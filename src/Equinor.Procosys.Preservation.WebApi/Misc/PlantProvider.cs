@@ -10,6 +10,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 
         public PlantProvider(IHttpContextAccessor accessor) => _accessor = accessor;
 
-        public string Plant => _accessor?.HttpContext?.Request?.Headers["x-plant"] ?? throw new Exception("Could not determine current plant");
+        public string Plant => _accessor?.HttpContext?.Request?.Headers["x-plant"].ToString().ToUpperInvariant() ?? throw new Exception("Could not determine current plant");
     }
 }

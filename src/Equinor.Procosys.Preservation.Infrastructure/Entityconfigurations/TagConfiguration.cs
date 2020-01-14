@@ -16,12 +16,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
             builder.Property(x => x.Description)
                 .HasMaxLength(Tag.DescriptionLengthMax);
 
-            builder.Property(x => x.ProjectNo)
-                .HasMaxLength(Tag.ProjectNoLengthMax)
+            builder.Property(x => x.ProjectNumber)
+                .HasMaxLength(Tag.ProjectNumberLengthMax)
                 .IsRequired();
 
-            builder.Property(x => x.TagNo)
-                .HasMaxLength(Tag.TagNoLengthMax)
+            builder.Property(x => x.TagNumber)
+                .HasMaxLength(Tag.TagNumberLengthMax)
                 .IsRequired();
         }
     }

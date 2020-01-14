@@ -98,7 +98,7 @@ namespace Equinor.Procosys.Preservation.WebApi
             });
 
             services.AddMediatrModules();
-            services.AddApplicationModules(Configuration.GetConnectionString("PreservationContext"), Configuration["MainApiBaseUrl"]);
+            services.AddApplicationModules(Configuration);
             services.AddApplicationInsightsTelemetry();
         }
 

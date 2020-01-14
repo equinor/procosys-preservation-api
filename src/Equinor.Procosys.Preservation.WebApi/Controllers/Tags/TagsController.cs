@@ -5,6 +5,8 @@ using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Query.TagAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -19,22 +21,22 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TagDto>>> GetAll()
         {
-            var tags = await _mediator.Send(new AllTagsQuery());
-            return Ok(tags);
+            var result = await _mediator.Send(new AllTagsQuery());
+            return this.FromResult(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateTag([FromBody] CreateTagDto dto)
+        public async Task<ActionResult> CreateTag([FromBody] CreateTagDto dto)
         {
-            var tagId = await _mediator.Send(new CreateTagCommand(dto.TagNo, dto.ProjectNo, dto.JourneyId, dto.StepId, dto.Description));
-            return Ok(tagId);
+            var result = await _mediator.Send(new CreateTagCommand(dto.TagNo, dto.ProjectNo, dto.JourneyId, dto.StepId, dto.Description));
+            return this.FromResult(result);
         }
 
         [HttpPost("{id}/SetStep")]
         public async Task<IActionResult> SetStep([FromRoute] int id, [FromBody] SetStepDto dto)
         {
-            await _mediator.Send(new SetStepCommand(id, dto.JourneyId, dto.StepId));
-            return NoContent();
+            var result = await _mediator.Send(new SetStepCommand(id, dto.JourneyId, dto.StepId));
+            return this.FromResult(result);
         }
     }
 }
