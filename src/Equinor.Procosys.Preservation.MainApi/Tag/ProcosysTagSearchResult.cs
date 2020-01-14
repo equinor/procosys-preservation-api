@@ -9,12 +9,4 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         public int MaxAvailable { get; set; }
         public List<ProcosysTagOverview> Items { get; set; }
     }
-
-    [DebuggerDisplay("{TagNo}")]
-    public class ProcosysTagOverview
-    {
-        public long Id { get; set; }
-        public string TagNo { get; set; }
-        public string Description { get; set; }
-    }
 }
