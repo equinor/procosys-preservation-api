@@ -1,12 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
-using Equinor.Procosys.Preservation.MainApi;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
