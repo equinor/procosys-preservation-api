@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
     public class TagsControllerTests
     {
         [TestMethod]
-        public async Task Create_tag_sends_command_test_async()
+        public async Task CreateTag_SendsCommand()
         {
             var mediator = new Mock<IMediator>();
             mediator
@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         }
 
         [TestMethod]
-        public async Task Create_tag_creates_correct_command_test_async()
+        public async Task CreateTag_CreatesCorrectCommand()
         {
             var mediator = new Mock<IMediator>();
             CreateTagCommand createTagCommandCreated = null;
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         }
 
         [TestMethod]
-        public async Task Create_tag_returns_Ok_test_async()
+        public async Task CreateTag_ReturnsOk_WhenResultIsSuccessful()
         {
             var mediator = new Mock<IMediator>();
             mediator
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         }
 
         [TestMethod]
-        public async Task Create_tag_returns_NotFound_test_async()
+        public async Task CreateTag_ReturnsNotFound_IfResultIsNotFound()
         {
             var mediator = new Mock<IMediator>();
             mediator
