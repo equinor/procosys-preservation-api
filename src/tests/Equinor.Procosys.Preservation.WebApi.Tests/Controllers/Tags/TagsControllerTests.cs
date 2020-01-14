@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
@@ -13,79 +14,66 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
     [TestClass]
     public class TagsControllerTests
     {
-        [TestMethod]
-        public async Task CreateTag_SendsCommand()
+        private Mock<IMediator> _mediatorMock = new Mock<IMediator>();
+        private CreateTagDto _createTagDto = new CreateTagDto {Requirements = new List<TagRequirementDto>()};
+        private TagsController _dut;
+
+        [TestInitialize]
+        public void Setup()
         {
-            var mediator = new Mock<IMediator>();
-            mediator
+            _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<int>(5) as Result<int>));
-            var dut = new TagsController(mediator.Object);
-            var dto = new Mock<CreateTagDto>();
-
-            await dut.CreateTag(dto.Object);
-
-            mediator.Verify(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+            _dut = new TagsController(_mediatorMock.Object);
         }
 
         [TestMethod]
-        public async Task CreateTag_CreatesCorrectCommand()
+        public async Task CreateTag_ShouldSendCommand()
         {
-            var mediator = new Mock<IMediator>();
+            await _dut.CreateTag(_createTagDto);
+            _mediatorMock.Verify(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task CreateTag_ShouldCreateCorrectCommand()
+        {
             CreateTagCommand createTagCommandCreated = null;
-            mediator
+            _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<int>(5) as Result<int>))
                 .Callback<IRequest<Result<int>>, CancellationToken>((request, cancellationToken) =>
                 {
                     createTagCommandCreated = request as CreateTagCommand;
                 });
-            var dut = new TagsController(mediator.Object);
-            var dto = new CreateTagDto
-            {
-                Description = "Description",
-                JourneyId = 1,
-                ProjectNo = "ProjectNumber",
-                StepId = 2,
-                TagNo = "TagNumber"
-            };
 
-            await dut.CreateTag(dto);
+            _createTagDto.ProjectNo = "ProjectNumber";
+            _createTagDto.StepId = 2;
+            _createTagDto.TagNo = "TagNo";
 
-            Assert.AreEqual(dto.Description, createTagCommandCreated.Description);
-            Assert.AreEqual(dto.JourneyId, createTagCommandCreated.JourneyId);
-            Assert.AreEqual(dto.ProjectNo, createTagCommandCreated.ProjectNumber);
-            Assert.AreEqual(dto.StepId, createTagCommandCreated.StepId);
-            Assert.AreEqual(dto.TagNo, createTagCommandCreated.TagNumber);
+            await _dut.CreateTag(_createTagDto);
+
+            Assert.AreEqual(_createTagDto.ProjectNo, createTagCommandCreated.ProjectNo);
+            Assert.AreEqual(_createTagDto.StepId, createTagCommandCreated.StepId);
+            Assert.AreEqual(_createTagDto.TagNo, createTagCommandCreated.TagNo);
         }
 
         [TestMethod]
-        public async Task CreateTag_ReturnsOk_WhenResultIsSuccessful()
+        public async Task CreateTag_ShouldReturnsOk_WhenResultIsSuccessful()
         {
-            var mediator = new Mock<IMediator>();
-            mediator
-                .Setup(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<int>(5) as Result<int>));
-            var dut = new TagsController(mediator.Object);
-            var dto = new Mock<CreateTagDto>();
-
-            var result = await dut.CreateTag(dto.Object);
+            var result = await _dut.CreateTag(_createTagDto);
 
             Assert.IsInstanceOfType(result, typeof(OkObjectResult));
             Assert.AreEqual(5, ((OkObjectResult)result).Value);
         }
 
         [TestMethod]
-        public async Task CreateTag_ReturnsNotFound_IfResultIsNotFound()
+        public async Task CreateTag_ShouldReturnsNotFound_IfResultIsNotFound()
         {
-            var mediator = new Mock<IMediator>();
-            mediator
+            _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new NotFoundResult<int>("") as Result<int>));
-            var dut = new TagsController(mediator.Object);
-            var dto = new Mock<CreateTagDto>();
 
-            var result = await dut.CreateTag(dto.Object);
+            var result = await _dut.CreateTag(_createTagDto);
 
             Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
         }

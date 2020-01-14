@@ -29,14 +29,14 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             _logger = logger;
         }
 
-        public async Task<ProcosysTagDetails> GetTagDetails(string plant, string projectName, string tagNumber)
+        public async Task<ProcosysTagDetails> GetTagDetails(string plant, string projectName, string tagNo)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
 
-            var tags = await GetTags(plant, projectName, tagNumber);
+            var tags = await GetTags(plant, projectName, tagNo);
             if (tags.Count != 1)
             {
                 throw new InvalidResultException($"Expected 1, but was {tags.Count()}");

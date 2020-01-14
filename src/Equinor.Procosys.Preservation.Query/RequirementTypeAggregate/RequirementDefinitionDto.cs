@@ -6,7 +6,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
     public class RequirementDefinitionDto
     {
-        public RequirementDefinitionDto(int id, string title, bool isVoided, int defaultInterval, int sortKey, IEnumerable<FieldDto> fields)
+        public RequirementDefinitionDto(int id, string title, bool isVoided, int defaultIntervalWeeks, int sortKey, IEnumerable<FieldDto> fields)
         {
             if (fields == null)
             {
@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             Id = id;
             Title = title;
             IsVoided = isVoided;
-            DefaultInterval = defaultInterval;
+            DefaultIntervalWeeks = defaultIntervalWeeks;
             SortKey = sortKey;
             Fields = fields.OrderBy(f => f.SortKey);
         }
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public int Id { get; }
         public string Title { get; }
         public bool IsVoided { get; }
-        public int DefaultInterval { get; }
+        public int DefaultIntervalWeeks { get; }
         public int SortKey { get; }
         public IEnumerable<FieldDto> Fields { get; }
 

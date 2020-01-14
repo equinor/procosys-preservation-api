@@ -14,17 +14,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public RequirementDefinition(string schema, string title, int defaultInterval, int sortKey)
+        public RequirementDefinition(string schema, string title, int defaultIntervalWeeks, int sortKey)
             : base(schema)
         {
             Title = title;
-            DefaultInterval = defaultInterval;
+            DefaultIntervalWeeks = defaultIntervalWeeks;
             SortKey = sortKey;
         }
 
         public string Title { get; private set; }
         public bool IsVoided { get; private set; }
-        public int DefaultInterval { get; private set; }
+        public int DefaultIntervalWeeks { get; private set; }
         public int SortKey { get; private set; }
         public IReadOnlyCollection<Field> Fields => _fields.AsReadOnly();
 

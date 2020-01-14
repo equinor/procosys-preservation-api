@@ -1,7 +1,6 @@
 ﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.Validators
@@ -15,14 +14,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators
         public static IRuleBuilder<T, string> JourneyTitleIsUnique<T>(this IRuleBuilder<T, string> ruleBuilder, IJourneyRepository journeyRepository) =>
             ruleBuilder
                 .SetValidator(new JourneyTitleIsUniqueValidator(journeyRepository));
-
-        public static IRuleBuilder<T, int> TagMustExist<T>(this IRuleBuilder<T, int> ruleBuilder, ITagRepository tagRepository) =>
-            ruleBuilder
-                .SetValidator(new TagExistsValidator(tagRepository));
-
-        public static IRuleBuilder<T, int> StepMustExist<T>(this IRuleBuilder<T, int> ruleBuilder, IJourneyRepository journeyRepository) =>
-            ruleBuilder
-                .SetValidator(new StepExistsValidator(journeyRepository));
 
         public static IRuleBuilder<T, int> ModeMustExist<T>(this IRuleBuilder<T, int> ruleBuilder, IModeRepository modeRepository) =>
             ruleBuilder

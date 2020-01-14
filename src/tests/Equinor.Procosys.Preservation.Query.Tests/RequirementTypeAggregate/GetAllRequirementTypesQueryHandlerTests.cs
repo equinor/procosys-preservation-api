@@ -25,8 +25,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             _repoMock = new Mock<IRequirementTypeRepository>();
 
-            _field = new Field("SchemaA", "LabelA", "UnitA", true, FieldType.Attachment, 10);
-            _fieldVoided = new Field("SchemaB", "LabelB", "UnitB", false, FieldType.Number, 20);
+            _field = new Field("SchemaA", "LabelA", FieldType.Attachment, 10, "UnitA", true);
+            _fieldVoided = new Field("SchemaB", "LabelB", FieldType.Number, 20, "UnitB", false);
             _fieldVoided.Void();
 
             _requirementDefinition = new RequirementDefinition("SchemaA", "TitleA", 4, 10);
@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllNonVoidedRequirementTypesQuery_ShouldGetNonVoidedOnly()
+        public void HandleGetAllRequirementTypesQuery_ShouldGetNonVoidedRequirementTypesOnly_WhenNotGettingVoided()
         {
             var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
 
@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             Assert.IsFalse(requirementTypes[0].IsVoided);
 
             Assert.AreEqual(_requirementDefinition.Title, requirementDefinitions[0].Title);
-            Assert.AreEqual(_requirementDefinition.DefaultInterval, requirementDefinitions[0].DefaultInterval);
+            Assert.AreEqual(_requirementDefinition.DefaultIntervalWeeks, requirementDefinitions[0].DefaultIntervalWeeks);
             Assert.AreEqual(_requirementDefinition.SortKey, requirementDefinitions[0].SortKey);
             Assert.IsFalse(requirementDefinitions[0].IsVoided);
 
@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllInclVoidedRequirementTypesQuery_ShouldGetVoidedAlso()
+        public void HandleGetAllRequirementTypesQuery_ShoudlncludeVoidedRequirementTypes_WhenGettingVoided()
         {
             var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
 
@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllInclVoidedRequirementTypesQuery_ShouldReturnTypesSortedBySortKey()
+        public void HandleGetAllRequirementTypesQuery_ShouldReturnRequirementTypesSortedBySortKey()
         {
             var requirementTypes = new List<RequirementType>
             {

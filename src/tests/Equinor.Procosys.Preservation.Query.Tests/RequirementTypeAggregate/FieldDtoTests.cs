@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
     public class FieldDtoTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTestForInfo()
+        public void ConstructorForInfoField_ShouldSetProperties()
         {
             var fieldType = FieldType.Info;
 
@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTestForAttachment()
+        public void ConstructorForAttachmentField_ShouldSetProperties()
         {
             var fieldType = FieldType.Attachment;
 
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTestForNumber()
+        public void ConstructorForNumberField_ShouldSetProperties()
         {
             var fieldType = FieldType.Number;
 
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTestForCheckbox()
+        public void ConstructorForCheckBoxField_ShouldSetProperties()
         {
             var fieldType = FieldType.CheckBox;
 
@@ -41,14 +41,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 
         private static void AssertField(FieldType fieldType, bool needUserInput)
         {
-            var f = new FieldDto(1, "LabelA", "UnitA", true, true, fieldType, 10);
+            var f = new FieldDto(1, "LabelA", true, fieldType, 10, "UnitA", true);
 
             Assert.AreEqual(1, f.Id);
             Assert.AreEqual("LabelA", f.Label);
             Assert.AreEqual("UnitA", f.Unit);
             Assert.AreEqual(fieldType, f.FieldType);
             Assert.AreEqual(10, f.SortKey);
-            Assert.IsTrue(f.ShowPrevious);
+            Assert.IsTrue(f.ShowPrevious.HasValue);
+            Assert.IsTrue(f.ShowPrevious.Value);
             Assert.IsTrue(f.IsVoided);
             Assert.AreEqual(needUserInput, f.NeedUserInput);
         }

@@ -68,6 +68,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("ModeId");
 
+                    b.HasIndex("ResponsibleId");
+
                     b.ToTable("Step");
                 });
 
@@ -122,14 +124,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.Property<bool>("ShowPrevious")
+                    b.Property<bool?>("ShowPrevious")
                         .HasColumnType("bit");
 
                     b.Property<int>("SortKey")
                         .HasColumnType("int");
 
                     b.Property<string>("Unit")
-                        .IsRequired()
                         .HasColumnType("nvarchar(32)")
                         .HasMaxLength(32);
 
@@ -233,6 +234,39 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.ToTable("Responsibles");
                 });
 
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Requirement", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("Interval")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsVoided")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RequirementDefinitionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Schema")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<int>("TagId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RequirementDefinitionId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("Requirements");
+                });
+
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Tag", b =>
                 {
                     b.Property<int>("Id")
@@ -307,6 +341,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasForeignKey("ModeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", null)
+                        .WithMany()
+                        .HasForeignKey("ResponsibleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.Field", b =>
@@ -323,6 +363,21 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType", null)
                         .WithMany("RequirementDefinitions")
                         .HasForeignKey("RequirementTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Requirement", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", null)
+                        .WithMany()
+                        .HasForeignKey("RequirementDefinitionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Tag", null)
+                        .WithMany("Requirements")
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
