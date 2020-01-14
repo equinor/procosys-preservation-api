@@ -77,7 +77,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
             Assert.AreEqual(0, tagAddedToRepository.Id);
             Assert.AreEqual(false, tagAddedToRepository.IsAreaTag);
             Assert.AreEqual("McPkgNo", tagAddedToRepository.McPkcNumber);
-            Assert.AreEqual(DateTime.MinValue, tagAddedToRepository.NextDueTime);
             Assert.AreEqual("ProjectNumber", tagAddedToRepository.ProjectNumber);
             Assert.AreEqual("PurchaseOrderNo", tagAddedToRepository.PurchaseOrderNumber);
             Assert.AreEqual("TestPlant", tagAddedToRepository.Schema);

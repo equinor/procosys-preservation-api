@@ -16,7 +16,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public string DisciplineCode { get; private set; }
         public bool IsAreaTag { get; private set; }
         public string McPkcNumber { get; private set; }
-        public DateTime NextDueTime { get; private set; }
         public string ProjectNumber { get; private set; }
         public string PurchaseOrderNumber { get; private set; }
         public int StepId { get; private set; }
