@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             }
 
             var tags = await GetTags(plant, projectName, tagNumber);
-            if (tags.Count() != 1)
+            if (tags.Count != 1)
             {
                 throw new InvalidResultException($"Expected 1, but was {tags.Count()}");
             }
