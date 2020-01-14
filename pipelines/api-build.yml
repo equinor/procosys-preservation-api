@@ -57,7 +57,7 @@ stages:
     containerRegistry: '${{ variables.containerRegistryName }}' 
 
   jobs:
-  - template: /templates/pipelines/webapprelease.yml@templates
+  - template: /templates/pipelines/webapprelease-api.yml@templates
     parameters:
       dependsOn: ''
       deploymentName: 'publish_container_to_webapp'
