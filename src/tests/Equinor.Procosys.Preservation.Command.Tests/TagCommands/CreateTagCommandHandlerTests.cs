@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
                 .Returns(Task.FromResult(tagDetails));
 
             var command = new CreateTagCommand(
-                "TagNumber",
+                "TagNo",
                 "ProjectNumber",
                 0,
                 new List<Requirement> {new Requirement(1, 1)});
@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
             Assert.AreEqual("TestPlant", tagAddedToRepository.Schema);
             Assert.AreEqual(0, tagAddedToRepository.StepId);
             Assert.AreEqual("TagFunctionCode", tagAddedToRepository.TagFunctionCode);
-            Assert.AreEqual("TagNumber", tagAddedToRepository.TagNumber);
+            Assert.AreEqual("TagNo", tagAddedToRepository.TagNo);
         }
     }
 }

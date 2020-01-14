@@ -9,8 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
     {
         private readonly List<Requirement> _requirements = new List<Requirement>();
 
-        public const int DescriptionLengthMax = 1000;
-        public const int TagNumberLengthMax = 255;
+        public const int TagNoLengthMax = 255;
         public const int ProjectNumberLengthMax = 255;
 
         public string AreaCode { get; private set; }
@@ -23,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public string PurchaseOrderNumber { get; private set; }
         public int StepId { get; private set; }
         public string TagFunctionCode { get; private set; }
-        public string TagNumber { get; private set; }
+        public string TagNo { get; private set; }
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
 
         protected Tag()
@@ -33,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 
         public Tag(
             string schema,
-            string tagNumber,
+            string tagNo,
             string projectNumber,
             string areaCode,
             string calloffNumber,
@@ -60,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
                 throw new Exception("Must have at least one requirement");
             }
 
-            TagNumber = tagNumber;
+            TagNo = tagNo;
             ProjectNumber = projectNumber;
             AreaCode = areaCode;
             CalloffNumber = calloffNumber;

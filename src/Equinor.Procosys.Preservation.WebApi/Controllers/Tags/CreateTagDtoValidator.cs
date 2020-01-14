@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             RuleFor(x => x.TagNo)
                 .NotEmpty()
-                .MaximumLength(Tag.TagNumberLengthMax);
+                .MaximumLength(Tag.TagNoLengthMax);
 
             RuleFor(x => x.ProjectNo)
                 .NotEmpty()
@@ -20,16 +20,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             RuleFor(tag => tag.Requirements)
                 .Must(r => r != null && r.Any())
                 .WithMessage($"{nameof(CreateTagDto.Requirements)} must have at least one element")
-                .Must(BuUniqueRequirements)
+                .Must(BeUniqueRequirements)
                 .WithMessage($"{nameof(CreateTagDto.Requirements)} must be unique");
 
             RuleForEach(x => x.Requirements)
-                .Must(RequirementMustHaveInterval)
+                .Must(RequirementMustHavePositiveInterval)
                 .WithMessage($"{nameof(TagRequirementDto.IntervalWeeks)} must be positive");
             
-            bool RequirementMustHaveInterval(TagRequirementDto dto) => dto.IntervalWeeks > 0;
+            bool RequirementMustHavePositiveInterval(TagRequirementDto dto) => dto.IntervalWeeks > 0;
 
-            bool BuUniqueRequirements(IEnumerable<TagRequirementDto> dtos)
+            bool BeUniqueRequirements(IEnumerable<TagRequirementDto> dtos)
             {
                 if (dtos == null)
                 {

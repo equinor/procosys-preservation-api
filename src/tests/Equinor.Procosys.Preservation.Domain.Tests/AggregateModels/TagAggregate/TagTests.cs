@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         public void Constructor_ShouldSetProperties()
         {
             var dut = new Tag("SchemaA",
-                "TagNumberA",
+                "TagNoA",
                 "ProjectNumberA", 
                 "AreaCodeA", 
                 "CalloffA", 
@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
                 _requirements);
 
             Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual("TagNumberA", dut.TagNumber);
+            Assert.AreEqual("TagNoA", dut.TagNo);
             Assert.AreEqual("ProjectNumberA", dut.ProjectNumber);
             Assert.AreEqual("AreaCodeA", dut.AreaCode);
             Assert.AreEqual("CalloffA", dut.CalloffNumber);
