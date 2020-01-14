@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Domain;
@@ -18,15 +19,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
     public class CreateTagCommandHandlerTests
     {
         [TestMethod]
-        public async Task TagIsAddedToRepositoryTestAsync()
+        public async Task HandlingCreateTagCommand_ShouldAddTagToRepository()
         {
             // Arrange
             var mode = new Mock<Mode>("TestPlant", "ModeTitle");
             var responsible = new Mock<Responsible>("TestPlant", "ResponsibleName");
+            var stepId = 11;
             var step = new Mock<Step>("TestPlant", mode.Object, responsible.Object);
+            step.SetupGet(x => x.Id).Returns(stepId);
             var journeyRepository = new Mock<IJourneyRepository>();
             journeyRepository
-                .Setup(x => x.GetStepByStepIdAsync(It.IsAny<int>()))
+                .Setup(x => x.GetStepByStepIdAsync(stepId))
                 .Returns(Task.FromResult(step.Object));
 
             Tag tagAddedToRepository = null;
@@ -40,8 +43,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
 
             var requirementTypeRepository = new Mock<IRequirementTypeRepository>();
             var requirementDefinition = new Mock<RequirementDefinition>("TestPlant", "Title", 4, 1);
+            var requirementDefinitionId = 99;
+            requirementDefinition.SetupGet(x => x.Id).Returns(requirementDefinitionId);
             requirementTypeRepository
-                .Setup(r => r.GetRequirementDefinitionByIdAsync(It.IsAny<int>()))
+                .Setup(r => r.GetRequirementDefinitionByIdAsync(requirementDefinitionId))
                 .Returns(Task.FromResult(requirementDefinition.Object));
 
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -69,8 +74,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
             var command = new CreateTagCommand(
                 "TagNo",
                 "ProjectNumber",
-                0,
-                new List<Requirement> {new Requirement(1, 1)});
+                stepId,
+                new List<Requirement>
+                {
+                    new Requirement(requirementDefinitionId, 1)
+                });
             var createTagCommandHandler = new CreateTagCommandHandler(
                 tagRepository.Object,
                 journeyRepository.Object,
@@ -95,9 +103,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
             Assert.AreEqual("ProjectNumber", tagAddedToRepository.ProjectNumber);
             Assert.AreEqual("PurchaseOrderNo", tagAddedToRepository.PurchaseOrderNumber);
             Assert.AreEqual("TestPlant", tagAddedToRepository.Schema);
-            Assert.AreEqual(0, tagAddedToRepository.StepId);
+            Assert.AreEqual(stepId, tagAddedToRepository.StepId);
             Assert.AreEqual("TagFunctionCode", tagAddedToRepository.TagFunctionCode);
             Assert.AreEqual("TagNo", tagAddedToRepository.TagNo);
+            Assert.AreEqual(1, tagAddedToRepository.Requirements.Count);
+            Assert.AreEqual(requirementDefinitionId, tagAddedToRepository.Requirements.First().RequirementDefinitionId);
         }
     }
 }
