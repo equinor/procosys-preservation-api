@@ -60,10 +60,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
                 .Returns(Task.FromResult(tagDetails));
 
             var command = new CreateTagCommand("TagNumber", "ProjectNumber", 0, 0, "Description");
-            var dut = new CreateTagCommandHandler(tagRepository.Object, journeyRepository.Object, unitOfWork.Object, plantProvider.Object, tagApiService.Object);
+            var createTagCommandHandler = new CreateTagCommandHandler(tagRepository.Object, journeyRepository.Object, unitOfWork.Object, plantProvider.Object, tagApiService.Object);
 
             // Act
-            var result = await dut.Handle(command, default);
+            var result = await createTagCommandHandler.Handle(command, default);
 
             // Assert
             Assert.AreEqual(0, result.Data);
