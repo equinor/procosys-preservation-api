@@ -44,20 +44,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
                 .Setup(x => x.Plant)
                 .Returns("TestPlant");
 
-            var tagDetails = new Mock<ProcosysTagDetails>();
-            tagDetails.Object.AreaCode = "AreaCode";
-            tagDetails.Object.CallOffNo = "CalloffNo";
-            tagDetails.Object.CommPkgNo = "CommPkgNo";
-            tagDetails.Object.Description = "Description";
-            tagDetails.Object.DisciplineCode = "DisciplineCode";
-            tagDetails.Object.McPkgNo = "McPkgNo";
-            tagDetails.Object.PurchaseOrderNo = "PurchaseOrderNo";
-            tagDetails.Object.TagFunctionCode = "TagFunctionCode";
-            tagDetails.Object.TagNo = "TagNo";
+            var tagDetails = new ProcosysTagDetails();
+            tagDetails.AreaCode = "AreaCode";
+            tagDetails.CallOffNo = "CalloffNo";
+            tagDetails.CommPkgNo = "CommPkgNo";
+            tagDetails.Description = "Description";
+            tagDetails.DisciplineCode = "DisciplineCode";
+            tagDetails.McPkgNo = "McPkgNo";
+            tagDetails.PurchaseOrderNo = "PurchaseOrderNo";
+            tagDetails.TagFunctionCode = "TagFunctionCode";
+            tagDetails.TagNo = "TagNo";
             var tagApiService = new Mock<ITagApiService>();
             tagApiService
                 .Setup(x => x.GetTagDetails(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                .Returns(Task.FromResult(tagDetails.Object));
+                .Returns(Task.FromResult(tagDetails));
 
             var command = new CreateTagCommand("TagNumber", "ProjectNumber", 0, 0, "Description");
             var dut = new CreateTagCommandHandler(tagRepository.Object, journeyRepository.Object, unitOfWork.Object, plantProvider.Object, tagApiService.Object);
