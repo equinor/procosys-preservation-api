@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                     new RequirementDefinitionDto(rd.Id,
                         rd.Title,
                         rd.IsVoided,
-                        rd.DefaultInterval,
+                        rd.DefaultIntervalWeeks,
                         rd.SortKey,
                         rd.Fields.Select(f => new FieldDto(
                             f.Id,

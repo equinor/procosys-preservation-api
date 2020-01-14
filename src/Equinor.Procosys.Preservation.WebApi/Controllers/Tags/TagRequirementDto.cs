@@ -3,6 +3,6 @@
     public class TagRequirementDto
     {
         public int RequirementDefinitionId { get; set; }
-        public int Interval { get; set; }
+        public int IntervalWeeks { get; set; }
     }
 }

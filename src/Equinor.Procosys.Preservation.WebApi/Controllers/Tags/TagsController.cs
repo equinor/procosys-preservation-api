@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     dto.ProjectNo,
                     dto.StepId,
                     dto.Requirements.Select(r =>
-                        new Requirement(r.RequirementDefinitionId, r.Interval))));
+                        new Requirement(r.RequirementDefinitionId, r.IntervalWeeks))));
             return this.FromResult(result);
         }
 

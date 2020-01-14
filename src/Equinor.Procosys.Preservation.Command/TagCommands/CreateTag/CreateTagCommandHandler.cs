@@ -6,7 +6,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Requirement;
-using Equinor.Procosys.Preservation.MainApi;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using ServiceResult;
@@ -40,7 +39,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
         public async Task<Result<int>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
-            // todo Unit test
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             if (step == null)
             {

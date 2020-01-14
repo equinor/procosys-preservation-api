@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
 
             Assert.AreEqual(1, r.Id);
             Assert.AreEqual(2, r.RequirementDefinitionId);
-            Assert.AreEqual(4, r.Interval);
+            Assert.AreEqual(4, r.IntervalWeeks);
             Assert.IsTrue(r.IsVoided);
         }
     }

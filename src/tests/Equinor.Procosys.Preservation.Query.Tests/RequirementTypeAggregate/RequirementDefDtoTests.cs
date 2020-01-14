@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 
             Assert.AreEqual(1, rd.Id);
             Assert.AreEqual("TitleA", rd.Title);
-            Assert.AreEqual(4, rd.DefaultInterval);
+            Assert.AreEqual(4, rd.DefaultIntervalWeeks);
             Assert.AreEqual(10, rd.SortKey);
             Assert.IsTrue(rd.IsVoided);
             Assert.AreEqual(0, rd.Fields.Count());

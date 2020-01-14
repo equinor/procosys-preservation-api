@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             bool needUserInput)
         {
             Assert.AreEqual(requirementDefinition.Title, requirementDefinitionDto.Title);
-            Assert.AreEqual(requirementDefinition.DefaultInterval, requirementDefinitionDto.DefaultInterval);
+            Assert.AreEqual(requirementDefinition.DefaultIntervalWeeks, requirementDefinitionDto.DefaultIntervalWeeks);
             Assert.AreEqual(requirementDefinition.SortKey, requirementDefinitionDto.SortKey);
             Assert.AreEqual(needUserInput, requirementDefinitionDto.NeedUserInput);
             Assert.IsFalse(requirementDefinitionDto.IsVoided);

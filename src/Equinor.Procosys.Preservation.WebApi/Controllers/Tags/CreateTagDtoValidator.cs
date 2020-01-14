@@ -25,9 +25,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             RuleForEach(x => x.Requirements)
                 .Must(RequirementMustHaveInterval)
-                .WithMessage($"{nameof(TagRequirementDto.Interval)} must be positive");
+                .WithMessage($"{nameof(TagRequirementDto.IntervalWeeks)} must be positive");
             
-            bool RequirementMustHaveInterval(TagRequirementDto dto) => dto.Interval > 0;
+            bool RequirementMustHaveInterval(TagRequirementDto dto) => dto.IntervalWeeks > 0;
 
             bool BuUniqueRequirements(IEnumerable<TagRequirementDto> dtos)
             {

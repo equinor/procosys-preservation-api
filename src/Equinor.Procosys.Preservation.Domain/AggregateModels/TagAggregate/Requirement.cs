@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         {
         }
 
-        public Requirement(string schema, int interval, RequirementDefinition requirementDefinition)
+        public Requirement(string schema, int intervalWeeks, RequirementDefinition requirementDefinition)
             : base(schema)
         {
             if (requirementDefinition == null)
@@ -18,10 +18,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
 
-            Interval = interval;
+            IntervalWeeks = intervalWeeks;
             RequirementDefinitionId = requirementDefinition.Id;
         }
-        public int Interval { get; private set; }
+        public int IntervalWeeks { get; private set; }
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; set; }
 

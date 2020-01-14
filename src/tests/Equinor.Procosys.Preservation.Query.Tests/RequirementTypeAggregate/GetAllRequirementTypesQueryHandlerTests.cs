@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             Assert.IsFalse(requirementTypes[0].IsVoided);
 
             Assert.AreEqual(_requirementDefinition.Title, requirementDefinitions[0].Title);
-            Assert.AreEqual(_requirementDefinition.DefaultInterval, requirementDefinitions[0].DefaultInterval);
+            Assert.AreEqual(_requirementDefinition.DefaultIntervalWeeks, requirementDefinitions[0].DefaultIntervalWeeks);
             Assert.AreEqual(_requirementDefinition.SortKey, requirementDefinitions[0].SortKey);
             Assert.IsFalse(requirementDefinitions[0].IsVoided);
 
