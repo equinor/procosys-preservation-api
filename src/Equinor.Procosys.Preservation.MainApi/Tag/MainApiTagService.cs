@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             }
 
             var tag = tags.First();
-            var url = $"Tag?plantId=PCS${plant}&tagId={tag.Id}&api-version={_apiVersion}";
+            var url = $"Tag?plantId={plant}&tagId={tag.Id}&api-version={_apiVersion}";
             var tagDetailsResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagDetailsResult>(url);
             if (tagDetailsResult == null)
             {
