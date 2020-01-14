@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Requirement;
 using Equinor.Procosys.Preservation.MainApi;
+using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using ServiceResult;
 
@@ -61,11 +62,19 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, requirementDefinition));
             }
 
-            var result = await _tagApiService.GetTags(_plantProvider.Plant, "1"); //TODO: Use this to enrich the tag.
+            var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectNo, request.TagNo);
 
-            var tagToAdd = new Tag(_plantProvider.Plant, 
-                request.TagNo, 
+            var tagToAdd = new Tag(
+                _plantProvider.Plant,
+                request.TagNo,
                 request.ProjectNo,
+                tagDetails.AreaCode,
+                tagDetails.CallOffNo,
+                tagDetails.DisciplineCode,
+                tagDetails.McPkgNo,
+                tagDetails.CommPkgNo,
+                tagDetails.PurchaseOrderNo,
+                tagDetails.TagFunctionCode,
                 step,
                 requirements);
             _tagRepository.Add(tagToAdd);

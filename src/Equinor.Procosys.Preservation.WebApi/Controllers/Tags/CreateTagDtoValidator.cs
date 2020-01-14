@@ -11,11 +11,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             RuleFor(x => x.TagNo)
                 .NotEmpty()
-                .MaximumLength(Tag.TagNoLengthMax);
+                .MaximumLength(Tag.TagNumberLengthMax);
 
             RuleFor(x => x.ProjectNo)
                 .NotEmpty()
-                .MaximumLength(Tag.ProjectNoLengthMax);
+                .MaximumLength(Tag.ProjectNumberLengthMax);
 
             RuleFor(tag => tag.Requirements)
                 .Must(r => r != null && r.Any())

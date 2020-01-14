@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,52 +23,71 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             _stepMock = new Mock<Step>();
             _stepMock.SetupGet(x => x.Id).Returns(3);
             _requirementMock = new Mock<Requirement>();
+            _requirementMock.SetupGet(x => x.Id).Returns(4);
             _requirements.Add(_requirementMock.Object);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var tag = new Tag("SchemaA", "TagNoA", "ProjectNoA", _stepMock.Object, _requirements);
+            var dut = new Tag("SchemaA",
+                "TagNumberA",
+                "ProjectNumberA", 
+                "AreaCodeA", 
+                "CalloffA", 
+                "DisciplineA", 
+                "McPkgA", 
+                "CommPkgA", 
+                "PurchaseOrderA", 
+                "TagFunctionCodeA", 
+                _stepMock.Object,
+                _requirements);
 
-            Assert.AreEqual("SchemaA", tag.Schema);
-            Assert.AreEqual("TagNoA", tag.TagNo);
-            Assert.AreEqual("ProjectNoA", tag.ProjectNo);
-            Assert.AreEqual(_stepMock.Object.Id, tag.StepId);
-            Assert.AreEqual(1, tag.Requirements.Count);
+            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual("TagNumberA", dut.TagNumber);
+            Assert.AreEqual("ProjectNumberA", dut.ProjectNumber);
+            Assert.AreEqual("AreaCodeA", dut.AreaCode);
+            Assert.AreEqual("CalloffA", dut.CalloffNumber);
+            Assert.AreEqual("DisciplineA", dut.DisciplineCode);
+            Assert.AreEqual("McPkgA", dut.McPkcNumber);
+            Assert.AreEqual("PurchaseOrderA", dut.PurchaseOrderNumber);
+            Assert.AreEqual("TagFunctionCodeA", dut.TagFunctionCode);
+            Assert.AreEqual(_stepMock.Object.Id, dut.StepId);
+            Assert.AreEqual(1, dut.Requirements.Count);
+            Assert.AreEqual(_requirementMock.Object.Id, dut.Requirements.First().Id);
         }
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenStepNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(()
-                => new Tag("", "", "", null, _requirements));
+                => new Tag("", "", "", "", "", "", "", "", "", "", null, _requirements));
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenRequirementsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(()
-                => new Tag("", "", "", _stepMock.Object, null));
+                => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, null));
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenEmptyListOfRequirementsNotGiven()
             => Assert.ThrowsException<Exception>(()
-                => new Tag("", "", "", _stepMock.Object, _emptyRequirements));
+                => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _emptyRequirements));
 
         [TestMethod]
         public void SetStep_ShouldSetStepId()
         {
-            var tag = new Tag("", "", "", _stepMock.Object, _requirements);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
 
             var newStep = new Mock<Step>();
             newStep.SetupGet(x => x.Id).Returns(4);
-            tag.SetStep(newStep.Object);
+            dut.SetStep(newStep.Object);
 
-            Assert.AreEqual(newStep.Object.Id, tag.StepId);
+            Assert.AreEqual(newStep.Object.Id, dut.StepId);
         }
 
         [TestMethod]
         public void SetStep_ShouldThrowException_WhenStepNotGiven()
         {
-            var tag = new Tag("", "", "", _stepMock.Object, _requirements);
+            var tag = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
 
             Assert.ThrowsException<ArgumentNullException>(() => tag.SetStep(null));
         }
@@ -75,9 +95,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         [TestMethod]
         public void SetRequirement_ShouldThrowException_WhenRequirementNotGiven()
         {
-            var tag = new Tag("", "", "", _stepMock.Object, _requirements);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
 
-            Assert.ThrowsException<ArgumentNullException>(() => tag.AddRequirement(null));
+            Assert.ThrowsException<ArgumentNullException>(() => dut.AddRequirement(null));
         }
     }
 }

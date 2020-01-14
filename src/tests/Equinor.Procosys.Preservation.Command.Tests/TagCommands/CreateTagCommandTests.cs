@@ -1,0 +1,20 @@
+﻿using System.Collections.Generic;
+using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
+{
+    [TestClass]
+    public class CreateTagCommandTests
+    {
+        [TestMethod]
+        public void Constructor_ShouldSetProperties()
+        {
+            var dut = new CreateTagCommand("TagNumberA", "ProjectNumberA", 2, new List<Requirement>());
+
+            Assert.AreEqual("TagNumberA", dut.TagNo);
+            Assert.AreEqual("ProjectNumberA", dut.ProjectNo);
+            Assert.AreEqual(2, dut.StepId);
+        }
+    }
+}
