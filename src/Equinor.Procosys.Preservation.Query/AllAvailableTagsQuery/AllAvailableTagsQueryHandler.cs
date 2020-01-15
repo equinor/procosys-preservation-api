@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.AllAvailableTagsQuery
             var presTags = await _tagRepository.GetAllAsync();
 
             var combinedTags = apiTags
-                .GroupJoin(presTags, apiTag => apiTag.TagNo, presTag => presTag.TagNumber, (x, y) => new { ApiTag = x, PresTag = y })
+                .GroupJoin(presTags, apiTag => apiTag.TagNo, presTag => presTag.TagNo, (x, y) => new { ApiTag = x, PresTag = y })
                 .SelectMany(x => x.PresTag.DefaultIfEmpty(), (x, y) =>
                     new ProcosysTagDto(x.ApiTag.TagNo, x.ApiTag.Description, x.ApiTag.PurchaseOrderNo, x.ApiTag.CommPkgNo, x.ApiTag.McPkgNo, y != null))
                 .ToList();
