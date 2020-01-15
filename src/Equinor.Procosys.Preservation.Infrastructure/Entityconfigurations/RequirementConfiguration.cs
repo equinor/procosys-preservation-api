@@ -15,6 +15,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             builder.HasOne<RequirementDefinition>();
+
+            builder
+                .HasMany(x => x.PreservationRecords)
+                .WithOne()
+                .IsRequired();
         }
     }
 }
