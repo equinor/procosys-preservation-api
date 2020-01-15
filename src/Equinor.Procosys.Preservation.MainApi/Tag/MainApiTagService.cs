@@ -65,7 +65,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             if (tagSearchResult == null)
             {
                 _logger.LogWarning($"Tag search returned no data. URL: {url}");
-                return default;
+                return new List<ProcosysTagOverview>();
+            }
+            if (tagSearchResult.Items == null)
+            {
+                return new List<ProcosysTagOverview>();
             }
             return tagSearchResult.Items;
         }
