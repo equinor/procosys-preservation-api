@@ -24,7 +24,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             IntervalWeeks = intervalWeeks;
             RequirementDefinitionId = requirementDefinition.Id;
         }
-        public int IntervalWeeks { get; protected set; }
+
+        public int IntervalWeeks { get; private set; }
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; set; }
         public IReadOnlyCollection<PreservationRecord> PreservationRecords => _preservationRecords.AsReadOnly();
