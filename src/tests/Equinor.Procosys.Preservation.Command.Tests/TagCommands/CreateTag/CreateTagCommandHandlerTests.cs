@@ -13,7 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.CreateTag.Requirement;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 {
     [TestClass]
     public class CreateTagCommandHandlerTests

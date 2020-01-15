@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 {
     [TestClass]
     public class CreateTagCommandValidatorTests
