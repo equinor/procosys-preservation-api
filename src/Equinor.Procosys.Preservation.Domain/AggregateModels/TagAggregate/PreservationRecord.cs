@@ -24,13 +24,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             }
 
             RequirementId = requirement.Id;
-            NextDueTime = timeService.GetCurrentTimeUtc().AddDays(7*requirement.IntervalWeeks);
+            NextDueTimeUtc = timeService.GetCurrentTimeUtc().AddDays(7*requirement.IntervalWeeks);
         }
 
         public int RequirementId { get; private set; }
-        public DateTime NextDueTime { get; private set; }
+        public DateTime NextDueTimeUtc { get; private set; }
         public bool? BulkPreserved { get; set; }
-        public DateTime? Preserved { get; set; }
+        public DateTime? PreservedAtUtc { get; set; }
         public int? PreservedBy { get; set; }
         public string Comment { get; set; }
  
@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             }
 
             PreservedBy = preservedBy.Id;
-            Preserved = timeService.GetCurrentTimeUtc();
+            PreservedAtUtc = timeService.GetCurrentTimeUtc();
             Comment = comment;
         }   }
 }

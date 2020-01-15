@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             Assert.AreEqual("SchemaA", req.Schema);
             Assert.AreEqual(_reqMock.Object.Id, req.RequirementId);
             Assert.IsFalse(req.BulkPreserved.HasValue);
-            Assert.IsFalse(req.Preserved.HasValue);
+            Assert.IsFalse(req.PreservedAtUtc.HasValue);
             Assert.IsFalse(req.PreservedBy.HasValue);
         }
         [TestMethod]
@@ -45,8 +45,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
 
             var req = new PreservationRecord("SchemaA", r, _tsMock.Object);
 
-            var expectedNextDueTime = _utcNow.AddDays(7 * intervalWeeks);
-            Assert.AreEqual(expectedNextDueTime, req.NextDueTime);
+            var expectedNextDueTimeUtc = _utcNow.AddDays(7 * intervalWeeks);
+            Assert.AreEqual(expectedNextDueTimeUtc, req.NextDueTimeUtc);
         }
 
         [TestMethod]
