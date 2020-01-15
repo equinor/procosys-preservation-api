@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
         public const int FirstNameLengthMax = 64;
         public const int LastNameLengthMax = 64;
 
-        private Person() : base()
+        protected Person() : base()
         {
         }
 

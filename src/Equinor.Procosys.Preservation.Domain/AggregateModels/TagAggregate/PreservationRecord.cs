@@ -34,12 +34,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public int? PreservedBy { get; set; }
         public string Comment { get; set; }
  
-        public void Preserve(Person preservedBy, string comment, ITimeService timeService)
+        public void Preserve(Person preservedBy, string comment, ITimeService timeService) => Preserve(preservedBy, comment, false, timeService);
+
+        public void BulkPreserve(Person preservedBy, ITimeService timeService) => Preserve(preservedBy, null, true, timeService);
+
+        private void Preserve(Person preservedBy, string comment, bool bulkPreserve, ITimeService timeService)
         {
             if (preservedBy == null)
             {
                 throw new ArgumentNullException(nameof(preservedBy));
             }
+
             if (timeService == null)
             {
                 throw new ArgumentNullException(nameof(timeService));
@@ -48,5 +53,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             PreservedBy = preservedBy.Id;
             PreservedAtUtc = timeService.GetCurrentTimeUtc();
             Comment = comment;
-        }   }
+            BulkPreserved = bulkPreserve;
+        }
+    }
 }
