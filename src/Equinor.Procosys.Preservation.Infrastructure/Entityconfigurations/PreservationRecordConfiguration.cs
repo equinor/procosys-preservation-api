@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .HasMaxLength(PreservationRecord.CommentLengthMax);
 
             builder.Property(x => x.Preserved)
-                .IsRequired(false);
+                .IsRequired();
 
             builder.Property(x => x.PreservedBy)
                 .IsRequired(false);

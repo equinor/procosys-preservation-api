@@ -11,15 +11,19 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         {
         }
         
-        public PreservationRecord(string schema, Requirement requirement) : base(schema)
+        public PreservationRecord(string schema, Requirement requirement, ITimeService timeService) : base(schema)
         {
             if (requirement == null)
             {
                 throw new ArgumentNullException(nameof(requirement));
             }
+            if (timeService == null)
+            {
+                throw new ArgumentNullException(nameof(timeService));
+            }
 
             RequirementId = requirement.Id;
-            NextDueTime = DateTime.Now.AddDays(7*requirement.IntervalWeeks);
+            NextDueTime = timeService.GetCurrentTimeUtc().AddDays(7*requirement.IntervalWeeks);
         }
 
         public int RequirementId { get; private set; }
