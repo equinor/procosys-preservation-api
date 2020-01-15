@@ -28,10 +28,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             _repoMock = new Mock<IRequirementTypeRepository>();
 
-            _infoField = new Field("SchemaA", "LabelA", "UnitA", false, FieldType.Info, 10);
-            _numberField = new Field("SchemaB", "LabelB", "UnitB", false, FieldType.Number, 20);
-            _checkboxField = new Field("SchemaC", "LabelC", "UnitC", false, FieldType.CheckBox, 30);
-            _attachmentField = new Field("SchemaD", "LabelD", "UnitD", false, FieldType.Attachment, 40);
+            _infoField = new Field("SchemaA", "LabelA", FieldType.Info, 10);
+            _numberField = new Field("SchemaB", "LabelB", FieldType.Number, 20, "UnitA", true);
+            _checkboxField = new Field("SchemaC", "LabelC", FieldType.CheckBox, 30);
+            _attachmentField = new Field("SchemaD", "LabelD", FieldType.Attachment, 40);
 
             _requirementDefWithInfo = new RequirementDefinition("SchemaA", "DefWithInfo", 8, 140);
             _requirementDefWithNumber = new RequirementDefinition("SchemaB", "DefWithNumber", 8, 130);
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetRequirementTypeByIdQueryTest()
+        public void HandleGetRequirementTypeByIdQuery_ShouldGetRequirementTypeWithAllPropertiesSet()
         {
             var handler = new GetRequirementTypeByIdQueryHandler(_repoMock.Object);
 
@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             bool needUserInput)
         {
             Assert.AreEqual(requirementDefinition.Title, requirementDefinitionDto.Title);
-            Assert.AreEqual(requirementDefinition.DefaultInterval, requirementDefinitionDto.DefaultInterval);
+            Assert.AreEqual(requirementDefinition.DefaultIntervalWeeks, requirementDefinitionDto.DefaultIntervalWeeks);
             Assert.AreEqual(requirementDefinition.SortKey, requirementDefinitionDto.SortKey);
             Assert.AreEqual(needUserInput, requirementDefinitionDto.NeedUserInput);
             Assert.IsFalse(requirementDefinitionDto.IsVoided);

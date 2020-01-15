@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
 {
@@ -19,14 +18,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
         public async Task<ActionResult<IEnumerable<RequirementTypeDto>>> GetRequirementTypes([FromQuery] bool includeVoided = false)
         {
             var result = await _mediator.Send(new GetAllRequirementTypesQuery(includeVoided));
-            return this.FromResult(result);
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetRequirementType([FromRoute] int id)
         {
             var result = await _mediator.Send(new GetRequirementTypeByIdQuery(id));
-            return this.FromResult(result);
+            return Ok(result);
         }
     }
 }

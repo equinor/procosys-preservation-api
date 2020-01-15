@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
     public class JourneyTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var j = new Journey("SchemaA", "TitleA");
 
@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void AddingEmptyStepThrowsExceptionTest()
+        public void AddStep_ShouldThrowException_WhenStepNotGiven()
         {
             var j = new Journey("", "");
 
@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void StepIsAddedToStepsListTest()
+        public void AddStep_ShouldAddStepToStepsList()
         {
             var j = new Journey("", "");
             var step = new Mock<Step>();

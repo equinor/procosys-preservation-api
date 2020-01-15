@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
     public class GetAllRequirementTypesQueryTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var q = new GetAllRequirementTypesQuery(true);
             Assert.IsTrue(q.IncludeVoided);

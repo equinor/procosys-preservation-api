@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
     public class RequirementTypeTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var rt = new RequirementType("SchemaA", "CodeA", "TitleA", 10);
 
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
-        public void AddingEmptyRequirementDefinitionThrowsExceptionTest()
+        public void AddRequirementDefinition_ShouldThrowExceptionTest_ForNullRequirementDefinition()
         {
             var rt = new RequirementType("", "", "", 0);
 
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
-        public void RequirementDefinitionIsAddedToRequirementDefinitionsListTest()
+        public void AddRequirementDefinition_ShouldAddRequirementDefinitionToRequirementDefinitionsList()
         {
             var rt = new RequirementType("", "", "", 0);
             var rd = new Mock<RequirementDefinition>();

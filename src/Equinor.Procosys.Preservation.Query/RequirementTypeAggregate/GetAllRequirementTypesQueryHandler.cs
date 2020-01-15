@@ -30,17 +30,17 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                             => new RequirementDefinitionDto(rd.Id,
                                 rd.Title,
                                 rd.IsVoided,
-                                rd.DefaultInterval,
+                                rd.DefaultIntervalWeeks,
                                 rd.SortKey,
                                 rd.Fields.Where(f => !f.IsVoided || request.IncludeVoided).Select(f
                                     => new FieldDto(
                                         f.Id,
                                         f.Label,
-                                        f.Unit,
                                         f.IsVoided,
-                                        f.ShowPrevious,
                                         f.FieldType,
-                                        f.SortKey))))))
+                                        f.SortKey,
+                                        f.Unit,
+                                        f.ShowPrevious))))))
                     .OrderBy(rt => rt.SortKey);
 
             return new SuccessResult<IEnumerable<RequirementTypeDto>>(dtos);

@@ -19,14 +19,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestInitialize]
         public void Setup()
         {
-            _info = new FieldDto(1, "", "", true, true, FieldType.Info, 1);
-            _number = new FieldDto(1, "", "", true, true, FieldType.Number, 1);
-            _cb = new FieldDto(1, "", "", true, true, FieldType.CheckBox, 1);
-            _attachment = new FieldDto(1, "", "", true, true, FieldType.Attachment, 1);
+            _info = new FieldDto(1, "", true, FieldType.Info, 1, null, null);
+            _number = new FieldDto(1, "", true, FieldType.Number, 1, "", true);
+            _cb = new FieldDto(1, "", true, FieldType.CheckBox, 1, null, null);
+            _attachment = new FieldDto(1, "", true, FieldType.Attachment, 1, null, null);
         }
 
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var rt = new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, new List<RequirementDefinitionDto>());
 
@@ -39,13 +39,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void ConstructorWithNullModeThrowsExceptionTest()
+        public void Constructor_ShouldThrowException_WhenDefinitionsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, null)
             );
 
         [TestMethod]
-        public void DefinitionsNotNeedingInputShouldBeSortedBySortKey()
+        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedBySortKey_WhenFieldsNotNeedInput()
         {
             var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void DefinitionsNeedingInputShouldBeSortedBySortKey()
+        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedBySortKey_WhenFieldsNeedInput()
         {
             var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void DefinitionShouldFirstBeSortedByNotNeedingInputThenBySortKey()
+        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedByNeedingInputThenBySortKey_WhenFieldsBothNeedInputAndNotNeedInput()
         {
             var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {

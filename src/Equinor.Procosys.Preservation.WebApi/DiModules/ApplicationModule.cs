@@ -1,5 +1,9 @@
 ﻿using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
+using Equinor.Procosys.Preservation.Command.Validators.Project;
+using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
+using Equinor.Procosys.Preservation.Command.Validators.Step;
+using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -42,15 +46,19 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IMainApiClient, MainApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();
-            services.AddScoped<IReadOnlyContext, PreservationContext>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
 
             services.AddScoped<ITagRepository, TagRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
             services.AddScoped<IJourneyRepository, JourneyRepository>();
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
             services.AddScoped<IRequirementTypeRepository, RequirementTypeRepository>();
+            
+            services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
+            services.AddScoped<ITagValidator, TagValidator>();
+            services.AddScoped<IProjectValidator, ProjectValidator>();
+            services.AddScoped<IStepValidator, StepValidator>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();

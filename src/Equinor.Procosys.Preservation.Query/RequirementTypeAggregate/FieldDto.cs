@@ -4,24 +4,24 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
     public class FieldDto
     {
-        public FieldDto(int id, string label, string unit, bool isVoided, bool showPrevious, FieldType fieldType, int sortKey)
+        public FieldDto(int id, string label, bool isVoided, FieldType fieldType, int sortKey, string unit, bool? showPrevious)
         {
             Id = id;
             Label = label;
-            Unit = unit;
             IsVoided = isVoided;
-            ShowPrevious = showPrevious;
             FieldType = fieldType;
             SortKey = sortKey;
+            Unit = unit;
+            ShowPrevious = showPrevious;
         }
 
         public int Id { get; }
         public string Label { get; }
-        public string Unit { get; }
         public bool IsVoided { get; }
-        public bool ShowPrevious { get; }
-        public FieldType FieldType { get; }
         public int SortKey { get; }
+        public FieldType FieldType { get; }
+        public string Unit { get; }
+        public bool? ShowPrevious { get; }
         public bool NeedUserInput =>
             FieldType == FieldType.Number ||
             FieldType == FieldType.Attachment ||

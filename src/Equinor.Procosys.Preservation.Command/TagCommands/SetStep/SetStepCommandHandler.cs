@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -25,8 +24,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.SetStep
         public async Task<Result<Unit>> Handle(SetStepCommand request, CancellationToken cancellationToken)
         {
             var tag = await _tagRepository.GetByIdAsync(request.TagId);
-            var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
-            tag.SetStep(journey.Steps.FirstOrDefault(step => step.Id == request.StepId));
+            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
+            tag.SetStep(step);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);
         }

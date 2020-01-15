@@ -16,11 +16,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             builder.Property(f => f.Label)
-                .IsRequired()
-                .HasMaxLength(Field.LabelLengthMax);
+                .HasMaxLength(Field.LabelLengthMax)
+                .IsRequired();
 
             builder.Property(f => f.Unit)
-                .IsRequired()
                 .HasMaxLength(Field.UnitLengthMax);
 
             builder.Property(f => f.FieldType)

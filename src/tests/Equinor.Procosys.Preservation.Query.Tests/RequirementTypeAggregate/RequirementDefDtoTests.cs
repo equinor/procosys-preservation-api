@@ -11,33 +11,33 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
     public class RequirementDefDtoTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var rd = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, new List<FieldDto>());
 
             Assert.AreEqual(1, rd.Id);
             Assert.AreEqual("TitleA", rd.Title);
-            Assert.AreEqual(4, rd.DefaultInterval);
+            Assert.AreEqual(4, rd.DefaultIntervalWeeks);
             Assert.AreEqual(10, rd.SortKey);
             Assert.IsTrue(rd.IsVoided);
             Assert.AreEqual(0, rd.Fields.Count());
         }
 
         [TestMethod]
-        public void ConstructorWithNullModeThrowsExceptionTest()
+        public void Constructor_ShouldThrowException_WhenModeNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new RequirementDefinitionDto(1, "TitleA", true, 4, 10, null)
             );
 
         [TestMethod]
-        public void FieldsShouldBeSortedBySortKey()
+        public void ConstructorWithFields_ShouldCreateDtoWithFieldsSortedBySortKey()
         {
             var rd = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, new List<FieldDto>
             {
-                new FieldDto(1, "", "", true, true, FieldType.Info, 1),
-                new FieldDto(2, "", "", true, true, FieldType.Info, 90),
-                new FieldDto(3, "", "", true, true, FieldType.Info, 5),
-                new FieldDto(4, "", "", true, true, FieldType.Info, 10),
+                new FieldDto(1, "", true, FieldType.Info, 1, null, null),
+                new FieldDto(2, "", true, FieldType.Info, 90, null, null),
+                new FieldDto(3, "", true, FieldType.Info, 5, null, null),
+                new FieldDto(4, "", true, FieldType.Info, 10, null, null),
             });
 
             var dtos = rd.Fields.ToList();

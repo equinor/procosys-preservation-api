@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure
 {
-    public class PreservationContext : DbContext, IReadOnlyContext, IUnitOfWork
+    public class PreservationContext : DbContext, IUnitOfWork
     {
         private readonly IEventDispatcher _eventDispatcher;
         private readonly IPlantProvider _plantProvider;
@@ -56,6 +56,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public DbSet<RequirementType> RequirementTypes { get; set; }
         public DbSet<RequirementDefinition> RequirementDefinitions { get; set; }
         public DbSet<Field> Fields { get; set; }
+        public DbSet<Requirement> Requirements { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
@@ -71,10 +72,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure
                 .Select(x => x.Entity);
             await _eventDispatcher.DispatchAsync(entities, cancellationToken);
         }
-
-        public IQueryable<TQuery> ReadOnlySet<TQuery>() where TQuery : class =>
-                Set<TQuery>()
-                .AsNoTracking();
 
         public void SetGlobalQuery<T>(ModelBuilder builder) where T : SchemaEntityBase =>
             builder
