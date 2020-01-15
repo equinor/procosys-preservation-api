@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllRequirementTypesQuery_ShoudlncludeVoidedRequirementTypes_WhenGettingVoided()
+        public void HandleGetAllRequirementTypesQuery_ShouldlncludeVoidedRequirementTypes_WhenGettingVoided()
         {
             var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
 

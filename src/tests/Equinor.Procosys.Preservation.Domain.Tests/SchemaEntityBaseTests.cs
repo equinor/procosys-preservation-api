@@ -6,7 +6,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
     public class SchemaEntityBaseTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var dut = new TestableSchemaEntityBase("SchemaA");
 

@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ModeAggrega
     public class ModeTests
     {
         [TestMethod]
-        public void ConstructorSetsPropertiesTest()
+        public void Constructor_ShouldSetProperties()
         {
             var dut = new Mode("SchemaA", "TitleA");
 

@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
                 => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, null));
 
         [TestMethod]
-        public void Constructor_ShouldThrowException_WhenEmptyListOfRequirementsNotGiven()
+        public void Constructor_ShouldThrowException_WhenEmptyListOfRequirementsGiven()
             => Assert.ThrowsException<Exception>(()
                 => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _emptyRequirements));
 
@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void SetRequirement_ShouldThrowException_WhenRequirementNotGiven()
+        public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
 
