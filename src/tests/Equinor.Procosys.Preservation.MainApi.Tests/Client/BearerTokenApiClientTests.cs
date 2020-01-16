@@ -9,7 +9,7 @@ using Moq;
 namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
 {
     [TestClass]
-    public class MainApiClientTests
+    public class BearerTokenApiClientTests
     {
         private Mock<IBearerTokenProvider> _bearerTokenProvider;
         private Mock<ILogger<BearerTokenApiClient>> _logger;
