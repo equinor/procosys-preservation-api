@@ -117,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void WhenPreserve_ShouldThrowException_WhenPreservedByNotGivenInUtc()
+        public void WhenPreserve_ShouldThrowException_WhenPreservedByNotGiven()
         {
             var dut = new PreservationRecord("SchemaA", _reqMock.Object, _utcNow);
             Assert.ThrowsException<ArgumentNullException>(() => dut.Preserve(null, "", _utcNow));
@@ -133,7 +133,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void WhenBulkPreserve_ShouldThrowException_WhenPreservedByNotGivenInUtc()
+        public void WhenBulkPreserve_ShouldThrowException_WhenPreservedByNotGiven()
         {
             var dut = new PreservationRecord("SchemaA", _reqMock.Object, _utcNow);
             Assert.ThrowsException<ArgumentNullException>(() => dut.BulkPreserve(null, _utcNow));
