@@ -23,10 +23,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         };
 
         [TestInitialize]
-        public void Setup()
-        {
-            _dut = new AvailableTagsController(_mediatorMock.Object);
-        }
+        public void Setup() => _dut = new AvailableTagsController(_mediatorMock.Object);
 
         [TestMethod]
         public async Task GetAllAvailableTags_ShouldSendCommand()

@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         private Mock<IPlantProvider> _plantProviderMock;
         private IList<ProcosysTagOverview> _apiTags;
         private List<Tag> _repositoryTags;
+        private SearchTagsQueryHandler _dut;
 
         [TestInitialize]
         public void Setup()
@@ -69,6 +70,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 new Tag("", "TagNoNotInApi1", "", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
                 new Tag("", "TagNoNotInApi2", "", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
             };
+
+            _dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
         }
 
         [TestMethod]
@@ -78,10 +81,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
                 .Returns(Task.FromResult(_apiTags));
 
-            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
             var query = new SearchTagsQuery("ProjectName", "TagNo");
 
-            var result = await dut.Handle(query, default);
+            var result = await _dut.Handle(query, default);
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
         }
@@ -97,10 +99,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetAllAsync())
                 .Returns(Task.FromResult(_repositoryTags));
 
-            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
             var query = new SearchTagsQuery("ProjectName", "TagNo");
 
-            var result = await dut.Handle(query, default);
+            var result = await _dut.Handle(query, default);
 
             Assert.AreEqual(3, result.Data.Count);
         }
@@ -116,10 +117,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetAllAsync())
                 .Returns(Task.FromResult(_repositoryTags));
 
-            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
             var query = new SearchTagsQuery("ProjectName", "TagNo");
 
-            var result = await dut.Handle(query, default);
+            var result = await _dut.Handle(query, default);
 
             Assert.IsTrue(result.Data[0].IsPreserved);
             Assert.IsFalse(result.Data[1].IsPreserved);
@@ -133,10 +133,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
                 .Returns(Task.FromResult<IList<ProcosysTagOverview>>(null));
 
-            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
             var query = new SearchTagsQuery("ProjectName", "TagNo");
 
-            var result = await dut.Handle(query, default);
+            var result = await _dut.Handle(query, default);
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
             Assert.AreEqual(0, result.Data.Count);
@@ -153,10 +152,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetAllAsync())
                 .Returns(Task.FromResult<List<Tag>>(null));
 
-            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
             var query = new SearchTagsQuery("ProjectName", "TagNo");
 
-            var result = await dut.Handle(query, default);
+            var result = await _dut.Handle(query, default);
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
             Assert.AreEqual(3, result.Data.Count);
