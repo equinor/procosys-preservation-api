@@ -19,14 +19,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.Exists(_title)).Returns(false);
+            _command = new CreateJourneyCommand(_title);
 
             _dut = new CreateJourneyCommandValidator(_journeyValidatorMock.Object);
-
-            _command = new CreateJourneyCommand(_title);
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldBeValid_WhenOkState()
+        public void Validate_ShouldBeValid_WhenOkState()
         {
             var result = _dut.Validate(_command);
 
@@ -34,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenJourneyWithSameTitleAlreadyExists()
+        public void Validate_ShouldFail_WhenJourneyWithSameTitleAlreadyExists()
         {
             _journeyValidatorMock.Setup(r => r.Exists(_title)).Returns(true);
             

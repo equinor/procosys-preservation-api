@@ -22,19 +22,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
         {
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.Exists(_tagId)).Returns(true);
-
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(true);
+            _command = new SetStepCommand(_tagId, _stepId);
 
             _dut = new SetStepCommandValidator(
                 _tagValidatorMock.Object, 
                 _stepValidatorMock.Object);
-
-            _command = new SetStepCommand(_tagId, _stepId);
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldBeValid_WhenOkState()
+        public void Validate_ShouldBeValid_WhenOkState()
         {
             var result = _dut.Validate(_command);
 
@@ -42,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenTagNotExists()
+        public void Validate_ShouldFail_WhenTagNotExists()
         {
             _tagValidatorMock.Setup(r => r.Exists(_tagId)).Returns(false);
             
@@ -54,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenStepNotExists()
+        public void Validate_ShouldFail_WhenStepNotExists()
         {
             _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(false);
             
@@ -62,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains("Step doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exists!"));
         }
     }
 }

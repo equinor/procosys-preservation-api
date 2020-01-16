@@ -4,6 +4,7 @@
     {
         bool Exists(int modeId);
 
+        bool Exists(string title);
         bool IsVoided(int modeId);
     }
 }

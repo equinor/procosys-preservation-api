@@ -29,14 +29,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _modeValidatorMock.Setup(r => r.Exists(_modeId)).Returns(true);
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
             _responsibleValidatorMock.Setup(r => r.Exists(_responsibleId)).Returns(true);
+            _command = new CreateStepCommand(_journeyId, _modeId, _responsibleId);
 
             _dut = new CreateStepCommandValidator(_journeyValidatorMock.Object, _modeValidatorMock.Object, _responsibleValidatorMock.Object);
-
-            _command = new CreateStepCommand(_journeyId, _modeId, _responsibleId);
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldBeValid_WhenOkState()
+        public void Validate_ShouldBeValid_WhenOkState()
         {
             var result = _dut.Validate(_command);
 
@@ -44,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenJourneyNotExists()
+        public void Validate_ShouldFail_WhenJourneyNotExists()
         {
             _journeyValidatorMock.Setup(r => r.Exists(_journeyId)).Returns(false);
             
@@ -56,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenModeNotExists()
+        public void Validate_ShouldFail_WhenModeNotExists()
         {
             _modeValidatorMock.Setup(r => r.Exists(_modeId)).Returns(false);
             
@@ -68,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenResponsibleNotExists()
+        public void Validate_ShouldFail_WhenResponsibleNotExists()
         {
             _responsibleValidatorMock.Setup(r => r.Exists(_responsibleId)).Returns(false);
             
