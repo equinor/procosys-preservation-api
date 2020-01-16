@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Command
+namespace Equinor.Procosys.Preservation.Domain
 {
     public static class DateTimeExtensions
     {

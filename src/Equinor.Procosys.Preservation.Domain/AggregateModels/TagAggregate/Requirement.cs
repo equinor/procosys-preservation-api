@@ -26,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         }
 
         public int IntervalWeeks { get; private set; }
+        public DateTime? NextDueTimeUtc { get; private set; }
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; set; }
         public IReadOnlyCollection<PreservationRecord> PreservationRecords => _preservationRecords.AsReadOnly();
@@ -41,6 +42,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             }
 
             _preservationRecords.Add(preservationRecord);
+        }
+
+        public void SetNextDueTimeUtc(DateTime currentTime)
+        {
+            if (currentTime.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(currentTime)} is not Utc");
+            }
+
+            NextDueTimeUtc = currentTime.AddWeeks(IntervalWeeks);
         }
     }
 }
