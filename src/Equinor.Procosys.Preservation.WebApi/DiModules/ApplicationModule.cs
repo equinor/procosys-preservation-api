@@ -1,7 +1,10 @@
 ﻿using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
+using Equinor.Procosys.Preservation.Command.Validators.Journey;
+using Equinor.Procosys.Preservation.Command.Validators.Mode;
 using Equinor.Procosys.Preservation.Command.Validators.Project;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
+using Equinor.Procosys.Preservation.Command.Validators.Responsible;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Equinor.Procosys.Preservation.Domain;
@@ -60,6 +63,9 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<ITagValidator, TagValidator>();
             services.AddScoped<IProjectValidator, ProjectValidator>();
             services.AddScoped<IStepValidator, StepValidator>();
+            services.AddScoped<IJourneyValidator, JourneyValidator>();
+            services.AddScoped<IModeValidator, ModeValidator>();
+            services.AddScoped<IResponsibleValidator, ResponsibleValidator>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();

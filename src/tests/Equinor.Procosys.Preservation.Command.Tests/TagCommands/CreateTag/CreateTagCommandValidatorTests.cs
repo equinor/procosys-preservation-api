@@ -7,12 +7,12 @@ using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 {
     [TestClass]
     public class CreateTagCommandValidatorTests
     {
-        private CreateTagCommandValidator _validator;
+        private CreateTagCommandValidator _dut;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IProjectValidator> _projectValidatorMock;
@@ -42,12 +42,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
             _rdValidatorMock.Setup(r => r.Exists(_rd1Id)).Returns(true);
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(true);
 
-            _validator = new CreateTagCommandValidator(
-                _tagValidatorMock.Object, 
-                _stepValidatorMock.Object, 
-                _projectValidatorMock.Object,
-                _rdValidatorMock.Object);
-
             _command = new CreateTagCommand(
                 _tagNo,
                 _projectNo,
@@ -57,22 +51,28 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
                     new Requirement(_rd1Id, 1),
                     new Requirement(_rd2Id, 1)
                 });
+
+            _dut = new CreateTagCommandValidator(
+                _tagValidatorMock.Object, 
+                _stepValidatorMock.Object, 
+                _projectValidatorMock.Object,
+                _rdValidatorMock.Object);
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldBeValid_WhenOkState()
+        public void Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenTagAlreadyExists()
+        public void Validate_ShouldFail_WhenTagAlreadyExists()
         {
             _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(true);
             
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -80,50 +80,50 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldBeValid_WhenProjectExistsAndProjectNotClosed()
+        public void Validate_ShouldBeValid_WhenProjectExistsAndProjectNotClosed()
         {
             _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
 
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsTrue(result.IsValid);
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenProjectExistsButClosed()
+        public void Validate_ShouldFail_WhenProjectExistsButClosed()
         {
             _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
             _projectValidatorMock.Setup(r => r.IsClosed(_projectNo)).Returns(true);
             
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains("Project is closed!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenStepNotExists()
+        public void Validate_ShouldFail_WhenStepNotExists()
         {
             _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(false);
             
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains("Step doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exists!"));
         }
 
         [TestMethod]
-        public void WhenValidate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
+        public void Validate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
         {
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
             
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains("Requirement definition doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exists!"));
             Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(_rd2Id.ToString()));
         }
     }

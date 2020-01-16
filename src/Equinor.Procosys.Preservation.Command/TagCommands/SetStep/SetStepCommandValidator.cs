@@ -12,15 +12,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.SetStep
             )
         {
             RuleFor(s => s.TagId)
-                .Must(NotBeAnExistingTag)
-                .WithMessage(s => $"Tag {s.TagId} don't exists");
+                .Must(BeAnExistingTag)
+                .WithMessage(s => $"Tag doesn't exists! Tag={s.TagId}");
 
-            RuleFor(t => t.StepId)
+            RuleFor(s => s.StepId)
                 .Must(BeAnExistingStep)
-                .WithMessage(s => $"Step {s.StepId} don't exists");
+                .WithMessage(s => $"Step doesn't exists! Step={s.StepId}");
 
-            bool NotBeAnExistingTag(int tagId)
-                => !tagValidator.Exists(tagId);
+            bool BeAnExistingTag(int tagId)
+                => tagValidator.Exists(tagId);
 
             bool BeAnExistingStep(int stepId)
                 => stepValidator.Exists(stepId);

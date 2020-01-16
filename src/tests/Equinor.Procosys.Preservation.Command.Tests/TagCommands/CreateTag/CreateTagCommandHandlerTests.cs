@@ -13,7 +13,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.CreateTag.Requirement;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 {
     [TestClass]
     public class CreateTagCommandHandlerTests
@@ -79,7 +79,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
                 {
                     new Requirement(requirementDefinitionId, 1)
                 });
-            var createTagCommandHandler = new CreateTagCommandHandler(
+            
+            var dut = new CreateTagCommandHandler(
                 tagRepository.Object,
                 journeyRepository.Object,
                 requirementTypeRepository.Object,
@@ -88,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands
                 tagApiService.Object);
 
             // Act
-            var result = await createTagCommandHandler.Handle(command, default);
+            var result = await dut.Handle(command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);

@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         [HttpPost]
         public async Task<IActionResult> AddMode([FromBody] CreateModeDto dto)
         {
-            var result = await _mediator.Send(new CreateModeCommand { Title = dto.Title });
+            var result = await _mediator.Send(new CreateModeCommand(dto.Title));
             return this.FromResult(result);
         }
 
