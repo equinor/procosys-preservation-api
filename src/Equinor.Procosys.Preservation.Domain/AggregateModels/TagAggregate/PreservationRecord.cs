@@ -12,19 +12,19 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         {
         }
         
-        public PreservationRecord(string schema, Requirement requirement, ITimeService timeService) : base(schema)
+        public PreservationRecord(string schema, Requirement requirement, DateTime currentTime) : base(schema)
         {
             if (requirement == null)
             {
                 throw new ArgumentNullException(nameof(requirement));
             }
-            if (timeService == null)
+            if (currentTime.Kind != DateTimeKind.Utc)
             {
-                throw new ArgumentNullException(nameof(timeService));
+                throw new ArgumentException($"{nameof(currentTime)} is not Utc");
             }
 
             RequirementId = requirement.Id;
-            NextDueTimeUtc = timeService.GetCurrentTimeUtc().AddDays(7*requirement.IntervalWeeks);
+            NextDueTimeUtc = currentTime.AddDays(7*requirement.IntervalWeeks);
         }
 
         public int RequirementId { get; private set; }
@@ -34,24 +34,24 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public int? PreservedBy { get; set; }
         public string Comment { get; set; }
  
-        public void Preserve(Person preservedBy, string comment, ITimeService timeService) => Preserve(preservedBy, comment, false, timeService);
+        public void Preserve(Person preservedBy, string comment, DateTime currentTime) => Preserve(preservedBy, comment, false, currentTime);
 
-        public void BulkPreserve(Person preservedBy, ITimeService timeService) => Preserve(preservedBy, null, true, timeService);
+        public void BulkPreserve(Person preservedBy, DateTime currentTime) => Preserve(preservedBy, null, true, currentTime);
 
-        private void Preserve(Person preservedBy, string comment, bool bulkPreserve, ITimeService timeService)
+        private void Preserve(Person preservedBy, string comment, bool bulkPreserve, DateTime currentTime)
         {
             if (preservedBy == null)
             {
                 throw new ArgumentNullException(nameof(preservedBy));
             }
 
-            if (timeService == null)
+            if (currentTime.Kind != DateTimeKind.Utc)
             {
-                throw new ArgumentNullException(nameof(timeService));
+                throw new ArgumentException($"{nameof(currentTime)} is not Utc");
             }
 
             PreservedBy = preservedBy.Id;
-            PreservedAtUtc = timeService.GetCurrentTimeUtc();
+            PreservedAtUtc = currentTime;
             Comment = comment;
             BulkPreserved = bulkPreserve;
         }

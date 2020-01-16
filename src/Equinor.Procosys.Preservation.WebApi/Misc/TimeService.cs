@@ -1,5 +1,5 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Command;
 
 namespace Equinor.Procosys.Preservation.WebApi.Misc
 {

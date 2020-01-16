@@ -1,4 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using Equinor.Procosys.Preservation.Command;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
