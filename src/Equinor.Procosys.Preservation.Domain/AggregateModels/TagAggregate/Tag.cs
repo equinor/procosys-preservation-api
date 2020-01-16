@@ -46,6 +46,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
                 throw new Exception("Must have at least one requirement");
             }
 
+            Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
             ProjectNumber = projectNumber;
             AreaCode = areaCode;
@@ -58,7 +59,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             StepId = step.Id;
             _requirements.AddRange(reqList);
         }
-        
+
+        public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string CalloffNumber { get; private set; }
         public string CommPkgNumber { get; private set; }
