@@ -13,5 +13,9 @@
             : base(schema) => Name = name;
 
         public string Name { get; private set; }
+        public bool IsVoided { get; private set; }
+
+        public void Void() => IsVoided = true;
+        public void UnVoid() => IsVoided = false;
     }
 }

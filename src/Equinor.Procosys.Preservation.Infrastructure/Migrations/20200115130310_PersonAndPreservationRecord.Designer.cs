@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200115130310_PersonAndPreservationRecord")]
+    partial class PersonAndPreservationRecord
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,9 +27,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsVoided")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Schema")
                         .IsRequired()
@@ -50,9 +49,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsVoided")
-                        .HasColumnType("bit");
 
                     b.Property<int?>("JourneyId")
                         .HasColumnType("int");
@@ -85,9 +81,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsVoided")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Schema")
                         .IsRequired()
@@ -253,9 +246,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("IsVoided")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
@@ -366,9 +356,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<bool>("IsAreaTag")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsVoided")
-                        .HasColumnType("bit");
-
                     b.Property<string>("McPkcNumber")
                         .HasColumnType("nvarchar(max)");
 
@@ -384,12 +371,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("NotStarted");
 
                     b.Property<int>("StepId")
                         .HasColumnType("int");
@@ -407,8 +388,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("StepId");
 
                     b.ToTable("Tags");
-
-                    b.HasCheckConstraint("constraint_tag_check_valid_status", "Status in ('NotStarted','Active','Completed')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Step", b =>
