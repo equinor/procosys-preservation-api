@@ -11,7 +11,13 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
                 .Must(BeAnExistingMode)
                 .WithMessage(x => $"Mode doesn't exists! Step={x.ModeId}");
 
+            RuleFor(x => x.ModeId)
+                .Must(BeAVoidedMode)
+                .WithMessage(x => $"Mode is not voided! Step={x.ModeId}");
+
             bool BeAnExistingMode(int modeId) => modeValidator.Exists(modeId);
+
+            bool BeAVoidedMode(int modeId) => modeValidator.IsVoided(modeId);
         }
     }
 }

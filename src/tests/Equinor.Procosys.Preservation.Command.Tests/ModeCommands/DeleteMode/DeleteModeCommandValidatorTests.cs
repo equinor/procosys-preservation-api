@@ -43,5 +43,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode doesn't exists!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenModeNotVoided()
+        {
+            _modeValidatorMock.Setup(r => r.IsVoided(_id)).Returns(false);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode is not voided!"));
+        }
     }
 }
