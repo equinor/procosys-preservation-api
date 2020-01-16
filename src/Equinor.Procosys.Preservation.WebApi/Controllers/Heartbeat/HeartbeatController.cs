@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Heartbeat
         [HttpGet("IsAlive")]
         public IActionResult IsAlive()
         {
-            var timestampString = $"{_timeService.GetCurrentTimeUTC().ToString("yyyy-MM-dd HH:mm:ss")} UTC";
+            var timestampString = $"{_timeService.GetCurrentTimeUtc().ToString("yyyy-MM-dd HH:mm:ss")} UTC";
             _logger.LogDebug($"The application is running at {timestampString}");
             return new JsonResult(new
             {
