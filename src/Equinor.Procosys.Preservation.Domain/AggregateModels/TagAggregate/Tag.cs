@@ -73,6 +73,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public string TagFunctionCode { get; private set; }
         public string TagNo { get; private set; }
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
+        public bool IsVoided { get; private set; }
+
+        public void Void() => IsVoided = true;
+        public void UnVoid() => IsVoided = false;
 
         public void SetStep(Step step)
         {

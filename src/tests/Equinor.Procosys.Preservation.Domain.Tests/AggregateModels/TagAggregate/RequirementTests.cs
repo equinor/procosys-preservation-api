@@ -9,17 +9,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
     [TestClass]
     public class RequirementTests
     {
+        private Mock<RequirementDefinition> _rdMock;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _rdMock = new Mock<RequirementDefinition>();
+            _rdMock.SetupGet(x => x.Id).Returns(3);
+        }
+
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var rd = new Mock<RequirementDefinition>();
-            rd.SetupGet(x => x.Id).Returns(3);
+            var dut = new Requirement("SchemaA", 24, _rdMock.Object);
 
-            var req = new Requirement("SchemaA", 24, rd.Object);
-
-            Assert.AreEqual("SchemaA", req.Schema);
-            Assert.AreEqual(rd.Object.Id, req.RequirementDefinitionId);
-            Assert.IsFalse(req.IsVoided);
+            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual(_rdMock.Object.Id, dut.RequirementDefinitionId);
+            Assert.IsFalse(dut.IsVoided);
         }
 
         [TestMethod]
@@ -27,5 +33,18 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new Requirement("SchemaA", 4, null)
             );
+ 
+        [TestMethod]
+        public void VoidUnVoid_ShouldToggleIsVoided()
+        {
+            var dut = new Requirement("SchemaA", 24, _rdMock.Object);
+            Assert.IsFalse(dut.IsVoided);
+
+            dut.Void();
+            Assert.IsTrue(dut.IsVoided);
+
+            dut.UnVoid();
+            Assert.IsFalse(dut.IsVoided);
+        }
     }
 }

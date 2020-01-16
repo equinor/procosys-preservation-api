@@ -12,35 +12,48 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var rt = new RequirementType("SchemaA", "CodeA", "TitleA", 10);
+            var dut = new RequirementType("SchemaA", "CodeA", "TitleA", 10);
 
-            Assert.AreEqual("SchemaA", rt.Schema);
-            Assert.AreEqual("CodeA", rt.Code);
-            Assert.AreEqual("TitleA", rt.Title);
-            Assert.AreEqual(10, rt.SortKey);
-            Assert.IsFalse(rt.IsVoided);
-            Assert.AreEqual(0, rt.RequirementDefinitions.Count);
+            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual("CodeA", dut.Code);
+            Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual(10, dut.SortKey);
+            Assert.IsFalse(dut.IsVoided);
+            Assert.AreEqual(0, dut.RequirementDefinitions.Count);
         }
 
         [TestMethod]
         public void AddRequirementDefinition_ShouldThrowExceptionTest_ForNullRequirementDefinition()
         {
-            var rt = new RequirementType("", "", "", 0);
+            var dut = new RequirementType("", "", "", 0);
 
-            Assert.ThrowsException<ArgumentNullException>(() => rt.AddRequirementDefinition(null));
-            Assert.AreEqual(0, rt.RequirementDefinitions.Count);
+            Assert.ThrowsException<ArgumentNullException>(() => dut.AddRequirementDefinition(null));
+            Assert.AreEqual(0, dut.RequirementDefinitions.Count);
         }
 
         [TestMethod]
         public void AddRequirementDefinition_ShouldAddRequirementDefinitionToRequirementDefinitionsList()
         {
-            var rt = new RequirementType("", "", "", 0);
+            var dut = new RequirementType("", "", "", 0);
             var rd = new Mock<RequirementDefinition>();
 
-            rt.AddRequirementDefinition(rd.Object);
+            dut.AddRequirementDefinition(rd.Object);
 
-            Assert.AreEqual(1, rt.RequirementDefinitions.Count);
-            Assert.IsTrue(rt.RequirementDefinitions.Contains(rd.Object));
+            Assert.AreEqual(1, dut.RequirementDefinitions.Count);
+            Assert.IsTrue(dut.RequirementDefinitions.Contains(rd.Object));
+        }
+ 
+        [TestMethod]
+        public void VoidUnVoid_ShouldToggleIsVoided()
+        {
+            var dut = new RequirementType("", "", "", 0);
+            Assert.IsFalse(dut.IsVoided);
+
+            dut.Void();
+            Assert.IsTrue(dut.IsVoided);
+
+            dut.UnVoid();
+            Assert.IsFalse(dut.IsVoided);
         }
     }
 }

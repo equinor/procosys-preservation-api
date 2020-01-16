@@ -12,35 +12,48 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var rd = new RequirementDefinition("SchemaA", "TitleA", 4, 10);
+            var dut = new RequirementDefinition("SchemaA", "TitleA", 4, 10);
 
-            Assert.AreEqual("SchemaA", rd.Schema);
-            Assert.AreEqual("TitleA", rd.Title);
-            Assert.AreEqual(4, rd.DefaultIntervalWeeks);
-            Assert.AreEqual(10, rd.SortKey);
-            Assert.IsFalse(rd.IsVoided);
-            Assert.AreEqual(0, rd.Fields.Count);
+            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual(4, dut.DefaultIntervalWeeks);
+            Assert.AreEqual(10, dut.SortKey);
+            Assert.IsFalse(dut.IsVoided);
+            Assert.AreEqual(0, dut.Fields.Count);
         }
 
         [TestMethod]
         public void AddField_ShouldThrowExceptionTest_ForNullField()
         {
-            var rd = new RequirementDefinition("", "", 0, 0);
+            var dut = new RequirementDefinition("", "", 0, 0);
 
-            Assert.ThrowsException<ArgumentNullException>(() => rd.AddField(null));
-            Assert.AreEqual(0, rd.Fields.Count);
+            Assert.ThrowsException<ArgumentNullException>(() => dut.AddField(null));
+            Assert.AreEqual(0, dut.Fields.Count);
         }
 
         [TestMethod]
         public void AddField_ShouldAddFieldToFieldsList()
         {
-            var rd = new RequirementDefinition("", "", 0, 0);
             var f = new Mock<Field>();
 
-            rd.AddField(f.Object);
+            var dut = new RequirementDefinition("", "", 0, 0);
+            dut.AddField(f.Object);
 
-            Assert.AreEqual(1, rd.Fields.Count);
-            Assert.IsTrue(rd.Fields.Contains(f.Object));
+            Assert.AreEqual(1, dut.Fields.Count);
+            Assert.IsTrue(dut.Fields.Contains(f.Object));
+        }
+
+        [TestMethod]
+        public void VoidUnVoid_ShouldToggleIsVoided()
+        {
+            var dut = new RequirementDefinition("", "", 0, 0);
+            Assert.IsFalse(dut.IsVoided);
+
+            dut.Void();
+            Assert.IsTrue(dut.IsVoided);
+
+            dut.UnVoid();
+            Assert.IsFalse(dut.IsVoided);
         }
     }
 }
