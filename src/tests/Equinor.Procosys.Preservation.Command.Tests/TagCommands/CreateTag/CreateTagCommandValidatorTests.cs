@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
     [TestClass]
     public class CreateTagCommandValidatorTests
     {
-        private CreateTagCommandValidator _validator;
+        private CreateTagCommandValidator _dut;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IProjectValidator> _projectValidatorMock;
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             _rdValidatorMock.Setup(r => r.Exists(_rd1Id)).Returns(true);
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(true);
 
-            _validator = new CreateTagCommandValidator(
+            _dut = new CreateTagCommandValidator(
                 _tagValidatorMock.Object, 
                 _stepValidatorMock.Object, 
                 _projectValidatorMock.Object,
@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void WhenValidate_ShouldBeValid_WhenOkState()
         {
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsTrue(result.IsValid);
         }
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         {
             _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(true);
             
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         {
             _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
 
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsTrue(result.IsValid);
         }
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
             _projectValidatorMock.Setup(r => r.IsClosed(_projectNo)).Returns(true);
             
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         {
             _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(false);
             
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -119,7 +119,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         {
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
             
-            var result = _validator.Validate(_command);
+            var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);

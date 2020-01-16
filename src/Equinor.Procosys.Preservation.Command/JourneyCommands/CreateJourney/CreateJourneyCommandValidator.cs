@@ -1,13 +1,17 @@
-﻿using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+﻿using Equinor.Procosys.Preservation.Command.Validators.Journey;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
 {
     public class CreateJourneyCommandValidator : AbstractValidator<CreateJourneyCommand>
     {
-        public CreateJourneyCommandValidator(IJourneyRepository journeyRepository) =>
+        public CreateJourneyCommandValidator(IJourneyValidator journeyValidator)
+        {
             RuleFor(x => x.Title)
-                .JourneyTitleIsUnique(journeyRepository);
+                .Must(HaveUniqueTitle)
+                .WithMessage(x => $"Journey with title already exists! Title={x.Title}");
+
+            bool HaveUniqueTitle(string title) => !journeyValidator.Exists(title);
+        }
     }
 }

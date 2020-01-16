@@ -79,7 +79,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 {
                     new Requirement(requirementDefinitionId, 1)
                 });
-            var createTagCommandHandler = new CreateTagCommandHandler(
+            
+            var dut = new CreateTagCommandHandler(
                 tagRepository.Object,
                 journeyRepository.Object,
                 requirementTypeRepository.Object,
@@ -88,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 tagApiService.Object);
 
             // Act
-            var result = await createTagCommandHandler.Handle(command, default);
+            var result = await dut.Handle(command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
