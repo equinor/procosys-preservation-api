@@ -77,5 +77,41 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Responsible doesn't exists!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenJourneyIsVoided()
+        {
+            _journeyValidatorMock.Setup(r => r.IsVoided(_journeyId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenModeIsVoided()
+        {
+            _modeValidatorMock.Setup(r => r.IsVoided(_modeId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenResponsibleIsVoided()
+        {
+            _responsibleValidatorMock.Setup(r => r.IsVoided(_responsibleId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Responsible is voided!"));
+        }
     }
 }
