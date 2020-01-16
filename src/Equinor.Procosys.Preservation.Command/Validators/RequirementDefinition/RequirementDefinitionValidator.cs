@@ -11,5 +11,11 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
 
         public bool Exists(int requirementDefinitionId)
             => _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirementDefinitionId).Result != null;
+
+        public bool IsVoided(int requirementDefinitionId)
+        {
+            var r = _requirementTypeRepository.GetByIdAsync(requirementDefinitionId).Result;
+            return r != null && r.IsVoided;
+        }
     }
 }

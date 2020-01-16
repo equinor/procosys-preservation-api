@@ -115,6 +115,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
+        public void Validate_ShouldFail_WhenStepIsVoided()
+        {
+            _stepValidatorMock.Setup(r => r.IsVoided(_stepId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step is voided!"));
+        }
+
+        [TestMethod]
         public void Validate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
         {
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
@@ -124,6 +136,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(_rd2Id.ToString()));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenAnyRequirementDefinitionIsVoided()
+        {
+            _rdValidatorMock.Setup(r => r.IsVoided(_rd2Id)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition is voided!"));
             Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(_rd2Id.ToString()));
         }
     }
