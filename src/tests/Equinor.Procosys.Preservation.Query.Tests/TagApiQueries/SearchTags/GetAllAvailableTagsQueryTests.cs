@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.AllAvailableTagsQuery;
+﻿using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.AllAvailableTagsQuery
+namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 {
     [TestClass]
     public class GetAllAvailableTagsQueryTests
@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.AllAvailableTagsQuery
         [TestMethod]
         public void Constructor_SetsProperties()
         {
-            var dut = new GetAllAvailableTagsQuery("ProjectName", "TagNo");
+            var dut = new SearchTagsQuery("ProjectName", "TagNo");
 
             Assert.AreEqual("ProjectName", dut.ProjectName);
             Assert.AreEqual("TagNo", dut.StartsWithTagNo);

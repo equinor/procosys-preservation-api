@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Query.AllAvailableTagsQuery;
+using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -32,23 +32,23 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         public async Task GetAllAvailableTags_ShouldSendCommand()
         {
             _mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetAllAvailableTagsQuery>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<SearchTagsQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(null) as Result<List<ProcosysTagDto>>));
 
             await _dut.GetAllAvailableTags("", "");
-            _mediatorMock.Verify(x => x.Send(It.IsAny<GetAllAvailableTagsQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+            _mediatorMock.Verify(x => x.Send(It.IsAny<SearchTagsQuery>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [TestMethod]
         public async Task GetAllAvailableTags_ShouldCreateCorrectCommand()
         {
-            GetAllAvailableTagsQuery query = null;
+            SearchTagsQuery query = null;
             _mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetAllAvailableTagsQuery>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<SearchTagsQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(null) as Result<List<ProcosysTagDto>>))
                 .Callback<IRequest<Result<List<ProcosysTagDto>>>, CancellationToken>((request, cancellationToken) =>
                 {
-                    query = request as GetAllAvailableTagsQuery;
+                    query = request as SearchTagsQuery;
                 });
 
             await _dut.GetAllAvailableTags("ProjectName", "TagNo");
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         public async Task GetAllAvailableTags_ShouldReturnOk_WhenResultIsSuccessful()
         {
             _mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetAllAvailableTagsQuery>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<SearchTagsQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(_listWithTwoItems) as Result<List<ProcosysTagDto>>));
 
             var result = await _dut.GetAllAvailableTags("ProjectName", "TagNo");
@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         public async Task GetAllAvailableTags_ReturnsCorrectNumberOfElements()
         {
             _mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetAllAvailableTagsQuery>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<SearchTagsQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(_listWithTwoItems) as Result<List<ProcosysTagDto>>));
 
             var result = await _dut.GetAllAvailableTags("ProjectName", "TagNo");
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         public async Task GetAllAvailableTags_ShouldReturnsNotFound_IfResultIsNotFound()
         {
             _mediatorMock
-                .Setup(x => x.Send(It.IsAny<GetAllAvailableTagsQuery>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<SearchTagsQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new NotFoundResult<List<ProcosysTagDto>>(string.Empty) as Result<List<ProcosysTagDto>>));
 
             var result = await _dut.GetAllAvailableTags("ProjectName", "TagNo");

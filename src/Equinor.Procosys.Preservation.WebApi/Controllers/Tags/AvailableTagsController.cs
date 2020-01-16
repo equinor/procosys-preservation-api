@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Query.AllAvailableTagsQuery;
+using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpGet]
         public async Task<ActionResult<List<ProcosysTagDto>>> GetAllAvailableTags([FromQuery] string projectName, [FromQuery] string startsWithTagNo)
         {
-            var result = await _mediator.Send(new GetAllAvailableTagsQuery(projectName, startsWithTagNo));
+            var result = await _mediator.Send(new SearchTagsQuery(projectName, startsWithTagNo));
             return this.FromResult(result);
         }
     }

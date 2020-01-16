@@ -2,11 +2,11 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.AllAvailableTagsQuery
+namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
 {
-    public class GetAllAvailableTagsQuery : IRequest<Result<List<ProcosysTagDto>>>
+    public class SearchTagsQuery : IRequest<Result<List<ProcosysTagDto>>>
     {
-        public GetAllAvailableTagsQuery(string projectName, string startsWithTagNo)
+        public SearchTagsQuery(string projectName, string startsWithTagNo)
         {
             ProjectName = projectName;
             StartsWithTagNo = startsWithTagNo;

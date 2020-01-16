@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
-using Equinor.Procosys.Preservation.Query.AllAvailableTagsQuery;
+using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.AllAvailableTagsQuery
+namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 {
     [TestClass]
     public class GetAllAvailableTagsQueryHandlerTests
@@ -82,8 +78,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.AllAvailableTagsQuery
                 .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
                 .Returns(Task.FromResult(_apiTags));
 
-            var dut = new GetAllAvailableTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
-            var query = new GetAllAvailableTagsQuery("ProjectName", "TagNo");
+            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+            var query = new SearchTagsQuery("ProjectName", "TagNo");
 
             var result = await dut.Handle(query, default);
 
@@ -101,8 +97,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.AllAvailableTagsQuery
                 .Setup(x => x.GetAllAsync())
                 .Returns(Task.FromResult(_repositoryTags));
 
-            var dut = new GetAllAvailableTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
-            var query = new GetAllAvailableTagsQuery("ProjectName", "TagNo");
+            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+            var query = new SearchTagsQuery("ProjectName", "TagNo");
 
             var result = await dut.Handle(query, default);
 
@@ -120,8 +116,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.AllAvailableTagsQuery
                 .Setup(x => x.GetAllAsync())
                 .Returns(Task.FromResult(_repositoryTags));
 
-            var dut = new GetAllAvailableTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
-            var query = new GetAllAvailableTagsQuery("ProjectName", "TagNo");
+            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+            var query = new SearchTagsQuery("ProjectName", "TagNo");
 
             var result = await dut.Handle(query, default);
 
@@ -137,8 +133,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.AllAvailableTagsQuery
                 .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
                 .Returns(Task.FromResult<IList<ProcosysTagOverview>>(null));
 
-            var dut = new GetAllAvailableTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
-            var query = new GetAllAvailableTagsQuery("ProjectName", "TagNo");
+            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+            var query = new SearchTagsQuery("ProjectName", "TagNo");
 
             var result = await dut.Handle(query, default);
 
@@ -157,8 +153,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.AllAvailableTagsQuery
                 .Setup(x => x.GetAllAsync())
                 .Returns(Task.FromResult<List<Tag>>(null));
 
-            var dut = new GetAllAvailableTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
-            var query = new GetAllAvailableTagsQuery("ProjectName", "TagNo");
+            var dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+            var query = new SearchTagsQuery("ProjectName", "TagNo");
 
             var result = await dut.Handle(query, default);
 
