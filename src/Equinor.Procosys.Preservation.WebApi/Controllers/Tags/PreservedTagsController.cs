@@ -10,6 +10,9 @@ using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
+    /// <summary>
+    /// Handles requests that deal with preservation tags
+    /// </summary>
     [ApiController]
     [Route("Tags/Preserved")]
     public class PreservedTagsController : ControllerBase

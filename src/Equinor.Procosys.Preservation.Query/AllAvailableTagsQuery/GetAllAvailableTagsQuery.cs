@@ -4,9 +4,9 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.AllAvailableTagsQuery
 {
-    public class AllAvailableTagsQuery : IRequest<Result<List<ProcosysTagDto>>>
+    public class GetAllAvailableTagsQuery : IRequest<Result<List<ProcosysTagDto>>>
     {
-        public AllAvailableTagsQuery(string projectName, string startsWithTagNo)
+        public GetAllAvailableTagsQuery(string projectName, string startsWithTagNo)
         {
             ProjectName = projectName;
             StartsWithTagNo = startsWithTagNo;

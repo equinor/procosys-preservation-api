@@ -120,7 +120,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         }
 
         [TestMethod]
-        public async Task GetTags_ReturnsNull_WhenResultIsInvalid_TestAsync()
+        public async Task GetTags_ReturnsEmptyList_WhenResultIsInvalid_TestAsync()
         {
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
@@ -129,7 +129,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
 
             var result = await dut.GetTags("PCS$TESTPLANT", "TestProject", "A");
 
-            Assert.IsNull(result);
+            Assert.IsNotNull(result);
+            Assert.AreEqual(0, result.Count);
         }
 
         [TestMethod]
