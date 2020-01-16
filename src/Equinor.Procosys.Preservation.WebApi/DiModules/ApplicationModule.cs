@@ -13,6 +13,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
+using Equinor.Procosys.Preservation.MainApi;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Tag;
@@ -43,7 +44,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             // Scoped - Created once per client request (connection)
             services.AddScoped<IPlantProvider, PlantProvider>();
             services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();
-            services.AddScoped<IMainApiClient, MainApiClient>();
+            services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();

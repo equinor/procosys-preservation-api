@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.MainApi.Client
 {
-    public interface IMainApiClient
+    public interface IBearerTokenApiClient
     {
         Task<T> QueryAndDeserialize<T>(string url);
     }
