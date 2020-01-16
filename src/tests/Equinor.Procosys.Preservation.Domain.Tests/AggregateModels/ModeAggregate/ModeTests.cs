@@ -14,5 +14,18 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ModeAggrega
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual("TitleA", dut.Title);
         }
+
+        [TestMethod]
+        public void VoidUnVoid_ShouldToggleIsVoided()
+        {
+            var dut = new Mode("SchemaA", "TitleA");
+            Assert.IsFalse(dut.IsVoided);
+
+            dut.Void();
+            Assert.IsTrue(dut.IsVoided);
+
+            dut.UnVoid();
+            Assert.IsFalse(dut.IsVoided);
+        }
     }
 }

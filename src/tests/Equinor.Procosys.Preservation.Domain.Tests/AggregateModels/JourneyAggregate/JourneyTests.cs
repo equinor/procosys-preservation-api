@@ -12,33 +12,46 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var j = new Journey("SchemaA", "TitleA");
+            var dut = new Journey("SchemaA", "TitleA");
 
-            Assert.AreEqual("SchemaA", j.Schema);
-            Assert.AreEqual("TitleA", j.Title);
-            Assert.AreEqual(0, j.Steps.Count);
+            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual(0, dut.Steps.Count);
         }
 
         [TestMethod]
         public void AddStep_ShouldThrowException_WhenStepNotGiven()
         {
-            var j = new Journey("", "");
+            var dut = new Journey("", "");
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                j.AddStep(null));
-            Assert.AreEqual(0, j.Steps.Count);
+                dut.AddStep(null));
+            Assert.AreEqual(0, dut.Steps.Count);
         }
 
         [TestMethod]
         public void AddStep_ShouldAddStepToStepsList()
         {
-            var j = new Journey("", "");
+            var dut = new Journey("", "");
             var step = new Mock<Step>();
 
-            j.AddStep(step.Object);
+            dut.AddStep(step.Object);
 
-            Assert.AreEqual(1, j.Steps.Count);
-            Assert.IsTrue(j.Steps.Contains(step.Object));
+            Assert.AreEqual(1, dut.Steps.Count);
+            Assert.IsTrue(dut.Steps.Contains(step.Object));
+        }
+
+        [TestMethod]
+        public void VoidUnVoid_ShouldToggleIsVoided()
+        {
+            var dut = new Journey("", "");
+            Assert.IsFalse(dut.IsVoided);
+
+            dut.Void();
+            Assert.IsTrue(dut.IsVoided);
+
+            dut.UnVoid();
+            Assert.IsFalse(dut.IsVoided);
         }
     }
 }
