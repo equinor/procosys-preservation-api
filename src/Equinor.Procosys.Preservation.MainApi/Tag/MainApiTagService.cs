@@ -55,7 +55,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             }
 
             var tag = tags.First();
-            var url = $"{_baseAddress}Tag?plantId={plant}&tagId={tag.Id}&api-version={_apiVersion}";
+            var url = $"{_baseAddress}Tag" +
+                $"?plantId={plant}" +
+                $"&tagId={tag.Id}" +
+                $"&api-version={_apiVersion}";
             var tagDetailsResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagDetailsResult>(url);
             if (tagDetailsResult == null)
             {
@@ -65,7 +68,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             return tagDetailsResult.Tag;
         }
 
-        public async Task<IList<ProcosysTagOverview>> GetTags(string plant, string projectName, string startsWithTagNo) // TODO: Use paging to get all results
+        public async Task<IList<ProcosysTagOverview>> GetTags(string plant, string projectName, string startsWithTagNo)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
@@ -76,7 +79,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             var currentPage = 0;
             do
             {
-                var url = $"{_baseAddress}Tag/Search?plantid={plant}&startsWithTagNo={startsWithTagNo}&projectName={projectName}&currentPage={currentPage++}&itemsPerPage={_tagSearchPageSize}&api-version={_apiVersion}";
+                var url = $"{_baseAddress}Tag/Search" +
+                    $"?plantid={plant}" +
+                    $"&startsWithTagNo={startsWithTagNo}" +
+                    $"&projectName={projectName}" +
+                    $"&currentPage={currentPage++}" +
+                    $"&itemsPerPage={_tagSearchPageSize}" +
+                    $"&api-version={_apiVersion}";
                 var tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
                 {
