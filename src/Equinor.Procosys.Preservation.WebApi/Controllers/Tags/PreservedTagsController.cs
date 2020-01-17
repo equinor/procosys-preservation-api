@@ -6,18 +6,20 @@ using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Query.TagAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
+    /// <summary>
+    /// Handles requests that deal with preservation tags
+    /// </summary>
     [ApiController]
-    [Route("Tags")]
-    public class TagsController : ControllerBase
+    [Route("Tags/Preserved")]
+    public class PreservedTagsController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public TagsController(IMediator mediator) => _mediator = mediator;
+        public PreservedTagsController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TagDto>>> GetAll()
