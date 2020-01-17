@@ -11,21 +11,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     /// Handles requests that deal with all ProCoSys tags, not just preservation
     /// </summary>
     [ApiController]
-    [Route("Tags/Available")]
-    public class AvailableTagsController : ControllerBase
+    [Route("Tags/Search")]
+    public class TagSearchController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public AvailableTagsController(IMediator mediator) => _mediator = mediator;
+        public TagSearchController(IMediator mediator) => _mediator = mediator;
 
         /// <summary>
-        /// Gets all tags from ProCoSys and encriches them with preservation data
+        /// Gets tags from ProCoSys and encriches them with preservation data
         /// </summary>
         /// <param name="projectName"></param>
         /// <param name="startsWithTagNo"></param>
         /// <returns>All ProCoSys tags that match the search parameters</returns>
         [HttpGet]
-        public async Task<ActionResult<List<ProcosysTagDto>>> GetAllAvailableTags([FromQuery] string projectName, [FromQuery] string startsWithTagNo)
+        public async Task<ActionResult<List<ProcosysTagDto>>> SearchTags([FromQuery] string projectName, [FromQuery] string startsWithTagNo)
         {
             var result = await _mediator.Send(new SearchTagsQuery(projectName, startsWithTagNo));
             return this.FromResult(result);
