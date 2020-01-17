@@ -66,9 +66,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             var requirementMock = new Mock<Requirement>();
             _repositoryTags = new List<Tag>
             {
-                new Tag("", "TagNo1", "", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
-                new Tag("", "TagNoNotInApi1", "", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
-                new Tag("", "TagNoNotInApi2", "", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNo1", "ProjectName", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNoNotInApi1", "ProjectName", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNoNotInApi2", "ProjectName", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
             };
 
             _dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
@@ -114,7 +114,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Returns(Task.FromResult(_apiTags));
 
             _tagRepositoryMock
-                .Setup(x => x.GetAllAsync())
+                .Setup(x => x.GetAllByProjectNoAsync("ProjectName"))
                 .Returns(Task.FromResult(_repositoryTags));
 
             var query = new SearchTagsQuery("ProjectName", "TagNo");
@@ -149,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Returns(Task.FromResult(_apiTags));
 
             _tagRepositoryMock
-                .Setup(x => x.GetAllAsync())
+                .Setup(x => x.GetAllByProjectNoAsync("ProjectName"))
                 .Returns(Task.FromResult<List<Tag>>(null));
 
             var query = new SearchTagsQuery("ProjectName", "TagNo");

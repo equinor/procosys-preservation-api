@@ -48,15 +48,15 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             }
         }
 
-        public DbSet<Journey> Journeys { get; set; }
-        public DbSet<Step> Step { get; set; }
-        public DbSet<Mode> Modes { get; set; }
-        public DbSet<Responsible> Responsibles { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<RequirementType> RequirementTypes { get; set; }
-        public DbSet<RequirementDefinition> RequirementDefinitions { get; set; }
-        public DbSet<Field> Fields { get; set; }
-        public DbSet<Requirement> Requirements { get; set; }
+        public virtual DbSet<Journey> Journeys { get; set; }
+        public virtual DbSet<Step> Step { get; set; }
+        public virtual DbSet<Mode> Modes { get; set; }
+        public virtual DbSet<Responsible> Responsibles { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<RequirementType> RequirementTypes { get; set; }
+        public virtual DbSet<RequirementDefinition> RequirementDefinitions { get; set; }
+        public virtual DbSet<Field> Fields { get; set; }
+        public virtual DbSet<Requirement> Requirements { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
