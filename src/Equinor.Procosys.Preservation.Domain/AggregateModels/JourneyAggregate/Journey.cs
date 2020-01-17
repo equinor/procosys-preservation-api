@@ -20,6 +20,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public IReadOnlyCollection<Step> Steps => _steps.AsReadOnly();
         public string Title { get; private set; }
+        public bool IsVoided { get; private set; }
+
+        public void Void() => IsVoided = true;
+        public void UnVoid() => IsVoided = false;
 
         public void AddStep(Step step)
         {

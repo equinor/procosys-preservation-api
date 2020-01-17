@@ -4,6 +4,6 @@ namespace Equinor.Procosys.Preservation.Command
 {
     public interface ITimeService
     {
-        DateTime GetCurrentTimeUTC();
+        DateTime GetCurrentTimeUtc();
     }
 }

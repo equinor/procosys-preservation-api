@@ -10,20 +10,27 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
     [TestClass]
     public class StepTests
     {
+        private Mock<Mode> _modeMock;
+        private Mock<Responsible> _responsibleMock;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _modeMock = new Mock<Mode>();
+            _modeMock.SetupGet(x => x.Id).Returns(3);
+
+            _responsibleMock = new Mock<Responsible>();
+            _responsibleMock.SetupGet(x => x.Id).Returns(4);
+        }
+
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var mode = new Mock<Mode>();
-            mode.SetupGet(x => x.Id).Returns(3);
+            var dut = new Step("SchemaA", _modeMock.Object, _responsibleMock.Object);
 
-            var responsible = new Mock<Responsible>();
-            responsible.SetupGet(x => x.Id).Returns(4);
-
-            var step = new Step("SchemaA", mode.Object, responsible.Object);
-
-            Assert.AreEqual("SchemaA", step.Schema);
-            Assert.AreEqual(mode.Object.Id, step.ModeId);
-            Assert.AreEqual(responsible.Object.Id, step.ResponsibleId);
+            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual(_modeMock.Object.Id, dut.ModeId);
+            Assert.AreEqual(_responsibleMock.Object.Id, dut.ResponsibleId);
         }
 
         [TestMethod]
@@ -45,6 +52,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new Step("SchemaA", mode.Object, null)
                 );
+        }
+
+        [TestMethod]
+        public void VoidUnVoid_ShouldToggleIsVoided()
+        {
+            var dut = new Step("SchemaA", _modeMock.Object, _responsibleMock.Object);
+            Assert.IsFalse(dut.IsVoided);
+
+            dut.Void();
+            Assert.IsTrue(dut.IsVoided);
+
+            dut.UnVoid();
+            Assert.IsFalse(dut.IsVoided);
         }
     }
 }

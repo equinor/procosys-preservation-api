@@ -30,5 +30,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public int ModeId { get; private set; }
         public int ResponsibleId { get; private set; }
+        public bool IsVoided { get; private set; }
+
+        public void Void() => IsVoided = true;
+        public void UnVoid() => IsVoided = false;
     }
 }

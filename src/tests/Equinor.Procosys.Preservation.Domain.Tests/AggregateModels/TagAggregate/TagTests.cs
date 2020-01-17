@@ -55,6 +55,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             Assert.AreEqual(_stepMock.Object.Id, dut.StepId);
             Assert.AreEqual(1, dut.Requirements.Count);
             Assert.AreEqual(_requirementMock.Object.Id, dut.Requirements.First().Id);
+            Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
         }
 
         [TestMethod]

@@ -31,11 +31,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 .Must(BeAnExistingRequirementDefinition)
                 .WithMessage((tag, req) => $"Requirement definition doesn't exists! {req.RequirementDefinitionId} ");
 
-            bool NotBeAnExistingTag(CreateTagCommand tag)
-                => !tagValidator.Exists(tag.TagNo, tag.ProjectNo);
+            bool NotBeAnExistingTag(CreateTagCommand tag) => !tagValidator.Exists(tag.TagNo, tag.ProjectNo);
 
-            bool BeAnExistingStep(int stepId)
-                => stepValidator.Exists(stepId);
+            bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
 
             bool ProjectExists(string projectNo) => projectValidator.Exists(projectNo);
 

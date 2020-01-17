@@ -1,14 +1,17 @@
-﻿using FluentValidation;
+﻿using Equinor.Procosys.Preservation.Command.Validators.Mode;
+using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
 {
     public class CreateModeCommandValidator : AbstractValidator<CreateModeCommand>
     {
-        public CreateModeCommandValidator()
+        public CreateModeCommandValidator(IModeValidator modeValidator)
         {
             RuleFor(x => x.Title)
-                .MinimumLength(3)
-                .MaximumLength(255);
+                .Must(HaveUniqueTitle)
+                .WithMessage(x => $"Mode with title already exists! Title={x.Title}");
+
+            bool HaveUniqueTitle(string title) => !modeValidator.Exists(title);
         }
     }
 }

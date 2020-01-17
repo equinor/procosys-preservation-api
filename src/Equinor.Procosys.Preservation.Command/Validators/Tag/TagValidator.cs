@@ -15,6 +15,11 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
         public bool Exists(string tagNo, string projectNo)
             => _tagRepository.GetByNoAsync(tagNo, projectNo).Result != null;
 
-        public bool IsVoided(int tagId) => throw new System.NotImplementedException("tag.isvoided"); // todo
+
+        public bool IsVoided(int tagId)
+        {
+            var r = _tagRepository.GetByIdAsync(tagId).Result;
+            return r != null && r.IsVoided;
+        }
     }
 }
