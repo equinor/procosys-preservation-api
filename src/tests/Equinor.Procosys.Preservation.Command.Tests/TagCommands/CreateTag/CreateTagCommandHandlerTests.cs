@@ -56,16 +56,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 .Setup(x => x.Plant)
                 .Returns("TestPlant");
 
-            var tagDetails = new ProcosysTagDetails();
-            tagDetails.AreaCode = "AreaCode";
-            tagDetails.CallOffNo = "CalloffNo";
-            tagDetails.CommPkgNo = "CommPkgNo";
-            tagDetails.Description = "Description";
-            tagDetails.DisciplineCode = "DisciplineCode";
-            tagDetails.McPkgNo = "McPkgNo";
-            tagDetails.PurchaseOrderNo = "PurchaseOrderNo";
-            tagDetails.TagFunctionCode = "TagFunctionCode";
-            tagDetails.TagNo = "TagNo";
+            var tagDetails =
+                new ProcosysTagDetails
+                {
+                    AreaCode = "AreaCode",
+                    CallOffNo = "CalloffNo",
+                    CommPkgNo = "CommPkgNo",
+                    Description = "Description",
+                    DisciplineCode = "DisciplineCode",
+                    McPkgNo = "McPkgNo",
+                    PurchaseOrderNo = "PurchaseOrderNo",
+                    TagFunctionCode = "TagFunctionCode",
+                    TagNo = "TagNo"
+                };
             var tagApiService = new Mock<ITagApiService>();
             tagApiService
                 .Setup(x => x.GetTagDetails(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))

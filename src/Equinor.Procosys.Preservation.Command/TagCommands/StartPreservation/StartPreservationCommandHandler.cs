@@ -22,19 +22,13 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
 
         public async Task<Result<Unit>> Handle(StartPreservationCommand request, CancellationToken cancellationToken)
         {
-            foreach (var tagId in request.TagIds)
+            var tags = await _tagRepository.GetByIdsAsync(request.TagIds);
+            foreach (var tag in tags)
             {
-                var tag = await _tagRepository.GetByIdAsync(tagId);
-                if (tag == null)
-                {
-                    return new NotFoundResult<Unit>(Strings.EntityNotFound(nameof(Tag), tagId));
-                }
-                
                 tag.Status = PreservationStatus.Active;
                 foreach (var requirement in tag.Requirements)
                 {
-                    // todo after merging Move_NextDueDate_column_vol2
-                    //requirement.SetNextDueTimeUtc(_timeService.GetCurrentTimeUtc());
+                    requirement.SetNextDueTimeUtc(_timeService.GetCurrentTimeUtc());
                 }
             }
             
