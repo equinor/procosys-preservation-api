@@ -12,7 +12,7 @@ using ServiceResult;
 namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 {
     [TestClass]
-    public class GetAllAvailableTagsQueryHandlerTests
+    public class SearchTagsQueryHandlerTests
     {
         private Mock<ITagRepository> _tagRepositoryMock;
         private Mock<ITagApiService> _tagApiServiceMock;
@@ -20,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         private IList<ProcosysTagOverview> _apiTags;
         private List<Tag> _repositoryTags;
         private SearchTagsQueryHandler _dut;
+        private SearchTagsQuery _query;
 
         [TestInitialize]
         public void Setup()
@@ -72,6 +73,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             };
 
             _dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+
+            _query = new SearchTagsQuery("ProjectName", "TagNo");
         }
 
         [TestMethod]
@@ -81,9 +84,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
                 .Returns(Task.FromResult(_apiTags));
 
-            var query = new SearchTagsQuery("ProjectName", "TagNo");
-
-            var result = await _dut.Handle(query, default);
+            var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
         }
@@ -99,9 +100,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetAllAsync())
                 .Returns(Task.FromResult(_repositoryTags));
 
-            var query = new SearchTagsQuery("ProjectName", "TagNo");
-
-            var result = await _dut.Handle(query, default);
+            var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(3, result.Data.Count);
         }
@@ -117,9 +116,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetAllByProjectNoAsync("ProjectName"))
                 .Returns(Task.FromResult(_repositoryTags));
 
-            var query = new SearchTagsQuery("ProjectName", "TagNo");
-
-            var result = await _dut.Handle(query, default);
+            var result = await _dut.Handle(_query, default);
 
             Assert.IsTrue(result.Data[0].IsPreserved);
             Assert.IsFalse(result.Data[1].IsPreserved);
@@ -133,9 +130,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
                 .Returns(Task.FromResult<IList<ProcosysTagOverview>>(null));
 
-            var query = new SearchTagsQuery("ProjectName", "TagNo");
-
-            var result = await _dut.Handle(query, default);
+            var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
             Assert.AreEqual(0, result.Data.Count);
@@ -152,9 +147,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetAllByProjectNoAsync("ProjectName"))
                 .Returns(Task.FromResult<List<Tag>>(null));
 
-            var query = new SearchTagsQuery("ProjectName", "TagNo");
-
-            var result = await _dut.Handle(query, default);
+            var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
             Assert.AreEqual(3, result.Data.Count);

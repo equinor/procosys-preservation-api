@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 {
     [TestClass]
-    public class GetAllAvailableTagsQueryTests
+    public class SearchTagsQueryTests
     {
         [TestMethod]
         public void Constructor_SetsProperties()
