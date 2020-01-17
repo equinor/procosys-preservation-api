@@ -2,25 +2,31 @@
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.RequirementTypeAggregate
 {
     [TestClass]
     public class RequirementDefTests
     {
+        private RequirementDefinition _dut;
+
+        [TestInitialize]
+        public void Setup() => _dut = new RequirementDefinition("SchemaA", "TitleA", 4, 10);
+
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new RequirementDefinition("SchemaA", "TitleA", 4, 10);
-
-            Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual("TitleA", dut.Title);
-            Assert.AreEqual(4, dut.DefaultIntervalWeeks);
-            Assert.AreEqual(10, dut.SortKey);
-            Assert.IsFalse(dut.IsVoided);
-            Assert.AreEqual(0, dut.Fields.Count);
+            Assert.AreEqual("SchemaA", _dut.Schema);
+            Assert.AreEqual("TitleA", _dut.Title);
+            Assert.AreEqual(4, _dut.DefaultIntervalWeeks);
+            Assert.AreEqual(10, _dut.SortKey);
+            Assert.IsFalse(_dut.IsVoided);
+            Assert.AreEqual(0, _dut.Fields.Count);
         }
+
+        [TestMethod]
+        public void Constructor_ShouldMakeRequirementDefinitionNotNeedingInput()
+            => Assert.IsFalse(_dut.NeedUserInput);
 
         [TestMethod]
         public void AddField_ShouldThrowExceptionTest_ForNullField()
@@ -34,26 +40,74 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void AddField_ShouldAddFieldToFieldsList()
         {
-            var f = new Mock<Field>();
+            var f = new Field("", "", FieldType.Info, 1);
 
             var dut = new RequirementDefinition("", "", 0, 0);
-            dut.AddField(f.Object);
+            dut.AddField(f);
 
             Assert.AreEqual(1, dut.Fields.Count);
-            Assert.IsTrue(dut.Fields.Contains(f.Object));
+            Assert.IsTrue(dut.Fields.Contains(f));
+        }
+
+        [TestMethod]
+        public void AddInfoField_ShouldNotCauseRequirementDefinitionNeedingInput()
+        {
+            var f = new Field("", "", FieldType.Info, 1);
+
+            var dut = new RequirementDefinition("", "", 0, 0);
+            Assert.IsFalse(_dut.NeedUserInput);
+            
+            dut.AddField(f);
+
+            Assert.IsFalse(_dut.NeedUserInput);
+        }
+
+        [TestMethod]
+        public void AddNumberField_ShouldCauseRequirementDefinitionNeedingInput()
+        {
+            var f = new Field("", "", FieldType.Number, 1, "u", false);
+
+            Assert.IsFalse(_dut.NeedUserInput);
+            
+            _dut.AddField(f);
+
+            Assert.IsTrue(_dut.NeedUserInput);
+        }
+
+        [TestMethod]
+        public void AddCheckBoxField_ShouldCauseRequirementDefinitionNeedingInput()
+        {
+            var f = new Field("", "", FieldType.CheckBox, 1);
+
+            Assert.IsFalse(_dut.NeedUserInput);
+            
+            _dut.AddField(f);
+
+            Assert.IsTrue(_dut.NeedUserInput);
+        }
+
+        [TestMethod]
+        public void AddAttachmentField_ShouldCauseRequirementDefinitionNeedingInput()
+        {
+            var f = new Field("", "", FieldType.Attachment, 1);
+
+            Assert.IsFalse(_dut.NeedUserInput);
+            
+            _dut.AddField(f);
+
+            Assert.IsTrue(_dut.NeedUserInput);
         }
 
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()
         {
-            var dut = new RequirementDefinition("", "", 0, 0);
-            Assert.IsFalse(dut.IsVoided);
+            Assert.IsFalse(_dut.IsVoided);
 
-            dut.Void();
-            Assert.IsTrue(dut.IsVoided);
+            _dut.Void();
+            Assert.IsTrue(_dut.IsVoided);
 
-            dut.UnVoid();
-            Assert.IsFalse(dut.IsVoided);
+            _dut.UnVoid();
+            Assert.IsFalse(_dut.IsVoided);
         }
     }
 }

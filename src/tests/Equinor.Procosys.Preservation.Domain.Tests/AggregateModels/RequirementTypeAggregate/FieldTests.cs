@@ -22,6 +22,34 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.IsFalse(f.IsVoided);
         }
 
+        public void ConstructorForInfoField_ShouldMakeFieldNotNeedingUserInput()
+        {
+            var f = new Field("", "", FieldType.Info, 10);
+
+            Assert.IsFalse(f.NeedUserInput);
+        }
+
+        public void ConstructorForAttachmentField_ShouldMakeFieldNeedingUserInput()
+        {
+            var f = new Field("", "", FieldType.Attachment, 10);
+
+            Assert.IsTrue(f.NeedUserInput);
+        }
+
+        public void ConstructorForCheckBoxField_ShouldMakeFieldNeedingUserInput()
+        {
+            var f = new Field("", "", FieldType.CheckBox, 10);
+
+            Assert.IsTrue(f.NeedUserInput);
+        }
+
+        public void ConstructorForNumberField_ShouldMakeFieldNeedingUserInput()
+        {
+            var f = new Field("", "", FieldType.Number, 10);
+
+            Assert.IsTrue(f.NeedUserInput);
+        }
+
         [TestMethod]
         public void Constructor_ShouldSetDefaultValuesForUnitAndShowPrevious_WhenNotGivenAsArgument()
         {

@@ -10,32 +10,19 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
     [TestClass]
     public class RequirementTypeDtoTests
     {
-        private FieldDto _info;
-        private FieldDto _number;
-        private FieldDto _cb;
-        private FieldDto _attachment;
-
-
-        [TestInitialize]
-        public void Setup()
-        {
-            _info = new FieldDto(1, "", true, FieldType.Info, 1, null, null);
-            _number = new FieldDto(1, "", true, FieldType.Number, 1, "", true);
-            _cb = new FieldDto(1, "", true, FieldType.CheckBox, 1, null, null);
-            _attachment = new FieldDto(1, "", true, FieldType.Attachment, 1, null, null);
-        }
+        private readonly List<FieldDto> _fieldsDtos = new List<FieldDto>();
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var rt = new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, new List<RequirementDefinitionDto>());
+            var dut = new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, new List<RequirementDefinitionDto>());
 
-            Assert.AreEqual(1, rt.Id);
-            Assert.AreEqual("CodeA", rt.Code);
-            Assert.AreEqual("TitleA", rt.Title);
-            Assert.AreEqual(10, rt.SortKey);
-            Assert.IsTrue(rt.IsVoided);
-            Assert.AreEqual(0, rt.RequirementDefinitions.Count());
+            Assert.AreEqual(1, dut.Id);
+            Assert.AreEqual("CodeA", dut.Code);
+            Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual(10, dut.SortKey);
+            Assert.IsTrue(dut.IsVoided);
+            Assert.AreEqual(0, dut.RequirementDefinitions.Count());
         }
 
         [TestMethod]
@@ -45,68 +32,68 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             );
 
         [TestMethod]
-        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedBySortKey_WhenFieldsNotNeedInput()
+        public void ConstructorWithRequirementDefinitionsNotNeedInput_ShouldSortRequirementDefinitionsBySortKey()
         {
-            var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
+            var dut = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "", false, 4, 999, new List<FieldDto>{ _info}),
-                new RequirementDefinitionDto(2, "", false, 4, 5, new List<FieldDto>{ _info}),
-                new RequirementDefinitionDto(3, "", false, 4, 500, new List<FieldDto>{ _info}),
-                new RequirementDefinitionDto(4, "", false, 4, 10, new List<FieldDto>{ _info}),
+                new RequirementDefinitionDto(1, "", false, 4, 999, false, _fieldsDtos),
+                new RequirementDefinitionDto(2, "", false, 4, 5, false, _fieldsDtos),
+                new RequirementDefinitionDto(3, "", false, 4, 500, false, _fieldsDtos),
+                new RequirementDefinitionDto(4, "", false, 4, 10, false, _fieldsDtos),
             });
 
-            var dtos = rt.RequirementDefinitions.ToList();
-            Assert.AreEqual(4, dtos.Count);
-            Assert.AreEqual(2, dtos[0].Id);
-            Assert.AreEqual(4, dtos[1].Id);
-            Assert.AreEqual(3, dtos[2].Id);
-            Assert.AreEqual(1, dtos[3].Id);
+            var requirementDefinitions = dut.RequirementDefinitions.ToList();
+            Assert.AreEqual(4, requirementDefinitions.Count);
+            Assert.AreEqual(2, requirementDefinitions[0].Id);
+            Assert.AreEqual(4, requirementDefinitions[1].Id);
+            Assert.AreEqual(3, requirementDefinitions[2].Id);
+            Assert.AreEqual(1, requirementDefinitions[3].Id);
         }
 
         [TestMethod]
-        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedBySortKey_WhenFieldsNeedInput()
+        public void ConstructorWithRequirementDefinitionsNeedingInput_ShouldSortRequirementDefinitionsBySortKey()
         {
-            var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
+            var dut = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "", false, 4, 999, new List<FieldDto>{ _cb}),
-                new RequirementDefinitionDto(2, "", false, 4, 5, new List<FieldDto>{ _attachment}),
-                new RequirementDefinitionDto(3, "", false, 4, 500, new List<FieldDto>{ _attachment}),
-                new RequirementDefinitionDto(4, "", false, 4, 10, new List<FieldDto>{ _number}),
+                new RequirementDefinitionDto(1, "", false, 4, 999, true, _fieldsDtos),
+                new RequirementDefinitionDto(2, "", false, 4, 5, true, _fieldsDtos),
+                new RequirementDefinitionDto(3, "", false, 4, 500, true, _fieldsDtos),
+                new RequirementDefinitionDto(4, "", false, 4, 10, true, _fieldsDtos),
             });
 
-            var dtos = rt.RequirementDefinitions.ToList();
-            Assert.AreEqual(4, dtos.Count);
-            Assert.AreEqual(2, dtos[0].Id);
-            Assert.AreEqual(4, dtos[1].Id);
-            Assert.AreEqual(3, dtos[2].Id);
-            Assert.AreEqual(1, dtos[3].Id);
+            var requirementDefinitions = dut.RequirementDefinitions.ToList();
+            Assert.AreEqual(4, requirementDefinitions.Count);
+            Assert.AreEqual(2, requirementDefinitions[0].Id);
+            Assert.AreEqual(4, requirementDefinitions[1].Id);
+            Assert.AreEqual(3, requirementDefinitions[2].Id);
+            Assert.AreEqual(1, requirementDefinitions[3].Id);
         }
 
         [TestMethod]
-        public void ConstructorWithRequirementDefinitions_ShouldCreateDtoWithRequirementDefinitionSortedByNeedingInputThenBySortKey_WhenFieldsBothNeedInputAndNotNeedInput()
+        public void ConstructorWithRequirementDefinitionsBothNeedInputAndNotNeedInput_ShouldSortRequirementDefinitionsByNeedingInputThenSortKey()
         {
-            var rt = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
+            var dut = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "", false, 4, 999, new List<FieldDto>{ _cb}),
-                new RequirementDefinitionDto(2, "", false, 4, 5, new List<FieldDto>{ _attachment}),
-                new RequirementDefinitionDto(3, "", false, 4, 500, new List<FieldDto>{ _attachment}),
-                new RequirementDefinitionDto(4, "", false, 4, 10, new List<FieldDto>{ _number}),
-                new RequirementDefinitionDto(5, "", false, 4, 999, new List<FieldDto>{ _info}),
-                new RequirementDefinitionDto(6, "", false, 4, 5, new List<FieldDto>{ _info}),
-                new RequirementDefinitionDto(7, "", false, 4, 500, new List<FieldDto>{ _info}),
-                new RequirementDefinitionDto(8, "", false, 4, 10, new List<FieldDto>{ _info}),
+                new RequirementDefinitionDto(1, "", false, 4, 999, true, _fieldsDtos),
+                new RequirementDefinitionDto(2, "", false, 4, 5, true, _fieldsDtos),
+                new RequirementDefinitionDto(3, "", false, 4, 500, true, _fieldsDtos),
+                new RequirementDefinitionDto(4, "", false, 4, 10, true, _fieldsDtos),
+                new RequirementDefinitionDto(5, "", false, 4, 999, false, _fieldsDtos),
+                new RequirementDefinitionDto(6, "", false, 4, 5, false, _fieldsDtos),
+                new RequirementDefinitionDto(7, "", false, 4, 500, false, _fieldsDtos),
+                new RequirementDefinitionDto(8, "", false, 4, 10, false, _fieldsDtos),
             });
 
-            var dtos = rt.RequirementDefinitions.ToList();
-            Assert.AreEqual(8, dtos.Count);
-            Assert.AreEqual(6, dtos[0].Id);
-            Assert.AreEqual(8, dtos[1].Id);
-            Assert.AreEqual(7, dtos[2].Id);
-            Assert.AreEqual(5, dtos[3].Id);
-            Assert.AreEqual(2, dtos[4].Id);
-            Assert.AreEqual(4, dtos[5].Id);
-            Assert.AreEqual(3, dtos[6].Id);
-            Assert.AreEqual(1, dtos[7].Id);
+            var requirementDefinitions = dut.RequirementDefinitions.ToList();
+            Assert.AreEqual(8, requirementDefinitions.Count);
+            Assert.AreEqual(6, requirementDefinitions[0].Id);
+            Assert.AreEqual(8, requirementDefinitions[1].Id);
+            Assert.AreEqual(7, requirementDefinitions[2].Id);
+            Assert.AreEqual(5, requirementDefinitions[3].Id);
+            Assert.AreEqual(2, requirementDefinitions[4].Id);
+            Assert.AreEqual(4, requirementDefinitions[5].Id);
+            Assert.AreEqual(3, requirementDefinitions[6].Id);
+            Assert.AreEqual(1, requirementDefinitions[7].Id);
         }
     }
 }
