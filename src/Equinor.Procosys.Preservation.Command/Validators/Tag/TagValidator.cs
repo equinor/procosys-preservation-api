@@ -20,5 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             var r = _tagRepository.GetByIdAsync(tagId).Result;
             return r != null && r.IsVoided;
         }
+
+        public bool ProjectIsClosed(int tagId) => false; // todo
     }
 }
