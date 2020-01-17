@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
         {
             RuleFor(x => x.Title)
                 .Must(HaveUniqueTitle)
-                .WithMessage(x => $"Mode with title already exists! Title={x.Title}");
+                .WithMessage(x => $"Mode with title already exists! Mode={x.Title}");
 
             bool HaveUniqueTitle(string title) => !modeValidator.Exists(title);
         }

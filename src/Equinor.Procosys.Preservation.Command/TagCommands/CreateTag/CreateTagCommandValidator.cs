@@ -33,11 +33,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             RuleForEach(tag => tag.Requirements)
                 .Must(BeAnExistingRequirementDefinition)
-                .WithMessage((tag, req) => $"Requirement definition doesn't exists! {req.RequirementDefinitionId} ");
+                .WithMessage((tag, req) => $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId} ");
 
             RuleForEach(tag => tag.Requirements)
                 .Must(NotBeAVoidedRequirementDefinition)
-                .WithMessage((tag, req) => $"Requirement definition is voided! {req.RequirementDefinitionId} ");
+                .WithMessage((tag, req) => $"Requirement definition is voided! Requirement={req.RequirementDefinitionId} ");
 
             bool NotBeAnExistingTagWithinProject(CreateTagCommand tag) => !tagValidator.Exists(tag.TagNo, tag.ProjectNo);
 

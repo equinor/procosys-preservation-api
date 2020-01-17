@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         {
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.Exists(_id)).Returns(true);
+            _modeValidatorMock.Setup(r => r.IsVoided(_id)).Returns(true);
             _command = new DeleteModeCommand(_id);
 
             _dut = new DeleteModeCommandValidator(_modeValidatorMock.Object);
@@ -54,6 +55,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode is not voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenModeIsUsedInAStep()
+        {
+            _modeValidatorMock.Setup(r => r.IsUsedInStep(_id)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode is used in step(s)!"));
         }
     }
 }

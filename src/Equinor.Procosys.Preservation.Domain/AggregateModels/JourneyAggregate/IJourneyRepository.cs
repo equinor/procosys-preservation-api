@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
@@ -9,5 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         Task<Journey> GetJourneyByStepIdAsync(int stepId);
         
         Task<Step> GetStepByStepIdAsync(int stepId);
+        
+        Task<List<Step>> GetStepsByModeIdAsync(int modeId);
     }
 }
