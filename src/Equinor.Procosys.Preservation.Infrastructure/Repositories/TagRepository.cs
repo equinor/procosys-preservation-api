@@ -18,6 +18,5 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 
         public Task<Tag> GetByNoAsync(string tagNo, string projectNo)
             => DefaultQuery.FirstOrDefaultAsync(t => t.TagNo == tagNo && t.ProjectNumber == projectNo);
-
     }
 }

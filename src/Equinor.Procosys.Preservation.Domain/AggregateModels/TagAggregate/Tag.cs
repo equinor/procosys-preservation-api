@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             _requirements.AddRange(reqList);
         }
 
-        public PreservationStatus Status { get; private set; }
+        public PreservationStatus Status { get; set; }
         public string AreaCode { get; private set; }
         public string CalloffNumber { get; private set; }
         public string CommPkgNumber { get; private set; }
