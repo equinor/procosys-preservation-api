@@ -19,8 +19,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
             var mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
             mainApiOptions
                 .Setup(x => x.CurrentValue)
-                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseUrl = "http://example.com" });
-            var mainApiClient = new Mock<IMainApiClient>();
+                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
+            var mainApiClient = new Mock<IBearerTokenApiClient>();
             mainApiClient
                 .Setup(x => x.QueryAndDeserialize<List<ProcosysPlant>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<ProcosysPlant>
@@ -46,8 +46,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
             var mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
             mainApiOptions
                 .Setup(x => x.CurrentValue)
-                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseUrl = "http://example.com" });
-            var mainApiClient = new Mock<IMainApiClient>();
+                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
+            var mainApiClient = new Mock<IBearerTokenApiClient>();
             mainApiClient
                 .Setup(x => x.QueryAndDeserialize<List<ProcosysPlant>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<ProcosysPlant>
