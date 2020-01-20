@@ -10,7 +10,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
     public class PreservationRecordTests
     {
         private DateTime _utcNow;
-        private Mock<Requirement> _reqMock;
         private int _preservedById = 99;
         private Mock<Person> _preservedByMock;
 
@@ -18,7 +17,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         public void Setup()
         {
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _reqMock = new Mock<Requirement>();
             _preservedByMock = new Mock<Person>();
             _preservedByMock.SetupGet(p => p.Id).Returns(_preservedById);
         }
@@ -26,12 +24,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            _reqMock.SetupGet(r => r.Id).Returns(3);
-
-            var dut = new PreservationRecord("SchemaA", _reqMock.Object, _utcNow, _preservedByMock.Object, true, "Comment");
+            var dut = new PreservationRecord("SchemaA", _utcNow, _preservedByMock.Object, true, "Comment");
 
             Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual(_reqMock.Object.Id, dut.RequirementId);
             Assert.AreEqual(_utcNow, dut.PreservedAtUtc);
             Assert.AreEqual(_preservedById, dut.PreservedByPersonId);
             Assert.IsTrue(dut.BulkPreserved);
@@ -39,15 +34,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         }
 
         [TestMethod]
-        public void Constructor_ShouldThrowException_WhenRequirementNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() =>
-                new PreservationRecord("SchemaA", null, _utcNow, _preservedByMock.Object, true, "Comment")
-            );
-
-        [TestMethod]
         public void Constructor_ShouldThrowException_WhenPreservedByNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
-                new PreservationRecord("SchemaA", _reqMock.Object, _utcNow, null, true, "Comment")
+                new PreservationRecord("SchemaA", _utcNow, null, true, "Comment")
             );
 
     }

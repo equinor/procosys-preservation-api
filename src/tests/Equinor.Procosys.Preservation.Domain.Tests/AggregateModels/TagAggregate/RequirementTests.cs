@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -36,15 +37,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             );
 
         [TestMethod]
-        public void AddPreservationRecord_ShouldAddPreservationRecordToPreservationRecordsList()
+        public void Preserve_ShouldAddPreservationRecordToPreservationRecordsList()
         {
             var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
             var pr = new Mock<PreservationRecord>();
 
-            dut.AddPreservationRecord(pr.Object);
+            dut.Preserve(pr.Object);
 
             Assert.AreEqual(1, dut.PreservationRecords.Count);
             Assert.IsTrue(dut.PreservationRecords.Contains(pr.Object));
+        }
+        
+        [TestMethod]
+        public void Preserve_ShouldSetCorrectNextDueDate()
+        {
+            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            var intervalWeeks = 8;
+            var p = new Mock<Person>();
+
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
+            var pr = new PreservationRecord("", utcNow, p.Object, false, "");
+            dut.Preserve(pr);
+
+            var expectedNextDueTimeUtc = utcNow.AddWeeks(intervalWeeks);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
         }
 
         [TestMethod]
@@ -59,29 +75,5 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             dut.UnVoid();
             Assert.IsFalse(dut.IsVoided);
         }
-        
-        [TestMethod]
-        public void SetNextDueTimeUtc_ShouldSetCorrectNextDueDate()
-        {
-            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            var intervalWeeks = 8;
-            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
-
-            dut.SetNextDueTimeUtc(utcNow);
-
-            var expectedNextDueTimeUtc = utcNow.AddWeeks(intervalWeeks);
-            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
-        }
-
-        [TestMethod]
-        public void SetNextDueTimeUtc_ShouldThrowException_WhenTimeNotGivenInUtc()
-        {
-            var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
-            var now = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Local);
-            Assert.ThrowsException<ArgumentException>(() =>
-                dut.SetNextDueTimeUtc(now)
-            );
-        }
-
     }
 }
