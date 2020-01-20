@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests
+namespace Equinor.Procosys.Preservation.Domain.Tests
 {
     public class DateTimeExtensionsTests
     {
