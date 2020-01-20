@@ -137,7 +137,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag do not have correct status to start!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.NotStarted} to start!"));
         }
 
         [TestMethod]

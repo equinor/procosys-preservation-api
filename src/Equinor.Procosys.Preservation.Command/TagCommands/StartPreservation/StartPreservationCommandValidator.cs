@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
                     .Must(NotBeInAClosedProject)
                     .WithMessage((x, id) => $"Project for tag is closed! Tag={id}")
                     .Must(PreservationIsNotStarted)
-                    .WithMessage((x, id) => $"Tag do not have correct status to start! Tag={id}")
+                    .WithMessage((x, id) => $"Tag must have status {PreservationStatus.NotStarted} to start! Tag={id}")
                     .Must(HaveAtLeastOneNonVoidedRequirement)
                     .WithMessage((x, id) => $"Tag do not have any non voided requirement! Tag={id}")
                     .Must(HaveExistingRequirementDefinitions)
