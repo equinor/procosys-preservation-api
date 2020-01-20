@@ -13,26 +13,27 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var rd = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, new List<FieldDto>());
+            var dut = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, false, new List<FieldDto>());
 
-            Assert.AreEqual(1, rd.Id);
-            Assert.AreEqual("TitleA", rd.Title);
-            Assert.AreEqual(4, rd.DefaultIntervalWeeks);
-            Assert.AreEqual(10, rd.SortKey);
-            Assert.IsTrue(rd.IsVoided);
-            Assert.AreEqual(0, rd.Fields.Count());
+            Assert.AreEqual(1, dut.Id);
+            Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual(4, dut.DefaultIntervalWeeks);
+            Assert.AreEqual(10, dut.SortKey);
+            Assert.IsTrue(dut.IsVoided);
+            Assert.IsFalse(dut.NeedsUserInput);
+            Assert.AreEqual(0, dut.Fields.Count());
         }
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenModeNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequirementDefinitionDto(1, "TitleA", true, 4, 10, null)
+                new RequirementDefinitionDto(1, "TitleA", true, 4, 10, true, null)
             );
 
         [TestMethod]
         public void ConstructorWithFields_ShouldCreateDtoWithFieldsSortedBySortKey()
         {
-            var rd = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, new List<FieldDto>
+            var dut = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, true, new List<FieldDto>
             {
                 new FieldDto(1, "", true, FieldType.Info, 1, null, null),
                 new FieldDto(2, "", true, FieldType.Info, 90, null, null),
@@ -40,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 new FieldDto(4, "", true, FieldType.Info, 10, null, null),
             });
 
-            var dtos = rd.Fields.ToList();
+            var dtos = dut.Fields.ToList();
             Assert.AreEqual(4, dtos.Count);
             Assert.AreEqual(1, dtos[0].Id);
             Assert.AreEqual(3, dtos[1].Id);

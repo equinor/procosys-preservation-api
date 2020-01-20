@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
@@ -27,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public int DefaultIntervalWeeks { get; private set; }
         public int SortKey { get; private set; }
         public IReadOnlyCollection<Field> Fields => _fields.AsReadOnly();
+        public bool NeedsUserInput => _fields.Any(f => f.NeedsUserInput);
 
         public void AddField(Field field)
         {

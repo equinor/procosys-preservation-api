@@ -86,12 +86,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             RequirementDefinitionDto requirementDefinitionDto,
             RequirementDefinition requirementDefinition,
             Field field,
-            bool needUserInput)
+            bool needsUserInput)
         {
             Assert.AreEqual(requirementDefinition.Title, requirementDefinitionDto.Title);
             Assert.AreEqual(requirementDefinition.DefaultIntervalWeeks, requirementDefinitionDto.DefaultIntervalWeeks);
             Assert.AreEqual(requirementDefinition.SortKey, requirementDefinitionDto.SortKey);
-            Assert.AreEqual(needUserInput, requirementDefinitionDto.NeedUserInput);
+            Assert.AreEqual(needsUserInput, requirementDefinitionDto.NeedsUserInput);
             Assert.IsFalse(requirementDefinitionDto.IsVoided);
 
             var fields = requirementDefinitionDto.Fields.ToList();
@@ -101,7 +101,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             Assert.AreEqual(field.FieldType, fields[0].FieldType);
             Assert.AreEqual(field.ShowPrevious, fields[0].ShowPrevious);
             Assert.AreEqual(field.SortKey, fields[0].SortKey);
-            Assert.AreEqual(needUserInput, fields[0].NeedUserInput);
             Assert.IsFalse(fields[0].IsVoided);
         }
     }

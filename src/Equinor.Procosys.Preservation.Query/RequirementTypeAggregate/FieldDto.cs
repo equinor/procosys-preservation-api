@@ -22,9 +22,5 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public FieldType FieldType { get; }
         public string Unit { get; }
         public bool? ShowPrevious { get; }
-        public bool NeedUserInput =>
-            FieldType == FieldType.Number ||
-            FieldType == FieldType.Attachment ||
-            FieldType == FieldType.CheckBox;
     }
 }

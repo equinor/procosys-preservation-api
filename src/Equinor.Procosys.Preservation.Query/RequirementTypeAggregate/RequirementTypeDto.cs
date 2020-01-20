@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             Title = title;
             IsVoided = isVoided;
             SortKey = sortKey;
-            RequirementDefinitions = requirementDefinitions.OrderBy(rd => rd.NeedUserInput).ThenBy(rd => rd.SortKey);
+            RequirementDefinitions = requirementDefinitions.OrderBy(rd => rd.NeedsUserInput).ThenBy(rd => rd.SortKey);
         }
 
         public int Id { get; }
