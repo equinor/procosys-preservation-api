@@ -25,14 +25,24 @@ namespace Equinor.Procosys.Preservation.WebApi
     public class Startup
     {
         private const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
+        private readonly IWebHostEnvironment _environment;
 
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+        {
+            Configuration = configuration;
+            _environment = webHostEnvironment;
+        }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            if (_environment.IsDevelopment())
+            {
+                services.AddHostedService<DatabaseMigrator>();
+            }
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
