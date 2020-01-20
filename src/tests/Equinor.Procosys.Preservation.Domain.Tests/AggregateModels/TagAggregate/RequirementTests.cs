@@ -12,12 +12,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
     public class RequirementTests
     {
         private Mock<RequirementDefinition> _reqDefMock;
+        private DateTime _utcNow;
 
         [TestInitialize]
         public void Setup()
         {
             _reqDefMock = new Mock<RequirementDefinition>();
             _reqDefMock.SetupGet(x => x.Id).Returns(3);
+            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
         }
 
         [TestMethod]
@@ -37,6 +39,28 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             );
 
         [TestMethod]
+        public void StartPreservation_ShouldShouldSetCorrectNextDueDate()
+        {
+            var intervalWeeks = 2;
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
+
+            dut.StartPreservation(_utcNow, true);
+
+            var expectedNextDueTimeUtc = _utcNow.AddWeeks(intervalWeeks);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldShouldSetNeedsUserInput()
+        {
+            var dut = new Requirement("SchemaA", 2, _reqDefMock.Object);
+
+            dut.StartPreservation(_utcNow, true);
+
+            Assert.IsTrue(dut.NeedsUserInput);
+        }
+
+        [TestMethod]
         public void Preserve_ShouldAddPreservationRecordToPreservationRecordsList()
         {
             var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
@@ -51,15 +75,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         [TestMethod]
         public void Preserve_ShouldSetCorrectNextDueDate()
         {
-            var utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             var intervalWeeks = 8;
             var p = new Mock<Person>();
 
             var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
-            var pr = new PreservationRecord("", utcNow, p.Object, false, "");
+            var pr = new PreservationRecord("", _utcNow, p.Object, false, "");
             dut.Preserve(pr);
 
-            var expectedNextDueTimeUtc = utcNow.AddWeeks(intervalWeeks);
+            var expectedNextDueTimeUtc = _utcNow.AddWeeks(intervalWeeks);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
         }
 

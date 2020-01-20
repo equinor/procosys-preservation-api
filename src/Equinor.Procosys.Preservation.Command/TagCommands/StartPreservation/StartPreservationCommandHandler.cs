@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -29,9 +30,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
             foreach (var tag in tags)
             {
                 tag.Status = PreservationStatus.Active;
+                var reqDefs = await _requirementTypeRepository
+                    .GetRequirementDefinitionsByIdsAsync(tag.Requirements.Select(r => r.RequirementDefinitionId)
+                        .ToList());
                 foreach (var requirement in tag.Requirements)
                 {
-                    requirement.StartPreservation(_timeService.GetCurrentTimeUtc());
+                    var reqDef = reqDefs.Single(r => r.Id == requirement.RequirementDefinitionId);
+
+                    requirement.StartPreservation(_timeService.GetCurrentTimeUtc(), reqDef.NeedsUserInput);
                 }
             }
             

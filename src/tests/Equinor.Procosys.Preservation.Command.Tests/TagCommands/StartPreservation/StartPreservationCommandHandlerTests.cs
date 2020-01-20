@@ -24,13 +24,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         private StartPreservationCommand _command;
         private Tag _tag1;
         private Tag _tag2;
-        private Mock<Requirement> _req1OnTag1Mock;
-        private Mock<Requirement> _req2OnTag1Mock;
-        private Mock<Requirement> _req1OnTag2Mock;
-        private Mock<Requirement> _req2OnTag2Mock;
+        private Requirement _req1OnTag1;
+        private Requirement _req2OnTag1;
+        private Requirement _req1OnTag2;
+        private Requirement _req2OnTag2;
+        private Mock<RequirementDefinition> _rd1Mock;
+        private Mock<RequirementDefinition> _rd2Mock;
 
+        private int _rdId1 = 17;
+        private int _rdId2 = 18;
         private int _tagId1 = 7;
         private int _tagId2 = 8;
+        private int _intervalWeeks = 2;
 
         private StartPreservationCommandHandler _dut;
 
@@ -38,17 +43,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         public void Setup()
         {
             var stepMock = new Mock<Step>();
-            _req1OnTag1Mock = new Mock<Requirement>();
-            _req2OnTag1Mock = new Mock<Requirement>();
-            _req1OnTag2Mock = new Mock<Requirement>();
-            _req2OnTag2Mock = new Mock<Requirement>();
+            _rd1Mock = new Mock<RequirementDefinition>();
+            _rd1Mock.SetupGet(rd => rd.Id).Returns(_rdId1);
+            _rd2Mock = new Mock<RequirementDefinition>();
+            _rd2Mock.SetupGet(rd => rd.Id).Returns(_rdId2);
+
+            _req1OnTag1 = new Requirement("", _intervalWeeks, _rd1Mock.Object);
+            _req2OnTag1 = new Requirement("", _intervalWeeks, _rd2Mock.Object);
+            _req1OnTag2 = new Requirement("", _intervalWeeks, _rd1Mock.Object);
+            _req2OnTag2 = new Requirement("", _intervalWeeks, _rd2Mock.Object);
             _tag1 = new Tag("", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
-                _req1OnTag1Mock.Object, _req2OnTag1Mock.Object
+                _req1OnTag1, _req2OnTag1
             });
             _tag2 = new Tag("", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
-                _req1OnTag2Mock.Object, _req2OnTag2Mock.Object
+                _req1OnTag2, _req2OnTag2
             });
             var tags = new List<Tag>
             {
@@ -58,6 +68,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             var tagIds = new List<int> {_tagId1, _tagId2};
             _tagRepoMock = new Mock<ITagRepository>();
             _rtRepoMock = new Mock<IRequirementTypeRepository>();
+            _rtRepoMock.Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {_rdId1, _rdId2}))
+                .Returns(Task.FromResult(new List<RequirementDefinition> {_rd1Mock.Object, _rd2Mock.Object}));
             _tagRepoMock.Setup(r => r.GetByIdsAsync(tagIds)).Returns(Task.FromResult(tags));
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
@@ -81,15 +93,26 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         }
 
         [TestMethod]
-        public async Task HandlingStartPreservationCommand_ShouldSetNextDueTimeOnAllRequirementsOnAllTags()
+        public async Task HandlingStartPreservationCommand_ShouldStartPreservationOnAllRequirementsOnAllTags()
         {
             await _dut.Handle(_command, default);
 
-            _req1OnTag1Mock.Verify(r => r.StartPreservation(_utcNow), Times.Once);
-            _req2OnTag1Mock.Verify(r => r.StartPreservation(_utcNow), Times.Once);
-            
-            _req1OnTag2Mock.Verify(r => r.StartPreservation(_utcNow), Times.Once);
-            _req2OnTag2Mock.Verify(r => r.StartPreservation(_utcNow), Times.Once);
+            var expectedNextDueTimeUtc = _utcNow.AddWeeks(_intervalWeeks);
+            Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag1.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag1.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag2.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag2.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public async Task HandlingStartPreservationCommand_ShouldUpdateNeedsUserInputOnAllRequirementsOnAllTags()
+        {
+            await _dut.Handle(_command, default);
+
+            Assert.AreEqual(_rd1Mock.Object.NeedsUserInput, _req1OnTag1.NeedsUserInput);
+            Assert.AreEqual(_rd2Mock.Object.NeedsUserInput, _req2OnTag1.NeedsUserInput);
+            Assert.AreEqual(_rd1Mock.Object.NeedsUserInput, _req1OnTag2.NeedsUserInput);
+            Assert.AreEqual(_rd2Mock.Object.NeedsUserInput, _req2OnTag2.NeedsUserInput);
         }
 
         [TestMethod]
