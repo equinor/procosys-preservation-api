@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                 rd.IsVoided,
                                 rd.DefaultIntervalWeeks,
                                 rd.SortKey,
-                                rd.NeedUserInput,
+                                rd.NeedsUserInput,
                                 rd.Fields.Where(f => !f.IsVoided || request.IncludeVoided).Select(f
                                     => new FieldDto(
                                         f.Id,
@@ -40,7 +40,6 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                         f.IsVoided,
                                         f.FieldType,
                                         f.SortKey,
-                                        f.NeedUserInput,
                                         f.Unit,
                                         f.ShowPrevious))))))
                     .OrderBy(rt => rt.SortKey);

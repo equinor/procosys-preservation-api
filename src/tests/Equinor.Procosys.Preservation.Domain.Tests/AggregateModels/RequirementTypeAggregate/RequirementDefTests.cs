@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
 
         [TestMethod]
         public void Constructor_ShouldMakeRequirementDefinitionNotNeedingInput()
-            => Assert.IsFalse(_dut.NeedUserInput);
+            => Assert.IsFalse(_dut.NeedsUserInput);
 
         [TestMethod]
         public void AddField_ShouldThrowExceptionTest_ForNullField()
@@ -55,11 +55,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             var f = new Field("", "", FieldType.Info, 1);
 
             var dut = new RequirementDefinition("", "", 0, 0);
-            Assert.IsFalse(_dut.NeedUserInput);
+            Assert.IsFalse(_dut.NeedsUserInput);
             
             dut.AddField(f);
 
-            Assert.IsFalse(_dut.NeedUserInput);
+            Assert.IsFalse(_dut.NeedsUserInput);
         }
 
         [TestMethod]
@@ -67,11 +67,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         {
             var f = new Field("", "", FieldType.Number, 1, "u", false);
 
-            Assert.IsFalse(_dut.NeedUserInput);
+            Assert.IsFalse(_dut.NeedsUserInput);
             
             _dut.AddField(f);
 
-            Assert.IsTrue(_dut.NeedUserInput);
+            Assert.IsTrue(_dut.NeedsUserInput);
         }
 
         [TestMethod]
@@ -79,11 +79,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         {
             var f = new Field("", "", FieldType.CheckBox, 1);
 
-            Assert.IsFalse(_dut.NeedUserInput);
+            Assert.IsFalse(_dut.NeedsUserInput);
             
             _dut.AddField(f);
 
-            Assert.IsTrue(_dut.NeedUserInput);
+            Assert.IsTrue(_dut.NeedsUserInput);
         }
 
         [TestMethod]
@@ -91,11 +91,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         {
             var f = new Field("", "", FieldType.Attachment, 1);
 
-            Assert.IsFalse(_dut.NeedUserInput);
+            Assert.IsFalse(_dut.NeedsUserInput);
             
             _dut.AddField(f);
 
-            Assert.IsTrue(_dut.NeedUserInput);
+            Assert.IsTrue(_dut.NeedsUserInput);
         }
 
         [TestMethod]

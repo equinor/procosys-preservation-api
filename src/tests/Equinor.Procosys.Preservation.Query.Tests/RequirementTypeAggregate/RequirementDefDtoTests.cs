@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             Assert.AreEqual(4, dut.DefaultIntervalWeeks);
             Assert.AreEqual(10, dut.SortKey);
             Assert.IsTrue(dut.IsVoided);
-            Assert.IsFalse(dut.NeedUserInput);
+            Assert.IsFalse(dut.NeedsUserInput);
             Assert.AreEqual(0, dut.Fields.Count());
         }
 
@@ -35,10 +35,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             var dut = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, true, new List<FieldDto>
             {
-                new FieldDto(1, "", true, FieldType.Info, 1, false, null, null),
-                new FieldDto(2, "", true, FieldType.Info, 90, false, null, null),
-                new FieldDto(3, "", true, FieldType.Info, 5, false, null, null),
-                new FieldDto(4, "", true, FieldType.Info, 10, false, null, null),
+                new FieldDto(1, "", true, FieldType.Info, 1, null, null),
+                new FieldDto(2, "", true, FieldType.Info, 90, null, null),
+                new FieldDto(3, "", true, FieldType.Info, 5, null, null),
+                new FieldDto(4, "", true, FieldType.Info, 10, null, null),
             });
 
             var dtos = dut.Fields.ToList();
