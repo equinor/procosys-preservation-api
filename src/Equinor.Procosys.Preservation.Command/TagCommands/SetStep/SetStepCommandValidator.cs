@@ -13,17 +13,33 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.SetStep
         {
             RuleFor(s => s.TagId)
                 .Must(BeAnExistingTag)
-                .WithMessage(s => $"Tag doesn't exists! Tag={s.TagId}");
+                .WithMessage(x => $"Tag doesn't exists! Tag={x.TagId}");
+
+            RuleFor(x => x.TagId)
+                .Must(NotBeAVoidedTag)
+                .WithMessage(x => $"Tag is voided! Tag={x.TagId}");
+
+            RuleFor(x => x.TagId)
+                .Must(NotBeInAClosedProject)
+                .WithMessage(x => $"Project for tag is closed! Tag={x.TagId}");
 
             RuleFor(s => s.StepId)
                 .Must(BeAnExistingStep)
-                .WithMessage(s => $"Step doesn't exists! Step={s.StepId}");
+                .WithMessage(x => $"Step doesn't exists! Step={x.StepId}");
 
-            bool BeAnExistingTag(int tagId)
-                => tagValidator.Exists(tagId);
+            RuleFor(x => x.StepId)
+                .Must(NotBeAVoidedStep)
+                .WithMessage(x => $"Step is voided! Step={x.StepId}");
 
-            bool BeAnExistingStep(int stepId)
-                => stepValidator.Exists(stepId);
+            bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
+
+            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoided(tagId);
+
+            bool NotBeInAClosedProject(int tagId) => !tagValidator.ProjectIsClosed(tagId);
+
+            bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
+            
+            bool NotBeAVoidedStep(int stepId) => !stepValidator.IsVoided(stepId);
         }
     }
 }

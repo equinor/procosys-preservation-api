@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             IRequirementDefinitionValidator requirementDefinitionValidator)
         {
             RuleFor(tag => tag)
-                .Must(NotBeAnExistingTag)
+                .Must(NotBeAnExistingTagWithinProject)
                 .WithMessage(tag => $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectNo}");
 
             RuleFor(tag => tag.ProjectNo)
@@ -26,14 +26,24 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             RuleFor(tag => tag.StepId)
                 .Must(BeAnExistingStep)
                 .WithMessage(tag => $"Step doesn't exists! Step={tag.StepId}");
+            
+            RuleFor(x => x.StepId)
+                .Must(NotBeAVoidedStep)
+                .WithMessage(x => $"Step is voided! Step={x.StepId}");
 
             RuleForEach(tag => tag.Requirements)
                 .Must(BeAnExistingRequirementDefinition)
-                .WithMessage((tag, req) => $"Requirement definition doesn't exists! {req.RequirementDefinitionId} ");
+                .WithMessage((tag, req) => $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId} ");
 
-            bool NotBeAnExistingTag(CreateTagCommand tag) => !tagValidator.Exists(tag.TagNo, tag.ProjectNo);
+            RuleForEach(tag => tag.Requirements)
+                .Must(NotBeAVoidedRequirementDefinition)
+                .WithMessage((tag, req) => $"Requirement definition is voided! Requirement={req.RequirementDefinitionId} ");
+
+            bool NotBeAnExistingTagWithinProject(CreateTagCommand tag) => !tagValidator.Exists(tag.TagNo, tag.ProjectNo);
 
             bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
+            
+            bool NotBeAVoidedStep(int stepId) => !stepValidator.IsVoided(stepId);
 
             bool ProjectExists(string projectNo) => projectValidator.Exists(projectNo);
 
@@ -41,6 +51,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             bool BeAnExistingRequirementDefinition(Requirement requirement)
                 => requirementDefinitionValidator.Exists(requirement.RequirementDefinitionId);
+
+            bool NotBeAVoidedRequirementDefinition(Requirement requirement)
+                => !requirementDefinitionValidator.IsVoided(requirement.RequirementDefinitionId);
         }
     }
 }

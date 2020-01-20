@@ -62,5 +62,41 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exists!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenTagIsVoided()
+        {
+            _tagValidatorMock.Setup(r => r.IsVoided(_tagId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenStepIsVoided()
+        {
+            _stepValidatorMock.Setup(r => r.IsVoided(_stepId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenProjectForTagIsClosed()
+        {
+            _tagValidatorMock.Setup(r => r.ProjectIsClosed(_tagId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+        }
     }
 }
