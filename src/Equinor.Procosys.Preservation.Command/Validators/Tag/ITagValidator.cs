@@ -15,5 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
         bool VerifyPreservationStatus(int tagId, PreservationStatus status);
         
         bool HasANonVoidedRequirement(int tagId);
+        
+        bool AllRequirementDefinitionsExists(int tagId);
     }
 }

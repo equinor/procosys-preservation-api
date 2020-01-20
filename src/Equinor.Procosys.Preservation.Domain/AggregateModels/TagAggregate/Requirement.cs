@@ -45,8 +45,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             NextDueTimeUtc = preservationRecord.PreservedAtUtc.AddWeeks(IntervalWeeks);
         }
 
-        public virtual void SetNextDueTimeUtc(DateTime currentTimeUtc)
-        {
-        }
+        public virtual void StartPreservation(DateTime currentTimeUtc)
+            => NextDueTimeUtc = currentTimeUtc.AddWeeks(IntervalWeeks);
     }
 }

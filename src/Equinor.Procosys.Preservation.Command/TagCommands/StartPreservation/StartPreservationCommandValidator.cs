@@ -27,6 +27,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
             RuleForEach(x => x.TagIds)
                 .Must(HaveAtLeastOneNonVoidedRequirement)
                 .WithMessage((x, id) => $"Tag do not have any non voided requirement! Tag={id}");
+            
+            RuleForEach(x => x.TagIds)
+                .Must(HaveExistingRequirementDefinitions)
+                .WithMessage((x, id) => $"A requirement definition doesn't exists! Tag={id}");
 
             bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
 
@@ -37,6 +41,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
             bool PreservationIsNotStarted(int tagId) => tagValidator.VerifyPreservationStatus(tagId, PreservationStatus.NotStarted);
 
             bool HaveAtLeastOneNonVoidedRequirement(int tagId) => tagValidator.HasANonVoidedRequirement(tagId);
+            
+            bool HaveExistingRequirementDefinitions(int tagId) => tagValidator.AllRequirementDefinitionsExists(tagId);
         }
     }
 }

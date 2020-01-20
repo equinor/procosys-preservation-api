@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
     {
         private DateTime _utcNow;
         private Mock<ITagRepository> _tagRepoMock;
+        private Mock<IRequirementTypeRepository> _rtRepoMock;
         private Mock<ITimeService> _timeServiceMock;
         private Mock<IUnitOfWork> _uowMock;
         private StartPreservationCommand _command;
@@ -55,6 +57,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
 
             var tagIds = new List<int> {_tagId1, _tagId2};
             _tagRepoMock = new Mock<ITagRepository>();
+            _rtRepoMock = new Mock<IRequirementTypeRepository>();
             _tagRepoMock.Setup(r => r.GetByIdsAsync(tagIds)).Returns(Task.FromResult(tags));
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
@@ -62,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             _uowMock = new Mock<IUnitOfWork>();
             _command = new StartPreservationCommand(tagIds);
 
-            _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, _timeServiceMock.Object, _uowMock.Object);
+            _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, _rtRepoMock.Object, _timeServiceMock.Object, _uowMock.Object);
         }
 
         [TestMethod]
@@ -78,15 +81,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         }
 
         [TestMethod]
-        public async Task HandlingStartPreservationCommand_ShouldUpdateNextDueTimeOnAllRequirementsOnAllTags()
+        public async Task HandlingStartPreservationCommand_ShouldSetNextDueTimeOnAllRequirementsOnAllTags()
         {
             await _dut.Handle(_command, default);
 
-            _req1OnTag1Mock.Verify(r => r.SetNextDueTimeUtc(_utcNow), Times.Once);
-            _req2OnTag1Mock.Verify(r => r.SetNextDueTimeUtc(_utcNow), Times.Once);
+            _req1OnTag1Mock.Verify(r => r.StartPreservation(_utcNow), Times.Once);
+            _req2OnTag1Mock.Verify(r => r.StartPreservation(_utcNow), Times.Once);
             
-            _req1OnTag2Mock.Verify(r => r.SetNextDueTimeUtc(_utcNow), Times.Once);
-            _req2OnTag2Mock.Verify(r => r.SetNextDueTimeUtc(_utcNow), Times.Once);
+            _req1OnTag2Mock.Verify(r => r.StartPreservation(_utcNow), Times.Once);
+            _req2OnTag2Mock.Verify(r => r.StartPreservation(_utcNow), Times.Once);
         }
 
         [TestMethod]

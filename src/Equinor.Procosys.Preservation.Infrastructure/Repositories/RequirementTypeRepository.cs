@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -18,5 +19,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .SelectMany(rt => rt.RequirementDefinitions)
                 .Where(rd => rd.Id == requirementDefinitionId)
                 .FirstOrDefaultAsync();
+
+        public Task<List<RequirementDefinition>> GetRequirementDefinitionsByIdAsync(IList<int> requirementDefinitionIds)
+            => DefaultQuery
+                .Where(rt => rt.RequirementDefinitions.Any(rd => requirementDefinitionIds.Contains(rd.Id)))
+                .SelectMany(rt => rt.RequirementDefinitions)
+                .Where(rd => requirementDefinitionIds.Contains(rd.Id))
+                .ToListAsync();
+
     }
 }
