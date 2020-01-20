@@ -12,27 +12,23 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
             IModeValidator modeValidator,
             IResponsibleValidator responsibleValidator)
         {
+            CascadeMode = CascadeMode.StopOnFirstFailure;
+
             RuleFor(x => x.JourneyId)
                 .Must(BeAnExistingJourney)
-                .WithMessage(x => $"Journey doesn't exists! Journey={x.JourneyId}");
-
-            RuleFor(x => x.ModeId)
-                .Must(BeAnExistingMode)
-                .WithMessage(x => $"Mode doesn't exists! Mode={x.ModeId}");
-
-            RuleFor(x => x.ResponsibleId)
-                .Must(BeAnExistingResponsible)
-                .WithMessage(x => $"Responsible doesn't exists! Responsible={x.ResponsibleId}");
-
-            RuleFor(x => x.JourneyId)
+                .WithMessage(x => $"Journey doesn't exists! Journey={x.JourneyId}")
                 .Must(NotBeAVoidedJourney)
                 .WithMessage(x => $"Journey is voided! Journey={x.JourneyId}");
 
             RuleFor(x => x.ModeId)
+                .Must(BeAnExistingMode)
+                .WithMessage(x => $"Mode doesn't exists! Mode={x.ModeId}")
                 .Must(NotBeAVoidedMode)
                 .WithMessage(x => $"Mode is voided! Mode={x.ModeId}");
 
             RuleFor(x => x.ResponsibleId)
+                .Must(BeAnExistingResponsible)
+                .WithMessage(x => $"Responsible doesn't exists! Responsible={x.ResponsibleId}")
                 .Must(NotBeAVoidedResponsible)
                 .WithMessage(x => $"Responsible is voided! Responsible={x.ResponsibleId}");
 

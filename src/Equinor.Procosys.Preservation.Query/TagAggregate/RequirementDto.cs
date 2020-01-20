@@ -1,18 +1,22 @@
-﻿namespace Equinor.Procosys.Preservation.Query.TagAggregate
+﻿using System;
+using Equinor.Procosys.Preservation.Domain;
+
+namespace Equinor.Procosys.Preservation.Query.TagAggregate
 {
     public class RequirementDto
     {
-        public RequirementDto(int id, int requirementDefinitionId, bool isVoided, int intervalWeeks)
+        private readonly DateTime? _nextDueTimeUtc;
+        private readonly PreservationDate _nextPreservationDate;
+
+        public RequirementDto(bool needsUserInput, DateTime? nextDueTimeUtc)
         {
-            Id = id;
-            RequirementDefinitionId = requirementDefinitionId;
-            IsVoided = isVoided;
-            IntervalWeeks = intervalWeeks;
+            NeedsUserInput = needsUserInput;
+            _nextPreservationDate = nextDueTimeUtc.HasValue ? new PreservationDate(nextDueTimeUtc.Value) : null;
+            _nextDueTimeUtc = nextDueTimeUtc;
         }
 
-        public int Id { get; set; }
-        public int RequirementDefinitionId { get; }
-        public bool IsVoided { get; }
-        public int IntervalWeeks { get; }
+        public bool NeedsUserInput { get; }
+
+        public string NextDueWeek => _nextPreservationDate?.ToString();
     }
 }

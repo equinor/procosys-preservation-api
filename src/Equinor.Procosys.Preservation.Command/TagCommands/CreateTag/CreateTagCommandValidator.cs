@@ -16,50 +16,42 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             IProjectValidator projectValidator,
             IRequirementDefinitionValidator requirementDefinitionValidator)
         {
+            CascadeMode = CascadeMode.StopOnFirstFailure;
+
             RuleFor(tag => tag)
+                .Must(NotBeAClosedProject).When(ProjectExists)
+                .WithMessage(tag => $"Project is closed! Project={tag.ProjectNo}")
                 .Must(NotBeAnExistingTagWithinProject)
-                .WithMessage(tag =>
-                    $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectNo}");
-
-            RuleFor(tag => tag.ProjectNo)
-                .Must(NotBeAClosedProject)
-                .When(tag => ProjectExists(tag.ProjectNo))
-                .WithMessage(tag => $"Project is closed! Project={tag.ProjectNo}");
-
-            RuleFor(tag => tag.StepId)
+                .WithMessage(tag => $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectNo}")
                 .Must(BeAnExistingStep)
-                .WithMessage(tag => $"Step doesn't exists! Step={tag.StepId}");
-
-            RuleFor(tag => tag.StepId)
+                .WithMessage(tag => $"Step doesn't exists! Step={tag.StepId}")
                 .Must(NotBeAVoidedStep)
                 .WithMessage(tag => $"Step is voided! Step={tag.StepId}");
 
             RuleFor(tag => tag.Requirements)
                 .Must(r => r != null && r.Any())
-                .WithMessage(tag => $"At lease 1 requirement must be given! Tag={tag.TagNo}")
+                .WithMessage(tag => $"At least 1 requirement must be given! Tag={tag.TagNo}")
                 .Must(BeUniqueRequirements)
                 .WithMessage(tag => $"Requirement definitions must be unique! Tag={tag.TagNo}");
 
             RuleForEach(tag => tag.Requirements)
                 .Must(BeAnExistingRequirementDefinition)
                 .WithMessage((tag, req) =>
-                    $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}");
-
-            RuleForEach(tag => tag.Requirements)
+                    $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}")
                 .Must(NotBeAVoidedRequirementDefinition)
                 .WithMessage((tag, req) =>
                     $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
 
-            bool NotBeAnExistingTagWithinProject(CreateTagCommand tag) =>
-                !tagValidator.Exists(tag.TagNo, tag.ProjectNo);
+            bool NotBeAnExistingTagWithinProject(CreateTagCommand command) =>
+                !tagValidator.Exists(command.TagNo, command.ProjectNo);
 
-            bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
+            bool BeAnExistingStep(CreateTagCommand command) => stepValidator.Exists(command.StepId);
 
-            bool NotBeAVoidedStep(int stepId) => !stepValidator.IsVoided(stepId);
+            bool NotBeAVoidedStep(CreateTagCommand command) => !stepValidator.IsVoided(command.StepId);
 
-            bool ProjectExists(string projectNo) => projectValidator.Exists(projectNo);
+            bool ProjectExists(CreateTagCommand command) => projectValidator.Exists(command.ProjectNo);
 
-            bool NotBeAClosedProject(string projectNo) => !projectValidator.IsClosed(projectNo);
+            bool NotBeAClosedProject(CreateTagCommand command) => !projectValidator.IsClosed(command.ProjectNo);
             
             bool BeUniqueRequirements(IEnumerable<Requirement> requirements)
             {

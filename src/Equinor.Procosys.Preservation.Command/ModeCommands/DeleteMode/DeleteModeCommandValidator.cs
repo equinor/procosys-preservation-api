@@ -7,15 +7,13 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
     {
         public DeleteModeCommandValidator(IModeValidator modeValidator)
         {
+            CascadeMode = CascadeMode.StopOnFirstFailure;
+            
             RuleFor(x => x.ModeId)
                 .Must(BeAnExistingMode)
-                .WithMessage(x => $"Mode doesn't exists! Mode={x.ModeId}");
-
-            RuleFor(x => x.ModeId)
+                .WithMessage(x => $"Mode doesn't exists! Mode={x.ModeId}")
                 .Must(BeAVoidedMode)
-                .WithMessage(x => $"Mode is not voided! Mode={x.ModeId}");
-
-            RuleFor(x => x.ModeId)
+                .WithMessage(x => $"Mode is not voided! Mode={x.ModeId}")
                 .Must(NotBeUsedInAnyStep)
                 .WithMessage(x => $"Mode is used in step(s)! Mode={x.ModeId}");
 

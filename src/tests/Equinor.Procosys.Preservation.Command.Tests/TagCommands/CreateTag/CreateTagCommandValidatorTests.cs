@@ -165,7 +165,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("At lease 1 requirement must be given!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("At least 1 requirement must be given!"));
         }
 
         [TestMethod]
@@ -186,6 +186,30 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definitions must be unique!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith1Error_When2ErrorsWithinSameRule()
+        {
+            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(true);
+            _stepValidatorMock.Setup(r => r.IsVoided(_stepId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
+        {
+            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(true);
+            _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(2, result.Errors.Count);
         }
     }
 }

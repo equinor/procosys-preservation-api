@@ -23,10 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
                     tag.StepId,
                     tag.Status,
                     tag.Requirements.Select(r =>
-                        new RequirementDto(r.Id, 
-                            r.RequirementDefinitionId, 
-                            r.IsVoided, 
-                            r.IntervalWeeks)))));
+                        new RequirementDto(r.NeedsUserInput, r.NextDueTimeUtc)))));
         }
     }
 }

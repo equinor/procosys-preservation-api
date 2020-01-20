@@ -43,6 +43,30 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
 
             Assert.IsTrue(result.IsValid);
         }
+        
+        [TestMethod]
+        public void Validate_ShouldFail_WhenNoTagsGiven()
+        {
+            var command = new StartPreservationCommand(new List<int>());
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("At least 1 tag must be given!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenTagsNotUnique()
+        {
+            var command = new StartPreservationCommand(new List<int>{1, 1});
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tags must be unique!"));
+        }
 
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyTagNotExists()
@@ -113,7 +137,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Preservation is already started!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag do not have correct status to start!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith1Error_When2Errors()
+        {
+            _tagValidatorMock.Setup(r => r.ProjectIsClosed(_tagId1)).Returns(true);
+            _tagValidatorMock.Setup(r => r.Exists(_tagId2)).Returns(false);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exists!"));
         }
     }
 }
