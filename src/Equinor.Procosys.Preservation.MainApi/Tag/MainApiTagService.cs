@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Exceptions;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
