@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             return tag?.Requirements != null && tag.Requirements.Any(r => !r.IsVoided);
         }
 
-        public bool AllRequirementDefinitionsExists(int tagId)
+        public bool AllRequirementDefinitionsExist(int tagId)
         {
             var tag = _tagRepository.GetByIdAsync(tagId).Result;
             if (tag == null || tag.Requirements == null)

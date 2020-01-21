@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
 
             bool HaveAtLeastOneNonVoidedRequirement(int tagId) => tagValidator.HasANonVoidedRequirement(tagId);
             
-            bool HaveExistingRequirementDefinitions(int tagId) => tagValidator.AllRequirementDefinitionsExists(tagId);
+            bool HaveExistingRequirementDefinitions(int tagId) => tagValidator.AllRequirementDefinitionsExist(tagId);
         }
     }
 }
