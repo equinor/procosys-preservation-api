@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -16,7 +15,7 @@ using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.CreateTag.
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 {
     [TestClass]
-    public class CreateTagCommandHandlerTests
+    public class CreateTagCommandHandlerTests : CommandHandlerTestsBase
     {
         [TestMethod]
         public async Task HandlingCreateTagCommand_ShouldAddTagToRepository()
@@ -49,12 +48,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(requirementDefinitionId))
                 .Returns(Task.FromResult(requirementDefinition.Object));
 
-            var unitOfWork = new Mock<IUnitOfWork>();
-
-            var plantProvider = new Mock<IPlantProvider>();
-            plantProvider
-                .Setup(x => x.Plant)
-                .Returns("TestPlant");
 
             var tagDetails = new ProcosysTagDetails();
             tagDetails.AreaCode = "AreaCode";
@@ -84,8 +77,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 tagRepository.Object,
                 journeyRepository.Object,
                 requirementTypeRepository.Object,
-                unitOfWork.Object,
-                plantProvider.Object,
+                _unitOfWorkMock.Object,
+                _plantProviderMock.Object,
                 tagApiService.Object);
 
             // Act

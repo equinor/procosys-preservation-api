@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -8,14 +7,11 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJourney
 {
     [TestClass]
-    public class CreateJourneyCommandHandlerTests
+    public class CreateJourneyCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const string TestPlant = "TestPlant";
         private const string TestJourney = "TestJourney";
         private Journey _journeyAdded;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Mock<IUnitOfWork> _unitOfWorkMock;
-        private Mock<IPlantProvider> _plantProviderMock;
         private CreateJourneyCommand _command;
         private CreateJourneyCommandHandler _dut;
         
@@ -30,11 +26,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
                 {
                     _journeyAdded = journey;
                 });
-            _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _plantProviderMock = new Mock<IPlantProvider>();
-            _plantProviderMock
-                .Setup(x => x.Plant)
-                .Returns(TestPlant);
 
             _command = new CreateJourneyCommand(TestJourney);
 

@@ -10,9 +10,8 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
 {
     [TestClass]
-    public class CreateStepCommandHandlerTests
+    public class CreateStepCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const string TestPlant = "TestPlant";
         private const int JourneyId = 1;
         private const int ModeId = 2;
         private const int ResponsibleId = 3;
@@ -23,8 +22,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         private Mock<Responsible> _responsibleMock;
         private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IResponsibleRepository> _responsibleRepositoryMock;
-        private Mock<IUnitOfWork> _unitOfWorkMock;
-        private Mock<IPlantProvider> _plantProviderMock;
         private CreateStepCommand _command;
         private CreateStepCommandHandler _dut;
 
@@ -57,12 +54,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleRepositoryMock
                 .Setup(r => r.GetByIdAsync(ResponsibleId))
                 .Returns(Task.FromResult(_responsibleMock.Object));
-
-            _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _plantProviderMock = new Mock<IPlantProvider>();
-            _plantProviderMock
-                .Setup(x => x.Plant)
-                .Returns(TestPlant);
 
             _command = new CreateStepCommand(JourneyId, ModeId, ResponsibleId);
 
