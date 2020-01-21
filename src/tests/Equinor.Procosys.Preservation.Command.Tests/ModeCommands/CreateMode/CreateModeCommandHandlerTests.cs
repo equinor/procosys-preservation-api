@@ -3,7 +3,7 @@
 namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
 {
     [TestClass]
-    public class DeleteModeCommandHandlerTests
+    public class CreateModeCommandHandlerTests
     {
         // todo Henning
     }
