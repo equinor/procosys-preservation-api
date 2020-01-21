@@ -29,7 +29,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
             var tags = await _tagRepository.GetByIdsAsync(request.TagIds);
             foreach (var tag in tags)
             {
-                tag.Status = PreservationStatus.Active;
                 var reqDefs = await _requirementTypeRepository
                     .GetRequirementDefinitionsByIdsAsync(tag.Requirements.Select(r => r.RequirementDefinitionId)
                         .ToList());
@@ -39,6 +38,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
 
                     requirement.StartPreservation(_timeService.GetCurrentTimeUtc(), reqDef.NeedsUserInput);
                 }
+
+                tag.StartPreservation();
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
             _requirements.AddRange(reqList);
         }
 
-        public PreservationStatus Status { get; set; }
+        public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string CalloffNumber { get; private set; }
         public string CommPkgNumber { get; private set; }
@@ -97,5 +97,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 
             _requirements.Add(requirement);
         }
+
+        public void StartPreservation() => Status = PreservationStatus.Active;
     }
 }

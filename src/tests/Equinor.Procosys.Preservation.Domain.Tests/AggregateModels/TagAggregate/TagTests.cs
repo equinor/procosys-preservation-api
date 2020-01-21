@@ -100,5 +100,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
 
             Assert.ThrowsException<ArgumentNullException>(() => dut.AddRequirement(null));
         }
+
+        [TestMethod]
+        public void StartPreservation_ShouldSetStatusActive()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
+            Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
+
+            dut.StartPreservation();
+
+            Assert.AreEqual(PreservationStatus.Active, dut.Status);
+        }
     }
 }
