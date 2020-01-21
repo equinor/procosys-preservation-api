@@ -8,12 +8,25 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
     public class RequirementDtoTests
     {
         [TestMethod]
-        public void Constructor_ShouldSetProperties()
+        public void Constructor_WithNextDueDate_ShouldSetAllProperties()
         {
-            var r = new RequirementDto(true, new DateTime(2020, 1, 1));
+            var nextDueTimeUtc = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var r = new RequirementDto(true, nextDueTimeUtc);
 
             Assert.IsTrue(r.NeedsUserInput);
-            Assert.AreEqual("2020W01", r.NextDueWeek);
+            Assert.IsTrue(r.NextDueTimeUtc.HasValue);
+            Assert.AreEqual(nextDueTimeUtc, r.NextDueTimeUtc.Value);
+            Assert.IsNotNull(r.NextDueAsYearAndWeek);
+        }
+
+        [TestMethod]
+        public void Constructor_WithoutNextDueDate_ShouldNotSetDueDateProperties()
+        {
+            var r = new RequirementDto(true, null);
+
+            Assert.IsTrue(r.NeedsUserInput);
+            Assert.IsFalse(r.NextDueTimeUtc.HasValue);
+            Assert.IsNull(r.NextDueAsYearAndWeek);
         }
     }
 }
