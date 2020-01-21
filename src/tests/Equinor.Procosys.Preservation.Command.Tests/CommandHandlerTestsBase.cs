@@ -5,18 +5,18 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Command.Tests
 {
     [TestClass]
-    public class CommandHandlerTestsBase
+    public abstract class CommandHandlerTestsBase
     {
         protected const string TestPlant = "TestPlant";
-        protected Mock<IUnitOfWork> _unitOfWorkMock;
-        protected Mock<IPlantProvider> _plantProviderMock;
+        protected Mock<IUnitOfWork> UnitOfWorkMock;
+        protected Mock<IPlantProvider> PlantProviderMock;
 
         [TestInitialize]
         public void BaseSetup()
         {
-            _unitOfWorkMock = new Mock<IUnitOfWork>();
-            _plantProviderMock = new Mock<IPlantProvider>();
-            _plantProviderMock
+            UnitOfWorkMock = new Mock<IUnitOfWork>();
+            PlantProviderMock = new Mock<IPlantProvider>();
+            PlantProviderMock
                 .Setup(x => x.Plant)
                 .Returns(TestPlant);
         }

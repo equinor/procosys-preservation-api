@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
             _dut = new SetStepCommandHandler(
                 _tagRepositoryMock.Object,
                 _journeyRepositoryMock.Object,
-                _unitOfWorkMock.Object);
+                UnitOfWorkMock.Object);
         }
 
         [TestMethod]
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
             await _dut.Handle(_command, default);
             
             // Assert
-            _unitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
     }
 }

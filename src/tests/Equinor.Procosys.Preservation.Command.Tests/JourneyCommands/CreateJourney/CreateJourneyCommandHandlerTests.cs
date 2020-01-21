@@ -31,8 +31,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
 
             _dut = new CreateJourneyCommandHandler(
                 _journeyRepositoryMock.Object,
-                _unitOfWorkMock.Object,
-                _plantProviderMock.Object);
+                UnitOfWorkMock.Object,
+                PlantProviderMock.Object);
         }
 
         [TestMethod]
@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
             await _dut.Handle(_command, default);
             
             // Assert
-            _unitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
     }
 }

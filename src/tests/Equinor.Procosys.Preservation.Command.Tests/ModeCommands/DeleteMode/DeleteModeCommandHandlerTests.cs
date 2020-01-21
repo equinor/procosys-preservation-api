@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
 
             _dut = new DeleteModeCommandHandler(
                 _modeRepositoryMock.Object,
-                _unitOfWorkMock.Object
+                UnitOfWorkMock.Object
             );
         }
 
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
             await _dut.Handle(_command, default);
             
             // Assert
-            _unitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
     }
 }

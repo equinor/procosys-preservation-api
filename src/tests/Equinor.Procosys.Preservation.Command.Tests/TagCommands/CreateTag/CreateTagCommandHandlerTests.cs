@@ -89,8 +89,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 _tagRepositoryMock.Object,
                 _journeyRepositoryMock.Object,
                 _rtRepositoryMock.Object,
-                _unitOfWorkMock.Object,
-                _plantProviderMock.Object,
+                UnitOfWorkMock.Object,
+                PlantProviderMock.Object,
                 _tagApiServiceMock.Object);
         }
 
@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             await _dut.Handle(_command, default);
             
             // Assert
-            _unitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
     }
 }

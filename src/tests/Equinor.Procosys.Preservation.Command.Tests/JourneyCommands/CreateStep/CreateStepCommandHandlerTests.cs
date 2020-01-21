@@ -60,8 +60,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _dut = new CreateStepCommandHandler(_journeyRepositoryMock.Object,
                 _modeRepositoryMock.Object,
                 _responsibleRepositoryMock.Object,
-                _unitOfWorkMock.Object,
-                _plantProviderMock.Object);
+                UnitOfWorkMock.Object,
+                PlantProviderMock.Object);
         }
 
         [TestMethod]
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             await _dut.Handle(_command, default);
             
             // Assert
-            _unitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
     }
 }
