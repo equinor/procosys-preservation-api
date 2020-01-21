@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             TagNo = tagNo;
             ProjectNo = projectNo;
             StepId = stepId;
-            Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
+            Requirements = requirements ?? new List<Requirement>();
         }
 
         public string TagNo { get; }

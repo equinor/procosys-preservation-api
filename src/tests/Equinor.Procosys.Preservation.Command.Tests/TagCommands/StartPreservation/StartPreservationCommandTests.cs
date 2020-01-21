@@ -17,11 +17,5 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             Assert.AreEqual(1, dut.TagIds.Count());
             Assert.AreEqual(17, dut.TagIds.First());
         }
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenIdsNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() =>
-                new StartPreservationCommand(null)
-            );
     }
 }

@@ -17,11 +17,5 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.AreEqual("ProjectNumberA", dut.ProjectNo);
             Assert.AreEqual(2, dut.StepId);
         }
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenRequirementsNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() =>
-                new CreateTagCommand("TagNoA", "ProjectNumberA", 2, null)
-            );
     }
 }
