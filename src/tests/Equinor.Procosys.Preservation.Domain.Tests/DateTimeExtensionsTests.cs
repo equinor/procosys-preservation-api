@@ -86,5 +86,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
 
             Assert.AreEqual(-52, weeks);
         }
+
+        [TestMethod]
+        public void GetWeeksUntilDate_WithDifferentDateKinds_ShouldThrowException()
+        {
+            var fromTime = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var toTime = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Local);
+
+            Assert.ThrowsException<ArgumentException>(()
+                => fromTime.GetWeeksUntilDate(toTime));
+        }
     }
 }
