@@ -97,7 +97,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public async Task HandlingCreateTagCommand_ShouldAddTagToRepository()
         {
-            // Arrange
             // Act
             var result = await _dut.Handle(_command, default);
 

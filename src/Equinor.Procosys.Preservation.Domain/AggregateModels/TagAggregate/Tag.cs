@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public virtual void SetStep(Step step)
+        public void SetStep(Step step)
         {
             if (step == null)
             {
