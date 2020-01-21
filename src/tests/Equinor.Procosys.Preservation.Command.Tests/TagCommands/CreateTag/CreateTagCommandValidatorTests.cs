@@ -191,7 +191,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Validate_ShouldFailWith1Error_When2ErrorsWithinSameRule()
         {
-            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(true);
+            _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(false);
             _stepValidatorMock.Setup(r => r.IsVoided(_stepId)).Returns(true);
             
             var result = _dut.Validate(_command);
