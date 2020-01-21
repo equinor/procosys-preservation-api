@@ -59,6 +59,5 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
             // Assert
             _unitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
-
     }
 }
