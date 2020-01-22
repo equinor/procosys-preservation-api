@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.TagAggregate
+namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 {
     public class AllTagsInProjectQueryHandler : IRequestHandler<AllTagsInProjectQuery, Result<IEnumerable<TagDto>>>
     {

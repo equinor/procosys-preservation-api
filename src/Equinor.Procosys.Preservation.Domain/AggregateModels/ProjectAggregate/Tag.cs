@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
+namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Tag : SchemaEntityBase
     {

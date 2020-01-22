@@ -1,4 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags

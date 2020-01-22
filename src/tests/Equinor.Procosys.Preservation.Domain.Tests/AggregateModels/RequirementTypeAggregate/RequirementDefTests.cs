@@ -2,6 +2,7 @@
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.RequirementTypeAggregate
 {
@@ -40,13 +41,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void AddField_ShouldAddFieldToFieldsList()
         {
-            var f = new Field("", "", FieldType.Info, 1);
+            var f = new Mock<Field>();
 
             var dut = new RequirementDefinition("", "", 0, 0);
-            dut.AddField(f);
+            dut.AddField(f.Object);
 
             Assert.AreEqual(1, dut.Fields.Count);
-            Assert.IsTrue(dut.Fields.Contains(f));
+            Assert.IsTrue(dut.Fields.Contains(f.Object));
         }
 
         [TestMethod]

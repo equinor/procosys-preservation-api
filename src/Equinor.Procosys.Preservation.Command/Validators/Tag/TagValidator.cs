@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 {

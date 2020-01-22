@@ -2,7 +2,6 @@
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

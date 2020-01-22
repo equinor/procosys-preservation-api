@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.TagAggregate
+namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 {
     public class TagDto
     {

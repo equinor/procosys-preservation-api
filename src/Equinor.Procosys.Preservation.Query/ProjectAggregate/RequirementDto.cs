@@ -1,7 +1,7 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain;
 
-namespace Equinor.Procosys.Preservation.Query.TagAggregate
+namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 {
     public class RequirementDto
     {

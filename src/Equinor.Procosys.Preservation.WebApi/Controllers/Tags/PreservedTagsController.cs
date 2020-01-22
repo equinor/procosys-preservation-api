@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
-using Equinor.Procosys.Preservation.Query.TagAggregate;
+using Equinor.Procosys.Preservation.Query.ProjectAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;

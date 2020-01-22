@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.TagAggregate
+namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 {
     public class AllTagsInProjectQuery : IRequest<Result<IEnumerable<TagDto>>>
     {
