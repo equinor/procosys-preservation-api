@@ -98,5 +98,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
+        {
+            _tagValidatorMock.Setup(r => r.Exists(_tagId)).Returns(false);
+            _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(false);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(2, result.Errors.Count);
+        }
     }
 }

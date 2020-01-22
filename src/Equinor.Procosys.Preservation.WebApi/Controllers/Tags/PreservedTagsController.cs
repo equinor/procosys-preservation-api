@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
+using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Query.TagAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -41,10 +42,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [HttpPost("{id}/SetStep")]
+        [HttpPut("{id}/SetStep")]
         public async Task<ActionResult> SetStep([FromRoute] int id, [FromBody] SetStepDto dto)
         {
             var result = await _mediator.Send(new SetStepCommand(id, dto.StepId));
+            return this.FromResult(result);
+        }
+
+        [HttpPut("StartPreservation")]
+        public async Task<IActionResult> StartPreservation([FromBody] List<int> tagIds)
+        {
+            var result = await _mediator.Send(new StartPreservationCommand(tagIds));
             return this.FromResult(result);
         }
     }

@@ -50,12 +50,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             {
                 var requirementDefinition =
                     await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
-                if (requirementDefinition == null)
-                {
-                    return new NotFoundResult<int>(Strings.EntityNotFound(
-                        nameof(RequirementDefinition),
-                        requirement.RequirementDefinitionId));
-                }
 
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, requirementDefinition));
             }

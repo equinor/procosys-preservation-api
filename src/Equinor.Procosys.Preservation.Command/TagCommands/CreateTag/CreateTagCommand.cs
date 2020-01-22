@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MediatR;
 using ServiceResult;
 
@@ -11,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             TagNo = tagNo;
             ProjectName = projectName;
             StepId = stepId;
-            Requirements = requirements;
+            Requirements = requirements ?? new List<Requirement>();
         }
 
         public string TagNo { get; }

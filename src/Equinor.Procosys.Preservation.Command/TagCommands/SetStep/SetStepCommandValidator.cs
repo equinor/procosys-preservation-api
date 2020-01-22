@@ -11,23 +11,19 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.SetStep
             IStepValidator stepValidator
             )
         {
-            RuleFor(s => s.TagId)
-                .Must(BeAnExistingTag)
-                .WithMessage(x => $"Tag doesn't exists! Tag={x.TagId}");
-
-            RuleFor(x => x.TagId)
-                .Must(NotBeAVoidedTag)
-                .WithMessage(x => $"Tag is voided! Tag={x.TagId}");
+            CascadeMode = CascadeMode.StopOnFirstFailure;
 
             RuleFor(x => x.TagId)
                 .Must(NotBeInAClosedProject)
-                .WithMessage(x => $"Project for tag is closed! Tag={x.TagId}");
+                .WithMessage(x => $"Project for tag is closed! Tag={x.TagId}")
+                .Must(BeAnExistingTag)
+                .WithMessage(x => $"Tag doesn't exists! Tag={x.TagId}")
+                .Must(NotBeAVoidedTag)
+                .WithMessage(x => $"Tag is voided! Tag={x.TagId}");
 
             RuleFor(s => s.StepId)
                 .Must(BeAnExistingStep)
-                .WithMessage(x => $"Step doesn't exists! Step={x.StepId}");
-
-            RuleFor(x => x.StepId)
+                .WithMessage(x => $"Step doesn't exists! Step={x.StepId}")
                 .Must(NotBeAVoidedStep)
                 .WithMessage(x => $"Step is voided! Step={x.StepId}");
 

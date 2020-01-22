@@ -96,5 +96,29 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             Assert.ThrowsException<ArgumentException>(()
                 => fromTime.GetWeeksUntilDate(toTime));
         }
+
+        [TestMethod]
+        public void FormatAsYearAndWeekString_LastDayOf2019_ShouldGiveFirstWeekOfYearAfter()
+        {
+            var dut = new DateTime(2019, 12, 31);
+
+            Assert.AreEqual("2020w01", dut.FormatAsYearAndWeekString());
+        }
+
+        [TestMethod]
+        public void FormatAsYearAndWeekString_FirstDayOf2020_ShouldGiveFirstWeekOfYear()
+        {
+            var dut = new DateTime(2020, 1, 1);
+
+            Assert.AreEqual("2020w01", dut.FormatAsYearAndWeekString());
+        }
+
+        [TestMethod]
+        public void FormatAsYearAndWeekString_LastDayOf2020_ShouldGiveWeek53()
+        {
+            var dut = new DateTime(2020, 12, 31);
+
+            Assert.AreEqual("2020w53", dut.FormatAsYearAndWeekString());
+        }
     }
 }

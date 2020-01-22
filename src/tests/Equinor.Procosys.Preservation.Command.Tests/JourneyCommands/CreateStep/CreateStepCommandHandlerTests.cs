@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
@@ -68,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         public async Task HandlingCreateStepCommand_ShouldAddStepToJourney()
         {
             // Act
-            var result = await _dut.Handle(_command, default);
+            await _dut.Handle(_command, default);
             
             // Assert
             _journeyMock.Verify(u => u.AddStep(It.IsAny<Step>()), Times.Once);

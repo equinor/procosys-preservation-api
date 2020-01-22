@@ -14,7 +14,8 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
             string disciplineCode,
             bool isAreaTag,
             bool isVoided,
-            string mcPkgNo,
+            string mcPkgNo, 
+            bool needUserInput,
             string projectName,
             string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
@@ -31,6 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
             IsAreaTag = isAreaTag;
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
+            NeedUserInput = needUserInput;
             ProjectName = projectName;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
@@ -55,5 +57,6 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
         public int StepId { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
+        public bool NeedUserInput { get; }
     }
 }
