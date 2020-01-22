@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
@@ -20,8 +21,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 
         private Mock<Step> _stepMock;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Tag _tagAddedToRepository;
-        private Mock<ITagRepository> _tagRepositoryMock;
+        private Project _projectAddedToRepository;
+        private Tag _tagAddedToProject;
+        private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
         private Mock<RequirementDefinition> _rdMock;
         private Mock<ITagApiService> _tagApiServiceMock;
@@ -42,12 +44,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 .Setup(x => x.GetStepByStepIdAsync(StepId))
                 .Returns(Task.FromResult(_stepMock.Object));
 
-            _tagRepositoryMock = new Mock<ITagRepository>();
-            _tagRepositoryMock
-                .Setup(x => x.Add(It.IsAny<Tag>()))
-                .Callback<Tag>(x =>
+            _projectRepositoryMock = new Mock<IProjectRepository>();
+            _projectRepositoryMock
+                .Setup(x => x.Add(It.IsAny<Project>()))
+                .Callback<Project>(project =>
                 {
-                    _tagAddedToRepository = x;
+                    _projectAddedToRepository = project;
                 });
 
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
@@ -86,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 });
             
             _dut = new CreateTagCommandHandler(
-                _tagRepositoryMock.Object,
+                _projectRepositoryMock.Object,
                 _journeyRepositoryMock.Object,
                 _rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
@@ -103,21 +105,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
-            Assert.AreEqual("AreaCode", _tagAddedToRepository.AreaCode);
-            Assert.AreEqual("CalloffNo", _tagAddedToRepository.Calloff);
-            Assert.AreEqual("CommPkgNo", _tagAddedToRepository.CommPkgNo);
-            Assert.AreEqual("DisciplineCode", _tagAddedToRepository.DisciplineCode);
-            Assert.AreEqual(0, _tagAddedToRepository.Id);
-            Assert.AreEqual(false, _tagAddedToRepository.IsAreaTag);
-            Assert.AreEqual("McPkgNo", _tagAddedToRepository.McPkgNo);
-            Assert.AreEqual("ProjectName", _tagAddedToRepository.ProjectName);
-            Assert.AreEqual("PurchaseOrderNo", _tagAddedToRepository.PurchaseOrderNo);
-            Assert.AreEqual("TestPlant", _tagAddedToRepository.Schema);
-            Assert.AreEqual(StepId, _tagAddedToRepository.StepId);
-            Assert.AreEqual("TagFunctionCode", _tagAddedToRepository.TagFunctionCode);
-            Assert.AreEqual("TagNo", _tagAddedToRepository.TagNo);
-            Assert.AreEqual(1, _tagAddedToRepository.Requirements.Count);
-            Assert.AreEqual(RequirementDefinitionId, _tagAddedToRepository.Requirements.First().RequirementDefinitionId);
+            Assert.AreEqual("AreaCode", _tagAddedToProject.AreaCode);
+            Assert.AreEqual("CalloffNo", _tagAddedToProject.Calloff);
+            Assert.AreEqual("CommPkgNo", _tagAddedToProject.CommPkgNo);
+            Assert.AreEqual("DisciplineCode", _tagAddedToProject.DisciplineCode);
+            Assert.AreEqual(0, _tagAddedToProject.Id);
+            Assert.AreEqual(false, _tagAddedToProject.IsAreaTag);
+            Assert.AreEqual("McPkgNo", _tagAddedToProject.McPkgNo);
+            Assert.AreEqual("ProjectName", _tagAddedToProject.ProjectName);
+            Assert.AreEqual("PurchaseOrderNo", _tagAddedToProject.PurchaseOrderNo);
+            Assert.AreEqual("TestPlant", _tagAddedToProject.Schema);
+            Assert.AreEqual(StepId, _tagAddedToProject.StepId);
+            Assert.AreEqual("TagFunctionCode", _tagAddedToProject.TagFunctionCode);
+            Assert.AreEqual("TagNo", _tagAddedToProject.TagNo);
+            Assert.AreEqual(1, _tagAddedToProject.Requirements.Count);
+            Assert.AreEqual(RequirementDefinitionId, _tagAddedToProject.Requirements.First().RequirementDefinitionId);
         }
 
         [TestMethod]

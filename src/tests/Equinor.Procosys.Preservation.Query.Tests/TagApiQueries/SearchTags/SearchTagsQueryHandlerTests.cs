@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
@@ -14,7 +15,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
     [TestClass]
     public class SearchTagsQueryHandlerTests
     {
-        private Mock<ITagRepository> _tagRepositoryMock;
+        private const string TestPlant = "PCS$TESTPLANT";
+        private const string TestProject = "TestProject";
+        private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<ITagApiService> _tagApiServiceMock;
         private Mock<IPlantProvider> _plantProviderMock;
         private IList<ProcosysTagOverview> _apiTags;
@@ -25,12 +28,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestInitialize]
         public void Setup()
         {
-            _tagRepositoryMock = new Mock<ITagRepository>();
+            _projectRepositoryMock = new Mock<IProjectRepository>();
             _tagApiServiceMock = new Mock<ITagApiService>();
             _plantProviderMock = new Mock<IPlantProvider>();
             _plantProviderMock
                 .Setup(x => x.Plant)
-                .Returns("PCS$TESTPLANT");
+                .Returns(TestPlant);
 
             _apiTags = new List<ProcosysTagOverview>
             {
@@ -62,28 +65,30 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     TagNo = "TagNo3"
                 }
             };
+            _tagApiServiceMock
+                .Setup(x => x.GetTags(TestPlant, TestProject, "TagNo"))
+                .Returns(Task.FromResult(_apiTags));
 
             var stepMock = new Mock<Step>();
             var requirementMock = new Mock<Requirement>();
             _repositoryTags = new List<Tag>
             {
-                new Tag("", "TagNo1", "ProjectName", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
-                new Tag("", "TagNoNotInApi1", "ProjectName", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
-                new Tag("", "TagNoNotInApi2", "ProjectName", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNo1", TestProject, "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNoNotInApi1", TestProject, "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNoNotInApi2", TestProject, "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
             };
+            _projectRepositoryMock
+                .Setup(x => x.GetAllTagsInProjectAsync(TestProject))
+                .Returns(Task.FromResult(_repositoryTags));
 
-            _dut = new SearchTagsQueryHandler(_tagRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+            _dut = new SearchTagsQueryHandler(_projectRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
 
-            _query = new SearchTagsQuery("ProjectName", "TagNo");
+            _query = new SearchTagsQuery(TestProject, "TagNo");
         }
 
         [TestMethod]
         public async Task Handle_ReturnsOkResult()
         {
-            _tagApiServiceMock
-                .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
-                .Returns(Task.FromResult(_apiTags));
-
             var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -92,14 +97,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_ReturnsCorrectNumberOfItems()
         {
-            _tagApiServiceMock
-                .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
-                .Returns(Task.FromResult(_apiTags));
-
-            _tagRepositoryMock
-                .Setup(x => x.GetAllAsync())
-                .Returns(Task.FromResult(_repositoryTags));
-
             var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(3, result.Data.Count);
@@ -108,14 +105,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_SetsCorrectIsPreservedStatus()
         {
-            _tagApiServiceMock
-                .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
-                .Returns(Task.FromResult(_apiTags));
-
-            _tagRepositoryMock
-                .Setup(x => x.GetAllByProjectNameAsync("ProjectName"))
-                .Returns(Task.FromResult(_repositoryTags));
-
             var result = await _dut.Handle(_query, default);
 
             Assert.IsTrue(result.Data[0].IsPreserved);
@@ -127,7 +116,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         public async Task Handle_ReturnsEmptyList_WhenTagApiReturnsNull()
         {
             _tagApiServiceMock
-                .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
+                .Setup(x => x.GetTags(TestPlant, TestProject, "TagNo"))
                 .Returns(Task.FromResult<IList<ProcosysTagOverview>>(null));
 
             var result = await _dut.Handle(_query, default);
@@ -137,14 +126,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsApiTags_WhenTagRepositoryReturnsNull()
+        public async Task Handle_ReturnsApiTags_WhenProjectRepositoryReturnsNull()
         {
             _tagApiServiceMock
-                .Setup(x => x.GetTags("PCS$TESTPLANT", "ProjectName", "TagNo"))
+                .Setup(x => x.GetTags(TestPlant, TestProject, "TagNo"))
                 .Returns(Task.FromResult(_apiTags));
 
-            _tagRepositoryMock
-                .Setup(x => x.GetAllByProjectNameAsync("ProjectName"))
+            _projectRepositoryMock
+                .Setup(x => x.GetAllTagsInProjectAsync(TestProject))
                 .Returns(Task.FromResult<List<Tag>>(null));
 
             var result = await _dut.Handle(_query, default);

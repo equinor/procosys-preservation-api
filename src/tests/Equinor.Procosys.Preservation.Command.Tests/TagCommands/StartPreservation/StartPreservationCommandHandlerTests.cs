@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using MediatR;
@@ -16,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
     public class StartPreservationCommandHandlerTests : CommandHandlerTestsBase
     {
         private DateTime _utcNow;
-        private Mock<ITagRepository> _tagRepoMock;
+        private Mock<IProjectRepository> _tagRepoMock;
         private Mock<ITimeService> _timeServiceMock;
         private StartPreservationCommand _command;
         private Tag _tag1;
@@ -63,8 +64,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             };
 
             var tagIds = new List<int> {_tagId1, _tagId2};
-            _tagRepoMock = new Mock<ITagRepository>();
-            _tagRepoMock.Setup(r => r.GetByIdsAsync(tagIds)).Returns(Task.FromResult(tags));
+            _tagRepoMock = new Mock<IProjectRepository>();
+            _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);

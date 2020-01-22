@@ -2,21 +2,21 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.TagAggregate
 {
-    public class AllTagsQueryHandler : IRequestHandler<AllTagsQuery, Result<IEnumerable<TagDto>>>
+    public class AllTagsInProjectQueryHandler : IRequestHandler<AllTagsInProjectQuery, Result<IEnumerable<TagDto>>>
     {
-        private readonly ITagRepository _tagRepository;
+        private readonly IProjectRepository _projectRepository;
 
-        public AllTagsQueryHandler(ITagRepository tagRepository) => _tagRepository = tagRepository;
+        public AllTagsInProjectQueryHandler(IProjectRepository projectRepository) => _projectRepository = projectRepository;
 
-        public async Task<Result<IEnumerable<TagDto>>> Handle(AllTagsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<TagDto>>> Handle(AllTagsInProjectQuery request, CancellationToken cancellationToken)
         {
-            var tags = await _tagRepository.GetAllAsync();
+            var tags = await _projectRepository.GetAllTagsInProjectAsync(request.ProjectName);
             return new SuccessResult<IEnumerable<TagDto>>(tags.Select(tag =>
                 new TagDto(tag.Id,
                 tag.AreaCode,

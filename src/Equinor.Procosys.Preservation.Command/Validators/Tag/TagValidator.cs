@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 
@@ -6,24 +7,24 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 {
     public class TagValidator : ITagValidator
     {
-        private readonly ITagRepository _tagRepository;
+        private readonly IProjectRepository _projectRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
 
-        public TagValidator(ITagRepository tagRepository, IRequirementTypeRepository requirementTypeRepository)
+        public TagValidator(IProjectRepository projectRepository, IRequirementTypeRepository requirementTypeRepository)
         {
-            _tagRepository = tagRepository;
+            _projectRepository = projectRepository;
             _requirementTypeRepository = requirementTypeRepository;
         }
 
         public bool Exists(int tagId)
-            => _tagRepository.GetByIdAsync(tagId).Result != null;
+            => _projectRepository.GetByIdAsync(tagId).Result != null;
 
         public bool Exists(string tagNo, string projectName)
-            => _tagRepository.GetByNoAsync(tagNo, projectName).Result != null;
+            => _projectRepository.GetTagByTagNoAsync(tagNo, projectName).Result != null;
 
         public bool IsVoided(int tagId)
         {
-            var r = _tagRepository.GetByIdAsync(tagId).Result;
+            var r = _projectRepository.GetTagByTagIdAsync(tagId).Result;
             return r != null && r.IsVoided;
         }
 
@@ -31,19 +32,19 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 
         public bool VerifyPreservationStatus(int tagId, PreservationStatus status)
         {
-            var tag = _tagRepository.GetByIdAsync(tagId).Result;
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
             return tag != null && tag.Status == status;
         }
 
         public bool HasANonVoidedRequirement(int tagId)
         {
-            var tag = _tagRepository.GetByIdAsync(tagId).Result;
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
             return tag?.Requirements != null && tag.Requirements.Any(r => !r.IsVoided);
         }
 
         public bool AllRequirementDefinitionsExist(int tagId)
         {
-            var tag = _tagRepository.GetByIdAsync(tagId).Result;
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
             if (tag?.Requirements == null)
             {
                 return true;

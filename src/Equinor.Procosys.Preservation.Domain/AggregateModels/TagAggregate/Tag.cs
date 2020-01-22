@@ -5,7 +5,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 {
-    public class Tag : SchemaEntityBase, IAggregateRoot
+    public class Tag : SchemaEntityBase
     {
         private readonly List<Requirement> _requirements = new List<Requirement>();
 

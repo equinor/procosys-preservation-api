@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
@@ -60,6 +61,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public virtual DbSet<Requirement> Requirements { get; set; }
         public virtual DbSet<Person> Persons { get; set; }
         public virtual DbSet<PreservationRecord> PreservationRecords { get; set; }
+        public virtual DbSet<Project> Projects { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {

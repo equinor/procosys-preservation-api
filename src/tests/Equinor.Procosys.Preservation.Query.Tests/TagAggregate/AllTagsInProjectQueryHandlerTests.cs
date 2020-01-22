@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
@@ -14,40 +15,41 @@ using ServiceResult;
 namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
 {
     [TestClass]
-    public class AllTagsQueryHandlerTests
+    public class AllTagsInProjectQueryHandlerTests
     {
-        private Mock<ITagRepository> _tagRepositoryMock;
-        private AllTagsQueryHandler _dut;
-        private AllTagsQuery _query;
+        private const string ProjectName = "ProjectX";
+        private Mock<IProjectRepository> _projectRepositoryMock;
+        private AllTagsInProjectQueryHandler _dut;
+        private AllTagsInProjectQuery _query;
         private List<Tag> _tags;
 
         [TestInitialize]
         public void Setup()
         {
-            _tagRepositoryMock = new Mock<ITagRepository>();
-            _dut = new AllTagsQueryHandler(_tagRepositoryMock.Object);
-            _query = new AllTagsQuery();
             var plant = "PCS$TESTPLANT";
             var mode = new Mode(plant, "TestMode");
             var responsible = new Responsible(plant, "Responsible");
-            var step = new Step(plant, mode, responsible);
             var requirementDefinition = new RequirementDefinition(plant, "ReqDef", 2, 1);
             var requirements = new List<Requirement> { new Requirement(plant, 2, requirementDefinition) };
+            var step = new Step(plant, mode, responsible);
             _tags = new List<Tag>
             {
-                new Tag("PCS$TESTPLANT", "TagNo1", "PoNo", "AreaCode", "CalloffNo", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
-                new Tag("PCS$TESTPLANT", "TagNo2", "PoNo", "AreaCode", "CalloffNo", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
-                new Tag("PCS$TESTPLANT", "TagNo3", "PoNo", "AreaCode", "CalloffNo", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
+                new Tag(plant, "TagNo1", ProjectName, "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
+                new Tag(plant, "TagNo2", ProjectName, "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
+                new Tag(plant, "TagNo3", ProjectName, "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
             };
+
+            _projectRepositoryMock = new Mock<IProjectRepository>();
+            _projectRepositoryMock
+                .Setup(x => x.GetAllTagsInProjectAsync(ProjectName))
+                .Returns(Task.FromResult(_tags));
+            _dut = new AllTagsInProjectQueryHandler(_projectRepositoryMock.Object);
+            _query = new AllTagsInProjectQuery(ProjectName); // todo
         }
 
         [TestMethod]
         public async Task Handle_ReturnsOkResult()
         {
-            _tagRepositoryMock
-                .Setup(x => x.GetAllAsync())
-                .Returns(Task.FromResult(_tags));
-
             var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -56,10 +58,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
         [TestMethod]
         public async Task Handle_ReturnsCorrectNumberOfItems()
         {
-            _tagRepositoryMock
-                .Setup(x => x.GetAllAsync())
-                .Returns(Task.FromResult(_tags));
-
             var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(3, result.Data.Count());
@@ -68,10 +66,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
         [TestMethod]
         public async Task Handle_ReturnsCorrectDto()
         {
-            _tagRepositoryMock
-                .Setup(x => x.GetAllAsync())
-                .Returns(Task.FromResult(_tags));
-
             var result = await _dut.Handle(_query, default);
 
             var tag = _tags[0];
@@ -99,8 +93,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
         [TestMethod]
         public async Task Handle_ReturnsNoElements_WhenThereIsNoTags()
         {
-            _tagRepositoryMock
-                .Setup(x => x.GetAllAsync())
+            _projectRepositoryMock
+                .Setup(x => x.GetAllTagsInProjectAsync(ProjectName))
                 .Returns(Task.FromResult(new List<Tag>()));
 
             var result = await _dut.Handle(_query, default);
