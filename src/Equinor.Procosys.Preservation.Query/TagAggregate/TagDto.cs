@@ -40,20 +40,20 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
             Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
         }
 
-        public string AreaCode { get; set; }
-        public string CalloffNumber { get; set; }
-        public string CommPkgNumber { get; set; }
-        public string DisciplineCode { get; set; }
+        public string AreaCode { get; }
+        public string CalloffNumber { get; }
+        public string CommPkgNumber { get; }
+        public string DisciplineCode { get; }
         public int Id { get; }
-        public bool IsAreaTag { get; set; }
-        public bool IsVoided { get; set; }
-        public string McPkgNumber { get; set; }
-        public string ProjectNumber { get; set; }
-        public string PurchaseOrderNumber { get; set; }
+        public bool IsAreaTag { get; }
+        public bool IsVoided { get; }
+        public string McPkgNumber { get; }
+        public string ProjectNumber { get; }
+        public string PurchaseOrderNumber { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
         public int StepId { get; }
-        public string TagFunctionCode { get; set; }
+        public string TagFunctionCode { get; }
         public string TagNo { get; }
     }
 }
