@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Query.JourneyAggregate;
@@ -15,6 +16,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         private readonly IMediator _mediator;
 
         public JourneysController(IMediator mediator) => _mediator = mediator;
+
+        [HttpGet]
+        public async Task<ActionResult<List<JourneyDto>>> GetJourneys([FromQuery] bool includeVoided = false)
+        {
+            var result = await _mediator.Send(new GetAllJourneysQuery(includeVoided));
+            return this.FromResult(result);
+        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetJourney([FromRoute] int id)

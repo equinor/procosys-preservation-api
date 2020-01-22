@@ -6,8 +6,5 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
 {
     public class GetAllModesQuery : IRequest<Result<IEnumerable<ModeDto>>>
     {
-        public GetAllModesQuery()
-        {
-        }
     }
 }
