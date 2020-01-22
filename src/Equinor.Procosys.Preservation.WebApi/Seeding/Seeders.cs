@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
             for (var i = 0; i < entryCount; i++)
             {
                 var requirements = new List<Requirement>();
-                for (int j = 0; j < 5; j++)
+                for (var j = 0; j < 5; j++)
                 {
                     var requirement = new Requirement(plant, 2, requirementDefinitions[rand.Next(requirementDefinitions.Count)]);
                     requirements.Add(requirement);

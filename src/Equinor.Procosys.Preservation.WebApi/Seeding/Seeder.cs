@@ -14,10 +14,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
     {
         private readonly IServiceScopeFactory _serviceProvider;
 
-        public Seeder(IServiceScopeFactory serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+        public Seeder(IServiceScopeFactory serviceProvider) => _serviceProvider = serviceProvider;
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
@@ -53,7 +50,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
 
                     var steps = (await journeyRepository.GetAllAsync()).SelectMany(x => x.Steps).ToList();
                     var requirementDefinitions = (await requirementTypeRepository.GetAllAsync()).SelectMany(x => x.RequirementDefinitions).ToList();
-                    for (int i = 0; i < 1; i++)
+                    for (var i = 0; i < 1; i++)
                     {
                         tagRepository.AddTags(1000, plantProvider.Plant, steps, requirementDefinitions);
                         await unitOfWork.SaveChangesAsync(cancellationToken);

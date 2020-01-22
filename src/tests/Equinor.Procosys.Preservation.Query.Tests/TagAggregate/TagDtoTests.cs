@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Query.TagAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -32,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
                 "TagNo");
 
         [TestMethod]
-        public void Constructor_setsProperties()
+        public void Constructor_SetsProperties()
         {
             Assert.AreEqual(1, _dut.Id);
             Assert.AreEqual("AreaCode", _dut.AreaCode);
