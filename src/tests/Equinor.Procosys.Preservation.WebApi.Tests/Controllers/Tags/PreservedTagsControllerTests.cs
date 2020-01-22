@@ -46,13 +46,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
                     createTagCommandCreated = request as CreateTagCommand;
                 });
 
-            _createTagDto.ProjectNo = "ProjectNumber";
+            _createTagDto.ProjectName = "ProjectName";
             _createTagDto.StepId = 2;
             _createTagDto.TagNo = "TagNo";
 
             await _dut.CreateTag(_createTagDto);
 
-            Assert.AreEqual(_createTagDto.ProjectNo, createTagCommandCreated.ProjectNo);
+            Assert.AreEqual(_createTagDto.ProjectName, createTagCommandCreated.ProjectName);
             Assert.AreEqual(_createTagDto.StepId, createTagCommandCreated.StepId);
             Assert.AreEqual(_createTagDto.TagNo, createTagCommandCreated.TagNo);
         }

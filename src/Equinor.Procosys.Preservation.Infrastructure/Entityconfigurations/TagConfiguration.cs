@@ -15,8 +15,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
 
-            builder.Property(x => x.ProjectNumber)
-                .HasMaxLength(Tag.ProjectNumberLengthMax)
+            builder.Property(x => x.ProjectName)
+                .HasMaxLength(Tag.ProjectNameLengthMax)
                 .IsRequired();
 
             builder.Property(x => x.TagNo)

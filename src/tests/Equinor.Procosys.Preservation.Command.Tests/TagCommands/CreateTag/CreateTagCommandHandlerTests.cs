@@ -78,8 +78,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 
             _command = new CreateTagCommand(
                 "TagNo",
-                "ProjectNumber",
-                StepId,
+                "ProjectName",
+                _stepMock.Object.Id,
                 new List<Requirement>
                 {
                     new Requirement(RequirementDefinitionId, 1)
@@ -104,14 +104,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
             Assert.AreEqual("AreaCode", _tagAddedToRepository.AreaCode);
-            Assert.AreEqual("CalloffNo", _tagAddedToRepository.CalloffNumber);
-            Assert.AreEqual("CommPkgNo", _tagAddedToRepository.CommPkgNumber);
+            Assert.AreEqual("CalloffNo", _tagAddedToRepository.Calloff);
+            Assert.AreEqual("CommPkgNo", _tagAddedToRepository.CommPkgNo);
             Assert.AreEqual("DisciplineCode", _tagAddedToRepository.DisciplineCode);
             Assert.AreEqual(0, _tagAddedToRepository.Id);
             Assert.AreEqual(false, _tagAddedToRepository.IsAreaTag);
-            Assert.AreEqual("McPkgNo", _tagAddedToRepository.McPkcNumber);
-            Assert.AreEqual("ProjectNumber", _tagAddedToRepository.ProjectNumber);
-            Assert.AreEqual("PurchaseOrderNo", _tagAddedToRepository.PurchaseOrderNumber);
+            Assert.AreEqual("McPkgNo", _tagAddedToRepository.McPkgNo);
+            Assert.AreEqual("ProjectName", _tagAddedToRepository.ProjectName);
+            Assert.AreEqual("PurchaseOrderNo", _tagAddedToRepository.PurchaseOrderNo);
             Assert.AreEqual("TestPlant", _tagAddedToRepository.Schema);
             Assert.AreEqual(StepId, _tagAddedToRepository.StepId);
             Assert.AreEqual("TagFunctionCode", _tagAddedToRepository.TagFunctionCode);

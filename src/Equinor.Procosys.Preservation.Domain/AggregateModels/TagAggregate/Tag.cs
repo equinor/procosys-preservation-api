@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         private readonly List<Requirement> _requirements = new List<Requirement>();
 
         public const int TagNoLengthMax = 255;
-        public const int ProjectNumberLengthMax = 255;
+        public const int ProjectNameLengthMax = 255;
 
         protected Tag()
             : base(null)
@@ -20,13 +20,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
         public Tag(
             string schema,
             string tagNo,
-            string projectNumber,
+            string projectName,
             string areaCode,
-            string calloffNumber,
+            string calloff,
             string disciplineCode,
-            string mcPkcNumber,
-            string commPkgNumber,
-            string purchaseOrderNumber,
+            string mcPkgNo,
+            string commPkgNo,
+            string purchaseOrderNo,
             string tagFunctionCode,
             Step step, 
             IEnumerable<Requirement> requirements)
@@ -48,13 +48,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 
             Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
-            ProjectNumber = projectNumber;
+            ProjectName = projectName;
             AreaCode = areaCode;
-            CalloffNumber = calloffNumber;
+            Calloff = calloff;
             DisciplineCode = disciplineCode;
-            McPkcNumber = mcPkcNumber;
-            CommPkgNumber = commPkgNumber;
-            PurchaseOrderNumber = purchaseOrderNumber;
+            McPkgNo = mcPkgNo;
+            CommPkgNo = commPkgNo;
+            PurchaseOrderNo = purchaseOrderNo;
             TagFunctionCode = tagFunctionCode;
             StepId = step.Id;
             _requirements.AddRange(reqList);
@@ -62,13 +62,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 
         public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
-        public string CalloffNumber { get; private set; }
-        public string CommPkgNumber { get; private set; }
+        public string Calloff { get; private set; }
+        public string CommPkgNo { get; private set; }
         public string DisciplineCode { get; private set; }
         public bool IsAreaTag { get; private set; }
-        public string McPkcNumber { get; private set; }
-        public string ProjectNumber { get; private set; }
-        public string PurchaseOrderNumber { get; private set; }
+        public string McPkgNo { get; private set; }
+        public string ProjectName { get; private set; }
+        public string PurchaseOrderNo { get; private set; }
         public int StepId { get; private set; }
         public string TagFunctionCode { get; private set; }
         public string TagNo { get; private set; }

@@ -19,14 +19,24 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
             var tags = await _tagRepository.GetAllAsync();
             return new SuccessResult<IEnumerable<TagDto>>(tags.Select(tag =>
                 new TagDto(tag.Id,
-                    tag.TagNo,
-                    tag.StepId,
-                    tag.Status,
-                    tag.Requirements.Select(r =>
-                        new RequirementDto(r.Id, 
-                            r.RequirementDefinitionId, 
-                            r.IsVoided, 
-                            r.IntervalWeeks)))));
+                tag.AreaCode,
+                tag.Calloff,
+                tag.CommPkgNo,
+                tag.DisciplineCode,
+                tag.IsAreaTag,
+                tag.IsVoided,
+                tag.McPkgNo,
+                tag.ProjectName,
+                tag.PurchaseOrderNo,
+                tag.Requirements.Select(r =>
+                        new RequirementDto(r.Id,
+                            r.RequirementDefinitionId,
+                            r.IsVoided,
+                            r.IntervalWeeks)),
+                tag.Status,
+                tag.StepId,
+                tag.TagFunctionCode,
+                tag.TagNo)));
         }
     }
 }

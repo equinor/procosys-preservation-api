@@ -4,10 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Equinor.Procosys.Preservation.Command;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.WebApi.DIModules;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Seeding;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -40,7 +42,14 @@ namespace Equinor.Procosys.Preservation.WebApi
         {
             if (_environment.IsDevelopment())
             {
-                services.AddHostedService<DatabaseMigrator>();
+                if (Configuration.GetValue<bool>("MigrateDatabase"))
+                {
+                    services.AddHostedService<DatabaseMigrator>();
+                }
+                if (Configuration.GetValue<bool>("SeedDummyData"))
+                {
+                    services.AddHostedService<Seeder>();
+                }
             }
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

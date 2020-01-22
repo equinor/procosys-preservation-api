@@ -16,12 +16,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         {
             RuleFor(tag => tag)
                 .Must(NotBeAnExistingTagWithinProject)
-                .WithMessage(tag => $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectNo}");
+                .WithMessage(tag => $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectName}");
 
-            RuleFor(tag => tag.ProjectNo)
+            RuleFor(tag => tag.ProjectName)
                 .Must(NotBeAClosedProject)
-                .When(tag => ProjectExists(tag.ProjectNo))
-                .WithMessage(tag => $"Project is closed! Project={tag.ProjectNo}");
+                .When(tag => ProjectExists(tag.ProjectName))
+                .WithMessage(tag => $"Project is closed! Project={tag.ProjectName}");
 
             RuleFor(tag => tag.StepId)
                 .Must(BeAnExistingStep)
@@ -39,15 +39,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 .Must(NotBeAVoidedRequirementDefinition)
                 .WithMessage((tag, req) => $"Requirement definition is voided! Requirement={req.RequirementDefinitionId} ");
 
-            bool NotBeAnExistingTagWithinProject(CreateTagCommand tag) => !tagValidator.Exists(tag.TagNo, tag.ProjectNo);
+            bool NotBeAnExistingTagWithinProject(CreateTagCommand tag) => !tagValidator.Exists(tag.TagNo, tag.ProjectName);
 
             bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
             
             bool NotBeAVoidedStep(int stepId) => !stepValidator.IsVoided(stepId);
 
-            bool ProjectExists(string projectNo) => projectValidator.Exists(projectNo);
+            bool ProjectExists(string projectName) => projectValidator.Exists(projectName);
 
-            bool NotBeAClosedProject(string projectNo) => !projectValidator.IsClosed(projectNo);
+            bool NotBeAClosedProject(string projectName) => !projectValidator.IsClosed(projectName);
 
             bool BeAnExistingRequirementDefinition(Requirement requirement)
                 => requirementDefinitionValidator.Exists(requirement.RequirementDefinitionId);
