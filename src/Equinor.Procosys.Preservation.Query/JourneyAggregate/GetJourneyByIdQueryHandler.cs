@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
             var modes = (await _modeRepository.GetByIdsAsync(modeIds)).Select(x => new ModeDto(x.Id, x.Title));
             var responsibles = (await _responsibleRepository.GetByIdsAsync(responsibleIds)).Select(x => new ResponsibleDto(x.Id, x.Name));
 
-            return new SuccessResult<JourneyDto>(new JourneyDto(
+            var journeyDto = new JourneyDto(
                 journey.Id,
                 journey.Title,
                 journey.Steps.Select(step =>
@@ -47,7 +47,8 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                         responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId)
                     )
                 )
-            ));
+            );
+            return new SuccessResult<JourneyDto>(journeyDto);
         }
     }
 }
