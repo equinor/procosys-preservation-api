@@ -10,10 +10,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new CreateTagCommand("TagNoA", "ProjectNumberA", 2, new List<Requirement>());
+            var dut = new CreateTagCommand("TagNoA", "ProjectNameA", 2, new List<Requirement>());
 
             Assert.AreEqual("TagNoA", dut.TagNo);
-            Assert.AreEqual("ProjectNumberA", dut.ProjectNo);
+            Assert.AreEqual("ProjectNameA", dut.ProjectName);
             Assert.AreEqual(2, dut.StepId);
         }
     }

@@ -9,14 +9,14 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
         public TagDto(
             int id,
             string areaCode,
-            string calloffNumber,
-            string commPkgNumber,
+            string calloffNo,
+            string commPkgNo,
             string disciplineCode,
             bool isAreaTag,
             bool isVoided,
-            string mcPkgNumber,
-            string projectNumber,
-            string purchaseOrderNumber,
+            string mcPkgNo,
+            string projectName,
+            string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
             PreservationStatus status,
             int stepId,
@@ -25,14 +25,14 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
         {
             Id = id;
             AreaCode = areaCode;
-            CalloffNumber = calloffNumber;
-            CommPkgNumber = commPkgNumber;
+            CalloffNo = calloffNo;
+            CommPkgNo = commPkgNo;
             DisciplineCode = disciplineCode;
             IsAreaTag = isAreaTag;
             IsVoided = isVoided;
-            McPkgNumber = mcPkgNumber;
-            ProjectNumber = projectNumber;
-            PurchaseOrderNumber = purchaseOrderNumber;
+            McPkgNo = mcPkgNo;
+            ProjectName = projectName;
+            PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
             Status = status;
             StepId = stepId;
@@ -41,15 +41,15 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
         }
 
         public string AreaCode { get; }
-        public string CalloffNumber { get; }
-        public string CommPkgNumber { get; }
+        public string CalloffNo { get; }
+        public string CommPkgNo { get; }
         public string DisciplineCode { get; }
         public int Id { get; }
         public bool IsAreaTag { get; }
         public bool IsVoided { get; }
-        public string McPkgNumber { get; }
-        public string ProjectNumber { get; }
-        public string PurchaseOrderNumber { get; }
+        public string McPkgNo { get; }
+        public string ProjectName { get; }
+        public string PurchaseOrderNo { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
         public int StepId { get; }

@@ -60,12 +60,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, requirementDefinition));
             }
 
-            var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectNo, request.TagNo);
+            var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectName, request.TagNo);
 
             var tagToAdd = new Tag(
                 _plantProvider.Plant,
                 request.TagNo,
-                request.ProjectNo,
+                request.ProjectName,
                 tagDetails.AreaCode,
                 tagDetails.CallOffNo,
                 tagDetails.DisciplineCode,

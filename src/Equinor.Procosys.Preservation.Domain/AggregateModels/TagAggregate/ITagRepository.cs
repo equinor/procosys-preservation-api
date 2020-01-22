@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
 {
     public interface ITagRepository : IRepository<Tag>
     {
-        Task<List<Tag>> GetAllByProjectNoAsync(string projectNo);
-        Task<Tag> GetByNoAsync(string tagNo, string projectNo);
+        Task<List<Tag>> GetAllByProjectNameAsync(string projectName);
+        Task<Tag> GetByNoAsync(string tagNo, string projectName);
     }
 }

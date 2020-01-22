@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         {
             var dut = new Tag("SchemaA",
                 "TagNoA",
-                "ProjectNumberA", 
+                "ProjectNameA", 
                 "AreaCodeA", 
                 "CalloffA", 
                 "DisciplineA", 
@@ -45,12 +45,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual("TagNoA", dut.TagNo);
-            Assert.AreEqual("ProjectNumberA", dut.ProjectNumber);
+            Assert.AreEqual("ProjectNameA", dut.ProjectName);
             Assert.AreEqual("AreaCodeA", dut.AreaCode);
-            Assert.AreEqual("CalloffA", dut.CalloffNumber);
+            Assert.AreEqual("CalloffA", dut.Calloff);
             Assert.AreEqual("DisciplineA", dut.DisciplineCode);
-            Assert.AreEqual("McPkgA", dut.McPkcNumber);
-            Assert.AreEqual("PurchaseOrderA", dut.PurchaseOrderNumber);
+            Assert.AreEqual("McPkgA", dut.McPkgNo);
+            Assert.AreEqual("PurchaseOrderA", dut.PurchaseOrderNo);
             Assert.AreEqual("TagFunctionCodeA", dut.TagFunctionCode);
             Assert.AreEqual(_stepMock.Object.Id, dut.StepId);
             Assert.AreEqual(1, dut.Requirements.Count);

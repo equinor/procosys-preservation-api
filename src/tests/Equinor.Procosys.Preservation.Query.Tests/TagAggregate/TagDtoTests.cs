@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
                 true,
                 true,
                 "McPkgNo",
-                "ProjectNo",
+                "ProjectName",
                 "PoNo",
                 new List<RequirementDto> { new RequirementDto(1, 2, true, 3) },
                 PreservationStatus.Active,
@@ -34,14 +34,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
         {
             Assert.AreEqual(1, _dut.Id);
             Assert.AreEqual("AreaCode", _dut.AreaCode);
-            Assert.AreEqual("CallOffNo", _dut.CalloffNumber);
-            Assert.AreEqual("CommPkgNo", _dut.CommPkgNumber);
+            Assert.AreEqual("CallOffNo", _dut.CalloffNo);
+            Assert.AreEqual("CommPkgNo", _dut.CommPkgNo);
             Assert.AreEqual("DisciplineCode", _dut.DisciplineCode);
             Assert.IsTrue(_dut.IsAreaTag);
             Assert.IsTrue(_dut.IsVoided);
-            Assert.AreEqual("McPkgNo", _dut.McPkgNumber);
-            Assert.AreEqual("ProjectNo", _dut.ProjectNumber);
-            Assert.AreEqual("PoNo", _dut.PurchaseOrderNumber);
+            Assert.AreEqual("McPkgNo", _dut.McPkgNo);
+            Assert.AreEqual("ProjectName", _dut.ProjectName);
+            Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.IsNotNull(_dut.Requirements);
             Assert.AreEqual(1, _dut.Requirements.Count());
             Assert.AreEqual(PreservationStatus.Active, _dut.Status);

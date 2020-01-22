@@ -13,11 +13,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         {
         }
 
-        public Task<List<Tag>> GetAllByProjectNoAsync(string projectNo) =>
-            DefaultQuery.Where(t => t.ProjectNumber == projectNo).ToListAsync();
+        public Task<List<Tag>> GetAllByProjectNameAsync(string projectName) =>
+            DefaultQuery.Where(t => t.ProjectName == projectName).ToListAsync();
 
-        public Task<Tag> GetByNoAsync(string tagNo, string projectNo)
-            => DefaultQuery.FirstOrDefaultAsync(t => t.TagNo == tagNo && t.ProjectNumber == projectNo);
+        public Task<Tag> GetByNoAsync(string tagNo, string projectName)
+            => DefaultQuery.FirstOrDefaultAsync(t => t.TagNo == tagNo && t.ProjectName == projectName);
 
     }
 }

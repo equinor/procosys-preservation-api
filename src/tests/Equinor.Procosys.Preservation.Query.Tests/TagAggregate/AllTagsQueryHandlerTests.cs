@@ -77,15 +77,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
             var tag = _tags[0];
             var dto = result.Data.ElementAt(0);
             Assert.AreEqual(tag.AreaCode, dto.AreaCode);
-            Assert.AreEqual(tag.CalloffNumber, dto.CalloffNumber);
-            Assert.AreEqual(tag.CommPkgNumber, dto.CommPkgNumber);
+            Assert.AreEqual(tag.Calloff, dto.CalloffNo);
+            Assert.AreEqual(tag.CommPkgNo, dto.CommPkgNo);
             Assert.AreEqual(tag.DisciplineCode, dto.DisciplineCode);
             Assert.AreEqual(tag.Id, dto.Id);
             Assert.AreEqual(tag.IsAreaTag, dto.IsAreaTag);
             Assert.AreEqual(tag.IsVoided, dto.IsVoided);
-            Assert.AreEqual(tag.McPkcNumber, dto.McPkgNumber);
-            Assert.AreEqual(tag.ProjectNumber, dto.ProjectNumber);
-            Assert.AreEqual(tag.PurchaseOrderNumber, dto.PurchaseOrderNumber);
+            Assert.AreEqual(tag.McPkgNo, dto.McPkgNo);
+            Assert.AreEqual(tag.ProjectName, dto.ProjectName);
+            Assert.AreEqual(tag.PurchaseOrderNo, dto.PurchaseOrderNo);
 
             Assert.AreEqual(tag.Requirements.Count, dto.Requirements.Count());
             Assert.AreEqual(tag.Requirements.ElementAt(0).Id, dto.Requirements.ElementAt(0).Id);

@@ -2,7 +2,7 @@
 {
     public interface IProjectValidator
     {
-        bool Exists(string projectNo);
-        bool IsClosed(string projectNo);
+        bool Exists(string projectName);
+        bool IsClosed(string projectName);
     }
 }
