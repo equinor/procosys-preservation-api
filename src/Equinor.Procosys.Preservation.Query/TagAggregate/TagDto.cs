@@ -6,23 +6,20 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
 {
     public class TagDto
     {
-        public TagDto(int id, string tagNo, int stepId, PreservationStatus status, IEnumerable<RequirementDto> requirements)
+        public TagDto(int id, string tagNo, int stepId, PreservationStatus status, IEnumerable<RequirementDto> requirements, bool needUserInput)
         {
-            if (requirements == null)
-            {
-                throw new ArgumentNullException(nameof(requirements));
-            }
-            
             Id = id;
             TagNo = tagNo;
             Status = status;
             StepId = stepId;
-            Requirements = requirements;
+            Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
+            NeedUserInput = needUserInput;
         }
         public int Id { get; }
         public string TagNo { get; }
         public int StepId { get; }
         public PreservationStatus Status { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
+        public bool NeedUserInput { get; }
     }
 }

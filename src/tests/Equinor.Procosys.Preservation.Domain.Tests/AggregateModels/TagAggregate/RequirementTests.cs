@@ -44,20 +44,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             var intervalWeeks = 2;
             var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
 
-            dut.StartPreservation(_utcNow, true);
+            dut.StartPreservation(_utcNow);
 
             var expectedNextDueTimeUtc = _utcNow.AddWeeks(intervalWeeks);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
-        }
-
-        [TestMethod]
-        public void StartPreservation_ShouldShouldSetNeedsUserInput()
-        {
-            var dut = new Requirement("SchemaA", 2, _reqDefMock.Object);
-
-            dut.StartPreservation(_utcNow, true);
-
-            Assert.IsTrue(dut.NeedsUserInput);
         }
 
         [TestMethod]

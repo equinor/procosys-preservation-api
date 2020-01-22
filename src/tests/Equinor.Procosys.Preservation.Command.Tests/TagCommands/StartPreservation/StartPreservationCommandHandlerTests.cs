@@ -18,7 +18,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
     {
         private DateTime _utcNow;
         private Mock<ITagRepository> _tagRepoMock;
-        private Mock<IRequirementTypeRepository> _rtRepoMock;
         private Mock<ITimeService> _timeServiceMock;
         private Mock<IUnitOfWork> _uowMock;
         private StartPreservationCommand _command;
@@ -67,9 +66,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
 
             var tagIds = new List<int> {_tagId1, _tagId2};
             _tagRepoMock = new Mock<ITagRepository>();
-            _rtRepoMock = new Mock<IRequirementTypeRepository>();
-            _rtRepoMock.Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {_rdId1, _rdId2}))
-                .Returns(Task.FromResult(new List<RequirementDefinition> {_rd1Mock.Object, _rd2Mock.Object}));
             _tagRepoMock.Setup(r => r.GetByIdsAsync(tagIds)).Returns(Task.FromResult(tags));
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
@@ -77,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             _uowMock = new Mock<IUnitOfWork>();
             _command = new StartPreservationCommand(tagIds);
 
-            _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, _rtRepoMock.Object, _timeServiceMock.Object, _uowMock.Object);
+            _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, _timeServiceMock.Object, _uowMock.Object);
         }
 
         [TestMethod]
@@ -102,17 +98,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag1.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag2.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag2.NextDueTimeUtc);
-        }
-
-        [TestMethod]
-        public async Task HandlingStartPreservationCommand_ShouldUpdateNeedsUserInputOnAllRequirementsOnAllTags()
-        {
-            await _dut.Handle(_command, default);
-
-            Assert.AreEqual(_rd1Mock.Object.NeedsUserInput, _req1OnTag1.NeedsUserInput);
-            Assert.AreEqual(_rd2Mock.Object.NeedsUserInput, _req2OnTag1.NeedsUserInput);
-            Assert.AreEqual(_rd1Mock.Object.NeedsUserInput, _req1OnTag2.NeedsUserInput);
-            Assert.AreEqual(_rd2Mock.Object.NeedsUserInput, _req2OnTag2.NeedsUserInput);
         }
 
         [TestMethod]

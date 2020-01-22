@@ -11,9 +11,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
         public void Constructor_WithNextDueDate_ShouldSetAllProperties()
         {
             var nextDueTimeUtc = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            var r = new RequirementDto(true, nextDueTimeUtc);
+            var r = new RequirementDto(nextDueTimeUtc);
 
-            Assert.IsTrue(r.NeedsUserInput);
             Assert.IsTrue(r.NextDueTimeUtc.HasValue);
             Assert.AreEqual(nextDueTimeUtc, r.NextDueTimeUtc.Value);
             Assert.IsNotNull(r.NextDueAsYearAndWeek);
@@ -22,9 +21,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
         [TestMethod]
         public void Constructor_WithoutNextDueDate_ShouldNotSetDueDateProperties()
         {
-            var r = new RequirementDto(true, null);
+            var r = new RequirementDto(null);
 
-            Assert.IsTrue(r.NeedsUserInput);
             Assert.IsFalse(r.NextDueTimeUtc.HasValue);
             Assert.IsNull(r.NextDueAsYearAndWeek);
         }

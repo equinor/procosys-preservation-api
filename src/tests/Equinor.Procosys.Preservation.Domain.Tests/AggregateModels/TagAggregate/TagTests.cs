@@ -16,6 +16,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         // ReSharper disable once CollectionNeverUpdated.Local
         readonly List<Requirement> _emptyRequirements = new List<Requirement>();
         readonly List<Requirement> _requirements = new List<Requirement>();
+        private DateTime _utcNow;
 
         [TestInitialize]
         public void Setup()
@@ -25,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             _requirementMock = new Mock<Requirement>();
             _requirementMock.SetupGet(x => x.Id).Returns(4);
             _requirements.Add(_requirementMock.Object);
+            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
         }
 
         [TestMethod]
@@ -107,7 +109,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
             Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
 
-            dut.StartPreservation();
+            dut.StartPreservation(_utcNow);
 
             Assert.AreEqual(PreservationStatus.Active, dut.Status);
         }
