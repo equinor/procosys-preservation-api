@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
         public async Task HandlingSetStepCommand_ShouldSetStepIdOnTag()
         {
             // Act
-            var result = await _dut.Handle(_command, default);
+            await _dut.Handle(_command, default);
 
             // Assert
             Assert.AreEqual(StepId, _tagMock.Object.StepId);

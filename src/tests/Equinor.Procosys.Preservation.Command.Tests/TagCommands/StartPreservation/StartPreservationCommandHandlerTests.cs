@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Domain;
@@ -14,12 +13,11 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservation
 {
     [TestClass]
-    public class StartPreservationCommandHandlerTests
+    public class StartPreservationCommandHandlerTests : CommandHandlerTestsBase
     {
         private DateTime _utcNow;
         private Mock<ITagRepository> _tagRepoMock;
         private Mock<ITimeService> _timeServiceMock;
-        private Mock<IUnitOfWork> _uowMock;
         private StartPreservationCommand _command;
         private Tag _tag1;
         private Tag _tag2;
@@ -70,10 +68,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
-            _uowMock = new Mock<IUnitOfWork>();
             _command = new StartPreservationCommand(tagIds);
 
-            _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, _timeServiceMock.Object, _uowMock.Object);
+            _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object);
         }
 
         [TestMethod]
@@ -101,13 +98,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         }
 
         [TestMethod]
-        public async Task HandlingStartPreservationCommand_ShouldSaveUnitOfWork()
+        public async Task HandlingStartPreservationCommand_ShouldSave()
         {
-            var token = new CancellationToken();
-            
-            await _dut.Handle(_command, token);
+            await _dut.Handle(_command, default);
 
-            _uowMock.Verify(r => r.SaveChangesAsync(token), Times.Once);
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
         }
     }
 }
