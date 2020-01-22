@@ -55,6 +55,7 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
+    aspNetCoreEnvironment: 'Development'
 
   jobs:
   - template: /templates/pipelines/webapprelease-api.yml@templates
@@ -68,3 +69,4 @@ stages:
       env: '${{ variables.envName }}'
       containerRegistry: '${{ variables.containerRegistry }}'
       repository: ${{ variables.repositoryName }}
+      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'

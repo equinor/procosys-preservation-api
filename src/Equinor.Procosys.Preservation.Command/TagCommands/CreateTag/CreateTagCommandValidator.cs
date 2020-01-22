@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using Equinor.Procosys.Preservation.Command.Validators.Project;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
@@ -19,14 +18,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            RuleFor(tag => tag.ProjectNo)
-                .Must(NotBeAClosedProject)
-                .When(tag => ProjectExists(tag.ProjectNo))
-                .WithMessage(tag => $"Project is closed! Project={tag.ProjectNo}");
-
             RuleFor(tag => tag)
                 .Must(NotBeAnExistingTagWithinProject)
-                .WithMessage(tag => $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectNo}");
+                .WithMessage(tag => $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectName}");
+
+            RuleFor(tag => tag.ProjectName)
+                .Must(NotBeAClosedProject)
+                .When(tag => ProjectExists(tag.ProjectName))
+                .WithMessage(tag => $"Project is closed! Project={tag.ProjectName}");
 
             RuleFor(tag => tag.StepId)
                 .Must(BeAnExistingStep)
@@ -48,17 +47,16 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 .WithMessage((tag, req) =>
                     $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
 
-            bool NotBeAClosedProject(string projectNo) => !projectValidator.IsClosed(projectNo);
+            bool NotBeAnExistingTagWithinProject(CreateTagCommand tag) => !tagValidator.Exists(tag.TagNo, tag.ProjectName);
 
-            bool ProjectExists(string projectNo) => projectValidator.Exists(projectNo);
+            bool ProjectExists(string projectName) => projectValidator.Exists(projectName);
 
-            bool NotBeAnExistingTagWithinProject(CreateTagCommand command) =>
-                !tagValidator.Exists(command.TagNo, command.ProjectNo);
+            bool NotBeAClosedProject(string projectName) => !projectValidator.IsClosed(projectName);
 
             bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
 
             bool NotBeAVoidedStep(int stepId) => !stepValidator.IsVoided(stepId);
-            
+                        
             bool BeUniqueRequirements(IEnumerable<Requirement> requirements)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();

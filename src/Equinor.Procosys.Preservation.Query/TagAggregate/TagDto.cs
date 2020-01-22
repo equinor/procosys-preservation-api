@@ -6,20 +6,57 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
 {
     public class TagDto
     {
-        public TagDto(int id, string tagNo, int stepId, PreservationStatus status, IEnumerable<RequirementDto> requirements, bool needUserInput)
+        public TagDto(
+            int id,
+            string areaCode,
+            string calloffNo,
+            string commPkgNo,
+            string disciplineCode,
+            bool isAreaTag,
+            bool isVoided,
+            string mcPkgNo, 
+            bool needUserInput,
+            string projectName,
+            string purchaseOrderNo,
+            IEnumerable<RequirementDto> requirements,
+            PreservationStatus status,
+            int stepId,
+            string tagFunctionCode,
+            string tagNo)
         {
             Id = id;
+            AreaCode = areaCode;
+            CalloffNo = calloffNo;
+            CommPkgNo = commPkgNo;
+            DisciplineCode = disciplineCode;
+            IsAreaTag = isAreaTag;
+            IsVoided = isVoided;
+            McPkgNo = mcPkgNo;
+            NeedUserInput = needUserInput;
+            ProjectName = projectName;
+            PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
             Status = status;
             StepId = stepId;
+            TagFunctionCode = tagFunctionCode;
             Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
-            NeedUserInput = needUserInput;
         }
+
+        public string AreaCode { get; }
+        public string CalloffNo { get; }
+        public string CommPkgNo { get; }
+        public string DisciplineCode { get; }
         public int Id { get; }
-        public string TagNo { get; }
-        public int StepId { get; }
-        public PreservationStatus Status { get; }
+        public bool IsAreaTag { get; }
+        public bool IsVoided { get; }
+        public string McPkgNo { get; }
+        public string ProjectName { get; }
+        public string PurchaseOrderNo { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
+        public PreservationStatus Status { get; }
+        public int StepId { get; }
+        public string TagFunctionCode { get; }
+        public string TagNo { get; }
         public bool NeedUserInput { get; }
     }
 }

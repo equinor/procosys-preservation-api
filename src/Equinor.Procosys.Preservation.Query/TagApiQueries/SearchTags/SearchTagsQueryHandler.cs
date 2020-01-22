@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
             var apiTags = await _tagApiService
                 .GetTags(_plantProvider.Plant, request.ProjectName, request.StartsWithTagNo)
                 ?? new List<ProcosysTagOverview>();
-            var presTags = await _tagRepository.GetAllByProjectNoAsync(request.ProjectName)
+            var presTags = await _tagRepository.GetAllByProjectNameAsync(request.ProjectName)
                 ?? new List<Tag>();
 
             // Join all tags from API with preservation tags on TagNo. If a tag is not in preservation scope, use default value (null).

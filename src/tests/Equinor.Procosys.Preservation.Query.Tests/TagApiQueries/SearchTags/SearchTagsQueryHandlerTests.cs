@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Returns(Task.FromResult(_apiTags));
 
             _tagRepositoryMock
-                .Setup(x => x.GetAllByProjectNoAsync("ProjectName"))
+                .Setup(x => x.GetAllByProjectNameAsync("ProjectName"))
                 .Returns(Task.FromResult(_repositoryTags));
 
             var result = await _dut.Handle(_query, default);
@@ -144,7 +144,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Returns(Task.FromResult(_apiTags));
 
             _tagRepositoryMock
-                .Setup(x => x.GetAllByProjectNoAsync("ProjectName"))
+                .Setup(x => x.GetAllByProjectNameAsync("ProjectName"))
                 .Returns(Task.FromResult<List<Tag>>(null));
 
             var result = await _dut.Handle(_query, default);

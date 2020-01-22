@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         private readonly List<Step> _steps = new List<Step>();
 
-        private Journey()
+        protected Journey()
             : base(null)
         {
         }
@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public void AddStep(Step step)
+        public virtual void AddStep(Step step)
         {
             if (step == null)
             {

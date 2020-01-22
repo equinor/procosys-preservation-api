@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         private CreateTagCommand _command;
 
         private string _tagNo = "Tag";
-        private string _projectNo = "Project";
+        private string _projectName = "Project";
         private int _stepId = 1;
         private int _rd1Id = 2;
         private int _rd2Id = 3;
@@ -29,14 +29,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         public void Setup_OkState()
         {
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(false);
+            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectName)).Returns(false);
 
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(true);
 
             _projectValidatorMock = new Mock<IProjectValidator>();
-            _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
-            _projectValidatorMock.Setup(r => r.IsClosed(_projectNo)).Returns(false);
+            _projectValidatorMock.Setup(r => r.Exists(_projectName)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsClosed(_projectName)).Returns(false);
 
             _rdValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _rdValidatorMock.Setup(r => r.Exists(_rd1Id)).Returns(true);
@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 
             _command = new CreateTagCommand(
                 _tagNo,
-                _projectNo,
+                _projectName,
                 _stepId,
                 new List<Requirement>
                 {
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Validate_ShouldFail_WhenTagAlreadyExists()
         {
-            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(true);
+            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectName)).Returns(true);
             
             var result = _dut.Validate(_command);
 
@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Validate_ShouldBeValid_WhenProjectExistsAndProjectNotClosed()
         {
-            _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
+            _projectValidatorMock.Setup(r => r.Exists(_projectName)).Returns(true);
 
             var result = _dut.Validate(_command);
 
@@ -92,8 +92,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Validate_ShouldFail_WhenProjectExistsButClosed()
         {
-            _projectValidatorMock.Setup(r => r.Exists(_projectNo)).Returns(true);
-            _projectValidatorMock.Setup(r => r.IsClosed(_projectNo)).Returns(true);
+            _projectValidatorMock.Setup(r => r.Exists(_projectName)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsClosed(_projectName)).Returns(true);
             
             var result = _dut.Validate(_command);
 
@@ -157,7 +157,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         {
             var command = new CreateTagCommand(
                 _tagNo,
-                _projectNo,
+                _projectName,
                 _stepId,
                 new List<Requirement>());
             
@@ -173,7 +173,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         {
             var command = new CreateTagCommand(
                 _tagNo,
-                _projectNo,
+                _projectName,
                 _stepId,
                 new List<Requirement>
                 {
@@ -203,7 +203,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
         {
-            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectNo)).Returns(true);
+            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectName)).Returns(true);
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
             
             var result = _dut.Validate(_command);

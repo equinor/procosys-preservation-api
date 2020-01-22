@@ -6,7 +6,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
     {
         bool Exists(int tagId);
         
-        bool Exists(string tagNo, string projectNo);
+        bool Exists(string tagNo, string projectName);
 
         bool IsVoided(int tagId);
         

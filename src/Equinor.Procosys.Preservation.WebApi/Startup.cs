@@ -4,10 +4,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Equinor.Procosys.Preservation.Command;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.WebApi.DIModules;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Seeding;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -25,14 +27,31 @@ namespace Equinor.Procosys.Preservation.WebApi
     public class Startup
     {
         private const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
+        private readonly IWebHostEnvironment _environment;
 
-        public Startup(IConfiguration configuration) => Configuration = configuration;
+        public Startup(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+        {
+            Configuration = configuration;
+            _environment = webHostEnvironment;
+        }
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            if (_environment.IsDevelopment())
+            {
+                if (Configuration.GetValue<bool>("MigrateDatabase"))
+                {
+                    services.AddHostedService<DatabaseMigrator>();
+                }
+                if (Configuration.GetValue<bool>("SeedDummyData"))
+                {
+                    services.AddHostedService<Seeder>();
+                }
+            }
+
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -46,7 +65,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                     {
                         builder
                         .AllowAnyOrigin()
-                        .WithHeaders(PlantProvider.PlantHeader);
+                        .WithHeaders();
                     });
             });
 
