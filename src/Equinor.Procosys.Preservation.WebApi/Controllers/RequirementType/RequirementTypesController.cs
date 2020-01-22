@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetRequirementType([FromRoute] int id)
+        public async Task<ActionResult<RequirementTypeDto>> GetRequirementType([FromRoute] int id)
         {
             var result = await _mediator.Send(new GetRequirementTypeByIdQuery(id));
             return Ok(result);

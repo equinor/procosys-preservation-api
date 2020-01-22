@@ -62,8 +62,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         {
             var result = await _dut.CreateTag(_createTagDto);
 
-            Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-            Assert.AreEqual(5, ((OkObjectResult)result).Value);
+            Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+            Assert.AreEqual(5, ((OkObjectResult)result.Result).Value);
         }
 
         [TestMethod]
@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 
             var result = await _dut.CreateTag(_createTagDto);
 
-            Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
+            Assert.IsInstanceOfType(result.Result, typeof(NotFoundObjectResult));
         }
     }
 }
