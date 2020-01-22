@@ -1,4 +1,6 @@
-﻿namespace Equinor.Procosys.Preservation.Command.Validators.Tag
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+
+namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 {
     public interface ITagValidator
     {
@@ -9,5 +11,11 @@
         bool IsVoided(int tagId);
         
         bool ProjectIsClosed(int tagId);
+        
+        bool VerifyPreservationStatus(int tagId, PreservationStatus status);
+        
+        bool HasANonVoidedRequirement(int tagId);
+        
+        bool AllRequirementDefinitionsExist(int tagId);
     }
 }

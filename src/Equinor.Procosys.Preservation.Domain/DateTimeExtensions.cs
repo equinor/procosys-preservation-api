@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Equinor.Procosys.Preservation.Domain
 {
@@ -17,5 +18,8 @@ namespace Equinor.Procosys.Preservation.Domain
             var ts = toDateTime.Subtract(fromDateTime);
             return ts.Days/7;
         }
+
+        public static string FormatAsYearAndWeekString(this DateTime dateTime)
+            => string.Concat(ISOWeek.GetYear(dateTime).ToString(), "w", ISOWeek.GetWeekOfYear(dateTime).ToString("00"));
     }
 }

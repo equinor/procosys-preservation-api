@@ -88,10 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
             Assert.AreEqual(tag.PurchaseOrderNo, dto.PurchaseOrderNo);
 
             Assert.AreEqual(tag.Requirements.Count, dto.Requirements.Count());
-            Assert.AreEqual(tag.Requirements.ElementAt(0).Id, dto.Requirements.ElementAt(0).Id);
-            Assert.AreEqual(tag.Requirements.ElementAt(0).IntervalWeeks, dto.Requirements.ElementAt(0).IntervalWeeks);
-            Assert.AreEqual(tag.Requirements.ElementAt(0).IsVoided, dto.Requirements.ElementAt(0).IsVoided);
-            Assert.AreEqual(tag.Requirements.ElementAt(0).RequirementDefinitionId, dto.Requirements.ElementAt(0).RequirementDefinitionId);
+            Assert.AreEqual(tag.Requirements.ElementAt(0).NextDueTimeUtc, dto.Requirements.ElementAt(0).NextDueTimeUtc);
 
             Assert.AreEqual(tag.Status, dto.Status);
             Assert.AreEqual(tag.StepId, dto.StepId);

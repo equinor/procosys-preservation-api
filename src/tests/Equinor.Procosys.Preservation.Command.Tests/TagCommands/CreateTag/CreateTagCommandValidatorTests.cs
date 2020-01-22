@@ -151,5 +151,65 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition is voided!"));
             Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(_rd2Id.ToString()));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenNoRequirementsGiven()
+        {
+            var command = new CreateTagCommand(
+                _tagNo,
+                _projectName,
+                _stepId,
+                new List<Requirement>());
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("At least 1 requirement must be given!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenRequirementsNotUnique()
+        {
+            var command = new CreateTagCommand(
+                _tagNo,
+                _projectName,
+                _stepId,
+                new List<Requirement>
+                {
+                    new Requirement(_rd1Id, 1),
+                    new Requirement(_rd1Id, 1)
+                });
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definitions must be unique!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith1Error_When2ErrorsWithinSameRule()
+        {
+            _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(false);
+            _stepValidatorMock.Setup(r => r.IsVoided(_stepId)).Returns(true);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
+        {
+            _tagValidatorMock.Setup(r => r.Exists(_tagNo, _projectName)).Returns(true);
+            _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(2, result.Errors.Count);
+        }
     }
 }
