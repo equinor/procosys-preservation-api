@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Tag("SchemaA",
                 "TagNoA",
-                "ProjectNameA", 
+                "DescA", 
                 "AreaCodeA", 
                 "CalloffA", 
                 "DisciplineA", 
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual("TagNoA", dut.TagNo);
-            Assert.AreEqual("ProjectNameA", dut.ProjectName);
+            Assert.AreEqual("DescA", dut.Description);
             Assert.AreEqual("AreaCodeA", dut.AreaCode);
             Assert.AreEqual("CalloffA", dut.Calloff);
             Assert.AreEqual("DisciplineA", dut.DisciplineCode);

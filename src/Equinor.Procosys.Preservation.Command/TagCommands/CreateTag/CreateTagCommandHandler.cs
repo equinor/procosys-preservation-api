@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             var tagToAdd = new Tag(
                 _plantProvider.Plant,
                 request.TagNo,
-                request.ProjectName,
+                tagDetails.Description,
                 tagDetails.AreaCode,
                 tagDetails.CallOffNo,
                 tagDetails.DisciplineCode,

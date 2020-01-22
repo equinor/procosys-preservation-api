@@ -33,9 +33,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             };
 
             var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1");
-            project1.AddTag(new Tag(TestPlant, "TagNo1", "", "A", "CO", "Di", "MNo", "CNo", "PO", "TF", step, requirements));
-            project1.AddTag(new Tag(TestPlant, "TagNo2", "", "A", "CO", "Di", "MNo", "CNo", "PO", "TF", step, requirements));
-            project1.AddTag(new Tag(TestPlant, "TagNo3", "", "A", "CO", "Di", "MNo", "CNo", "PO", "TF", step, requirements));
+            project1.AddTag(new Tag(TestPlant, "TagNo1", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "TF", step, requirements));
+            project1.AddTag(new Tag(TestPlant, "TagNo2", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "TF", step, requirements));
+            project1.AddTag(new Tag(TestPlant, "TagNo3", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "TF", step, requirements));
             var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2");
             
             _projects = new List<Project> {project1, project2};

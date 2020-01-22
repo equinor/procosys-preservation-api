@@ -27,13 +27,12 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                 tag.IsVoided,
                 tag.McPkgNo,
                 tag.NeedUserInput,
-                tag.ProjectName,
                 tag.PurchaseOrderNo,
-                tag.Requirements.Select(r =>
-                        new RequirementDto(r.NextDueTimeUtc)),
+                tag.Requirements.Select(r => new RequirementDto(r.NextDueTimeUtc)),
                 tag.Status,
                 tag.StepId,
                 tag.TagFunctionCode,
+                tag.Description,
                 tag.TagNo)));
         }
     }

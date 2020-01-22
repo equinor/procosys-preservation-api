@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private readonly List<Requirement> _requirements = new List<Requirement>();
 
         public const int TagNoLengthMax = 255;
-        public const int ProjectNameLengthMax = 255;
+        public const int DescriptionLengthMax = 255;
 
         protected Tag()
             : base(null)
@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public Tag(
             string schema,
             string tagNo,
-            string projectName,
+            string description,
             string areaCode,
             string calloff,
             string disciplineCode,
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
-            ProjectName = projectName;
+            Description = description;
             AreaCode = areaCode;
             Calloff = calloff;
             DisciplineCode = disciplineCode;
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string DisciplineCode { get; private set; }
         public bool IsAreaTag { get; private set; }
         public string McPkgNo { get; private set; }
-        public string ProjectName { get; private set; }
+        public string Description { get; private set; }
         public string PurchaseOrderNo { get; private set; }
         public int StepId { get; private set; }
         public string TagFunctionCode { get; private set; }

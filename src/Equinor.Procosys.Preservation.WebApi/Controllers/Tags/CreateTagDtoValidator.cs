@@ -11,10 +11,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .NotEmpty()
                 .MaximumLength(Tag.TagNoLengthMax);
 
-            RuleFor(x => x.ProjectName)
-                .NotEmpty()
-                .MaximumLength(Tag.ProjectNameLengthMax);
-
             RuleForEach(x => x.Requirements)
                 .Must(RequirementMustHavePositiveInterval)
                 .WithMessage($"{nameof(TagRequirementDto.IntervalWeeks)} must be positive");

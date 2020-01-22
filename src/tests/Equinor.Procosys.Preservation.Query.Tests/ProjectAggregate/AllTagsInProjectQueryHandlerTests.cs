@@ -33,9 +33,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var step = new Step(plant, mode, responsible);
             _tags = new List<Tag>
             {
-                new Tag(plant, "TagNo1", ProjectName, "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
-                new Tag(plant, "TagNo2", ProjectName, "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
-                new Tag(plant, "TagNo3", ProjectName, "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
+                new Tag(plant, "TagNo1", "Desc", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
+                new Tag(plant, "TagNo2", "Desc", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
+                new Tag(plant, "TagNo3", "Desc", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
             };
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(tag.IsAreaTag, dto.IsAreaTag);
             Assert.AreEqual(tag.IsVoided, dto.IsVoided);
             Assert.AreEqual(tag.McPkgNo, dto.McPkgNo);
-            Assert.AreEqual(tag.ProjectName, dto.ProjectName);
+            Assert.AreEqual(tag.Description, dto.Description);
             Assert.AreEqual(tag.PurchaseOrderNo, dto.PurchaseOrderNo);
 
             Assert.AreEqual(tag.Requirements.Count, dto.Requirements.Count());

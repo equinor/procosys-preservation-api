@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     var tag = new Tag(
                         plant,
                         $"TagNo-{i}",
-                        "ProjectName",
+                        "Description",
                         "AreaCode",
                         "CalloffNo",
                         "DisciplineCode",
