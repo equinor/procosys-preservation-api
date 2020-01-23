@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Tests
 {
@@ -13,9 +9,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         protected ContextHelper ContextHelper;
         
         [TestInitialize]
-        public void RepositorySetup()
-        {
-            ContextHelper = new ContextHelper();
-        }
+        public void RepositorySetup() => ContextHelper = new ContextHelper();
     }
 }
