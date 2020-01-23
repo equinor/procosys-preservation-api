@@ -23,6 +23,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         private Field _attachmentField;
         private int _id = 1;
 
+        private GetRequirementTypeByIdQueryHandler _dut;
+
         [TestInitialize]
         public void Setup()
         {
@@ -50,14 +52,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             _requirementType.AddRequirementDefinition(_requirementDefWithAttachment);
 
             _repoMock.Setup(r => r.GetByIdAsync(_id)).Returns(Task.FromResult(_requirementType));
+
+            _dut = new GetRequirementTypeByIdQueryHandler(_repoMock.Object);
         }
 
         [TestMethod]
-        public void HandleGetRequirementTypeByIdQuery_ShouldGetRequirementTypeWithAllPropertiesSet()
+        public async Task HandleGetRequirementTypeByIdQuery_ShouldGetRequirementTypeWithAllPropertiesSet()
         {
-            var handler = new GetRequirementTypeByIdQueryHandler(_repoMock.Object);
-
-            var result = handler.Handle(new GetRequirementTypeByIdQuery(_id), new CancellationToken()).Result;
+            var result = await _dut.Handle(new GetRequirementTypeByIdQuery(_id), new CancellationToken());
 
             var requirementType = result.Data;
 

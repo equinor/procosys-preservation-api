@@ -20,6 +20,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         private Field _field;
         private Field _fieldVoided;
 
+        private GetAllRequirementTypesQueryHandler _dut;
+
         [TestInitialize]
         public void Setup()
         {
@@ -52,14 +54,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 _requirementTypeVoided
             };
             _repoMock.Setup(r => r.GetAllAsync()).Returns(Task.FromResult(requirementTypes));
+
+            _dut = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
         }
 
         [TestMethod]
-        public void HandleGetAllRequirementTypesQuery_ShouldGetNonVoidedRequirementTypesOnly_WhenNotGettingVoided()
+        public async Task HandleGetAllRequirementTypesQuery_ShouldGetNonVoidedRequirementTypesOnly_WhenNotGettingVoided()
         {
-            var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
-
-            var result = handler.Handle(new GetAllRequirementTypesQuery(false), new CancellationToken()).Result;
+            var result = await _dut.Handle(new GetAllRequirementTypesQuery(false), default);
 
             var requirementTypes = result.Data.ToList();
             var requirementDefinitions = requirementTypes.First().RequirementDefinitions.ToList();
@@ -88,11 +90,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllRequirementTypesQuery_ShouldlncludeVoidedRequirementTypes_WhenGettingVoided()
+        public async Task HandleGetAllRequirementTypesQuery_ShouldlncludeVoidedRequirementTypes_WhenGettingVoided()
         {
-            var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
-
-            var result = handler.Handle(new GetAllRequirementTypesQuery(true), new CancellationToken()).Result;
+            var result = await _dut.Handle(new GetAllRequirementTypesQuery(true), default);
 
             var requirementTypes = result.Data.ToList();
             var requirementDefinitions = requirementTypes.First().RequirementDefinitions.ToList();
@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public void HandleGetAllRequirementTypesQuery_ShouldReturnRequirementTypesSortedBySortKey()
+        public async Task HandleGetAllRequirementTypesQuery_ShouldReturnRequirementTypesSortedBySortKey()
         {
             var requirementTypes = new List<RequirementType>
             {
@@ -115,9 +115,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             };
             _repoMock.Setup(r => r.GetAllAsync()).Returns(Task.FromResult(requirementTypes));
 
-            var handler = new GetAllRequirementTypesQueryHandler(_repoMock.Object);
-
-            var result = handler.Handle(new GetAllRequirementTypesQuery(true), new CancellationToken()).Result;
+            var result = await _dut.Handle(new GetAllRequirementTypesQuery(true), new CancellationToken());
 
             var dtos = result.Data.ToList();
             Assert.AreEqual(4, dtos.Count);
