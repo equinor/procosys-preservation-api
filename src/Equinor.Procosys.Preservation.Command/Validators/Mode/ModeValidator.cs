@@ -22,14 +22,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Mode
 
         public bool IsVoided(int modeId)
         {
-            var r = _modeRepository.GetByIdAsync(modeId).Result;
-            return r != null && r.IsVoided;
+            var mode = _modeRepository.GetByIdAsync(modeId).Result;
+            return mode != null && mode.IsVoided;
         }
 
         public bool IsUsedInStep(int modeId)
         {
-            var r = _journeyRepository.GetStepsByModeIdAsync(modeId).Result;
-            return r != null && r.Count > 0;
+            var step = _journeyRepository.GetStepsByModeIdAsync(modeId).Result;
+            return step != null && step.Count > 0;
         }
     }
 }
