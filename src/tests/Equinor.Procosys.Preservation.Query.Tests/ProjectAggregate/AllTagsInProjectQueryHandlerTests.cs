@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 .Setup(x => x.GetAllTagsInProjectAsync(ProjectName))
                 .Returns(Task.FromResult(_tags));
             _dut = new AllTagsInProjectQueryHandler(_projectRepositoryMock.Object);
-            _query = new AllTagsInProjectQuery(ProjectName); // todo
+            _query = new AllTagsInProjectQuery(ProjectName);
         }
 
         [TestMethod]
