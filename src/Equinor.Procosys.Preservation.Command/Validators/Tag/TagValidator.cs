@@ -15,8 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             _requirementTypeRepository = requirementTypeRepository;
         }
 
-        public bool Exists(int tagId)
-            => _tagRepository.GetByIdAsync(tagId).Result != null;
+        public bool Exists(int tagId) => _tagRepository.Exists(tagId).Result;
 
         public bool Exists(string tagNo, string projectName)
             => _tagRepository.GetByNoAsync(tagNo, projectName).Result != null;

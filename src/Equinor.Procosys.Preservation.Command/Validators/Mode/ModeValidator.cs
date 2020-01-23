@@ -14,8 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Mode
             _journeyRepository = journeyRepository;
         }
 
-        public bool Exists(int modeId)
-            => _modeRepository.GetByIdAsync(modeId).Result != null;
+        public bool Exists(int modeId) => _modeRepository.Exists(modeId).Result;
         
         public bool Exists(string title)
             => _modeRepository.GetByTitleAsync(title).Result != null;
