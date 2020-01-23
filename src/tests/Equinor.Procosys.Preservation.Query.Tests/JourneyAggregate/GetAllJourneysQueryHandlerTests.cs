@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllJourneysQuery_ShouldGetNonVoidedJourneysOnly_WhenNotGettingVoided()
+        public async Task HandleGetAllJourneysQuery_ShouldReturnNonVoidedJourneysOnly_WhenNotGettingVoided()
         {
             var result = await _dut.Handle(new GetAllJourneysQuery(false), default);
 
@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllJourneysQuery_ShouldGetVoidedJourneys_WhenGettingVoided()
+        public async Task HandleGetAllJourneysQuery_ShouldReturnVoidedJourneys_WhenGettingVoided()
         {
             var result = await _dut.Handle(new GetAllJourneysQuery(true), default);
 

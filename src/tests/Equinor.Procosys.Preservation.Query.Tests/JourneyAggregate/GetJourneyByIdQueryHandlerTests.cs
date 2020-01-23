@@ -52,9 +52,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             _dut = new GetJourneyByIdQueryHandler(_journeyRepoMock.Object, _modeRepoMock.Object, _respRepoMock.Object);
         }
 
-
         [TestMethod]
-        public async Task HandleGetJourneyByIdQueryHandler_ShouldGetJourney()
+        public async Task HandleGetJourneyByIdQueryHandler_KnownId_ShouldReturnJourney()
         {
             var result = await _dut.Handle(new GetJourneyByIdQuery(JourneyId), default);
 
@@ -70,6 +69,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             Assert.IsNotNull(step.Responsible);
             Assert.AreEqual(ModeId, step.Mode.Id);
             Assert.AreEqual(RespId, step.Responsible.Id);
+        }
+
+        [TestMethod]
+        public async Task HandleGetJourneyByIdQueryHandler_UnknownId_ShouldReturnNull()
+        {
+            var result = await _dut.Handle(new GetJourneyByIdQuery(1525), default);
+
+            Assert.IsNull(result.Data);
         }
     }
 }

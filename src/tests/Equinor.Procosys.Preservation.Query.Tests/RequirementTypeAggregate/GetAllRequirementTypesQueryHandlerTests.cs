@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllRequirementTypesQuery_ShouldGetNonVoidedRequirementTypesOnly_WhenNotGettingVoided()
+        public async Task HandleGetAllRequirementTypesQuery_ShouldReturnNonVoidedRequirementTypesOnly_WhenNotGettingVoided()
         {
             var result = await _dut.Handle(new GetAllRequirementTypesQuery(false), default);
 

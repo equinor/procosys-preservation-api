@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByTitle_KnownMode_ReturnsMode()
+        public async Task GetByTitle_KnownTitle_ReturnsMode()
         {
             var result = await _dut.GetByTitleAsync(TestMode);
 
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByTitle_UnknownMode_ReturnsNull()
+        public async Task GetByTitle_UnknownTitle_ReturnsNull()
         {
             var result = await _dut.GetByTitleAsync("XYZ");
 
