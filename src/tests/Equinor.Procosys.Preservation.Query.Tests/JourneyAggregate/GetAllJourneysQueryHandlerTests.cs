@@ -95,10 +95,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             var journeys = result.Data.ToList();
 
             Assert.AreEqual(2, journeys.Count);
-            var journey = journeys.First();
-            
-            var steps = journey.Steps.ToList();
+            Assert.IsTrue(journeys.Any(j => j.IsVoided));
+
+            var steps = journeys.First().Steps.ToList();
             Assert.AreEqual(2, steps.Count);
+            Assert.IsTrue(steps.Any(s => s.IsVoided));
         }
     }
 }

@@ -40,9 +40,11 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
             var journeyDto = new JourneyDto(
                 journey.Id,
                 journey.Title,
+                journey.IsVoided,
                 journey.Steps.Select(step =>
                     new StepDto(
                         step.Id,
+                        step.IsVoided,
                         modes.FirstOrDefault(x => x.Id == step.ModeId),
                         responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId)
                     )

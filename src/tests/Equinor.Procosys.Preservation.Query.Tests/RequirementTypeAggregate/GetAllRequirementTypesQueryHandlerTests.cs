@@ -99,8 +99,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             var fields = requirementDefinitions.First().Fields.ToList();
 
             Assert.AreEqual(2, requirementTypes.Count);
+            Assert.IsTrue(requirementTypes.Any(j => j.IsVoided));
             Assert.AreEqual(2, requirementDefinitions.Count);
+            Assert.IsTrue(requirementDefinitions.Any(j => j.IsVoided));
             Assert.AreEqual(2, fields.Count);
+            Assert.IsTrue(fields.Any(j => j.IsVoided));
         }
 
         [TestMethod]
