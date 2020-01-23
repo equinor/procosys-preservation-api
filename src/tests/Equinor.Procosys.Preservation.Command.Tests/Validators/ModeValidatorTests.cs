@@ -28,8 +28,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                     new Step("S", new Mock<Mode>().Object, new Mock<Responsible>().Object)
                 }));
 
-            var mode = new Mode("S", "J");
-            var modeVoided = new Mode("S", "J");
+            var mode = new Mode("S", "M");
+            var modeVoided = new Mode("S", "M");
             modeVoided.Void();
 
             modeRepositoryMock.Setup(r => r.GetByTitleAsync(ModeTitle)).Returns(Task.FromResult(mode));
