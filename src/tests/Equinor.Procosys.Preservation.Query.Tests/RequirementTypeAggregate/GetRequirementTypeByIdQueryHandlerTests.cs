@@ -9,7 +9,7 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 {
     [TestClass]
-    public class GetRequirementTypesByIdQueryHandlerTests
+    public class GetRequirementTypeByIdQueryHandlerTests
     {
         private Mock<IRequirementTypeRepository> _repoMock;
         private RequirementType _requirementType;
