@@ -13,15 +13,13 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
 {
     [TestClass]
-    public class JourneyRepositoryTests
+    public class JourneyRepositoryTests : RepositoryTestBase
     {
-        private const string TestPlant = "PCS$TESTPLANT";
         private const string TestJourney = "J1";
         private const int ModeId = 11;
         private const int StepId = 51;
         private List<Journey> _journeys;
         private Mock<DbSet<Journey>> _dbSetMock;
-        private ContextHelper _contextHelper;
 
         private JourneyRepository _dut;
 
@@ -48,13 +46,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             
             _dbSetMock = _journeys.AsQueryable().BuildMockDbSet();
 
-            _contextHelper = new ContextHelper();
-            _contextHelper
+            ContextHelper
                 .ContextMock
                 .Setup(x => x.Journeys)
                 .Returns(_dbSetMock.Object);
 
-            _dut = new JourneyRepository(_contextHelper.ContextMock.Object);
+            _dut = new JourneyRepository(ContextHelper.ContextMock.Object);
         }
 
         [TestMethod]
