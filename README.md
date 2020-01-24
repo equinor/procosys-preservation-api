@@ -1,40 +1,56 @@
 # pcs-preservation-api
+Backend for the preservation module in Project Completion System (ProCoSys (PCS)).
 
-Backend .Net Core 3 application for Preservation module in Project Completion System (ProCoSys).
+It exposes a REST API and is an ASP.NET Core 3.1 application using Entity Framework Core 3.1.
 
-Note: Before running the application, the secret-file need to be updated (right-click 'Equinor.Procosys.Preservation.WebApi' and select 'Manage User Secrets'). 
+## Notes
 
-     {
-       "API": {
-         "Authority": "",
-         "Audience": ""
-       },
-       "Swagger": {
-         "AuthorizationUrl": "",
-         "ClientId": "",
-         "Scopes": {
-         }
-       },
-       "ConnectionStrings": {
-         "PreservationContext": ""
-       },
-       "MainApiBaseUrl": ""
-     }
+### Secrets
+Before running the application, some settings need to be set. These are defined in appsettings.json. To avoid the possibility to commit secrets, move parts of the configuration to the secrets.json file on your computer.
+Typical settings that should be moved to secrets.json are:
+* AD IDs
+* Keys
+* Local URLs
+* Other secrets
 
-## How to run in Visual Studio
+### Migration
+When running in development environment, the database is auto-migrated on application startup. This can be changed using the setting in appsettings.development.json.
+
+### Seeding
+The datebase can be seeded with test data. To do this, enable the feature in appsettings.development.json and start the application.
+>Note: This will run every time the application starts. To avoid multiple seedings, disable the feature after the application has started.
+
+## Visual Studio
+### Set secrets
+ To open secrets.json, right-click on the startup project and select 'Manage User Secrets'.
+### Run
+
 Choose to run as *Equinor.ProcoSys.Preservation.WebApi* in the dropdown menu and hit F5.
 
-## How to run from command line
+## Command line
+### Set secrets
 In folder
 ```
-src\Equinor.Procosys.Preservation.WebApi\
+src\Equinor.Procosys.Preservation.WebApi
+```
+Set secrets using
+```console
+dotnet user-secrets "<key>" "<value>"
+```
+### Run
+In folder
+```
+src\Equinor.Procosys.Preservation.WebApi
 ```
 run
 ```console
 dotnet run
 ```
 
-## How to run in Docker
+## Docker
+### Set secrets
+Use either Visual Studio or Command line. Docker-compose is set up to mount the secrets file into the container.
+### Run
 In folder
 ```
 src\
@@ -43,4 +59,3 @@ run
 ```console
 docker-compose -f .\Docker-compose.yml -f .\Docker-compose.development.yml up
 ```
-> Note: This does not work when connected to VPN, due to volume mounting issues.
