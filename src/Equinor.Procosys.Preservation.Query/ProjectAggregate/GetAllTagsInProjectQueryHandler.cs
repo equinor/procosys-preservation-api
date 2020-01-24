@@ -9,18 +9,18 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 {
-    public class AllTagsInProjectQueryHandler : IRequestHandler<AllTagsInProjectQuery, Result<IEnumerable<TagDto>>>
+    public class GetAllTagsInProjectQueryHandler : IRequestHandler<GetAllTagsInProjectQuery, Result<IEnumerable<TagDto>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly ITimeService _timeService;
 
-        public AllTagsInProjectQueryHandler(IProjectRepository projectRepository, ITimeService timeService)
+        public GetAllTagsInProjectQueryHandler(IProjectRepository projectRepository, ITimeService timeService)
         {
             _projectRepository = projectRepository;
             _timeService = timeService;
         }
 
-        public async Task<Result<IEnumerable<TagDto>>> Handle(AllTagsInProjectQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<TagDto>>> Handle(GetAllTagsInProjectQuery request, CancellationToken cancellationToken)
         {
             var tags = await _projectRepository.GetAllTagsInProjectAsync(request.ProjectName);
             return new SuccessResult<IEnumerable<TagDto>>(tags.Select(tag =>

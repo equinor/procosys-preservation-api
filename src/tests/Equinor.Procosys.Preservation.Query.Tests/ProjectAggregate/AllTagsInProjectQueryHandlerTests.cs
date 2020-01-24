@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -15,24 +16,61 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
     [TestClass]
     public class AllTagsInProjectQueryHandlerTests
     {
+        private DateTime _utcNow;
+        private const int IntervalWeeks = 4;
         private const string ProjectName = "ProjectX";
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<ITimeService> _timeServiceMock;
-        private AllTagsInProjectQueryHandler _dut;
-        private AllTagsInProjectQuery _query;
+        private GetAllTagsInProjectQueryHandler _dut;
+        private GetAllTagsInProjectQuery _query;
         private List<Tag> _tags;
+        private Tag _tagNotStartedPreservation;
+        private Tag _tagStartedPreservation;
 
         [TestInitialize]
         public void Setup()
         {
+            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             var plant = "PCS$TESTPLANT";
-            var requirements = new List<Requirement> { new Requirement(plant, 2, new Mock<RequirementDefinition>().Object) };
             var step = new Mock<Step>().Object;
+            _tagNotStartedPreservation = new Tag(
+                plant,
+                "TagNo1",
+                "Desc",
+                "AreaCode",
+                "Calloff",
+                "DisciplineCode",
+                "McPkgNo",
+                "CommPkgNo",
+                "PoNo",
+                "TagFunctionCode",
+                step,
+                new List<Requirement>
+                {
+                    new Requirement(plant, IntervalWeeks, new Mock<RequirementDefinition>().Object)
+                });
+            _tagStartedPreservation = new Tag(
+                plant,
+                "TagNo2",
+                "Desc",
+                "AreaCode",
+                "Calloff",
+                "DisciplineCode",
+                "McPkgNo",
+                "CommPkgNo",
+                "PoNo",
+                "TagFunctionCode",
+                step,
+                new List<Requirement>
+                {
+                    new Requirement(plant, IntervalWeeks, new Mock<RequirementDefinition>().Object)
+                });
+
+            _tagStartedPreservation.StartPreservation(_utcNow);
             _tags = new List<Tag>
             {
-                new Tag(plant, "TagNo1", "Desc", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
-                new Tag(plant, "TagNo2", "Desc", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
-                new Tag(plant, "TagNo3", "Desc", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
+                _tagNotStartedPreservation,
+                _tagStartedPreservation
             };
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
@@ -40,12 +78,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 .Setup(x => x.GetAllTagsInProjectAsync(ProjectName))
                 .Returns(Task.FromResult(_tags));
             _timeServiceMock = new Mock<ITimeService>();
-            _dut = new AllTagsInProjectQueryHandler(_projectRepositoryMock.Object, _timeServiceMock.Object);
-            _query = new AllTagsInProjectQuery(ProjectName);
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
+            _dut = new GetAllTagsInProjectQueryHandler(_projectRepositoryMock.Object, _timeServiceMock.Object);
+            _query = new GetAllTagsInProjectQuery(ProjectName);
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsOkResult()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsOkResult()
         {
             var result = await _dut.Handle(_query, default);
 
@@ -53,41 +92,68 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsCorrectNumberOfItems()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsCorrectNumberOfItems()
         {
             var result = await _dut.Handle(_query, default);
 
-            Assert.AreEqual(3, result.Data.Count());
+            Assert.AreEqual(2, result.Data.Count());
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsCorrectDto()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsCorrectDto()
         {
             var result = await _dut.Handle(_query, default);
 
             var tag = _tags[0];
-            var dto = result.Data.ElementAt(0);
-            Assert.AreEqual(tag.AreaCode, dto.AreaCode);
-            Assert.AreEqual(tag.Calloff, dto.CalloffNo);
-            Assert.AreEqual(tag.CommPkgNo, dto.CommPkgNo);
-            Assert.AreEqual(tag.DisciplineCode, dto.DisciplineCode);
-            Assert.AreEqual(tag.Id, dto.Id);
-            Assert.AreEqual(tag.IsAreaTag, dto.IsAreaTag);
-            Assert.AreEqual(tag.IsVoided, dto.IsVoided);
-            Assert.AreEqual(tag.McPkgNo, dto.McPkgNo);
-            Assert.AreEqual(tag.Description, dto.Description);
-            Assert.AreEqual(tag.PurchaseOrderNo, dto.PurchaseOrderNo);
+            var tagDto = result.Data.First();
+            Assert.AreEqual(tag.AreaCode, tagDto.AreaCode);
+            Assert.AreEqual(tag.Calloff, tagDto.CalloffNo);
+            Assert.AreEqual(tag.CommPkgNo, tagDto.CommPkgNo);
+            Assert.AreEqual(tag.DisciplineCode, tagDto.DisciplineCode);
+            Assert.AreEqual(tag.Id, tagDto.Id);
+            Assert.AreEqual(tag.IsAreaTag, tagDto.IsAreaTag);
+            Assert.AreEqual(tag.IsVoided, tagDto.IsVoided);
+            Assert.AreEqual(tag.McPkgNo, tagDto.McPkgNo);
+            Assert.AreEqual(tag.Description, tagDto.Description);
+            Assert.AreEqual(tag.PurchaseOrderNo, tagDto.PurchaseOrderNo);
 
-            Assert.AreEqual(tag.Requirements.Count, dto.Requirements.Count());
-
-            Assert.AreEqual(tag.Status, dto.Status);
-            Assert.AreEqual(tag.StepId, dto.StepId);
-            Assert.AreEqual(tag.TagFunctionCode, dto.TagFunctionCode);
-            Assert.AreEqual(tag.TagNo, dto.TagNo);
+            Assert.AreEqual(tag.Status, tagDto.Status);
+            Assert.AreEqual(tag.StepId, tagDto.StepId);
+            Assert.AreEqual(tag.TagFunctionCode, tagDto.TagFunctionCode);
+            Assert.AreEqual(tag.TagNo, tagDto.TagNo);
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsNoElements_WhenThereIsNoTags()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnsDueInfo_WhenPreservationNotStarted()
+        {
+            var result = await _dut.Handle(_query, default);
+
+            var tagDto = result.Data.First(t => t.Status == PreservationStatus.NotStarted);
+            var requirementDto = tagDto.Requirements.First();
+
+            Assert.IsFalse(requirementDto.NextDueTimeUtc.HasValue);
+            Assert.IsFalse(requirementDto.NextDueWeeks.HasValue);
+            Assert.IsNull(requirementDto.NextDueAsYearAndWeek);
+            Assert.AreEqual(PreservationStatus.NotStarted, tagDto.Status);
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsDueInfo_WhenPreservationStarted()
+        {
+            var result = await _dut.Handle(_query, default);
+
+            var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
+            var requirementDto = tagDto.Requirements.First();
+
+            Assert.IsTrue(requirementDto.NextDueTimeUtc.HasValue);
+            Assert.IsTrue(requirementDto.NextDueWeeks.HasValue);
+            Assert.AreEqual(IntervalWeeks, requirementDto.NextDueWeeks.Value);
+            Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
+            Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsNoElements_WhenThereIsNoTags()
         {
             _projectRepositoryMock
                 .Setup(x => x.GetAllTagsInProjectAsync(ProjectName))
