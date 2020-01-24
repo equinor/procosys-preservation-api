@@ -9,7 +9,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class JourneyValidatorTests
     {
-        private const string JourneyTitle = "J";
+        private const string JourneyTitle = "JourneyNotVoided";
+        private const string JourneyTitleVoided = "JourneyNotVoided";
         private const int JourneyIdNonVoided = 1;
         private const int JourneyIdVoided = 2;
         private JourneyValidator _dut;
@@ -19,8 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
 
-            var journey = new Journey("S", "J");
-            var journeyVoided = new Journey("S", "J");
+            var journey = new Journey("S", JourneyTitle);
+            var journeyVoided = new Journey("S", JourneyTitleVoided);
             journeyVoided.Void();
 
             journeyRepositoryMock.Setup(r => r.GetByTitleAsync(JourneyTitle)).Returns(Task.FromResult(journey));
