@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
 {
-    public class AllResponsiblesQuery : IRequest<Result<List<ResponsibleDto>>>
+    public class GetAllResponsiblesQuery : IRequest<Result<IEnumerable<ResponsibleDto>>>
     {
     }
 }

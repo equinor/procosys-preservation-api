@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsible
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ResponsibleDto>>> GetAllResponsibles()
         {
-            var result = await _mediator.Send(new AllResponsiblesQuery());
+            var result = await _mediator.Send(new GetAllResponsiblesQuery());
             return this.FromResult(result);
         }
     }

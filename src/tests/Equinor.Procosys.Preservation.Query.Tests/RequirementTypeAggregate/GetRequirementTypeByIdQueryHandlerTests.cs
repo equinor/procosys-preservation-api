@@ -9,8 +9,9 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 {
     [TestClass]
-    public class GetRequirementTypesByIdQueryHandlerTests
+    public class GetRequirementTypeByIdQueryHandlerTests
     {
+        private const int RequirementTypeId = 1;
         private Mock<IRequirementTypeRepository> _repoMock;
         private RequirementType _requirementType;
         private RequirementDefinition _requirementDefWithInfo;
@@ -21,7 +22,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         private Field _numberField;
         private Field _checkboxField;
         private Field _attachmentField;
-        private int _id = 1;
+
+        private GetRequirementTypeByIdQueryHandler _dut;
 
         [TestInitialize]
         public void Setup()
@@ -49,15 +51,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             _requirementType.AddRequirementDefinition(_requirementDefWithCheckbox);
             _requirementType.AddRequirementDefinition(_requirementDefWithAttachment);
 
-            _repoMock.Setup(r => r.GetByIdAsync(_id)).Returns(Task.FromResult(_requirementType));
+            _repoMock.Setup(r => r.GetByIdAsync(RequirementTypeId)).Returns(Task.FromResult(_requirementType));
+
+            _dut = new GetRequirementTypeByIdQueryHandler(_repoMock.Object);
         }
 
         [TestMethod]
-        public void HandleGetRequirementTypeByIdQuery_ShouldGetRequirementTypeWithAllPropertiesSet()
+        public async Task HandleGetRequirementTypeByIdQuery_KnownId_ShouldReturnRequirementTypeWithAllPropertiesSet()
         {
-            var handler = new GetRequirementTypeByIdQueryHandler(_repoMock.Object);
-
-            var result = handler.Handle(new GetRequirementTypeByIdQuery(_id), new CancellationToken()).Result;
+            var result = await _dut.Handle(new GetRequirementTypeByIdQuery(RequirementTypeId), new CancellationToken());
 
             var requirementType = result.Data;
 
@@ -80,6 +82,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 
             var requirementDefWithAttachment = requirementDefinitions.Single(rd => rd.Title == "DefWithAttachment");
             AssertRequirementDefinition(requirementDefWithAttachment, _requirementDefWithAttachment, _attachmentField, true);
+        }
+
+        [TestMethod]
+        public async Task HandleGetRequirementTypeByIdQuery_UnknownId_ShouldReturnNull()
+        {
+            var result = await _dut.Handle(new GetRequirementTypeByIdQuery(246), new CancellationToken());
+
+            Assert.IsNull(result.Data);
         }
 
         private void AssertRequirementDefinition(
