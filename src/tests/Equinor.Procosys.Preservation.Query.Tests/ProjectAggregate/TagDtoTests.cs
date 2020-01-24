@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             "CallOffNo",
             "CommPkgNo",
             "DisciplineCode",
-            null,
+            new RequirementDto(0, 0, null, default),
             true,
             true,
             "McPkgNo",
@@ -47,6 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.IsNotNull(_dut.Requirements);
+            Assert.IsNotNull(_dut.FirstUpcommingRequirement);
             Assert.AreEqual(1, _dut.Requirements.Count());
             Assert.AreEqual(PreservationStatus.Active, _dut.Status);
             Assert.AreEqual(2, _dut.StepId);

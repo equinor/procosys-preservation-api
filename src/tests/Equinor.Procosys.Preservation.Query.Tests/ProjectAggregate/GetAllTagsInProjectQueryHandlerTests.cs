@@ -14,7 +14,7 @@ using ServiceResult;
 namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 {
     [TestClass]
-    public class AllTagsInProjectQueryHandlerTests
+    public class GetAllTagsInProjectQueryHandlerTests
     {
         private DateTime _utcNow;
         private const int IntervalWeeks = 4;
@@ -131,6 +131,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var tagDto = result.Data.First(t => t.Status == PreservationStatus.NotStarted);
             var requirementDto = tagDto.Requirements.First();
 
+            Assert.IsNull(tagDto.FirstUpcommingRequirement);
             Assert.IsFalse(requirementDto.NextDueTimeUtc.HasValue);
             Assert.AreEqual(0, requirementDto.NextDueWeeks);
             Assert.IsNull(requirementDto.NextDueAsYearAndWeek);
@@ -149,6 +150,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(IntervalWeeks, requirementDto.NextDueWeeks);
             Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
             Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsCorrectFirstUpcommingRequirement_WhenPreservationStarted()
+        {
+            var result = await _dut.Handle(_query, default);
+
+            var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
+            var requirementDto = tagDto.Requirements.First();
+
+            Assert.IsNotNull(tagDto.FirstUpcommingRequirement);
+            Assert.AreEqual(requirementDto, tagDto.FirstUpcommingRequirement);
         }
 
         [TestMethod]

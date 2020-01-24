@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -11,28 +12,35 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class TagTests
     {
+        private const int ReqFirstId = 7;
+        private const int ReqLaterId = 17;
+        private const int IntervalWeeksFirst = 2;
+        private const int IntervalWeeksLater = 4;
         private Mock<Step> _stepMock;
-        private Mock<Requirement> _requirementMock;
-        // ReSharper disable once CollectionNeverUpdated.Local
-        readonly List<Requirement> _emptyRequirements = new List<Requirement>();
-        readonly List<Requirement> _requirements = new List<Requirement>();
+        private Mock<Requirement> _reqFirstMock;
+        private Mock<Requirement> _reqLaterMock;
+        private List<Requirement> _requirements;
         private DateTime _utcNow;
+        private Tag _dut;
 
         [TestInitialize]
         public void Setup()
         {
             _stepMock = new Mock<Step>();
             _stepMock.SetupGet(x => x.Id).Returns(3);
-            _requirementMock = new Mock<Requirement>();
-            _requirementMock.SetupGet(x => x.Id).Returns(4);
-            _requirements.Add(_requirementMock.Object);
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-        }
+            _reqFirstMock = new Mock<Requirement>("", IntervalWeeksFirst, new Mock<RequirementDefinition>().Object);
+            _reqFirstMock.SetupGet(x => x.Id).Returns(ReqFirstId);
+            _reqLaterMock = new Mock<Requirement>("", IntervalWeeksLater, new Mock<RequirementDefinition>().Object);
+            _reqLaterMock.SetupGet(x => x.Id).Returns(ReqLaterId);
 
-        [TestMethod]
-        public void Constructor_ShouldSetProperties()
-        {
-            var dut = new Tag("SchemaA",
+            _requirements = new List<Requirement>
+            {
+                _reqFirstMock.Object, _reqLaterMock.Object
+            };
+
+            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+
+            _dut = new Tag("SchemaA",
                 "TagNoA",
                 "DescA", 
                 "AreaCodeA", 
@@ -44,20 +52,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 "TagFunctionCodeA", 
                 _stepMock.Object,
                 _requirements);
+        }
 
-            Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual("TagNoA", dut.TagNo);
-            Assert.AreEqual("DescA", dut.Description);
-            Assert.AreEqual("AreaCodeA", dut.AreaCode);
-            Assert.AreEqual("CalloffA", dut.Calloff);
-            Assert.AreEqual("DisciplineA", dut.DisciplineCode);
-            Assert.AreEqual("McPkgA", dut.McPkgNo);
-            Assert.AreEqual("PurchaseOrderA", dut.PurchaseOrderNo);
-            Assert.AreEqual("TagFunctionCodeA", dut.TagFunctionCode);
-            Assert.AreEqual(_stepMock.Object.Id, dut.StepId);
-            Assert.AreEqual(1, dut.Requirements.Count);
-            Assert.AreEqual(_requirementMock.Object.Id, dut.Requirements.First().Id);
-            Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
+        [TestMethod]
+        public void Constructor_ShouldSetProperties()
+        {
+            Assert.AreEqual("SchemaA", _dut.Schema);
+            Assert.AreEqual("TagNoA", _dut.TagNo);
+            Assert.AreEqual("DescA", _dut.Description);
+            Assert.AreEqual("AreaCodeA", _dut.AreaCode);
+            Assert.AreEqual("CalloffA", _dut.Calloff);
+            Assert.AreEqual("DisciplineA", _dut.DisciplineCode);
+            Assert.AreEqual("McPkgA", _dut.McPkgNo);
+            Assert.AreEqual("PurchaseOrderA", _dut.PurchaseOrderNo);
+            Assert.AreEqual("TagFunctionCodeA", _dut.TagFunctionCode);
+            Assert.AreEqual(_stepMock.Object.Id, _dut.StepId);
+            var requirements = _dut.Requirements;
+            Assert.AreEqual(2, requirements.Count);
+            var firstReq = requirements.ElementAt(0);
+            var laterReq = requirements.ElementAt(1);
+            Assert.AreEqual(_reqFirstMock.Object.Id, firstReq.Id);
+            Assert.AreEqual(_reqLaterMock.Object.Id, laterReq.Id);
+            Assert.IsNull(firstReq.NextDueTimeUtc);
+            Assert.IsNull(laterReq.NextDueTimeUtc);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
         }
 
         [TestMethod]
@@ -73,45 +91,77 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenEmptyListOfRequirementsGiven()
             => Assert.ThrowsException<Exception>(()
-                => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _emptyRequirements));
+                => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, new List<Requirement>()));
 
         [TestMethod]
         public void SetStep_ShouldSetStepId()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
-
             var newStep = new Mock<Step>();
             newStep.SetupGet(x => x.Id).Returns(4);
-            dut.SetStep(newStep.Object);
+            _dut.SetStep(newStep.Object);
 
-            Assert.AreEqual(newStep.Object.Id, dut.StepId);
+            Assert.AreEqual(newStep.Object.Id, _dut.StepId);
         }
 
         [TestMethod]
         public void SetStep_ShouldThrowException_WhenStepNotGiven()
-        {
-            var tag = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
-
-            Assert.ThrowsException<ArgumentNullException>(() => tag.SetStep(null));
-        }
+            => Assert.ThrowsException<ArgumentNullException>(() => _dut.SetStep(null));
 
         [TestMethod]
         public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven()
-        {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
-
-            Assert.ThrowsException<ArgumentNullException>(() => dut.AddRequirement(null));
-        }
+            => Assert.ThrowsException<ArgumentNullException>(() => _dut.AddRequirement(null));
 
         [TestMethod]
         public void StartPreservation_ShouldSetStatusActive()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
-            Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
 
-            dut.StartPreservation(_utcNow);
+            _dut.StartPreservation(_utcNow);
 
-            Assert.AreEqual(PreservationStatus.Active, dut.Status);
+            Assert.AreEqual(PreservationStatus.Active, _dut.Status);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldShouldSetCorrectNextDueDateOnEachRequirement()
+        {
+            _dut.StartPreservation(_utcNow);
+
+            var expectedNextDueTimeFirstUtc = _utcNow.AddWeeks(IntervalWeeksFirst);
+            var expectedNextDueTimeLaterUtc = _utcNow.AddWeeks(IntervalWeeksLater);
+            Assert.AreEqual(expectedNextDueTimeFirstUtc, _dut.Requirements.ElementAt(0).NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeLaterUtc, _dut.Requirements.ElementAt(1).NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void FirstUpcommingRequirement_ShouldNotGiveRequirement_WhenPreservationNotStarted()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
+
+            var firstUpcommingRequirement = _dut.FirstUpcommingRequirement;
+
+            Assert.IsNull(firstUpcommingRequirement);
+        }
+
+        [TestMethod]
+        public void FirstUpcommingRequirement_ShouldGiveRequirement_WhenPreservationStarted()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
+
+            _dut.StartPreservation(_utcNow);
+            var firstUpcommingRequirement = _dut.FirstUpcommingRequirement;
+
+            Assert.IsNotNull(firstUpcommingRequirement);
+        }
+
+        [TestMethod]
+        public void FirstUpcommingRequirement_ShouldGiveCorrectRequirement_WhenDifferentInterval()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
+
+            _dut.StartPreservation(_utcNow);
+            var firstUpcommingRequirement = _dut.FirstUpcommingRequirement;
+
+            Assert.AreEqual(firstUpcommingRequirement, _dut.Requirements.ElementAt(0));
         }
     }
 }
