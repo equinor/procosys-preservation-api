@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
@@ -11,8 +12,13 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
     public class AllTagsInProjectQueryHandler : IRequestHandler<AllTagsInProjectQuery, Result<IEnumerable<TagDto>>>
     {
         private readonly IProjectRepository _projectRepository;
+        private readonly ITimeService _timeService;
 
-        public AllTagsInProjectQueryHandler(IProjectRepository projectRepository) => _projectRepository = projectRepository;
+        public AllTagsInProjectQueryHandler(IProjectRepository projectRepository, ITimeService timeService)
+        {
+            _projectRepository = projectRepository;
+            _timeService = timeService;
+        }
 
         public async Task<Result<IEnumerable<TagDto>>> Handle(AllTagsInProjectQuery request, CancellationToken cancellationToken)
         {
@@ -28,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                 tag.McPkgNo,
                 tag.NeedUserInput,
                 tag.PurchaseOrderNo,
-                tag.Requirements.Select(r => new RequirementDto(r.NextDueTimeUtc)),
+                tag.Requirements.Select(r => new RequirementDto(_timeService.GetCurrentTimeUtc(), r.NextDueTimeUtc)),
                 tag.Status,
                 tag.StepId,
                 tag.TagFunctionCode,

@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Query.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -18,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
     {
         private const string ProjectName = "ProjectX";
         private Mock<IProjectRepository> _projectRepositoryMock;
+        private Mock<ITimeService> _timeServiceMock;
         private AllTagsInProjectQueryHandler _dut;
         private AllTagsInProjectQuery _query;
         private List<Tag> _tags;
@@ -26,11 +26,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         public void Setup()
         {
             var plant = "PCS$TESTPLANT";
-            var mode = new Mode(plant, "TestMode");
-            var responsible = new Responsible(plant, "Responsible");
-            var requirementDefinition = new RequirementDefinition(plant, "ReqDef", 2, 1);
-            var requirements = new List<Requirement> { new Requirement(plant, 2, requirementDefinition) };
-            var step = new Step(plant, mode, responsible);
+            var requirements = new List<Requirement> { new Requirement(plant, 2, new Mock<RequirementDefinition>().Object) };
+            var step = new Mock<Step>().Object;
             _tags = new List<Tag>
             {
                 new Tag(plant, "TagNo1", "Desc", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PoNo", "TagFunctionCode", step, requirements),
@@ -42,7 +39,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             _projectRepositoryMock
                 .Setup(x => x.GetAllTagsInProjectAsync(ProjectName))
                 .Returns(Task.FromResult(_tags));
-            _dut = new AllTagsInProjectQueryHandler(_projectRepositoryMock.Object);
+            _timeServiceMock = new Mock<ITimeService>();
+            _dut = new AllTagsInProjectQueryHandler(_projectRepositoryMock.Object, _timeServiceMock.Object);
             _query = new AllTagsInProjectQuery(ProjectName);
         }
 
@@ -81,7 +79,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(tag.PurchaseOrderNo, dto.PurchaseOrderNo);
 
             Assert.AreEqual(tag.Requirements.Count, dto.Requirements.Count());
-            Assert.AreEqual(tag.Requirements.ElementAt(0).NextDueTimeUtc, dto.Requirements.ElementAt(0).NextDueTimeUtc);
 
             Assert.AreEqual(tag.Status, dto.Status);
             Assert.AreEqual(tag.StepId, dto.StepId);

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Query.ProjectAggregate;
@@ -23,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             "McPkgNo",
             true,
             "PoNo",
-            new List<RequirementDto> {new RequirementDto(null)},
+            new List<RequirementDto> {new RequirementDto(DateTime.Now, null)},
             PreservationStatus.Active,
             2,
             "TagFunctionCode",
