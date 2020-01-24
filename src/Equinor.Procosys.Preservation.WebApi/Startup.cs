@@ -65,7 +65,8 @@ namespace Equinor.Procosys.Preservation.WebApi
                     {
                         builder
                         .AllowAnyOrigin()
-                        .AllowAnyHeader();
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
                     });
             });
 
