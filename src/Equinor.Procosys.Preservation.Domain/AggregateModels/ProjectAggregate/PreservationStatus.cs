@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
+﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public enum PreservationStatus
     {

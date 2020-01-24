@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 
 namespace Equinor.Procosys.Preservation.WebApi.Seeding
 {
@@ -55,33 +55,47 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
             }
         }
 
-        public static void AddTags(this ITagRepository tagRepository, int entryCount, string plant, List<Step> steps, List<RequirementDefinition> requirementDefinitions)
+        public static void AddProjects(this IProjectRepository projectRepository, int entryCount, string plant)
+        {
+            for (var i = 0; i < entryCount; i++)
+            {
+                var project = new Project(plant, $"Project-{i}", "Decription");
+                projectRepository.Add(project);
+            }
+        }
+
+        public static void AddTags(this IEnumerable<Project> projects, int entryCountPrPoject, string plant, List<Step> steps, List<RequirementDefinition> requirementDefinitions)
         {
             var rand = new Random();
 
-            for (var i = 0; i < entryCount; i++)
+            foreach (var project in projects)
             {
-                var requirements = new List<Requirement>();
-                for (var j = 0; j < 5; j++)
+                for (var i = 0; i < entryCountPrPoject; i++)
                 {
-                    var requirement = new Requirement(plant, 2, requirementDefinitions[rand.Next(requirementDefinitions.Count)]);
-                    requirements.Add(requirement);
-                }
+                    var requirements = new List<Requirement>();
+                    for (var j = 0; j < 5; j++)
+                    {
+                        var requirement = new Requirement(plant, 2,
+                            requirementDefinitions[rand.Next(requirementDefinitions.Count)]);
+                        requirements.Add(requirement);
+                    }
 
-                var tag = new Tag(
-                    plant,
-                    $"TagNo-{i}",
-                    "ProjectName",
-                    "AreaCode",
-                    "CalloffNo",
-                    "DisciplineCode",
-                    "McPkgNo",
-                    "CommPkgNo",
-                    "PoNo",
-                    "TagFunctionCode",
-                    steps[rand.Next(steps.Count)],
-                    requirements);
-                tagRepository.Add(tag);
+                    var tag = new Tag(
+                        plant,
+                        $"TagNo-{i}",
+                        "Description",
+                        "AreaCode",
+                        "CalloffNo",
+                        "DisciplineCode",
+                        "McPkgNo",
+                        "CommPkgNo",
+                        "PoNo",
+                        "TagFunctionCode",
+                        steps[rand.Next(steps.Count)],
+                        requirements);
+
+                    project.AddTag(tag);
+                }
             }
         }
     }

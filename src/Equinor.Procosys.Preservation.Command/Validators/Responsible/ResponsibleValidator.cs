@@ -14,8 +14,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Responsible
 
         public bool IsVoided(int responsibleId)
         {
-            var r = _responsibleRepository.GetByIdAsync(responsibleId).Result;
-            return r != null && r.IsVoided;
+            var responsible = _responsibleRepository.GetByIdAsync(responsibleId).Result;
+            return responsible != null && responsible.IsVoided;
         }
     }
 }

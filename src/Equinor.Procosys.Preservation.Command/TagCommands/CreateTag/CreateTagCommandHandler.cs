@@ -3,9 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate.Requirement;
+using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using ServiceResult;
@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
     public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<int>>
     {
-        private readonly ITagRepository _tagRepository;
+        private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -22,14 +22,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         private readonly ITagApiService _tagApiService;
 
         public CreateTagCommandHandler(
-            ITagRepository tagRepository,
+            IProjectRepository projectRepository,
             IJourneyRepository journeyRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
             ITagApiService tagApiService)
         {
-            _tagRepository = tagRepository;
+            _projectRepository = projectRepository;
             _journeyRepository = journeyRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
@@ -56,10 +56,17 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectName, request.TagNo);
 
+            var project = await _projectRepository.GetByNameAsync(request.ProjectName);
+            if (project == null)
+            {
+                project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
+                _projectRepository.Add(project);
+            }
+
             var tagToAdd = new Tag(
                 _plantProvider.Plant,
                 request.TagNo,
-                request.ProjectName,
+                tagDetails.Description,
                 tagDetails.AreaCode,
                 tagDetails.CallOffNo,
                 tagDetails.DisciplineCode,
@@ -69,7 +76,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 tagDetails.TagFunctionCode,
                 step,
                 requirements);
-            _tagRepository.Add(tagToAdd);
+            
+            project.AddTag(tagToAdd);
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<int>(tagToAdd.Id);

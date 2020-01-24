@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     var modeRepository = new ModeRepository(dbContext);
                     var responsibleRepository = new ResponsibleRepository(dbContext);
                     var requirementTypeRepository = new RequirementTypeRepository(dbContext);
-                    var tagRepository = new TagRepository(dbContext);
+                    var projectRepository = new ProjectRepository(dbContext);
 
                     responsibleRepository.AddResponsibles(250, plantProvider.Plant);
                     await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -48,13 +48,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     requirementTypeRepository.AddRequirementTypes(250, plantProvider.Plant);
                     await unitOfWork.SaveChangesAsync(cancellationToken);
 
+                    projectRepository.AddProjects(50, plantProvider.Plant);
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    var projects = await projectRepository.GetAllAsync();
+
                     var steps = (await journeyRepository.GetAllAsync()).SelectMany(x => x.Steps).ToList();
                     var requirementDefinitions = (await requirementTypeRepository.GetAllAsync()).SelectMany(x => x.RequirementDefinitions).ToList();
-                    for (var i = 0; i < 1; i++)
-                    {
-                        tagRepository.AddTags(1000, plantProvider.Plant, steps, requirementDefinitions);
-                        await unitOfWork.SaveChangesAsync(cancellationToken);
-                    }
+                    
+                    projects.AddTags(100, plantProvider.Plant, steps, requirementDefinitions);
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
                 }
             }
         }

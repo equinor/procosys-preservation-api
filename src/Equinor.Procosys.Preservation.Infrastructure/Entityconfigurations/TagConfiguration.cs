@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -15,8 +15,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
 
-            builder.Property(x => x.ProjectName)
-                .HasMaxLength(Tag.ProjectNameLengthMax)
+            builder.Property(x => x.Description)
+                .HasMaxLength(Tag.DescriptionLengthMax)
                 .IsRequired();
 
             builder.Property(x => x.TagNo)

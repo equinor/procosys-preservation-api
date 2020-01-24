@@ -192,19 +192,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         }
 
         [TestMethod]
-        public async Task GetTagDetails_ThrowsException_WhenResultContainsMultipleElements_TestAsync()
-        {
-            // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_searchResultWithThreeItems))
-                .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object, _logger.Object);
-
-            await Assert.ThrowsExceptionAsync<InvalidResultException>(async () => await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", "TagNo1"));
-        }
-
-        [TestMethod]
         public async Task GetTagDetails_ReturnsNull_WhenResultIsNull_TestAsync()
         {
             // Arrange

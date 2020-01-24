@@ -1,4 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 {
