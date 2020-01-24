@@ -12,6 +12,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
             builder.Property(f => f.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
+            
+            builder.Property(x => x.PreservedAtUtc)
+                .HasConversion(PreservationContext.DateTimeKindConverter);
 
             builder.Property(x => x.Comment)
                 .HasMaxLength(PreservationRecord.CommentLengthMax);

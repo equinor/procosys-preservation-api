@@ -14,6 +14,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
 
+            builder.Property(x => x.NextDueTimeUtc)
+                .HasConversion(PreservationContext.NullableDateTimeKindConverter);
+
             builder.HasOne<RequirementDefinition>();
 
             builder
