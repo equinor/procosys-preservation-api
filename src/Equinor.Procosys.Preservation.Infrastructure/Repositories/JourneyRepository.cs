@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public class JourneyRepository : RepositoryBase<Journey>, IJourneyRepository
     {
         public JourneyRepository(PreservationContext context)
-            : base(context.Set<Journey>(), context.Set<Journey>().Include(j => j.Steps))
+            : base(context.Journeys, context.Journeys.Include(j => j.Steps))
         {
         }
 
@@ -20,14 +20,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 
         public Task<Step> GetStepByStepIdAsync(int stepId)
             => DefaultQuery
-                .Where(journey => journey.Steps.Any(s => s.Id == stepId))
                 .SelectMany(j => j.Steps)
-                .Where(s => s.Id == stepId)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync(s => s.Id == stepId);
 
         public Task<List<Step>> GetStepsByModeIdAsync(int modeId)
             => DefaultQuery
-                .Where(journey => journey.Steps.Any(s => s.ModeId == modeId))
                 .SelectMany(j => j.Steps)
                 .Where(s => s.ModeId == modeId)
                 .ToListAsync();
