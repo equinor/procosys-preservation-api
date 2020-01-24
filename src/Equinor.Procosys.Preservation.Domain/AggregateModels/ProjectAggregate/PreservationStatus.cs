@@ -2,7 +2,6 @@
 {
     public enum PreservationStatus
     {
-        // ReSharper disable once InconsistentNaming
         NotStarted,
         Active,
         Completed
