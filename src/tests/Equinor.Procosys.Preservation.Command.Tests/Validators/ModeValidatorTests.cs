@@ -12,7 +12,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class ModeValidatorTests
     {
-        private const string ModeTitle = "J";
+        private const string ModeTitle = "ModeNotVoided";
+        private const string ModeVoidedTitle = "ModeVoided";
         private const int ModeIdNonVoided = 1;
         private const int ModeIdVoided = 2;
         private ModeValidator _dut;
@@ -28,8 +29,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                     new Step("S", new Mock<Mode>().Object, new Mock<Responsible>().Object)
                 }));
 
-            var mode = new Mode("S", "M");
-            var modeVoided = new Mode("S", "M");
+            var mode = new Mode("S", ModeTitle);
+            var modeVoided = new Mode("S", ModeVoidedTitle);
             modeVoided.Void();
 
             modeRepositoryMock.Setup(r => r.GetByTitleAsync(ModeTitle)).Returns(Task.FromResult(mode));
