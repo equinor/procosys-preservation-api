@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

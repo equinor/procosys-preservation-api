@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregate
+namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
     [TestClass]
     public class TagTests
@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
         {
             var dut = new Tag("SchemaA",
                 "TagNoA",
-                "ProjectNameA", 
+                "DescA", 
                 "AreaCodeA", 
                 "CalloffA", 
                 "DisciplineA", 
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagAggregat
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual("TagNoA", dut.TagNo);
-            Assert.AreEqual("ProjectNameA", dut.ProjectName);
+            Assert.AreEqual("DescA", dut.Description);
             Assert.AreEqual("AreaCodeA", dut.AreaCode);
             Assert.AreEqual("CalloffA", dut.Calloff);
             Assert.AreEqual("DisciplineA", dut.DisciplineCode);

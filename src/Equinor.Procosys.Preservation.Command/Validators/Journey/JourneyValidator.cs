@@ -16,8 +16,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Journey
 
         public bool IsVoided(int journeyId)
         {
-            var r = _journeyRepository.GetByIdAsync(journeyId).Result;
-            return r != null && r.IsVoided;
+            var journey = _journeyRepository.GetByIdAsync(journeyId).Result;
+            return journey != null && journey.IsVoided;
         }
     }
 }

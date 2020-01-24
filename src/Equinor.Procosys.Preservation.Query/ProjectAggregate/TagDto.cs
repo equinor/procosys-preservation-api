@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.TagAggregate
+namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 {
     public class TagDto
     {
@@ -16,24 +16,24 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
             bool isVoided,
             string mcPkgNo, 
             bool needUserInput,
-            string projectName,
             string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
             PreservationStatus status,
             int stepId,
             string tagFunctionCode,
+            string tagDescription,
             string tagNo)
         {
             Id = id;
             AreaCode = areaCode;
             CalloffNo = calloffNo;
             CommPkgNo = commPkgNo;
+            Description = tagDescription;
             DisciplineCode = disciplineCode;
             IsAreaTag = isAreaTag;
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             NeedUserInput = needUserInput;
-            ProjectName = projectName;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
             Status = status;
@@ -45,12 +45,12 @@ namespace Equinor.Procosys.Preservation.Query.TagAggregate
         public string AreaCode { get; }
         public string CalloffNo { get; }
         public string CommPkgNo { get; }
+        public string Description { get; }
         public string DisciplineCode { get; }
         public int Id { get; }
         public bool IsAreaTag { get; }
         public bool IsVoided { get; }
         public string McPkgNo { get; }
-        public string ProjectName { get; }
         public string PurchaseOrderNo { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Exceptions;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -48,16 +47,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
 
-            var tags = await GetTags(plant, projectName, tagNo);
-            if (tags.Count != 1)
-            {
-                throw new InvalidResultException($"Expected 1, but was {tags.Count()}");
-            }
-
-            var tag = tags.First();
-            var url = $"{_baseAddress}Tag" +
+            var url = $"{_baseAddress}TagByNo" +
                 $"?plantId={plant}" +
-                $"&tagId={tag.Id}" +
+                $"&tagNo={tagNo}" +
+                $"&projectName={projectName}" +
                 $"&api-version={_apiVersion}";
             var tagDetailsResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagDetailsResult>(url);
             if (tagDetailsResult == null)

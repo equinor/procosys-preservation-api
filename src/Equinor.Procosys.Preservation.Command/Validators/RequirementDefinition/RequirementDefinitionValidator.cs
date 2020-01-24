@@ -14,8 +14,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
 
         public bool IsVoided(int requirementDefinitionId)
         {
-            var r = _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirementDefinitionId).Result;
-            return r != null && r.IsVoided;
+            var reqDef = _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirementDefinitionId).Result;
+            return reqDef != null && reqDef.IsVoided;
         }
     }
 }

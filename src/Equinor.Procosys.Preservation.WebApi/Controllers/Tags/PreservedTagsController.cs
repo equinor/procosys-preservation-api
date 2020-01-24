@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
-using Equinor.Procosys.Preservation.Query.TagAggregate;
+using Equinor.Procosys.Preservation.Query.ProjectAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
@@ -23,9 +23,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public PreservedTagsController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<TagDto>>> GetAllTagsInProject([FromQuery] string projectName)    
         {
-            var result = await _mediator.Send(new AllTagsQuery());
+            var result = await _mediator.Send(new AllTagsInProjectQuery(projectName));
             return this.FromResult(result);
         }
 

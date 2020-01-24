@@ -10,9 +10,9 @@ using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
 
-            services.AddScoped<ITagRepository, TagRepository>();
+            services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
             services.AddScoped<IJourneyRepository, JourneyRepository>();
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();

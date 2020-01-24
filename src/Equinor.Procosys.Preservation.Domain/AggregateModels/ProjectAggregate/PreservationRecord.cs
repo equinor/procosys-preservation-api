@@ -1,7 +1,7 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate
+namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class PreservationRecord : SchemaEntityBase
     {

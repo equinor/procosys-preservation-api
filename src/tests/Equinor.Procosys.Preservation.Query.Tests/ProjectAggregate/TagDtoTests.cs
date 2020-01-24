@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagAggregate;
-using Equinor.Procosys.Preservation.Query.TagAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Query.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 {
     [TestClass]
     public class TagDtoTests
@@ -22,12 +22,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
             true,
             "McPkgNo",
             true,
-            "ProjectName",
             "PoNo",
             new List<RequirementDto> {new RequirementDto(null)},
             PreservationStatus.Active,
             2,
             "TagFunctionCode",
+            "TagDesc",
             "TagNo");
 
         [TestMethod]
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagAggregate
             Assert.IsTrue(_dut.IsVoided);
             Assert.AreEqual("McPkgNo", _dut.McPkgNo);
             Assert.IsTrue(_dut.NeedUserInput);
-            Assert.AreEqual("ProjectName", _dut.ProjectName);
+            Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.IsNotNull(_dut.Requirements);
             Assert.AreEqual(1, _dut.Requirements.Count());
