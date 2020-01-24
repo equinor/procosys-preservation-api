@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
 using ServiceResult;
@@ -40,9 +41,11 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
             var journeyDto = new JourneyDto(
                 journey.Id,
                 journey.Title,
+                journey.IsVoided,
                 journey.Steps.Select(step =>
                     new StepDto(
                         step.Id,
+                        step.IsVoided,
                         modes.FirstOrDefault(x => x.Id == step.ModeId),
                         responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId)
                     )

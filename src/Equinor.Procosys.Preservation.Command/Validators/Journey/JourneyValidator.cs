@@ -9,8 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Journey
         public JourneyValidator(IJourneyRepository journeyRepository)
             => _journeyRepository = journeyRepository;
 
-        public bool Exists(int journeyId)
-            => _journeyRepository.GetByIdAsync(journeyId).Result != null;
+        public bool Exists(int journeyId) => _journeyRepository.Exists(journeyId).Result;
 
         public bool Exists(string title)
             => _journeyRepository.GetByTitleAsync(title).Result != null;

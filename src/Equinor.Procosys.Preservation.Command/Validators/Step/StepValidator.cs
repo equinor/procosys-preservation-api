@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Step
 
         public bool IsVoided(int stepId)
         {
-            var step = _journeyRepository.GetByIdAsync(stepId).Result;
+            var step = _journeyRepository.GetStepByStepIdAsync(stepId).Result;
             return step != null && step.IsVoided;
         }
     }

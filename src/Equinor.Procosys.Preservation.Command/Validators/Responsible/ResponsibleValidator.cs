@@ -9,8 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Responsible
         public ResponsibleValidator(IResponsibleRepository responsibleRepository)
             => _responsibleRepository = responsibleRepository;
 
-        public bool Exists(int responsibleId)
-            => _responsibleRepository.GetByIdAsync(responsibleId).Result != null;
+        public bool Exists(int responsibleId) => _responsibleRepository.Exists(responsibleId).Result;
 
         public bool IsVoided(int responsibleId)
         {
