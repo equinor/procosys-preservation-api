@@ -108,5 +108,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationStatus.Active;
         }
+
+        // todo test
+        public Requirement FirstUpcommingRequirement
+            => Status == PreservationStatus.Active ?  Requirements?
+                .Where(r => r.NextDueTimeUtc.HasValue)
+                .OrderBy(r => r.NextDueTimeUtc.Value).FirstOrDefault() : null;
     }
 }

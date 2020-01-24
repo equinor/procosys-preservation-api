@@ -5,34 +5,20 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 {
     public class RequirementDto
     {
-        private readonly DateTime _currentDateTimeUtc;
-
-        public RequirementDto(DateTime currentDateTimeUtc, DateTime? nextDueTimeUtc)
+        public RequirementDto(int id, int requirementDefinitionId, DateTime? nextDueTimeUtc, TimeSpan timeUntilNextDueTime)
         {
-            if (nextDueTimeUtc.HasValue && nextDueTimeUtc.Value.Kind != currentDateTimeUtc.Kind)
-            {
-                throw new ArgumentException($"{nameof(nextDueTimeUtc)} and {nameof(currentDateTimeUtc)} has different kinds");
-            }
-
+            Id = id;
+            RequirementDefinitionId = requirementDefinitionId;
             NextDueTimeUtc = nextDueTimeUtc;
-            _currentDateTimeUtc = currentDateTimeUtc;
+            NextDueWeeks = timeUntilNextDueTime.Weeks();
         }
 
+        public int Id { get; }
+        public int RequirementDefinitionId { get; }
         public DateTime? NextDueTimeUtc { get; }
 
         public string NextDueAsYearAndWeek => NextDueTimeUtc?.FormatAsYearAndWeekString();
 
-        public int? NextDueWeeks
-        {
-            get
-            {
-                if (!NextDueTimeUtc.HasValue)
-                {
-                    return null;
-                }
-
-                return _currentDateTimeUtc.GetWeeksUntilDate(NextDueTimeUtc.Value);
-            }
-        }
+        public int NextDueWeeks { get; }
     }
 }

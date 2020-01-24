@@ -24,22 +24,42 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         {
             var tags = await _projectRepository.GetAllTagsInProjectAsync(request.ProjectName);
             return new SuccessResult<IEnumerable<TagDto>>(tags.Select(tag =>
-                new TagDto(tag.Id,
-                tag.AreaCode,
-                tag.Calloff,
-                tag.CommPkgNo,
-                tag.DisciplineCode,
-                tag.IsAreaTag,
-                tag.IsVoided,
-                tag.McPkgNo,
-                tag.NeedUserInput,
-                tag.PurchaseOrderNo,
-                tag.Requirements.Select(r => new RequirementDto(_timeService.GetCurrentTimeUtc(), r.NextDueTimeUtc)),
-                tag.Status,
-                tag.StepId,
-                tag.TagFunctionCode,
-                tag.Description,
-                tag.TagNo)));
+            {
+                var now = _timeService.GetCurrentTimeUtc();
+                var requirementsDtos = tag.Requirements.Select(
+                    r => new RequirementDto(
+                        r.Id,
+                        r.RequirementDefinitionId,
+                        r.NextDueTimeUtc,
+                        r.GetTimeUntilNextDueTime(now)))
+                    .ToList();
+
+                var firstUpcommingRequirement = tag.FirstUpcommingRequirement;
+
+                RequirementDto firstUpcommingRequirementDto = null;
+                if (firstUpcommingRequirement != null)
+                {
+                    firstUpcommingRequirementDto = requirementsDtos.Single(r => r.Id == firstUpcommingRequirement.Id);
+                }
+
+                return new TagDto(tag.Id,
+                    tag.AreaCode,
+                    tag.Calloff,
+                    tag.CommPkgNo,
+                    tag.DisciplineCode,
+                    firstUpcommingRequirementDto,
+                    tag.IsAreaTag,
+                    tag.IsVoided,
+                    tag.McPkgNo,
+                    tag.NeedUserInput,
+                    tag.PurchaseOrderNo,
+                    requirementsDtos,
+                    tag.Status,
+                    tag.StepId,
+                    tag.TagFunctionCode,
+                    tag.Description,
+                    tag.TagNo);
+            }));
         }
     }
 }

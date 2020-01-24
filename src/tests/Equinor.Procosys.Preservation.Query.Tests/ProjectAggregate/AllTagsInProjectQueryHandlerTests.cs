@@ -132,7 +132,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var requirementDto = tagDto.Requirements.First();
 
             Assert.IsFalse(requirementDto.NextDueTimeUtc.HasValue);
-            Assert.IsFalse(requirementDto.NextDueWeeks.HasValue);
+            Assert.AreEqual(0, requirementDto.NextDueWeeks);
             Assert.IsNull(requirementDto.NextDueAsYearAndWeek);
             Assert.AreEqual(PreservationStatus.NotStarted, tagDto.Status);
         }
@@ -146,8 +146,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var requirementDto = tagDto.Requirements.First();
 
             Assert.IsTrue(requirementDto.NextDueTimeUtc.HasValue);
-            Assert.IsTrue(requirementDto.NextDueWeeks.HasValue);
-            Assert.AreEqual(IntervalWeeks, requirementDto.NextDueWeeks.Value);
+            Assert.AreEqual(IntervalWeeks, requirementDto.NextDueWeeks);
             Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
             Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
         }

@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             string calloffNo,
             string commPkgNo,
             string disciplineCode,
+            RequirementDto firstUpcommingRequirement,
             bool isAreaTag,
             bool isVoided,
             string mcPkgNo, 
@@ -30,6 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             CommPkgNo = commPkgNo;
             Description = tagDescription;
             DisciplineCode = disciplineCode;
+            FirstUpcommingRequirement = firstUpcommingRequirement;
             IsAreaTag = isAreaTag;
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
@@ -52,6 +54,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public bool IsVoided { get; }
         public string McPkgNo { get; }
         public string PurchaseOrderNo { get; }
+        public RequirementDto FirstUpcommingRequirement { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
         public int StepId { get; }
