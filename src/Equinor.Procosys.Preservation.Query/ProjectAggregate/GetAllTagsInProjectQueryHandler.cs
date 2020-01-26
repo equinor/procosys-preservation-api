@@ -73,6 +73,11 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     firstUpcommingRequirementDto = requirementsDtos.Single(r => r.Id == firstUpcommingRequirement.Id);
                 }
 
+                var step = steps.Single(s => s.Id == tag.StepId);
+                var mode = modes.Single(m => m.Id == step.ModeId);
+                var resp = resposibles.Single(r => r.Id == step.ResponsibleId);
+
+                /* Above or this solution Henning? :
                 var step = steps.FirstOrDefault(s => s.Id == tag.StepId);
                 if (step == null)
                 {
@@ -88,7 +93,8 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                 {
                     throw new Exception($"Data inconsistency: Responsible {step.ResponsibleId} in Step {step.Id} do not exists");
                 }
-                
+                */
+
                 return new TagDto(tag.Id,
                     tag.AreaCode,
                     tag.Calloff,
