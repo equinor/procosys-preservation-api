@@ -33,17 +33,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-            NewMethod(modelBuilder);
+            SetGlobalPlantFilter(modelBuilder);
         }
 
-        private void NewMethod(ModelBuilder modelBuilder)
+        private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
         {
             // Set global query filter on entities inheriting from SchemaEntityBase
             // https://gunnarpeipman.com/ef-core-global-query-filters/
             foreach (var type in TypeProvider.GetEntityTypes(typeof(IDomainMarker).GetTypeInfo().Assembly, typeof(SchemaEntityBase)))
             {
                 typeof(PreservationContext)
-                .GetMethod(nameof(PreservationContext.SetGlobalQuery))
+                .GetMethod(nameof(PreservationContext.SetGlobalQueryFilter))
                 ?.MakeGenericMethod(type)
                 .Invoke(this, new object[] { modelBuilder });
             }
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             await _eventDispatcher.DispatchAsync(entities, cancellationToken);
         }
 
-        public void SetGlobalQuery<T>(ModelBuilder builder) where T : SchemaEntityBase =>
+        public void SetGlobalQueryFilter<T>(ModelBuilder builder) where T : SchemaEntityBase =>
             builder
             .Entity<T>()
             .HasQueryFilter(e => e.Schema == _plantProvider.Plant);
