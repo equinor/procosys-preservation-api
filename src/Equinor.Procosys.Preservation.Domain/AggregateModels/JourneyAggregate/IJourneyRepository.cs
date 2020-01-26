@@ -11,6 +11,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         
         Task<Step> GetStepByStepIdAsync(int stepId);
         
+        Task<List<Step>> GetStepsByStepIdsAsync(IEnumerable<int> stepIds);
+        
         Task<List<Step>> GetStepsByModeIdAsync(int modeId);
     }
 }

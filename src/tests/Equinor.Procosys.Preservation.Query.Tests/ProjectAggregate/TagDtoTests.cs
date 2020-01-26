@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Query.ProjectAggregate;
@@ -23,11 +22,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             true,
             true,
             "McPkgNo",
+            "Mode",
             true,
             "PoNo",
             new List<RequirementDto> {new RequirementDto(0, 0, null, default)},
+            "Resp",
             PreservationStatus.Active,
-            2,
             "TagFunctionCode",
             "TagDesc",
             "TagNo");
@@ -43,6 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.IsTrue(_dut.IsAreaTag);
             Assert.IsTrue(_dut.IsVoided);
             Assert.AreEqual("McPkgNo", _dut.McPkgNo);
+            Assert.AreEqual("Mode", _dut.Mode);
             Assert.IsTrue(_dut.NeedUserInput);
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
@@ -50,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.IsNotNull(_dut.FirstUpcommingRequirement);
             Assert.AreEqual(1, _dut.Requirements.Count());
             Assert.AreEqual(PreservationStatus.Active, _dut.Status);
-            Assert.AreEqual(2, _dut.StepId);
+            Assert.AreEqual("Resp", _dut.ResposibleCode);
             Assert.AreEqual("TagFunctionCode", _dut.TagFunctionCode);
             Assert.AreEqual("TagNo", _dut.TagNo);
         }

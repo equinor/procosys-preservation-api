@@ -17,7 +17,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
     {
         private const string TestJourney = "J1";
         private const int ModeId = 11;
-        private const int StepId = 51;
+        private const int StepId1 = 51;
+        private const int StepId2 = 52;
         private List<Journey> _journeys;
         private Mock<DbSet<Journey>> _dbSetMock;
 
@@ -28,14 +29,15 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         {
             var modeMock = new Mock<Mode>();
             modeMock.SetupGet(s => s.Id).Returns(ModeId);
-            var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Id).Returns(StepId);
-            var step = new Step(TestPlant, modeMock.Object, new Mock<Responsible>().Object);
-            
+            var stepMock1 = new Mock<Step>();
+            stepMock1.SetupGet(s => s.Id).Returns(StepId1);
+            var stepMock2 = new Mock<Step>(TestPlant, modeMock.Object, new Mock<Responsible>().Object);
+            stepMock2.SetupGet(s => s.Id).Returns(StepId2);
+
             var journeyWithSteps = new Journey(TestPlant, TestJourney);
             journeyWithSteps.AddStep(new Mock<Step>().Object);
-            journeyWithSteps.AddStep(stepMock.Object);
-            journeyWithSteps.AddStep(step);
+            journeyWithSteps.AddStep(stepMock1.Object);
+            journeyWithSteps.AddStep(stepMock2.Object);
             
             _journeys = new List<Journey>
             {
@@ -74,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetJourneyByStepId_KnownId_ReturnsJourneysWith3Steps()
         {
-            var result = await _dut.GetJourneyByStepIdAsync(StepId);
+            var result = await _dut.GetJourneyByStepIdAsync(StepId1);
 
             Assert.AreEqual(TestJourney, result.Title);
             Assert.AreEqual(3, result.Steps.Count);
@@ -91,9 +93,35 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetStepByStepId_KnownId_ReturnsStep()
         {
-            var result = await _dut.GetStepByStepIdAsync(StepId);
+            var result = await _dut.GetStepByStepIdAsync(StepId1);
 
-            Assert.AreEqual(StepId, result.Id);
+            Assert.AreEqual(StepId1, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetStepsByStepIds_KnownIds_Returns2Steps()
+        {
+            var result = await _dut.GetStepsByStepIdsAsync(new List<int>{StepId1, StepId2});
+
+            Assert.AreEqual(2, result.Count);
+            Assert.IsTrue(result.Any(s => s.Id == StepId1));
+            Assert.IsTrue(result.Any(s => s.Id == StepId2));
+        }
+
+        [TestMethod]
+        public async Task GetStepsByStepIds_UnKnownIds_ReturnsEmptyList()
+        {
+            var result = await _dut.GetStepsByStepIdsAsync(new List<int>{123512});
+
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetStepsByStepIds_NoIds_ReturnsEmptyList()
+        {
+            var result = await _dut.GetStepsByStepIdsAsync(new List<int>());
+
+            Assert.AreEqual(0, result.Count);
         }
 
         [TestMethod]

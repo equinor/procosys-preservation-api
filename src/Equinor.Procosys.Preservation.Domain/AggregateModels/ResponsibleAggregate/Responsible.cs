@@ -12,7 +12,7 @@
         public Responsible(string schema, string name)
             : base(schema) => Name = name;
 
-        public string Name { get; private set; } // todo replace Responsible.Name with Resposible.Code
+        public string Name { get; private set; } // todo replace Responsible.Name with Resposible.Code (after first demo)
         // todo Add Responsible.Title
         public bool IsVoided { get; private set; }
 
