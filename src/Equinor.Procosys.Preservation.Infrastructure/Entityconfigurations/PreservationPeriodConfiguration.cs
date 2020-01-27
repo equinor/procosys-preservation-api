@@ -5,17 +5,18 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
 {
-    internal class PreservationRecordConfiguration : IEntityTypeConfiguration<PreservationRecord>
+    internal class PreservationPeriodConfiguration : IEntityTypeConfiguration<PreservationPeriod>
     {
-        public void Configure(EntityTypeBuilder<PreservationRecord> builder)
+        public void Configure(EntityTypeBuilder<PreservationPeriod> builder)
         {
             builder.Property(f => f.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
 
-            builder.HasOne<PreservationPeriod>()
-                .WithOne(p => p.PreservationRecord)
-                .IsRequired(false);
+            builder.Property(x => x.Comment)
+                .HasMaxLength(PreservationPeriod.CommentLengthMax);
+
+            // todo datetime converter for DueDateUtc
         }
     }
 }

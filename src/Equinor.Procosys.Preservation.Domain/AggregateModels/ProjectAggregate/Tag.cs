@@ -103,7 +103,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             foreach (var requirement in Requirements)
             {
-                requirement.StartPreservation(utcNow);
+                // todo need to get if requirementDefinition by requirement.RequirementDefinitionId and check if NeedUserInput
+                var initialStatus = PreservationPeriodStatus.ReadyToPreserve;
+                
+                requirement.StartPreservation(utcNow, initialStatus);
             }
 
             Status = PreservationStatus.Active;

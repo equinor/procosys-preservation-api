@@ -16,8 +16,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             string schema,
             DateTime preservedAtUtc,
             Person preservedBy,
-            bool bulkPreserved,
-            string comment) : base(schema)
+            bool bulkPreserved) : base(schema)
         {
             if (preservedBy == null)
             {
@@ -29,13 +28,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             PreservedAtUtc = preservedAtUtc;
             PreservedByPersonId = preservedBy.Id;
-            Comment = comment;
             BulkPreserved = bulkPreserved;
         }
 
         public DateTime PreservedAtUtc { get; private set; }
         public int PreservedByPersonId { get; private set; }
-        public string Comment { get; private set; }
         public bool BulkPreserved { get; private set; }
     }
 }

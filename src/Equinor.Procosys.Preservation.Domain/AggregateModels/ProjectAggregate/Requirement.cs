@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Requirement : SchemaEntityBase
     {
-        private readonly List<PreservationRecord> _preservationRecords = new List<PreservationRecord>();
+        private readonly List<PreservationPeriod> _preservationPeriods = new List<PreservationPeriod>();
 
         protected Requirement()
             : base(null)
@@ -29,23 +31,28 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime? NextDueTimeUtc { get; private set; }
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; private set; }
-        public IReadOnlyCollection<PreservationRecord> PreservationRecords => _preservationRecords.AsReadOnly();
+        public IReadOnlyCollection<PreservationPeriod> PreservationPeriods => _preservationPeriods.AsReadOnly();
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public void Preserve(PreservationRecord preservationRecord)
+        public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved, PreservationPeriodStatus initialStatus)
         {
-            if (preservationRecord == null)
-            {
-                throw new ArgumentNullException(nameof(preservationRecord));
-            }
+            var preservationPeriod =
+                PreservationPeriods.Single(pp => pp.Status == PreservationPeriodStatus.ReadyToPreserve);
 
-            _preservationRecords.Add(preservationRecord);
-            NextDueTimeUtc = preservationRecord.PreservedAtUtc.AddWeeks(IntervalWeeks);
+            preservationPeriod.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
+            AddNewPreservationPeriod(preservedAtUtc, initialStatus);
         }
 
-        public virtual void StartPreservation(DateTime currentTimeUtc)
-            => NextDueTimeUtc = currentTimeUtc.AddWeeks(IntervalWeeks);
+        public virtual void StartPreservation(DateTime startedAtUtc, PreservationPeriodStatus initialStatus)
+            => AddNewPreservationPeriod(startedAtUtc, initialStatus);
+
+        private void AddNewPreservationPeriod(DateTime nextDueTimeUtc, PreservationPeriodStatus initialStatus)
+        {
+            NextDueTimeUtc = nextDueTimeUtc.AddWeeks(IntervalWeeks);
+            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, initialStatus);
+            _preservationPeriods.Add(preservationPeriod);
+        }
     }
 }

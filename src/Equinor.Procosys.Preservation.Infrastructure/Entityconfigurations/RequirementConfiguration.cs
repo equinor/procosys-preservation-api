@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.HasOne<RequirementDefinition>();
 
             builder
-                .HasMany(x => x.PreservationRecords)
+                .HasMany(x => x.PreservationPeriods)
                 .WithOne()
                 .IsRequired();
         }
