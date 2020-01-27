@@ -45,7 +45,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             NextDueTimeUtc = preservationRecord.PreservedAtUtc.AddWeeks(IntervalWeeks);
         }
 
-        public virtual void StartPreservation(DateTime currentTimeUtc)
+        public void StartPreservation(DateTime currentTimeUtc)
             => NextDueTimeUtc = currentTimeUtc.AddWeeks(IntervalWeeks);
+
+        public TimeSpan GetTimeUntilNextDueTime(DateTime timeUtc)
+        {
+            if (!NextDueTimeUtc.HasValue)
+            {
+                return default;
+            }
+
+            return NextDueTimeUtc.Value - timeUtc;
+        }
     }
 }

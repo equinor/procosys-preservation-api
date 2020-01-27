@@ -23,6 +23,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .SelectMany(j => j.Steps)
                 .FirstOrDefaultAsync(s => s.Id == stepId);
 
+        public Task<List<Step>> GetStepsByStepIdsAsync(IEnumerable<int> stepIds)
+            => DefaultQuery
+                .SelectMany(j => j.Steps)
+                .Where(step => stepIds.Contains(step.Id))
+                .ToListAsync();
+
         public Task<List<Step>> GetStepsByModeIdAsync(int modeId)
             => DefaultQuery
                 .SelectMany(j => j.Steps)

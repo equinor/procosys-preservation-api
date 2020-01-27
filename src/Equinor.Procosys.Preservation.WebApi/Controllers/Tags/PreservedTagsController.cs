@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TagDto>>> GetAllTagsInProject([FromQuery] string projectName)    
         {
-            var result = await _mediator.Send(new AllTagsInProjectQuery(projectName));
+            var result = await _mediator.Send(new GetAllTagsInProjectQuery(projectName));
             return this.FromResult(result);
         }
 

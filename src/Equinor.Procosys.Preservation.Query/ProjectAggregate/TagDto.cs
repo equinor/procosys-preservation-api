@@ -12,14 +12,16 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             string calloffNo,
             string commPkgNo,
             string disciplineCode,
+            RequirementDto firstUpcomingRequirement,
             bool isAreaTag,
             bool isVoided,
             string mcPkgNo, 
+            string mode,
             bool needUserInput,
             string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
+            string responsibleCode,
             PreservationStatus status,
-            int stepId,
             string tagFunctionCode,
             string tagDescription,
             string tagNo)
@@ -30,14 +32,16 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             CommPkgNo = commPkgNo;
             Description = tagDescription;
             DisciplineCode = disciplineCode;
+            FirstUpcomingRequirement = firstUpcomingRequirement;
             IsAreaTag = isAreaTag;
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
+            Mode = mode;
             NeedUserInput = needUserInput;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
+            ResposibleCode = responsibleCode;
             Status = status;
-            StepId = stepId;
             TagFunctionCode = tagFunctionCode;
             Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
         }
@@ -51,10 +55,12 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public bool IsAreaTag { get; }
         public bool IsVoided { get; }
         public string McPkgNo { get; }
+        public string Mode { get; }
         public string PurchaseOrderNo { get; }
+        public RequirementDto FirstUpcomingRequirement { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
-        public int StepId { get; }
+        public string ResposibleCode { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
         public bool NeedUserInput { get; }
