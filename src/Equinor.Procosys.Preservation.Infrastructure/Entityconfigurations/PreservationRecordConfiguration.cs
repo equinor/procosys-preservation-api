@@ -12,10 +12,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
             builder.Property(f => f.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
-
-            builder.HasOne<PreservationPeriod>()
-                .WithOne(p => p.PreservationRecord)
-                .IsRequired(false);
         }
     }
 }

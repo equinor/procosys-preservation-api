@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                 tag.IsAreaTag,
                 tag.IsVoided,
                 tag.McPkgNo,
-                tag.NeedUserInput,
+                tag.ReadyToBePreserved,
                 tag.PurchaseOrderNo,
                 tag.Requirements.Select(r => new RequirementDto(r.NextDueTimeUtc)),
                 tag.Status,

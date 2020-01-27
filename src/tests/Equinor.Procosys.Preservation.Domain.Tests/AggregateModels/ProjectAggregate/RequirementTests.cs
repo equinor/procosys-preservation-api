@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -42,38 +44,75 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var intervalWeeks = 2;
             var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
 
-            dut.StartPreservation(_utcNow, PreservationPeriodStatus.ReadyToPreserve);
+            dut.StartPreservation(_utcNow);
 
             var expectedNextDueTimeUtc = _utcNow.AddWeeks(intervalWeeks);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
         }
 
-        // todo
-        //[TestMethod]
-        //public void Preserve_ShouldAddPreservationRecordToPreservationRecordsList()
-        //{
-        //    var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
-        //    var pr = new Mock<PreservationRecord>();
+        [TestMethod]
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithCorrectDueDate()
+        {
+            var intervalWeeks = 2;
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
 
-        //    dut.Preserve(pr.Object);
+            dut.StartPreservation(_utcNow);
 
-        //    Assert.AreEqual(1, dut.PreservationRecords.Count);
-        //    Assert.IsTrue(dut.PreservationRecords.Contains(pr.Object));
-        //}
+            var expectedNextDueTimeUtc = _utcNow.AddWeeks(intervalWeeks);
+            Assert.AreEqual(1, dut.PreservationPeriods.Count);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.First().DueTimeUtc);
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldThrowException_WhenPreservationNotReady()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
+
+            Assert.ThrowsException<Exception>(() =>
+                dut.Preserve(_utcNow, new Mock<Person>().Object, false)
+            );
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldPreserveActivePreservationPeriod()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            dut.Preserve(_utcNow, new Mock<Person>().Object, false);
+
+            Assert.AreEqual(PreservationPeriodStatus.Preserved, dut.PreservationPeriods.First().Status);
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldAddNewPreservationPeriodToPreservationPeriodsList()
+        {
+            var intervalWeeks = 2;
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            var preservatedTime = _utcNow.AddDays(5);
+            dut.Preserve(preservatedTime, new Mock<Person>().Object, false);
+            
+            var expectedNextDueTimeUtc = preservatedTime.AddWeeks(intervalWeeks);
+            Assert.AreEqual(2, dut.PreservationPeriods.Count);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Last().DueTimeUtc);
+        }
         
-        //[TestMethod]
-        //public void Preserve_ShouldSetCorrectNextDueDate()
-        //{
-        //    var intervalWeeks = 8;
-        //    var p = new Mock<Person>();
+        [TestMethod]
+        public void Preserve_ShouldShouldUpdateCorrectNextDueDate()
+        {
+            var intervalWeeks = 2;
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
 
-        //    var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
-        //    var pr = new PreservationRecord("", _utcNow, p.Object, false, "");
-        //    dut.Preserve(pr);
+            dut.StartPreservation(_utcNow);
 
-        //    var expectedNextDueTimeUtc = _utcNow.AddWeeks(intervalWeeks);
-        //    Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
-        //}
+            var preservatedTime = _utcNow.AddDays(5);
+            dut.Preserve(preservatedTime, new Mock<Person>().Object, false);
+            
+            var expectedNextDueTimeUtc = preservatedTime.AddWeeks(intervalWeeks);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
+        }
 
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()

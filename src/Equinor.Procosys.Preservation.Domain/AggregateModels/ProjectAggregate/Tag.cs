@@ -74,7 +74,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string TagNo { get; private set; }
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
         public bool IsVoided { get; private set; }
-        public bool NeedUserInput => false; // todo Must aggregate over FieldValues -> true if any Field need input at current time
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
@@ -103,13 +102,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             foreach (var requirement in Requirements)
             {
-                // todo need to get if requirementDefinition by requirement.RequirementDefinitionId and check if NeedUserInput
-                var initialStatus = PreservationPeriodStatus.ReadyToPreserve;
-                
-                requirement.StartPreservation(utcNow, initialStatus);
+                requirement.StartPreservation(utcNow);
             }
 
             Status = PreservationStatus.Active;
         }
+
+        public bool ReadyToBePreserved => _requirements.All(r => r.ReadyToBePreserved);
+
     }
 }
