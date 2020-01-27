@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -11,11 +12,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class TagTests
     {
+        private RequirementDefinition _reqDefNeedInput;
+        private RequirementDefinition _reqDefNotNeedInput;
         private Mock<Step> _stepMock;
-        private Mock<Requirement> _requirementMock;
+        private Requirement _reqNotNeedInput;
+        private Requirement _reqNeedInput;
         // ReSharper disable once CollectionNeverUpdated.Local
-        readonly List<Requirement> _emptyRequirements = new List<Requirement>();
-        readonly List<Requirement> _requirements = new List<Requirement>();
+        private readonly List<Requirement> _reqsNotNeedInput = new List<Requirement>();
+        private readonly List<Requirement> _reqsNeedInput = new List<Requirement>();
         private DateTime _utcNow;
 
         [TestInitialize]
@@ -23,9 +27,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _stepMock = new Mock<Step>();
             _stepMock.SetupGet(x => x.Id).Returns(3);
-            _requirementMock = new Mock<Requirement>();
-            _requirementMock.SetupGet(x => x.Id).Returns(4);
-            _requirements.Add(_requirementMock.Object);
+            _reqDefNeedInput = new RequirementDefinition("", "", 1, 0);
+            _reqDefNeedInput.AddField(new Field("", "", FieldType.CheckBox, 0));
+            _reqDefNotNeedInput = new RequirementDefinition("", "", 1, 0);
+            _reqDefNotNeedInput.AddField(new Field("", "", FieldType.Info, 0));
+            _reqNotNeedInput = new Requirement("", 0, _reqDefNotNeedInput);
+            _reqNeedInput = new Requirement("", 0, _reqDefNeedInput);
+            _reqsNotNeedInput.Add(_reqNotNeedInput);
+            _reqsNeedInput.Add(_reqNeedInput);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
         }
 
@@ -43,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 "PurchaseOrderA", 
                 "TagFunctionCodeA", 
                 _stepMock.Object,
-                _requirements);
+                _reqsNotNeedInput);
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual("TagNoA", dut.TagNo);
@@ -56,14 +65,21 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual("TagFunctionCodeA", dut.TagFunctionCode);
             Assert.AreEqual(_stepMock.Object.Id, dut.StepId);
             Assert.AreEqual(1, dut.Requirements.Count);
-            Assert.AreEqual(_requirementMock.Object.Id, dut.Requirements.First().Id);
             Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
+        }
+
+        [TestMethod]
+        public void Constructor_ShouldNotMakeTagReadyToBePreserved()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNotNeedInput);
+
+            Assert.IsFalse(dut.ReadyToBePreserved);
         }
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenStepNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(()
-                => new Tag("", "", "", "", "", "", "", "", "", "", null, _requirements));
+                => new Tag("", "", "", "", "", "", "", "", "", "", null, _reqsNotNeedInput));
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenRequirementsNotGiven()
@@ -73,12 +89,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenEmptyListOfRequirementsGiven()
             => Assert.ThrowsException<Exception>(()
-                => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _emptyRequirements));
+                => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, new List<Requirement>()));
 
         [TestMethod]
         public void SetStep_ShouldSetStepId()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNotNeedInput);
 
             var newStep = new Mock<Step>();
             newStep.SetupGet(x => x.Id).Returns(4);
@@ -90,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void SetStep_ShouldThrowException_WhenStepNotGiven()
         {
-            var tag = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
+            var tag = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNotNeedInput);
 
             Assert.ThrowsException<ArgumentNullException>(() => tag.SetStep(null));
         }
@@ -98,7 +114,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNotNeedInput);
 
             Assert.ThrowsException<ArgumentNullException>(() => dut.AddRequirement(null));
         }
@@ -106,12 +122,44 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void StartPreservation_ShouldSetStatusActive()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _requirements);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNotNeedInput);
             Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
 
             dut.StartPreservation(_utcNow);
 
             Assert.AreEqual(PreservationStatus.Active, dut.Status);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldMakeTagReadyToBePreserved_WhenNoRequirementNeedInput()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNotNeedInput);
+            Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
+
+            dut.StartPreservation(_utcNow);
+
+            Assert.IsTrue(dut.ReadyToBePreserved);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldNotMakeTagReadyToBePreserved_WhenRequirementNeedInput()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNeedInput);
+            Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
+
+            dut.StartPreservation(_utcNow);
+
+            Assert.IsFalse(dut.ReadyToBePreserved);
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldThrowException_WhenNotReadyToBePreserved()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNeedInput);
+            dut.StartPreservation(_utcNow);
+            Assert.IsFalse(dut.ReadyToBePreserved);
+
+            Assert.ThrowsException<Exception>(() => dut.Preserve(_utcNow, new Mock<Person>().Object, false));
         }
     }
 }
