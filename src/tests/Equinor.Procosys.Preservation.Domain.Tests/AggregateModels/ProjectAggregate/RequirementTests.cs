@@ -80,6 +80,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithoutPreservationRecord()
+        {
+            var dut = new Requirement("SchemaA", 1, _reqDefNeedInputMock.Object);
+
+            dut.StartPreservation(_utcNow);
+
+            Assert.IsNull(dut.PreservationPeriods.First().PreservationRecord);
+        }
+
+        [TestMethod]
         public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusNeedUserInput_WhenReqDefNeedUserInput()
         {
             var dut = new Requirement("SchemaA", 8, _reqDefNeedInputMock.Object);
@@ -100,12 +110,34 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Preserve_ShouldThrowException_WhenPreservationPeriodNeedInput()
+        public void Preserve_ShouldThrowException_WhenPreservationNotStarted()
         {
-            var dut = new Requirement("SchemaA", 24, _reqDefNeedInputMock.Object);
+            var dut = new Requirement("SchemaA", 24, _reqDefNotNeedInputMock.Object);
 
             Assert.ThrowsException<Exception>(() =>
                 dut.Preserve(_utcNow, new Mock<Person>().Object, false)
+            );
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldThrowException_WhenPreservationPeriodNeedInput()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefNeedInputMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            Assert.ThrowsException<Exception>(() =>
+                dut.Preserve(_utcNow, new Mock<Person>().Object, false)
+            );
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldThrowException_WhenPreservedByNoGiven()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefNotNeedInputMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                dut.Preserve(_utcNow, null, false)
             );
         }
                 
@@ -133,6 +165,42 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.Preserve(_utcNow, new Mock<Person>().Object, false);
 
             Assert.AreEqual(PreservationPeriodStatus.Preserved, dut.PreservationPeriods.First().Status);
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldCreatePreservationRecordOnReadyPreservationPeriod()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefNotNeedInputMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            var personMock = new Mock<Person>();
+            personMock.SetupGet(p => p.Id).Returns(51);
+            dut.Preserve(_utcNow, personMock.Object, false);
+
+            var preservationRecord = dut.PreservationPeriods.First().PreservationRecord;
+            Assert.IsNotNull(preservationRecord);
+            Assert.AreEqual(51, preservationRecord.PreservedByPersonId);
+            Assert.AreEqual(_utcNow, preservationRecord.PreservedAtUtc);
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldCreatePreservationRecordWithBulk_WhenBulkPreserve()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefNotNeedInputMock.Object);
+            dut.StartPreservation(_utcNow);
+            dut.Preserve(_utcNow, new Mock<Person>().Object, true);
+
+            Assert.IsTrue(dut.PreservationPeriods.First().PreservationRecord.BulkPreserved);
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldCreatePreservationRecordWithoutBulk_WhenNotBulkPreserve()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefNotNeedInputMock.Object);
+            dut.StartPreservation(_utcNow);
+            dut.Preserve(_utcNow, new Mock<Person>().Object, false);
+
+            Assert.IsFalse(dut.PreservationPeriods.First().PreservationRecord.BulkPreserved);
         }
 
         [TestMethod]
