@@ -33,13 +33,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public PreservationPeriodStatus Status { get; private set; }
         public DateTime DueTimeUtc { get; private set; }
         public string Comment { get; set; }
-        public PreservationRecord PreservationRecord { get; set; }
+        public PreservationRecord PreservationRecord { get; private set; }
 
         internal void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
-            if (preservedAtUtc.Kind != DateTimeKind.Utc)
+            if (PreservationRecord != null)
             {
-                throw new ArgumentException($"{nameof(preservedAtUtc)} is not Utc");
+                throw new Exception($"{nameof(PreservationPeriod)} already have a {nameof(PreservationRecord)}. Can't preserve");
             }
 
             if (Status != PreservationPeriodStatus.ReadyToBePreserved)
@@ -47,9 +47,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)}. Can't preserve");
             }
 
-            if (PreservationRecord != null)
+            if (preservedAtUtc.Kind != DateTimeKind.Utc)
             {
-                throw new Exception($"{nameof(PreservationPeriod)} already have a {nameof(PreservationRecord)}. Can't preserve");
+                throw new ArgumentException($"{nameof(preservedAtUtc)} is not Utc");
             }
 
             Status = PreservationPeriodStatus.Preserved;
