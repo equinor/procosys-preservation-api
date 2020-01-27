@@ -133,35 +133,35 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void FirstUpcommingRequirement_ShouldNotGiveRequirement_WhenPreservationNotStarted()
+        public void FirstUpcomingRequirement_ShouldNotGiveRequirement_WhenPreservationNotStarted()
         {
             Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
 
-            var firstUpcommingRequirement = _dut.FirstUpcommingRequirement;
+            var firstUpcomingRequirement = _dut.FirstUpcomingRequirement;
 
-            Assert.IsNull(firstUpcommingRequirement);
+            Assert.IsNull(firstUpcomingRequirement);
         }
 
         [TestMethod]
-        public void FirstUpcommingRequirement_ShouldGiveRequirement_WhenPreservationStarted()
+        public void FirstUpcomingRequirement_ShouldGiveRequirement_WhenPreservationStarted()
         {
             Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
 
             _dut.StartPreservation(_utcNow);
-            var firstUpcommingRequirement = _dut.FirstUpcommingRequirement;
+            var firstUpcomingRequirement = _dut.FirstUpcomingRequirement;
 
-            Assert.IsNotNull(firstUpcommingRequirement);
+            Assert.IsNotNull(firstUpcomingRequirement);
         }
 
         [TestMethod]
-        public void FirstUpcommingRequirement_ShouldGiveCorrectRequirement_WhenDifferentInterval()
+        public void FirstUpcomingRequirement_ShouldGiveCorrectRequirement_WhenDifferentInterval()
         {
             Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
 
             _dut.StartPreservation(_utcNow);
-            var firstUpcommingRequirement = _dut.FirstUpcommingRequirement;
+            var firstUpcomingRequirement = _dut.FirstUpcomingRequirement;
 
-            Assert.AreEqual(firstUpcommingRequirement, _dut.Requirements.ElementAt(0));
+            Assert.AreEqual(firstUpcomingRequirement, _dut.Requirements.ElementAt(0));
         }
     }
 }

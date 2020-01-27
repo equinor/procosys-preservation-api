@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             var modes = await _modeRepository.GetByIdsAsync(modeIds);
 
             var respIds = steps.Select(s => s.ResponsibleId).Distinct();
-            var resposibles = await _responsibleRepository.GetByIdsAsync(respIds);
+            var responsibles = await _responsibleRepository.GetByIdsAsync(respIds);
 
             var now = _timeService.GetCurrentTimeUtc();
 
@@ -65,42 +65,24 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                         r.GetTimeUntilNextDueTime(now)))
                     .ToList();
 
-                var firstUpcommingRequirement = tag.FirstUpcommingRequirement;
+                var firstUpcomingRequirement = tag.FirstUpcomingRequirement;
 
-                RequirementDto firstUpcommingRequirementDto = null;
-                if (firstUpcommingRequirement != null)
+                RequirementDto firstUpcomingRequirementDto = null;
+                if (firstUpcomingRequirement != null)
                 {
-                    firstUpcommingRequirementDto = requirementsDtos.Single(r => r.Id == firstUpcommingRequirement.Id);
+                    firstUpcomingRequirementDto = requirementsDtos.Single(r => r.Id == firstUpcomingRequirement.Id);
                 }
 
                 var step = steps.Single(s => s.Id == tag.StepId);
                 var mode = modes.Single(m => m.Id == step.ModeId);
-                var resp = resposibles.Single(r => r.Id == step.ResponsibleId);
-
-                /* Above or this solution Henning? :
-                var step = steps.FirstOrDefault(s => s.Id == tag.StepId);
-                if (step == null)
-                {
-                    throw new Exception($"Data inconsistency: Step {tag.StepId} in Tag {tag.Id} do not exists");
-                }
-                var mode = modes.FirstOrDefault(m => m.Id == step.ModeId);
-                if (mode == null)
-                {
-                    throw new Exception($"Data inconsistency: Mode {step.ModeId} in Step {step.Id} do not exists");
-                }
-                var resp = resposibles.FirstOrDefault(r => r.Id == step.ResponsibleId);
-                if (resp == null)
-                {
-                    throw new Exception($"Data inconsistency: Responsible {step.ResponsibleId} in Step {step.Id} do not exists");
-                }
-                */
+                var resp = responsibles.Single(r => r.Id == step.ResponsibleId);
 
                 return new TagDto(tag.Id,
                     tag.AreaCode,
                     tag.Calloff,
                     tag.CommPkgNo,
                     tag.DisciplineCode,
-                    firstUpcommingRequirementDto,
+                    firstUpcomingRequirementDto,
                     tag.IsAreaTag,
                     tag.IsVoided,
                     tag.McPkgNo,

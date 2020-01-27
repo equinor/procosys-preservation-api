@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.IsNotNull(_dut.Requirements);
-            Assert.IsNotNull(_dut.FirstUpcommingRequirement);
+            Assert.IsNotNull(_dut.FirstUpcomingRequirement);
             Assert.AreEqual(1, _dut.Requirements.Count());
             Assert.AreEqual(PreservationStatus.Active, _dut.Status);
             Assert.AreEqual("Resp", _dut.ResposibleCode);

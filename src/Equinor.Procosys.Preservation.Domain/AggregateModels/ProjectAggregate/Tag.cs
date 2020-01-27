@@ -109,7 +109,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             Status = PreservationStatus.Active;
         }
 
-        public Requirement FirstUpcommingRequirement
+        public Requirement FirstUpcomingRequirement
             => Status == PreservationStatus.Active
                 ? Requirements
                     .Where(r => r.NextDueTimeUtc.HasValue)

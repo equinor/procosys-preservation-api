@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         }
 
         [TestMethod]
-        public void Weeks_AWeekBefore_ShouldGetOneWeekMinus()
+        public void Weeks_AWeekBefore_ShouldGetOneWeekNegative()
         {
             var span = new TimeSpan(-7, 0, 0, 0);
 
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         }
 
         [TestMethod]
-        public void Weeks_AYearBackward_ShouldGet52WeeksMinus()
+        public void Weeks_AYearBackward_ShouldGet52WeeksNegative()
         {
             var span = new TimeSpan(-365, 0, 0, 0);
 

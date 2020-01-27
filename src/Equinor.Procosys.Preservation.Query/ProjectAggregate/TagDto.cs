@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             string calloffNo,
             string commPkgNo,
             string disciplineCode,
-            RequirementDto firstUpcommingRequirement,
+            RequirementDto firstUpcomingRequirement,
             bool isAreaTag,
             bool isVoided,
             string mcPkgNo, 
@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             bool needUserInput,
             string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
-            string resposibleCode,
+            string responsibleCode,
             PreservationStatus status,
             string tagFunctionCode,
             string tagDescription,
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             CommPkgNo = commPkgNo;
             Description = tagDescription;
             DisciplineCode = disciplineCode;
-            FirstUpcommingRequirement = firstUpcommingRequirement;
+            FirstUpcomingRequirement = firstUpcomingRequirement;
             IsAreaTag = isAreaTag;
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             NeedUserInput = needUserInput;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
-            ResposibleCode = resposibleCode;
+            ResposibleCode = responsibleCode;
             Status = status;
             TagFunctionCode = tagFunctionCode;
             Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public string McPkgNo { get; }
         public string Mode { get; }
         public string PurchaseOrderNo { get; }
-        public RequirementDto FirstUpcommingRequirement { get; }
+        public RequirementDto FirstUpcomingRequirement { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
         public string ResposibleCode { get; }
