@@ -11,25 +11,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class RequirementTests
     {
-        private Mock<RequirementDefinition> _reqDefMock;
+        private Mock<RequirementDefinition> _reqDefNeedInputMock;
+        private Mock<RequirementDefinition> _reqDefNotNeedInputMock;
         private DateTime _utcNow;
 
         [TestInitialize]
         public void Setup()
         {
-            _reqDefMock = new Mock<RequirementDefinition>();
-            _reqDefMock.SetupGet(x => x.Id).Returns(3);
+            _reqDefNeedInputMock = new Mock<RequirementDefinition>();
+            _reqDefNeedInputMock.SetupGet(x => x.Id).Returns(3);
+            _reqDefNeedInputMock.Object.AddField(new Field("", "", FieldType.CheckBox, 0));
+            _reqDefNotNeedInputMock = new Mock<RequirementDefinition>();
+            _reqDefNotNeedInputMock.Object.AddField(new Field("", "", FieldType.Info, 0));
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
+            var dut = new Requirement("SchemaA", 24, _reqDefNeedInputMock.Object);
 
             Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual(_reqDefMock.Object.Id, dut.RequirementDefinitionId);
+            Assert.AreEqual(_reqDefNeedInputMock.Object.Id, dut.RequirementDefinitionId);
             Assert.IsFalse(dut.IsVoided);
+            Assert.IsFalse(dut.ReadyToBePreserved);
         }
 
         [TestMethod]
@@ -42,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void StartPreservation_ShouldShouldSetCorrectNextDueDate()
         {
             var intervalWeeks = 2;
-            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefNeedInputMock.Object);
 
             dut.StartPreservation(_utcNow);
 
@@ -51,10 +56,21 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void StartPreservation_ShouldThrowException_WhenPreservationAlreadyOngoing()
+        {
+            var dut = new Requirement("SchemaA", 1, _reqDefNeedInputMock.Object);
+
+            dut.StartPreservation(_utcNow);
+
+            Assert.ThrowsException<Exception>(() => dut.StartPreservation(_utcNow)
+            );
+        }
+
+        [TestMethod]
         public void StartPreservation_ShouldAddNewPreservationPeriodWithCorrectDueDate()
         {
             var intervalWeeks = 2;
-            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefNeedInputMock.Object);
 
             dut.StartPreservation(_utcNow);
 
@@ -64,19 +80,54 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Preserve_ShouldThrowException_WhenPreservationNotReady()
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusNeedUserInput_WhenReqDefNeedUserInput()
         {
-            var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
+            var dut = new Requirement("SchemaA", 8, _reqDefNeedInputMock.Object);
+
+            dut.StartPreservation(_utcNow);
+
+            Assert.AreEqual(PreservationPeriodStatus.NeedUserInput, dut.PreservationPeriods.First().Status);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusReadyToBePreserved_WhenReqDefNotNeedUserInput()
+        {
+            var dut = new Requirement("SchemaA", 8, _reqDefNotNeedInputMock.Object);
+
+            dut.StartPreservation(_utcNow);
+
+            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.PreservationPeriods.First().Status);
+        }
+
+        [TestMethod]
+        public void Preserve_ShouldThrowException_WhenPreservationPeriodNeedInput()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefNeedInputMock.Object);
 
             Assert.ThrowsException<Exception>(() =>
                 dut.Preserve(_utcNow, new Mock<Person>().Object, false)
             );
         }
+                
+        [TestMethod]
+        public void Preserve_ShouldShouldUpdateCorrectNextDueDate()
+        {
+            var intervalWeeks = 2;
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefNotNeedInputMock.Object);
+
+            dut.StartPreservation(_utcNow);
+
+            var preservedTime = _utcNow.AddDays(5);
+            dut.Preserve(preservedTime, new Mock<Person>().Object, false);
+            
+            var expectedNextDueTimeUtc = preservedTime.AddWeeks(intervalWeeks);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
+        }
 
         [TestMethod]
-        public void Preserve_ShouldPreserveActivePreservationPeriod()
+        public void Preserve_ShouldSetStatusPreserveOnReadyPreservationPeriod()
         {
-            var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
+            var dut = new Requirement("SchemaA", 24, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
 
             dut.Preserve(_utcNow, new Mock<Person>().Object, false);
@@ -88,36 +139,36 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Preserve_ShouldAddNewPreservationPeriodToPreservationPeriodsList()
         {
             var intervalWeeks = 2;
-            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
+            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
 
-            var preservatedTime = _utcNow.AddDays(5);
-            dut.Preserve(preservatedTime, new Mock<Person>().Object, false);
+            var preservedTime = _utcNow.AddDays(5);
+            dut.Preserve(preservedTime, new Mock<Person>().Object, false);
             
-            var expectedNextDueTimeUtc = preservatedTime.AddWeeks(intervalWeeks);
+            var expectedNextDueTimeUtc = preservedTime.AddWeeks(intervalWeeks);
             Assert.AreEqual(2, dut.PreservationPeriods.Count);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Last().DueTimeUtc);
         }
-        
-        [TestMethod]
-        public void Preserve_ShouldShouldUpdateCorrectNextDueDate()
-        {
-            var intervalWeeks = 2;
-            var dut = new Requirement("SchemaA", intervalWeeks, _reqDefMock.Object);
 
+        [TestMethod]
+        public void Preserve_ShouldAddNewPreservationPeriodEachTime()
+        {
+            var dut = new Requirement("SchemaA", 4, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
 
-            var preservatedTime = _utcNow.AddDays(5);
-            dut.Preserve(preservatedTime, new Mock<Person>().Object, false);
+            var preserveCount = 15;
+            for (var i = 0; i < preserveCount; i++)
+            {
+                dut.Preserve(_utcNow, new Mock<Person>().Object, false);
+            }
             
-            var expectedNextDueTimeUtc = preservatedTime.AddWeeks(intervalWeeks);
-            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
+            Assert.AreEqual(preserveCount+1, dut.PreservationPeriods.Count);
         }
 
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()
         {
-            var dut = new Requirement("SchemaA", 24, _reqDefMock.Object);
+            var dut = new Requirement("SchemaA", 24, _reqDefNeedInputMock.Object);
             Assert.IsFalse(dut.IsVoided);
 
             dut.Void();

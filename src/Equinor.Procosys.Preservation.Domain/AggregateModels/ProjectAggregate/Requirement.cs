@@ -55,7 +55,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddNewPreservationPeriod(preservedAtUtc);
         }
 
-        public virtual void StartPreservation(DateTime preservationStartedUtc) => AddNewPreservationPeriod(preservationStartedUtc);
+        public void StartPreservation(DateTime preservationStartedUtc)
+        {
+            if (_preservationPeriods.Any())
+            {
+                throw new Exception($"{nameof(Requirement)} do have {nameof(PreservationPeriod)}. Can't start");
+            }
+            AddNewPreservationPeriod(preservationStartedUtc);
+        }
 
         private void AddNewPreservationPeriod(DateTime nextDueTimeUtc)
         {
