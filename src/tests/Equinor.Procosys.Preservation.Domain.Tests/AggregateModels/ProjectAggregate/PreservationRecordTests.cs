@@ -38,5 +38,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new PreservationRecord("SchemaA", _utcNow, null, true)
             );
 
+        [TestMethod]
+        public void Constructor_ShouldThrowException_WhenDateNotUtc()
+            => Assert.ThrowsException<ArgumentException>(() =>
+                new PreservationRecord("SchemaA", DateTime.Now, _preservedByMock.Object, true)
+            );
     }
 }
