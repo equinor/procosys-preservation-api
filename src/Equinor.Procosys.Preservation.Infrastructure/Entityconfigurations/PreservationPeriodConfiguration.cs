@@ -26,7 +26,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .HasDefaultValue(PreservationPeriodStatus.NeedsUserInput)
                 .IsRequired();
 
-            // todo datetime converter for DueTimeUtc
             builder.Property(x => x.DueTimeUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
 
