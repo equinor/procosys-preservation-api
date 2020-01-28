@@ -33,11 +33,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Constructor_ShouldAllowStatusNeedUserInput()
+        public void Constructor_ShouldAllowStatusNeedsUserInput()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.NeedUserInput);
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.NeedsUserInput);
 
-            Assert.AreEqual(PreservationPeriodStatus.NeedUserInput, dut.Status);
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.Status);
         }
 
         [TestMethod]
@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenDateNotUtc()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new PreservationPeriod("SchemaA", DateTime.Now, PreservationPeriodStatus.NeedUserInput)
+                new PreservationPeriod("SchemaA", DateTime.Now, PreservationPeriodStatus.NeedsUserInput)
             );
 
         [TestMethod]
@@ -94,10 +94,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Preserve_ShouldThrowException_WhenNeedUserInput()
+        public void Preserve_ShouldThrowException_WhenNeedsUserInput()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.NeedUserInput);
-            Assert.AreEqual(PreservationPeriodStatus.NeedUserInput, dut.Status);
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.NeedsUserInput);
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.Status);
 
             // act
             Assert.ThrowsException<Exception>(() =>

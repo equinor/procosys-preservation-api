@@ -90,17 +90,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusNeedUserInput_WhenReqDefNeedUserInput()
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusNeedsUserInput_WhenReqDefNeedsUserInput()
         {
             var dut = new Requirement("SchemaA", 8, _reqDefNeedInputMock.Object);
 
             dut.StartPreservation(_utcNow);
 
-            Assert.AreEqual(PreservationPeriodStatus.NeedUserInput, dut.PreservationPeriods.First().Status);
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.PreservationPeriods.First().Status);
         }
 
         [TestMethod]
-        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusReadyToBePreserved_WhenReqDefNotNeedUserInput()
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusReadyToBePreserved_WhenReqDefNotNeedsUserInput()
         {
             var dut = new Requirement("SchemaA", 8, _reqDefNotNeedInputMock.Object);
 

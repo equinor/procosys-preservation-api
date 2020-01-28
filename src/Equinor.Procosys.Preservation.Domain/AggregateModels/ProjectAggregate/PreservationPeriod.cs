@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"{nameof(dueTimeUtc)} is not Utc");
             }
 
-            if (status != PreservationPeriodStatus.NeedUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
+            if (status != PreservationPeriodStatus.NeedsUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
             {
                 throw new ArgumentException($"{status} is an illegal initial status for a {nameof(PreservationPeriod)}");
             }
@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             if (PreservationRecord != null)
             {
-                throw new Exception($"{nameof(PreservationPeriod)} already have a {nameof(PreservationRecord)}. Can't preserve");
+                throw new Exception($"{nameof(PreservationPeriod)} already has a {nameof(PreservationRecord)}. Can't preserve");
             }
 
             if (Status != PreservationPeriodStatus.ReadyToBePreserved)

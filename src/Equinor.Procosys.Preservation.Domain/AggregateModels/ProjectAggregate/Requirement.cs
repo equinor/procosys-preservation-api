@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Requirement : SchemaEntityBase
     {
-        private readonly bool _requirementDefinitionNeedUserInput;
+        private readonly bool _requirementDefinitionNeedsUserInput;
         private readonly List<PreservationPeriod> _preservationPeriods = new List<PreservationPeriod>();
 
         protected Requirement()
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             IntervalWeeks = intervalWeeks;
             RequirementDefinitionId = requirementDefinition.Id;
-            _requirementDefinitionNeedUserInput = requirementDefinition.NeedsUserInput;
+            _requirementDefinitionNeedsUserInput = requirementDefinition.NeedsUserInput;
         }
 
         public int IntervalWeeks { get; private set; }
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private void AddNewPreservationPeriod(DateTime nextDueTimeUtc)
         {
             NextDueTimeUtc = nextDueTimeUtc.AddWeeks(IntervalWeeks);
-            var initialStatus =  _requirementDefinitionNeedUserInput ? PreservationPeriodStatus.NeedUserInput : PreservationPeriodStatus.ReadyToBePreserved;
+            var initialStatus =  _requirementDefinitionNeedsUserInput ? PreservationPeriodStatus.NeedsUserInput : PreservationPeriodStatus.ReadyToBePreserved;
             var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, initialStatus);
             _preservationPeriods.Add(preservationPeriod);
         }

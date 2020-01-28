@@ -2,7 +2,7 @@
 {
     public enum PreservationPeriodStatus
     {
-        NeedUserInput,
+        NeedsUserInput,
         ReadyToBePreserved,
         Preserved,
         Stopped
