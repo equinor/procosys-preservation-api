@@ -104,5 +104,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 dut.Preserve(_utcNow, _preservedByMock.Object, true)
             );
         }
+
+        [TestMethod]
+        public void Preserve_ShouldThrowException_WhenDateNotUtc()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.Status);
+
+            // act
+            Assert.ThrowsException<ArgumentException>(() =>
+                dut.Preserve(DateTime.Now, _preservedByMock.Object, true)
+            );
+        }
     }
 }
