@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             if (status != PreservationPeriodStatus.NeedUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
             {
-                throw new ArgumentException($"{nameof(dueTimeUtc)} {status} is an illegal initial status for a {nameof(PreservationPeriod)}");
+                throw new ArgumentException($"{status} is an illegal initial status for a {nameof(PreservationPeriod)}");
             }
             DueTimeUtc = dueTimeUtc;
             Status = status;
@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string Comment { get; set; }
         public PreservationRecord PreservationRecord { get; private set; }
 
-        internal void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
+        public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
             if (PreservationRecord != null)
             {
