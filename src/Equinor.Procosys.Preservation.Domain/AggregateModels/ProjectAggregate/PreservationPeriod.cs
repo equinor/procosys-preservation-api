@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class PreservationPeriod : SchemaEntityBase
     {
+        private readonly List<FieldValue> _fieldValues = new List<FieldValue>();
+
         public const int CommentLengthMax = 2048;
 
         protected PreservationPeriod()
@@ -34,6 +37,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime DueTimeUtc { get; private set; }
         public string Comment { get; set; }
         public PreservationRecord PreservationRecord { get; private set; }
+        public IReadOnlyCollection<FieldValue> FieldValues => _fieldValues.AsReadOnly();
+
+        public void AddFieldValue(FieldValue fieldValue)
+        {
+            if (fieldValue == null)
+            {
+                throw new ArgumentNullException(nameof(fieldValue));
+            }
+
+            _fieldValues.Add(fieldValue);
+        }
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
