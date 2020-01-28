@@ -22,9 +22,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
         {
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.Exists(_tagId)).Returns(true);
+            _tagValidatorMock.Setup(r => r.RequirementIsReadyForRecording(_tagId, _fieldId)).Returns(true);
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(r => r.Exists(_fieldId)).Returns(true);
-            
+
             _command = new TestCommand(_tagId, _fieldId);
 
             _dut = new RecordCommandValidator<TestCommand>(
@@ -62,6 +63,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exists!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenRequirementIsNotReadyForRecording()
+        {
+            _tagValidatorMock.Setup(r => r.RequirementIsReadyForRecording(_tagId, _fieldId)).Returns(false);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("The requirement for the field is not ready for recording!"));
         }
 
         [TestMethod]

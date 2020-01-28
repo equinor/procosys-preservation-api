@@ -101,8 +101,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var requirements = _dut.Requirements;
             var firstReq = requirements.ElementAt(0);
             var laterReq = requirements.ElementAt(1);
-            Assert.IsFalse(firstReq.ReadyToBePreserved);
-            Assert.IsFalse(laterReq.ReadyToBePreserved);
+            Assert.IsFalse(firstReq.HasPeriodReadyToBePreserved);
+            Assert.IsFalse(laterReq.HasPeriodReadyToBePreserved);
         }
 
         [TestMethod]

@@ -117,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                     .First()
                 : null;
 
-        public bool ReadyToBePreserved => _requirements.All(r => r.ReadyToBePreserved);
+        public bool ReadyToBePreserved => _requirements.All(r => r.HasPeriodReadyToBePreserved);
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {

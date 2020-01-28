@@ -38,23 +38,25 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public bool ReadyToBePreserved => ReadyToBePreservationPeriod != null;
+        public bool HasPeriodReadyToBePreserved => PeriodReadyToBePreserved != null;
+        
+        public bool HasActivePeriod => ActivePeriod != null;
 
         public void StartPreservation(DateTime startedAtUtc)
         {
             if (_preservationPeriods.Any())
             {
-                throw new Exception($"{nameof(Requirement)} do have {nameof(PreservationPeriod)}. Can't start");
+                throw new Exception($"{nameof(Requirement)} {Id} do have {nameof(PreservationPeriod)}. Can't start");
             }
             AddNewPreservationPeriod(startedAtUtc);
         }
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
-            var preservationPeriod = ReadyToBePreservationPeriod;
+            var preservationPeriod = PeriodReadyToBePreserved;
             if (preservationPeriod == null)
             {
-                throw new Exception($"{nameof(Requirement)} is not {PreservationPeriodStatus.ReadyToBePreserved}");
+                throw new Exception($"{nameof(Requirement)} {Id} has not period {PreservationPeriodStatus.ReadyToBePreserved}");
             }
 
             preservationPeriod.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
@@ -79,7 +81,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return NextDueTimeUtc.Value - timeUtc;
         }
 
-        private PreservationPeriod ReadyToBePreservationPeriod
+        private PreservationPeriod ActivePeriod
+            => PreservationPeriods.SingleOrDefault(pp => 
+                pp.Status == PreservationPeriodStatus.ReadyToBePreserved ||
+                pp.Status == PreservationPeriodStatus.NeedsUserInput);
+
+        private PreservationPeriod PeriodReadyToBePreserved
             => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
     }
 }

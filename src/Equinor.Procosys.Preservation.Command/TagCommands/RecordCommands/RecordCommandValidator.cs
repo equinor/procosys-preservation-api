@@ -6,10 +6,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands
 {
     public class RecordCommandValidator<T> : AbstractValidator<T> where T : RecordCommand
     {
-        public RecordCommandValidator(
-            ITagValidator tagValidator,
-            IFieldValidator fieldValidator
-        )
+        public RecordCommandValidator(ITagValidator tagValidator, IFieldValidator fieldValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -21,11 +18,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands
                 .Must(NotBeAVoidedTag)
                 .WithMessage(x => $"Tag is voided! Tag={x.TagId}");
 
-            RuleFor(s => s.FieldId)
+            RuleFor(x => x.FieldId)
                 .Must(BeAnExistingField)
                 .WithMessage(x => $"Field doesn't exists! Field={x.FieldId}")
                 .Must(NotBeAVoidedField)
                 .WithMessage(x => $"Field is voided! Field={x.FieldId}");
+
+            RuleFor(x => x)
+                .Must(HaveRequirementReadyForRecording)
+                .WithMessage(x => $"The requirement for the field is not ready for recording! Tag={x.TagId}. Field={x.FieldId}");
 
             bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
 
@@ -36,6 +37,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands
             bool BeAnExistingField(int fieldId) => fieldValidator.Exists(fieldId);
             
             bool NotBeAVoidedField(int fieldId) => !fieldValidator.IsVoided(fieldId);
+            
+            bool HaveRequirementReadyForRecording(RecordCommand command)
+                => tagValidator.RequirementIsReadyForRecording(command.TagId, command.FieldId);
         }
     }
 }

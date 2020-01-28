@@ -22,6 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
         {
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.Exists(_tagId)).Returns(true);
+            _tagValidatorMock.Setup(r => r.RequirementIsReadyForRecording(_tagId, _fieldId)).Returns(true);
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(r => r.Exists(_fieldId)).Returns(true);
             

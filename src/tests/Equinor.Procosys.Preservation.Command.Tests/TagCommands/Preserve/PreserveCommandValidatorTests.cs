@@ -27,12 +27,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _tagValidatorMock.Setup(r => r.Exists(_tagId2)).Returns(true);
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirement(_tagId1)).Returns(true);
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirement(_tagId2)).Returns(true);
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExist(_tagId1)).Returns(true);
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExist(_tagId2)).Returns(true);
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(_tagId1, PreservationStatus.Active)).Returns(true);
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(_tagId2, PreservationStatus.Active)).Returns(true);
-            _tagValidatorMock.Setup(r => r.AllRequirementsReadyToBePreserved(_tagId1)).Returns(true);
-            _tagValidatorMock.Setup(r => r.AllRequirementsReadyToBePreserved(_tagId2)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(_tagId1)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(_tagId2)).Returns(true);
             _command = new PreserveCommand(_tagIds, true);
 
             _dut = new PreserveCommandValidator(_tagValidatorMock.Object);
@@ -107,30 +105,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyTagMissesNonVoidedRequirement()
-        {
-            _tagValidatorMock.Setup(r => r.HasANonVoidedRequirement(_tagId1)).Returns(false);
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag do not have any non voided requirement!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenAnyTagMissesARequirementDefinition()
-        {
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExist(_tagId1)).Returns(false);
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("A requirement definition doesn't exists!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenPreservationIsNotActiveForAnyTag()
         {
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(_tagId1, PreservationStatus.Active)).Returns(false);
@@ -145,7 +119,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyRequirementIsNotReadyToBePreservedForAnyTag()
         {
-            _tagValidatorMock.Setup(r => r.AllRequirementsReadyToBePreserved(_tagId1)).Returns(false);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(_tagId1)).Returns(false);
             
             var result = _dut.Validate(_command);
 
