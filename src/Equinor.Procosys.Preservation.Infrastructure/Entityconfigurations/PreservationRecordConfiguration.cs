@@ -15,9 +15,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
             
             builder.Property(x => x.PreservedAtUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
-
-            builder.Property(x => x.Comment)
-                .HasMaxLength(PreservationRecord.CommentLengthMax);
         }
     }
 }

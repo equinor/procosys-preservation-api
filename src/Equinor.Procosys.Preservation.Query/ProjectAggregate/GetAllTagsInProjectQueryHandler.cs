@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -87,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.IsVoided,
                     tag.McPkgNo,
                     mode.Title,
-                    tag.NeedUserInput,
+                    tag.ReadyToBePreserved,
                     tag.PurchaseOrderNo,
                     requirementsDtos,
                     resp.Name,

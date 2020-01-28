@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Query.ProjectAggregate;
@@ -49,10 +50,31 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [HttpPut("{id}/StartPreservation")]
+        public async Task<IActionResult> StartPreservation([FromRoute] int tagId)
+        {
+            var result = await _mediator.Send(new StartPreservationCommand(new List<int>{tagId}));
+            return this.FromResult(result);
+        }
+
         [HttpPut("StartPreservation")]
         public async Task<IActionResult> StartPreservation([FromBody] List<int> tagIds)
         {
             var result = await _mediator.Send(new StartPreservationCommand(tagIds));
+            return this.FromResult(result);
+        }
+
+        [HttpPut("{id}/Preserve")]
+        public async Task<IActionResult> Preserve([FromRoute] int tagId)
+        {
+            var result = await _mediator.Send(new PreserveCommand(new List<int>{tagId}, false));
+            return this.FromResult(result);
+        }
+
+        [HttpPut("Preserve")]
+        public async Task<IActionResult> Preserve([FromBody] List<int> tagIds)
+        {
+            var result = await _mediator.Send(new PreserveCommand(tagIds, true));
             return this.FromResult(result);
         }
     }

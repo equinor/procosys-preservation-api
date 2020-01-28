@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -14,9 +15,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         private const int JourneyId = 1;
         private const int ModeId = 2;
         private const int ResponsibleId = 3;
-        private Step _stepAdded;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Mock<Journey> _journeyMock;
+        private Journey _journey;
         private Mock<Mode> _modeMock;
         private Mock<Responsible> _responsibleMock;
         private Mock<IModeRepository> _modeRepositoryMock;
@@ -29,16 +29,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         {
             // Arrange
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
-            _journeyMock = new Mock<Journey>();
+            _journey = new Journey("", "J");
             _journeyRepositoryMock
                 .Setup(r => r.GetByIdAsync(JourneyId))
-                .Returns(Task.FromResult(_journeyMock.Object));
-            _journeyMock
-                .Setup(journey => journey.AddStep(It.IsAny<Step>()))
-                .Callback<Step>(step =>
-                {
-                    _stepAdded = step;
-                });
+                .Returns(Task.FromResult(_journey));
 
             _modeRepositoryMock = new Mock<IModeRepository>();
             _modeMock = new Mock<Mode>();
@@ -66,13 +60,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public async Task HandlingCreateStepCommand_ShouldAddStepToJourney()
         {
+            Assert.AreEqual(0, _journey.Steps.Count);
             // Act
             await _dut.Handle(_command, default);
             
             // Assert
-            _journeyMock.Verify(u => u.AddStep(It.IsAny<Step>()), Times.Once);
-            Assert.AreEqual(ModeId, _stepAdded.ModeId);
-            Assert.AreEqual(ResponsibleId, _stepAdded.ResponsibleId);
+            Assert.AreEqual(1, _journey.Steps.Count);
+            var stepAdded = _journey.Steps.First();
+            Assert.AreEqual(ModeId, stepAdded.ModeId);
+            Assert.AreEqual(ResponsibleId, stepAdded.ResponsibleId);
         }
 
         [TestMethod]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -74,7 +75,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string TagNo { get; private set; }
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
         public bool IsVoided { get; private set; }
-        public bool NeedUserInput => false; // todo Must aggregate over FieldValues -> true if any Field need input at current time
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
@@ -99,11 +99,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             _requirements.Add(requirement);
         }
 
-        public void StartPreservation(DateTime utcNow)
+        public void StartPreservation(DateTime startedAtUtc)
         {
             foreach (var requirement in Requirements)
             {
-                requirement.StartPreservation(utcNow);
+                requirement.StartPreservation(startedAtUtc);
             }
 
             Status = PreservationStatus.Active;
@@ -116,5 +116,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                     .OrderBy(r => r.NextDueTimeUtc.Value)
                     .First()
                 : null;
+
+        public bool ReadyToBePreserved => _requirements.All(r => r.ReadyToBePreserved);
+
+        public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
+        {
+            foreach (var requirement in Requirements)
+            {
+                requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
+            }
+        }
     }
 }

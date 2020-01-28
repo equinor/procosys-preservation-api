@@ -63,6 +63,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public virtual DbSet<Requirement> Requirements { get; set; }
         public virtual DbSet<Person> Persons { get; set; }
         public virtual DbSet<PreservationRecord> PreservationRecords { get; set; }
+        public virtual DbSet<PreservationPeriod> PreservationPeriods { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

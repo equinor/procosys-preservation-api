@@ -1,4 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+﻿using System;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
@@ -8,5 +11,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
             : base(context.Persons)
         {
         }
+
+        public Task<Person> GetByOidAsync(Guid oid)
+            => DefaultQuery.FirstOrDefaultAsync(p => p.Oid == oid);
     }
 }

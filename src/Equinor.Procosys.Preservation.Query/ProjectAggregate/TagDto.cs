@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             bool isVoided,
             string mcPkgNo, 
             string mode,
-            bool needUserInput,
+            bool readyToBePreserved,
             string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
             string responsibleCode,
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             Mode = mode;
-            NeedUserInput = needUserInput;
+            ReadyToBePreserved = readyToBePreserved;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
             ResposibleCode = responsibleCode;
@@ -51,18 +51,18 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public string CommPkgNo { get; }
         public string Description { get; }
         public string DisciplineCode { get; }
+        public RequirementDto FirstUpcomingRequirement { get; }
         public int Id { get; }
         public bool IsAreaTag { get; }
         public bool IsVoided { get; }
         public string McPkgNo { get; }
         public string Mode { get; }
         public string PurchaseOrderNo { get; }
-        public RequirementDto FirstUpcomingRequirement { get; }
+        public bool ReadyToBePreserved { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
         public string ResposibleCode { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
-        public bool NeedUserInput { get; }
     }
 }
