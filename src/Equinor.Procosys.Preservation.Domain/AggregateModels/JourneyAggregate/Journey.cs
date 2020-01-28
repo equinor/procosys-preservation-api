@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public virtual void AddStep(Step step)
+        public void AddStep(Step step)
         {
             if (step == null)
             {
