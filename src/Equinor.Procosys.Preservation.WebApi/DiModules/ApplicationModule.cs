@@ -1,6 +1,5 @@
 ﻿using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
-using Equinor.Procosys.Preservation.Command.Validators.FieldValue;
 using Equinor.Procosys.Preservation.Command.Validators.Journey;
 using Equinor.Procosys.Preservation.Command.Validators.Mode;
 using Equinor.Procosys.Preservation.Command.Validators.Project;
@@ -70,7 +69,6 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IModeValidator, ModeValidator>();
             services.AddScoped<IResponsibleValidator, ResponsibleValidator>();
             services.AddScoped<IFieldValidator, FieldValidator>();
-            services.AddScoped<IFieldValueValidator, FieldValueValidator>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ITimeService, TimeService>();

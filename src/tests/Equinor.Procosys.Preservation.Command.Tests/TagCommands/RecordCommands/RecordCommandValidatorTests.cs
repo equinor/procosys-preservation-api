@@ -1,6 +1,5 @@
 ﻿using Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
-using Equinor.Procosys.Preservation.Command.Validators.FieldValue;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -13,7 +12,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
         private RecordCommandValidator<TestCommand> _dut;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IFieldValidator> _fieldValidatorMock;
-        private Mock<IFieldValueValidator> _fieldValueValidatorMock;
         private TestCommand _command;
 
         private int _tagId = 1;
@@ -26,15 +24,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
             _tagValidatorMock.Setup(r => r.Exists(_tagId)).Returns(true);
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(r => r.Exists(_fieldId)).Returns(true);
-            _fieldValueValidatorMock = new Mock<IFieldValueValidator>();
-            _fieldValueValidatorMock.Setup(r => r.ExistsInCurrentPeriod(_fieldId)).Returns(false);
             
             _command = new TestCommand(_tagId, _fieldId);
 
             _dut = new RecordCommandValidator<TestCommand>(
                 _tagValidatorMock.Object, 
-                _fieldValidatorMock.Object,
-                _fieldValueValidatorMock.Object);
+                _fieldValidatorMock.Object);
         }
 
         [TestMethod]
@@ -91,18 +86,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field is voided!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenFieldValueAlreadyExistsInPeriod()
-        {
-            _fieldValueValidatorMock.Setup(r => r.ExistsInCurrentPeriod(_fieldId)).Returns(true);
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field value already exists for field in current period!"));
         }
 
         [TestMethod]

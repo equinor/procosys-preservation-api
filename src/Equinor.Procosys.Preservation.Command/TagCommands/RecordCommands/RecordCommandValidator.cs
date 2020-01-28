@@ -1,5 +1,4 @@
 ﻿using Equinor.Procosys.Preservation.Command.Validators.Field;
-using Equinor.Procosys.Preservation.Command.Validators.FieldValue;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using FluentValidation;
 
@@ -9,8 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands
     {
         public RecordCommandValidator(
             ITagValidator tagValidator,
-            IFieldValidator fieldValidator,
-            IFieldValueValidator fieldValueValidator
+            IFieldValidator fieldValidator
         )
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
@@ -27,9 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands
                 .Must(BeAnExistingField)
                 .WithMessage(x => $"Field doesn't exists! Field={x.FieldId}")
                 .Must(NotBeAVoidedField)
-                .WithMessage(x => $"Field is voided! Field={x.FieldId}")
-                .Must(NotBeAnExistingFieldValueInCurrentPeriod)
-                .WithMessage(x => $"Field value already exists for field in current period! Field={x.FieldId}");
+                .WithMessage(x => $"Field is voided! Field={x.FieldId}");
 
             bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
 
@@ -40,8 +36,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands
             bool BeAnExistingField(int fieldId) => fieldValidator.Exists(fieldId);
             
             bool NotBeAVoidedField(int fieldId) => !fieldValidator.IsVoided(fieldId);
-            
-            bool NotBeAnExistingFieldValueInCurrentPeriod(int fieldId) => !fieldValueValidator.ExistsInCurrentPeriod(fieldId);
         }
     }
 }

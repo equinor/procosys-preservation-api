@@ -1,5 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
 {
