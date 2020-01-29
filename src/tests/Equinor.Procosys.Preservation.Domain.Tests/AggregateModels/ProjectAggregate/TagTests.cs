@@ -73,6 +73,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 "McPkgA", 
                 "CommPkgA", 
                 "PurchaseOrderA", 
+                "RemarkA", 
                 "TagFunctionCodeA", 
                 _stepMock.Object,
                 _reqsNotNeedInput);
@@ -89,6 +90,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual("DisciplineA", _dut.DisciplineCode);
             Assert.AreEqual("McPkgA", _dut.McPkgNo);
             Assert.AreEqual("PurchaseOrderA", _dut.PurchaseOrderNo);
+            Assert.AreEqual("RemarkA", _dut.Remark);
             Assert.AreEqual("TagFunctionCodeA", _dut.TagFunctionCode);
             Assert.AreEqual(_stepMock.Object.Id, _dut.StepId);
             var requirements = _dut.Requirements;
@@ -114,17 +116,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenStepNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(()
-                => new Tag("", "", "", "", "", "", "", "", "", "", null, _reqsNotNeedInput));
+                => new Tag("", "", "", "", "", "", "", "", "", "", "", null, _reqsNotNeedInput));
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenRequirementsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(()
-                => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, null));
+                => new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, null));
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenEmptyListOfRequirementsGiven()
             => Assert.ThrowsException<Exception>(()
-                => new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, new List<Requirement>()));
+                => new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, new List<Requirement>()));
 
         [TestMethod]
         public void SetStep_ShouldSetStepId()
@@ -178,7 +180,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void StartPreservation_ShouldNotMakeTagReadyToBePreserved_WhenRequirementNeedInput()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNeedInput);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNeedInput);
             Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
 
             dut.StartPreservation(_utcNow);
@@ -211,7 +213,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Preserve_ShouldThrowException_WhenRequirementNeedInput()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNeedInput);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNeedInput);
             dut.StartPreservation(_utcNow);
             Assert.IsFalse(dut.ReadyToBePreserved);
 
@@ -231,7 +233,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Preserve_ShouldThrowException_WhenPreservedByNotGiven()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNotNeedInput);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNotNeedInput);
             dut.StartPreservation(_utcNow);
 
             Assert.ThrowsException<ArgumentNullException>(() => dut.Preserve(_utcNow, null, false));

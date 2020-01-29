@@ -25,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         private DateTime _utcNow;
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
+        private Mock<ICurrentUserProvider> _currentUserProvider;
         private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
         private Tag _tag1;
@@ -52,11 +53,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _req2OnTag1 = new Requirement("", IntervalWeeks, _rd2Mock.Object);
             _req1OnTag2 = new Requirement("", IntervalWeeks, _rd1Mock.Object);
             _req2OnTag2 = new Requirement("", IntervalWeeks, _rd2Mock.Object);
-            _tag1 = new Tag("", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
+            _tag1 = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _req1OnTag1, _req2OnTag1
             });
-            _tag2 = new Tag("", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
+            _tag2 = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _req1OnTag2, _req2OnTag2
             });
@@ -64,14 +65,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             {
                 _tag1, _tag2
             };
-
-            _personMock = new Mock<Person>();
-            _personMock.SetupGet(rd => rd.Id).Returns(PersonId);
+            _currentUserProvider = new Mock<ICurrentUserProvider>();
+            _currentUserProvider
+                .Setup(x => x.GetCurrentUserAsync())
+                .Returns(Task.FromResult(new Person(new Guid("12345678-1234-1234-1234-123456789123"), "Firstname", "Lastname")));
             var tagIds = new List<int> {TagId1, TagId2};
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
-            _personRepoMock = new Mock<IPersonRepository>();
-            _personRepoMock.Setup(r => r.GetByOidAsync(Guid.Empty)).Returns(Task.FromResult(_personMock.Object));
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _tag1.StartPreservation(_utcNow.AddDays(-14));
             _tag2.StartPreservation(_utcNow.AddDays(-14));
 
-            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _personRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object);
+            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
         }
 
         [TestMethod]

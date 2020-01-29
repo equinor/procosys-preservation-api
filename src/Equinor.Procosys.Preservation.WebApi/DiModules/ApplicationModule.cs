@@ -46,6 +46,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
 
 
             // Scoped - Created once per client request (connection)
+            services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
             services.AddScoped<IPlantProvider, PlantProvider>();
             services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();
             services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();

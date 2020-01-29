@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -15,7 +16,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
 
             operation.Parameters.Add(new OpenApiParameter
             {
-                Name = "x-plant",
+                Name = PlantProvider.PlantHeader,
                 In = ParameterLocation.Header,
                 Required = true
             });

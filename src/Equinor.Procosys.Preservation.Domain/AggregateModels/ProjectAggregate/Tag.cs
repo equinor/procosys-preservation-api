@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public const int TagNoLengthMax = 255;
         public const int DescriptionLengthMax = 255;
+        public const int RemarkLengthMax = 255;
 
         protected Tag()
             : base(null)
@@ -28,6 +29,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             string mcPkgNo,
             string commPkgNo,
             string purchaseOrderNo,
+            string remark,
             string tagFunctionCode,
             Step step, 
             IEnumerable<Requirement> requirements)
@@ -56,6 +58,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             McPkgNo = mcPkgNo;
             CommPkgNo = commPkgNo;
             PurchaseOrderNo = purchaseOrderNo;
+            Remark = remark;
             TagFunctionCode = tagFunctionCode;
             StepId = step.Id;
             _requirements.AddRange(reqList);
@@ -70,6 +73,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string McPkgNo { get; private set; }
         public string Description { get; private set; }
         public string PurchaseOrderNo { get; private set; }
+        public string Remark { get; private set; }
         public int StepId { get; private set; }
         public string TagFunctionCode { get; private set; }
         public string TagNo { get; private set; }

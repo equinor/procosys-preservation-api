@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200129100124_TagRemark")]
+    partial class TagRemark
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,39 +129,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Persons");
-                });
-
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("FieldId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("FieldType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PreservationPeriodId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Schema")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FieldId");
-
-                    b.HasIndex("PreservationPeriodId");
-
-                    b.ToTable("FieldValues");
-
-                    b.HasDiscriminator<string>("FieldType").HasValue("FieldValue");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationPeriod", b =>
@@ -516,33 +485,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.ToTable("Responsibles");
                 });
 
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Attachment", b =>
-                {
-                    b.HasBaseType("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue");
-
-                    b.Property<string>("BlobId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Attachment");
-                });
-
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.CheckBoxChecked", b =>
-                {
-                    b.HasBaseType("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue");
-
-                    b.HasDiscriminator().HasValue("CheckBoxChecked");
-                });
-
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.NumberValue", b =>
-                {
-                    b.HasBaseType("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue");
-
-                    b.Property<double?>("Value")
-                        .HasColumnType("float");
-
-                    b.HasDiscriminator().HasValue("NumberValue");
-                });
-
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Step", b =>
                 {
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", null)
@@ -558,20 +500,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", null)
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue", b =>
-                {
-                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.Field", null)
-                        .WithMany()
-                        .HasForeignKey("FieldId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationPeriod", null)
-                        .WithMany("FieldValues")
-                        .HasForeignKey("PreservationPeriodId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
