@@ -101,8 +101,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var requirements = _dut.Requirements;
             var firstReq = requirements.ElementAt(0);
             var laterReq = requirements.ElementAt(1);
-            Assert.IsFalse(firstReq.HasPeriodReadyToBePreserved);
-            Assert.IsFalse(laterReq.HasPeriodReadyToBePreserved);
+            Assert.IsFalse(firstReq.ReadyToBePreserved);
+            Assert.IsFalse(laterReq.ReadyToBePreserved);
         }
 
         [TestMethod]
@@ -178,16 +178,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation(_utcNow);
 
             Assert.IsFalse(dut.ReadyToBePreserved);
-        }
-
-        [TestMethod]
-        public void FirstUpcomingRequirement_ShouldNotGiveRequirement_WhenPreservationNotStarted()
-        {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
-
-            var firstUpcomingRequirement = _dut.FirstUpcomingRequirement;
-
-            Assert.IsNull(firstUpcomingRequirement);
         }
 
         [TestMethod]

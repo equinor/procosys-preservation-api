@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public bool HasPeriodReadyToBePreserved => PeriodReadyToBePreserved != null;
+        public bool ReadyToBePreserved => PeriodReadyToBePreserved != null;
         
         public bool HasActivePeriod => ActivePeriod != null;
 

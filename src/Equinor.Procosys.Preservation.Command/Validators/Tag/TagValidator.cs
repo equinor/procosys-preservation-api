@@ -62,12 +62,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
         public bool ReadyToBePreserved(int tagId)
         {
             var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
-            if (tag?.Requirements == null)
+            if (tag == null)
             {
                 return false;
             }
 
-            return tag.Requirements.All(r => r.HasPeriodReadyToBePreserved);
+
+            return tag.ReadyToBePreserved;
         }
 
         public bool RequirementIsReadyForRecording(int tagId, int fieldId)

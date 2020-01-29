@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual(_reqDefNeedInputMock.Object.Id, dut.RequirementDefinitionId);
             Assert.IsFalse(dut.IsVoided);
-            Assert.IsFalse(dut.HasPeriodReadyToBePreserved);
+            Assert.IsFalse(dut.ReadyToBePreserved);
         }
 
         [TestMethod]
