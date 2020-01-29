@@ -223,7 +223,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Preserve_ShouldThrowException_WhenFirstUpcommingRequirementNeedInput()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsFirstNeedInputButNotSecond);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsFirstNeedInputButNotSecond);
             dut.StartPreservation(_utcNow);
             Assert.IsFalse(dut.ReadyToBePreserved);
 
