@@ -28,11 +28,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     plantProvider))
                 {
                     var unitOfWork = dbContext;
+                    var personRepository = new PersonRepository(dbContext);
                     var journeyRepository = new JourneyRepository(dbContext);
                     var modeRepository = new ModeRepository(dbContext);
                     var responsibleRepository = new ResponsibleRepository(dbContext);
                     var requirementTypeRepository = new RequirementTypeRepository(dbContext);
                     var projectRepository = new ProjectRepository(dbContext);
+
+                    personRepository.AddUsers(250);
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
 
                     responsibleRepository.AddResponsibles(250, plantProvider.Plant);
                     await unitOfWork.SaveChangesAsync(cancellationToken);
