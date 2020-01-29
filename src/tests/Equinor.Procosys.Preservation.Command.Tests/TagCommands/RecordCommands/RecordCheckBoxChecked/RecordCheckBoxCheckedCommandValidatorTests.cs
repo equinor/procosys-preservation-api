@@ -1,6 +1,7 @@
 ﻿using Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.RecordCheckBoxChecked;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -25,8 +26,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
             _tagValidatorMock.Setup(r => r.RequirementIsReadyForRecording(_tagId, _fieldId)).Returns(true);
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(r => r.Exists(_fieldId)).Returns(true);
+            _fieldValidatorMock.Setup(r => r.VerifyFieldType(_fieldId, FieldType.CheckBox)).Returns(true);
             
-            _command = new RecordCheckBoxCheckedCommand(_tagId, _fieldId);
+            _command = new RecordCheckBoxCheckedCommand(_tagId, _fieldId, true);
 
             _dut = new RecordCheckBoxCheckedCommandValidator(
                 _tagValidatorMock.Object, 
@@ -41,6 +43,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
             Assert.IsTrue(result.IsValid);
         }
 
+        [TestMethod]
+        public void Validate_ShouldFail_WhenFieldNotCheckBox()
+        {
+            _fieldValidatorMock.Setup(r => r.VerifyFieldType(_fieldId, FieldType.CheckBox)).Returns(false);
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Field is not of type {FieldType.CheckBox}!"));
+        }
         // RecordCommandValidatorTests covers other unit test for RecordCheckBoxCheckedCommandValidatorTests
     }
 }

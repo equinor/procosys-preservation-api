@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Requirement : SchemaEntityBase
     {
-        private readonly bool _requirementDefinitionNeedsUserInput;
+        private readonly PreservationPeriodStatus _initialPreservationPeriodStatus;
         private readonly List<PreservationPeriod> _preservationPeriods = new List<PreservationPeriod>();
 
         protected Requirement()
@@ -26,7 +26,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             IntervalWeeks = intervalWeeks;
             RequirementDefinitionId = requirementDefinition.Id;
-            _requirementDefinitionNeedsUserInput = requirementDefinition.NeedsUserInput;
+            
+            _initialPreservationPeriodStatus = requirementDefinition.NeedsUserInput
+                ? PreservationPeriodStatus.NeedsUserInput
+                : PreservationPeriodStatus.ReadyToBePreserved;
         }
 
         public int IntervalWeeks { get; private set; }
@@ -66,8 +69,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private void AddNewPreservationPeriod(DateTime nextDueTimeUtc)
         {
             NextDueTimeUtc = nextDueTimeUtc.AddWeeks(IntervalWeeks);
-            var initialStatus =  _requirementDefinitionNeedsUserInput ? PreservationPeriodStatus.NeedsUserInput : PreservationPeriodStatus.ReadyToBePreserved;
-            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, initialStatus);
+            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
         }
 
@@ -81,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return NextDueTimeUtc.Value - timeUtc;
         }
 
-        private PreservationPeriod ActivePeriod
+        public PreservationPeriod ActivePeriod
             => PreservationPeriods.SingleOrDefault(pp => 
                 pp.Status == PreservationPeriodStatus.ReadyToBePreserved ||
                 pp.Status == PreservationPeriodStatus.NeedsUserInput);

@@ -17,5 +17,11 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Field
             var field = _requirementTypeRepository.GetFieldByIdAsync(fieldId).Result;
             return field != null && field.IsVoided;
         }
+
+        public bool VerifyFieldType(int fieldId, FieldType fieldType)
+        {
+            var field = _requirementTypeRepository.GetFieldByIdAsync(fieldId).Result;
+            return field != null && field.FieldType == fieldType;
+        }
     }
 }

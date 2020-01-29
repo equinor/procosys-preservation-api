@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -45,8 +47,28 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(fieldValue));
             }
+            
+            if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
+            {
+                throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when adding field value");
+            }
 
             _fieldValues.Add(fieldValue);
+        }
+
+        
+        public void RemoveAnyOldFieldValueWithFieldId(int fieldId)
+        {
+            if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
+            {
+                throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when removing field value");
+            }
+
+            var fieldValue = _fieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
+            if (fieldValue != null)
+            {
+                _fieldValues.Remove(fieldValue);
+            }
         }
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
@@ -68,6 +90,27 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationPeriodStatus.Preserved;
             PreservationRecord = new PreservationRecord(base.Schema, preservedAtUtc, preservedBy, bulkPreserved);
+        }
+
+        public void UpdateStatus(RequirementDefinition reqDef)
+        {
+            if (reqDef == null)
+            {
+                throw new ArgumentNullException(nameof(reqDef));
+            }
+
+            if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
+            {
+                throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when updating status");
+            }
+
+            var fieldNeedUserInputIds = reqDef.Fields.Where(f => f.NeedsUserInput).Select(f => f.Id);
+            var recordedIds = _fieldValues.Select(fv => fv.FieldId);
+
+            if (fieldNeedUserInputIds.All(id => recordedIds.Contains(id)))
+            {
+                Status = PreservationPeriodStatus.ReadyToBePreserved;
+            }
         }
     }
 }

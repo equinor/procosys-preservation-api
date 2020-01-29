@@ -9,10 +9,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new RecordCheckBoxCheckedCommand(1, 2);
+            var dut = new RecordCheckBoxCheckedCommand(1, 2, true);
 
             Assert.AreEqual(1, dut.TagId);
             Assert.AreEqual(2, dut.FieldId);
+            Assert.IsTrue(dut.IsChecked);
         }
     }
 }

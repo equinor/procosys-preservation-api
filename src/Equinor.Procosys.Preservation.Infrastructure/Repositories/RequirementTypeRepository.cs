@@ -29,5 +29,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .SelectMany(rt => rt.RequirementDefinitions)
                 .SelectMany(rd => rd.Fields)
                 .FirstOrDefaultAsync(f => f.Id == fieldId);
+
+        public Task<RequirementDefinition> GetRequirementDefinitionByFieldIdAsync(int fieldId)
+            => DefaultQuery
+                .SelectMany(rt => rt.RequirementDefinitions)
+                .Where(rt => rt.Fields.Any(f => f.Id == fieldId))
+                .FirstOrDefaultAsync();
     }
 }
