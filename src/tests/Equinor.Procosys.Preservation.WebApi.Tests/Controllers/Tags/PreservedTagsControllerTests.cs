@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
     public class PreservedTagsControllerTests
     {
         private Mock<IMediator> _mediatorMock = new Mock<IMediator>();
-        private CreateTagDto _createTagDto = new CreateTagDto {Requirements = new List<TagRequirementDto>()};
+        private CreateTagDto _createTagDto = new CreateTagDto();
         private PreservedTagsController _dut;
 
         [TestInitialize]
@@ -49,13 +49,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 
             _createTagDto.ProjectName = "ProjectName";
             _createTagDto.StepId = 2;
-            _createTagDto.TagNos = new List<string> {"TagNo"};
+            _createTagDto.TagNos = new List<string> {"TagNo1", "TagNo2"};
 
             await _dut.CreateTag(_createTagDto);
 
             Assert.AreEqual(_createTagDto.ProjectName, createTagCommandCreated.ProjectName);
             Assert.AreEqual(_createTagDto.StepId, createTagCommandCreated.StepId);
-            Assert.AreEqual(_createTagDto.TagNos.First(), createTagCommandCreated.TagNos);
+            Assert.AreEqual(2, createTagCommandCreated.TagNos.Count());
+            Assert.AreEqual(_createTagDto.TagNos.First(), createTagCommandCreated.TagNos.First());
+            Assert.AreEqual(_createTagDto.TagNos.Last(), createTagCommandCreated.TagNos.Last());
         }
 
         [TestMethod]
@@ -64,7 +66,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             var result = await _dut.CreateTag(_createTagDto);
 
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
-            Assert.AreEqual(5, ((OkObjectResult)result.Result).Value);
+            var okResult = (OkObjectResult)result.Result;
+            Assert.IsInstanceOfType(okResult.Value, typeof(List<int>));
+            var list = (List<int>)okResult.Value;
+            Assert.AreEqual(1, list.Count);
+            Assert.AreEqual(5, list.First());
         }
     }
 }
