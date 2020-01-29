@@ -7,7 +7,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     {
         public CreateTagDtoValidator()
         {
-            RuleFor(x => x.TagNo)
+            RuleFor(x => x.TagNos)
+                .NotNull();
+
+            RuleForEach(x => x.TagNos)
                 .NotEmpty()
                 .MaximumLength(Tag.TagNoLengthMax);
 

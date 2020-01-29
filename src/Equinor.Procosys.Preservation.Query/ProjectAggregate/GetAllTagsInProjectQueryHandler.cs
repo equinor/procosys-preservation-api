@@ -88,6 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     mode.Title,
                     tag.ReadyToBePreserved,
                     tag.PurchaseOrderNo,
+                    tag.Remark,
                     requirementsDtos,
                     resp.Name,
                     tag.Status,

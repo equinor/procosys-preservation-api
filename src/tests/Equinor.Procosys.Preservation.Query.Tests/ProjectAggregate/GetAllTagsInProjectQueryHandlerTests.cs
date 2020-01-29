@@ -63,6 +63,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 "McPkgNo",
                 "CommPkgNo",
                 "PoNo",
+                "Remark",
                 "TagFunctionCode",
                 stepMock.Object,
                 new List<Requirement>
@@ -79,6 +80,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 "McPkgNo",
                 "CommPkgNo",
                 "PoNo",
+                "Remark",
                 "TagFunctionCode",
                 stepMock.Object,
                 new List<Requirement>
@@ -163,6 +165,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(ResponsibleCode, tagDto.ResponsibleCode);
             Assert.AreEqual(tag.Description, tagDto.Description);
             Assert.AreEqual(tag.PurchaseOrderNo, tagDto.PurchaseOrderNo);
+            Assert.AreEqual(tag.Remark, tagDto.Remark);
 
             Assert.AreEqual(tag.Status, tagDto.Status);
             Assert.AreEqual(tag.TagFunctionCode, tagDto.TagFunctionCode);

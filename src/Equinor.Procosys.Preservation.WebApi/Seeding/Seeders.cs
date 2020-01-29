@@ -90,6 +90,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                         "McPkgNo",
                         "CommPkgNo",
                         "PoNo",
+                        "Remark",
                         "TagFunctionCode",
                         steps[rand.Next(steps.Count)],
                         requirements);
