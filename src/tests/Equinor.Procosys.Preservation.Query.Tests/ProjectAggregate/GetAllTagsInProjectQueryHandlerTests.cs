@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
     public class GetAllTagsInProjectQueryHandlerTests
     {
         private const string ModeTitle = "Hookup";
-        private const string ResposibleCode = "EQC";
+        private const string ResponsibleCode = "EQC";
         private DateTime _utcNow;
         private const int IntervalWeeks = 4;
         private const string ProjectName = "ProjectX";
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var modeMock = new Mock<Mode>(plant, ModeTitle);
             modeMock.SetupGet(m => m.Id).Returns(modeId);
 
-            var respMock = new Mock<Responsible>(plant, ResposibleCode);
+            var respMock = new Mock<Responsible>(plant, ResponsibleCode);
             respMock.SetupGet(r => r.Id).Returns(respId);
             
             var stepMock = new Mock<Step>(plant, modeMock.Object, respMock.Object);
@@ -160,7 +160,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(tag.IsVoided, tagDto.IsVoided);
             Assert.AreEqual(tag.McPkgNo, tagDto.McPkgNo);
             Assert.AreEqual(ModeTitle, tagDto.Mode);
-            Assert.AreEqual(ResposibleCode, tagDto.ResposibleCode);
+            Assert.AreEqual(ResponsibleCode, tagDto.ResponsibleCode);
             Assert.AreEqual(tag.Description, tagDto.Description);
             Assert.AreEqual(tag.PurchaseOrderNo, tagDto.PurchaseOrderNo);
 

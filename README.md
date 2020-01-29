@@ -13,6 +13,14 @@ Typical settings that should be moved to secrets.json are:
 * Local URLs
 * Other secrets
 
+### Environment
+Set the runtime environment by setting the environment variable ASPNETCORE_ENVIRONMENT on your machine to one of the following:
+* Development
+* Staging
+* Production
+
+If this variable is not set, it will default to Production.
+
 ### Migration
 When running in development environment, the database is auto-migrated on application startup. This can be changed using the setting in appsettings.development.json.
 

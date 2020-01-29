@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             ReadyToBePreserved = readyToBePreserved;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
-            ResposibleCode = responsibleCode;
+            ResponsibleCode = responsibleCode;
             Status = status;
             TagFunctionCode = tagFunctionCode;
             Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public bool ReadyToBePreserved { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
-        public string ResposibleCode { get; }
+        public string ResponsibleCode { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
     }
