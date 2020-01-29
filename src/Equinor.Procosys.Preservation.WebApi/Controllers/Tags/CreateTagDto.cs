@@ -8,6 +8,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public string ProjectName { get; set; }
         public int StepId { get; set; }
         public IEnumerable<TagRequirementDto> Requirements { get; set; }
-        public string Remarks { get; set; }
+        public string Remark { get; set; }
     }
 }
