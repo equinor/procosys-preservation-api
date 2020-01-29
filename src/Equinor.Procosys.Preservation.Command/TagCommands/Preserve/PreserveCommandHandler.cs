@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -14,34 +13,31 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
         private readonly IProjectRepository _projectRepository;
         private readonly IPersonRepository _personRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICurrentUserProvider _currentUserProvider;
         private readonly ITimeService _timeService;
 
         public PreserveCommandHandler(
             IProjectRepository projectRepository,
             IPersonRepository personRepository,
             ITimeService timeService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            ICurrentUserProvider currentUserProvider)
         {
             _projectRepository = projectRepository;
             _personRepository = personRepository;
             _timeService = timeService;
             _unitOfWork = unitOfWork;
+            _currentUserProvider = currentUserProvider;
         }
 
         public async Task<Result<Unit>> Handle(PreserveCommand request, CancellationToken cancellationToken)
         {
             var tags = await _projectRepository.GetTagsByTagIdsAsync(request.TagIds);
-            var dummy = await _personRepository.GetByOidAsync(Guid.Empty);
-            if (dummy == null)
-            {
-                dummy = new Person(Guid.Empty, "Ole", "Olsen");
-                _personRepository.Add(dummy);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-            }
+            var currentUser = await _currentUserProvider.GetCurrentUserAsync();
 
             foreach (var tag in tags)
             {
-                tag.Preserve(_timeService.GetCurrentTimeUtc(), dummy, request.BulkPreserved);
+                tag.Preserve(_timeService.GetCurrentTimeUtc(), currentUser, request.BulkPreserved);
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
