@@ -10,23 +10,23 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            RuleFor(x => x.TagId)
+            RuleFor(command => command.TagId)
                 .Must(NotBeInAClosedProject)
-                .WithMessage(x => $"Project for tag is closed! Tag={x.TagId}")
+                .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
                 .Must(BeAnExistingTag)
-                .WithMessage(x => $"Tag doesn't exists! Tag={x.TagId}")
+                .WithMessage(command => $"Tag doesn't exists! Tag={command.TagId}")
                 .Must(NotBeAVoidedTag)
-                .WithMessage(x => $"Tag is voided! Tag={x.TagId}");
+                .WithMessage(command => $"Tag is voided! Tag={command.TagId}");
 
-            RuleFor(x => x.FieldId)
+            RuleFor(command => command.FieldId)
                 .Must(BeAnExistingField)
-                .WithMessage(x => $"Field doesn't exists! Field={x.FieldId}")
+                .WithMessage(command => $"Field doesn't exists! Field={command.FieldId}")
                 .Must(NotBeAVoidedField)
-                .WithMessage(x => $"Field is voided! Field={x.FieldId}");
+                .WithMessage(command => $"Field is voided! Field={command.FieldId}");
 
-            RuleFor(x => x)
+            RuleFor(command => command)
                 .Must(HaveRequirementReadyForRecording)
-                .WithMessage(x => $"The requirement for the field is not ready for recording! Tag={x.TagId}. Field={x.FieldId}");
+                .WithMessage(command => $"The requirement for the field is not ready for recording! Tag={command.TagId}. Field={command.FieldId}");
 
             bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
 
