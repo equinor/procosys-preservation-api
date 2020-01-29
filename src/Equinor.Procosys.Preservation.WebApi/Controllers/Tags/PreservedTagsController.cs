@@ -35,11 +35,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(
                 new CreateTagCommand(
-                    dto.TagNo,
+                    dto.TagNos,
                     dto.ProjectName,
                     dto.StepId,
                     dto.Requirements.Select(r =>
-                        new Requirement(r.RequirementDefinitionId, r.IntervalWeeks))));
+                        new Requirement(r.RequirementDefinitionId, r.IntervalWeeks)),
+                    dto.Remarks));
             return this.FromResult(result);
         }
 

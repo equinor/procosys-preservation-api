@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
@@ -23,7 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         {
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<int>(5) as Result<int>));
+                .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int>{5}) as Result<List<int>>));
             _dut = new PreservedTagsController(_mediatorMock.Object);
         }
 
@@ -40,21 +41,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             CreateTagCommand createTagCommandCreated = null;
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<int>(5) as Result<int>))
-                .Callback<IRequest<Result<int>>, CancellationToken>((request, cancellationToken) =>
+                .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int>{5}) as Result<List<int>>))
+                .Callback<IRequest<Result<List<int>>>, CancellationToken>((request, cancellationToken) =>
                 {
                     createTagCommandCreated = request as CreateTagCommand;
                 });
 
             _createTagDto.ProjectName = "ProjectName";
             _createTagDto.StepId = 2;
-            _createTagDto.TagNo = "TagNo";
+            _createTagDto.TagNos = new List<string> {"TagNo"};
 
             await _dut.CreateTag(_createTagDto);
 
             Assert.AreEqual(_createTagDto.ProjectName, createTagCommandCreated.ProjectName);
             Assert.AreEqual(_createTagDto.StepId, createTagCommandCreated.StepId);
-            Assert.AreEqual(_createTagDto.TagNo, createTagCommandCreated.TagNo);
+            Assert.AreEqual(_createTagDto.TagNos.First(), createTagCommandCreated.TagNos);
         }
 
         [TestMethod]
@@ -64,18 +65,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             Assert.AreEqual(5, ((OkObjectResult)result.Result).Value);
-        }
-
-        [TestMethod]
-        public async Task CreateTag_ShouldReturnsNotFound_IfResultIsNotFound()
-        {
-            _mediatorMock
-                .Setup(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new NotFoundResult<int>("") as Result<int>));
-
-            var result = await _dut.CreateTag(_createTagDto);
-
-            Assert.IsInstanceOfType(result.Result, typeof(NotFoundObjectResult));
         }
     }
 }

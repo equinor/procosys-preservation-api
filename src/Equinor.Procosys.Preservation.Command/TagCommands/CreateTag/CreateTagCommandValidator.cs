@@ -18,9 +18,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            RuleFor(tag => tag)
-                .Must(NotBeAnExistingTagWithinProject)
-                .WithMessage(tag => $"Tag already exists in scope for project! Tag={tag.TagNo} Project={tag.ProjectName}");
+            RuleForEach(tag => tag.TagNos)
+                .Must((command, tagNo) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName))
+                .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo} Project={command.ProjectName}");
 
             RuleFor(tag => tag.ProjectName)
                 .Must(NotBeAClosedProject)
@@ -35,19 +35,19 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             RuleFor(tag => tag.Requirements)
                 .Must(r => r != null && r.Any())
-                .WithMessage(tag => $"At least 1 requirement must be given! Tag={tag.TagNo}")
+                .WithMessage(tag => $"At least 1 requirement must be given! Tag={tag.TagNos}")
                 .Must(BeUniqueRequirements)
-                .WithMessage(tag => $"Requirement definitions must be unique! Tag={tag.TagNo}");
+                .WithMessage(tag => $"Requirement definitions must be unique! Tag={tag.TagNos}");
 
             RuleForEach(tag => tag.Requirements)
                 .Must(BeAnExistingRequirementDefinition)
-                .WithMessage((tag, req) =>
+                .WithMessage((command, req) =>
                     $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}")
                 .Must(NotBeAVoidedRequirementDefinition)
-                .WithMessage((tag, req) =>
+                .WithMessage((command, req) =>
                     $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
 
-            bool NotBeAnExistingTagWithinProject(CreateTagCommand tag) => !tagValidator.Exists(tag.TagNo, tag.ProjectName);
+            bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.Exists(tagNo, projectName);
 
             bool ProjectExists(string projectName) => projectValidator.Exists(projectName);
 

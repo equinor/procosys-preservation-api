@@ -12,7 +12,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
-    public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<int>>
+    public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<List<int>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
@@ -37,13 +37,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             _tagApiService = tagApiService;
         }
 
-        public async Task<Result<int>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
+        public async Task<Result<List<int>>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
-            if (step == null)
-            {
-                return new NotFoundResult<int>(Strings.EntityNotFound(nameof(Step), request.StepId));
-            }
 
             var requirements = new List<TagRequirement>();
             foreach (var requirement in request.Requirements)
@@ -54,34 +50,39 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, requirementDefinition));
             }
 
-            var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectName, request.TagNo);
-
+            var addedTagIds = new List<int>();
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
-            if (project == null)
+            foreach (var tagNo in request.TagNos)
             {
-                project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
-                _projectRepository.Add(project);
-            }
+                var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectName, tagNo); // todo Make more suitable endpoint to get many tags
 
-            var tagToAdd = new Tag(
-                _plantProvider.Plant,
-                request.TagNo,
-                tagDetails.Description,
-                tagDetails.AreaCode,
-                tagDetails.CallOffNo,
-                tagDetails.DisciplineCode,
-                tagDetails.McPkgNo,
-                tagDetails.CommPkgNo,
-                tagDetails.PurchaseOrderNo,
-                tagDetails.TagFunctionCode,
-                step,
-                requirements);
+                if (project == null)
+                {
+                    project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
+                    _projectRepository.Add(project);
+                }
+
+                var tagToAdd = new Tag(
+                    _plantProvider.Plant,
+                    tagNo,
+                    tagDetails.Description,
+                    tagDetails.AreaCode,
+                    tagDetails.CallOffNo,
+                    tagDetails.DisciplineCode,
+                    tagDetails.McPkgNo,
+                    tagDetails.CommPkgNo,
+                    tagDetails.PurchaseOrderNo,
+                    tagDetails.TagFunctionCode,
+                    step,
+                    requirements);
             
-            project.AddTag(tagToAdd);
+                project.AddTag(tagToAdd);
+                addedTagIds.Add(tagToAdd.Id);
+            }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<int>(tagToAdd.Id);
+            return new SuccessResult<List<int>>(addedTagIds);
         }
     }
 }
