@@ -25,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             "Mode",
             true,
             "PoNo",
+            "Remark!",
             new List<RequirementDto> {new RequirementDto(0, 0, null, default)},
             "Resp",
             PreservationStatus.Active,
@@ -47,6 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.IsTrue(_dut.ReadyToBePreserved);
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
+            Assert.AreEqual("Remark!", _dut.Remark);
             Assert.IsNotNull(_dut.Requirements);
             Assert.IsNotNull(_dut.FirstUpcomingRequirement);
             Assert.AreEqual(1, _dut.Requirements.Count());

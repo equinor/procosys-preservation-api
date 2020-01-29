@@ -72,9 +72,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             var requirementMock = new Mock<Requirement>();
             _repositoryTags = new List<Tag>
             {
-                new Tag("", "TagNo1", "Desc", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
-                new Tag("", "TagNoNotInApi1", "Desc", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
-                new Tag("", "TagNoNotInApi2", "Desc", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNo1", "", "", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNoNotInApi1", "", "", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
+                new Tag("", "TagNoNotInApi2", "", "", "", "", "", "", "", "","", stepMock.Object, new List<Requirement> {requirementMock.Object }),
             };
             _projectRepositoryMock
                 .Setup(x => x.GetAllTagsInProjectAsync(TestProject))
