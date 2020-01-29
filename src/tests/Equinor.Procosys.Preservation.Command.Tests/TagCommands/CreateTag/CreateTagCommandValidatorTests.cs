@@ -170,6 +170,41 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
+        public void Validate_ShouldFail_WhenNoTagNosGiven()
+        {
+            var command = new CreateTagCommand(
+                new List<string>(), 
+                _projectName,
+                _stepId,
+                new List<Requirement>{new Requirement(_rd1Id, 1)},
+                null);
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("At least 1 TagNo must be given!"));
+        }
+
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenNoTagNosNotUnique()
+        {
+            var command = new CreateTagCommand(
+                new List<string>{"X","x"}, 
+                _projectName,
+                _stepId,
+                new List<Requirement>{new Requirement(_rd1Id, 1)},
+                null);
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("TagNos must be unique!"));
+        }
+
+        [TestMethod]
         public void Validate_ShouldFail_WhenRequirementsNotUnique()
         {
             var command = new CreateTagCommand(

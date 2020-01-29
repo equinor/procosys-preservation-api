@@ -18,6 +18,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
+            RuleFor(tag => tag.TagNos)
+                .Must(r => r.Any())
+                .WithMessage("At least 1 TagNo must be given!")
+                .Must(BeUniqueTagNos)
+                .WithMessage("TagNos must be unique!");
+
             RuleForEach(tag => tag.TagNos)
                 .Must((command, tagNo) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName))
                 .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo} Project={command.ProjectName}");
@@ -34,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 .WithMessage(tag => $"Step is voided! Step={tag.StepId}");
 
             RuleFor(tag => tag.Requirements)
-                .Must(r => r != null && r.Any())
+                .Must(r => r.Any())
                 .WithMessage(tag => $"At least 1 requirement must be given! Tag={tag.TagNos}")
                 .Must(BeUniqueRequirements)
                 .WithMessage(tag => $"Requirement definitions must be unique! Tag={tag.TagNos}");
@@ -46,6 +52,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 .Must(NotBeAVoidedRequirementDefinition)
                 .WithMessage((command, req) =>
                     $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
+                        
+            bool BeUniqueTagNos(IEnumerable<string> tagNos)
+            {
+                var lowerTagNos = tagNos.Select(t => t.ToLower()).ToList();
+                return lowerTagNos.Distinct().Count() == lowerTagNos.Count;
+            }
 
             bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.Exists(tagNo, projectName);
 
