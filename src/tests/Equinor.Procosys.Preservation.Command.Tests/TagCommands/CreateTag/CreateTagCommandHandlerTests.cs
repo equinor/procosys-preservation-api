@@ -20,14 +20,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         private const string TestProjectName = "TestProjectX";
         private const string TestProjectDescription = "TestProjectXDescription";
         private const int StepId = 11;
-        private const int RequirementDefinitionId = 99;
+        private const int ReqDefId1 = 99;
+        private const int ReqDefId2 = 199;
+        private const int Interval1 = 2;
+        private const int Interval2 = 3;
 
         private Mock<Step> _stepMock;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private Project _projectAddedToRepository;
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
-        private Mock<RequirementDefinition> _rdMock;
         private Mock<ITagApiService> _tagApiServiceMock;
 
         private ProcosysTagDetails _mainTagDetails1;
@@ -57,11 +59,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 });
 
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
-            _rdMock = new Mock<RequirementDefinition>();
-            _rdMock.SetupGet(x => x.Id).Returns(RequirementDefinitionId);
+            var rdMock1 = new Mock<RequirementDefinition>();
+            rdMock1.SetupGet(x => x.Id).Returns(ReqDefId1);
+            var rdMock2 = new Mock<RequirementDefinition>();
+            rdMock2.SetupGet(x => x.Id).Returns(ReqDefId2);
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionByIdAsync(RequirementDefinitionId))
-                .Returns(Task.FromResult(_rdMock.Object));
+                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2}))
+                .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
 
             _mainTagDetails1 =
                 new ProcosysTagDetails
@@ -106,7 +110,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 _stepMock.Object.Id,
                 new List<Requirement>
                 {
-                    new Requirement(RequirementDefinitionId, 1)
+                    new Requirement(ReqDefId1, Interval1),
+                    new Requirement(ReqDefId2, Interval2),
                 },
                 null);
             
@@ -220,8 +225,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.AreEqual(mainTagDetails.TagFunctionCode, tagAddedToProject.TagFunctionCode);
             Assert.AreEqual(mainTagDetails.TagNo, tagAddedToProject.TagNo);
-            Assert.AreEqual(1, tagAddedToProject.Requirements.Count);
-            Assert.AreEqual(RequirementDefinitionId, tagAddedToProject.Requirements.First().RequirementDefinitionId);
+            Assert.AreEqual(2, tagAddedToProject.Requirements.Count);
+            AssertReqProperties(tagAddedToProject.Requirements.First(), ReqDefId1, Interval1);
+            AssertReqProperties(tagAddedToProject.Requirements.Last(), ReqDefId2, Interval2);
+        }
+
+        private void AssertReqProperties(Domain.AggregateModels.ProjectAggregate.Requirement req, int reqDefId, int interval)
+        {
+            Assert.AreEqual(reqDefId, req.RequirementDefinitionId);
+            Assert.AreEqual(interval, req.IntervalWeeks);
         }
     }
 }
