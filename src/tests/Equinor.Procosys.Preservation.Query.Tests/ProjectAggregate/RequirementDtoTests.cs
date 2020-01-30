@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             var currentTimeUtc = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var nextDueTimeUtc = currentTimeUtc.AddDays(8);
-            var dut = new RequirementDto(1, 2, nextDueTimeUtc, new TimeSpan(8, 0, 0, 0));
+            var dut = new RequirementDto(1, 2, nextDueTimeUtc, new TimeSpan(8, 0, 0, 0), true);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual(2, dut.RequirementDefinitionId);
@@ -21,12 +21,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.IsNotNull(dut.NextDueWeeks);
             Assert.AreEqual(1, dut.NextDueWeeks);
             Assert.IsNotNull(dut.NextDueAsYearAndWeek);
+            Assert.IsTrue(dut.ReadyToBePreserved);
         }
 
         [TestMethod]
         public void Constructor_WithoutNextDueDate_ShouldNotSetDueDateProperties()
         {
-            var dut = new RequirementDto(0, 0, null, default);
+            var dut = new RequirementDto(0, 0, null, default, false);
 
             Assert.IsFalse(dut.NextDueTimeUtc.HasValue);
             Assert.IsNull(dut.NextDueAsYearAndWeek);

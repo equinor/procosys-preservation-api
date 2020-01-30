@@ -61,7 +61,8 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                         r.Id,
                         r.RequirementDefinitionId,
                         r.NextDueTimeUtc,
-                        r.GetTimeUntilNextDueTime(now)))
+                        r.GetTimeUntilNextDueTime(now),
+                        r.ReadyToBePreserved))
                     .ToList();
 
                 var firstUpcomingRequirement = tag.FirstUpcomingRequirement;
