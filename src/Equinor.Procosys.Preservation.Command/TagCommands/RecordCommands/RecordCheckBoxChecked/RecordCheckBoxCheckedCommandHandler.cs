@@ -28,20 +28,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.Recor
         public async Task<Result<Unit>> Handle(RecordCheckBoxCheckedCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+
             var reqDef = await _requirementTypeRepository.GetRequirementDefinitionByFieldIdAsync(request.FieldId);
             var field = reqDef.Fields.Single(f => f.Id == request.FieldId);
+            var requirement = tag.Requirements.Single(r => r.RequirementDefinitionId == reqDef.Id);
 
-            var req = tag.Requirements.Single(r => r.RequirementDefinitionId == reqDef.Id);
-
-            var period = req.ActivePeriod;
+            var period = requirement.ActivePeriod;
 
             period.RemoveAnyOldFieldValueWithFieldId(request.FieldId);
 
             if (request.Value)
             {
+                // save new value ONLY if CheckBox is Checked!
                 period.AddFieldValue(new CheckBoxChecked(period.Schema, field));
             }
-            // do not save a new value if CheckBox is Unchecked
 
             period.UpdateStatus(reqDef);
 
