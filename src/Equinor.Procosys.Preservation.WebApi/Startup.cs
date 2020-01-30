@@ -20,6 +20,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace Equinor.Procosys.Preservation.WebApi
@@ -124,6 +125,8 @@ namespace Equinor.Procosys.Preservation.WebApi
                 });
 
                 c.OperationFilter<AddSchemaHeaderParameter>();
+
+                c.AddFluentValidationRules();
             });
 
             services.AddResponseCompression(options =>
