@@ -22,18 +22,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
 
         private Requirement _requirement;
-        private RecordCheckBoxCheckedCommand _command;
+        private RecordCheckBoxCheckedCommand _recordCheckedCommand;
+        private RecordCheckBoxCheckedCommand _recordUncheckedCommand;
         private RecordCheckBoxCheckedCommandHandler _dut;
 
         [TestInitialize]
         public void Setup()
         {
             // Arrange
-            _command = new RecordCheckBoxCheckedCommand(TagId, FieldId, true);
+            _recordCheckedCommand = new RecordCheckBoxCheckedCommand(TagId, FieldId, true);
+            _recordUncheckedCommand = new RecordCheckBoxCheckedCommand(TagId, FieldId, false);
 
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(f => f.Id).Returns(RdId);
-            var fieldMock = new Mock<Field>();
+            var fieldMock = new Mock<Field>("", "", FieldType.CheckBox, 0, null, null);
             fieldMock.SetupGet(f => f.Id).Returns(FieldId);
             rdMock.Object.AddField(fieldMock.Object);
 
@@ -46,12 +48,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_command.TagId))
+                .Setup(r => r.GetTagByTagIdAsync(_recordCheckedCommand.TagId))
                 .Returns(Task.FromResult(tag));
 
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionByFieldIdAsync(_command.FieldId))
+                .Setup(r => r.GetRequirementDefinitionByFieldIdAsync(_recordCheckedCommand.FieldId))
                 .Returns(Task.FromResult(rdMock.Object));
             
             _dut = new RecordCheckBoxCheckedCommandHandler(
@@ -62,19 +64,75 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
             // Assert setup
             Assert.IsTrue(_requirement.HasActivePeriod);
             Assert.AreEqual(0, _requirement.ActivePeriod.FieldValues.Count);
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, _requirement.ActivePeriod.Status);
         }
 
         [TestMethod]
-        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldCreateNewCheckBoxChecked_WhenCheckBoxTrue()
+        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
         {
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_recordCheckedCommand, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             var fieldValues = _requirement.ActivePeriod.FieldValues;
             Assert.AreEqual(1, fieldValues.Count);
-            Assert.IsInstanceOfType(fieldValues.First(), typeof(CheckBoxChecked));
+            var fv = fieldValues.First();
+            Assert.IsInstanceOfType(fv, typeof(CheckBoxChecked));
+            Assert.AreEqual(FieldId, fv.FieldId);
+        }
+
+        [TestMethod]
+        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldUpdateStatusToReadyToBePreserved_WhenValueIsTrue()
+        {
+            // Act
+            var result = await _dut.Handle(_recordCheckedCommand, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, _requirement.ActivePeriod.Status);
+        }
+
+        [TestMethod]
+        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldDoNothing_WhenValueIsFalseAndNoValueExistsInAdvance()
+        {
+            // Act
+            var result = await _dut.Handle(_recordUncheckedCommand, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(0, _requirement.ActivePeriod.FieldValues.Count);
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, _requirement.ActivePeriod.Status);
+        }
+
+        [TestMethod]
+        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldDeleteExistingValueAndNotCreateNew_WhenValueIsFalseAndValueExistsInAdvance()
+        {
+            // Arrange
+            await _dut.Handle(_recordCheckedCommand, default);
+            Assert.AreEqual(1, _requirement.ActivePeriod.FieldValues.Count);
+
+            // Act
+            var result = await _dut.Handle(_recordUncheckedCommand, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(0, _requirement.ActivePeriod.FieldValues.Count);
+        }
+
+        [TestMethod]
+        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldUpdateStatusBackToNeedsUserInput_WhenValueIsFalse()
+        {
+            // Arrange
+            await _dut.Handle(_recordCheckedCommand, default);
+            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, _requirement.ActivePeriod.Status);
+
+            // Act
+            var result = await _dut.Handle(_recordUncheckedCommand, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, _requirement.ActivePeriod.Status);
         }
     }
 }
