@@ -2,9 +2,9 @@
 {
     public class RecordCheckBoxCheckedCommand : RecordCommand
     {
-        public RecordCheckBoxCheckedCommand(int tagId, int fieldId, bool isChecked) : base(tagId, fieldId)
-            => IsChecked = isChecked;
+        public RecordCheckBoxCheckedCommand(int tagId, int fieldId, bool value) : base(tagId, fieldId)
+            => Value = value;
 
-        public bool IsChecked { get; }
+        public bool Value { get; }
     }
 }

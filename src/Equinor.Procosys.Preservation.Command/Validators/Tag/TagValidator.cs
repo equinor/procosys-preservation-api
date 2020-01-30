@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
         public bool RequirementIsReadyForRecording(int tagId, int fieldId)
         {
             var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
-            var reqDef = _requirementTypeRepository.GetRequirementDefinitionByFieldIdAsync(fieldId);
+            var reqDef = _requirementTypeRepository.GetRequirementDefinitionByFieldIdAsync(fieldId).Result;
             if (tag == null || reqDef == null)
             {
                 return false;

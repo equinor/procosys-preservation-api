@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
 
             Assert.AreEqual(1, dut.TagId);
             Assert.AreEqual(2, dut.FieldId);
-            Assert.IsTrue(dut.IsChecked);
+            Assert.IsTrue(dut.Value);
         }
     }
 }

@@ -111,6 +111,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 Status = PreservationPeriodStatus.ReadyToBePreserved;
             }
+            else
+            {
+                Status = PreservationPeriodStatus.NeedsUserInput;
+            }
         }
     }
 }

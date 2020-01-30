@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
+using Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.RecordCheckBoxChecked;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Query.ProjectAggregate;
@@ -78,6 +79,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> Preserve([FromBody] List<int> tagIds)
         {
             var result = await _mediator.Send(new PreserveCommand(tagIds, true));
+            return this.FromResult(result);
+        }
+
+        [HttpPut("{id}/RecordCheckBoxChecked")]
+        public async Task<IActionResult> RecordCheckBoxChecked([FromRoute] int id, [FromBody] RecordCheckBoxCheckedDto dto)
+        {
+            var result = await _mediator.Send(new RecordCheckBoxCheckedCommand(id, dto.FieldId, dto.Value));
             return this.FromResult(result);
         }
     }

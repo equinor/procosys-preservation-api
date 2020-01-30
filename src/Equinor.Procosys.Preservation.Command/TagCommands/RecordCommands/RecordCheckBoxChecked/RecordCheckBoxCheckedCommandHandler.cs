@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.Recor
 
             period.RemoveAnyOldFieldValueWithFieldId(request.FieldId);
 
-            if (request.IsChecked)
+            if (request.Value)
             {
                 period.AddFieldValue(new CheckBoxChecked(period.Schema, field));
             }
