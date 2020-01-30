@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         
-        public void RemoveAnyOldFieldValueWithFieldId(int fieldId)
+        public void RemoveAnyOldFieldValue(int fieldId)
         {
             if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
             {
@@ -92,11 +92,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             PreservationRecord = new PreservationRecord(base.Schema, preservedAtUtc, preservedBy, bulkPreserved);
         }
 
-        public void UpdateStatus(RequirementDefinition reqDef)
+        public void UpdateStatus(RequirementDefinition requirementDefinition)
         {
-            if (reqDef == null)
+            if (requirementDefinition == null)
             {
-                throw new ArgumentNullException(nameof(reqDef));
+                throw new ArgumentNullException(nameof(requirementDefinition));
             }
 
             if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when updating status");
             }
 
-            var fieldNeedUserInputIds = reqDef.Fields.Where(f => f.NeedsUserInput).Select(f => f.Id);
+            var fieldNeedUserInputIds = requirementDefinition.Fields.Where(f => f.NeedsUserInput).Select(f => f.Id);
             var recordedIds = _fieldValues.Select(fv => fv.FieldId);
 
             if (fieldNeedUserInputIds.All(id => recordedIds.Contains(id)))

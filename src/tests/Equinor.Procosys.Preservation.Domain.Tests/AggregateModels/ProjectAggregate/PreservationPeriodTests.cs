@@ -102,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.AddFieldValue(fv);
             Assert.AreEqual(1, dut.FieldValues.Count);
 
-            dut.RemoveAnyOldFieldValueWithFieldId(41);
+            dut.RemoveAnyOldFieldValue(41);
 
             Assert.AreEqual(0, dut.FieldValues.Count);
         }
@@ -114,7 +114,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.AddFieldValue(new Mock<FieldValue>().Object);
             Assert.AreEqual(1, dut.FieldValues.Count);
 
-            dut.RemoveAnyOldFieldValueWithFieldId(141);
+            dut.RemoveAnyOldFieldValue(141);
 
             Assert.AreEqual(1, dut.FieldValues.Count);
         }
@@ -125,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
             dut.Preserve(_utcNow, _preservedByMock.Object, true);
 
-            Assert.ThrowsException<Exception>(() => dut.RemoveAnyOldFieldValueWithFieldId(141));
+            Assert.ThrowsException<Exception>(() => dut.RemoveAnyOldFieldValue(141));
         }
 
         [TestMethod]

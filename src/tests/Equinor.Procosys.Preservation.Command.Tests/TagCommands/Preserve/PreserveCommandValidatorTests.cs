@@ -117,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyRequirementIsNotReadyToBePreservedForAnyTag()
+        public void Validate_ShouldFail_WhenTagNotReadyToBePreserved()
         {
             _tagValidatorMock.Setup(r => r.ReadyToBePreserved(_tagId1)).Returns(false);
             
@@ -125,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("A requirement is not ready to be preserved!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is not ready to be preserved!"));
         }
 
         [TestMethod]

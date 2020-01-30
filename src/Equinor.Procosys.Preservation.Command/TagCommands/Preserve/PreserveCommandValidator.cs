@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
                     .Must(PreservationIsStarted)
                     .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
                     .Must(BeReadyToBePreserved)
-                    .WithMessage((x, id) => $"A requirement is not ready to be preserved! Tag={id}");
+                    .WithMessage((x, id) => $"Tag is not ready to be preserved! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)

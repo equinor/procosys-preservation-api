@@ -66,13 +66,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddNewPreservationPeriod(preservedAtUtc);
         }
 
-        private void AddNewPreservationPeriod(DateTime nextDueTimeUtc)
-        {
-            NextDueTimeUtc = nextDueTimeUtc.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
-            _preservationPeriods.Add(preservationPeriod);
-        }
-
         public TimeSpan GetTimeUntilNextDueTime(DateTime timeUtc)
         {
             if (!NextDueTimeUtc.HasValue)
@@ -90,5 +83,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private PreservationPeriod PeriodReadyToBePreserved
             => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
+
+        private void AddNewPreservationPeriod(DateTime nextDueTimeUtc)
+        {
+            NextDueTimeUtc = nextDueTimeUtc.AddWeeks(IntervalWeeks);
+            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
+            _preservationPeriods.Add(preservationPeriod);
+        }
     }
 }

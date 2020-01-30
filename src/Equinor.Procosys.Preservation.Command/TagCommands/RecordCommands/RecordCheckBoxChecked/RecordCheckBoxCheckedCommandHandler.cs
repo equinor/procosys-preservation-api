@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.Recor
 
             var period = requirement.ActivePeriod;
 
-            period.RemoveAnyOldFieldValueWithFieldId(request.FieldId);
+            period.RemoveAnyOldFieldValue(request.FieldId);
 
             if (request.Value)
             {
