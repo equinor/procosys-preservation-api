@@ -21,7 +21,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 
         public async Task<Person> GetCurrentUserAsync()
         {
-            var oidString = _accessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == Oid).Value;
+            var oidClaim = _accessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == Oid);
+            if (oidClaim == null)
+            {
+                return null;
+            }
+
+            var oidString = oidClaim.Value;
             var oid = Guid.Parse(oidString);
             var user = await _personRepository.GetByOidAsync(oid);
             return user;

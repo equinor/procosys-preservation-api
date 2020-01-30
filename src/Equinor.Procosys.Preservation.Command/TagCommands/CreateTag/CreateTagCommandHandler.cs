@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -41,16 +42,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         {
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
 
-            var requirements = new List<TagRequirement>();
-            foreach (var requirement in request.Requirements)
-            {
-                var requirementDefinition =
-                    await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
+            var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
+            var reqDefs =
+                await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
-                requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, requirementDefinition));
-            }
-
-            var addedTagIds = new List<int>();
+            var addedTags = new List<Tag>();
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
             foreach (var tagNo in request.TagNos)
             {
@@ -60,6 +56,13 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 {
                     project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
                     _projectRepository.Add(project);
+                }
+
+                var requirements = new List<TagRequirement>();
+                foreach (var requirement in request.Requirements)
+                {
+                    var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
+                    requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
                 }
 
                 var tagToAdd = new Tag(
@@ -78,12 +81,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                     requirements);
             
                 project.AddTag(tagToAdd);
-                addedTagIds.Add(tagToAdd.Id);
+                addedTags.Add(tagToAdd);
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<List<int>>(addedTagIds);
+            return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());
         }
     }
 }
