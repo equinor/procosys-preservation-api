@@ -6,7 +6,7 @@ namespace Equinor.Procosys.Preservation.Domain
 {
     public static class DateTimeExtensions
     {
-        private static DayOfWeek firstDayOfWeek = Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
+        private static readonly DayOfWeek firstDayOfWeek = Thread.CurrentThread.CurrentCulture.DateTimeFormat.FirstDayOfWeek;
 
         public static DateTime AddWeeks(this DateTime dateTime, int weeks)
             => dateTime.AddDays(7 * weeks);
@@ -19,10 +19,9 @@ namespace Equinor.Procosys.Preservation.Domain
             var dayOfWeek = GetDayOfWeekMondayAsFirst(dt);
             var diff = -(dayOfWeek - (int)firstDayOfWeek);
             return dt.AddDays(diff).Date;
-
         }
 
-        public static int GetWeeksReferencedFromStartOfWeek(this DateTime toDateTime, DateTime fromDateTime)
+        public static int GetWeeksUntil(this DateTime fromDateTime, DateTime toDateTime)
         {
             var startOfFromWeek = fromDateTime.StartOfWeek();
             var startOfToWeek = toDateTime.StartOfWeek();

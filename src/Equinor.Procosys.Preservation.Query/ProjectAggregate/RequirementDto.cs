@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             
             if (nextDueTimeUtc.HasValue)
             {
-                NextDueWeeks = nextDueTimeUtc.Value.GetWeeksReferencedFromStartOfWeek(currentTimeUtc);
+                NextDueWeeks = currentTimeUtc.GetWeeksUntil(nextDueTimeUtc.Value);
             }
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
         }

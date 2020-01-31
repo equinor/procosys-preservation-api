@@ -18,13 +18,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         {
             var expected = 3;
 
-            var weeks = _fridayInWeek9.GetWeeksReferencedFromStartOfWeek(_mondayInWeek6);
+            var weeks = _fridayInWeek6.GetWeeksUntil(_mondayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _fridayInWeek9.GetWeeksReferencedFromStartOfWeek(_fridayInWeek6);
+            weeks = _fridayInWeek6.GetWeeksUntil(_fridayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _fridayInWeek9.GetWeeksReferencedFromStartOfWeek(_sundayInWeek6);
+            weeks = _fridayInWeek6.GetWeeksUntil(_sundayInWeek9);
             Assert.AreEqual(expected, weeks);
         }
 
@@ -33,13 +33,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         {
             var expected = 3;
 
-            var weeks = _mondayInWeek9.GetWeeksReferencedFromStartOfWeek(_mondayInWeek6);
+            var weeks = _mondayInWeek6.GetWeeksUntil(_mondayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _mondayInWeek9.GetWeeksReferencedFromStartOfWeek(_fridayInWeek6);
+            weeks = _mondayInWeek6.GetWeeksUntil(_fridayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _mondayInWeek9.GetWeeksReferencedFromStartOfWeek(_sundayInWeek6);
+            weeks = _mondayInWeek6.GetWeeksUntil(_sundayInWeek9);
             Assert.AreEqual(expected, weeks);
         }
 
@@ -48,13 +48,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         {
             var expected = 3;
 
-            var weeks = _sundayInWeek9.GetWeeksReferencedFromStartOfWeek(_mondayInWeek6);
+            var weeks = _sundayInWeek6.GetWeeksUntil(_mondayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _sundayInWeek9.GetWeeksReferencedFromStartOfWeek(_fridayInWeek6);
+            weeks = _sundayInWeek6.GetWeeksUntil(_fridayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _sundayInWeek9.GetWeeksReferencedFromStartOfWeek(_sundayInWeek6);
+            weeks = _sundayInWeek6.GetWeeksUntil(_sundayInWeek9);
             Assert.AreEqual(expected, weeks);
         }
 
@@ -63,13 +63,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         {
             var expected = -3;
 
-            var weeks = _sundayInWeek6.GetWeeksReferencedFromStartOfWeek(_mondayInWeek9);
+            var weeks = _sundayInWeek9.GetWeeksUntil(_mondayInWeek6);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _sundayInWeek6.GetWeeksReferencedFromStartOfWeek(_fridayInWeek9);
+            weeks = _sundayInWeek9.GetWeeksUntil(_fridayInWeek6);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _sundayInWeek6.GetWeeksReferencedFromStartOfWeek(_sundayInWeek9);
+            weeks = _sundayInWeek9.GetWeeksUntil(_sundayInWeek6);
             Assert.AreEqual(expected, weeks);
         }
 
@@ -78,30 +78,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         {
             var expected = 0;
 
-            var weeks = _mondayInWeek6.GetWeeksReferencedFromStartOfWeek(_mondayInWeek6);
+            var weeks = _mondayInWeek9.GetWeeksUntil(_mondayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _mondayInWeek6.GetWeeksReferencedFromStartOfWeek(_fridayInWeek6);
+            weeks = _mondayInWeek9.GetWeeksUntil(_fridayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _mondayInWeek6.GetWeeksReferencedFromStartOfWeek(_sundayInWeek6);
+            weeks = _mondayInWeek9.GetWeeksUntil(_sundayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _sundayInWeek6.GetWeeksReferencedFromStartOfWeek(_mondayInWeek6);
+            weeks = _sundayInWeek9.GetWeeksUntil(_mondayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _sundayInWeek6.GetWeeksReferencedFromStartOfWeek(_fridayInWeek6);
+            weeks = _sundayInWeek9.GetWeeksUntil(_fridayInWeek9);
             Assert.AreEqual(expected, weeks);
 
-            weeks = _sundayInWeek6.GetWeeksReferencedFromStartOfWeek(_sundayInWeek6);
+            weeks = _sundayInWeek9.GetWeeksUntil(_sundayInWeek9);
             Assert.AreEqual(expected, weeks);
         }
         
         [TestMethod]
         public void GetWeeksReferencedFromStartOfWeek_ShouldBeAYear()
         {
-            var nextYear = _mondayInWeek6.AddDays(365);
-            var weeks = nextYear.GetWeeksReferencedFromStartOfWeek(_mondayInWeek6);
+            var nextYear = _mondayInWeek9.AddDays(365);
+            var weeks = _mondayInWeek9.GetWeeksUntil(nextYear);
             Assert.AreEqual(52, weeks);
         }
 
