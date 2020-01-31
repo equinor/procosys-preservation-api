@@ -7,12 +7,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
     [TestClass]
     public class RequirementDtoTests
     {
+        private readonly DateTime _currentTimeUtc = new DateTime(2020, 6, 2, 14, 2, 16, DateTimeKind.Utc);
+
         [TestMethod]
         public void Constructor_WithNextDueDate_ShouldSetAllProperties()
         {
-            var currentTimeUtc = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            var nextDueTimeUtc = currentTimeUtc.AddDays(8);
-            var dut = new RequirementDto(1, 2, nextDueTimeUtc, new TimeSpan(8, 0, 0, 0));
+            var nextDueTimeUtc = _currentTimeUtc.AddDays(7);
+            var dut = new RequirementDto(1, 2, _currentTimeUtc, nextDueTimeUtc);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual(2, dut.RequirementDefinitionId);
@@ -26,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         [TestMethod]
         public void Constructor_WithoutNextDueDate_ShouldNotSetDueDateProperties()
         {
-            var dut = new RequirementDto(0, 0, null, default);
+            var dut = new RequirementDto(0, 0, _currentTimeUtc, null);
 
             Assert.IsFalse(dut.NextDueTimeUtc.HasValue);
             Assert.IsNull(dut.NextDueAsYearAndWeek);

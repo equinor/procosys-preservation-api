@@ -60,8 +60,8 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     r => new RequirementDto(
                         r.Id,
                         r.RequirementDefinitionId,
-                        r.NextDueTimeUtc,
-                        r.GetTimeUntilNextDueTime(now)))
+                        now,
+                        r.NextDueTimeUtc))
                     .ToList();
 
                 var firstUpcomingRequirement = tag.FirstUpcomingRequirement;
