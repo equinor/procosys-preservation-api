@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
         {
             TagId = tagId;
             RequirementDefinitionId = requirementDefinitionId;
-            FieldValues = fieldValues;
+            FieldValues = fieldValues ?? new List<FieldValue>();
             Comment = comment;
         }
 

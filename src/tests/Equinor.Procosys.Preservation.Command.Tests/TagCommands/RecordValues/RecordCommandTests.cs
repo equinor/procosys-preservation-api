@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
+﻿using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
@@ -10,11 +9,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            // todo more tests
-            var dut = new RecordValuesCommand(1, 2, new List<FieldValue>(), default);
+            var dut = new RecordValuesCommand(1, 2, null, "Comment");
 
             Assert.AreEqual(1, dut.TagId);
             Assert.AreEqual(2, dut.RequirementDefinitionId);
+            Assert.IsNotNull(dut.FieldValues);
+            Assert.AreEqual(0, dut.FieldValues.Count);
+            Assert.AreEqual("Comment", dut.Comment);
         }
     }
 }

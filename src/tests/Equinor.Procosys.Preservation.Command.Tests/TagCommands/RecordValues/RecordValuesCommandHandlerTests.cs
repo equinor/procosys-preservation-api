@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         }
 
         [TestMethod]
-        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
+        public async Task HandlingRecordValuesCommand_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
         {
             // Act
             var result = await _dut.Handle(_recordCheckedCommand, default);
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         }
 
         [TestMethod]
-        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldUpdateStatusToReadyToBePreserved_WhenValueIsTrue()
+        public async Task HandlingRecordValuesCommand_ShouldUpdateStatusToReadyToBePreserved_WhenValueIsTrue()
         {
             // Act
             var result = await _dut.Handle(_recordCheckedCommand, default);
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         }
 
         [TestMethod]
-        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldDoNothing_WhenValueIsFalseAndNoValueExistsInAdvance()
+        public async Task HandlingRecordValuesCommand_ShouldDoNothing_WhenValueIsFalseAndNoValueExistsInAdvance()
         {
             // Act
             var result = await _dut.Handle(_recordUncheckedCommand, default);
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         }
 
         [TestMethod]
-        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldDeleteExistingValueAndNotCreateNew_WhenValueIsFalseAndValueExistsInAdvance()
+        public async Task HandlingRecordValuesCommand_ShouldDeleteExistingValueAndNotCreateNew_WhenValueIsFalseAndValueExistsInAdvance()
         {
             // Arrange
             await _dut.Handle(_recordCheckedCommand, default);
@@ -122,7 +122,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         }
 
         [TestMethod]
-        public async Task HandlingRecordCheckBoxCheckedCommand_ShouldUpdateStatusBackToNeedsUserInput_WhenValueIsFalse()
+        public async Task HandlingRecordValuesCommand_ShouldUpdateStatusBackToNeedsUserInput_WhenValueIsFalse()
         {
             // Arrange
             await _dut.Handle(_recordCheckedCommand, default);
