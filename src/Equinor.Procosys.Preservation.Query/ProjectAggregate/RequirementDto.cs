@@ -8,21 +8,30 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public RequirementDto(
             int id,
             int requirementDefinitionId,
+            DateTime currentTimeUtc,
             DateTime? nextDueTimeUtc,
-            TimeSpan timeUntilNextDueTime,
             bool readyToBePreserved)
         {
             Id = id;
             RequirementDefinitionId = requirementDefinitionId;
             NextDueTimeUtc = nextDueTimeUtc;
-            NextDueWeeks = timeUntilNextDueTime.Weeks();
+            
+            if (nextDueTimeUtc.HasValue)
+            {
+                NextDueWeeks = currentTimeUtc.GetWeeksUntil(nextDueTimeUtc.Value);
+            }
+            NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
             ReadyToBePreserved = readyToBePreserved;
         }
 
         public int Id { get; }
         public int RequirementDefinitionId { get; }
         public DateTime? NextDueTimeUtc { get; }
-        public string NextDueAsYearAndWeek => NextDueTimeUtc?.FormatAsYearAndWeekString();
+        public string NextDueAsYearAndWeek { get; }
+
+        /// <summary>
+        /// NextDueWeeks shifts at Monday night regardless of where in week the NextDueTimeUtc / current time is
+        /// </summary>
         public int NextDueWeeks { get; }
         public bool ReadyToBePreserved { get; }
     }
