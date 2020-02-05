@@ -36,12 +36,19 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 
         public async Task<Result<IEnumerable<TagDto>>> Handle(GetAllTagsInProjectQuery request, CancellationToken cancellationToken)
         {
-            var tags = await _projectRepository.GetAllTagsInProjectAsync(request.ProjectName);
+            var unOrderedTags = await _projectRepository.GetAllTagsInProjectAsync(request.ProjectName);
 
-            if (!tags.Any())
+            if (!unOrderedTags.Any())
             {
                 return new SuccessResult<IEnumerable<TagDto>>(new List<TagDto>());
             }
+
+            var tags = unOrderedTags
+                .OrderByDescending(t => t.NextDueTimeUtc.HasValue)
+                .ThenBy(t => t.NextDueTimeUtc)
+                .ThenBy(t => t.Status)
+                .ThenBy(t => t.Id)
+                .ToList();
 
             var stepIds = tags.Select(t => t.StepId).Distinct();
             var steps = await _journeyRepository.GetStepsByStepIdsAsync(stepIds);
@@ -60,8 +67,9 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     r => new RequirementDto(
                         r.Id,
                         r.RequirementDefinitionId,
+                        now,
                         r.NextDueTimeUtc,
-                        r.GetTimeUntilNextDueTime(now)))
+                        r.ReadyToBePreserved))
                     .ToList();
 
                 var firstUpcomingRequirement = tag.FirstUpcomingRequirement;

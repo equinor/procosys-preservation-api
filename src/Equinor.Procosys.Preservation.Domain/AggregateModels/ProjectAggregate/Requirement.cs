@@ -66,16 +66,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddNewPreservationPeriod(preservedAtUtc);
         }
 
-        public TimeSpan GetTimeUntilNextDueTime(DateTime timeUtc)
-        {
-            if (!NextDueTimeUtc.HasValue)
-            {
-                return default;
-            }
-
-            return NextDueTimeUtc.Value - timeUtc;
-        }
-
         public PreservationPeriod ActivePeriod
             => PreservationPeriods.SingleOrDefault(pp => 
                 pp.Status == PreservationPeriodStatus.ReadyToBePreserved ||

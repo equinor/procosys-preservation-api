@@ -79,6 +79,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string TagNo { get; private set; }
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
         public bool IsVoided { get; private set; }
+        public DateTime? NextDueTimeUtc => FirstUpcomingRequirement?.NextDueTimeUtc;
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;

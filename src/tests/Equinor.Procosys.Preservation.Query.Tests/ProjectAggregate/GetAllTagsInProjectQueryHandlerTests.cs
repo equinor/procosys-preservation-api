@@ -151,8 +151,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             var result = await _dut.Handle(_query, default);
 
-            var tag = _tags[0];
             var tagDto = result.Data.First();
+            var tag = _tags.Single(t => t.TagNo == tagDto.TagNo);
             Assert.AreEqual(tag.AreaCode, tagDto.AreaCode);
             Assert.AreEqual(tag.Calloff, tagDto.CalloffNo);
             Assert.AreEqual(tag.CommPkgNo, tagDto.CommPkgNo);
