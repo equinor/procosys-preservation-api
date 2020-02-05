@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Exceptions;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Microsoft.Extensions.Logging;
@@ -22,7 +21,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         private Mock<IPlantApiService> _plantApiService;
         private ProcosysTagSearchResult _searchResultWithOneItem;
         private ProcosysTagSearchResult _searchResultWithThreeItems;
-        private ProcosysTagDetailsResult _tagDetailsResult;
+        private List<ProcosysTagDetails> _tagDetails;
 
         [TestInitialize]
         public void Setup()
@@ -78,9 +77,9 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                     MaxAvailable = 1
                 };
 
-            _tagDetailsResult = new ProcosysTagDetailsResult
+            _tagDetails = new List<ProcosysTagDetails>
             {
-                Tag = new ProcosysTagDetails
+                new ProcosysTagDetails
                 {
                     AreaCode = "AreaCode",
                     CallOffNo = "CallOffNo",
@@ -163,24 +162,26 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                 .Returns(Task.FromResult(_searchResultWithOneItem))
                 .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
             _mainApiClient
-                .Setup(x => x.QueryAndDeserialize<ProcosysTagDetailsResult>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_tagDetailsResult));
+                .Setup(x => x.QueryAndDeserialize<List<ProcosysTagDetails>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(_tagDetails));
             var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object, _logger.Object);
 
             // Act
-            var result = await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", "111111111");
+            var result = await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", new List<string>{"111111111"});
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual("AreaCode", result.AreaCode);
-            Assert.AreEqual("CallOffNo", result.CallOffNo);
-            Assert.AreEqual("CommPkgNo", result.CommPkgNo);
-            Assert.AreEqual("Description1", result.Description);
-            Assert.AreEqual("DisciplineCode", result.DisciplineCode);
-            Assert.AreEqual("McPkgNo", result.McPkgNo);
-            Assert.AreEqual("PurchaseOrderNo", result.PurchaseOrderNo);
-            Assert.AreEqual("TagFunctionCode", result.TagFunctionCode);
-            Assert.AreEqual("TagNo1", result.TagNo);
+            Assert.AreEqual(1, result.Count);
+            var tag = result.First();
+            Assert.AreEqual("AreaCode", tag.AreaCode);
+            Assert.AreEqual("CallOffNo", tag.CallOffNo);
+            Assert.AreEqual("CommPkgNo", tag.CommPkgNo);
+            Assert.AreEqual("Description1", tag.Description);
+            Assert.AreEqual("DisciplineCode", tag.DisciplineCode);
+            Assert.AreEqual("McPkgNo", tag.McPkgNo);
+            Assert.AreEqual("PurchaseOrderNo", tag.PurchaseOrderNo);
+            Assert.AreEqual("TagFunctionCode", tag.TagFunctionCode);
+            Assert.AreEqual("TagNo1", tag.TagNo);
         }
 
         [TestMethod]
@@ -188,7 +189,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         {
             var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object, _logger.Object);
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetTagDetails("INVALIDPLANT", "TestProject", "TagNo1"));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetTagDetails("INVALIDPLANT", "TestProject", new List<string>{"TagNo1"}));
         }
 
         [TestMethod]
@@ -200,11 +201,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                 .Returns(Task.FromResult(_searchResultWithOneItem))
                 .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
             _mainApiClient
-                .Setup(x => x.QueryAndDeserialize<ProcosysTagDetailsResult>(It.IsAny<string>()))
-                .Returns(Task.FromResult<ProcosysTagDetailsResult>(null));
+                .Setup(x => x.QueryAndDeserialize<List<ProcosysTagDetails>>(It.IsAny<string>()))
+                .Returns(Task.FromResult<List<ProcosysTagDetails>>(null));
             var dut = new MainApiTagService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object, _logger.Object);
 
-            var result = await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", "TagNo1");
+            var result = await dut.GetTagDetails("PCS$TESTPLANT", "TestProject", new List<string>{"TagNo1"});
 
             Assert.IsNull(result);
         }

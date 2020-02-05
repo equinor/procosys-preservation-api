@@ -40,25 +40,35 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             }
         }
 
-        public async Task<ProcosysTagDetails> GetTagDetails(string plant, string projectName, string tagNo)
+        public async Task<IList<ProcosysTagDetails>> GetTagDetails(string plant, string projectName, IEnumerable<string> tagNos)
         {
+            if (tagNos == null)
+            {
+                throw new ArgumentNullException(nameof(tagNos));
+
+            }
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
 
-            var url = $"{_baseAddress}TagByNo" +
+            var url = $"{_baseAddress}TagsByNo" +
                 $"?plantId={plant}" +
-                $"&tagNo={tagNo}" +
                 $"&projectName={projectName}" +
                 $"&api-version={_apiVersion}";
-            var tagDetailsResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagDetailsResult>(url);
-            if (tagDetailsResult == null)
+            foreach (var tagNo in tagNos)
+            {
+                url += $"&tagNos={tagNo}";
+            }
+
+            var tagDetails = await _mainApiClient.QueryAndDeserialize<List<ProcosysTagDetails>>(url);
+            
+            if (tagDetails == null)
             {
                 _logger.LogWarning($"Tag details returned no data. URL: {url}");
                 return default;
             }
-            return tagDetailsResult.Tag;
+            return tagDetails;
         }
 
         public async Task<IList<ProcosysTagOverview>> GetTags(string plant, string projectName, string startsWithTagNo)
