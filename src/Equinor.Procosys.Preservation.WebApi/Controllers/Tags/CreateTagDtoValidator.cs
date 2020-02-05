@@ -7,6 +7,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     {
         public CreateTagDtoValidator()
         {
+            RuleFor(x => x).NotNull();
+
             RuleFor(x => x.TagNos)
                 .NotNull();
 

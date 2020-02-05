@@ -1,8 +1,8 @@
 ﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class RecordCheckBoxCheckedDto
+    public class FieldValuesDto
     {
         public int FieldId { get; set; }
-        public bool Value { get; set; }
+        public string Value { get; set; }
     }
 }

@@ -1,18 +1,18 @@
-﻿using Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands;
+﻿using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
 {
     [TestClass]
     public class RecordCommandValidatorTests
     {
-        private RecordCommandValidator<TestCommand> _dut;
+        private RecordValuesCommandValidator _dut;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IFieldValidator> _fieldValidatorMock;
-        private TestCommand _command;
+        private RecordValuesCommand _command;
 
         private int _tagId = 1;
         private int _fieldId = 2;
@@ -26,11 +26,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(r => r.Exists(_fieldId)).Returns(true);
 
-            _command = new TestCommand(_tagId, _fieldId);
+            // todo refactor tests
+            //_command = new RecordValuesCommand(_tagId, _fieldId);
 
-            _dut = new RecordCommandValidator<TestCommand>(
-                _tagValidatorMock.Object, 
-                _fieldValidatorMock.Object);
+            //_dut = new RecordValuesCommandCommandValidator<RecordValuesCommand>(
+            //    _tagValidatorMock.Object, 
+            //    _fieldValidatorMock.Object);
         }
 
         [TestMethod]

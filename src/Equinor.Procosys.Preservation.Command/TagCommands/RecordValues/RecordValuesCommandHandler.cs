@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -7,15 +6,15 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.RecordCheckBoxChecked
+namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
 {
-    public class RecordCheckBoxCheckedCommandHandler : IRequestHandler<RecordCheckBoxCheckedCommand, Result<Unit>>
+    public class RecordValuesCommandHandler : IRequestHandler<RecordValuesCommand, Result<Unit>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public RecordCheckBoxCheckedCommandHandler(
+        public RecordValuesCommandHandler(
             IProjectRepository projectRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork)
@@ -25,25 +24,19 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.Recor
             _requirementTypeRepository = requirementTypeRepository;
         }
 
-        public async Task<Result<Unit>> Handle(RecordCheckBoxCheckedCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(RecordValuesCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
 
-            var reqDef = await _requirementTypeRepository.GetRequirementDefinitionByFieldIdAsync(request.FieldId);
-            var field = reqDef.Fields.Single(f => f.Id == request.FieldId);
-            var requirement = tag.Requirements.Single(r => r.RequirementDefinitionId == reqDef.Id);
+            var requirementDefinition =
+                await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(request.RequirementDefinitionId);
 
-            var period = requirement.ActivePeriod;
-
-            period.RemoveAnyOldFieldValue(request.FieldId);
-
-            if (request.Value)
+            foreach (var fieldValue in request.FieldValues)
             {
-                // save new value ONLY if CheckBox is Checked!
-                period.AddFieldValue(new CheckBoxChecked(period.Schema, field));
+                tag.RecordValueForActivePeriod(fieldValue.FieldId, fieldValue.Value, requirementDefinition);
             }
 
-            period.UpdateStatus(reqDef);
+            tag.UpdateCommentForActivePeriod(request.Comment, requirementDefinition);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);

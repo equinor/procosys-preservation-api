@@ -56,21 +56,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             _fieldValues.Add(fieldValue);
         }
 
-        
-        public void RemoveAnyOldFieldValue(int fieldId)
-        {
-            if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
-            {
-                throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when removing field value");
-            }
-
-            var fieldValue = _fieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
-            if (fieldValue != null)
-            {
-                _fieldValues.Remove(fieldValue);
-            }
-        }
-
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
             if (PreservationRecord != null)
@@ -114,6 +99,88 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             else
             {
                 Status = PreservationPeriodStatus.NeedsUserInput;
+            }
+        }
+        
+        public void SetComment(string comment)
+        {
+            if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
+            {
+                throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when setting comment");
+            }
+
+            Comment = comment;
+        }
+
+        public void RecordValueForField(Field field, string value)
+        {
+            if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
+            {
+                throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when recording field value");
+            }
+
+            RemoveAnyOldFieldValue(field.Id);
+
+            if (string.IsNullOrEmpty(value))
+            {
+                return;
+            }
+
+            switch (field.FieldType)
+            {
+                case FieldType.Info:
+                    break;
+                case FieldType.Number:
+                    RecordNumberValueForField(field, value);
+                    break;
+                case FieldType.CheckBox:
+                    RecordCheckBoxValueForField(field, value);
+                    break;
+                case FieldType.Attachment:
+                    // todo
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void RecordCheckBoxValueForField(Field field, string value)
+        {
+            if (!bool.TryParse(value, out var isChecked))
+            {
+                throw new ArgumentException($"Value {value} is not legal for a {nameof(Field)} of type {field.FieldType}");
+            }
+
+            // save new value ONLY if CheckBox is Checked!
+            if (!isChecked)
+            {
+                return;
+            }
+
+            AddFieldValue(new CheckBoxChecked(Schema, field));
+        }
+
+        private void RecordNumberValueForField(Field field, string value)
+        {
+            // NA and N/A is legal special cases for a number
+            if (value.ToUpper() == "NA" || value.ToUpper() == "N/A")
+            {
+                AddFieldValue(new NumberValue(Schema, field, null));
+            }
+            if (!double.TryParse(value, out var number))
+            {
+                throw new ArgumentException($"Value {value} is not legal for a {nameof(Field)} of type {field.FieldType}");
+            }
+
+            AddFieldValue(new NumberValue(Schema, field, number));
+        }
+
+        private void RemoveAnyOldFieldValue(int fieldId)
+        {
+            var fieldValue = _fieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
+            if (fieldValue != null)
+            {
+                _fieldValues.Remove(fieldValue);
             }
         }
     }

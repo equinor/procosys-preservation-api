@@ -2,7 +2,6 @@
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -81,6 +80,29 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(1, dut.FieldValues.Count);
             Assert.IsTrue(dut.FieldValues.Contains(fvMock.Object));
         }
+
+        [TestMethod]
+        public void SetComment_ShouldSetComment()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+
+            dut.SetComment("Comment");
+
+            Assert.AreEqual("Comment", dut.Comment);
+        }
+                
+        [TestMethod]
+        public void SetComment_ShouldThrowException_AfterPreserved()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            dut.SetComment("Comment");
+            Assert.AreEqual("Comment", dut.Comment);
+
+            dut.Preserve(_utcNow, _preservedByMock.Object, true);
+
+            Assert.ThrowsException<Exception>(() => dut.SetComment("X"));
+            Assert.AreEqual("Comment", dut.Comment);
+        }
                 
         [TestMethod]
         public void AddFieldValue_ShouldThrowException_AfterPreserved()
@@ -90,42 +112,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.ThrowsException<Exception>(() => dut.AddFieldValue(new Mock<FieldValue>().Object));
             Assert.AreEqual(0, dut.FieldValues.Count);
-        }
-        
-        [TestMethod]
-        public void RemoveFieldValue_ShouldRemoveFieldValueFromFieldValuesList()
-        {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
-            var fMock = new Mock<Field>();
-            fMock.SetupGet(f => f.Id).Returns(41);
-            var fv = new FieldValue("", fMock.Object);
-            dut.AddFieldValue(fv);
-            Assert.AreEqual(1, dut.FieldValues.Count);
-
-            dut.RemoveAnyOldFieldValue(41);
-
-            Assert.AreEqual(0, dut.FieldValues.Count);
-        }
-        
-        [TestMethod]
-        public void RemoveFieldValue_ShouldDoNothing_WhenNoFieldValueForFieldIdExists()
-        {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
-            dut.AddFieldValue(new Mock<FieldValue>().Object);
-            Assert.AreEqual(1, dut.FieldValues.Count);
-
-            dut.RemoveAnyOldFieldValue(141);
-
-            Assert.AreEqual(1, dut.FieldValues.Count);
-        }
-        
-        [TestMethod]
-        public void RemoveFieldValue_ShouldThrowException_AfterPreserved()
-        {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
-            dut.Preserve(_utcNow, _preservedByMock.Object, true);
-
-            Assert.ThrowsException<Exception>(() => dut.RemoveAnyOldFieldValue(141));
         }
 
         [TestMethod]

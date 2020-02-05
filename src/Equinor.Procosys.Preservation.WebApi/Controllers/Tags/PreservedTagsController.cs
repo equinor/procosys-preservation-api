@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
-using Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.RecordCheckBoxChecked;
+using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Query.ProjectAggregate;
@@ -82,10 +82,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [HttpPut("{id}/RecordCheckBoxChecked")]
-        public async Task<IActionResult> RecordCheckBoxChecked([FromRoute] int id, [FromBody] RecordCheckBoxCheckedDto dto)
+        [HttpPost("{id}/Requirement/{requirementDefinitionId}/RecordValues")]
+        public async Task<IActionResult> RecordCheckBoxChecked([FromRoute] int id, [FromRoute] int requirementDefinitionId, [FromBody] RequirementValuesDto requirementValuesDto)
         {
-            var result = await _mediator.Send(new RecordCheckBoxCheckedCommand(id, dto.FieldId, dto.Value));
+            var fieldValues = requirementValuesDto?.FieldValues
+                .Select(v => new FieldValue(v.FieldId, v.Value)).ToList();
+
+            var result = await _mediator.Send(new RecordValuesCommand(id, requirementDefinitionId, fieldValues, requirementValuesDto?.Comment));
+            
             return this.FromResult(result);
         }
     }

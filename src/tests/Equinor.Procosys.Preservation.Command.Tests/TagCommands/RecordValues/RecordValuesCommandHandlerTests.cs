@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.RecordCommands.RecordCheckBoxChecked;
+using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using FieldValue = Equinor.Procosys.Preservation.Command.TagCommands.RecordValues.FieldValue;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands.RecordCheckBoxChecked
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
 {
     [TestClass]
-    public class RecordCheckBoxCheckedCommandHandlerTests : CommandHandlerTestsBase
+    public class RecordValuesCommandHandlerTests : CommandHandlerTestsBase
     {
         private const int TagId = 1;
         private const int FieldId = 11;
@@ -22,16 +23,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
 
         private Requirement _requirement;
-        private RecordCheckBoxCheckedCommand _recordCheckedCommand;
-        private RecordCheckBoxCheckedCommand _recordUncheckedCommand;
-        private RecordCheckBoxCheckedCommandHandler _dut;
+        private RecordValuesCommand _recordCheckedCommand;
+        private RecordValuesCommand _recordUncheckedCommand;
+        private RecordValuesCommandHandler _dut;
 
         [TestInitialize]
         public void Setup()
         {
             // Arrange
-            _recordCheckedCommand = new RecordCheckBoxCheckedCommand(TagId, FieldId, true);
-            _recordUncheckedCommand = new RecordCheckBoxCheckedCommand(TagId, FieldId, false);
+            _recordCheckedCommand = new RecordValuesCommand(TagId, RdId, new List<FieldValue>{ new FieldValue(FieldId, "true")}, "Comment");
+            _recordUncheckedCommand = new RecordValuesCommand(TagId, RdId, new List<FieldValue>{ new FieldValue(FieldId, "false")}, "Comment");
 
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(f => f.Id).Returns(RdId);
@@ -53,10 +54,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordCommands
 
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionByFieldIdAsync(_recordCheckedCommand.FieldId))
+                .Setup(r => r.GetRequirementDefinitionByIdAsync(_recordCheckedCommand.RequirementDefinitionId))
                 .Returns(Task.FromResult(rdMock.Object));
             
-            _dut = new RecordCheckBoxCheckedCommandHandler(
+            _dut = new RecordValuesCommandHandler(
                 _projectRepositoryMock.Object,
                 _rtRepositoryMock.Object,
                 UnitOfWorkMock.Object);
