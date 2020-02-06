@@ -67,42 +67,38 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2}))
                 .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
 
-            _mainTagDetails1 =
-                new ProcosysTagDetails
-                {
-                    AreaCode = "AreaCode1",
-                    CallOffNo = "CalloffNo1",
-                    CommPkgNo = "CommPkgNo1",
-                    Description = "Description1",
-                    DisciplineCode = "DisciplineCode1",
-                    McPkgNo = "McPkgNo1",
-                    PurchaseOrderNo = "PurchaseOrderNo1",
-                    TagFunctionCode = "TagFunctionCode1",
-                    TagNo = TestTagNo1,
-                    ProjectDescription = TestProjectDescription
-                };
-            _mainTagDetails2 =
-                new ProcosysTagDetails
-                {
-                    AreaCode = "AreaCode2",
-                    CallOffNo = "CalloffNo2",
-                    CommPkgNo = "CommPkgNo2",
-                    Description = "Description2",
-                    DisciplineCode = "DisciplineCode2",
-                    McPkgNo = "McPkgNo2",
-                    PurchaseOrderNo = "PurchaseOrderNo2",
-                    TagFunctionCode = "TagFunctionCode2",
-                    TagNo = TestTagNo2,
-                    ProjectDescription = TestProjectDescription
-                };
-            
+            _mainTagDetails1 = new ProcosysTagDetails
+            {
+                AreaCode = "AreaCode1",
+                CallOffNo = "CalloffNo1",
+                CommPkgNo = "CommPkgNo1",
+                Description = "Description1",
+                DisciplineCode = "DisciplineCode1",
+                McPkgNo = "McPkgNo1",
+                PurchaseOrderNo = "PurchaseOrderNo1",
+                TagFunctionCode = "TagFunctionCode1",
+                TagNo = TestTagNo1,
+                ProjectDescription = TestProjectDescription
+            };
+            _mainTagDetails2 = new ProcosysTagDetails
+            {
+                AreaCode = "AreaCode2",
+                CallOffNo = "CalloffNo2",
+                CommPkgNo = "CommPkgNo2",
+                Description = "Description2",
+                DisciplineCode = "DisciplineCode2",
+                McPkgNo = "McPkgNo2",
+                PurchaseOrderNo = "PurchaseOrderNo2",
+                TagFunctionCode = "TagFunctionCode2",
+                TagNo = TestTagNo2,
+                ProjectDescription = TestProjectDescription
+            };
+
+            IList<ProcosysTagDetails> mainTagDetailList = new List<ProcosysTagDetails> {_mainTagDetails1, _mainTagDetails2};
             _tagApiServiceMock = new Mock<ITagApiService>();
             _tagApiServiceMock
-                .Setup(x => x.GetTagDetails(TestPlant, TestProjectName, TestTagNo1))
-                .Returns(Task.FromResult(_mainTagDetails1));
-            _tagApiServiceMock
-                .Setup(x => x.GetTagDetails(TestPlant, TestProjectName, TestTagNo2))
-                .Returns(Task.FromResult(_mainTagDetails2));
+                .Setup(x => x.GetTagDetails(TestPlant, TestProjectName, new List<string>{TestTagNo1, TestTagNo2}))
+                .Returns(Task.FromResult(mainTagDetailList));
 
             _command = new CreateTagCommand(
                 new List<string>{TestTagNo1, TestTagNo2}, 

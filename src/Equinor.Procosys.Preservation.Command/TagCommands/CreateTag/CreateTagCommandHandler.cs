@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,10 +49,17 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
+            
+            // Todo Must validate if request.ProjectName exists in Main and of all TagNos exists in Main. Wait to code this until Validation discussion has landed inside team
+            var tagDetailList = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectName, request.TagNos);
+            
             foreach (var tagNo in request.TagNos)
             {
-                var tagDetails = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectName, tagNo); // todo Make more suitable endpoint to get many tags
-
+                var tagDetails = tagDetailList.FirstOrDefault(td => td.TagNo == tagNo);
+                if (tagDetails == null)
+                {
+                    throw new Exception($"Details for Tag {tagNo} not found in project {request.ProjectName}");
+                }
                 if (project == null)
                 {
                     project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
