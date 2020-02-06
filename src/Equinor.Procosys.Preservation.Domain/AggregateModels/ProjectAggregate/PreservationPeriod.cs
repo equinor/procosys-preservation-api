@@ -166,6 +166,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             if (value.ToUpper() == "NA" || value.ToUpper() == "N/A")
             {
                 AddFieldValue(new NumberValue(Schema, field, null));
+                return;
             }
             if (!double.TryParse(value, out var number))
             {
