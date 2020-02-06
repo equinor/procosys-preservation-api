@@ -49,6 +49,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
+            
+            // Todo Must validate if request.ProjectName exists and of all TagNos exists. Wait to code this until Validation discussion has landed inside team
             var tagDetailList = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectName, request.TagNos);
             
             foreach (var tagNo in request.TagNos)
