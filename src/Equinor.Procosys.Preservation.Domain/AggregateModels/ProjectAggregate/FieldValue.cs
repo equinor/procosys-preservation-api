@@ -21,6 +21,5 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
         
         public int FieldId { get; private set; }
-        public string FieldType { get; set; }
     }
 }
