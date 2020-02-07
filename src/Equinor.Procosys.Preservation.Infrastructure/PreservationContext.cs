@@ -14,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure
 {
-    public class PreservationContext : DbContext, IUnitOfWork
+    public class PreservationContext : DbContext, IUnitOfWork, IReadOnlyContext
     {
         private readonly IEventDispatcher _eventDispatcher;
         private readonly IPlantProvider _plantProvider;
@@ -86,5 +86,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             builder
             .Entity<T>()
             .HasQueryFilter(e => e.Schema == _plantProvider.Plant);
+
+        public IQueryable<TEntity> QuerySet<TEntity>() where TEntity : class => Set<TEntity>().AsNoTracking();
     }
 }

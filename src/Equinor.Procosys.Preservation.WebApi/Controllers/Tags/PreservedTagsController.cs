@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
+using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.ProjectAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -28,6 +29,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<IEnumerable<TagDto>>> GetAllTagsInProject([FromQuery] string projectName)    
         {
             var result = await _mediator.Send(new GetAllTagsInProjectQuery(projectName));
+            return this.FromResult(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TagDetailsDto>> GetTagDetails([FromRoute] int id)
+        {
+            var result = await _mediator.Send(new GetTagDetailsQuery(id));
             return this.FromResult(result);
         }
 
