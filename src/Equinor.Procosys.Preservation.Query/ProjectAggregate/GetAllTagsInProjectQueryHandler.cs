@@ -67,9 +67,10 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     r => new RequirementDto(
                         r.Id,
                         r.RequirementDefinitionId,
-                        now,
                         r.NextDueTimeUtc,
-                        r.ReadyToBePreserved))
+                        r.GetNextDueInWeeks(now),
+                        r.ReadyToBePreserved,
+                        r.IsReadyToBeBulkPreserved(now)))
                     .ToList();
 
                 var firstUpcomingRequirement = tag.FirstUpcomingRequirement;
@@ -95,6 +96,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.McPkgNo,
                     mode.Title,
                     tag.ReadyToBePreserved,
+                    tag.IsReadyToBeBulkPreserved(now),
                     tag.PurchaseOrderNo,
                     tag.Remark,
                     requirementsDtos,

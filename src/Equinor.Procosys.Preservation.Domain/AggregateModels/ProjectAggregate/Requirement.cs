@@ -42,7 +42,29 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void UnVoid() => IsVoided = false;
 
         public bool ReadyToBePreserved => PeriodReadyToBePreserved != null;
+
+        public int? GetNextDueInWeeks(DateTime timeUtc)
+        {
+            if (!NextDueTimeUtc.HasValue)
+            {
+                return null;
+            }
+
+            return timeUtc.GetWeeksUntil(NextDueTimeUtc.Value);
+        }
         
+        public bool IsReadyToBeBulkPreserved(DateTime preservedAtUtc)
+        {
+            if (!ReadyToBePreserved)
+            {
+                return false;
+            }
+
+            var nextDueInWeeks = GetNextDueInWeeks(preservedAtUtc);
+
+            return nextDueInWeeks.HasValue && nextDueInWeeks.Value <= 0;
+        }
+
         public bool HasActivePeriod => ActivePeriod != null;
 
         public void StartPreservation(DateTime startedAtUtc)

@@ -182,7 +182,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
             Assert.IsNull(tagDto.FirstUpcomingRequirement);
             Assert.IsFalse(requirementDto.NextDueTimeUtc.HasValue);
-            Assert.AreEqual(0, requirementDto.NextDueWeeks);
+            Assert.IsFalse(requirementDto.NextDueWeeks.HasValue);
             Assert.IsNull(requirementDto.NextDueAsYearAndWeek);
             Assert.AreEqual(PreservationStatus.NotStarted, tagDto.Status);
         }

@@ -124,6 +124,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool ReadyToBePreserved
             => Status == PreservationStatus.Active && FirstUpcomingRequirement.ReadyToBePreserved;
 
+        public bool IsReadyToBeBulkPreserved(DateTime preservedAtUtc)
+            => Status == PreservationStatus.Active && FirstUpcomingRequirement.IsReadyToBeBulkPreserved(preservedAtUtc);
+
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
             if (!ReadyToBePreserved)
