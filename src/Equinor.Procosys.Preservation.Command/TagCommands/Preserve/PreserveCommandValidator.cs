@@ -29,13 +29,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
                     .WithMessage((x, id) => $"Project for tag is closed! Tag={id}")
                     .Must(PreservationIsStarted)
                     .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
-                    .Must(HaveAtLeastOneNonVoidedRequirement)
-                    .WithMessage((x, id) => $"Tag do not have any non voided requirement! Tag={id}")
-                    .Must(HaveExistingRequirementDefinitions)
-                    .WithMessage((x, id) => $"A requirement definition doesn't exists! Tag={id}")
-                    .Must(HaveRequirementsReadyToBePreserved)
-                    .WithMessage((x, id) => $"A requirement is not ready to be preserved! Tag={id}")
-                    ;
+                    .Must(BeReadyToBePreserved)
+                    .WithMessage((x, id) => $"Tag is not ready to be preserved! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
@@ -52,11 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
 
             bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatus(tagId, PreservationStatus.Active);
 
-            bool HaveAtLeastOneNonVoidedRequirement(int tagId) => tagValidator.HasANonVoidedRequirement(tagId);
-            
-            bool HaveExistingRequirementDefinitions(int tagId) => tagValidator.AllRequirementDefinitionsExist(tagId);
-            
-            bool HaveRequirementsReadyToBePreserved(int tagId) => tagValidator.AllRequirementsReadyToBePreserved(tagId);
+            bool BeReadyToBePreserved(int tagId) => tagValidator.ReadyToBePreserved(tagId);
         }
     }
 }

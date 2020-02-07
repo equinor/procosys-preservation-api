@@ -38,6 +38,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void Constructor_ShouldNotSetActivePeriod()
+        {
+            var dut = new Requirement("SchemaA", 24, _reqDefNeedInputMock.Object);
+
+            Assert.IsFalse(dut.HasActivePeriod);
+            Assert.IsNull(dut.ActivePeriod);
+        }
+
+        [TestMethod]
         public void Constructor_ShouldThrowException_WhenRequirementDefinitionNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new Requirement("SchemaA", 4, null)
@@ -53,6 +62,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var expectedNextDueTimeUtc = _utcNow.AddWeeks(intervalWeeks);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldSetActivePeriod()
+        {
+            var dut = new Requirement("SchemaA", 12, _reqDefNeedInputMock.Object);
+
+            dut.StartPreservation(_utcNow);
+
+            Assert.IsTrue(dut.HasActivePeriod);
+            Assert.IsNotNull(dut.ActivePeriod);
         }
 
         [TestMethod]

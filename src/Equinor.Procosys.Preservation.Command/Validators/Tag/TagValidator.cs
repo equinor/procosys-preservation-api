@@ -30,7 +30,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
         public bool ProjectIsClosed(int tagId)
         {
             var project = _projectRepository.GetByTagIdAsync(tagId).Result;
-
             return project != null && project.IsClosed;
         }
 
@@ -59,15 +58,28 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             return reqDefs.Count == reqDefIds.Count;
         }
 
-        public bool AllRequirementsReadyToBePreserved(int tagId)
+        public bool ReadyToBePreserved(int tagId)
         {
             var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
-            if (tag?.Requirements == null)
+            if (tag == null)
             {
                 return false;
             }
 
-            return tag.Requirements.All(r => r.ReadyToBePreserved);
+            return tag.ReadyToBePreserved;
+        }
+
+        public bool RequirementIsReadyForRecording(int tagId, int fieldId)
+        {
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
+            var reqDef = _requirementTypeRepository.GetRequirementDefinitionByFieldIdAsync(fieldId).Result;
+            if (tag == null || reqDef == null)
+            {
+                return false;
+            }
+
+            var req = tag.Requirements.Single(r => r.RequirementDefinitionId == reqDef.Id);
+            return req.HasActivePeriod;
         }
     }
 }

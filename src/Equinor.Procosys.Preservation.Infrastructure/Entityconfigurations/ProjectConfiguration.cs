@@ -25,7 +25,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .HasMany(x => x.Tags)
                 .WithOne()
                 .IsRequired();
-
         }
     }
 }

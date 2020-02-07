@@ -6,6 +6,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
     public interface IRequirementTypeRepository : IRepository<RequirementType>
     {
         Task<RequirementDefinition> GetRequirementDefinitionByIdAsync (int requirementDefinitionId);
+        
         Task<List<RequirementDefinition>> GetRequirementDefinitionsByIdsAsync(IList<int> requirementDefinitionIds);
+        
+        Task<Field> GetFieldByIdAsync(int fieldId);
+        
+        Task<RequirementDefinition> GetRequirementDefinitionByFieldIdAsync (int fieldId);
     }
 }

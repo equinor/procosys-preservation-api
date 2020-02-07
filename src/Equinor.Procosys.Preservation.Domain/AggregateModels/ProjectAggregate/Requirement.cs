@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Requirement : SchemaEntityBase
     {
-        private readonly bool _requirementDefinitionNeedsUserInput;
+        private readonly PreservationPeriodStatus _initialPreservationPeriodStatus;
         private readonly List<PreservationPeriod> _preservationPeriods = new List<PreservationPeriod>();
 
         protected Requirement()
@@ -26,7 +26,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             IntervalWeeks = intervalWeeks;
             RequirementDefinitionId = requirementDefinition.Id;
-            _requirementDefinitionNeedsUserInput = requirementDefinition.NeedsUserInput;
+            
+            _initialPreservationPeriodStatus = requirementDefinition.NeedsUserInput
+                ? PreservationPeriodStatus.NeedsUserInput
+                : PreservationPeriodStatus.ReadyToBePreserved;
         }
 
         public int IntervalWeeks { get; private set; }
@@ -38,38 +41,44 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public bool ReadyToBePreserved => ReadyToBePreservationPeriod != null;
+        public bool ReadyToBePreserved => PeriodReadyToBePreserved != null;
+        
+        public bool HasActivePeriod => ActivePeriod != null;
 
         public void StartPreservation(DateTime startedAtUtc)
         {
             if (_preservationPeriods.Any())
             {
-                throw new Exception($"{nameof(Requirement)} do have {nameof(PreservationPeriod)}. Can't start");
+                throw new Exception($"{nameof(Requirement)} {Id} do have {nameof(PreservationPeriod)}. Can't start");
             }
             AddNewPreservationPeriod(startedAtUtc);
         }
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
-            var preservationPeriod = ReadyToBePreservationPeriod;
+            var preservationPeriod = PeriodReadyToBePreserved;
             if (preservationPeriod == null)
             {
-                throw new Exception($"{nameof(Requirement)} is not {PreservationPeriodStatus.ReadyToBePreserved}");
+                throw new Exception($"{nameof(Requirement)} {Id} has not period {PreservationPeriodStatus.ReadyToBePreserved}");
             }
 
             preservationPeriod.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
             AddNewPreservationPeriod(preservedAtUtc);
         }
 
-        private void AddNewPreservationPeriod(DateTime nextDueTimeUtc)
+        public PreservationPeriod ActivePeriod
+            => PreservationPeriods.SingleOrDefault(pp => 
+                pp.Status == PreservationPeriodStatus.ReadyToBePreserved ||
+                pp.Status == PreservationPeriodStatus.NeedsUserInput);
+
+        private PreservationPeriod PeriodReadyToBePreserved
+            => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
+
+        private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
         {
-            NextDueTimeUtc = nextDueTimeUtc.AddWeeks(IntervalWeeks);
-            var initialStatus =  _requirementDefinitionNeedsUserInput ? PreservationPeriodStatus.NeedsUserInput : PreservationPeriodStatus.ReadyToBePreserved;
-            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, initialStatus);
+            NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
+            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
         }
-
-        private PreservationPeriod ReadyToBePreservationPeriod
-            => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
     }
 }

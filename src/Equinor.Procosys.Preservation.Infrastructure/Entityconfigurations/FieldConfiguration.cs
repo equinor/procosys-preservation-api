@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -26,6 +27,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasConversion<string>()
                 .HasDefaultValue(FieldType.Info)
                 .IsRequired();
+
+            builder.HasMany<FieldValue>()
+                .WithOne()
+                .HasForeignKey(pr => pr.FieldId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired(false);
 
             builder.HasCheckConstraint("constraint_field_check_valid_fieldtype", $"{nameof(Field.FieldType)} in ({GetValidFieldTypes()})");
         }

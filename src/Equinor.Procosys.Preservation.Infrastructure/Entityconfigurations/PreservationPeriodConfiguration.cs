@@ -25,6 +25,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .HasConversion<string>()
                 .HasDefaultValue(PreservationPeriodStatus.NeedsUserInput)
                 .IsRequired();
+                        
+            builder
+                .HasMany(x => x.FieldValues)
+                .WithOne()
+                .IsRequired();
 
             builder.Property(x => x.DueTimeUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -115,21 +116,43 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public Requirement FirstUpcomingRequirement
-            => Status == PreservationStatus.Active
-                ? Requirements
-                    .Where(r => r.NextDueTimeUtc.HasValue)
-                    .OrderBy(r => r.NextDueTimeUtc.Value)
-                    .First()
-                : null;
+            => Requirements
+                .Where(r => r.NextDueTimeUtc.HasValue)
+                .OrderBy(r => r.NextDueTimeUtc.Value)
+                .FirstOrDefault();
 
-        public bool ReadyToBePreserved => _requirements.All(r => r.ReadyToBePreserved);
+        public bool ReadyToBePreserved
+            => Status == PreservationStatus.Active && FirstUpcomingRequirement.ReadyToBePreserved;
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
-            foreach (var requirement in Requirements)
+            if (!ReadyToBePreserved)
+            {
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved ");
+            }
+            foreach (var requirement in Requirements.Where(r => r.ReadyToBePreserved))
             {
                 requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
             }
+        }
+
+        public void RecordValueForActivePeriod(int fieldId, string value, RequirementDefinition requirementDefinition)
+        {
+            var field = requirementDefinition.Fields.Single(f => f.Id == fieldId);
+            var requirement = Requirements.Single(r => r.RequirementDefinitionId == requirementDefinition.Id);
+
+            var period = requirement.ActivePeriod;
+
+            period.RecordValueForField(field, value);
+
+            period.UpdateStatus(requirementDefinition);
+        }
+
+        public void UpdateCommentForActivePeriod(string comment, RequirementDefinition requirementDefinition)
+        {
+            var requirement = Requirements.Single(r => r.RequirementDefinitionId == requirementDefinition.Id);
+
+            requirement.ActivePeriod.SetComment(comment);
         }
     }
 }
