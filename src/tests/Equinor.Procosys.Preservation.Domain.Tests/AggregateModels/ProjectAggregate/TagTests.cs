@@ -13,8 +13,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class TagTests
     {
-        private const int IntervalWeeksFirst = 2;
-        private const int IntervalWeeksLater = 4;
+        private const int TwoWeeksInterval = 2;
+        private const int FourWeeksInterval = 4;
         private Mock<Step> _stepMock;
         
         private RequirementDefinition _reqDefFirstNotNeedInput;
@@ -43,9 +43,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDefNeedInput = new RequirementDefinition("", "", 1, 0);
             _reqDefNeedInput.AddField(new Field("", "", FieldType.CheckBox, 0));
             
-            _reqFirstNotNeedInput = new Requirement("", IntervalWeeksFirst, _reqDefFirstNotNeedInput);
-            _reqLaterNotNeedInput = new Requirement("", IntervalWeeksLater, _reqDefLaterNotNeedInput);
-            _reqNeedInput = new Requirement("", IntervalWeeksFirst, _reqDefNeedInput);
+            _reqFirstNotNeedInput = new Requirement("", TwoWeeksInterval, _reqDefFirstNotNeedInput);
+            _reqLaterNotNeedInput = new Requirement("", FourWeeksInterval, _reqDefLaterNotNeedInput);
+            _reqNeedInput = new Requirement("", TwoWeeksInterval, _reqDefNeedInput);
 
             _reqsNotNeedInput = new List<Requirement>
             {
@@ -103,9 +103,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void Constructor_ShouldNotMakeTagReadyToBePreserved()
+        public void Constructor_ShouldNotSetReadyToBePreserved()
         {
             Assert.IsFalse(_dut.ReadyToBePreserved);
+            Assert.IsFalse(_dut.IsReadyToBeBulkPreserved(_utcNow.AddWeeks(TwoWeeksInterval)));
             var requirements = _dut.Requirements;
             var firstReq = requirements.ElementAt(0);
             var laterReq = requirements.ElementAt(1);
@@ -161,14 +162,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _dut.StartPreservation(_utcNow);
 
-            var expectedNextDueTimeFirstUtc = _utcNow.AddWeeks(IntervalWeeksFirst);
-            var expectedNextDueTimeLaterUtc = _utcNow.AddWeeks(IntervalWeeksLater);
+            var expectedNextDueTimeFirstUtc = _utcNow.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeLaterUtc = _utcNow.AddWeeks(FourWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeFirstUtc, _dut.Requirements.ElementAt(0).NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeLaterUtc, _dut.Requirements.ElementAt(1).NextDueTimeUtc);
         }
         
         [TestMethod]
-        public void StartPreservation_ShouldMakeTagReadyToBePreserved_WhenNoRequirementNeedInput()
+        public void StartPreservation_ShouldSetReadyToBePreserved_WhenNoRequirementNeedInput()
         {
             Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
 
@@ -176,9 +177,38 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.IsTrue(_dut.ReadyToBePreserved);
         }
+        
+        [TestMethod]
+        public void IsReadyToBeBulkPreserved_ShouldBeFalse_BeforePeriod()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
+            _dut.StartPreservation(_utcNow);
+
+            Assert.IsFalse(_dut.IsReadyToBeBulkPreserved(_utcNow));
+        }
+        
+        [TestMethod]
+        public void IsReadyToBeBulkPreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
+            _dut.StartPreservation(_utcNow);
+
+            var spotOnTime = _utcNow.AddWeeks(TwoWeeksInterval);
+            Assert.IsTrue(_dut.IsReadyToBeBulkPreserved(spotOnTime));
+        }
+        
+        [TestMethod]
+        public void IsReadyToBeBulkPreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dut.Status);
+            _dut.StartPreservation(_utcNow);
+
+            var overDue = _utcNow.AddWeeks(TwoWeeksInterval + TwoWeeksInterval);
+            Assert.IsTrue(_dut.IsReadyToBeBulkPreserved(overDue));
+        }
 
         [TestMethod]
-        public void StartPreservation_ShouldNotMakeTagReadyToBePreserved_WhenRequirementNeedInput()
+        public void StartPreservation_ShouldNotSetReadyToBePreserved_WhenRequirementNeedInput()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _reqsNeedInput);
             Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
