@@ -1,22 +1,23 @@
 ﻿using System;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagDetails
 {
     public class TagDetailsDto
     {
-        public int Id { get; private set; }
-        public string TagNo { get; private set; }
-        public string Description { get; private set; }
-        public PreservationStatus Status { get; private set; }
-        public string JourneyName { get; private set; }
-        public string ModeName { get; private set; }
-        public string ResponsibleName { get; private set; }
-        public string CommPkgNo { get; private set; }
-        public string McPkgNo { get; private set; }
-        public string PoNo { get; private set; }
-        public string Area { get; private set; }
-        public DateTime NextDueDate { get; private set; }
-        public string NextDueDateString { get; private set; }
+        public int Id { get; set; }
+        public string TagNo { get; set; }
+        public string Description { get; set; }
+        public PreservationStatus Status { get; set; }
+        public string JourneyName { get; set; }
+        public string Mode { get; set; }
+        public string Responsible { get; set; }
+        public string CommPkgNo { get; set; }
+        public string McPkgNo { get; set; }
+        public string PoNo { get; set; }
+        public string Area { get; set; }
+        public DateTime? NextDueDate { get; set; }
+        public string NextDueDateString => NextDueDate?.FormatAsYearAndWeekString() ?? null;
     }
 }

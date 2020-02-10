@@ -47,8 +47,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure
                 .GetMethod(nameof(PreservationContext.SetGlobalQueryFilter))
                 ?.MakeGenericMethod(type)
                 .Invoke(this, new object[] { modelBuilder });
-
-                modelBuilder.Entity<TagDetailsDto>().HasNoKey().ToView(nameof(TagDetailsDto));
             }
         }
 
