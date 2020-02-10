@@ -47,7 +47,7 @@ stages:
 - stage: dev
   displayName: 'Dev'
   dependsOn: 'common'
-  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'
@@ -74,7 +74,7 @@ stages:
 - stage: qa
   displayName: 'QA'
   dependsOn: 'common'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/pipeline'))
   variables:
     envName: 'qa'
     envRg: '${{ variables.envRgName }}'
