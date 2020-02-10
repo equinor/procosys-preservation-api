@@ -20,27 +20,27 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
 
         public async Task<Result<TagDetailsDto>> Handle(GetTagDetailsQuery request, CancellationToken cancellationToken)
         {
-            var tagDetails =    await (from tag in _context.QuerySet<Tag>().Include(tag => tag.Requirements)
-                                join step in _context.QuerySet<Step>() on tag.StepId equals step.Id
-                                join journey in _context.QuerySet<Journey>() on EF.Property<int>(step, "JourneyId") equals journey.Id
-                                join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
-                                join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
-                                where tag.Id == request.Id
-                                select new TagDetailsDto
-                                {
-                                    AreaCode = tag.AreaCode,
-                                    CommPkgNo = tag.CommPkgNo,
-                                    Description = tag.Description,
-                                    Id = tag.Id,
-                                    JourneyTitle = journey.Title,
-                                    McPkgNo = tag.McPkgNo,
-                                    Mode = mode.Title,
-                                    NextDueDate = tag.Requirements.OrderBy(req => req.NextDueTimeUtc).Select(req => req.NextDueTimeUtc).FirstOrDefault(),
-                                    PurchaseOrderNo = tag.PurchaseOrderNo,
-                                    ResponsibleName = responsible.Name,
-                                    Status = tag.Status,
-                                    TagNo = tag.TagNo
-                                }).FirstOrDefaultAsync();
+            var tagDetails = await (from tag in _context.QuerySet<Tag>().Include(tag => tag.Requirements)
+                                    join step in _context.QuerySet<Step>() on tag.StepId equals step.Id
+                                    join journey in _context.QuerySet<Journey>() on EF.Property<int>(step, "JourneyId") equals journey.Id
+                                    join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
+                                    join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
+                                    where tag.Id == request.Id
+                                    select new TagDetailsDto
+                                    {
+                                        AreaCode = tag.AreaCode,
+                                        CommPkgNo = tag.CommPkgNo,
+                                        Description = tag.Description,
+                                        Id = tag.Id,
+                                        JourneyTitle = journey.Title,
+                                        McPkgNo = tag.McPkgNo,
+                                        Mode = mode.Title,
+                                        NextDueDate = tag.Requirements.Where(req => req.NextDueTimeUtc.HasValue).OrderBy(req => req.NextDueTimeUtc).Select(req => req.NextDueTimeUtc.Value).FirstOrDefault(),
+                                        PurchaseOrderNo = tag.PurchaseOrderNo,
+                                        ResponsibleName = responsible.Name,
+                                        Status = tag.Status,
+                                        TagNo = tag.TagNo
+                                    }).FirstOrDefaultAsync();
 
             if (tagDetails == null)
             {
