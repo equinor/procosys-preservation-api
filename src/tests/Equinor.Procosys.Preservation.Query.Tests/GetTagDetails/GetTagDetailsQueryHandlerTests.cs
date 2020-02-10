@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsNull_IfTagIsNotFound()
+        public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
             var dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
                  .UseInMemoryDatabase(databaseName: new Guid().ToString())
