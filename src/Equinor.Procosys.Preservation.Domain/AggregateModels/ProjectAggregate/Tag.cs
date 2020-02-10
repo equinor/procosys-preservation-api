@@ -115,11 +115,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             Status = PreservationStatus.Active;
         }
 
-        public Requirement FirstUpcomingRequirement
-            => Requirements
-                .Where(r => r.NextDueTimeUtc.HasValue)
-                .OrderBy(r => r.NextDueTimeUtc.Value)
-                .FirstOrDefault();
+        public Requirement FirstUpcomingRequirement => UpComingRequirements().FirstOrDefault();
 
         public bool ReadyToBePreserved
             => Status == PreservationStatus.Active && 
@@ -131,15 +127,27 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                FirstUpcomingRequirement != null && 
                FirstUpcomingRequirement.IsReadyToBeBulkPreserved(preservedAtUtc);
 
-        public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
+        public void Preserve(DateTime preservedAtUtc, Person preservedBy)
         {
             if (!ReadyToBePreserved)
             {
                 throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved ");
             }
-            foreach (var requirement in Requirements.Where(r => r.ReadyToBePreserved))
+            foreach (var requirement in UpComingRequirements().Where(r => r.ReadyToBePreserved))
             {
-                requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
+                requirement.Preserve(preservedAtUtc, preservedBy, false);
+            }
+        }
+
+        public void BulkPreserve(DateTime preservedAtUtc, Person preservedBy)
+        {
+            if (!IsReadyToBeBulkPreserved(preservedAtUtc))
+            {
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be bulk preserved ");
+            }
+            foreach (var requirement in UpComingRequirements().Where(r => r.IsReadyToBeBulkPreserved(preservedAtUtc)))
+            {
+                requirement.Preserve(preservedAtUtc, preservedBy, true);
             }
         }
 
@@ -161,5 +169,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             requirement.ActivePeriod.SetComment(comment);
         }
+        private IOrderedEnumerable<Requirement> UpComingRequirements()
+            => Requirements
+                .Where(r => r.NextDueTimeUtc.HasValue)
+                .OrderBy(r => r.NextDueTimeUtc.Value);
     }
 }

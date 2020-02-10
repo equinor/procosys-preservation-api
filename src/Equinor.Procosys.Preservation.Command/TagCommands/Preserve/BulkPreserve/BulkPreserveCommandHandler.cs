@@ -5,16 +5,16 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
+namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve.BulkPreserve
 {
-    public class PreserveCommandHandler : IRequestHandler<PreserveCommand, Result<Unit>>
+    public class BulkPreserveCommandHandler : IRequestHandler<BulkPreserveCommand, Result<Unit>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly ITimeService _timeService;
 
-        public PreserveCommandHandler(
+        public BulkPreserveCommandHandler(
             IProjectRepository projectRepository,
             ITimeService timeService,
             IUnitOfWork unitOfWork,
@@ -26,14 +26,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
             _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<Result<Unit>> Handle(PreserveCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(BulkPreserveCommand request, CancellationToken cancellationToken)
         {
             var tags = await _projectRepository.GetTagsByTagIdsAsync(request.TagIds);
             var currentUser = await _currentUserProvider.GetCurrentUserAsync();
 
             foreach (var tag in tags)
             {
-                tag.Preserve(_timeService.GetCurrentTimeUtc(), currentUser);
+                tag.BulkPreserve(_timeService.GetCurrentTimeUtc(), currentUser);
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);

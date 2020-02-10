@@ -6,13 +6,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
 {
     public class PreserveCommand : IRequest<Result<Unit>>
     {
-        public PreserveCommand(IEnumerable<int> tagIds, bool bulkPreserved)
-        {
-            TagIds = tagIds ?? new List<int>();
-            BulkPreserved = bulkPreserved;
-        }
+        public PreserveCommand(IEnumerable<int> tagIds) => TagIds = tagIds ?? new List<int>();
 
         public IEnumerable<int> TagIds { get; }
-        public bool BulkPreserved { get; }
     }
 }
