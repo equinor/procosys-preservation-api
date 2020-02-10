@@ -27,14 +27,15 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                 where tag.Id == request.Id
                                 select new TagDetailsDto
                                 {
-                                    Area = tag.AreaCode,
+                                    AreaCode = tag.AreaCode,
                                     CommPkgNo = tag.CommPkgNo,
                                     Description = tag.Description,
                                     Id = tag.Id,
-                                    JourneyName = journey.Title,
+                                    JourneyTitle = journey.Title,
                                     McPkgNo = tag.McPkgNo,
                                     NextDueDate = tag.NextDueTimeUtc,
-                                    PoNo = tag.PurchaseOrderNo,
+                                    PurchaseOrderNo = tag.PurchaseOrderNo,
+                                    ResponsibleName = responsible.Name,
                                     Status = tag.Status,
                                     TagNo = tag.TagNo
                                 }).FirstOrDefaultAsync();
