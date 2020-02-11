@@ -19,12 +19,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         private const int RdId2 = 18;
         private const int TagId1 = 7;
         private const int TagId2 = 8;
-        private const int PersonId = 142;
         private const int IntervalWeeks = 2;
 
         private DateTime _utcNow;
         private Mock<IProjectRepository> _projectRepoMock;
-        private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
@@ -38,7 +36,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         private Mock<RequirementDefinition> _rd2Mock;
 
         private PreserveCommandHandler _dut;
-        private Mock<Person> _personMock;
 
         [TestInitialize]
         public void Setup()
@@ -75,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
-            _command = new PreserveCommand(tagIds, true);
+            _command = new PreserveCommand(tagIds);
 
             _tag1.StartPreservation(_utcNow.AddDays(-14));
             _tag2.StartPreservation(_utcNow.AddDays(-14));

@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using System;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 {
@@ -19,6 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
         bool AllRequirementDefinitionsExist(int tagId);
         
         bool ReadyToBePreserved(int tagId);
+
+        bool ReadyToBeBulkPreserved(int tagId, DateTime preservedAtUtc);
         
         bool RequirementIsReadyForRecording(int tagId, int fieldId);
     }

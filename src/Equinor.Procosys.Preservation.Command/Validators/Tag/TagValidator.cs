@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
@@ -67,6 +68,17 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             }
 
             return tag.ReadyToBePreserved;
+        }
+
+        public bool ReadyToBeBulkPreserved(int tagId, DateTime preservedAtUtc)
+        {
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return tag.IsReadyToBeBulkPreserved(preservedAtUtc);
         }
 
         public bool RequirementIsReadyForRecording(int tagId, int fieldId)
