@@ -53,14 +53,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return timeUtc.GetWeeksUntil(NextDueTimeUtc.Value);
         }
         
-        public bool IsReadyToBeBulkPreserved(DateTime preservedAtUtc)
+        public bool IsReadyToBeBulkPreserved(DateTime currentTimeUtc)
         {
             if (!ReadyToBePreserved)
             {
                 return false;
             }
 
-            var nextDueInWeeks = GetNextDueInWeeks(preservedAtUtc);
+            var nextDueInWeeks = GetNextDueInWeeks(currentTimeUtc);
 
             return nextDueInWeeks.HasValue && nextDueInWeeks.Value <= 0;
         }
