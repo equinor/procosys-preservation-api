@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.Validators.Field;
+﻿using System.Linq;
+using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using FluentValidation;
 
@@ -18,13 +19,18 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
                 .Must(NotBeAVoidedTag)
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}");
 
-            RuleForEach(command => command.FieldValues)
-                .Must(BeAnExistingField)
-                .WithMessage((command, fv) => $"Field doesn't exists! Field={fv.FieldId}")
-                .Must(NotBeAVoidedField)
-                .WithMessage((command, fv) => $"Field is voided! Field={fv.FieldId}")
-                .Must((command, fv) => HaveRequirementReadyForRecording(command.TagId, fv.FieldId))
-                .WithMessage((command, fv) => $"The requirement for the field is not ready for recording! Tag={command.TagId}. Field={fv.FieldId}");
+            RuleFor(command => command.RequirementId)
+                .Must(HaveRequirementReadyForRecording)
+                .WithMessage((command, reqId) => $"The requirement for the field is not ready for recording! Tag={command.TagId}. Requirement={reqId}");
+
+            When(command => command.FieldValues.Any(), () =>
+            {
+                RuleForEach(command => command.FieldValues)
+                    .Must(BeAnExistingField)
+                    .WithMessage((command, fv) => $"Field doesn't exists! Field={fv.FieldId}")
+                    .Must(NotBeAVoidedField)
+                    .WithMessage((command, fv) => $"Field is voided! Field={fv.FieldId}");
+            });
 
             bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
 
@@ -36,8 +42,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
             
             bool NotBeAVoidedField(FieldValue fieldValue) => !fieldValidator.IsVoided(fieldValue.FieldId);
             
-            bool HaveRequirementReadyForRecording(int tagId, int fieldId)
-                => tagValidator.RequirementIsReadyForRecording(tagId, fieldId);
+            bool HaveRequirementReadyForRecording(int requirementId)
+                => tagValidator.RequirementIsReadyForRecording(requirementId);
         }
     }
 }

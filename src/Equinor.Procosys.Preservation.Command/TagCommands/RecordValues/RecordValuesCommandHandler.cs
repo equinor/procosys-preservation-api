@@ -27,9 +27,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
         public async Task<Result<Unit>> Handle(RecordValuesCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var requirement = await _projectRepository.GetRequirementByIdAsync(request.RequirementId);
 
             var requirementDefinition =
-                await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(request.RequirementDefinitionId);
+                await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
 
             foreach (var fieldValue in request.FieldValues)
             {
