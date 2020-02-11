@@ -56,9 +56,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [HttpPut("{id}/StartPreservation")]
-        public async Task<IActionResult> StartPreservation([FromRoute] int tagId)
+        public async Task<IActionResult> StartPreservation([FromRoute] int id)
         {
-            var result = await _mediator.Send(new StartPreservationCommand(new List<int>{tagId}));
+            var result = await _mediator.Send(new StartPreservationCommand(new List<int>{id}));
             return this.FromResult(result);
         }
 
