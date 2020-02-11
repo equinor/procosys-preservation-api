@@ -18,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             string mcPkgNo, 
             string mode,
             bool readyToBePreserved,
+            bool readyToBeBulkPreserved,
             string purchaseOrderNo,
             string remark,
             IEnumerable<RequirementDto> requirements,
@@ -39,6 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             McPkgNo = mcPkgNo;
             Mode = mode;
             ReadyToBePreserved = readyToBePreserved;
+            ReadyToBeBulkPreserved = readyToBeBulkPreserved;
             PurchaseOrderNo = purchaseOrderNo;
             Remark = remark;
             TagNo = tagNo;
@@ -62,6 +64,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public string PurchaseOrderNo { get; }
         public string Remark { get; }
         public bool ReadyToBePreserved { get; }
+        public bool ReadyToBeBulkPreserved { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
         public string ResponsibleCode { get; }

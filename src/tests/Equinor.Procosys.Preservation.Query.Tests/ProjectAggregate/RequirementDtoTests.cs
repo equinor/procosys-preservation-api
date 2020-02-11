@@ -7,32 +7,31 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
     [TestClass]
     public class RequirementDtoTests
     {
-        private readonly DateTime _currentTimeUtc = new DateTime(2020, 6, 2, 14, 2, 16, DateTimeKind.Utc);
-
         [TestMethod]
         public void Constructor_WithNextDueDate_ShouldSetAllProperties()
         {
-            var nextDueTimeUtc = _currentTimeUtc.AddDays(7);
-            var dut = new RequirementDto(1, 2, _currentTimeUtc, nextDueTimeUtc, true);
+            var nextDueTimeUtc = new DateTime(2020, 6, 2, 14, 2, 16, DateTimeKind.Utc);
+            var dut = new RequirementDto(1, 2, nextDueTimeUtc, 3, true, true);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual(2, dut.RequirementDefinitionId);
             Assert.IsTrue(dut.NextDueTimeUtc.HasValue);
             Assert.AreEqual(nextDueTimeUtc, dut.NextDueTimeUtc.Value);
             Assert.IsNotNull(dut.NextDueWeeks);
-            Assert.AreEqual(1, dut.NextDueWeeks);
-            Assert.IsNotNull(dut.NextDueAsYearAndWeek);
+            Assert.IsTrue(dut.NextDueWeeks.HasValue);
+            Assert.AreEqual(3, dut.NextDueWeeks);
+            Assert.AreEqual("2020w23", dut.NextDueAsYearAndWeek);
             Assert.IsTrue(dut.ReadyToBePreserved);
         }
 
         [TestMethod]
         public void Constructor_WithoutNextDueDate_ShouldNotSetDueDateProperties()
         {
-            var dut = new RequirementDto(0, 0, _currentTimeUtc, null, false);
+            var dut = new RequirementDto(0, 0, null, null, false, false);
 
+            Assert.IsFalse(dut.NextDueWeeks.HasValue);
             Assert.IsFalse(dut.NextDueTimeUtc.HasValue);
             Assert.IsNull(dut.NextDueAsYearAndWeek);
-            Assert.AreEqual(0, dut.NextDueWeeks);
         }
     }
 }
