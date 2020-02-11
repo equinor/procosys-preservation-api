@@ -25,11 +25,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties_WhenValue()
         {
-            var dut = new NumberValue("SchemaA", new Mock<Field>().Object, "14");
+            var dut = new NumberValue("SchemaA", new Mock<Field>().Object, "1,4");
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.IsTrue(dut.Value.HasValue);
-            Assert.AreEqual(14, dut.Value.Value);
+            Assert.AreEqual(1.4, dut.Value.Value);
         }
 
         [TestMethod]
