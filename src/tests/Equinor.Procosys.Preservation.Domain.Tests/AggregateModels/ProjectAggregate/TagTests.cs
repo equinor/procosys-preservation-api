@@ -187,7 +187,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void StartPreservation_ShouldSetReadyToBePreserved_WhenNoRequirementNeedInput()
+        public void StartPreservation_ShouldSetReadyToBePreserved_WhenNoRequirementNeedsInput()
         {
             Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInput.Status);
 
@@ -225,7 +225,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void StartPreservation_ShouldNotSetReadyToBePreserved_WhenRequirementNeedInput()
+        public void StartPreservation_ShouldNotSetReadyToBePreserved_WhenRequirementNeedsInput()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _oneReq_NeedInputTwoWeekInterval);
             Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
@@ -295,7 +295,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Preserve_ShouldThrowException_WhenRequirementNeedInput()
+        public void Preserve_ShouldThrowException_WhenRequirementNeedsInput()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _oneReq_NeedInputTwoWeekInterval);
             dut.StartPreservation(_utcNow);
@@ -305,7 +305,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Preserve_ShouldThrowException_WhenFirstUpcomingRequirementNeedInput()
+        public void Preserve_ShouldThrowException_WhenFirstUpcomingRequirementNeedsInput()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
