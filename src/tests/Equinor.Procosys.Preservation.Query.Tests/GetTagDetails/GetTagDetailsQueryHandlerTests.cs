@@ -82,8 +82,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual("Journey", result.Data.JourneyTitle);
                 Assert.AreEqual("McPkgNo", result.Data.McPkgNo);
                 Assert.AreEqual("Mode", result.Data.Mode);
-                Assert.AreEqual(new DateTime(2020, 2, 15, 0, 0, 0, DateTimeKind.Utc), result.Data.NextDueDate);
-                Assert.AreEqual("2020w07", result.Data.NextDueDateString);
                 Assert.AreEqual("PurchaseOrderNo", result.Data.PurchaseOrderNo);
                 Assert.AreEqual("Responsible", result.Data.ResponsibleName);
                 Assert.AreEqual(PreservationStatus.Active, result.Data.Status);

@@ -1,6 +1,4 @@
-﻿using System;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagDetails
 {
@@ -17,7 +15,5 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
         public string McPkgNo { get; set; }
         public string PurchaseOrderNo { get; set; }
         public string AreaCode { get; set; }
-        public DateTime? NextDueDate { get; set; }
-        public string NextDueDateString => NextDueDate?.FormatAsYearAndWeekString() ?? null;
     }
 }
