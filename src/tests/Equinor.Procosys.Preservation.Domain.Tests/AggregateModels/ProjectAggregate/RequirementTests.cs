@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             );
 
         [TestMethod]
-        public void StartPreservation_ShouldShouldSetCorrectNextDueDate()
+        public void StartPreservation_ShouldSetCorrectNextDueDate()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNeedInputMock.Object);
 
@@ -257,7 +257,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
                 
         [TestMethod]
-        public void Preserve_ShouldShouldUpdateCorrectNextDueDate()
+        public void Preserve_ShouldUpdateCorrectNextDueDate()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNotNeedInputMock.Object);
 
