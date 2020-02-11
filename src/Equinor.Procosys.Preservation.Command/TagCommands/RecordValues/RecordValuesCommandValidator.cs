@@ -21,11 +21,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
 
             RuleFor(command => command.RequirementId)
                 .Must(HaveRequirementReadyForRecording)
-                .WithMessage((command, reqId) => $"The requirement for the field is not ready for recording! Tag={command.TagId}. Requirement={reqId}");
+                .WithMessage((command, reqId) =>
+                    $"The requirement for the field is not ready for recording! Tag={command.TagId}. Requirement={reqId}");
 
             When(command => command.FieldValues.Any(), () =>
             {
                 RuleForEach(command => command.FieldValues)
+                    .Must(BeAValidValueForField)
+                    .WithMessage((command, fv) => $"Field value is not valid! Field={fv.FieldId} Value={fv.Value}")
                     .Must(BeAnExistingField)
                     .WithMessage((command, fv) => $"Field doesn't exists! Field={fv.FieldId}")
                     .Must(NotBeAVoidedField)
@@ -39,11 +42,13 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
             bool NotBeInAClosedProject(int tagId) => !tagValidator.ProjectIsClosed(tagId);
 
             bool BeAnExistingField(FieldValue fieldValue) => fieldValidator.Exists(fieldValue.FieldId);
-            
+
             bool NotBeAVoidedField(FieldValue fieldValue) => !fieldValidator.IsVoided(fieldValue.FieldId);
-            
+
             bool HaveRequirementReadyForRecording(int requirementId)
                 => tagValidator.RequirementIsReadyForRecording(requirementId);
+
+            bool BeAValidValueForField(FieldValue fieldValue) => !fieldValidator.IsValidValue(fieldValue.FieldId, fieldValue.Value);
         }
     }
 }

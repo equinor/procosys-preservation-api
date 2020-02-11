@@ -9,5 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Field
         bool IsVoided(int fieldId);
         
         bool VerifyFieldType(int fieldId, FieldType fieldType);
+
+        bool IsValidValue(int fieldId, string value);
     }
 }
