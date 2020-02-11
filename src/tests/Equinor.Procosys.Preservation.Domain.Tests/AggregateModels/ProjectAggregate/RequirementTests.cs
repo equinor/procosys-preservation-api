@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void StartPreservation_ShouldNotSetReadyToBePreserved_WhenFieldNeedInput()
+        public void StartPreservation_ShouldNotSetReadyToBePreserved_WhenFieldNeedsInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNeedInputMock.Object);
 
@@ -235,7 +235,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Preserve_ShouldThrowException_WhenPreservationPeriodNeedInput()
+        public void Preserve_ShouldThrowException_WhenPreservationPeriodNeedsInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
