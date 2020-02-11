@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.Field
 {
@@ -18,38 +19,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Field
             return field != null && field.IsVoided;
         }
 
-        public bool VerifyFieldType(int fieldId, FieldType fieldType)
-        {
-            var field = _requirementTypeRepository.GetFieldByIdAsync(fieldId).Result;
-            return field != null && field.FieldType == fieldType;
-        }
-
         public bool IsValidValue(int fieldId, string value)
         {
             var field = _requirementTypeRepository.GetFieldByIdAsync(fieldId).Result;
             switch (field.FieldType)
             {
                 case FieldType.Number:
-                    return IsAValidNumberValue(value);
+                    return NumberValue.IsValidValue(value, out _);
                 case FieldType.CheckBox:
-                    return IsAValidCheckBoxValue(value);
+                    return CheckBoxChecked.IsValidValue(value, out _);
                 default:
                     return false;
             }
-        }
-
-        private bool IsAValidCheckBoxValue(string value)
-            => bool.TryParse(value, out _);
-
-        private bool IsAValidNumberValue(string value)
-        {
-            // NA and N/A is legal special cases for a number
-            if (value.ToUpper() == "NA" || value.ToUpper() == "N/A")
-            {
-                return true;
-            }
-
-            return double.TryParse(value, out _);
         }
     }
 }

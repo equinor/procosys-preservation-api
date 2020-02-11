@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using System;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -14,9 +15,34 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public NumberValue(string schema, Field field, double? value)
-            : base(schema, field) => Value = value;
+        public NumberValue(string schema, Field field, string value)
+            : base(schema, field)
+        {
+            if (!IsValidValue(value, out var number))
+            {
+                throw new ArgumentException($"Value {value} is not a legal value for a {nameof(NumberValue)}");
+            }
+
+            Value = number;
+        }
 
         public double? Value { get; private set; }
+
+        public static bool IsValidValue(string value, out double? number)
+        {
+            number = null;
+            if (value.ToUpper() == "NA" || value.ToUpper() == "N/A")
+            {
+                return true;
+            }
+
+            if (double.TryParse(value, out var n))
+            {
+                number = n;
+                return true;
+            }
+
+            return false;
+        }
     }
 }

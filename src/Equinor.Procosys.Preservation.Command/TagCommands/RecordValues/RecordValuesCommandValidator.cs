@@ -48,7 +48,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
             bool HaveRequirementReadyForRecording(int requirementId)
                 => tagValidator.RequirementIsReadyForRecording(requirementId);
 
-            bool BeAValidValueForField(FieldValue fieldValue) => !fieldValidator.IsValidValue(fieldValue.FieldId, fieldValue.Value);
+            bool BeAValidValueForField(FieldValue fieldValue)
+                => fieldValidator.IsValidValue(fieldValue.FieldId, fieldValue.Value);
         }
     }
 }

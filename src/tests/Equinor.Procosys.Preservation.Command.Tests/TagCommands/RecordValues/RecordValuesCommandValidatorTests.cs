@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyFieldNotValid()
         {
-            _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, NumberAsString)).Returns(true);
+            _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, NumberAsString)).Returns(false);
             
             var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
 
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         public void Validate_ShouldFailWith3Errors_WhenErrorsInAllRules()
         {
             _tagValidatorMock.Setup(r => r.ProjectIsClosed(TagId)).Returns(true);
-            _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, NumberAsString)).Returns(true);
+            _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, NumberAsString)).Returns(false);
             _tagValidatorMock.Setup(r => r.RequirementIsReadyForRecording(ReqId)).Returns(false);
 
             var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
