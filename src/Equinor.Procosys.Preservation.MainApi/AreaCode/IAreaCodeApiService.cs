@@ -5,6 +5,6 @@ namespace Equinor.Procosys.Preservation.MainApi.AreaCode
 {
     public interface IAreaCodeApiService
     {
-        Task<List<AreaCode>> GetAreaCodes(string plant);
+        Task<List<ProcosysAreaCode>> GetAreaCodes(string plant);
     }
 }

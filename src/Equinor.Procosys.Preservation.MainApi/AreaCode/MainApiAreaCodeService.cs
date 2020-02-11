@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.MainApi.AreaCode
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<List<AreaCode>> GetAreaCodes(string plant)
+        public async Task<List<ProcosysAreaCode>> GetAreaCodes(string plant)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.MainApi.AreaCode
                 $"?plantId={plant}" +
                 $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<List<AreaCode>>(url) ?? new List<AreaCode>();
+            return await _mainApiClient.QueryAndDeserialize<List<ProcosysAreaCode>>(url) ?? new List<ProcosysAreaCode>();
         }
     }
 }
