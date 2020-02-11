@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         public async Task Handler_ReturnsTagDetails()
         {
             var dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
-                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                  .Options;
 
             using (var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
             var dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
-                 .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                  .Options;
 
             using var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object);
