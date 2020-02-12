@@ -34,8 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirement(TagId2)).Returns(true);
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(TagId1, PreservationStatus.Active)).Returns(true);
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(TagId2, PreservationStatus.Active)).Returns(true);
-            _tagValidatorMock.Setup(r => r.ReadyToBeBulkPreserved(TagId1, _utcNow)).Returns(true);
-            _tagValidatorMock.Setup(r => r.ReadyToBeBulkPreserved(TagId2, _utcNow)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId1, _utcNow)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId2, _utcNow)).Returns(true);
             _timeServiceMock = new Mock<ITimeService>();
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
             _command = new BulkPreserveCommand(_tagIds);
@@ -126,7 +126,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotReadyToBeBulkPreserved()
         {
-            _tagValidatorMock.Setup(r => r.ReadyToBeBulkPreserved(TagId1, _utcNow)).Returns(false);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId1, _utcNow)).Returns(false);
             
             var result = _dut.Validate(_command);
 

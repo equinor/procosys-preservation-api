@@ -1,4 +1,5 @@
 ﻿using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
@@ -6,7 +7,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
 {
     public class PreserveCommandValidator : AbstractValidator<PreserveCommand>
     {
-        public PreserveCommandValidator(ITagValidator tagValidator)
+        public PreserveCommandValidator(
+            ITagValidator tagValidator,
+            ITimeService timeService)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
             
@@ -30,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
 
             bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatus(tagId, PreservationStatus.Active);
 
-            bool BeReadyToBePreserved(int tagId) => tagValidator.ReadyToBePreserved(tagId);
+            bool BeReadyToBePreserved(int tagId) => tagValidator.ReadyToBePreserved(tagId, timeService.GetCurrentTimeUtc());
         }
     }
 }

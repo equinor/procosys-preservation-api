@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
                     .WithMessage((x, id) => $"Project for tag is closed! Tag={id}")
                     .Must(PreservationIsStarted)
                     .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
-                    .Must(BeReadyToBeBulkPreserved)
+                    .Must(BeReadyToBePreserved)
                     .WithMessage((x, id) => $"Tag is not ready to be bulk preserved! Tag={id}");
             });
 
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
 
             bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatus(tagId, PreservationStatus.Active);
             
-            bool BeReadyToBeBulkPreserved(int tagId) => tagValidator.ReadyToBeBulkPreserved(tagId, timeService.GetCurrentTimeUtc());
+            bool BeReadyToBePreserved(int tagId) => tagValidator.ReadyToBePreserved(tagId, timeService.GetCurrentTimeUtc());
         }
     }
 }

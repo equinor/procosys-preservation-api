@@ -1,5 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -10,22 +12,26 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
     public class PreserveCommandValidatorTests
     {
         private const int TagId = 7;
-
+        private DateTime _utcNow;
         private PreserveCommandValidator _dut;
         private Mock<ITagValidator> _tagValidatorMock;
+        private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
 
         [TestInitialize]
         public void Setup_OkState()
         {
+            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.Exists(TagId)).Returns(true);
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirement(TagId)).Returns(true);
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(TagId, PreservationStatus.Active)).Returns(true);
-            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId, _utcNow)).Returns(true);
+            _timeServiceMock = new Mock<ITimeService>();
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
             _command = new PreserveCommand(TagId);
 
-            _dut = new PreserveCommandValidator(_tagValidatorMock.Object);
+            _dut = new PreserveCommandValidator(_tagValidatorMock.Object, _timeServiceMock.Object);
         }
 
         [TestMethod]
@@ -87,7 +93,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotReadyToBePreserved()
         {
-            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId)).Returns(false);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId, _utcNow)).Returns(false);
             
             var result = _dut.Validate(_command);
 

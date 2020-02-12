@@ -24,7 +24,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             "McPkgNo",
             "Mode",
             true,
-            true,
             "PoNo",
             "Remark!",
             new List<RequirementDto> {new RequirementDto(0, 0, default, default, false, false)},
@@ -47,7 +46,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual("McPkgNo", _dut.McPkgNo);
             Assert.AreEqual("Mode", _dut.Mode);
             Assert.IsTrue(_dut.ReadyToBePreserved);
-            Assert.IsTrue(_dut.ReadyToBeBulkPreserved);
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.AreEqual("Remark!", _dut.Remark);

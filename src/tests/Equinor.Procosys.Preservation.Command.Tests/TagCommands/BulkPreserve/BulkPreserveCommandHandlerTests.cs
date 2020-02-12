@@ -125,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         }
 
         [TestMethod]
-        public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
+        public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
         {
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(TwoWeeksInterval));
             await _dut.Handle(_command, default);
@@ -134,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         }
 
         [TestMethod]
-        public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
+        public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
         {
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(FourWeeksInterval));
             await _dut.Handle(_command, default);
