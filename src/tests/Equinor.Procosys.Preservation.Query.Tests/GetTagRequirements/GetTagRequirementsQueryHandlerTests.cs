@@ -21,9 +21,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
     [TestClass]
     public class GetTagRequirementsQueryHandlerTests
     {
-        readonly string _schema = "PCS$TEST";
-        Mock<IEventDispatcher> _eventDispatcherMock;
-        Mock<IPlantProvider> _plantProviderMock;
+        const string _schema = "PCS$TEST";
+        private DbContextOptions<PreservationContext> _dbContextOptions;
+        private Mock<IEventDispatcher> _eventDispatcherMock;
+        private Mock<IPlantProvider> _plantProviderMock;
+        private DateTime _startedAtUtc = new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
 
         [TestInitialize]
         public void Setup()
@@ -31,15 +33,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             _eventDispatcherMock = new Mock<IEventDispatcher>();
             _plantProviderMock = new Mock<IPlantProvider>();
             _plantProviderMock.SetupGet(x => x.Plant).Returns(_schema);
+            
+            _dbContextOptions = SetupNewDatabase();
         }
 
-        [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirements()
+        private DbContextOptions<PreservationContext> SetupNewDatabase()
         {
             var dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
-                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                 .Options;
-
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options;
+            
             using (var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
             {
                 var responsible = new Responsible(_schema, "Responsible");
@@ -60,43 +63,44 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 context.RequirementDefinitions.Add(requirementDefinitionWithoutField);
 
                 var requirementDefinitionWithInfo = new RequirementDefinition(_schema, "WithInfo", 2, 1);
-                var infoField = new Field(_schema, "Label for Info", FieldType.Info, 0); 
+                var infoField = new Field(_schema, "Label for Info", FieldType.Info, 0);
                 requirementDefinitionWithInfo.AddField(infoField);
                 context.RequirementDefinitions.Add(requirementDefinitionWithInfo);
-                
+
                 var requirementDefinitionWithCheckBox = new RequirementDefinition(_schema, "WithCheckBox", 2, 1);
-                var cbField = new Field(_schema, "Label for CheckBox", FieldType.CheckBox, 10); 
+                var cbField = new Field(_schema, "Label for CheckBox", FieldType.CheckBox, 10);
                 requirementDefinitionWithCheckBox.AddField(cbField);
                 context.RequirementDefinitions.Add(requirementDefinitionWithCheckBox);
-                
-                var requirementDefinitionWithThreeNumberShowPrev = new RequirementDefinition(_schema, "WithNumber previous", 2, 1);
-                var numberFieldPrev1 = new Field(_schema, "Label for number", FieldType.Number, 15, "unit", true); 
-                var numberFieldPrev2 = new Field(_schema, "Label for number", FieldType.Number, 2, "unit", true); 
-                var numberFieldPrev3 = new Field(_schema, "Label for number", FieldType.Number, 10, "unit", true); 
+
+                var requirementDefinitionWithThreeNumberShowPrev =
+                    new RequirementDefinition(_schema, "WithNumber previous", 2, 1);
+                var numberFieldPrev1 = new Field(_schema, "Label for number - third", FieldType.Number, 15, "unit", true);
+                var numberFieldPrev2 = new Field(_schema, "Label for number - first", FieldType.Number, 2, "unit", true);
+                var numberFieldPrev3 = new Field(_schema, "Label for number - second", FieldType.Number, 10, "unit", true);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev1);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev2);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev3);
                 context.RequirementDefinitions.Add(requirementDefinitionWithThreeNumberShowPrev);
-                
-                var requirementDefinitionWithNumberNoPrev = new RequirementDefinition(_schema, "WithNumber no  previous", 2, 1);
-                var numberFieldNoPrev = new Field(_schema, "Label for number", FieldType.Number, 10, "unit", false); 
+
+                var requirementDefinitionWithNumberNoPrev = new RequirementDefinition(_schema, "WithNumber no previous", 2, 1);
+                var numberFieldNoPrev = new Field(_schema, "Label for number", FieldType.Number, 10, "unit", false);
                 requirementDefinitionWithNumberNoPrev.AddField(numberFieldNoPrev);
                 context.RequirementDefinitions.Add(requirementDefinitionWithNumberNoPrev);
-                
+
                 context.SaveChanges();
 
-                var tag = new Tag(_schema, 
-                    "TagNo", 
-                    "Description", 
-                    "AreaCode", 
-                    "Calloff", 
-                    "DisciplineCode", 
-                    "McPkgNo", 
-                    "CommPkgNo", 
-                    "PurchaseOrderNo", 
-                    "Remark", 
-                    "TagFunctionCode", 
-                    step, 
+                var tag = new Tag(_schema,
+                    "TagNo",
+                    "Description",
+                    "AreaCode",
+                    "Calloff",
+                    "DisciplineCode",
+                    "McPkgNo",
+                    "CommPkgNo",
+                    "PurchaseOrderNo",
+                    "Remark",
+                    "TagFunctionCode",
+                    step,
                     new List<Requirement>
                     {
                         new Requirement(_schema, 2, requirementDefinitionWithoutField),
@@ -105,12 +109,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                         new Requirement(_schema, 12, requirementDefinitionWithNumberNoPrev),
                         new Requirement(_schema, 4, requirementDefinitionWithThreeNumberShowPrev)
                     });
-                tag.StartPreservation(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
                 context.Tags.Add(tag);
                 context.SaveChanges();
             }
 
-            using (var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            return dbContextOptions;
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnsTagRequirements_NoDueDates_BeforePreservationStarted()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
             {
                 var query = new GetTagRequirementsQuery(1);
                 var dut = new GetTagRequirementsQueryHandler(context);
@@ -119,6 +128,45 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                foreach (var requirement in result.Data)
+                {
+                    Assert.IsFalse(requirement.NextDueTimeUtc.HasValue);
+                    Assert.IsNull(requirement.NextDueAsYearAndWeek);
+                    Assert.IsFalse(requirement.ReadyToBePreserved);
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnsTagRequirements_AfterPreservationStarted()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object,
+                _plantProviderMock.Object))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single();
+                tag.StartPreservation(_startedAtUtc);
+                context.Update(tag);
+                context.SaveChanges();
+
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            {
+                var query = new GetTagRequirementsQuery(1);
+                var dut = new GetTagRequirementsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                foreach (var requirement in result.Data)
+                {
+                    Assert.IsTrue(requirement.NextDueTimeUtc.HasValue);
+                    Assert.IsNotNull(requirement.NextDueTimeUtc.Value);
+                    Assert.IsNotNull(requirement.NextDueAsYearAndWeek);
+                    //Assert.IsFalse(requirement.ReadyToBePreserved);
+                }
             }
         }
 
