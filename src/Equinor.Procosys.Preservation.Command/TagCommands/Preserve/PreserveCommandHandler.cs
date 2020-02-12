@@ -28,13 +28,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
 
         public async Task<Result<Unit>> Handle(PreserveCommand request, CancellationToken cancellationToken)
         {
-            var tags = await _projectRepository.GetTagsByTagIdsAsync(request.TagIds);
+            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
             var currentUser = await _currentUserProvider.GetCurrentUserAsync();
 
-            foreach (var tag in tags)
-            {
-                tag.Preserve(_timeService.GetCurrentTimeUtc(), currentUser);
-            }
+            tag.Preserve(_timeService.GetCurrentTimeUtc(), currentUser);
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
