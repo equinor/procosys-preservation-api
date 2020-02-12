@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsCorrecResultType()
+        public async Task Handle_ShouldReturnCorrecResultType()
         {
             _areaCodeApiServiceMock
                 .Setup(x => x.GetAreaCodes(It.IsAny<string>()))
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsCorrectNumberOfElements()
+        public async Task Handle_ShouldReturnCorrectNumberOfElements()
         {
             _areaCodeApiServiceMock
                 .Setup(x => x.GetAreaCodes(It.IsAny<string>()))
@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsCorrectData()
+        public async Task Handle_ShouldReturnCorrectData()
         {
             _areaCodeApiServiceMock
                 .Setup(x => x.GetAreaCodes(It.IsAny<string>()))

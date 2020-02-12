@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace Equinor.Procosys.Preservation.MainApi.AreaCode
@@ -14,16 +13,13 @@ namespace Equinor.Procosys.Preservation.MainApi.AreaCode
         private readonly Uri _baseAddress;
         private readonly IBearerTokenApiClient _mainApiClient;
         private readonly IPlantApiService _plantApiService;
-        private readonly ILogger<MainApiAreaCodeService> _logger;
 
         public MainApiAreaCodeService(IBearerTokenApiClient mainApiClient,
             IPlantApiService plantApiService,
-            IOptionsMonitor<MainApiOptions> options,
-            ILogger<MainApiAreaCodeService> logger)
+            IOptionsMonitor<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
             _plantApiService = plantApiService;
-            _logger = logger;
             _apiVersion = options.CurrentValue.ApiVersion;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }

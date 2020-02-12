@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
     public class AreaCodeDtoTests
     {
         [TestMethod]
-        public void Constructor_SetsProperties()
+        public void Constructor_ShouldSetProperties()
         {
             var dut = new AreaCodeDto("CodeA", "DescriptionA");
 
