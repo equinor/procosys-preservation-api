@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetDisciplines
     public class DisciplineDtoTests
     {
         [TestMethod]
-        public void Constructor_SetsProperties()
+        public void Constructor_ShouldSetProperties()
         {
             var dut = new DisciplineDto("CodeA", "DescriptionA");
 

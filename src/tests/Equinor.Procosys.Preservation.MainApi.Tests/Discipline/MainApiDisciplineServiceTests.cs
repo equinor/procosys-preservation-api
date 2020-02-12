@@ -62,13 +62,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
         }
 
         [TestMethod]
-        public async Task GetDisciplines_ReturnsThreeDisciplines_TestAsync()
+        public async Task GetDisciplines_ShouldReturnsThreeDisciplines()
         {
             // Arrange
             _mainApiClient
                 .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysDiscipline>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeItems));
-            var dut = new MainApiDisciplineService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object, _logger.Object);
+            var dut = new MainApiDisciplineService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
             // Act
             var result = await dut.GetDisciplines(_plant);
@@ -78,13 +78,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
         }
 
         [TestMethod]
-        public async Task GetDisciplines_ReturnsNoDisciplines_TestAsync()
+        public async Task GetDisciplines_ShouldReturnsNoDisciplines()
         {
             // Arrange
             _mainApiClient
                 .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysDiscipline>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithNoItems));
-            var dut = new MainApiDisciplineService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object, _logger.Object);
+            var dut = new MainApiDisciplineService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
             // Act
             var result = await dut.GetDisciplines(_plant);
@@ -94,9 +94,9 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
         }
 
         [TestMethod]
-        public async Task GetDisciplines_ThrowsException_WhenPlantIsInvalid_TestAsync()
+        public async Task GetDisciplines_ShouldThrowException_WhenPlantIsInvalid()
         {
-            var dut = new MainApiDisciplineService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object, _logger.Object);
+            var dut = new MainApiDisciplineService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
             await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetDisciplines("INVALIDPLANT"));
         }
