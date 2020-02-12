@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
 {
     [TestClass]
-    public class GetAreaCodeDtoTests
+    public class AreaCodeDtoTests
     {
         [TestMethod]
         public void Constructor_SetsProperties()
