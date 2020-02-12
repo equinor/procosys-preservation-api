@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         private const int CheckBoxFieldId = 11;
         private const int NumberFieldId = 12;
         private const double Number = 1282.91;
-        private const int RdId = 21;
+        private const int ReqId = 21;
 
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             // Arrange
             _recordValuesCommandWithCheckedCheckBox = new RecordValuesCommand(
                 TagId,
-                RdId, 
+                ReqId, 
                 new List<FieldValue>
                 {
                     new FieldValue(CheckBoxFieldId, "true")
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             
             _recordValuesCommandWithUncheckedCheckBox = new RecordValuesCommand(
                 TagId, 
-                RdId, 
+                ReqId, 
                 new List<FieldValue>
                 {
                     new FieldValue(CheckBoxFieldId, "false")
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             
             _recordValuesCommandWithNaNumber = new RecordValuesCommand(
                 TagId, 
-                RdId, 
+                ReqId, 
                 new List<FieldValue>
                 {
                     new FieldValue(NumberFieldId, "n/a")
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             
             _recordValuesCommandWithNullNumber = new RecordValuesCommand(
                 TagId, 
-                RdId, 
+                ReqId, 
                 new List<FieldValue>
                 {
                     new FieldValue(NumberFieldId, null)
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
 
             _recordValuesCommandWithNormalNumber = new RecordValuesCommand(
                 TagId, 
-                RdId, 
+                ReqId, 
                 new List<FieldValue>
                 {
                     new FieldValue(NumberFieldId, Number.ToString("F2"))
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             
             _recordValuesCommandWithCheckedCheckBoxAndNaAsNumber = new RecordValuesCommand(
                 TagId, 
-                RdId, 
+                ReqId, 
                 new List<FieldValue>
                 {
                     new FieldValue(CheckBoxFieldId, "true"),
@@ -94,7 +94,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
                 Comment);
 
             var requirementDefinitionWith2FieldsMock = new Mock<RequirementDefinition>();
-            requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(RdId);
+            requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(ReqId);
             
             var checkBoxFieldMock = new Mock<Field>("", "", FieldType.CheckBox, 0, null, null);
             checkBoxFieldMock.SetupGet(f => f.Id).Returns(CheckBoxFieldId);
@@ -104,7 +104,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             numberFieldMock.SetupGet(f => f.Id).Returns(NumberFieldId);
             requirementDefinitionWith2FieldsMock.Object.AddField(numberFieldMock.Object);
 
-            _requirement = new Requirement("", 2, requirementDefinitionWith2FieldsMock.Object);
+            var requirementMock = new Mock<Requirement>("", 2, requirementDefinitionWith2FieldsMock.Object);
+            requirementMock.SetupGet(r => r.Id).Returns(ReqId);
+            _requirement = requirementMock.Object;
+
             var tag = new Tag("", "", "", "", "", "", "", "", "", "", "", new Mock<Step>().Object, new List<Requirement>
             {
                 _requirement
@@ -118,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
 
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionByIdAsync(RdId))
+                .Setup(r => r.GetRequirementDefinitionByIdAsync(ReqId))
                 .Returns(Task.FromResult(requirementDefinitionWith2FieldsMock.Object));
             
             _dut = new RecordValuesCommandHandler(

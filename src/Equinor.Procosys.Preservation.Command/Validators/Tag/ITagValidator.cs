@@ -21,6 +21,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 
         bool ReadyToBePreserved(int tagId, DateTime preservedAtUtc);
         
-        bool RequirementIsReadyForRecording(int tagId, int fieldId);
+        bool RequirementIsReadyForRecording(int requirementId);
     }
 }

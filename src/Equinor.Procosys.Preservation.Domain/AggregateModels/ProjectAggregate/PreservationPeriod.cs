@@ -146,9 +146,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void RecordCheckBoxValueForField(Field field, string value)
         {
-            if (!bool.TryParse(value, out var isChecked))
+            if (!CheckBoxChecked.IsValidValue(value, out var isChecked))
             {
-                throw new ArgumentException($"Value {value} is not legal for a {nameof(Field)} of type {field.FieldType}");
+                throw new ArgumentException($"Value {value} is not legal value for a {nameof(Field)} of type {field.FieldType}");
             }
 
             // save new value ONLY if CheckBox is Checked!
@@ -161,20 +161,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         private void RecordNumberValueForField(Field field, string value)
-        {
-            // NA and N/A is legal special cases for a number
-            if (value.ToUpper() == "NA" || value.ToUpper() == "N/A")
-            {
-                AddFieldValue(new NumberValue(Schema, field, null));
-                return;
-            }
-            if (!double.TryParse(value, out var number))
-            {
-                throw new ArgumentException($"Value {value} is not legal for a {nameof(Field)} of type {field.FieldType}");
-            }
-
-            AddFieldValue(new NumberValue(Schema, field, number));
-        }
+            => AddFieldValue(new NumberValue(Schema, field, value));
 
         private void RemoveAnyOldFieldValue(int fieldId)
         {

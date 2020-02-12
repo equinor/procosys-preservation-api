@@ -11,5 +11,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         Task<Tag> GetTagByTagIdAsync(int tagId);
         Task<Tag> GetTagByTagNoAsync(string tagNo, string projectName);
         Task<List<Tag>> GetTagsByTagIdsAsync(IEnumerable<int> tagIds);
+        Task<Requirement> GetRequirementByIdAsync(int requirementId);
     }
 }

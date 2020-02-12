@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.Field
 {
@@ -18,10 +19,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Field
             return field != null && field.IsVoided;
         }
 
-        public bool VerifyFieldType(int fieldId, FieldType fieldType)
+        public bool IsValidValue(int fieldId, string value)
         {
             var field = _requirementTypeRepository.GetFieldByIdAsync(fieldId).Result;
-            return field != null && field.FieldType == fieldType;
+            switch (field.FieldType)
+            {
+                case FieldType.Number:
+                    return NumberValue.IsValidValue(value, out _);
+                case FieldType.CheckBox:
+                    return CheckBoxChecked.IsValidValue(value, out _);
+                default:
+                    return false;
+            }
         }
     }
 }

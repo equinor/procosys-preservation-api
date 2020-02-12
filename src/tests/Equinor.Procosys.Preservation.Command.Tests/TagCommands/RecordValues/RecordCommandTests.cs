@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             var dut = new RecordValuesCommand(1, 2, null, "Comment");
 
             Assert.AreEqual(1, dut.TagId);
-            Assert.AreEqual(2, dut.RequirementDefinitionId);
+            Assert.AreEqual(2, dut.RequirementId);
             Assert.IsNotNull(dut.FieldValues);
             Assert.AreEqual(0, dut.FieldValues.Count);
             Assert.AreEqual("Comment", dut.Comment);

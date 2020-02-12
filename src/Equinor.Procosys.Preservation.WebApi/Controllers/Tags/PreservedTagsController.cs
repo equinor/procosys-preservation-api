@@ -91,13 +91,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [HttpPost("{id}/Requirement/{requirementDefinitionId}/RecordValues")]
-        public async Task<IActionResult> RecordCheckBoxChecked([FromRoute] int id, [FromRoute] int requirementDefinitionId, [FromBody] RequirementValuesDto requirementValuesDto)
+        [HttpPost("{id}/Requirement/{requirementId}/RecordValues")]
+        public async Task<IActionResult> RecordCheckBoxChecked([FromRoute] int id, [FromRoute] int requirementId, [FromBody] RequirementValuesDto requirementValuesDto)
         {
             var fieldValues = requirementValuesDto?.FieldValues
                 .Select(v => new FieldValue(v.FieldId, v.Value)).ToList();
 
-            var result = await _mediator.Send(new RecordValuesCommand(id, requirementDefinitionId, fieldValues, requirementValuesDto?.Comment));
+            var result = await _mediator.Send(new RecordValuesCommand(id, requirementId, fieldValues, requirementValuesDto?.Comment));
             
             return this.FromResult(result);
         }
