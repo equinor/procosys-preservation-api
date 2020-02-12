@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
                 return false;
             }
 
-            return tag.IsReadyToBeBulkPreserved(preservedAtUtc);
+            return tag.IsReadyToBePreserved(preservedAtUtc);
         }
 
         public bool RequirementIsReadyForRecording(int tagId, int fieldId)

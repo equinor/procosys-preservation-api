@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.McPkgNo,
                     mode.Title,
                     tag.ReadyToBePreserved,
-                    tag.IsReadyToBeBulkPreserved(now),
+                    tag.IsReadyToBePreserved(now),
                     tag.PurchaseOrderNo,
                     tag.Remark,
                     requirementsDtos,

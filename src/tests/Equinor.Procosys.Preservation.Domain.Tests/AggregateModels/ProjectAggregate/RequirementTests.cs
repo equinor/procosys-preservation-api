@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeFalse_BeforePeriod()
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_BeforePeriod()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
+        public void IsReadyAndDueToBePreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeFalse_InPeriod_WhenNeedInput()
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_InPeriod_WhenNeedInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
+        public void IsReadyAndDueToBePreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -149,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeFalse_OnOverdue_WhenNeedInput()
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_OnOverdue_WhenNeedInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNeedInputMock.Object);
             dut.StartPreservation(_utcNow);

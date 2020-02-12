@@ -117,12 +117,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public Requirement FirstUpcomingRequirement => UpComingRequirements().FirstOrDefault();
 
-        public bool ReadyToBePreserved
-            => Status == PreservationStatus.Active && 
-               FirstUpcomingRequirement != null && 
-               FirstUpcomingRequirement.ReadyToBePreserved;
-
-        public bool IsReadyToBeBulkPreserved(DateTime currentTimeUtc)
+        public bool IsReadyToBePreserved(DateTime currentTimeUtc)
             => Status == PreservationStatus.Active && 
                FirstUpcomingRequirement != null && 
                FirstUpcomingRequirement.IsReadyAndDueToBePreserved(currentTimeUtc);
@@ -159,10 +154,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
-            if (!ReadyToBePreserved)
+            if (!IsReadyToBePreserved(preservedAtUtc))
             {
-                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved ");
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be bulk preserved ");
             }
+
             foreach (var requirement in UpComingRequirements())
             {
                 if (!requirement.IsReadyAndDueToBePreserved(preservedAtUtc))

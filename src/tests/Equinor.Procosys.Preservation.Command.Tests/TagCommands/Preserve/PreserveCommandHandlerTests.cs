@@ -35,10 +35,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         public void Setup()
         {
             var stepMock = new Mock<Step>();
+            var rdMock = new Mock<RequirementDefinition>();
 
-            _req1WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, new Mock<RequirementDefinition>().Object);
-            _req2WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, new Mock<RequirementDefinition>().Object);
-            _req3WithFourWeekInterval = new Requirement("", FourWeeksInterval, new Mock<RequirementDefinition>().Object);
+            _req1WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, rdMock.Object);
+            _req2WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, rdMock.Object);
+            _req3WithFourWeekInterval = new Requirement("", FourWeeksInterval, rdMock.Object);
             _tag = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _req1WithTwoWeekInterval, 
@@ -68,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
 
             await _dut.Handle(_command, default);
 
-            var expectedNextDueTimeUtc = preservedAtUtc;
+            var expectedNextDueTimeUtc = preservedAtUtc.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtc, _req1WithTwoWeekInterval.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req2WithTwoWeekInterval.NextDueTimeUtc);
         }

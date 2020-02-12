@@ -34,8 +34,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirement(TagId2)).Returns(true);
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(TagId1, PreservationStatus.Active)).Returns(true);
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(TagId2, PreservationStatus.Active)).Returns(true);
-            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId1)).Returns(true);
-            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId2)).Returns(true);
             _tagValidatorMock.Setup(r => r.ReadyToBeBulkPreserved(TagId1, _utcNow)).Returns(true);
             _tagValidatorMock.Setup(r => r.ReadyToBeBulkPreserved(TagId2, _utcNow)).Returns(true);
             _timeServiceMock = new Mock<ITimeService>();
@@ -123,18 +121,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.Active} to preserve!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotReadyToBePreserved()
-        {
-            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId1)).Returns(false);
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is not ready to be preserved!"));
         }
 
         [TestMethod]
