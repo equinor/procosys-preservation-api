@@ -38,6 +38,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Discipline
 
             var url = $"{_baseAddress}Library/Disciplines" +
                 $"?plantId={plant}" +
+                "&classifications=PRESERVATION" +
                 $"&api-version={_apiVersion}";
 
             return await _mainApiClient.QueryAndDeserialize<List<ProcosysDiscipline>>(url) ?? new List<ProcosysDiscipline>();
