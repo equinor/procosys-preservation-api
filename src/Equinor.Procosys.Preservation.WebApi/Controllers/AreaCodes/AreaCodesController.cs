@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.AreaCodes
         public AreaCodesController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<List<AreaCodeDto>>> GetJourneys()
+        public async Task<ActionResult<List<AreaCodeDto>>> GetAreaCodes()
         {
             var result = await _mediator.Send(new GetAreaCodesQuery());
             return this.FromResult(result);
