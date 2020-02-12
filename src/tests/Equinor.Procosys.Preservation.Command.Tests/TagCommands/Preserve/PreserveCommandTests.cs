@@ -11,10 +11,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new PreserveCommand(new List<int>{17});
+            var dut = new PreserveCommand(17);
 
-            Assert.AreEqual(1, dut.TagIds.Count());
-            Assert.AreEqual(17, dut.TagIds.First());
+            Assert.AreEqual(17, dut.TagId);
         }
     }
 }
