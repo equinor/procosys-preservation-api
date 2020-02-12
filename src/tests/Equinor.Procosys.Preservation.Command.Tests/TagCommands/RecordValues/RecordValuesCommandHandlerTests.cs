@@ -104,7 +104,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             numberFieldMock.SetupGet(f => f.Id).Returns(NumberFieldId);
             requirementDefinitionWith2FieldsMock.Object.AddField(numberFieldMock.Object);
 
-            _requirement = new Requirement("", 2, requirementDefinitionWith2FieldsMock.Object);
+            var requirementMock = new Mock<Requirement>("", 2, requirementDefinitionWith2FieldsMock.Object);
+            requirementMock.SetupGet(r => r.Id).Returns(ReqId);
+            _requirement = requirementMock.Object;
+
             var tag = new Tag("", "", "", "", "", "", "", "", "", "", "", new Mock<Step>().Object, new List<Requirement>
             {
                 _requirement
@@ -115,9 +118,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             _projectRepositoryMock
                 .Setup(r => r.GetTagByTagIdAsync(TagId))
                 .Returns(Task.FromResult(tag));
-            _projectRepositoryMock
-                .Setup(r => r.GetRequirementByIdAsync(ReqId))
-                .Returns(Task.FromResult(_requirement));
 
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             _rtRepositoryMock

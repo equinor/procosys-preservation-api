@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
         public async Task<Result<Unit>> Handle(RecordValuesCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
-            var requirement = await _projectRepository.GetRequirementByIdAsync(request.RequirementId);
+            var requirement = tag.Requirements.Single(r => r.Id == request.RequirementId);
 
             var requirementDefinition =
                 await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
