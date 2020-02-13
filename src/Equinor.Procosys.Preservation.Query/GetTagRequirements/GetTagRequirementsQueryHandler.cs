@@ -55,6 +55,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 
                     return new RequirementDto(
                         requirement.Id,
+                        "RequirementType.Code will come here",
+                        "RequirementType.Title will come here",
+                        requirementDefinition.Title,
                         requirement.NextDueTimeUtc,
                         requirement.ReadyToBePreserved,
                         fields);
