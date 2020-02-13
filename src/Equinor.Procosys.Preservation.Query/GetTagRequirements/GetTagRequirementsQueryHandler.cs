@@ -42,15 +42,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                     select rd
                 ).ToListAsync(cancellationToken);
 
-            var requirements = tag.Requirements.Select(requirement =>
+            var requirements = tag.UpComingRequirements.Select(requirement =>
             {
                 var requirementDefinition =
                     requirementDefinitions.Single(rd => rd.Id == requirement.RequirementDefinitionId);
 
                 var fields = requirementDefinition
-                    .Fields
-                    .Where(f => !f.IsVoided)
-                    .OrderBy(f => f.SortKey)
+                    .OrderedFields
                     .Select(f => new FieldDto(f.Id, f.Label, f.FieldType, f.Unit, f.ShowPrevious)).ToList();
 
                 return new RequirementDto(

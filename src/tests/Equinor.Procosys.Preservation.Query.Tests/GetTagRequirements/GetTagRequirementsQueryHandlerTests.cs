@@ -59,21 +59,23 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 context.Journeys.Add(journey);
                 context.SaveChanges();
 
-                var requirementDefinitionWithoutField = new RequirementDefinition(_schema, "WithoutField", 2, 1);
+                var requirementDefinitionWithoutField = new RequirementDefinition(_schema, "Without fields", 2, 1);
                 context.RequirementDefinitions.Add(requirementDefinitionWithoutField);
 
-                var requirementDefinitionWithInfo = new RequirementDefinition(_schema, "WithInfo", 2, 1);
+                var requirementDefinitionWithInfo = new RequirementDefinition(_schema, "With 1 info", 2, 1);
                 var infoField = new Field(_schema, "Label for Info", FieldType.Info, 0);
                 requirementDefinitionWithInfo.AddField(infoField);
                 context.RequirementDefinitions.Add(requirementDefinitionWithInfo);
 
-                var requirementDefinitionWithCheckBox = new RequirementDefinition(_schema, "WithCheckBox", 2, 1);
-                var cbField = new Field(_schema, "Label for CheckBox", FieldType.CheckBox, 10);
-                requirementDefinitionWithCheckBox.AddField(cbField);
-                context.RequirementDefinitions.Add(requirementDefinitionWithCheckBox);
+                var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(_schema, "With 2 checkboxes", 2, 1);
+                var cbField1 = new Field(_schema, "Label for checkBox - second", FieldType.CheckBox, 10);
+                var cbField2 = new Field(_schema, "Label for checkBox - first", FieldType.CheckBox, 2);
+                requirementDefinitionWithTwoCheckBoxes.AddField(cbField1);
+                requirementDefinitionWithTwoCheckBoxes.AddField(cbField2);
+                context.RequirementDefinitions.Add(requirementDefinitionWithTwoCheckBoxes);
 
                 var requirementDefinitionWithThreeNumberShowPrev =
-                    new RequirementDefinition(_schema, "WithNumber previous", 2, 1);
+                    new RequirementDefinition(_schema, "With 3 number with previous", 2, 1);
                 var numberFieldPrev1 = new Field(_schema, "Label for number - third", FieldType.Number, 15, "unit", true);
                 var numberFieldPrev2 = new Field(_schema, "Label for number - first", FieldType.Number, 2, "unit", true);
                 var numberFieldPrev3 = new Field(_schema, "Label for number - second", FieldType.Number, 10, "unit", true);
@@ -82,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev3);
                 context.RequirementDefinitions.Add(requirementDefinitionWithThreeNumberShowPrev);
 
-                var requirementDefinitionWithNumberNoPrev = new RequirementDefinition(_schema, "WithNumber no previous", 2, 1);
+                var requirementDefinitionWithNumberNoPrev = new RequirementDefinition(_schema, "With 1 number no previous", 2, 1);
                 var numberFieldNoPrev = new Field(_schema, "Label for number", FieldType.Number, 10, "unit", false);
                 requirementDefinitionWithNumberNoPrev.AddField(numberFieldNoPrev);
                 context.RequirementDefinitions.Add(requirementDefinitionWithNumberNoPrev);
@@ -105,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     {
                         new Requirement(_schema, 2, requirementDefinitionWithoutField),
                         new Requirement(_schema, 2, requirementDefinitionWithInfo),
-                        new Requirement(_schema, 1, requirementDefinitionWithCheckBox),
+                        new Requirement(_schema, 1, requirementDefinitionWithTwoCheckBoxes),
                         new Requirement(_schema, 12, requirementDefinitionWithNumberNoPrev),
                         new Requirement(_schema, 4, requirementDefinitionWithThreeNumberShowPrev)
                     });
