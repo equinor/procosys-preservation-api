@@ -107,6 +107,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void StartPreservation(DateTime startedAtUtc)
         {
+            if (!_requirements.Any())
+            {
+                throw new Exception("Can't start preservation without requirements");
+            }
             foreach (var requirement in Requirements) // todo start only those not voided. Write tests
             {
                 requirement.StartPreservation(startedAtUtc);
@@ -115,7 +119,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             Status = PreservationStatus.Active;
         }
 
-        public Requirement FirstUpcomingRequirement => UpComingRequirements.FirstOrDefault();
+        public Requirement FirstUpcomingRequirement => UpComingRequirements().FirstOrDefault();
 
         public bool IsReadyToBePreserved(DateTime currentTimeUtc)
             => Status == PreservationStatus.Active && 
@@ -147,10 +151,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             requirement.ActivePeriod.SetComment(comment);
         }
 
-        public IOrderedEnumerable<Requirement> UpComingRequirements
+        public IOrderedEnumerable<Requirement> UpComingRequirements()
             => Requirements
                 .Where(r => r.NextDueTimeUtc.HasValue && !r.IsVoided)
                 .OrderBy(r => r.NextDueTimeUtc.Value);
+
+        public IOrderedEnumerable<Requirement> OrderedRequirements()
+            => Requirements
+                .Where(r => !r.IsVoided)
+                .OrderBy(r => r.NextDueTimeUtc);
 
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
@@ -159,7 +168,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved ");
             }
 
-            foreach (var requirement in UpComingRequirements)
+            foreach (var requirement in UpComingRequirements())
             {
                 if (!requirement.IsReadyAndDueToBePreserved(preservedAtUtc))
                 {

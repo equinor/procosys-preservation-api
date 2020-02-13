@@ -452,11 +452,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldReturnNone_BeforePreservationStarted()
+        public void UpComingRequirements_ShouldReturnNoneRequirements_BeforePreservationStarted()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
-            Assert.AreEqual(0, dut.UpComingRequirements.Count());
+            Assert.AreEqual(0, dut.UpComingRequirements().Count());
 
         }
         
@@ -466,17 +466,39 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
 
-            Assert.AreEqual(dut.Requirements.Count, dut.UpComingRequirements.Count());
+            Assert.AreEqual(dut.Requirements.Count, dut.UpComingRequirements().Count());
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldNotReturnVoidedRequirements_AfterPreservationStarted()
+        public void UpComingRequirements_ShouldNotReturnVoidedRequirements()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
             dut.Requirements.ElementAt(0).Void();
 
-            Assert.AreEqual(dut.Requirements.Count-1, dut.UpComingRequirements.Count());
+            Assert.AreEqual(dut.Requirements.Count-1, dut.UpComingRequirements().Count());
+        }
+        
+        [TestMethod]
+        public void OrderedRequirements_ShouldReturnAllRequirements_BeforeAndAfterPreservationStarted()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+
+            Assert.AreEqual(dut.Requirements.Count, dut.OrderedRequirements().Count());
+        
+            dut.StartPreservation(_utcNow);
+            
+            Assert.AreEqual(dut.Requirements.Count, dut.OrderedRequirements().Count());
+        }
+        
+        [TestMethod]
+        public void OrderedRequirements_ShouldNotReturnVoidedRequirements()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            dut.StartPreservation(_utcNow);
+            dut.Requirements.ElementAt(0).Void();
+
+            Assert.AreEqual(dut.Requirements.Count-1, dut.OrderedRequirements().Count());
         }
     }
 }
