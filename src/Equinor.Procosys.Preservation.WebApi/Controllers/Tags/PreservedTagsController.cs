@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
-using Equinor.Procosys.Preservation.Command.TagCommands.Preserve.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpPut("{id}/Preserve")]
         public async Task<IActionResult> Preserve([FromRoute] int id)
         {
-            var result = await _mediator.Send(new PreserveCommand(new List<int>{id}));
+            var result = await _mediator.Send(new PreserveCommand(id));
             return this.FromResult(result);
         }
 

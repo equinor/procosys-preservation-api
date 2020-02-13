@@ -1,0 +1,56 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using FluentValidation;
+
+namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
+{
+    public class BulkPreserveCommandValidator : AbstractValidator<BulkPreserveCommand>
+    {
+        public BulkPreserveCommandValidator(
+            ITagValidator tagValidator,
+            ITimeService timeService)
+        {
+            CascadeMode = CascadeMode.StopOnFirstFailure;
+                        
+            RuleFor(tag => tag.TagIds)
+                .Must(r => r != null && r.Any())
+                .WithMessage("At least 1 tag must be given!")
+                .Must(BeUniqueTags)
+                .WithMessage("Tags must be unique!");
+
+            When(tag => tag.TagIds.Any() && BeUniqueTags(tag.TagIds), () =>
+            {
+                RuleForEach(s => s.TagIds)
+                    .Must(BeAnExistingTag)
+                    .WithMessage((x, id) => $"Tag doesn't exists! Tag={id}")
+                    .Must(NotBeAVoidedTag)
+                    .WithMessage((x, id) => $"Tag is voided! Tag={id}")
+                    .Must(NotBeInAClosedProject)
+                    .WithMessage((x, id) => $"Project for tag is closed! Tag={id}")
+                    .Must(PreservationIsStarted)
+                    .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
+                    .Must(BeReadyToBePreserved)
+                    .WithMessage((x, id) => $"Tag is not ready to be bulk preserved! Tag={id}");
+            });
+
+            bool BeUniqueTags(IEnumerable<int> tagIds)
+            {
+                var ids = tagIds.ToList();
+                return ids.Distinct().Count() == ids.Count;
+            }
+
+            bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
+
+            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoided(tagId);
+
+            bool NotBeInAClosedProject(int tagId) => !tagValidator.ProjectIsClosed(tagId);
+
+            bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatus(tagId, PreservationStatus.Active);
+            
+            bool BeReadyToBePreserved(int tagId) => tagValidator.ReadyToBePreserved(tagId, timeService.GetCurrentTimeUtc());
+        }
+    }
+}

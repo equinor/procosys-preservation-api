@@ -5,7 +5,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve.BulkPreserve
+namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
 {
     public class BulkPreserveCommandHandler : IRequestHandler<BulkPreserveCommand, Result<Unit>>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.Preserve.BulkPreserve;
+using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -10,13 +10,11 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve.BulkPreserve
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
 {
     [TestClass]
     public class BulkPreserveCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const int RdId1 = 17;
-        private const int RdId2 = 18;
         private const int TagId1 = 7;
         private const int TagId2 = 8;
         private const int TwoWeeksInterval = 2;
@@ -33,8 +31,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve.BulkP
         private Requirement _req2OnTag1WithFourWeekInterval;
         private Requirement _req1OnTag2WithTwoWeekInterval;
         private Requirement _req2OnTag2WithFourWeekInterval;
-        private Mock<RequirementDefinition> _rd1Mock;
-        private Mock<RequirementDefinition> _rd2Mock;
 
         private BulkPreserveCommandHandler _dut;
 
@@ -42,15 +38,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve.BulkP
         public void Setup()
         {
             var stepMock = new Mock<Step>();
-            _rd1Mock = new Mock<RequirementDefinition>();
-            _rd1Mock.SetupGet(rd => rd.Id).Returns(RdId1);
-            _rd2Mock = new Mock<RequirementDefinition>();
-            _rd2Mock.SetupGet(rd => rd.Id).Returns(RdId2);
+            var rdMock = new Mock<RequirementDefinition>();
 
-            _req1OnTag1WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, _rd1Mock.Object);
-            _req2OnTag1WithFourWeekInterval = new Requirement("", FourWeeksInterval, _rd2Mock.Object);
-            _req1OnTag2WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, _rd1Mock.Object);
-            _req2OnTag2WithFourWeekInterval = new Requirement("", FourWeeksInterval, _rd2Mock.Object);
+            _req1OnTag1WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, rdMock.Object);
+            _req2OnTag1WithFourWeekInterval = new Requirement("", FourWeeksInterval, rdMock.Object);
+            _req1OnTag2WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, rdMock.Object);
+            _req2OnTag2WithFourWeekInterval = new Requirement("", FourWeeksInterval, rdMock.Object);
             _tag1 = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _req1OnTag1WithTwoWeekInterval, _req2OnTag1WithFourWeekInterval
@@ -132,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve.BulkP
         }
 
         [TestMethod]
-        public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
+        public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
         {
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(TwoWeeksInterval));
             await _dut.Handle(_command, default);
@@ -141,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve.BulkP
         }
 
         [TestMethod]
-        public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
+        public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
         {
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(FourWeeksInterval));
             await _dut.Handle(_command, default);

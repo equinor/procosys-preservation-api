@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             return reqDefs.Count == reqDefIds.Count;
         }
 
-        public bool ReadyToBePreserved(int tagId)
+        public bool ReadyToBePreserved(int tagId, DateTime preservedAtUtc)
         {
             var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
             if (tag == null)
@@ -67,18 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
                 return false;
             }
 
-            return tag.ReadyToBePreserved;
-        }
-
-        public bool ReadyToBeBulkPreserved(int tagId, DateTime preservedAtUtc)
-        {
-            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
-            if (tag == null)
-            {
-                return false;
-            }
-
-            return tag.IsReadyToBeBulkPreserved(preservedAtUtc);
+            return tag.IsReadyToBePreserved(preservedAtUtc);
         }
 
         public bool RequirementIsReadyForRecording(int requirementId)

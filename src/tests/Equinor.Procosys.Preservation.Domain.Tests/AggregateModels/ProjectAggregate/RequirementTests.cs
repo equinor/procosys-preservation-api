@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(_reqDefNeedInputMock.Object.Id, dut.RequirementDefinitionId);
             Assert.IsFalse(dut.IsVoided);
             Assert.IsFalse(dut.ReadyToBePreserved);
-            Assert.IsFalse(dut.IsReadyToBeBulkPreserved(_utcNow.AddWeeks(TwoWeeksInterval)));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(_utcNow.AddWeeks(TwoWeeksInterval)));
         }
 
         [TestMethod]
@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeFalse_BeforePeriod()
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_BeforePeriod()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -105,12 +105,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var sameDayAsStart = _utcNow;
 
-            Assert.IsFalse(dut.IsReadyToBeBulkPreserved(sameDayAsStart));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(sameDayAsStart));
             Assert.AreEqual(2, dut.GetNextDueInWeeks(sameDayAsStart));
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
+        public void IsReadyAndDueToBePreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -118,12 +118,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var spotOnTime = _utcNow.AddWeeks(TwoWeeksInterval);
 
-            Assert.IsTrue(dut.IsReadyToBeBulkPreserved(spotOnTime));
+            Assert.IsTrue(dut.IsReadyAndDueToBePreserved(spotOnTime));
             Assert.AreEqual(0, dut.GetNextDueInWeeks(spotOnTime));
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeFalse_InPeriod_WhenNeedInput()
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_InPeriod_WhenNeedInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -131,12 +131,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var spotOnTime = _utcNow.AddWeeks(TwoWeeksInterval);
 
-            Assert.IsFalse(dut.IsReadyToBeBulkPreserved(spotOnTime));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(spotOnTime));
             Assert.AreEqual(0, dut.GetNextDueInWeeks(spotOnTime));
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
+        public void IsReadyAndDueToBePreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNotNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -144,12 +144,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var twoWeekOverdue = _utcNow.AddWeeks(TwoWeeksInterval + TwoWeeksInterval);
 
-            Assert.IsTrue(dut.IsReadyToBeBulkPreserved(twoWeekOverdue));
+            Assert.IsTrue(dut.IsReadyAndDueToBePreserved(twoWeekOverdue));
             Assert.AreEqual(-2, dut.GetNextDueInWeeks(twoWeekOverdue));
         }
 
         [TestMethod]
-        public void IsReadyToBeBulkPreserved_ShouldBeFalse_OnOverdue_WhenNeedInput()
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_OnOverdue_WhenNeedInput()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefNeedInputMock.Object);
             dut.StartPreservation(_utcNow);
@@ -157,7 +157,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var twoWeekOverdue = _utcNow.AddWeeks(TwoWeeksInterval+TwoWeeksInterval);
 
-            Assert.IsFalse(dut.IsReadyToBeBulkPreserved(twoWeekOverdue));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(twoWeekOverdue));
             Assert.AreEqual(-2, dut.GetNextDueInWeeks(twoWeekOverdue));
         }
 
@@ -168,7 +168,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.StartPreservation(_utcNow);
 
-            Assert.IsFalse(dut.IsReadyToBeBulkPreserved(_utcNow.AddDays(2)));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(_utcNow.AddDays(2)));
         }
 
         [TestMethod]

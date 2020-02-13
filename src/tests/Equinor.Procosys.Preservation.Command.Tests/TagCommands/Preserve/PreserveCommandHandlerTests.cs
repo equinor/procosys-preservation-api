@@ -15,25 +15,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
     [TestClass]
     public class PreserveCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const int RdId1 = 17;
-        private const int RdId2 = 18;
-        private const int TagId1 = 7;
-        private const int TagId2 = 8;
-        private const int IntervalWeeks = 2;
+        private const int TagId = 7;
+        private const int TwoWeeksInterval = 2;
+        private const int FourWeeksInterval = 4;
 
-        private DateTime _utcNow;
+        private DateTime _startedPreservedAtUtc;
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
-        private Tag _tag1;
-        private Tag _tag2;
-        private Requirement _req1OnTag1;
-        private Requirement _req2OnTag1;
-        private Requirement _req1OnTag2;
-        private Requirement _req2OnTag2;
-        private Mock<RequirementDefinition> _rd1Mock;
-        private Mock<RequirementDefinition> _rd2Mock;
+        private Tag _tag;
+        private Requirement _req1WithTwoWeekInterval;
+        private Requirement _req2WithTwoWeekInterval;
+        private Requirement _req3WithFourWeekInterval;
 
         private PreserveCommandHandler _dut;
 
@@ -41,63 +35,85 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         public void Setup()
         {
             var stepMock = new Mock<Step>();
-            _rd1Mock = new Mock<RequirementDefinition>();
-            _rd1Mock.SetupGet(rd => rd.Id).Returns(RdId1);
-            _rd2Mock = new Mock<RequirementDefinition>();
-            _rd2Mock.SetupGet(rd => rd.Id).Returns(RdId2);
+            var rdMock = new Mock<RequirementDefinition>();
 
-            _req1OnTag1 = new Requirement("", IntervalWeeks, _rd1Mock.Object);
-            _req2OnTag1 = new Requirement("", IntervalWeeks, _rd2Mock.Object);
-            _req1OnTag2 = new Requirement("", IntervalWeeks, _rd1Mock.Object);
-            _req2OnTag2 = new Requirement("", IntervalWeeks, _rd2Mock.Object);
-            _tag1 = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
+            _req1WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, rdMock.Object);
+            _req2WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, rdMock.Object);
+            _req3WithFourWeekInterval = new Requirement("", FourWeeksInterval, rdMock.Object);
+            _tag = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
-                _req1OnTag1, _req2OnTag1
+                _req1WithTwoWeekInterval, 
+                _req2WithTwoWeekInterval,
+                _req3WithFourWeekInterval
             });
-            _tag2 = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
-            {
-                _req1OnTag2, _req2OnTag2
-            });
-            var tags = new List<Tag>
-            {
-                _tag1, _tag2
-            };
             _currentUserProvider = new Mock<ICurrentUserProvider>();
             _currentUserProvider
                 .Setup(x => x.GetCurrentUserAsync())
                 .Returns(Task.FromResult(new Person(new Guid("12345678-1234-1234-1234-123456789123"), "Firstname", "Lastname")));
-            var tagIds = new List<int> {TagId1, TagId2};
             _projectRepoMock = new Mock<IProjectRepository>();
-            _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tag));
+            _startedPreservedAtUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
-            _command = new PreserveCommand(tagIds);
+            _command = new PreserveCommand(TagId);
 
-            _tag1.StartPreservation(_utcNow.AddDays(-14));
-            _tag2.StartPreservation(_utcNow.AddDays(-14));
+            _tag.StartPreservation(_startedPreservedAtUtc);
 
             _dut = new PreserveCommandHandler(_projectRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
         }
 
         [TestMethod]
-        public async Task HandlingPreserveCommand_ShouldPreserveAllRequirementsOnAllTags()
+        public async Task HandlingPreserveCommand_ShouldPreserveRequirementsOnTag_IsDue()
         {
+            var preservedAtUtc = _startedPreservedAtUtc.AddWeeks(TwoWeeksInterval);
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(preservedAtUtc);
+
             await _dut.Handle(_command, default);
 
-            var expectedNextDueTimeUtc = _utcNow.AddWeeks(IntervalWeeks);
-            Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag1.NextDueTimeUtc);
-            Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag1.NextDueTimeUtc);
-            Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag2.NextDueTimeUtc);
-            Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag2.NextDueTimeUtc);
+            var expectedNextDueTimeUtc = preservedAtUtc.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(expectedNextDueTimeUtc, _req1WithTwoWeekInterval.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _req2WithTwoWeekInterval.NextDueTimeUtc);
         }
 
         [TestMethod]
-        public async Task HandlingPreserveCommand_ShouldSave()
+        public async Task HandlingPreserveCommand_ShouldSkipPreservingRequirementsOnTag_NotDue()
         {
+            var preservedAtUtc = _startedPreservedAtUtc.AddWeeks(TwoWeeksInterval);
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(preservedAtUtc);
+            var oldNextDue = _req3WithFourWeekInterval.NextDueTimeUtc;
+
+            await _dut.Handle(_command, default);
+
+            Assert.AreEqual(oldNextDue, _req3WithFourWeekInterval.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
+        {
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(TwoWeeksInterval));
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
+        {
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(FourWeeksInterval));
+            await _dut.Handle(_command, default);
+
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingPreserveCommand_ShouldNotSave_WhenBeforeDueForAnyRequirement()
+        {
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc);
+
+            await Assert.ThrowsExceptionAsync<Exception>(() =>
+                _dut.Handle(_command, default)
+            );
+
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Never);
         }
     }
 }
