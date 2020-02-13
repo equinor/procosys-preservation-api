@@ -22,6 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
     public class GetTagRequirementsQueryHandlerTests
     {
         const string _schema = "PCS$TEST";
+        const string _unit = "unit";
         private DbContextOptions<PreservationContext> _dbContextOptions;
         private Mock<IEventDispatcher> _eventDispatcherMock;
         private Mock<IPlantProvider> _plantProviderMock;
@@ -82,16 +83,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var requirementDefinitionWithThreeNumberShowPrev =
                     new RequirementDefinition(_schema, "With 3 number with previous", 2, 1);
-                var numberFieldPrev1 = new Field(_schema, "Label for number - third", FieldType.Number, 15, "unit", true);
-                var numberFieldPrev2 = new Field(_schema, "Label for number - first", FieldType.Number, 2, "unit", true);
-                var numberFieldPrev3 = new Field(_schema, "Label for number - second", FieldType.Number, 10, "unit", true);
+                var numberFieldPrev1 = new Field(_schema, "Label for number - third", FieldType.Number, 15, _unit, true);
+                var numberFieldPrev2 = new Field(_schema, "Label for number - first", FieldType.Number, 2, _unit, true);
+                var numberFieldPrev3 = new Field(_schema, "Label for number - second", FieldType.Number, 10, _unit, true);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev1);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev2);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev3);
                 context.RequirementDefinitions.Add(requirementDefinitionWithThreeNumberShowPrev);
 
                 var requirementDefinitionWithOneNumberNoPrev = new RequirementDefinition(_schema, "With 1 number no previous", 2, 1);
-                var numberFieldNoPrev = new Field(_schema, "Label for number", FieldType.Number, 10, "unit", false);
+                var numberFieldNoPrev = new Field(_schema, "Label for number", FieldType.Number, 10, _unit, false);
                 requirementDefinitionWithOneNumberNoPrev.AddField(numberFieldNoPrev);
                 context.RequirementDefinitions.Add(requirementDefinitionWithOneNumberNoPrev);
 
@@ -218,10 +219,51 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             var requirementWithOneNumberNoPrev = requirements.Single(r => r.Id == _requirementWithOneNumberNoPrevId);
 
             Assert.AreEqual(0, requirementWithoutField.Fields.Count);
+            
             Assert.AreEqual(1, requirementWithOneInfo.Fields.Count);
+            AssertInfoField(requirementWithOneInfo.Fields.ElementAt(0));
+            
             Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
+            AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(0));
+            AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(1));
+            
             Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
+            AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(0));
+            AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(1));
+            AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(2));
+
             Assert.AreEqual(1, requirementWithOneNumberNoPrev.Fields.Count);
+            AssertNumberWithNoPreviewField(requirementWithOneNumberNoPrev.Fields.ElementAt(0));
+        }
+
+        private void AssertInfoField(FieldDto f)
+        {
+            Assert.AreEqual(FieldType.Info, f.FieldType);
+            Assert.IsFalse(f.ShowPrevious.HasValue);
+            Assert.IsNull(f.Unit);
+        }
+
+        private void AssertCheckBoxField(FieldDto f)
+        {
+            Assert.AreEqual(FieldType.CheckBox, f.FieldType);
+            Assert.IsFalse(f.ShowPrevious.HasValue);
+            Assert.IsNull(f.Unit);
+        }
+
+        private void AssertNumberWithPreviewField(FieldDto f)
+        {
+            Assert.AreEqual(FieldType.Number, f.FieldType);
+            Assert.IsTrue(f.ShowPrevious.HasValue);
+            Assert.IsTrue(f.ShowPrevious.Value);
+            Assert.AreEqual(_unit, f.Unit);
+        }
+
+        private void AssertNumberWithNoPreviewField(FieldDto f)
+        {
+            Assert.AreEqual(FieldType.Number, f.FieldType);
+            Assert.IsTrue(f.ShowPrevious.HasValue);
+            Assert.IsFalse(f.ShowPrevious.Value);
+            Assert.AreEqual(_unit, f.Unit);
         }
     }
 }
