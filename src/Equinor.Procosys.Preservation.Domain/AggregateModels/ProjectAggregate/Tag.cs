@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void StartPreservation(DateTime startedAtUtc)
         {
-            foreach (var requirement in Requirements)
+            foreach (var requirement in Requirements) // todo start only those not voided. Write tests
             {
                 requirement.StartPreservation(startedAtUtc);
             }
@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             Status = PreservationStatus.Active;
         }
 
-        public Requirement FirstUpcomingRequirement => UpComingRequirements().FirstOrDefault();
+        public Requirement FirstUpcomingRequirement => UpComingRequirements.FirstOrDefault();
 
         public bool IsReadyToBePreserved(DateTime currentTimeUtc)
             => Status == PreservationStatus.Active && 
@@ -147,9 +147,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             requirement.ActivePeriod.SetComment(comment);
         }
 
-        private IOrderedEnumerable<Requirement> UpComingRequirements()
+        public IOrderedEnumerable<Requirement> UpComingRequirements
             => Requirements
-                .Where(r => r.NextDueTimeUtc.HasValue)
+                .Where(r => r.NextDueTimeUtc.HasValue && !r.IsVoided)
                 .OrderBy(r => r.NextDueTimeUtc.Value);
 
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
@@ -159,7 +159,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved ");
             }
 
-            foreach (var requirement in UpComingRequirements())
+            foreach (var requirement in UpComingRequirements)
             {
                 if (!requirement.IsReadyAndDueToBePreserved(preservedAtUtc))
                 {
