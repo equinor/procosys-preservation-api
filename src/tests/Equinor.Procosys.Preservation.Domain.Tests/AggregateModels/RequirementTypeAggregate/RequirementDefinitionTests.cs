@@ -122,9 +122,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             dut.AddField(f1);
             dut.AddField(f2);
 
-            Assert.AreEqual(dut.Fields.Count, dut.OrderedFields.Count());
-            Assert.AreEqual(f2, dut.OrderedFields.ElementAt(0));
-            Assert.AreEqual(f1, dut.OrderedFields.ElementAt(1));
+            Assert.AreEqual(dut.Fields.Count, dut.OrderedFields().Count());
+            Assert.AreEqual(f2, dut.OrderedFields().ElementAt(0));
+            Assert.AreEqual(f1, dut.OrderedFields().ElementAt(1));
         }
 
         [TestMethod]
@@ -139,7 +139,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             dut.AddField(f2);
             f2.Void();
 
-            Assert.AreEqual(dut.Fields.Count-1, dut.OrderedFields.Count());
+            Assert.AreEqual(dut.Fields.Count-1, dut.OrderedFields().Count());
         }
     }
 }

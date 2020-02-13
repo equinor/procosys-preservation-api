@@ -27,6 +27,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         private Mock<IPlantProvider> _plantProviderMock;
         private DateTime _startedAtUtc = new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
 
+        private int _requirementWithoutFieldId;
+        private int _requirementWithOneInfoId;
+        private int _requirementWithTwoCheckBoxesId;
+        private int _requirementWithThreeNumberShowPrevId;
+        private int _requirementWithOneNumberNoPrevId;
+
         [TestInitialize]
         public void Setup()
         {
@@ -62,10 +68,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var requirementDefinitionWithoutField = new RequirementDefinition(_schema, "Without fields", 2, 1);
                 context.RequirementDefinitions.Add(requirementDefinitionWithoutField);
 
-                var requirementDefinitionWithInfo = new RequirementDefinition(_schema, "With 1 info", 2, 1);
+                var requirementDefinitionWithOneInfo = new RequirementDefinition(_schema, "With 1 info", 2, 1);
                 var infoField = new Field(_schema, "Label for Info", FieldType.Info, 0);
-                requirementDefinitionWithInfo.AddField(infoField);
-                context.RequirementDefinitions.Add(requirementDefinitionWithInfo);
+                requirementDefinitionWithOneInfo.AddField(infoField);
+                context.RequirementDefinitions.Add(requirementDefinitionWithOneInfo);
 
                 var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(_schema, "With 2 checkboxes", 2, 1);
                 var cbField1 = new Field(_schema, "Label for checkBox - second", FieldType.CheckBox, 10);
@@ -84,13 +90,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev3);
                 context.RequirementDefinitions.Add(requirementDefinitionWithThreeNumberShowPrev);
 
-                var requirementDefinitionWithNumberNoPrev = new RequirementDefinition(_schema, "With 1 number no previous", 2, 1);
+                var requirementDefinitionWithOneNumberNoPrev = new RequirementDefinition(_schema, "With 1 number no previous", 2, 1);
                 var numberFieldNoPrev = new Field(_schema, "Label for number", FieldType.Number, 10, "unit", false);
-                requirementDefinitionWithNumberNoPrev.AddField(numberFieldNoPrev);
-                context.RequirementDefinitions.Add(requirementDefinitionWithNumberNoPrev);
+                requirementDefinitionWithOneNumberNoPrev.AddField(numberFieldNoPrev);
+                context.RequirementDefinitions.Add(requirementDefinitionWithOneNumberNoPrev);
 
                 context.SaveChanges();
 
+                var requirementWithoutField = new Requirement(_schema, 2, requirementDefinitionWithoutField);
+                var requirementWithOneInfo = new Requirement(_schema, 2, requirementDefinitionWithOneInfo);
+                var requirementWithTwoCheckBoxes = new Requirement(_schema, 1, requirementDefinitionWithTwoCheckBoxes);
+                var requirementWithOneNumberNoPrev = new Requirement(_schema, 12, requirementDefinitionWithOneNumberNoPrev);
+                var requirementWithThreeNumberShowPrev = new Requirement(_schema, 4, requirementDefinitionWithThreeNumberShowPrev);
                 var tag = new Tag(_schema,
                     "TagNo",
                     "Description",
@@ -105,14 +116,20 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     step,
                     new List<Requirement>
                     {
-                        new Requirement(_schema, 2, requirementDefinitionWithoutField),
-                        new Requirement(_schema, 2, requirementDefinitionWithInfo),
-                        new Requirement(_schema, 1, requirementDefinitionWithTwoCheckBoxes),
-                        new Requirement(_schema, 12, requirementDefinitionWithNumberNoPrev),
-                        new Requirement(_schema, 4, requirementDefinitionWithThreeNumberShowPrev)
+                        requirementWithoutField,
+                        requirementWithOneInfo,
+                        requirementWithTwoCheckBoxes,
+                        requirementWithOneNumberNoPrev,
+                        requirementWithThreeNumberShowPrev
                     });
                 context.Tags.Add(tag);
                 context.SaveChanges();
+
+                _requirementWithoutFieldId = requirementWithoutField.Id;
+                _requirementWithOneInfoId = requirementWithOneInfo.Id;
+                _requirementWithTwoCheckBoxesId = requirementWithTwoCheckBoxes.Id;
+                _requirementWithThreeNumberShowPrevId = requirementWithThreeNumberShowPrev.Id;
+                _requirementWithOneNumberNoPrevId = requirementWithOneNumberNoPrev.Id;
             }
 
             return dbContextOptions;
@@ -137,6 +154,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     Assert.IsNull(requirement.NextDueAsYearAndWeek);
                     Assert.IsFalse(requirement.ReadyToBePreserved);
                 }
+
+                AssertFields(result.Data);
             }
         }
 
@@ -148,10 +167,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single();
                 tag.StartPreservation(_startedAtUtc);
-                context.Update(tag);
                 context.SaveChanges();
-
             }
+
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
             {
                 var query = new GetTagRequirementsQuery(1);
@@ -167,8 +185,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     Assert.IsTrue(requirement.NextDueTimeUtc.HasValue);
                     Assert.IsNotNull(requirement.NextDueTimeUtc.Value);
                     Assert.IsNotNull(requirement.NextDueAsYearAndWeek);
-                    //Assert.IsFalse(requirement.ReadyToBePreserved);
                 }
+            
+                AssertFields(result.Data);
             }
         }
 
@@ -188,6 +207,21 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             Assert.IsNotNull(result);
             Assert.AreEqual(ResultType.NotFound, result.ResultType);
             Assert.IsNull(result.Data);
+        }
+
+        private void AssertFields(List<RequirementDto> requirements)
+        {
+            var requirementWithoutField = requirements.Single(r => r.Id == _requirementWithoutFieldId);
+            var requirementWithOneInfo = requirements.Single(r => r.Id == _requirementWithOneInfoId);
+            var requirementWithTwoCheckBoxes = requirements.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
+            var requirementWithThreeNumberShowPrev = requirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
+            var requirementWithOneNumberNoPrev = requirements.Single(r => r.Id == _requirementWithOneNumberNoPrevId);
+
+            Assert.AreEqual(0, requirementWithoutField.Fields.Count);
+            Assert.AreEqual(1, requirementWithOneInfo.Fields.Count);
+            Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
+            Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
+            Assert.AreEqual(1, requirementWithOneNumberNoPrev.Fields.Count);
         }
     }
 }

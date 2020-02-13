@@ -42,21 +42,24 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                     select rd
                 ).ToListAsync(cancellationToken);
 
-            var requirements = tag.UpComingRequirements.Select(requirement =>
-            {
-                var requirementDefinition =
-                    requirementDefinitions.Single(rd => rd.Id == requirement.RequirementDefinitionId);
+            var requirements = tag
+                .OrderedRequirements()
+                .Select(requirement =>
+                {
+                    var requirementDefinition =
+                        requirementDefinitions.Single(rd => rd.Id == requirement.RequirementDefinitionId);
 
-                var fields = requirementDefinition
-                    .OrderedFields
-                    .Select(f => new FieldDto(f.Id, f.Label, f.FieldType, f.Unit, f.ShowPrevious)).ToList();
+                    var fields = requirementDefinition
+                        .OrderedFields()
+                        .Select(f => new FieldDto(f.Id, f.Label, f.FieldType, f.Unit, f.ShowPrevious)).ToList();
 
-                return new RequirementDto(
-                    requirement.Id,
-                    requirement.NextDueTimeUtc,
-                    requirement.ReadyToBePreserved,
-                    fields);
-            }).ToList();
+                    return new RequirementDto(
+                        requirement.Id,
+                        requirement.NextDueTimeUtc,
+                        requirement.ReadyToBePreserved,
+                        fields);
+                })
+                .ToList();
             
             return new SuccessResult<List<RequirementDto>>(requirements);
         }
