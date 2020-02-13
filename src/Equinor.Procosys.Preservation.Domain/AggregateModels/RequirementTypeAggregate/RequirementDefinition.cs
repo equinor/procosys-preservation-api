@@ -40,7 +40,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             _fields.Add(field);
         }
 
+        public IOrderedEnumerable<Field> OrderedFields()
+            => Fields
+                .Where(f => !f.IsVoided)
+                .OrderBy(f => f.SortKey);
+
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
+
+        public override string ToString() => Title;
     }
 }

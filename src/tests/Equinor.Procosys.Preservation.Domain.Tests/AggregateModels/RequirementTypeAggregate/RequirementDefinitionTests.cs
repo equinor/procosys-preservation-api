@@ -7,7 +7,7 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.RequirementTypeAggregate
 {
     [TestClass]
-    public class RequirementDefTests
+    public class RequirementDefinitionTests
     {
         private RequirementDefinition _dut;
 
@@ -109,6 +109,37 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             _dut.UnVoid();
             Assert.IsFalse(_dut.IsVoided);
+        }
+
+        [TestMethod]
+        public void OrderedFields_ShouldReturnAllFieldsOrdered()
+        {
+            var f1 = new Field("", "First", FieldType.Info, 10);
+            var f2 = new Field("", "Second", FieldType.Info, 5);
+
+            var dut = new RequirementDefinition("", "", 0, 0);
+            
+            dut.AddField(f1);
+            dut.AddField(f2);
+
+            Assert.AreEqual(dut.Fields.Count, dut.OrderedFields().Count());
+            Assert.AreEqual(f2, dut.OrderedFields().ElementAt(0));
+            Assert.AreEqual(f1, dut.OrderedFields().ElementAt(1));
+        }
+
+        [TestMethod]
+        public void OrderedFields_ShouldNotReturnVoidedFields()
+        {
+            var f1 = new Field("", "First", FieldType.Info, 10);
+            var f2 = new Field("", "Second", FieldType.Info, 5);
+
+            var dut = new RequirementDefinition("", "", 0, 0);
+            
+            dut.AddField(f1);
+            dut.AddField(f2);
+            f2.Void();
+
+            Assert.AreEqual(dut.Fields.Count-1, dut.OrderedFields().Count());
         }
     }
 }

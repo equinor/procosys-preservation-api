@@ -107,7 +107,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void StartPreservation(DateTime startedAtUtc)
         {
-            foreach (var requirement in Requirements)
+            if (!_requirements.Any())
+            {
+                throw new Exception("Can't start preservation without requirements");
+            }
+            foreach (var requirement in Requirements) // todo start only those not voided. Write tests
             {
                 requirement.StartPreservation(startedAtUtc);
             }
@@ -147,10 +151,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             requirement.ActivePeriod.SetComment(comment);
         }
 
-        private IOrderedEnumerable<Requirement> UpComingRequirements()
+        public IOrderedEnumerable<Requirement> UpComingRequirements()
             => Requirements
-                .Where(r => r.NextDueTimeUtc.HasValue)
+                .Where(r => r.NextDueTimeUtc.HasValue && !r.IsVoided)
                 .OrderBy(r => r.NextDueTimeUtc.Value);
+
+        public IOrderedEnumerable<Requirement> OrderedRequirements()
+            => Requirements
+                .Where(r => !r.IsVoided)
+                .OrderBy(r => r.NextDueTimeUtc);
 
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
