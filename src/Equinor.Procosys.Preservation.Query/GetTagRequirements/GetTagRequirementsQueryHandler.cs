@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 
                     var fields = requirementDefinition
                         .OrderedFields()
-                        .Select(f => new FieldDto(f.Id, f.Label, f.FieldType, f.Unit, f.ShowPrevious)).ToList();
+                        .Select(f => new FieldDto(f.Id, f.Label, f.FieldType, f.Unit, f.ShowPrevious, null, null)).ToList();
 
                     return new RequirementDto(
                         requirement.Id,
