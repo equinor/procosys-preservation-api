@@ -35,29 +35,36 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 
             var requirementDefinitionIds = tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();
 
-            var requirementDefinitions = await
-                (from rd in _context.QuerySet<RequirementDefinition>()
-                        .Include(rd => rd.Fields)
-                    where requirementDefinitionIds.Contains(rd.Id)
-                    select rd
+            var requirementDtos = await
+                (from requirementDefinition in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
+                    join requirementType in _context.QuerySet<RequirementType>()
+                        on EF.Property<int>(requirementDefinition, "RequirementTypeId") equals requirementType.Id
+                    where requirementDefinitionIds.Contains(requirementDefinition.Id)
+                    select new Dto
+                    {
+                        ReqTypeCode = requirementType.Code,
+                        ReqTypeTitle = requirementType.Title,
+                        RequirementDefinition = requirementDefinition
+                    }
                 ).ToListAsync(cancellationToken);
 
             var requirements = tag
                 .OrderedRequirements()
                 .Select(requirement =>
                 {
-                    var requirementDefinition =
-                        requirementDefinitions.Single(rd => rd.Id == requirement.RequirementDefinitionId);
+                    var requirementDto =
+                        requirementDtos.Single(rd => rd.RequirementDefinition.Id == requirement.RequirementDefinitionId);
 
-                    var fields = requirementDefinition
+                    var fields = requirementDto
+                        .RequirementDefinition
                         .OrderedFields()
                         .Select(f => new FieldDto(f.Id, f.Label, f.FieldType, f.Unit, f.ShowPrevious, null, null)).ToList();
 
                     return new RequirementDto(
                         requirement.Id,
-                        "RequirementType.Code will come here",
-                        "RequirementType.Title will come here",
-                        requirementDefinition.Title,
+                        requirementDto.ReqTypeCode,
+                        requirementDto.ReqTypeTitle,
+                        requirementDto.RequirementDefinition.Title,
                         requirement.NextDueTimeUtc,
                         requirement.ReadyToBePreserved,
                         fields);
@@ -66,5 +73,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             
             return new SuccessResult<List<RequirementDto>>(requirements);
         }
+        
+        private class Dto
+        {
+            public string ReqTypeCode { get; set; }
+            public string ReqTypeTitle { get; set; }
+            public RequirementDefinition RequirementDefinition { get; set; }
+        }
     }
+
 }
