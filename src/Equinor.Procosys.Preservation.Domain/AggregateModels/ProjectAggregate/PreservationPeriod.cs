@@ -41,21 +41,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public PreservationRecord PreservationRecord { get; private set; }
         public IReadOnlyCollection<FieldValue> FieldValues => _fieldValues.AsReadOnly();
 
-        public void AddFieldValue(FieldValue fieldValue)
-        {
-            if (fieldValue == null)
-            {
-                throw new ArgumentNullException(nameof(fieldValue));
-            }
-            
-            if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
-            {
-                throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when adding field value");
-            }
-
-            _fieldValues.Add(fieldValue);
-        }
-
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
             if (PreservationRecord != null)
@@ -128,8 +113,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             switch (field.FieldType)
             {
-                case FieldType.Info:
-                    break;
                 case FieldType.Number:
                     RecordNumberValueForField(field, value);
                     break;
@@ -140,9 +123,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                     // todo
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    throw new ArgumentOutOfRangeException($"Can't record value for {field.FieldType}");
             }
         }
+        
+        public FieldValue GetFieldValue(int fieldId)
+            => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
 
         private void RecordCheckBoxValueForField(Field field, string value)
         {
@@ -162,6 +148,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void RecordNumberValueForField(Field field, string value)
             => AddFieldValue(new NumberValue(Schema, field, value));
+        
+        private void AddFieldValue(FieldValue fieldValue)
+        {
+            if (fieldValue == null)
+            {
+                throw new ArgumentNullException(nameof(fieldValue));
+            }
+
+            _fieldValues.Add(fieldValue);
+        }
 
         private void RemoveAnyOldFieldValue(int fieldId)
         {
