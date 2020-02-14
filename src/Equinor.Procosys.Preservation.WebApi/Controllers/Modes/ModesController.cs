@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
 using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
-using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
