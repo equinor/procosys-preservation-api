@@ -45,11 +45,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         private int _requirementWithThreeNumberShowPrevId;
         private int _requirementWithOneNumberNoPrevId;
 
+        private int _requestTimeAfterPreservationStartedInWeeks = 1;
+        private int _interval = 8;
+
         [TestInitialize]
         public void Setup()
         {
             _startedAtUtc = new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
-            _currentUtc = _startedAtUtc.AddWeeks(2);
+            _currentUtc = _startedAtUtc.AddWeeks(_requestTimeAfterPreservationStartedInWeeks);
 
             _eventDispatcherMock = new Mock<IEventDispatcher>();
             _plantProviderMock = new Mock<IPlantProvider>();
@@ -119,11 +122,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 context.SaveChanges();
 
-                var requirementWithoutField = new Requirement(_schema, 2, requirementDefinitionWithoutField);
-                var requirementWithOneInfo = new Requirement(_schema, 2, requirementDefinitionWithOneInfo);
-                var requirementWithTwoCheckBoxes = new Requirement(_schema, 1, requirementDefinitionWithTwoCheckBoxes);
-                var requirementWithOneNumberNoPrev = new Requirement(_schema, 12, requirementDefinitionWithOneNumberNoPrev);
-                var requirementWithThreeNumberShowPrev = new Requirement(_schema, 4, requirementDefinitionWithThreeNumberShowPrev);
+                var requirementWithoutField = new Requirement(_schema, _interval, requirementDefinitionWithoutField);
+                var requirementWithOneInfo = new Requirement(_schema, _interval, requirementDefinitionWithOneInfo);
+                var requirementWithTwoCheckBoxes = new Requirement(_schema, _interval, requirementDefinitionWithTwoCheckBoxes);
+                var requirementWithOneNumberNoPrev = new Requirement(_schema, _interval, requirementDefinitionWithOneNumberNoPrev);
+                var requirementWithThreeNumberShowPrev = new Requirement(_schema, _interval, requirementDefinitionWithThreeNumberShowPrev);
                 var tag = new Tag(_schema,
                     "TagNo",
                     "Description",
@@ -207,6 +210,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     Assert.IsTrue(requirement.NextDueTimeUtc.HasValue);
                     Assert.IsNotNull(requirement.NextDueTimeUtc.Value);
                     Assert.IsNotNull(requirement.NextDueAsYearAndWeek);
+                    Assert.AreEqual(_interval, requirement.IntervalWeeks);
+                    Assert.AreEqual(_interval-_requestTimeAfterPreservationStartedInWeeks, requirement.NextDueWeeks);
                 }
             
                 AssertRequirements(result.Data);
