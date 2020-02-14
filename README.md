@@ -1,5 +1,5 @@
 # pcs-preservation-api
-Backend for the preservation module in Project Completion System (ProCoSys (PCS)).
+REST API for the preservation module in Project Completion System (ProCoSys (PCS)).
 
 It exposes a REST API and is an ASP.NET Core 3.1 application using Entity Framework Core 3.1.
 
