@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -14,19 +15,24 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
     public class GetTagRequirementsQueryHandler : IRequestHandler<GetTagRequirementsQuery, Result<List<RequirementDto>>>
     {
         private readonly IReadOnlyContext _context;
+        private readonly ITimeService _timeService;
 
-        public GetTagRequirementsQueryHandler(IReadOnlyContext context) => _context = context;
+        public GetTagRequirementsQueryHandler(IReadOnlyContext context, ITimeService timeService)
+        {
+            _context = context;
+            _timeService = timeService;
+        }
 
         public async Task<Result<List<RequirementDto>>> Handle(GetTagRequirementsQuery request, CancellationToken cancellationToken)
         {
+            // Get tag with all requirements and all previous preservation
             var tag = await
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements)
                         .ThenInclude(r => r.PreservationPeriods)
                         .ThenInclude(p => p.FieldValues)
                     where t.Id == request.Id
-                    select t)
-                .FirstOrDefaultAsync(cancellationToken);
+                    select t).FirstOrDefaultAsync(cancellationToken);
             
             if (tag == null)
             {
@@ -35,6 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 
             var requirementDefinitionIds = tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();
 
+            // get needed information about requirementType/Definition for all requirement on tag
             var requirementDtos = await
                 (from requirementDefinition in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
                     join requirementType in _context.QuerySet<RequirementType>()
@@ -52,24 +59,32 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                 .OrderedRequirements()
                 .Select(requirement =>
                 {
+                    // .Single should be OK here since all requirements for a tag should be to unique Definitions
                     var requirementDto =
                         requirementDtos.Single(rd => rd.RequirementDefinition.Id == requirement.RequirementDefinitionId);
 
                     var fields = requirementDto
                         .RequirementDefinition
                         .OrderedFields()
-                        .Select(f => new FieldDto(f.Id, f.Label, f.FieldType, f.Unit, f.ShowPrevious, null, null)).ToList();
+                        .Select(f =>
+                        {
+                            var currentValue = requirement.GetCurrentFieldValue(f);
+                            var previousValue = requirement.GetPreviousFieldValue(f);
+                            return new FieldDto(f, currentValue, previousValue);
+                        })
+                        .ToList();
 
                     return new RequirementDto(
                         requirement.Id,
+                        requirement.IntervalWeeks,
+                        requirement.GetNextDueInWeeks(_timeService.GetCurrentTimeUtc()),
                         requirementDto.ReqTypeCode,
                         requirementDto.ReqTypeTitle,
                         requirementDto.RequirementDefinition.Title,
                         requirement.NextDueTimeUtc,
                         requirement.ReadyToBePreserved,
                         fields);
-                })
-                .ToList();
+                }).ToList();
             
             return new SuccessResult<List<RequirementDto>>(requirements);
         }

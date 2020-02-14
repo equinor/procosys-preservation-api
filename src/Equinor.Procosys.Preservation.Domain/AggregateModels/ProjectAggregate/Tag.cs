@@ -132,6 +132,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void BulkPreserve(DateTime preservedAtUtc, Person preservedBy)
             => Preserve(preservedAtUtc, preservedBy, true);
 
+        // todo write more unit test. Consider refactoring to move business logic down to requirement 
         public void RecordValueForActivePeriod(int fieldId, string value, RequirementDefinition requirementDefinition)
         {
             var field = requirementDefinition.Fields.Single(f => f.Id == fieldId);

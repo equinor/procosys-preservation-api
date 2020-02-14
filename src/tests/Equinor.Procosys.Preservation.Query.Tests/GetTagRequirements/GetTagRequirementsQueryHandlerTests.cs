@@ -35,7 +35,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         private DbContextOptions<PreservationContext> _dbContextOptions;
         private Mock<IEventDispatcher> _eventDispatcherMock;
         private Mock<IPlantProvider> _plantProviderMock;
-        private DateTime _startedAtUtc = new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
+        private Mock<ITimeService> _timeServiceMock;
+        private DateTime _startedAtUtc;
+        private DateTime _currentUtc;
 
         private int _requirementWithoutFieldId;
         private int _requirementWithOneInfoId;
@@ -46,10 +48,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         [TestInitialize]
         public void Setup()
         {
+            _startedAtUtc = new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
+            _currentUtc = _startedAtUtc.AddWeeks(2);
+
             _eventDispatcherMock = new Mock<IEventDispatcher>();
             _plantProviderMock = new Mock<IPlantProvider>();
+            _timeServiceMock = new Mock<ITimeService>();
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_currentUtc);
             _plantProviderMock.SetupGet(x => x.Plant).Returns(_schema);
-            
+
             _dbContextOptions = SetupNewDatabase();
         }
 
@@ -156,7 +163,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
             {
                 var query = new GetTagRequirementsQuery(1);
-                var dut = new GetTagRequirementsQueryHandler(context);
+                var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
 
                 var result = await dut.Handle(query, default);
 
@@ -188,7 +195,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
             {
                 var query = new GetTagRequirementsQuery(1);
-                var dut = new GetTagRequirementsQueryHandler(context);
+                var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
 
                 var result = await dut.Handle(query, default);
 
@@ -215,7 +222,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             using var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object);
             var query = new GetTagRequirementsQuery(1);
-            var dut = new GetTagRequirementsQueryHandler(context);
+            var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
 
             var result = await dut.Handle(query, default);
 
@@ -268,30 +275,28 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         private void AssertInfoField(FieldDto f)
         {
             Assert.AreEqual(FieldType.Info, f.FieldType);
-            Assert.IsFalse(f.ShowPrevious.HasValue);
+            Assert.IsFalse(f.ShowPrevious);
             Assert.IsNull(f.Unit);
         }
 
         private void AssertCheckBoxField(FieldDto f)
         {
             Assert.AreEqual(FieldType.CheckBox, f.FieldType);
-            Assert.IsFalse(f.ShowPrevious.HasValue);
+            Assert.IsFalse(f.ShowPrevious);
             Assert.IsNull(f.Unit);
         }
 
         private void AssertNumberWithPreviewField(FieldDto f)
         {
             Assert.AreEqual(FieldType.Number, f.FieldType);
-            Assert.IsTrue(f.ShowPrevious.HasValue);
-            Assert.IsTrue(f.ShowPrevious.Value);
+            Assert.IsTrue(f.ShowPrevious);
             Assert.AreEqual(_unit, f.Unit);
         }
 
         private void AssertNumberWithNoPreviewField(FieldDto f)
         {
             Assert.AreEqual(FieldType.Number, f.FieldType);
-            Assert.IsTrue(f.ShowPrevious.HasValue);
-            Assert.IsFalse(f.ShowPrevious.Value);
+            Assert.IsFalse(f.ShowPrevious);
             Assert.AreEqual(_unit, f.Unit);
         }
     }
