@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             Id = id;
             NextDueTimeUtc = nextDueTimeUtc;
             ReadyToBePreserved = readyToBePreserved;
-            Fields = fields;
+            Fields = fields ?? new List<FieldDto>();
             NextDueWeeks = nextDueWeeks;
             IntervalWeeks = intervalWeeks;
             RequirementTypeCode = requirementTypeCode;

@@ -45,8 +45,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         private int _requirementWithThreeNumberShowPrevId;
         private int _requirementWithOneNumberNoPrevId;
 
+        private int _tagId;
         private int _requestTimeAfterPreservationStartedInWeeks = 1;
         private int _interval = 8;
+        private int _firstCbFieldId;
+        private int _secondCbFieldId;
+        private int _firstNumberFieldId;
+        private int _secondNumberFieldId;
+        private int _thirdNumberFieldId;
+        private int _requirementDefinitionWithTwoCheckBoxesId;
 
         [TestInitialize]
         public void Setup()
@@ -127,6 +134,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var requirementWithTwoCheckBoxes = new Requirement(_schema, _interval, requirementDefinitionWithTwoCheckBoxes);
                 var requirementWithOneNumberNoPrev = new Requirement(_schema, _interval, requirementDefinitionWithOneNumberNoPrev);
                 var requirementWithThreeNumberShowPrev = new Requirement(_schema, _interval, requirementDefinitionWithThreeNumberShowPrev);
+                
                 var tag = new Tag(_schema,
                     "TagNo",
                     "Description",
@@ -150,11 +158,22 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 context.Tags.Add(tag);
                 context.SaveChanges();
 
+                _tagId = tag.Id;
+
+                _requirementDefinitionWithTwoCheckBoxesId = requirementDefinitionWithTwoCheckBoxes.Id;
+
                 _requirementWithoutFieldId = requirementWithoutField.Id;
                 _requirementWithOneInfoId = requirementWithOneInfo.Id;
                 _requirementWithTwoCheckBoxesId = requirementWithTwoCheckBoxes.Id;
                 _requirementWithThreeNumberShowPrevId = requirementWithThreeNumberShowPrev.Id;
                 _requirementWithOneNumberNoPrevId = requirementWithOneNumberNoPrev.Id;
+
+                _firstCbFieldId = cbField2.Id;
+                _secondCbFieldId = cbField1.Id;
+
+                _firstNumberFieldId = numberFieldPrev2.Id;
+                _secondNumberFieldId = numberFieldPrev3.Id;
+                _thirdNumberFieldId = numberFieldPrev1.Id;
             }
 
             return dbContextOptions;
@@ -165,7 +184,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
             {
-                var query = new GetTagRequirementsQuery(1);
+                var query = new GetTagRequirementsQuery(_tagId);
                 var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
 
                 var result = await dut.Handle(query, default);
@@ -178,6 +197,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     Assert.IsFalse(requirement.NextDueTimeUtc.HasValue);
                     Assert.IsNull(requirement.NextDueAsYearAndWeek);
                     Assert.IsFalse(requirement.ReadyToBePreserved);
+                    Assert.AreEqual(_interval, requirement.IntervalWeeks);
+                    Assert.IsNull(requirement.NextDueWeeks);
                 }
 
                 AssertRequirements(result.Data);
@@ -197,7 +218,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
             {
-                var query = new GetTagRequirementsQuery(1);
+                var query = new GetTagRequirementsQuery(_tagId);
                 var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
 
                 var result = await dut.Handle(query, default);
@@ -219,6 +240,44 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
+        public async Task Handler_ShouldReturnsTagRequirementsWithCheckBoxField_AfterRecordingCheckBoxField()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object,
+                _plantProviderMock.Object))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single();
+                tag.StartPreservation(_startedAtUtc);
+                context.SaveChanges();
+
+                var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
+                    .Single(rd => rd.Id == _requirementDefinitionWithTwoCheckBoxesId);
+                tag.RecordValueForActivePeriod(_firstCbFieldId, 
+                    "true",
+                    requirementDefinition);
+                context.SaveChanges();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            {
+                var query = new GetTagRequirementsQuery(_tagId);
+                var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                var requirementWithTwoCheckBoxes = result.Data.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
+                Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
+
+                var f = requirementWithTwoCheckBoxes.Fields.Single(f => f.Id == _firstCbFieldId);
+                Assert.IsNotNull(f);
+                Assert.IsNotNull(f.CurrentValue);
+                Assert.IsInstanceOfType(f.CurrentValue, typeof(CheckBoxDto));
+            }
+        }
+
+        [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
             var dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
@@ -226,7 +285,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                  .Options;
 
             using var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object);
-            var query = new GetTagRequirementsQuery(1);
+            var query = new GetTagRequirementsQuery(_tagId);
             var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
 
             var result = await dut.Handle(query, default);
