@@ -38,7 +38,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         PurchaseOrderNo = tag.PurchaseOrderNo,
                                         ResponsibleName = responsible.Name,
                                         Status = tag.Status,
-                                        TagNo = tag.TagNo
+                                        TagNo = tag.TagNo,
+                                        TagType = tag.TagType
                                     }).FirstOrDefaultAsync(cancellationToken);
 
             if (tagDetails == null)

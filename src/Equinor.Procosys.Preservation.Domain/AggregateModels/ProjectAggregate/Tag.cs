@@ -50,6 +50,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception("Must have at least one requirement");
             }
 
+            TagType = TagType.Standard;
+
             Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
             Description = description;
@@ -70,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string Calloff { get; private set; }
         public string CommPkgNo { get; private set; }
         public string DisciplineCode { get; private set; }
-        public bool IsAreaTag { get; private set; }
+        public TagType TagType { get; private set; }
         public string McPkgNo { get; private set; }
         public string Description { get; private set; }
         public string PurchaseOrderNo { get; private set; }

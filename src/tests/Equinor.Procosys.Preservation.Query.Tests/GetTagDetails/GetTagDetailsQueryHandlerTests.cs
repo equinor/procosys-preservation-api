@@ -75,17 +75,20 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
 
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
-                Assert.AreEqual("AreaCode", result.Data.AreaCode);
-                Assert.AreEqual("CommPkgNo", result.Data.CommPkgNo);
-                Assert.AreEqual("Description", result.Data.Description);
-                Assert.AreEqual(1, result.Data.Id);
-                Assert.AreEqual("Journey", result.Data.JourneyTitle);
-                Assert.AreEqual("McPkgNo", result.Data.McPkgNo);
-                Assert.AreEqual("Mode", result.Data.Mode);
-                Assert.AreEqual("PurchaseOrderNo", result.Data.PurchaseOrderNo);
-                Assert.AreEqual("Responsible", result.Data.ResponsibleName);
-                Assert.AreEqual(PreservationStatus.Active, result.Data.Status);
-                Assert.AreEqual("TagNo", result.Data.TagNo);
+                
+                var dto = result.Data;
+                Assert.AreEqual("AreaCode", dto.AreaCode);
+                Assert.AreEqual("CommPkgNo", dto.CommPkgNo);
+                Assert.AreEqual("Description", dto.Description);
+                Assert.AreEqual(1, dto.Id);
+                Assert.AreEqual("Journey", dto.JourneyTitle);
+                Assert.AreEqual("McPkgNo", dto.McPkgNo);
+                Assert.AreEqual("Mode", dto.Mode);
+                Assert.AreEqual("PurchaseOrderNo", dto.PurchaseOrderNo);
+                Assert.AreEqual("Responsible", dto.ResponsibleName);
+                Assert.AreEqual(PreservationStatus.Active, dto.Status);
+                Assert.AreEqual("TagNo", dto.TagNo);
+                Assert.AreEqual(TagType.Standard, dto.TagType);
             }
         }
 

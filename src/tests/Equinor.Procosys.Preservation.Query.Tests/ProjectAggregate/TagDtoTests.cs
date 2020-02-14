@@ -20,7 +20,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             "DisciplineCode",
             new RequirementDto(0, 0, default, default, false, false),
             true,
-            true,
             "McPkgNo",
             "Mode",
             true,
@@ -31,7 +30,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             PreservationStatus.Active,
             "TagFunctionCode",
             "TagDesc",
-            "TagNo");
+            "TagNo",
+            TagType.Standard);
 
         [TestMethod]
         public void Constructor_SetsProperties()
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual("CallOffNo", _dut.CalloffNo);
             Assert.AreEqual("CommPkgNo", _dut.CommPkgNo);
             Assert.AreEqual("DisciplineCode", _dut.DisciplineCode);
-            Assert.IsTrue(_dut.IsAreaTag);
+            Assert.AreEqual(TagType.Standard, _dut.TagType);
             Assert.IsTrue(_dut.IsVoided);
             Assert.AreEqual("McPkgNo", _dut.McPkgNo);
             Assert.AreEqual("Mode", _dut.Mode);
