@@ -13,10 +13,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var fieldMock = new Mock<Field>();
             fieldMock.SetupGet(f => f.Id).Returns(54);
-            var f = new FieldValue("SchemaA", fieldMock.Object);
+            var f = new TestClass("SchemaA", fieldMock.Object);
 
             Assert.AreEqual("SchemaA", f.Schema);
             Assert.AreEqual(54, f.FieldId);
+        }
+
+        private class TestClass : FieldValue
+        {
+            public TestClass(string schema, Field field) : base(schema, field)
+            {
+            }
         }
     }
 }

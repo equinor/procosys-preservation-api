@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -10,6 +10,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class PreservationPeriodTests
     {
+        private Field _checkBoxField;
+        private Field _infoField;
         private const int PreservedById = 31;
         private DateTime _utcNow;
         private Mock<Person> _preservedByMock;
@@ -17,6 +19,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestInitialize]
         public void Setup()
         {
+            _checkBoxField = new Field("", "", FieldType.CheckBox, 0);
+            _infoField = new Field("", "", FieldType.Info, 0);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _preservedByMock = new Mock<Person>();
             _preservedByMock.SetupGet(p => p.Id).Returns(PreservedById);
@@ -58,28 +62,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             => Assert.ThrowsException<ArgumentException>(() =>
                 new PreservationPeriod("SchemaA", DateTime.Now, PreservationPeriodStatus.NeedsUserInput)
             );
-        
-        [TestMethod]
-        public void AddFieldValue_ShouldThrowException_WhenFieldValueNotGiven()
-        {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
-
-            Assert.ThrowsException<ArgumentNullException>(() =>
-                dut.AddFieldValue(null));
-            Assert.AreEqual(0, dut.FieldValues.Count);
-        }
-
-        [TestMethod]
-        public void AddFieldValue_ShouldAddFieldValueToFieldValuesList()
-        {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
-            var fvMock = new Mock<FieldValue>();
-
-            dut.AddFieldValue(fvMock.Object);
-
-            Assert.AreEqual(1, dut.FieldValues.Count);
-            Assert.IsTrue(dut.FieldValues.Contains(fvMock.Object));
-        }
 
         [TestMethod]
         public void SetComment_ShouldSetComment()
@@ -102,16 +84,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.ThrowsException<Exception>(() => dut.SetComment("X"));
             Assert.AreEqual("Comment", dut.Comment);
-        }
-                
-        [TestMethod]
-        public void AddFieldValue_ShouldThrowException_AfterPreserved()
-        {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
-            dut.Preserve(_utcNow, _preservedByMock.Object, true);
-
-            Assert.ThrowsException<Exception>(() => dut.AddFieldValue(new Mock<FieldValue>().Object));
-            Assert.AreEqual(0, dut.FieldValues.Count);
         }
 
         [TestMethod]
@@ -167,6 +139,76 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.ThrowsException<ArgumentException>(() =>
                 dut.Preserve(DateTime.Now, _preservedByMock.Object, true)
             );
+        }
+                 
+        [TestMethod]
+        public void RecordValueForField_ShouldAddFieldValueToFieldValuesList_ForCheckBoxField()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+
+            dut.RecordValueForField(_checkBoxField, "true");
+
+            Assert.AreEqual(1, dut.FieldValues.Count);
+        }
+       
+        [TestMethod]
+        public void RecordValueForField_ShouldThrowException_ForInfoField()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+
+            Assert.ThrowsException<ArgumentOutOfRangeException>(() => dut.RecordValueForField(_infoField, "abc"));
+            Assert.AreEqual(0, dut.FieldValues.Count);
+        }
+       
+        [TestMethod]
+        public void RecordValueForField_ShouldThrowException_AfterPreserved()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            dut.Preserve(_utcNow, _preservedByMock.Object, true);
+
+            Assert.ThrowsException<Exception>(() => dut.RecordValueForField(_checkBoxField, "true"));
+            Assert.AreEqual(0, dut.FieldValues.Count);
+        }
+
+
+        [TestMethod]
+        public void GetFieldValue_ShouldGetACheckBoxCheckedValue_AfterRecordingCheckBoxValue()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var fMock = new Mock<Field>("", "", FieldType.CheckBox, 0, null, null);
+            fMock.SetupGet(f => f.Id).Returns(12);
+            var field = fMock.Object;
+
+            dut.RecordValueForField(field, "true");
+
+            var fieldValue = dut.GetFieldValue(12);
+
+            Assert.IsNotNull(fieldValue);
+            Assert.IsInstanceOfType(fieldValue, typeof(CheckBoxChecked));
+        }
+
+        [TestMethod]
+        public void GetFieldValue_ShouldGetANumberValue_AfterRecordingNumber()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var fMock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
+            fMock.SetupGet(f => f.Id).Returns(12);
+            var field = fMock.Object;
+
+            dut.RecordValueForField(field, "NA");
+
+            var fieldValue = dut.GetFieldValue(12);
+
+            Assert.IsNotNull(fieldValue);
+            Assert.IsInstanceOfType(fieldValue, typeof(NumberValue));
+        }
+
+        [TestMethod]
+        public void GetFieldValue_ShouldReturnNull_ForUnknownField()
+        {
+            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+
+            Assert.IsNull(dut.GetFieldValue(12));
         }
     }
 }

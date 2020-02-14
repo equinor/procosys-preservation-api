@@ -12,6 +12,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     public class RequirementTests
     {
         private const int TwoWeeksInterval = 2;
+        private Field _checkBoxField;
+        private Field _infoField;
         private Mock<RequirementDefinition> _reqDefNeedInputMock;
         private Mock<RequirementDefinition> _reqDefNotNeedInputMock;
         private DateTime _utcNow;
@@ -19,11 +21,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestInitialize]
         public void Setup()
         {
+            _checkBoxField = new Field("", "", FieldType.CheckBox, 0);
+            _infoField = new Field("", "", FieldType.Info, 0);
             _reqDefNeedInputMock = new Mock<RequirementDefinition>();
             _reqDefNeedInputMock.SetupGet(x => x.Id).Returns(3);
-            _reqDefNeedInputMock.Object.AddField(new Field("", "", FieldType.CheckBox, 0));
+            _reqDefNeedInputMock.Object.AddField(_checkBoxField);
             _reqDefNotNeedInputMock = new Mock<RequirementDefinition>();
-            _reqDefNotNeedInputMock.Object.AddField(new Field("", "", FieldType.Info, 0));
+            _reqDefNotNeedInputMock.Object.AddField(_infoField);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
         }
 

@@ -35,12 +35,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties_WhenDoubleValue()
         {
-            var dut = new NumberValue("SchemaA", new Mock<Field>().Object, "1,4");
+            var number = 1282.91;
+            var numberAsString = number.ToString("F2");
+            var dut = new NumberValue("SchemaA", new Mock<Field>().Object, numberAsString);
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.IsTrue(dut.Value.HasValue);
-            // todo fix NumberValue so it build on Azure pipeline. Need some culture-stuff
-            //Assert.AreEqual(1.4, dut.Value.Value);
+            Assert.AreEqual(number, dut.Value.Value);
         }
 
         [TestMethod]

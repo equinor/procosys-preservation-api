@@ -7,7 +7,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
     public class RequirementDto
     {
         public RequirementDto(
-            int id,
+            int id, 
+            int intervalWeeks, 
+            int? nextDueWeeks,
             string requirementTypeCode,
             string requirementTypeTitle,
             string requirementDefinitionTitle,
@@ -18,7 +20,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             Id = id;
             NextDueTimeUtc = nextDueTimeUtc;
             ReadyToBePreserved = readyToBePreserved;
-            Fields = fields;
+            Fields = fields ?? new List<FieldDto>();
+            NextDueWeeks = nextDueWeeks;
+            IntervalWeeks = intervalWeeks;
             RequirementTypeCode = requirementTypeCode;
             RequirementTypeTitle = requirementTypeTitle;
             RequirementDefinitionTitle = requirementDefinitionTitle;
@@ -26,6 +30,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         }
 
         public int Id { get; }
+        public int IntervalWeeks { get; }
+        /// <summary>
+        /// NextDueWeeks shifts at Monday night regardless of where in week the NextDueTimeUtc / current time is
+        /// </summary>
+        public int? NextDueWeeks { get; }
         public string RequirementTypeCode { get; }
         public string RequirementTypeTitle { get; }
         public string RequirementDefinitionTitle { get; }

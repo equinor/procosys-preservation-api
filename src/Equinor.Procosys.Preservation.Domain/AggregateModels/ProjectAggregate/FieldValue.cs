@@ -3,14 +3,14 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class FieldValue : SchemaEntityBase
+    public abstract class FieldValue : SchemaEntityBase
     {
         protected FieldValue()
             : base(null)
         {
         }
 
-        public FieldValue(string schema, Field field)
+        protected FieldValue(string schema, Field field)
             : base(schema)
         {
             if (field == null)
