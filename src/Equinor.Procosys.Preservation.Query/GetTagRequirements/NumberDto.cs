@@ -2,9 +2,9 @@
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
-    public class FieldNumberValueDto
+    public class NumberDto
     {
-        public FieldNumberValueDto(NumberValue fieldValue)
+        public NumberDto(NumberValue fieldValue)
         {
             IsNA = !fieldValue.Value.HasValue;
             Value = fieldValue.Value;

@@ -54,6 +54,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         private int _secondNumberFieldId;
         private int _thirdNumberFieldId;
         private int _requirementDefinitionWithTwoCheckBoxesId;
+        private int _requirementDefinitionWithThreeNumberShowPrevId;
 
         [TestInitialize]
         public void Setup()
@@ -161,6 +162,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 _tagId = tag.Id;
 
                 _requirementDefinitionWithTwoCheckBoxesId = requirementDefinitionWithTwoCheckBoxes.Id;
+                _requirementDefinitionWithThreeNumberShowPrevId = requirementDefinitionWithThreeNumberShowPrev.Id;
 
                 _requirementWithoutFieldId = requirementWithoutField.Id;
                 _requirementWithOneInfoId = requirementWithOneInfo.Id;
@@ -242,6 +244,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         [TestMethod]
         public async Task Handler_ShouldReturnsTagRequirementsWithCheckBoxField_AfterRecordingCheckBoxField()
         {
+            var fieldId = _firstCbFieldId;
+
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object,
                 _plantProviderMock.Object))
             {
@@ -251,9 +255,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithTwoCheckBoxesId);
-                tag.RecordValueForActivePeriod(_firstCbFieldId, 
-                    "true",
-                    requirementDefinition);
+                tag.RecordValueForActivePeriod(fieldId, "true", requirementDefinition);
                 context.SaveChanges();
             }
 
@@ -270,10 +272,85 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var requirementWithTwoCheckBoxes = result.Data.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
                 Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
 
-                var f = requirementWithTwoCheckBoxes.Fields.Single(f => f.Id == _firstCbFieldId);
-                Assert.IsNotNull(f);
-                Assert.IsNotNull(f.CurrentValue);
-                Assert.IsInstanceOfType(f.CurrentValue, typeof(CheckBoxDto));
+                var field = requirementWithTwoCheckBoxes.Fields.Single(f => f.Id == fieldId);
+                Assert.IsNotNull(field);
+                Assert.IsNotNull(field.CurrentValue);
+                Assert.IsInstanceOfType(field.CurrentValue, typeof(CheckBoxDto));
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnsTagRequirementsWithNumbers_AfterRecordingNumberFields()
+        {
+            var fieldWithNaId = _thirdNumberFieldId;
+            var fieldWithDoubleId = _secondNumberFieldId;
+            var number = 1282.91;
+            var numberAsString = number.ToString("F2");
+
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object,
+                _plantProviderMock.Object))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single();
+                tag.StartPreservation(_startedAtUtc);
+                context.SaveChanges();
+
+                var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
+                    .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
+                tag.RecordValueForActivePeriod(fieldWithNaId, 
+                    "NA",
+                    requirementDefinition);
+                tag.RecordValueForActivePeriod(fieldWithDoubleId, 
+                    numberAsString,
+                    requirementDefinition);
+                context.SaveChanges();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            {
+                var query = new GetTagRequirementsQuery(_tagId);
+                var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                var requirementWithThreeNumberShowPrev = result.Data.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
+                Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
+
+                var fieldWithNa = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == fieldWithNaId);
+                AssertNaNumber(fieldWithNa);
+
+                var fieldWithDouble = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == fieldWithDoubleId);
+                AssertNumber(fieldWithDouble, number);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnsTagRequirementsWithOrderedFields()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            {
+                var query = new GetTagRequirementsQuery(_tagId);
+                var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                var requirementWithTwoCheckBoxes = result.Data.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
+                Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
+
+                Assert.AreEqual(_firstCbFieldId, requirementWithTwoCheckBoxes.Fields.ElementAt(0).Id);
+                Assert.AreEqual(_secondCbFieldId, requirementWithTwoCheckBoxes.Fields.ElementAt(1).Id);
+
+                var requirementWithThreeNumbers = result.Data.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
+                Assert.AreEqual(3, requirementWithThreeNumbers.Fields.Count);
+
+                Assert.AreEqual(_firstNumberFieldId, requirementWithThreeNumbers.Fields.ElementAt(0).Id);
+                Assert.AreEqual(_secondNumberFieldId, requirementWithThreeNumbers.Fields.ElementAt(1).Id);
+                Assert.AreEqual(_thirdNumberFieldId, requirementWithThreeNumbers.Fields.ElementAt(2).Id);
             }
         }
 
@@ -362,6 +439,32 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             Assert.AreEqual(FieldType.Number, f.FieldType);
             Assert.IsFalse(f.ShowPrevious);
             Assert.AreEqual(_unit, f.Unit);
+        }
+
+        private static void AssertNaNumber(FieldDto f)
+        {
+            var numberValue = AssertNumber(f);
+            Assert.IsTrue(numberValue.IsNA);
+            Assert.IsFalse(numberValue.Value.HasValue);
+        }
+
+        private static void AssertNumber(FieldDto f, double value)
+        {
+            var numberValue = AssertNumber(f);
+            Assert.IsFalse(numberValue.IsNA);
+            Assert.IsTrue(numberValue.Value.HasValue);
+            Assert.AreEqual(value, numberValue.Value.Value);
+        }
+
+        private static NumberDto AssertNumber(FieldDto f)
+        {
+            var numberValue = f.CurrentValue as NumberDto;
+            Assert.IsNotNull(f);
+            Assert.IsNotNull(f.CurrentValue);
+            Assert.IsInstanceOfType(f.CurrentValue, typeof(NumberDto));
+
+            Assert.IsNotNull(numberValue);
+            return numberValue;
         }
     }
 }

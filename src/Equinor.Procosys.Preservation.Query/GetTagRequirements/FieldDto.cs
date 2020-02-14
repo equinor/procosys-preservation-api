@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             switch (fieldType)
             {
                 case FieldType.Number:
-                    return new FieldNumberValueDto(fieldValue as NumberValue);
+                    return new NumberDto(fieldValue as NumberValue);
                 case FieldType.CheckBox:
                     return new CheckBoxDto();
                 default:
