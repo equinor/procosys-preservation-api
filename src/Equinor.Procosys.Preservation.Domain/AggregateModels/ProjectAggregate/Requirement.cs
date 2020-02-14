@@ -93,6 +93,24 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 pp.Status == PreservationPeriodStatus.ReadyToBePreserved ||
                 pp.Status == PreservationPeriodStatus.NeedsUserInput);
 
+        public FieldValue GetCurrentFieldValue(Field field)
+            => ActivePeriod?.GetFieldValue(field.Id);
+
+        public FieldValue GetPreviousFieldValue(Field field)
+        {
+            if (!field.ShowPrevious.HasValue || !field.ShowPrevious.Value)
+            {
+                return null;
+            }
+            
+            var lastPreservedPeriod = PreservationPeriods
+                .Where(pp => pp.Status == PreservationPeriodStatus.Preserved)
+                .OrderByDescending(pp => pp.PreservationRecord.PreservedAtUtc)
+                .FirstOrDefault();
+        
+            return lastPreservedPeriod?.GetFieldValue(field.Id);
+        }
+
         private PreservationPeriod PeriodReadyToBePreserved
             => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
 
