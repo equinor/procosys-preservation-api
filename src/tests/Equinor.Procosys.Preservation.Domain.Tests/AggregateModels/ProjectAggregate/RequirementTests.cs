@@ -404,45 +404,45 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region RecordValuesForActivePeriod
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldThrowException_WhenPreservationNotStarted()
+        public void RecordValues_ShouldThrowException_WhenPreservationNotStarted()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordValuesForActivePeriod(null, null, _reqDefWithCheckBoxFieldMock.Object)
+                dut.RecordValues(null, null, _reqDefWithCheckBoxFieldMock.Object)
             );
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldThrowException_WhenReqDefNotGiven()
+        public void RecordValues_ShouldThrowException_WhenReqDefNotGiven()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                dut.RecordValuesForActivePeriod(null, null, null)
+                dut.RecordValues(null, null, null)
             );
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldThrowException_WhenRecordingOnWrongDefinition()
+        public void RecordValues_ShouldThrowException_WhenRecordingOnWrongDefinition()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordValuesForActivePeriod(null, null, _reqDefWithCheckBoxFieldMock.Object)
+                dut.RecordValues(null, null, _reqDefWithCheckBoxFieldMock.Object)
             );
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldThrowException_WhenFieldIsInfo()
+        public void RecordValues_ShouldThrowException_WhenFieldIsInfo()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordValuesForActivePeriod(
+                dut.RecordValues(
                     new Dictionary<int, string>{ {InfoFieldId, "x"}},
                     null,
                     _reqDefWithInfoFieldMock.Object)
@@ -450,25 +450,25 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void RecordValuesForActivePeriod_WithComment_ShouldUpdateCommentOnActivePeriod()
+        public void RecordValues_WithComment_ShouldUpdateCommentOnActivePeriod()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(null, "Abc", _reqDefWithCheckBoxFieldMock.Object);
+            dut.RecordValues(null, "Abc", _reqDefWithCheckBoxFieldMock.Object);
             Assert.AreEqual("Abc", dut.ActivePeriod.Comment);
 
-            dut.RecordValuesForActivePeriod(null, null, _reqDefWithCheckBoxFieldMock.Object);
+            dut.RecordValues(null, null, _reqDefWithCheckBoxFieldMock.Object);
             Assert.IsNull(dut.ActivePeriod.Comment);
         }
         
         [TestMethod]
-        public void RecordValuesForActivePeriod_WithCheckBoxChecked_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
+        public void RecordValues_WithCheckBoxChecked_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"}
@@ -485,12 +485,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void RecordValuesForActivePeriod_WithCheckBoxUnchecked_ShouldDoNothing_WhenNoValueExistsInAdvance()
+        public void RecordValues_WithCheckBoxUnchecked_ShouldDoNothing_WhenNoValueExistsInAdvance()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "false"}
@@ -504,12 +504,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         
         [TestMethod]
-        public void RecordValuesForActivePeriod_WithNaAsNumber_ShouldCreateNumberValueWithNullValue()
+        public void RecordValues_WithNaAsNumber_ShouldCreateNumberValueWithNullValue()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, "n/a"}
@@ -527,13 +527,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_WithNumber_ShouldCreateNumberValueWithCorrectValue()
+        public void RecordValues_WithNumber_ShouldCreateNumberValueWithCorrectValue()
         {
             var number = 1282.91;
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, number.ToString("F2")}
@@ -553,12 +553,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_WithNoNumber_ShouldDoNothing_WhenNoValueExistsInAdvance()
+        public void RecordValues_WithNoNumber_ShouldDoNothing_WhenNoValueExistsInAdvance()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, null}
@@ -571,12 +571,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldDeleteExistingCheckBoxValueAndNotCreateNew_WhenCheckBoxIsUncheckedAndValueExistsInAdvance()
+        public void RecordValues_ShouldDeleteExistingCheckBoxValueAndNotCreateNew_WhenCheckBoxIsUncheckedAndValueExistsInAdvance()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"}
@@ -587,7 +587,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Assert
             Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "false"}
@@ -599,12 +599,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldDeleteExistingNumberValueAndNotCreateNew_WhenNumberIsNullAndValueExistsInAdvance()
+        public void RecordValues_ShouldDeleteExistingNumberValueAndNotCreateNew_WhenNumberIsNullAndValueExistsInAdvance()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, "na"}
@@ -615,7 +615,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Assert
             Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, null}
@@ -629,12 +629,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldMakeRequirementReadyToBePreserved_WhenRecordRealValues_OneByOne()
+        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordRealValues_OneByOne()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"}
@@ -645,7 +645,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, "na"}
@@ -658,12 +658,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldMakeRequirementReadyToBePreserved_WhenRecordRealValues_AllRequiredAtOnce()
+        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordRealValues_AllRequiredAtOnce()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"},
@@ -677,12 +677,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ToggleReadyToBePreserved_WhenRecordRealValues_AllRequiredAtOnce_ThenRemoveCheckBox()
+        public void RecordValues_ToggleReadyToBePreserved_WhenRecordRealValues_AllRequiredAtOnce_ThenRemoveCheckBox()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"},
@@ -694,7 +694,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "false"}
@@ -707,12 +707,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldToggleReadyToBePreserved_WhenRecordingCheckBoxValue()
+        public void RecordValues_ShouldToggleReadyToBePreserved_WhenRecordingCheckBoxValue()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"}
@@ -724,7 +724,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "false"}
@@ -737,12 +737,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValuesForActivePeriod_ShouldToggleReadyToBePreserved_WhenRecordingNumberValue()
+        public void RecordValues_ShouldToggleReadyToBePreserved_WhenRecordingNumberValue()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, "1"}
@@ -754,7 +754,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, null}
@@ -794,7 +794,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"}
@@ -815,7 +815,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"}
@@ -826,7 +826,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Assert
             Assert.IsNotNull(dut.GetCurrentFieldValue(_checkBoxFieldMock.Object));
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "false"}
@@ -844,7 +844,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, "123"}
@@ -865,7 +865,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, "123"}
@@ -876,7 +876,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Assert
             Assert.IsNotNull(dut.GetCurrentFieldValue(_numberFieldMock.Object));
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, null}
@@ -900,7 +900,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.IsNull(dut.GetPreviousFieldValue(_numberFieldMock.Object));
 
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, "1"}
@@ -921,7 +921,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(1, ((NumberValue)value).Value);
 
             // record a new value in this period
-            dut.RecordValuesForActivePeriod(
+            dut.RecordValues(
                 new Dictionary<int, string>
                 {
                     {NumberFieldId, "2"}

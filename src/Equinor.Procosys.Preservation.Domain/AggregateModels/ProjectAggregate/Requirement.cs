@@ -111,7 +111,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return lastPreservedPeriod?.GetFieldValue(field.Id);
         }
 
-        public void RecordValuesForActivePeriod(Dictionary<int, string> fieldValues, string comment, RequirementDefinition requirementDefinition)
+        public void RecordValues(Dictionary<int, string> fieldValues, string comment, RequirementDefinition requirementDefinition)
         {
             if (requirementDefinition == null)
             {
