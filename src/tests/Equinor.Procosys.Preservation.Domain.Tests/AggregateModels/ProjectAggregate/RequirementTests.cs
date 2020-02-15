@@ -16,7 +16,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private const int InfoFieldId = 5;
         private const int CheckBoxFieldId = 11;
         private const int NumberFieldId = 12;
-        private const double Number = 1282.91;
         private const int TwoWeeksInterval = 2;
         private Mock<Field> _infoFieldMock;
         private Mock<Field> _checkBoxFieldMock;
@@ -530,13 +529,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValuesForActivePeriod_WithNumber_ShouldCreateNumberValueWithCorrectValue()
         {
+            var number = 1282.91;
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
             dut.StartPreservation(_utcNow);
 
             dut.RecordValuesForActivePeriod(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, Number.ToString("F2")}
+                    {NumberFieldId, number.ToString("F2")}
                 }, 
                 null,
                 _reqDefWithNumberFieldMock.Object);
@@ -549,7 +549,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(NumberFieldId, fv.FieldId);
             var numberValue = (NumberValue)fv;
             Assert.IsTrue( numberValue.Value.HasValue);
-            Assert.AreEqual(Number, numberValue.Value.Value);
+            Assert.AreEqual(number, numberValue.Value.Value);
         }
 
         [TestMethod]
