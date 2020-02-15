@@ -571,7 +571,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldDeleteExistingCheckBoxValueAndNotCreateNew_WhenCheckBoxIsUncheckedAndValueExistsInAdvance()
+        public void RecordValues_ShouldDeleteExistingCheckBoxValue_WhenCheckBoxIsUnchecked()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
@@ -599,7 +599,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldDeleteExistingNumberValueAndNotCreateNew_WhenNumberIsNullAndValueExistsInAdvance()
+        public void RecordValues_ShouldDeleteExistingNumberValue_WhenNumberIsNull()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
             dut.StartPreservation(_utcNow);
@@ -629,7 +629,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         
         [TestMethod]
-        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordRealValues_OneByOne()
+        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_OneByOne()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
@@ -658,7 +658,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordRealValues_AllRequiredAtOnce()
+        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
@@ -677,7 +677,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ToggleReadyToBePreserved_WhenRecordRealValues_AllRequiredAtOnce_ThenRemoveCheckBox()
+        public void RecordValues_ToggleReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_ThenRemoveCheckBox()
         {
             var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation(_utcNow);
