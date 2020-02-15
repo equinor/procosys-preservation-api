@@ -890,6 +890,64 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region GetPreviousValue
+
+        [TestMethod]
+        public void GetPreviousFieldValue_ShouldReturnValue_AfterRecordingAndPreserved()
+        {
+            var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            Assert.IsNull(dut.GetPreviousFieldValue(_numberFieldMock.Object));
+
+            dut.RecordValuesForActivePeriod(
+                new Dictionary<int, string>
+                {
+                    {NumberFieldId, "1"}
+                }, 
+                null,
+                _reqDefWithNumberFieldMock.Object);
+
+            // Assert
+            var value = dut.GetPreviousFieldValue(_numberFieldMock.Object);
+            Assert.IsNull(value);
+
+            // preserve and get a new period
+            dut.Preserve(_utcNow.AddDays(5), new Mock<Person>().Object, false);
+
+            value = dut.GetPreviousFieldValue(_numberFieldMock.Object);
+            Assert.IsNotNull(value);
+            Assert.IsInstanceOfType(value, typeof(NumberValue));
+            Assert.AreEqual(1, ((NumberValue)value).Value);
+
+            // record a new value in this period
+            dut.RecordValuesForActivePeriod(
+                new Dictionary<int, string>
+                {
+                    {NumberFieldId, "2"}
+                }, 
+                null,
+                _reqDefWithNumberFieldMock.Object);
+
+            value = dut.GetPreviousFieldValue(_numberFieldMock.Object);
+            Assert.AreEqual(1, ((NumberValue)value).Value);
+            
+            dut.Preserve(_utcNow.AddDays(15), new Mock<Person>().Object, false);
+            value = dut.GetPreviousFieldValue(_numberFieldMock.Object);
+            Assert.AreEqual(2, ((NumberValue)value).Value);
+        }
+
+        [TestMethod]
+        public void GetPreviousFieldValue_ShouldReturnNull_ForUnknownField()
+        {
+            var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            Assert.IsNull(dut.GetPreviousFieldValue(new Mock<Field>().Object));
+        }
+
+        #endregion
+
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()
         {
