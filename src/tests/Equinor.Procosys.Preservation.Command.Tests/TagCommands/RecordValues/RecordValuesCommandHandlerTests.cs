@@ -8,7 +8,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using FieldValue = Equinor.Procosys.Preservation.Command.TagCommands.RecordValues.FieldValue;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
 {
@@ -41,55 +40,40 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             _recordValuesCommandWithCheckedCheckBox = new RecordValuesCommand(
                 TagId,
                 ReqId, 
-                new List<FieldValue>
-                {
-                    new FieldValue(CheckBoxFieldId, "true")
-                }, 
+                new Dictionary<int, string> {{CheckBoxFieldId, "true"}}, 
                 Comment);
             
             _recordValuesCommandWithUncheckedCheckBox = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
-                new List<FieldValue>
-                {
-                    new FieldValue(CheckBoxFieldId, "false")
-                }, 
+                new Dictionary<int, string> {{CheckBoxFieldId, "false"}}, 
                 Comment);
             
             _recordValuesCommandWithNaNumber = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
-                new List<FieldValue>
-                {
-                    new FieldValue(NumberFieldId, "n/a")
-                }, 
+                new Dictionary<int, string> {{NumberFieldId, "n/a"}}, 
                 Comment);
             
             _recordValuesCommandWithNullNumber = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
-                new List<FieldValue>
-                {
-                    new FieldValue(NumberFieldId, null)
-                }, 
+                new Dictionary<int, string> {{NumberFieldId, null}}, 
                 Comment);
 
             _recordValuesCommandWithNormalNumber = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
-                new List<FieldValue>
-                {
-                    new FieldValue(NumberFieldId, Number.ToString("F2"))
-                }, 
+                new Dictionary<int, string> {{NumberFieldId, Number.ToString("F2")}}, 
                 Comment);
             
             _recordValuesCommandWithCheckedCheckBoxAndNaAsNumber = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
-                new List<FieldValue>
+                new Dictionary<int, string>
                 {
-                    new FieldValue(CheckBoxFieldId, "true"),
-                    new FieldValue(NumberFieldId, "n/a")
+                    {CheckBoxFieldId, "true"},
+                    {NumberFieldId, "n/a"}
                 }, 
                 Comment);
 

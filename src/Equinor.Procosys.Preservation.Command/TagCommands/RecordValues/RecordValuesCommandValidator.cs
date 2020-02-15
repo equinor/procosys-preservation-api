@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using FluentValidation;
@@ -28,11 +29,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
             {
                 RuleForEach(command => command.FieldValues)
                     .Must(BeAValidValueForField)
-                    .WithMessage((command, fv) => $"Field value is not valid! Field={fv.FieldId} Value={fv.Value}")
+                    .WithMessage((command, fv) => $"Field value is not valid! Field={fv.Key} Value={fv.Value}")
                     .Must(BeAnExistingField)
-                    .WithMessage((command, fv) => $"Field doesn't exists! Field={fv.FieldId}")
+                    .WithMessage((command, fv) => $"Field doesn't exists! Field={fv.Key}")
                     .Must(NotBeAVoidedField)
-                    .WithMessage((command, fv) => $"Field is voided! Field={fv.FieldId}");
+                    .WithMessage((command, fv) => $"Field is voided! Field={fv.Key}");
             });
 
             bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
@@ -41,15 +42,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
 
             bool NotBeInAClosedProject(int tagId) => !tagValidator.ProjectIsClosed(tagId);
 
-            bool BeAnExistingField(FieldValue fieldValue) => fieldValidator.Exists(fieldValue.FieldId);
+            bool BeAnExistingField(KeyValuePair<int, string> fieldValue) => fieldValidator.Exists(fieldValue.Key);
 
-            bool NotBeAVoidedField(FieldValue fieldValue) => !fieldValidator.IsVoided(fieldValue.FieldId);
+            bool NotBeAVoidedField(KeyValuePair<int, string>  fieldValue) => !fieldValidator.IsVoided(fieldValue.Key);
 
             bool HaveRequirementReadyForRecording(int requirementId)
                 => tagValidator.RequirementIsReadyForRecording(requirementId);
 
-            bool BeAValidValueForField(FieldValue fieldValue)
-                => fieldValidator.IsValidValue(fieldValue.FieldId, fieldValue.Value);
+            bool BeAValidValueForField(KeyValuePair<int, string>  fieldValue)
+                => fieldValidator.IsValidValue(fieldValue.Key, fieldValue.Value);
         }
     }
 }

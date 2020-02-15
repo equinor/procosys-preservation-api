@@ -43,10 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             _recordValuesCommandWithNormalNumber = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
-                new List<FieldValue>
-                {
-                    new FieldValue(FieldId, NumberAsString)
-                }, 
+                new Dictionary<int, string> {{FieldId, NumberAsString}},
                 Comment);
 
             _dut = new RecordValuesCommandValidator(_tagValidatorMock.Object, _fieldValidatorMock.Object);
