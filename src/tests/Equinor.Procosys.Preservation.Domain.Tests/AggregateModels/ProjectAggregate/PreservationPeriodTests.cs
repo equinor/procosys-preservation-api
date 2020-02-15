@@ -156,7 +156,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => dut.RecordValueForField(_infoField, "abc"));
+            Assert.ThrowsException<Exception>(() => dut.RecordValueForField(_infoField, "abc"));
             Assert.AreEqual(0, dut.FieldValues.Count);
         }
        

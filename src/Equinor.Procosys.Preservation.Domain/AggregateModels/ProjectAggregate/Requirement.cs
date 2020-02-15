@@ -113,6 +113,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void RecordValuesForActivePeriod(Dictionary<int, string> fieldValues, string comment, RequirementDefinition requirementDefinition)
         {
+            if (requirementDefinition == null)
+            {
+                throw new ArgumentNullException(nameof(requirementDefinition));
+            }
+
+            if (requirementDefinition.Id != RequirementDefinitionId)
+            {
+                throw new Exception($"{nameof(Requirement)} {Id} belong to RequirementDefinition {RequirementDefinitionId}. Can't record values for RequirementDefinition {requirementDefinition.Id}");
+            }
+
             if (!HasActivePeriod)
             {
                 throw new Exception($"{nameof(Requirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't record values");
@@ -120,11 +130,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             var period = ActivePeriod;
 
-            foreach (var fieldValue in fieldValues)
+            if (fieldValues != null)
             {
-                var field = requirementDefinition.Fields.Single(f => f.Id == fieldValue.Key);
+                foreach (var fieldValue in fieldValues)
+                {
+                    var field = requirementDefinition.Fields.Single(f => f.Id == fieldValue.Key);
 
-                period.RecordValueForField(field, fieldValue.Value);
+                    period.RecordValueForField(field, fieldValue.Value);
+                }
             }
 
             period.UpdateStatus(requirementDefinition);
