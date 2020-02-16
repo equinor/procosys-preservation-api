@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                         r.IsReadyAndDueToBePreserved(now)))
                     .ToList();
 
-                var firstUpcomingRequirement = tag.FirstUpcomingRequirement;
+                var firstUpcomingRequirement = tag.FirstUpcomingRequirement(now);
 
                 RequirementDto firstUpcomingRequirementDto = null;
                 if (firstUpcomingRequirement != null)
