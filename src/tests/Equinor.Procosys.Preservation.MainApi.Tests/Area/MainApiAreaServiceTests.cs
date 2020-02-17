@@ -1,24 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.AreaCode;
+using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tests.AreaCode
+namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
 {
     [TestClass]
-    public class MainApiAreaCodeServiceTests
+    public class MainApiAreaServiceTests
     {
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
         private Mock<IPlantApiService> _plantApiService;
-        private List<ProcosysAreaCode> _resultWithNoItems;
-        private List<ProcosysAreaCode> _resultWithThreeItems;
+        private List<ProcosysArea> _resultWithNoItems;
+        private List<ProcosysArea> _resultWithThreeItems;
 
         [TestInitialize]
         public void Setup()
@@ -33,23 +33,23 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.AreaCode
                 .Setup(x => x.IsPlantValidAsync(_plant))
                 .Returns(Task.FromResult(true));
 
-            _resultWithNoItems = new List<ProcosysAreaCode>();
+            _resultWithNoItems = new List<ProcosysArea>();
 
-            _resultWithThreeItems = new List<ProcosysAreaCode>
+            _resultWithThreeItems = new List<ProcosysArea>
             {
-                new ProcosysAreaCode
+                new ProcosysArea
                 {
                     Id = 1,
                     Code = "CodeA",
                     Description = "Description1",
                 },
-                new ProcosysAreaCode
+                new ProcosysArea
                 {
                     Id = 2,
                     Code = "CodeB",
                     Description = "Description2",
                 },
-                new ProcosysAreaCode
+                new ProcosysArea
                 {
                     Id = 3,
                     Code = "CodeC",
@@ -63,12 +63,12 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.AreaCode
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysAreaCode>>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysArea>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeItems));
-            var dut = new MainApiAreaCodeService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
+            var dut = new MainApiAreaService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
             // Act
-            var result = await dut.GetAreaCodes(_plant);
+            var result = await dut.GetAreas(_plant);
 
             // Assert
             Assert.AreEqual(3, result.Count);
@@ -79,12 +79,12 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.AreaCode
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysAreaCode>>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysArea>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithNoItems));
-            var dut = new MainApiAreaCodeService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
+            var dut = new MainApiAreaService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
             // Act
-            var result = await dut.GetAreaCodes(_plant);
+            var result = await dut.GetAreas(_plant);
 
             // Assert
             Assert.AreEqual(0, result.Count);
@@ -93,9 +93,9 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.AreaCode
         [TestMethod]
         public async Task GetAreaCodes_ThrowsException_WhenPlantIsInvalid()
         {
-            var dut = new MainApiAreaCodeService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
+            var dut = new MainApiAreaService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetAreaCodes("INVALIDPLANT"));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetAreas("INVALIDPLANT"));
         }
     }
 }

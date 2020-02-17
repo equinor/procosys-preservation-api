@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.MainApi.AreaCode;
-using Equinor.Procosys.Preservation.Query.GetAreaCodes;
+using Equinor.Procosys.Preservation.MainApi.Area;
+using Equinor.Procosys.Preservation.Query.GetAreas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
@@ -12,29 +12,29 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
     [TestClass]
     public class GetAreaCodesQueryHandlerTests
     {
-        private List<ProcosysAreaCode> _resultWithThreeElements;
+        private List<ProcosysArea> _resultWithThreeElements;
         private Mock<IPlantProvider> _plantProviderMock;
-        private Mock<IAreaCodeApiService> _areaCodeApiServiceMock;
-        private GetAreaCodesQuery _query;
+        private Mock<IAreaApiService> _areaApiServiceMock;
+        private GetAreasQuery _query;
 
         [TestInitialize]
         public void Setup()
         {
-            _resultWithThreeElements = new List<ProcosysAreaCode>
+            _resultWithThreeElements = new List<ProcosysArea>
             {
-                new ProcosysAreaCode
+                new ProcosysArea
                 {
                     Code = "CodeA",
                     Description = "DescriptionA",
                     Id = 1,
                 },
-                new ProcosysAreaCode
+                new ProcosysArea
                 {
                     Code = "CodeB",
                     Description = "DescriptionB",
                     Id = 1,
                 },
-                new ProcosysAreaCode
+                new ProcosysArea
                 {
                     Code = "CodeC",
                     Description = "DescriptionC",
@@ -43,17 +43,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
             };
 
             _plantProviderMock = new Mock<IPlantProvider>();
-            _areaCodeApiServiceMock = new Mock<IAreaCodeApiService>();
-            _query = new GetAreaCodesQuery();
+            _areaApiServiceMock = new Mock<IAreaApiService>();
+            _query = new GetAreasQuery();
         }
 
         [TestMethod]
-        public async Task Handle_ShouldReturnCorrecResultType()
+        public async Task Handle_ShouldReturnCorrectResultType()
         {
-            _areaCodeApiServiceMock
-                .Setup(x => x.GetAreaCodes(It.IsAny<string>()))
+            _areaApiServiceMock
+                .Setup(x => x.GetAreas(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
-            var dut = new GetAreaCodesQueryHandler(_areaCodeApiServiceMock.Object, _plantProviderMock.Object);
+            var dut = new GetAreasQueryHandler(_areaApiServiceMock.Object, _plantProviderMock.Object);
 
             var result = await dut.Handle(_query, default);
 
@@ -63,10 +63,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
         [TestMethod]
         public async Task Handle_ShouldReturnCorrectNumberOfElements()
         {
-            _areaCodeApiServiceMock
-                .Setup(x => x.GetAreaCodes(It.IsAny<string>()))
+            _areaApiServiceMock
+                .Setup(x => x.GetAreas(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
-            var dut = new GetAreaCodesQueryHandler(_areaCodeApiServiceMock.Object, _plantProviderMock.Object);
+            var dut = new GetAreasQueryHandler(_areaApiServiceMock.Object, _plantProviderMock.Object);
 
             var result = await dut.Handle(_query, default);
 
@@ -76,10 +76,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
         [TestMethod]
         public async Task Handle_ShouldReturnCorrectData()
         {
-            _areaCodeApiServiceMock
-                .Setup(x => x.GetAreaCodes(It.IsAny<string>()))
+            _areaApiServiceMock
+                .Setup(x => x.GetAreas(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
-            var dut = new GetAreaCodesQueryHandler(_areaCodeApiServiceMock.Object, _plantProviderMock.Object);
+            var dut = new GetAreasQueryHandler(_areaApiServiceMock.Object, _plantProviderMock.Object);
 
             var result = await dut.Handle(_query, default);
 

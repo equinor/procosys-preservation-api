@@ -5,16 +5,16 @@ using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.MainApi.AreaCode
+namespace Equinor.Procosys.Preservation.MainApi.Area
 {
-    public class MainApiAreaCodeService : IAreaCodeApiService
+    public class MainApiAreaService : IAreaApiService
     {
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
         private readonly IBearerTokenApiClient _mainApiClient;
         private readonly IPlantApiService _plantApiService;
 
-        public MainApiAreaCodeService(IBearerTokenApiClient mainApiClient,
+        public MainApiAreaService(IBearerTokenApiClient mainApiClient,
             IPlantApiService plantApiService,
             IOptionsMonitor<MainApiOptions> options)
         {
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.MainApi.AreaCode
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<List<ProcosysAreaCode>> GetAreaCodes(string plant)
+        public async Task<List<ProcosysArea>> GetAreas(string plant)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.MainApi.AreaCode
                 $"?plantId={plant}" +
                 $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<List<ProcosysAreaCode>>(url) ?? new List<ProcosysAreaCode>();
+            return await _mainApiClient.QueryAndDeserialize<List<ProcosysArea>>(url) ?? new List<ProcosysArea>();
         }
     }
 }

@@ -1,6 +1,6 @@
-﻿namespace Equinor.Procosys.Preservation.MainApi.AreaCode
+﻿namespace Equinor.Procosys.Preservation.MainApi.Area
 {
-    public class ProcosysAreaCode
+    public class ProcosysArea
     {
         public int Id { get; set; }
         public string Code { get; set; }

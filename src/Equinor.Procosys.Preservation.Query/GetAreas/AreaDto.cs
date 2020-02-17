@@ -1,8 +1,8 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetAreaCodes
+﻿namespace Equinor.Procosys.Preservation.Query.GetAreas
 {
-    public class AreaCodeDto
+    public class AreaDto
     {
-        public AreaCodeDto(string code, string description)
+        public AreaDto(string code, string description)
         {
             Code = code;
             Description = description;

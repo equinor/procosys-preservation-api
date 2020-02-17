@@ -18,7 +18,7 @@ using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Equinor.Procosys.Preservation.MainApi;
-using Equinor.Procosys.Preservation.MainApi.AreaCode;
+using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();
-            services.AddScoped<IAreaCodeApiService, MainApiAreaCodeService>();
+            services.AddScoped<IAreaApiService, MainApiAreaService>();
             services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
