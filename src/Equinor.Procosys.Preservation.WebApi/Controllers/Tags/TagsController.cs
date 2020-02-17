@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
@@ -21,12 +22,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     /// Handles requests that deal with preservation tags
     /// </summary>
     [ApiController]
-    [Route("Tags/Preserved")]
-    public class PreservedTagsController : ControllerBase
+    [Route("Tags")]
+    public class TagsController : ControllerBase
     {
         private readonly IMediator _mediator;
 
-        public PreservedTagsController(IMediator mediator) => _mediator = mediator;
+        public TagsController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TagDto>>> GetAllTagsInProject([FromQuery] string projectName)    
@@ -49,7 +50,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [HttpPost]
+        [HttpPost("Standard")]
         public async Task<ActionResult<int>> CreateTag([FromBody] CreateTagDto dto)
         {
             var requirements = dto.Requirements?
@@ -63,6 +64,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     requirements,
                     dto.Remark));
             return this.FromResult(result);
+        }
+
+        [HttpPost("Area")]
+        public async Task<ActionResult<int>> CreateAreaTag([FromBody] CreateAreaTagDto dto)
+        {
+            var requirements = dto.Requirements?
+                .Select(r =>
+                    new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
+            
+            throw new NotImplementedException();
+
+            //return this.FromResult(result);
         }
 
         [HttpPut("{id}/SetStep")]

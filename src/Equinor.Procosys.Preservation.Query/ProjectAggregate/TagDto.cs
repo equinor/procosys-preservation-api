@@ -13,7 +13,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             string commPkgNo,
             string disciplineCode,
             RequirementDto firstUpcomingRequirement,
-            bool isAreaTag,
             bool isVoided,
             string mcPkgNo, 
             string mode,
@@ -25,7 +24,9 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             PreservationStatus status,
             string tagFunctionCode,
             string tagDescription,
-            string tagNo)
+            string tagNo,
+            TagType tagType
+            )
         {
             Id = id;
             AreaCode = areaCode;
@@ -34,7 +35,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             Description = tagDescription;
             DisciplineCode = disciplineCode;
             FirstUpcomingRequirement = firstUpcomingRequirement;
-            IsAreaTag = isAreaTag;
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             Mode = mode;
@@ -46,6 +46,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             Status = status;
             TagFunctionCode = tagFunctionCode;
             Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
+            TagType = tagType;
         }
 
         public string AreaCode { get; }
@@ -55,7 +56,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public string DisciplineCode { get; }
         public RequirementDto FirstUpcomingRequirement { get; }
         public int Id { get; }
-        public bool IsAreaTag { get; }
         public bool IsVoided { get; }
         public string McPkgNo { get; }
         public string Mode { get; }
@@ -67,5 +67,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public string ResponsibleCode { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
+        public TagType TagType { get;  }
     }
 }
