@@ -36,12 +36,25 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .HasDefaultValue(PreservationStatus.NotStarted)
                 .IsRequired();
 
+            builder.Property(f => f.TagType)
+                .HasConversion<string>()
+                .HasDefaultValue(TagType.Standard)
+                .IsRequired();
+
             builder.HasCheckConstraint("constraint_tag_check_valid_status", $"{nameof(Tag.Status)} in ({GetValidStatuses()})");
+            
+            builder.HasCheckConstraint("constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})");
         }
 
         private string GetValidStatuses()
         {
             var fieldTypes = Enum.GetNames(typeof(PreservationStatus)).Select(t => $"'{t}'");
+            return string.Join(',', fieldTypes);
+        }
+
+        private string GetValidTagTypes()
+        {
+            var fieldTypes = Enum.GetNames(typeof(TagType)).Select(t => $"'{t}'");
             return string.Join(',', fieldTypes);
         }
     }
