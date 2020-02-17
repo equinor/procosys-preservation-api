@@ -3,7 +3,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 {
     public class CreateAreaTagCommand : IRequest<Result<int>>
     {

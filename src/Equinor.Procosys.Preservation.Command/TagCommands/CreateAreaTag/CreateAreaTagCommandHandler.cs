@@ -13,7 +13,7 @@ using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.Proj
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 {
     public class CreateAreaTagCommandHandler : IRequestHandler<CreateAreaTagCommand, Result<int>>
     {
@@ -55,7 +55,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             
             if (project == null)
             {
-                throw new NotImplementedException("Must get project from main here to be able to create it with Description. Later PBI 71457 since we don't have that endpoint yet");
+                // todo Must get project from main here to be able to create it with Description. Later PBI 71457 since we don't have that endpoint in MainApi yet");
+                return new NotFoundResult<int>($"Project {request.ProjectName} not found in preservation");
                 //project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
                 //_projectRepository.Add(project);
             }

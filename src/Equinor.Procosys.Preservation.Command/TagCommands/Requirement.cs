@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
+﻿namespace Equinor.Procosys.Preservation.Command.TagCommands
 {
     public class Requirement
     {
