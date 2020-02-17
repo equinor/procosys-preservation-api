@@ -61,16 +61,16 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 
             var now = _timeService.GetCurrentTimeUtc();
 
-            return new SuccessResult<IEnumerable<TagDto>>(tags.Select(tag =>
+            var tagDtos = tags.Select(tag =>
             {
-                var requirementsDtos = tag.OrderedRequirements().Select(
-                    r => new RequirementDto(
-                        r.Id,
-                        r.RequirementDefinitionId,
-                        r.NextDueTimeUtc,
-                        r.GetNextDueInWeeks(now),
-                        r.ReadyToBePreserved,
-                        r.IsReadyAndDueToBePreserved(now)))
+                var requirementDtos = tag.OrderedRequirements().Select(
+                        r => new RequirementDto(
+                            r.Id,
+                            r.RequirementDefinitionId,
+                            r.NextDueTimeUtc,
+                            r.GetNextDueInWeeks(now),
+                            r.ReadyToBePreserved,
+                            r.IsReadyAndDueToBePreserved(now)))
                     .ToList();
 
                 var firstUpcomingRequirement = tag.FirstUpcomingRequirement(now);
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                 RequirementDto firstUpcomingRequirementDto = null;
                 if (firstUpcomingRequirement != null)
                 {
-                    firstUpcomingRequirementDto = requirementsDtos.Single(r => r.Id == firstUpcomingRequirement.Id);
+                    firstUpcomingRequirementDto = requirementDtos.Single(r => r.Id == firstUpcomingRequirement.Id);
                 }
 
                 var step = steps.Single(s => s.Id == tag.StepId);
@@ -98,13 +98,14 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.IsReadyToBePreserved(now),
                     tag.PurchaseOrderNo,
                     tag.Remark,
-                    requirementsDtos,
+                    requirementDtos,
                     resp.Name,
                     tag.Status,
                     tag.TagFunctionCode,
                     tag.Description,
                     tag.TagNo);
-            }));
+            });
+            return new SuccessResult<IEnumerable<TagDto>>(tagDtos);
         }
     }
 }
