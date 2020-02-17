@@ -23,7 +23,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.AreEqual("RemarkA", dut.Remark);
             Assert.AreEqual(2, dut.StepId);
             Assert.AreEqual(1, dut.Requirements.Count());
-            Assert.AreEqual(11, dut.Requirements.First().RequirementDefinitionId);
+            var requirement = dut.Requirements.First();
+            Assert.AreEqual(11, requirement.RequirementDefinitionId);
+            Assert.AreEqual(12, requirement.IntervalWeeks);
             Assert.AreEqual(1, dut.TagNos.Count());
             Assert.AreEqual("TagNoA", dut.TagNos.First());
         }
@@ -31,12 +33,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithNullLists()
         {
-            var dut = new CreateTagCommand(null, "", 0, null, "");
+            var dut = new CreateTagCommand(null, "", 0, null, null);
 
             Assert.IsNotNull(dut.Requirements);
             Assert.AreEqual(0, dut.Requirements.Count());
             Assert.IsNotNull(dut.TagNos);
             Assert.AreEqual(0, dut.TagNos.Count());
+            Assert.IsNull(dut.Remark);
         }
     }
 }
