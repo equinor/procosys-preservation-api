@@ -3,23 +3,25 @@ using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class CreateTagDtoValidator : AbstractValidator<CreateTagDto>
+    public class CreateAreaTagDtoValidator : AbstractValidator<CreateAreaTagDto>
     {
-        public CreateTagDtoValidator()
+        public CreateAreaTagDtoValidator()
         {
-            RuleFor(x => x).NotNull();
-            
+            RuleFor(x => x)
+                .NotNull();
+
             RuleFor(x => x.ProjectName)
                 .NotNull()
                 .NotEmpty()
                 .MaximumLength(Project.NameLengthMax);
 
-            RuleFor(x => x.TagNos)
-                .NotNull();
-
-            RuleForEach(x => x.TagNos)
+            RuleFor(x => x.DisciplineCode)
+                .NotNull()
                 .NotEmpty()
-                .MaximumLength(Tag.TagNoLengthMax);
+                .MaximumLength(Tag.DisciplineCodeLengthMax);
+
+            RuleFor(x => x.AreaCode)
+                .MaximumLength(Tag.AreaCodeLengthMax);
 
             RuleForEach(x => x.Requirements)
                 .Must(RequirementMustHavePositiveInterval)

@@ -91,7 +91,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     }
 
                     var tag = new Tag(
-                        plant,
+                        plant, 
+                        TagType.Standard,
                         $"TagNo-{i}",
                         "Description",
                         "AreaCode",

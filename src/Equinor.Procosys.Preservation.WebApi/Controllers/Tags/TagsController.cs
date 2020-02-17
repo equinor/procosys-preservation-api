@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
@@ -73,9 +72,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .Select(r =>
                     new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
             
-            throw new NotImplementedException();
+            var result = await _mediator.Send(
+                new CreateAreaTagCommand(
+                    dto.ProjectName,
+                    dto.AreaTagType.ConvertToTagType(),
+                    dto.DisciplineCode,
+                    dto.AreaCode,
+                    dto.TagNoSuffix,
+                    dto.StepId,
+                    requirements,
+                    dto.Description,
+                    dto.Remark));
 
-            //return this.FromResult(result);
+            return this.FromResult(result);
         }
 
         [HttpPut("{id}/SetStep")]

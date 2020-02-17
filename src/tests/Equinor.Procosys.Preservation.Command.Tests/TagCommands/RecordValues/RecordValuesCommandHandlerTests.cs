@@ -108,7 +108,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             requirementMock.SetupGet(r => r.Id).Returns(ReqId);
             _requirement = requirementMock.Object;
 
-            var tag = new Tag("", "", "", "", "", "", "", "", "", "", "", new Mock<Step>().Object, new List<Requirement>
+            var tag = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", new Mock<Step>().Object, new List<Requirement>
             {
                 _requirement
             });

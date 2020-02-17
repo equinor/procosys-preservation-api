@@ -12,6 +12,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private readonly List<Requirement> _requirements = new List<Requirement>();
 
         public const int TagNoLengthMax = 255;
+        public const int AreaCodeLengthMax = 255;
+        public const int DisciplineCodeLengthMax = 255;
         public const int DescriptionLengthMax = 255;
         public const int RemarkLengthMax = 255;
 
@@ -22,6 +24,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public Tag(
             string schema,
+            TagType tagType,
             string tagNo,
             string description,
             string areaCode,
@@ -50,8 +53,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception("Must have at least one requirement");
             }
 
-            TagType = TagType.Standard;
-
+            TagType = tagType;
             Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
             Description = description;

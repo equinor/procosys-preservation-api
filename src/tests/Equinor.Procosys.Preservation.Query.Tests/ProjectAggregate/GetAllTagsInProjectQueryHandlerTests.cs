@@ -55,6 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
             _tagNotStartedPreservation = new Tag(
                 plant,
+                TagType.Standard,
                 "TagNo1",
                 "Desc",
                 "AreaCode",
@@ -72,6 +73,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 });
             _tagStartedPreservation = new Tag(
                 plant,
+                TagType.Standard,
                 "TagNo2",
                 "Desc",
                 "AreaCode",
