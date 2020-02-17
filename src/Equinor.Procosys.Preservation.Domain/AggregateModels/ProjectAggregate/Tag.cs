@@ -131,11 +131,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void BulkPreserve(DateTime preservedAtUtc, Person preservedBy)
             => Preserve(preservedAtUtc, preservedBy, true);
 
-        public IOrderedEnumerable<Requirement> UpComingRequirements(DateTime currentTimeUtc)
+        public IEnumerable<Requirement> UpComingRequirements(DateTime currentTimeUtc)
         {
-            var upComingRequirements = Requirements
-                .Where(r => r.IsReadyAndDueToBePreserved(currentTimeUtc) && !r.IsVoided)
-                .OrderBy(r => r.NextDueTimeUtc);
+            var upComingRequirements = OrderedRequirements()
+                .Where(r => r.IsReadyAndDueToBePreserved(currentTimeUtc));
             return upComingRequirements;
         }
 

@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
 
             return new SuccessResult<IEnumerable<TagDto>>(tags.Select(tag =>
             {
-                var requirementsDtos = tag.Requirements.Select(
+                var requirementsDtos = tag.OrderedRequirements().Select(
                     r => new RequirementDto(
                         r.Id,
                         r.RequirementDefinitionId,
