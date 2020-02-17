@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -87,12 +86,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
             }
 
-            var tagNo = CreateTagNo(request);
-
             var tagToAdd = new Tag(
                 _plantProvider.Plant,
                 request.TagType,
-                tagNo,
+                request.GetTagNo,
                 request.Description,
                 request.AreaCode,
                 null,
@@ -110,21 +107,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<int>(tagToAdd.Id);
-        }
-
-        private string CreateTagNo(CreateAreaTagCommand request)
-        {
-            var tagNo = $"{request.TagType.GetTagNoPrefix()}-{request.DisciplineCode}";
-            if (!string.IsNullOrEmpty(request.AreaCode))
-            {
-                tagNo += $"-{request.AreaCode}";
-            }
-            if (!string.IsNullOrEmpty(request.TagNoSuffix))
-            {
-                tagNo += $"-{request.TagNoSuffix}";
-            }
-
-            return tagNo;
         }
     }
 }

@@ -38,5 +38,23 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         public IEnumerable<Requirement> Requirements { get; }
         public string Description { get; }
         public string Remark { get; }
+        public string GetTagNo 
+        {
+            get
+            {
+                var tagNo = $"{TagType.GetTagNoPrefix()}-{DisciplineCode}";
+                if (!string.IsNullOrEmpty(AreaCode))
+                {
+                    tagNo += $"-{AreaCode}";
+                }
+
+                if (!string.IsNullOrEmpty(TagNoSuffix))
+                {
+                    tagNo += $"-{TagNoSuffix}";
+                }
+
+                return tagNo;
+            }
+        }
     }
 }
