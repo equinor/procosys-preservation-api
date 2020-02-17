@@ -255,7 +255,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithTwoCheckBoxesId);
-                tag.RecordValueForActivePeriod(fieldId, "true", requirementDefinition);
+                var requirement = context.Requirements.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
+                requirement.RecordValues(
+                    new Dictionary<int, string> {{fieldId, "true"}},
+                    "",
+                    requirementDefinition);
                 context.SaveChanges();
             }
 
@@ -296,11 +300,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
-                tag.RecordValueForActivePeriod(fieldWithNaId, 
-                    "NA",
-                    requirementDefinition);
-                tag.RecordValueForActivePeriod(fieldWithDoubleId, 
-                    numberAsString,
+                var requirement = context.Requirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
+                
+                requirement.RecordValues(
+                    new Dictionary<int, string>
+                    {
+                        {fieldWithNaId, "NA"},
+                        {fieldWithDoubleId, numberAsString}
+                    },
+                    "",
                     requirementDefinition);
                 context.SaveChanges();
             }

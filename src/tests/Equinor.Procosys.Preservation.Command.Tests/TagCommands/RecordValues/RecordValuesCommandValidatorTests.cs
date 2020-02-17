@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         {
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(v => v.Exists(TagId)).Returns(true);
-            _tagValidatorMock.Setup(v => v.RequirementIsReadyForRecording(ReqId)).Returns(true);
+            _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecording(TagId, ReqId)).Returns(true);
 
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(v => v.Exists(FieldId)).Returns(true);
@@ -43,10 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             _recordValuesCommandWithNormalNumber = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
-                new List<FieldValue>
-                {
-                    new FieldValue(FieldId, NumberAsString)
-                }, 
+                new Dictionary<int, string> {{FieldId, NumberAsString}},
                 Comment);
 
             _dut = new RecordValuesCommandValidator(_tagValidatorMock.Object, _fieldValidatorMock.Object);
@@ -99,13 +96,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementIsNotReadyForRecording()
         {
-            _tagValidatorMock.Setup(r => r.RequirementIsReadyForRecording(ReqId)).Returns(false);
+            _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecording(TagId, ReqId)).Returns(false);
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("The requirement for the field is not ready for recording!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't have this requirement ready for recording!"));
         }
 
         [TestMethod]
@@ -133,16 +130,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
         }
  
         [TestMethod]
-        public void Validate_ShouldFailWith3Errors_WhenErrorsInAllRules()
+        public void Validate_ShouldFailWith2Errors_WhenErrorsIn2Rules()
         {
             _tagValidatorMock.Setup(r => r.ProjectIsClosed(TagId)).Returns(true);
             _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, NumberAsString)).Returns(false);
-            _tagValidatorMock.Setup(r => r.RequirementIsReadyForRecording(ReqId)).Returns(false);
 
             var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
             
             Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(3, result.Errors.Count);
+            Assert.AreEqual(2, result.Errors.Count);
         }
     }
 }

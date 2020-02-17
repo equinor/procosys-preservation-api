@@ -69,9 +69,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void StartPreservation(DateTime startedAtUtc)
         {
-            if (_preservationPeriods.Any())
+            if (HasActivePeriod)
             {
-                throw new Exception($"{nameof(Requirement)} {Id} do have {nameof(PreservationPeriod)}. Can't start");
+                throw new Exception($"{nameof(Requirement)} {Id} already have an active {nameof(PreservationPeriod)}. Can't start");
             }
             AddNewPreservationPeriod(startedAtUtc);
         }
@@ -109,6 +109,39 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 .FirstOrDefault();
         
             return lastPreservedPeriod?.GetFieldValue(field.Id);
+        }
+
+        public void RecordValues(Dictionary<int, string> fieldValues, string comment, RequirementDefinition requirementDefinition)
+        {
+            if (requirementDefinition == null)
+            {
+                throw new ArgumentNullException(nameof(requirementDefinition));
+            }
+
+            if (requirementDefinition.Id != RequirementDefinitionId)
+            {
+                throw new Exception($"{nameof(Requirement)} {Id} belong to RequirementDefinition {RequirementDefinitionId}. Can't record values for RequirementDefinition {requirementDefinition.Id}");
+            }
+
+            if (!HasActivePeriod)
+            {
+                throw new Exception($"{nameof(Requirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't record values");
+            }
+
+            var period = ActivePeriod;
+
+            if (fieldValues != null)
+            {
+                foreach (var fieldValue in fieldValues)
+                {
+                    var field = requirementDefinition.Fields.Single(f => f.Id == fieldValue.Key);
+
+                    period.RecordValueForField(field, fieldValue.Value);
+                }
+            }
+
+            period.UpdateStatus(requirementDefinition);
+            period.SetComment(comment);
         }
 
         private PreservationPeriod PeriodReadyToBePreserved

@@ -46,11 +46,5 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .SelectMany(project => project.Tags)
                 .Where(tag => tagIds.Contains(tag.Id))
                 .ToListAsync();
-
-        public Task<Requirement> GetRequirementByIdAsync(int requirementId)
-            => DefaultQuery
-                .SelectMany(t => t.Tags)
-                .SelectMany(r => r.Requirements)
-                .FirstOrDefaultAsync(r => r.Id == requirementId);
     }
 }

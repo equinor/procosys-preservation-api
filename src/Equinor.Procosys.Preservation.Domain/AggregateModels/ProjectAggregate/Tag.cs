@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -133,26 +132,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void BulkPreserve(DateTime preservedAtUtc, Person preservedBy)
             => Preserve(preservedAtUtc, preservedBy, true);
-
-        // todo write more unit test. Consider refactoring to move business logic down to requirement 
-        public void RecordValueForActivePeriod(int fieldId, string value, RequirementDefinition requirementDefinition)
-        {
-            var field = requirementDefinition.Fields.Single(f => f.Id == fieldId);
-            var requirement = Requirements.Single(r => r.RequirementDefinitionId == requirementDefinition.Id);
-
-            var period = requirement.ActivePeriod;
-
-            period.RecordValueForField(field, value);
-
-            period.UpdateStatus(requirementDefinition);
-        }
-
-        public void UpdateCommentForActivePeriod(string comment, RequirementDefinition requirementDefinition)
-        {
-            var requirement = Requirements.Single(r => r.RequirementDefinitionId == requirementDefinition.Id);
-
-            requirement.ActivePeriod.SetComment(comment);
-        }
 
         public IOrderedEnumerable<Requirement> UpComingRequirements()
             => Requirements
