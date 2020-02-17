@@ -13,11 +13,11 @@ using ServiceResult;
 namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
-    public class PreservedTagsControllerTests
+    public class TagsControllerTests
     {
         private Mock<IMediator> _mediatorMock = new Mock<IMediator>();
         private CreateTagDto _createTagDto = new CreateTagDto();
-        private PreservedTagsController _dut;
+        private TagsController _dut;
 
         [TestInitialize]
         public void Setup()
@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int>{5}) as Result<List<int>>));
-            _dut = new PreservedTagsController(_mediatorMock.Object);
+            _dut = new TagsController(_mediatorMock.Object);
         }
 
         [TestMethod]
