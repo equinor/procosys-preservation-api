@@ -91,7 +91,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.CommPkgNo,
                     tag.DisciplineCode,
                     firstUpcomingRequirementDto,
-                    tag.IsAreaTag,
                     tag.IsVoided,
                     tag.McPkgNo,
                     mode.Title,
@@ -103,7 +102,8 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.Status,
                     tag.TagFunctionCode,
                     tag.Description,
-                    tag.TagNo);
+                    tag.TagNo,
+                    tag.TagType);
             });
             return new SuccessResult<IEnumerable<TagDto>>(tagDtos);
         }

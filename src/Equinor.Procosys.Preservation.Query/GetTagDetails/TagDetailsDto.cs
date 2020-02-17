@@ -15,5 +15,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
         public string McPkgNo { get; set; }
         public string PurchaseOrderNo { get; set; }
         public string AreaCode { get; set; }
+        public TagType TagType { get; set; }
     }
 }

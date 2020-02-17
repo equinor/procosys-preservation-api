@@ -213,7 +213,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.AreEqual(mainTagDetails.CommPkgNo, tagAddedToProject.CommPkgNo);
             Assert.AreEqual(mainTagDetails.DisciplineCode, tagAddedToProject.DisciplineCode);
             Assert.AreEqual(0, tagAddedToProject.Id);
-            Assert.AreEqual(false, tagAddedToProject.IsAreaTag);
+            Assert.AreEqual(TagType.Standard, tagAddedToProject.TagType);
             Assert.AreEqual(mainTagDetails.McPkgNo, tagAddedToProject.McPkgNo);
             Assert.AreEqual(mainTagDetails.Description, tagAddedToProject.Description);
             Assert.AreEqual(mainTagDetails.PurchaseOrderNo, tagAddedToProject.PurchaseOrderNo);

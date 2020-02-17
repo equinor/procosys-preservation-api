@@ -158,7 +158,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(tag.CommPkgNo, tagDto.CommPkgNo);
             Assert.AreEqual(tag.DisciplineCode, tagDto.DisciplineCode);
             Assert.AreEqual(tag.Id, tagDto.Id);
-            Assert.AreEqual(tag.IsAreaTag, tagDto.IsAreaTag);
+            Assert.AreEqual(TagType.Standard, tagDto.TagType);
             Assert.AreEqual(tag.IsVoided, tagDto.IsVoided);
             Assert.AreEqual(tag.McPkgNo, tagDto.McPkgNo);
             Assert.AreEqual(ModeTitle, tagDto.Mode);
