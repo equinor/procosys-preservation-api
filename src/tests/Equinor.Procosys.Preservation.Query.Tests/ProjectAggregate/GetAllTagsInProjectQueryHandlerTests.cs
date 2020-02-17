@@ -199,11 +199,23 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(IntervalWeeks, requirementDto.NextDueWeeks);
             Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
             Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
+            Assert.IsNull(tagDto.FirstUpcomingRequirement);
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsCorrectFirstUpcomingRequirement_WhenPreservationStarted()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnsFirstUpcomingRequirement_WhenNotDue()
         {
+            var result = await _dut.Handle(_query, default);
+
+            var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
+
+            Assert.IsNull(tagDto.FirstUpcomingRequirement);
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsCorrectFirstUpcomingRequirement_OnDue()
+        {
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow.AddWeeks(IntervalWeeks));
             var result = await _dut.Handle(_query, default);
 
             var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
