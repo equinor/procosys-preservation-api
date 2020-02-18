@@ -44,11 +44,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _req2OnTag1WithFourWeekInterval = new Requirement("", FourWeeksInterval, rdMock.Object);
             _req1OnTag2WithTwoWeekInterval = new Requirement("", TwoWeeksInterval, rdMock.Object);
             _req2OnTag2WithFourWeekInterval = new Requirement("", FourWeeksInterval, rdMock.Object);
-            _tag1 = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
+            _tag1 = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _req1OnTag1WithTwoWeekInterval, _req2OnTag1WithFourWeekInterval
             });
-            _tag2 = new Tag("", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
+            _tag2 = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _req1OnTag2WithTwoWeekInterval, _req2OnTag2WithFourWeekInterval
             });
