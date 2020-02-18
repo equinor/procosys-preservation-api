@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
-            => UpComingRequirements(currentTimeUtc).FirstOrDefault();
+            => GetUpComingRequirements(currentTimeUtc).FirstOrDefault();
 
         public bool IsReadyToBePreserved(DateTime currentTimeUtc)
             => Status == PreservationStatus.Active && 
@@ -133,11 +133,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void BulkPreserve(DateTime preservedAtUtc, Person preservedBy)
             => Preserve(preservedAtUtc, preservedBy, true);
 
-        public IEnumerable<Requirement> UpComingRequirements(DateTime currentTimeUtc)
+        public IEnumerable<Requirement> GetUpComingRequirements(DateTime currentTimeUtc)
         {
-            var upComingRequirements = OrderedRequirements()
+            var GetUpComingRequirements = OrderedRequirements()
                 .Where(r => r.IsReadyAndDueToBePreserved(currentTimeUtc));
-            return upComingRequirements;
+            return GetUpComingRequirements;
         }
 
         public IOrderedEnumerable<Requirement> OrderedRequirements()
@@ -152,7 +152,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved ");
             }
 
-            foreach (var requirement in UpComingRequirements(preservedAtUtc))
+            foreach (var requirement in GetUpComingRequirements(preservedAtUtc))
             {
                 requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
             }

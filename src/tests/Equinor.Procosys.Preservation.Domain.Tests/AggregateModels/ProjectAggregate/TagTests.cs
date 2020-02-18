@@ -479,57 +479,57 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldReturnNoneRequirements_BeforePreservationStarted()
+        public void GetUpComingRequirements_ShouldReturnNoneRequirements_BeforePreservationStarted()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
-            Assert.AreEqual(0, dut.UpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
+            Assert.AreEqual(0, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldReturnNoneRequirements_BeforeDue()
+        public void GetUpComingRequirements_ShouldReturnNoneRequirements_BeforeDue()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
             dut.StartPreservation(_utcNow);
-            Assert.AreEqual(0, dut.UpComingRequirements(_utcNow).Count());
+            Assert.AreEqual(0, dut.GetUpComingRequirements(_utcNow).Count());
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldReturnTwoReadyRequirements_WhenBothReadyAndDue()
+        public void GetUpComingRequirements_ShouldReturnTwoReadyRequirements_WhenBothReadyAndDue()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
 
-            Assert.AreEqual(2, dut.UpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
+            Assert.AreEqual(2, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldReturnReadyRequirements_WhenOverDue()
+        public void GetUpComingRequirements_ShouldReturnReadyRequirements_WhenOverDue()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
 
-            Assert.AreEqual(1, dut.UpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
+            Assert.AreEqual(1, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldReturnReadyRequirements_WhenDue()
+        public void GetUpComingRequirements_ShouldReturnReadyRequirements_WhenDue()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
 
-            Assert.AreEqual(1, dut.UpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
+            Assert.AreEqual(1, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldNotReturnVoidedRequirements()
+        public void GetUpComingRequirements_ShouldNotReturnVoidedRequirements()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
             dut.Requirements.ElementAt(0).Void();
 
-            Assert.AreEqual(1, dut.UpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
+            Assert.AreEqual(1, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
         
         [TestMethod]
