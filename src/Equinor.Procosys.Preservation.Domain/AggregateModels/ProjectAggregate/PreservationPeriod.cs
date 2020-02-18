@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                     // todo
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException($"Can't record value for {field.FieldType}");
+                    throw new Exception($"Can't record value for {field.FieldType}");
             }
         }
         

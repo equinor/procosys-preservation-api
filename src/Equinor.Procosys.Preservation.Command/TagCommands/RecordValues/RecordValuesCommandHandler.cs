@@ -33,12 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
             var requirementDefinition =
                 await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
 
-            foreach (var fieldValue in request.FieldValues)
-            {
-                tag.RecordValueForActivePeriod(fieldValue.FieldId, fieldValue.Value, requirementDefinition);
-            }
-
-            tag.UpdateCommentForActivePeriod(request.Comment, requirementDefinition);
+            requirement.RecordValues(request.FieldValues, request.Comment, requirementDefinition);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);

@@ -70,10 +70,17 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             return tag.IsReadyToBePreserved(preservedAtUtc);
         }
 
-        public bool RequirementIsReadyForRecording(int requirementId)
+        public bool HaveRequirementReadyForRecording(int tagId, int requirementId)
         {
-            var req = _projectRepository.GetRequirementByIdAsync(requirementId).Result;
-            return req.HasActivePeriod;
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
+            if (tag == null)
+            {
+                return false;
+            }
+
+            var requirement = tag.Requirements.SingleOrDefault(r => r.Id == requirementId);
+
+            return requirement != null && requirement.HasActivePeriod;
         }
     }
 }
