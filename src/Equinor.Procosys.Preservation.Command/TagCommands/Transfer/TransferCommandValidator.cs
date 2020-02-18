@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
@@ -9,9 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
 {
     public class TransferCommandValidator : AbstractValidator<TransferCommand>
     {
-        public TransferCommandValidator(
-            ITagValidator tagValidator,
-            ITimeService timeService)
+        public TransferCommandValidator(ITagValidator tagValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
                         
@@ -33,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                     .Must(PreservationIsStarted)
                     .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
                     .Must(HaveNextStep)
-                    .WithMessage((x, id) => $"Tag do not have a next step to transfer to! Tag={id}");
+                    .WithMessage((x, id) => $"Tag doesn't have a next step to transfer to! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
