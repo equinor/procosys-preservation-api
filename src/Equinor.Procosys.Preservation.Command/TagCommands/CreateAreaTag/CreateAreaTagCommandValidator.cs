@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            RuleFor(tag => tag.GetTagNo)
+            RuleFor(tag => tag.GetTagNo())
                 .Must((command, tagNo) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName))
                 .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo} Project={command.ProjectName}");
 
@@ -35,9 +35,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
             RuleFor(tag => tag.Requirements)
                 .Must(r => r.Any())
-                .WithMessage(tag => $"At least 1 requirement must be given! Tag={tag.GetTagNo}")
+                .WithMessage(tag => $"At least 1 requirement must be given! Tag={tag.GetTagNo()}")
                 .Must(BeUniqueRequirements)
-                .WithMessage(tag => $"Requirement definitions must be unique! Tag={tag.GetTagNo}");
+                .WithMessage(tag => $"Requirement definitions must be unique! Tag={tag.GetTagNo()}");
 
             RuleForEach(tag => tag.Requirements)
                 .Must(BeAnExistingRequirementDefinition)

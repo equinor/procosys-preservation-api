@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null);
 
-            Assert.AreEqual("#PRE-I", dut.GetTagNo);
+            Assert.AreEqual("#PRE-I", dut.GetTagNo());
         }
 
         [TestMethod]
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null);
 
-            Assert.AreEqual("#SITE-I", dut.GetTagNo);
+            Assert.AreEqual("#SITE-I", dut.GetTagNo());
         }
 
         [TestMethod]
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null);
 
-            Assert.AreEqual("#PRE-I-XX", dut.GetTagNo);
+            Assert.AreEqual("#PRE-I-XX", dut.GetTagNo());
         }
 
         [TestMethod]
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null);
 
-            Assert.AreEqual("#SITE-I-XX", dut.GetTagNo);
+            Assert.AreEqual("#SITE-I-XX", dut.GetTagNo());
         }
 
         [TestMethod]
@@ -118,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null);
 
-            Assert.AreEqual("#PRE-I-A300", dut.GetTagNo);
+            Assert.AreEqual("#PRE-I-A300", dut.GetTagNo());
         }
 
         [TestMethod]
@@ -135,7 +135,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null);
 
-            Assert.AreEqual("#SITE-I-A300", dut.GetTagNo);
+            Assert.AreEqual("#SITE-I-A300", dut.GetTagNo());
         }
 
         [TestMethod]
@@ -152,7 +152,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null);
 
-            Assert.AreEqual("#PRE-I-A300-XX", dut.GetTagNo);
+            Assert.AreEqual("#PRE-I-A300-XX", dut.GetTagNo());
         }
 
         [TestMethod]
@@ -169,7 +169,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null);
 
-            Assert.AreEqual("#SITE-I-A300-XX", dut.GetTagNo);
+            Assert.AreEqual("#SITE-I-A300-XX", dut.GetTagNo());
         }
 
         [TestMethod]

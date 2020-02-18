@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             var tagToAdd = new Tag(
                 _plantProvider.Plant,
                 request.TagType,
-                request.GetTagNo,
+                request.GetTagNo(),
                 request.Description,
                 request.AreaCode,
                 null,

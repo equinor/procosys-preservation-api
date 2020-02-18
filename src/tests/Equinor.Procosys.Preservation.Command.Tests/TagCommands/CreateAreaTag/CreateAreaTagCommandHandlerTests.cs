@@ -205,7 +205,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(TestPlant, tagAddedToProject.Schema);
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.IsNull(tagAddedToProject.TagFunctionCode);
-            Assert.AreEqual(command.GetTagNo, tagAddedToProject.TagNo);
+            Assert.AreEqual(command.GetTagNo(), tagAddedToProject.TagNo);
             Assert.AreEqual(2, tagAddedToProject.Requirements.Count);
             AssertReqProperties(tagAddedToProject.Requirements.First(), ReqDefId1, Interval1);
             AssertReqProperties(tagAddedToProject.Requirements.Last(), ReqDefId2, Interval2);
