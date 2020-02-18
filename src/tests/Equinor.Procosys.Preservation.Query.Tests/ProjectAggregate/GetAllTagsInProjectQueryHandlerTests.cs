@@ -133,7 +133,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsOkResult()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
         {
             var result = await _dut.Handle(_query, default);
 
@@ -141,7 +141,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsCorrectNumberOfItems()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectNumberOfItems()
         {
             var result = await _dut.Handle(_query, default);
 
@@ -149,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsCorrectDto()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectDto()
         {
             var result = await _dut.Handle(_query, default);
 
@@ -175,7 +175,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnsDueInfo_WhenPreservationNotStarted()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnDueInfo_WhenPreservationNotStarted()
         {
             var result = await _dut.Handle(_query, default);
 
@@ -190,7 +190,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsDueInfo_WhenPreservationStarted()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnDueInfo_WhenPreservationStarted()
         {
             var result = await _dut.Handle(_query, default);
 
@@ -201,11 +201,23 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(IntervalWeeks, requirementDto.NextDueWeeks);
             Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
             Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
+            Assert.IsNull(tagDto.FirstUpcomingRequirement);
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsCorrectFirstUpcomingRequirement_WhenPreservationStarted()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnFirstUpcomingRequirement_WhenNotDue()
         {
+            var result = await _dut.Handle(_query, default);
+
+            var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
+
+            Assert.IsNull(tagDto.FirstUpcomingRequirement);
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectFirstUpcomingRequirement_OnDue()
+        {
+            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow.AddWeeks(IntervalWeeks));
             var result = await _dut.Handle(_query, default);
 
             var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
@@ -216,7 +228,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnsNoElements_WhenThereIsNoTags()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnNoElements_WhenThereIsNoTags()
         {
             _projectRepositoryMock
                 .Setup(x => x.GetAllTagsInProjectAsync(ProjectName))
