@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public DateTime? DueTimeUtc { get; private set; }
 
-        public bool Cleared { get; private set; }
+        public DateTime? ClearedAtUtc { get; private set; }
 
         public int? ClearedById { get; private set; }
 
@@ -35,15 +35,25 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             DueTimeUtc = dueTimeUtc;
         }
 
-        public void Clear(Person clearedBy)
+        public void Clear(DateTime clearedAtUtc, Person clearedBy)
         {
             if (clearedBy == null)
             {
                 throw new ArgumentNullException(nameof(clearedBy));
             }
+            if (clearedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(clearedAtUtc)} is not Utc");
+            }
 
-            Cleared = true;
+            ClearedAtUtc = clearedAtUtc;
             ClearedById = clearedBy.Id;
+        }
+
+        public void Unclear()
+        {
+            ClearedAtUtc = null;
+            ClearedById = null;
         }
     }
 }

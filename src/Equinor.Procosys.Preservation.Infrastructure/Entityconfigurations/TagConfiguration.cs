@@ -37,6 +37,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .WithOne()
                 .IsRequired();
 
+            builder
+                .HasMany(x => x.Actions)
+                .WithOne()
+                .IsRequired();
+
             builder.Property(f => f.Status)
                 .HasConversion<string>()
                 .HasDefaultValue(PreservationStatus.NotStarted)
