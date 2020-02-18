@@ -44,11 +44,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public Step GetNextStep(int stepId)
         {
-            var nextStep = OrderedSteps()
-                .SkipWhile(s => s.Id == stepId)
-                .Skip(1)
-                .FirstOrDefault();
-            return nextStep;
+            var orderedSteps = OrderedSteps().ToList();
+            var stepIndex = orderedSteps.FindIndex(s => s.Id == stepId);
+            if (stepIndex < orderedSteps.Count - 1)
+            {
+                return orderedSteps[stepIndex+1];
+            }
+
+            return null;
         }
     }
 }

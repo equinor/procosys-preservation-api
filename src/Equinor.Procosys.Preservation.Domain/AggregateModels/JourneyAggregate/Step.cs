@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         {
         }
 
-        public Step(string schema, Mode mode, Responsible responsible)
+        public Step(string schema, Mode mode, Responsible responsible, int sortKey = 0) // sortKey will be set correct in later PBI when impl UI for Add, MoveUp and MoveDown of Steps in Journey
             : base(schema)
         {
             if (mode == null)
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentNullException(nameof(responsible));
             }
 
-            SortKey = 0; // Later PBI when impl UI for Add, MoveUp and MoveDown of Steps in Journey
+            SortKey = sortKey;
             ModeId = mode.Id;
             ResponsibleId = responsible.Id;
         }
