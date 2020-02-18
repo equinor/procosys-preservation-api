@@ -65,16 +65,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var secondStepId = 3;
             var thirdStepId = 967;
             
-            var firstStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
+            var firstStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object);
             firstStepMock.SetupGet(s => s.Id).Returns(firstStepId);
+            firstStepMock.Object.SortKey = 10;
             var firstStep = firstStepMock.Object;
 
-            var secondStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 20);
+            var secondStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object);
             secondStepMock.SetupGet(s => s.Id).Returns(secondStepId);
+            secondStepMock.Object.SortKey = 20;
             var secondStep = secondStepMock.Object;
 
-            var thirdStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 30);
+            var thirdStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object);
             thirdStepMock.SetupGet(s => s.Id).Returns(thirdStepId);
+            thirdStepMock.Object.SortKey = 30;
             var thirdStep = thirdStepMock.Object;
             
             _dut.AddStep(thirdStep);
@@ -99,15 +102,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var secondStepId = 2;
             var thirdStepId = 3;
             
-            var firstStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
+            var firstStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object);
             firstStepMock.SetupGet(s => s.Id).Returns(firstStepId);
             var firstStep = firstStepMock.Object;
 
-            var secondStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
+            var secondStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object);
             secondStepMock.SetupGet(s => s.Id).Returns(secondStepId);
             var secondStep = secondStepMock.Object;
 
-            var thirdStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
+            var thirdStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object);
             thirdStepMock.SetupGet(s => s.Id).Returns(thirdStepId);
             var thirdStep = thirdStepMock.Object;
             
