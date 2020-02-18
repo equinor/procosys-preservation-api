@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual("SchemaA", _dut.Schema);
             Assert.IsFalse(_dut.DueTimeUtc.HasValue);
             Assert.IsFalse(_dut.ClearedById.HasValue);
-            Assert.IsFalse(_dut.Cleared);
+            Assert.IsNull(_dut.ClearedAtUtc);
             Assert.AreEqual("DescA", _dut.Description);
         }
 
@@ -69,12 +69,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Clear_ShouldClearDueDate()
+        public void Clear_Unclear_ShouldToggleClearedData()
         {
-            _dut.Clear(_clearedByMock.Object);
+            _dut.Clear(_utcNow, _clearedByMock.Object);
 
             Assert.AreEqual(ClearedById, _dut.ClearedById);
-            Assert.IsTrue(_dut.Cleared);
+            Assert.AreEqual(_utcNow, _dut.ClearedAtUtc);
+
+            _dut.Unclear();
+
+            Assert.IsNull(_dut.ClearedById);
+            Assert.IsNull(_dut.ClearedAtUtc);
         }
     }
 }
