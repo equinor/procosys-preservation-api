@@ -122,6 +122,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual("RemarkA", _dutWithOneReqNotNeedInputTwoWeekInterval.Remark);
             Assert.AreEqual("TagFunctionCodeA", _dutWithOneReqNotNeedInputTwoWeekInterval.TagFunctionCode);
             Assert.AreEqual(_stepMock.Object.Id, _dutWithOneReqNotNeedInputTwoWeekInterval.StepId);
+            Assert.AreEqual(TagType.Standard, _dutWithOneReqNotNeedInputTwoWeekInterval.TagType);
             var requirements = _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements;
             Assert.AreEqual(1, requirements.Count);
             
@@ -483,7 +484,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetUpComingRequirements_ShouldReturnNoneRequirements_BeforePreservationStarted()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            var dut = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
             Assert.AreEqual(0, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
@@ -500,7 +501,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetUpComingRequirements_ShouldReturnTwoReadyRequirements_WhenBothReadyAndDue()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var dut = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
 
             Assert.AreEqual(2, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
@@ -509,7 +510,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetUpComingRequirements_ShouldReturnReadyRequirements_WhenOverDue()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var dut = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
 
             Assert.AreEqual(1, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
