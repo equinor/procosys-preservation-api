@@ -14,7 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.MainApi\Equinor.Procosys.Preservation.MainApi.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Query\Equinor.Procosys.Preservation.Query.csproj" />
   </ItemGroup>
 
   <ItemGroup>
