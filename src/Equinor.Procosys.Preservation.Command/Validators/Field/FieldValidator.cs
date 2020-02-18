@@ -32,5 +32,11 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Field
                     return false;
             }
         }
+
+        public bool IsValidForRecording(int fieldId)
+        {
+            var field = _requirementTypeRepository.GetFieldByIdAsync(fieldId).Result;
+            return field.FieldType == FieldType.Number || field.FieldType == FieldType.CheckBox;
+        }
     }
 }

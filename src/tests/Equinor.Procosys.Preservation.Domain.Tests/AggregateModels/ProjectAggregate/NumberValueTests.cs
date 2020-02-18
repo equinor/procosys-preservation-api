@@ -49,5 +49,42 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             => Assert.ThrowsException<ArgumentException>(() =>
                 new NumberValue("SchemaA", new Mock<Field>().Object, "ABC")
             );
+
+        [TestMethod]
+        public void IsValidValue_ShouldAcceptNumber()
+        {
+            var number = 1282.91;
+            var valid = NumberValue.IsValidValue(number.ToString("F2"), out var parsedNumber);
+
+            Assert.AreEqual(number, parsedNumber);
+            Assert.IsTrue(valid);
+        }
+
+        [TestMethod]
+        public void IsValidValue_ShouldAcceptBlank()
+        {
+            var valid = NumberValue.IsValidValue(string.Empty, out var parsedNumber);
+
+            Assert.IsNull(parsedNumber);
+            Assert.IsTrue(valid);
+        }
+
+        [TestMethod]
+        public void IsValidValue_ShouldAcceptNull()
+        {
+            var valid = NumberValue.IsValidValue(null, out var parsedNumber);
+
+            Assert.IsNull(parsedNumber);
+            Assert.IsTrue(valid);
+        }
+
+        [TestMethod]
+        public void IsValidValue_ShouldAcceptNA()
+        {
+            var valid = NumberValue.IsValidValue("NA", out var parsedNumber);
+
+            Assert.IsNull(parsedNumber);
+            Assert.IsTrue(valid);
+        }
     }
 }
