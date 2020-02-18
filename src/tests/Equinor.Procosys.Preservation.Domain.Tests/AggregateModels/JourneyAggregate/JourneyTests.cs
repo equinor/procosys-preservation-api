@@ -12,30 +12,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
     public class JourneyTests
     {
         private Journey _dut;
-        private int _firstStepId = 10033;
-        private int _secondStepId = 3;
-        private int _thirdStepId = 967;
-        private Step _firstStep;
-        private Step _secondStep;
-        private Step _thirdStep;
 
         [TestInitialize]
-        public void Setup()
-        {
-            _dut = new Journey("SchemaA", "TitleA");
-
-            var firstStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
-            firstStepMock.SetupGet(s => s.Id).Returns(_firstStepId);
-            _firstStep = firstStepMock.Object;
-
-            var secondStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 20);
-            secondStepMock.SetupGet(s => s.Id).Returns(_secondStepId);
-            _secondStep = secondStepMock.Object;
-
-            var thirdStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 30);
-            thirdStepMock.SetupGet(s => s.Id).Returns(_thirdStepId);
-            _thirdStep = thirdStepMock.Object;
-        }
+        public void Setup() => _dut = new Journey("SchemaA", "TitleA");
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
@@ -44,7 +23,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.IsFalse(_dut.IsVoided);
             Assert.AreEqual(0, _dut.Steps.Count);
-            Assert.AreEqual(0, _dut.OrderedSteps().Count());
         }
 
         [TestMethod]
@@ -81,32 +59,69 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void OrderedSteps_Should_ReturnCorrectOrder()
+        public void GetNextStep_ShouldReturnStepWithNextSortKey_WhenDifferentSortKeys()
         {
-            _dut.AddStep(_thirdStep);
-            _dut.AddStep(_firstStep);
-            _dut.AddStep(_secondStep);
+            var firstStepId = 10033;
+            var secondStepId = 3;
+            var thirdStepId = 967;
+            
+            var firstStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
+            firstStepMock.SetupGet(s => s.Id).Returns(firstStepId);
+            var firstStep = firstStepMock.Object;
 
-            var steps = _dut.OrderedSteps().ToList();
-            Assert.AreEqual(_firstStep, steps[0]);
-            Assert.AreEqual(_secondStep, steps[1]);
-            Assert.AreEqual(_thirdStep, steps[2]);
+            var secondStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 20);
+            secondStepMock.SetupGet(s => s.Id).Returns(secondStepId);
+            var secondStep = secondStepMock.Object;
+
+            var thirdStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 30);
+            thirdStepMock.SetupGet(s => s.Id).Returns(thirdStepId);
+            var thirdStep = thirdStepMock.Object;
+            
+            _dut.AddStep(thirdStep);
+            _dut.AddStep(firstStep);
+            _dut.AddStep(secondStep);
+
+            var step = _dut.GetNextStep(firstStepId);
+            Assert.AreEqual(secondStep, step);
+
+            step = _dut.GetNextStep(secondStepId);
+            Assert.AreEqual(thirdStep, step);
+
+            step = _dut.GetNextStep(thirdStepId);
+            Assert.IsNull(step);
         }
 
         [TestMethod]
-        public void GetNextStep_Should_ReturnCorrectStep()
+        public void GetNextStep_ShouldReturnNextStepInList_WhenEqualSortKeys()
         {
-            _dut.AddStep(_thirdStep);
-            _dut.AddStep(_firstStep);
-            _dut.AddStep(_secondStep);
+            // this test exists to ensure reconsidering the case with Equal SortKeys when step sorting is implemented properly later
+            var firstStepId = 1;
+            var secondStepId = 2;
+            var thirdStepId = 3;
+            
+            var firstStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
+            firstStepMock.SetupGet(s => s.Id).Returns(firstStepId);
+            var firstStep = firstStepMock.Object;
 
-            var step = _dut.GetNextStep(_firstStepId);
-            Assert.AreEqual(_secondStep, step);
+            var secondStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
+            secondStepMock.SetupGet(s => s.Id).Returns(secondStepId);
+            var secondStep = secondStepMock.Object;
 
-            step = _dut.GetNextStep(_secondStepId);
-            Assert.AreEqual(_thirdStep, step);
+            var thirdStepMock = new Mock<Step>("S", new Mock<Mode>().Object, new Mock<Responsible>().Object, 10);
+            thirdStepMock.SetupGet(s => s.Id).Returns(thirdStepId);
+            var thirdStep = thirdStepMock.Object;
+            
+            _dut.AddStep(firstStep);
+            _dut.AddStep(secondStep);
+            _dut.AddStep(thirdStep);
 
-            step = _dut.GetNextStep(_thirdStepId);
+            var step = _dut.GetNextStep(firstStepId);
+            Assert.AreEqual(secondStep, step);
+
+            step = _dut.GetNextStep(secondStepId);
+            Assert.AreEqual(thirdStep, step);
+
+            step = _dut.GetNextStep(thirdStepId);
             Assert.IsNull(step);
         }
     }

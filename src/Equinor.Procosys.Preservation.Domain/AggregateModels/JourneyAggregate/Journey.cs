@@ -35,16 +35,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             _steps.Add(step);
         }
-        
-        public IOrderedEnumerable<Step> OrderedSteps()
-            => Steps
-                .Where(r => !r.IsVoided)
-                .OrderBy(r => r.SortKey)
-                .ThenBy(r => r.Id);
 
         public Step GetNextStep(int stepId)
         {
-            var orderedSteps = OrderedSteps().ToList();
+            var orderedSteps = _steps.OrderBy(r => r.SortKey).Where(r => !r.IsVoided).ToList();
             var stepIndex = orderedSteps.FindIndex(s => s.Id == stepId);
             if (stepIndex < orderedSteps.Count - 1)
             {

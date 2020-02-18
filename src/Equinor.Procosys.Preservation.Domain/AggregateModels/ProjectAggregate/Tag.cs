@@ -147,10 +147,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 .Where(r => !r.IsVoided)
                 .OrderBy(r => r.NextDueTimeUtc);
 
-        public void Transfer()
-        {
-            throw new NotImplementedException();
-        }
+        public void Transfer(Journey journey)
+            => SetStep(journey.GetNextStep(StepId));
 
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
