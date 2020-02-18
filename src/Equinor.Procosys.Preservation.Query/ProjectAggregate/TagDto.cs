@@ -17,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             string mcPkgNo, 
             string mode,
             bool readyToBePreserved,
+            bool readyToBeTransferred,
             string purchaseOrderNo,
             string remark,
             IEnumerable<RequirementDto> requirements,
@@ -25,8 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             string tagFunctionCode,
             string tagDescription,
             string tagNo,
-            TagType tagType
-            )
+            TagType tagType)
         {
             Id = id;
             AreaCode = areaCode;
@@ -39,6 +39,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             McPkgNo = mcPkgNo;
             Mode = mode;
             ReadyToBePreserved = readyToBePreserved;
+            ReadyToBeTransferred = readyToBeTransferred;
             PurchaseOrderNo = purchaseOrderNo;
             Remark = remark;
             TagNo = tagNo;
@@ -62,11 +63,12 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public string PurchaseOrderNo { get; }
         public string Remark { get; }
         public bool ReadyToBePreserved { get; }
+        public bool ReadyToBeTransferred { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
         public string ResponsibleCode { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
-        public TagType TagType { get;  }
+        public TagType TagType { get; }
     }
 }

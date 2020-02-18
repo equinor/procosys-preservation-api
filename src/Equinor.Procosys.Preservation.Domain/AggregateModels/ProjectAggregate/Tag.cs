@@ -147,14 +147,31 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 .Where(r => !r.IsVoided)
                 .OrderBy(r => r.NextDueTimeUtc);
 
+        public bool IsReadyToBeTransferred(Journey journey)
+        {
+            if (journey == null)
+            {
+                throw new ArgumentNullException(nameof(journey));
+            }
+
+            return Status == PreservationStatus.Active && journey.GetNextStep(StepId) != null;
+        }
+
         public void Transfer(Journey journey)
-            => SetStep(journey.GetNextStep(StepId));
+        {
+            if (!IsReadyToBeTransferred(journey))
+            {
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be transferred");
+            }
+
+            SetStep(journey.GetNextStep(StepId));
+        }
 
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
             if (!IsReadyToBePreserved(preservedAtUtc))
             {
-                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved ");
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
             }
 
             foreach (var requirement in GetUpComingRequirements(preservedAtUtc))

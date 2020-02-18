@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.Active} to preserve!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.Active} to transfer!"));
         }
 
         [TestMethod]

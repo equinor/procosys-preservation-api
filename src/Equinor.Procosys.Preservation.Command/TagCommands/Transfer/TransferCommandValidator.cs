@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                     .Must(NotBeInAClosedProject)
                     .WithMessage((x, id) => $"Project for tag is closed! Tag={id}")
                     .Must(PreservationIsStarted)
-                    .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
+                    .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to transfer! Tag={id}")
                     .Must(HaveNextStep)
                     .WithMessage((x, id) => $"Tag doesn't have a next step to transfer to! Tag={id}");
             });

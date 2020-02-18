@@ -50,9 +50,10 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                 .ThenBy(t => t.Id)
                 .ToList();
 
-            var stepIds = tags.Select(t => t.StepId).Distinct();
-            var steps = await _journeyRepository.GetStepsByStepIdsAsync(stepIds);
+            var stepIds = tags.Select(t => t.StepId).Distinct().ToList();
+            var journeys = await _journeyRepository.GetJourneysByStepIdsAsync(stepIds);
 
+            var steps = journeys.SelectMany(s => s.Steps).Where(s => stepIds.Contains(s.Id)).ToList();
             var modeIds = steps.Select(s => s.ModeId).Distinct();
             var modes = await _modeRepository.GetByIdsAsync(modeIds);
 
@@ -81,6 +82,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     firstUpcomingRequirementDto = requirementDtos.Single(r => r.Id == firstUpcomingRequirement.Id);
                 }
 
+                var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
                 var step = steps.Single(s => s.Id == tag.StepId);
                 var mode = modes.Single(m => m.Id == step.ModeId);
                 var resp = responsibles.Single(r => r.Id == step.ResponsibleId);
@@ -95,6 +97,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.McPkgNo,
                     mode.Title,
                     tag.IsReadyToBePreserved(now),
+                    tag.IsReadyToBeTransferred(journey),
                     tag.PurchaseOrderNo,
                     tag.Remark,
                     requirementDtos,

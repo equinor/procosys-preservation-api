@@ -39,7 +39,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
 
-            var stepId = 2;
+            var step1Id = 2;
+            var step2Id = 12;
             var modeId = 12;
             var respId = 22;
             var plant = "PCS$TESTPLANT";
@@ -50,8 +51,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var respMock = new Mock<Responsible>(plant, ResponsibleCode);
             respMock.SetupGet(r => r.Id).Returns(respId);
             
-            var stepMock = new Mock<Step>(plant, modeMock.Object, respMock.Object);
-            stepMock.SetupGet(s => s.Id).Returns(stepId);
+            var step1Mock = new Mock<Step>(plant, modeMock.Object, respMock.Object);
+            step1Mock.SetupGet(s => s.Id).Returns(step1Id);
+            step1Mock.Object.SortKey = 10;
+            var step2Mock = new Mock<Step>(plant, modeMock.Object, respMock.Object);
+            step2Mock.SetupGet(s => s.Id).Returns(step2Id);
+            step2Mock.Object.SortKey = 20;
+
+            var journey = new Journey("","");
+            journey.AddStep(step1Mock.Object);
+            journey.AddStep(step2Mock.Object);
 
             _tagNotStartedPreservation = new Tag(
                 plant,
@@ -66,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 "PoNo",
                 "Remark",
                 "TagFunctionCode",
-                stepMock.Object,
+                step1Mock.Object,
                 new List<Requirement>
                 {
                     new Requirement(plant, IntervalWeeks, new Mock<RequirementDefinition>().Object)
@@ -84,7 +93,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 "PoNo",
                 "Remark",
                 "TagFunctionCode",
-                stepMock.Object,
+                step1Mock.Object,
                 new List<Requirement>
                 {
                     new Requirement(plant, IntervalWeeks, new Mock<RequirementDefinition>().Object)
@@ -104,19 +113,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyRepositoryMock
                 .Setup(r
-                    => r.GetStepsByStepIdsAsync(new List<int> {stepId}))
-                .Returns(Task.FromResult(new List<Step> {stepMock.Object}));
+                    => r.GetJourneysByStepIdsAsync(It.IsAny<List<int>>()))
+                .Returns(Task.FromResult(new List<Journey> {journey}));
 
             _modeRepositoryMock = new Mock<IModeRepository>();
             _modeRepositoryMock
-                .Setup(r
-                    => r.GetByIdsAsync(new List<int> {modeId}))
+                .Setup(r => r.GetByIdsAsync(new List<int> {modeId}))
                 .Returns(Task.FromResult(new List<Mode> {modeMock.Object}));
             
             _respRepositoryMock = new Mock<IResponsibleRepository>();
             _respRepositoryMock
-                .Setup(r
-                    => r.GetByIdsAsync(new List<int> {respId}))
+                .Setup(r => r.GetByIdsAsync(new List<int> {respId}))
                 .Returns(Task.FromResult(new List<Responsible> {respMock.Object}));
             
             _timeServiceMock = new Mock<ITimeService>();
@@ -212,6 +219,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
 
             Assert.IsNull(tagDto.FirstUpcomingRequirement);
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnReadyToBeTransferred()
+        {
+            var result = await _dut.Handle(_query, default);
+
+            var tagActiveDto = result.Data.First(t => t.Status == PreservationStatus.Active);
+            var tagNotStartedDto = result.Data.First(t => t.Status == PreservationStatus.NotStarted);
+
+            Assert.IsTrue(tagActiveDto.ReadyToBeTransferred);
+            Assert.IsFalse(tagNotStartedDto.ReadyToBeTransferred);
         }
 
         [TestMethod]
