@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
@@ -9,11 +10,16 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
+        private readonly IJourneyRepository _journeyRepository;
 
-        public TagValidator(IProjectRepository projectRepository, IRequirementTypeRepository requirementTypeRepository)
+        public TagValidator(
+            IProjectRepository projectRepository,
+            IRequirementTypeRepository requirementTypeRepository,
+            IJourneyRepository journeyRepository)
         {
             _projectRepository = projectRepository;
             _requirementTypeRepository = requirementTypeRepository;
+            _journeyRepository = journeyRepository;
         }
 
         public bool Exists(int tagId)
@@ -81,6 +87,20 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             var requirement = tag.Requirements.SingleOrDefault(r => r.Id == requirementId);
 
             return requirement != null && requirement.HasActivePeriod;
+        }
+
+        public bool HaveNextStep(int tagId)
+        {
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
+            if (tag == null)
+            {
+                return false;
+            }
+
+            var journey = _journeyRepository.GetJourneyByStepIdAsync(tag.StepId).Result;
+            var step = journey?.GetNextStep(tag.StepId);
+
+            return step != null;
         }
     }
 }

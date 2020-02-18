@@ -24,12 +24,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentNullException(nameof(responsible));
             }
 
+            SortKey = 0; // Later PBI when impl UI for Add, MoveUp and MoveDown of Steps in Journey
             ModeId = mode.Id;
             ResponsibleId = responsible.Id;
         }
 
         public int ModeId { get; private set; }
         public int ResponsibleId { get; private set; }
+        public int SortKey { get; private set; }
         public bool IsVoided { get; private set; }
 
         public void Void() => IsVoided = true;

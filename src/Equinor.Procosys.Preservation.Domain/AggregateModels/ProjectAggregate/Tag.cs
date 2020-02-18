@@ -145,6 +145,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 .Where(r => !r.IsVoided)
                 .OrderBy(r => r.NextDueTimeUtc);
 
+        public void Transfer()
+        {
+            throw new NotImplementedException();
+        }
+
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
             if (!IsReadyToBePreserved(preservedAtUtc))
