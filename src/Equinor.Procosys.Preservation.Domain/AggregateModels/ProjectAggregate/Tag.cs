@@ -81,7 +81,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string TagNo { get; private set; }
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
         public bool IsVoided { get; private set; }
-        public DateTime? NextDueTimeUtc => FirstUpcomingRequirement?.NextDueTimeUtc;
+        public DateTime? NextDueTimeUtc => OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
@@ -120,12 +120,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             Status = PreservationStatus.Active;
         }
 
-        public Requirement FirstUpcomingRequirement => UpComingRequirements().FirstOrDefault();
+        public Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
+            => GetUpComingRequirements(currentTimeUtc).FirstOrDefault();
 
         public bool IsReadyToBePreserved(DateTime currentTimeUtc)
             => Status == PreservationStatus.Active && 
-               FirstUpcomingRequirement != null && 
-               FirstUpcomingRequirement.IsReadyAndDueToBePreserved(currentTimeUtc);
+               FirstUpcomingRequirement(currentTimeUtc) != null;
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy)
             => Preserve(preservedAtUtc, preservedBy, false);
@@ -133,10 +133,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void BulkPreserve(DateTime preservedAtUtc, Person preservedBy)
             => Preserve(preservedAtUtc, preservedBy, true);
 
-        public IOrderedEnumerable<Requirement> UpComingRequirements()
-            => Requirements
-                .Where(r => r.NextDueTimeUtc.HasValue && !r.IsVoided)
-                .OrderBy(r => r.NextDueTimeUtc.Value);
+        public IEnumerable<Requirement> GetUpComingRequirements(DateTime currentTimeUtc)
+        {
+            var GetUpComingRequirements = OrderedRequirements()
+                .Where(r => r.IsReadyAndDueToBePreserved(currentTimeUtc));
+            return GetUpComingRequirements;
+        }
 
         public IOrderedEnumerable<Requirement> OrderedRequirements()
             => Requirements
@@ -150,13 +152,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved ");
             }
 
-            foreach (var requirement in UpComingRequirements())
+            foreach (var requirement in GetUpComingRequirements(preservedAtUtc))
             {
-                if (!requirement.IsReadyAndDueToBePreserved(preservedAtUtc))
-                {
-                    // exit on first requirement not Ready and Due so we don't preserve Ready requirements not due yet
-                    break;
-                }
                 requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
             }
         }

@@ -30,11 +30,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private List<Requirement> _oneReq_NeedInputTwoWeekInterval;
         private List<Requirement> _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval;
         private List<Requirement> _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval;
+        private List<Requirement> _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval;
         
         private DateTime _utcNow;
         private DateTime _dueTimeForTwoWeeksInterval;
         private DateTime _dueTimeForThreeWeeksInterval;
-        private Tag _dutWithOneReqNotNeedInput;
+        private Tag _dutWithOneReqNotNeedInputTwoWeekInterval;
 
         [TestInitialize]
         public void Setup()
@@ -81,11 +82,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 _reqNotNeedInputTwoWeekInterval, _reqNeedInputThreeWeekInterval
             };
 
+            _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval = new List<Requirement>
+            {
+                _reqNotNeedInputTwoWeekInterval, _reqNotNeedInputThreeWeekInterval
+            };
+
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _dueTimeForTwoWeeksInterval = _utcNow.AddWeeks(TwoWeeksInterval);
             _dueTimeForThreeWeeksInterval = _utcNow.AddWeeks(ThreeWeeksInterval);
 
-            _dutWithOneReqNotNeedInput = new Tag("SchemaA",
+            _dutWithOneReqNotNeedInputTwoWeekInterval = new Tag("SchemaA",
                 "TagNoA",
                 "DescA", 
                 "AreaCodeA", 
@@ -103,31 +109,31 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual("SchemaA", _dutWithOneReqNotNeedInput.Schema);
-            Assert.AreEqual("TagNoA", _dutWithOneReqNotNeedInput.TagNo);
-            Assert.AreEqual("DescA", _dutWithOneReqNotNeedInput.Description);
-            Assert.AreEqual("AreaCodeA", _dutWithOneReqNotNeedInput.AreaCode);
-            Assert.AreEqual("CalloffA", _dutWithOneReqNotNeedInput.Calloff);
-            Assert.AreEqual("DisciplineA", _dutWithOneReqNotNeedInput.DisciplineCode);
-            Assert.AreEqual("McPkgA", _dutWithOneReqNotNeedInput.McPkgNo);
-            Assert.AreEqual("PurchaseOrderA", _dutWithOneReqNotNeedInput.PurchaseOrderNo);
-            Assert.AreEqual("RemarkA", _dutWithOneReqNotNeedInput.Remark);
-            Assert.AreEqual("TagFunctionCodeA", _dutWithOneReqNotNeedInput.TagFunctionCode);
-            Assert.AreEqual(_stepMock.Object.Id, _dutWithOneReqNotNeedInput.StepId);
-            var requirements = _dutWithOneReqNotNeedInput.Requirements;
+            Assert.AreEqual("SchemaA", _dutWithOneReqNotNeedInputTwoWeekInterval.Schema);
+            Assert.AreEqual("TagNoA", _dutWithOneReqNotNeedInputTwoWeekInterval.TagNo);
+            Assert.AreEqual("DescA", _dutWithOneReqNotNeedInputTwoWeekInterval.Description);
+            Assert.AreEqual("AreaCodeA", _dutWithOneReqNotNeedInputTwoWeekInterval.AreaCode);
+            Assert.AreEqual("CalloffA", _dutWithOneReqNotNeedInputTwoWeekInterval.Calloff);
+            Assert.AreEqual("DisciplineA", _dutWithOneReqNotNeedInputTwoWeekInterval.DisciplineCode);
+            Assert.AreEqual("McPkgA", _dutWithOneReqNotNeedInputTwoWeekInterval.McPkgNo);
+            Assert.AreEqual("PurchaseOrderA", _dutWithOneReqNotNeedInputTwoWeekInterval.PurchaseOrderNo);
+            Assert.AreEqual("RemarkA", _dutWithOneReqNotNeedInputTwoWeekInterval.Remark);
+            Assert.AreEqual("TagFunctionCodeA", _dutWithOneReqNotNeedInputTwoWeekInterval.TagFunctionCode);
+            Assert.AreEqual(_stepMock.Object.Id, _dutWithOneReqNotNeedInputTwoWeekInterval.StepId);
+            var requirements = _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements;
             Assert.AreEqual(1, requirements.Count);
             
-            var req = _dutWithOneReqNotNeedInput.Requirements.ElementAt(0);
+            var req = _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.ElementAt(0);
             Assert.IsNull(req.NextDueTimeUtc);
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInput.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
         }
         
         [TestMethod]
         public void Constructor_ShouldNotSetReadyToBePreserved_AtAnyTime()
         {
-            Assert.IsFalse(_dutWithOneReqNotNeedInput.IsReadyToBePreserved(_utcNow));
-            Assert.IsFalse(_dutWithOneReqNotNeedInput.IsReadyToBePreserved(_utcNow.AddWeeks(TwoWeeksInterval)));
-            Assert.IsFalse(_dutWithOneReqNotNeedInput.IsReadyToBePreserved(_utcNow.AddWeeks(ThreeWeeksInterval)));
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved(_utcNow));
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved(_utcNow.AddWeeks(TwoWeeksInterval)));
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved(_utcNow.AddWeeks(ThreeWeeksInterval)));
         }
 
         [TestMethod]
@@ -150,27 +156,27 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var newStep = new Mock<Step>();
             newStep.SetupGet(x => x.Id).Returns(4);
-            _dutWithOneReqNotNeedInput.SetStep(newStep.Object);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.SetStep(newStep.Object);
 
-            Assert.AreEqual(newStep.Object.Id, _dutWithOneReqNotNeedInput.StepId);
+            Assert.AreEqual(newStep.Object.Id, _dutWithOneReqNotNeedInputTwoWeekInterval.StepId);
         }
 
         [TestMethod]
         public void SetStep_ShouldThrowException_WhenStepNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInput.SetStep(null));
+            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.SetStep(null));
 
         [TestMethod]
         public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInput.AddRequirement(null));
+            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(null));
 
         [TestMethod]
         public void StartPreservation_ShouldSetStatusActive()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInput.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
 
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
 
-            Assert.AreEqual(PreservationStatus.Active, _dutWithOneReqNotNeedInput.Status);
+            Assert.AreEqual(PreservationStatus.Active, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
         }
 
         [TestMethod]
@@ -189,29 +195,29 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBePreserved_ShouldBeFalse_BeforePeriod()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInput.Status);
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
 
-            Assert.IsFalse(_dutWithOneReqNotNeedInput.IsReadyToBePreserved(_utcNow));
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved(_utcNow));
         }
         
         [TestMethod]
         public void IsReadyToBePreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInput.Status);
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
             
-            Assert.IsTrue(_dutWithOneReqNotNeedInput.IsReadyToBePreserved(_dueTimeForTwoWeeksInterval));
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved(_dueTimeForTwoWeeksInterval));
         }
         
         [TestMethod]
         public void IsReadyToBePreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInput.Status);
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
 
             var overDue = _utcNow.AddWeeks(TwoWeeksInterval + TwoWeeksInterval);
-            Assert.IsTrue(_dutWithOneReqNotNeedInput.IsReadyToBePreserved(overDue));
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved(overDue));
         }
 
         [TestMethod]
@@ -226,57 +232,78 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void FirstUpcomingRequirement_ShouldGiveRequirement_WhenPreservationStarted()
+        public void FirstUpcomingRequirement_ShouldNotGiveRequirement_BeforeDue()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInput.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
 
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
-            var firstUpcomingRequirement = _dutWithOneReqNotNeedInput.FirstUpcomingRequirement;
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
 
-            Assert.IsNotNull(firstUpcomingRequirement);
+            Assert.IsNull(_dutWithOneReqNotNeedInputTwoWeekInterval.FirstUpcomingRequirement(_utcNow));
+        }
+
+        [TestMethod]
+        public void FirstUpcomingRequirement_ShouldGiveRequirement_OnDue()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
+
+            var firstUpcomingRequirement = _dutWithOneReqNotNeedInputTwoWeekInterval.FirstUpcomingRequirement(_dueTimeForTwoWeeksInterval);
+            Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, firstUpcomingRequirement);
+        }
+
+        [TestMethod]
+        public void FirstUpcomingRequirement_ShouldGiveRequirement_OverDue()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
+
+            var firstUpcomingRequirement = _dutWithOneReqNotNeedInputTwoWeekInterval.FirstUpcomingRequirement(_dueTimeForTwoWeeksInterval);
+            Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, firstUpcomingRequirement);
         }
 
         [TestMethod]
         public void Preserve_ShouldThrowException_WhenPreservingBeforeTime()
         {
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
                    
             Assert.ThrowsException<Exception>(() 
-                => _dutWithOneReqNotNeedInput.Preserve(_utcNow, new Mock<Person>().Object));
+                => _dutWithOneReqNotNeedInputTwoWeekInterval.Preserve(_utcNow, new Mock<Person>().Object));
      
         }
 
         [TestMethod]
         public void Preserve_ShouldPreserve_WhenPreservingOnDue()
         {
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
-            Assert.AreEqual(1, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
+            Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
             
-            _dutWithOneReqNotNeedInput.Preserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.Preserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
         }
 
         [TestMethod]
         public void Preserve_ShouldPreserve_WhenPreservingOverDue()
         {
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
-            Assert.AreEqual(1, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
+            Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
             
-            _dutWithOneReqNotNeedInput.Preserve(_dueTimeForThreeWeeksInterval, new Mock<Person>().Object);
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.Preserve(_dueTimeForThreeWeeksInterval, new Mock<Person>().Object);
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
         }
         
         [TestMethod]
         public void Preserve_ShouldPreserveOnce_WhenPreservingMultipleTimesAtSameTime()
         {
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
-            Assert.AreEqual(1, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
+            Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
             
-            _dutWithOneReqNotNeedInput.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
             Assert.ThrowsException<Exception>(() 
-                => _dutWithOneReqNotNeedInput.Preserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object));
+                => _dutWithOneReqNotNeedInputTwoWeekInterval.Preserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object));
         }
 
         [TestMethod]
@@ -319,13 +346,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Preserve_ShouldChangeUpComingRequirement()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
-            Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, dut.FirstUpcomingRequirement);
+            Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, dut.FirstUpcomingRequirement(_dueTimeForThreeWeeksInterval));
 
             dut.Preserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
 
-            Assert.AreEqual(_reqNeedInputThreeWeekInterval, dut.FirstUpcomingRequirement);
+            Assert.AreEqual(_reqNotNeedInputThreeWeekInterval, dut.FirstUpcomingRequirement(_dueTimeForThreeWeeksInterval));
         }
         
         [TestMethod]
@@ -384,43 +411,43 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void BulkPreserve_ShouldThrowException_WhenPreservingBeforeTime()
         {
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
             
             Assert.ThrowsException<Exception>(() 
-                => _dutWithOneReqNotNeedInput.BulkPreserve(_utcNow, new Mock<Person>().Object));
+                => _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_utcNow, new Mock<Person>().Object));
         }
 
         [TestMethod]
         public void BulkPreserve_ShouldPreserve_WhenPreservingOnDue()
         {
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
-            Assert.AreEqual(1, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
+            Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
             
-            _dutWithOneReqNotNeedInput.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
         }
 
         [TestMethod]
         public void BulkPreserve_ShouldPreserve_WhenPreservingOverDue()
         {
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
-            Assert.AreEqual(1, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
+            Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
             
-            _dutWithOneReqNotNeedInput.BulkPreserve(_dueTimeForThreeWeeksInterval, new Mock<Person>().Object);
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_dueTimeForThreeWeeksInterval, new Mock<Person>().Object);
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
         }
         
         [TestMethod]
         public void BulkPreserve_ShouldPreserveOnce_WhenPreservingMultipleTimesAtSameTime()
         {
-            _dutWithOneReqNotNeedInput.StartPreservation(_utcNow);
-            Assert.AreEqual(1, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation(_utcNow);
+            Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
             
-            _dutWithOneReqNotNeedInput.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInput.FirstUpcomingRequirement.PreservationPeriods.Count);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
             Assert.ThrowsException<Exception>(() 
-                => _dutWithOneReqNotNeedInput.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object));
+                => _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object));
         }
         
         [TestMethod]
@@ -442,41 +469,67 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void BulkPreserve_ShouldChangeUpComingRequirement()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
-            Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, dut.FirstUpcomingRequirement);
+            Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, dut.FirstUpcomingRequirement(_dueTimeForTwoWeeksInterval));
 
             dut.BulkPreserve(_dueTimeForTwoWeeksInterval, new Mock<Person>().Object);
 
-            Assert.AreEqual(_reqNeedInputThreeWeekInterval, dut.FirstUpcomingRequirement);
+            Assert.AreEqual(_reqNotNeedInputThreeWeekInterval, dut.FirstUpcomingRequirement(_dueTimeForThreeWeeksInterval));
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldReturnNoneRequirements_BeforePreservationStarted()
+        public void GetUpComingRequirements_ShouldReturnNoneRequirements_BeforePreservationStarted()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
-            Assert.AreEqual(0, dut.UpComingRequirements().Count());
-
+            Assert.AreEqual(0, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldReturnAllRequirements_AfterPreservationStarted()
+        public void GetUpComingRequirements_ShouldReturnNoneRequirements_BeforeDue()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+
+            dut.StartPreservation(_utcNow);
+            Assert.AreEqual(0, dut.GetUpComingRequirements(_utcNow).Count());
+        }
+        
+        [TestMethod]
+        public void GetUpComingRequirements_ShouldReturnTwoReadyRequirements_WhenBothReadyAndDue()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            dut.StartPreservation(_utcNow);
+
+            Assert.AreEqual(2, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
+        }
+        
+        [TestMethod]
+        public void GetUpComingRequirements_ShouldReturnReadyRequirements_WhenOverDue()
+        {
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            dut.StartPreservation(_utcNow);
+
+            Assert.AreEqual(1, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
+        }
+        
+        [TestMethod]
+        public void GetUpComingRequirements_ShouldReturnReadyRequirements_WhenDue()
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
 
-            Assert.AreEqual(dut.Requirements.Count, dut.UpComingRequirements().Count());
+            Assert.AreEqual(1, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
         
         [TestMethod]
-        public void UpComingRequirements_ShouldNotReturnVoidedRequirements()
+        public void GetUpComingRequirements_ShouldNotReturnVoidedRequirements()
         {
-            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation(_utcNow);
             dut.Requirements.ElementAt(0).Void();
 
-            Assert.AreEqual(dut.Requirements.Count-1, dut.UpComingRequirements().Count());
+            Assert.AreEqual(1, dut.GetUpComingRequirements(_dueTimeForThreeWeeksInterval).Count());
         }
         
         [TestMethod]
@@ -484,11 +537,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Tag("", "", "", "", "", "", "", "", "", "", "", _stepMock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
-            Assert.AreEqual(dut.Requirements.Count, dut.OrderedRequirements().Count());
+            Assert.AreEqual(2, dut.OrderedRequirements().Count());
         
             dut.StartPreservation(_utcNow);
             
-            Assert.AreEqual(dut.Requirements.Count, dut.OrderedRequirements().Count());
+            Assert.AreEqual(2, dut.OrderedRequirements().Count());
         }
         
         [TestMethod]
@@ -498,7 +551,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation(_utcNow);
             dut.Requirements.ElementAt(0).Void();
 
-            Assert.AreEqual(dut.Requirements.Count-1, dut.OrderedRequirements().Count());
+            Assert.AreEqual(1, dut.OrderedRequirements().Count());
         }
     }
 }
