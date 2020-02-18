@@ -1,27 +1,26 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Command.TagCommands;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.Validators.Project;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.Requirement;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 {
     [TestClass]
-    public class CreateTagCommandValidatorTests
+    public class CreateAreaTagCommandValidatorTests
     {
-        private CreateTagCommandValidator _dut;
+        private CreateAreaTagCommandValidator _dut;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<IRequirementDefinitionValidator> _rdValidatorMock;
-        private CreateTagCommand _command;
+        private CreateAreaTagCommand _command;
 
-        private string _tagNo1 = "Tag1";
-        private string _tagNo2 = "Tag2";
         private string _projectName = "Project";
         private int _stepId = 1;
         private int _rd1Id = 2;
@@ -42,18 +41,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             _rdValidatorMock.Setup(r => r.Exists(_rd1Id)).Returns(true);
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(true);
 
-            _command = new CreateTagCommand(
-                new List<string>{_tagNo1, _tagNo2}, 
+            _command = new CreateAreaTagCommand(
                 _projectName,
+                TagType.PreArea,
+                "D",
+                "A",
+                null,
                 _stepId,
                 new List<Requirement>
                 {
                     new Requirement(_rd1Id, 1),
                     new Requirement(_rd2Id, 1)
                 },
-                null);
+                "Desc",
+                "Remark");
 
-            _dut = new CreateTagCommandValidator(
+            _dut = new CreateAreaTagCommandValidator(
                 _tagValidatorMock.Object, 
                 _stepValidatorMock.Object, 
                 _projectValidatorMock.Object,
@@ -71,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyTagAlreadyExists()
         {
-            _tagValidatorMock.Setup(r => r.Exists(_tagNo2, _projectName)).Returns(true);
+            _tagValidatorMock.Setup(r => r.Exists(_command.GetTagNo(), _projectName)).Returns(true);
             
             var result = _dut.Validate(_command);
 
@@ -156,12 +159,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Validate_ShouldFail_WhenNoRequirementsGiven()
         {
-            var command = new CreateTagCommand(
-                new List<string>{_tagNo1}, 
+            var command = new CreateAreaTagCommand(
                 _projectName,
+                TagType.PreArea,
+                "DisciplineA",
+                "AreaA",
+                null,
                 _stepId,
                 new List<Requirement>(),
-                null);
+                "DescriptionA",
+                "RemarkA");
             
             var result = _dut.Validate(command);
 
@@ -171,52 +178,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenNoTagNosGiven()
-        {
-            var command = new CreateTagCommand(
-                new List<string>(), 
-                _projectName,
-                _stepId,
-                new List<Requirement>{new Requirement(_rd1Id, 1)},
-                null);
-            
-            var result = _dut.Validate(command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("At least 1 TagNo must be given!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenNoTagNosNotUnique()
-        {
-            var command = new CreateTagCommand(
-                new List<string>{"X","x"}, 
-                _projectName,
-                _stepId,
-                new List<Requirement>{new Requirement(_rd1Id, 1)},
-                null);
-            
-            var result = _dut.Validate(command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("TagNos must be unique!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenRequirementsNotUnique()
         {
-            var command = new CreateTagCommand(
-                new List<string>{_tagNo1}, 
+            var command = new CreateAreaTagCommand(
                 _projectName,
+                TagType.PreArea,
+                "DisciplineA",
+                "AreaA",
+                null,
                 _stepId,
                 new List<Requirement>
                 {
                     new Requirement(_rd1Id, 1),
                     new Requirement(_rd1Id, 1)
                 },
-                null);
+                "DescriptionA",
+                "RemarkA");
             
             var result = _dut.Validate(command);
 
@@ -240,7 +217,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
         {
-            _tagValidatorMock.Setup(r => r.Exists(_tagNo1, _projectName)).Returns(true);
+            _tagValidatorMock.Setup(r => r.Exists(_command.GetTagNo(), _projectName)).Returns(true);
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
             
             var result = _dut.Validate(_command);

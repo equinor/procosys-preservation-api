@@ -137,6 +137,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var requirementWithThreeNumberShowPrev = new Requirement(_schema, _interval, requirementDefinitionWithThreeNumberShowPrev);
                 
                 var tag = new Tag(_schema,
+                    TagType.Standard, 
                     "TagNo",
                     "Description",
                     "AreaCode",

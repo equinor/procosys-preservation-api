@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 context.RequirementDefinitions.Add(requirementDefinition);
                 context.SaveChanges();
 
-                var tag = new Tag(_schema, "TagNo", "Description", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PurchaseOrderNo", "Remark", "TagFunctionCode", step, new List<Requirement> { new Requirement(_schema, 2, requirementDefinition) });
+                var tag = new Tag(_schema, TagType.Standard, "TagNo", "Description", "AreaCode", "Calloff", "DisciplineCode", "McPkgNo", "CommPkgNo", "PurchaseOrderNo", "Remark", "TagFunctionCode", step, new List<Requirement> { new Requirement(_schema, 2, requirementDefinition) });
                 tag.StartPreservation(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
                 context.Tags.Add(tag);
                 context.SaveChanges();
