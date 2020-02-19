@@ -15,7 +15,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             string requirementDefinitionTitle,
             DateTime? nextDueTimeUtc,
             bool readyToBePreserved,
-            List<FieldDto> fields)
+            List<FieldDto> fields,
+            string comment)
         {
             Id = id;
             NextDueTimeUtc = nextDueTimeUtc;
@@ -27,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             RequirementTypeTitle = requirementTypeTitle;
             RequirementDefinitionTitle = requirementDefinitionTitle;
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
+            Comment = comment;
         }
 
         public int Id { get; }
@@ -42,5 +44,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         public string NextDueAsYearAndWeek { get; }
         public bool ReadyToBePreserved { get; }
         public List<FieldDto> Fields { get; }
+        public string Comment { get; }
     }
 }
