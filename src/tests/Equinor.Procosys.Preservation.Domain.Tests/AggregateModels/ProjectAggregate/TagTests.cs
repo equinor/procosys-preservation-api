@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
@@ -171,6 +172,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(null));
+        
+        [TestMethod]
+        public void AddAction_ShouldAddAction()
+        {
+            var action = new Action("", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+
+            Assert.AreEqual(action, _dutWithOneReqNotNeedInputTwoWeekInterval.Actions.First());
+        }
+
+        [TestMethod]
+        public void AddAction_ShouldThrowException_WhenActionNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(null));
 
         [TestMethod]
         public void StartPreservation_ShouldSetStatusActive()

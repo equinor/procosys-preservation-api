@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -9,16 +11,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class ActionTests
     {
-        private const int ClosedById = 31;
-        private Mock<Person> _closedByMock;
+        private const int PersonId = 31;
+        private Mock<Person> _personMock;
         private DateTime _utcNow;
         private Action _dut;
 
         [TestInitialize]
         public void Setup()
         {
-            _closedByMock = new Mock<Person>();
-            _closedByMock.SetupGet(p => p.Id).Returns(ClosedById);
+            _personMock = new Mock<Person>();
+            _personMock.SetupGet(p => p.Id).Returns(PersonId);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _dut = new Action("SchemaA", "DescA", _utcNow);
         }
@@ -71,10 +73,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Close_ShouldSetClosedData()
         {
-            _dut.Close(_utcNow, _closedByMock.Object);
+            _dut.Close(_utcNow, _personMock.Object);
 
-            Assert.AreEqual(ClosedById, _dut.ClosedById);
+            Assert.AreEqual(PersonId, _dut.ClosedById);
             Assert.AreEqual(_utcNow, _dut.ClosedAtUtc);
         }
+
+        [TestMethod]
+        public void AddComment_ShouldAddComment()
+        {
+            var comment = new ActionComment("", "", _utcNow, _personMock.Object);
+            _dut.AddComment(comment);
+
+            Assert.AreEqual(comment, _dut.ActionComments.First());
+        }
+
+        [TestMethod]
+        public void AddComment_ShouldThrowException_WhenCommentNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dut.AddComment(null));
     }
 }
