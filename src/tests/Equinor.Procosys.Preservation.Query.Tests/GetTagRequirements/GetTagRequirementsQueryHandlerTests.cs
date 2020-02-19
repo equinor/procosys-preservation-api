@@ -3,12 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Microsoft.EntityFrameworkCore;
@@ -19,10 +15,9 @@ using ServiceResult;
 namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 {
     [TestClass]
-    public class GetTagRequirementsQueryHandlerTests
+    public class GetTagRequirementsQueryHandlerTests : ReadOnlyTestsBase
     {
-        const string _schema = "PCS$TEST";
-        const string _unit = "unit";
+        protected const string _unit = "unit";
         const string _requirementType1Code = "Code1";
         const string _requirementType1Title = "Title1";
         const string _requirementType2Code = "Code2";
@@ -32,12 +27,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         const string _requirementDefinitionWithTwoCheckBoxesTitle = "With 2 checkboxes";
         const string _requirementDefinitionWithThreeNumberShowPrevTitle = "With 3 number with previous";
         const string _requirementDefinitionWithOneNumberNoPrevTitle = "With 1 number no previous";
-        private DbContextOptions<PreservationContext> _dbContextOptions;
-        private Mock<IEventDispatcher> _eventDispatcherMock;
-        private Mock<IPlantProvider> _plantProviderMock;
-        private Mock<ITimeService> _timeServiceMock;
+        protected Mock<ITimeService> _timeServiceMock;
+        protected DateTime _currentUtc;
         private DateTime _startedAtUtc;
-        private DateTime _currentUtc;
 
         private int _requirementWithoutFieldId;
         private int _requirementWithOneInfoId;
@@ -61,37 +53,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             _startedAtUtc = new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
             _currentUtc = _startedAtUtc.AddWeeks(_requestTimeAfterPreservationStartedInWeeks);
-
-            _eventDispatcherMock = new Mock<IEventDispatcher>();
-            _plantProviderMock = new Mock<IPlantProvider>();
             _timeServiceMock = new Mock<ITimeService>();
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_currentUtc);
-            _plantProviderMock.SetupGet(x => x.Plant).Returns(_schema);
-
-            _dbContextOptions = SetupNewDatabase();
         }
 
-        private DbContextOptions<PreservationContext> SetupNewDatabase()
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            var dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-            
             using (var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
             {
-                var responsible = new Responsible(_schema, "Responsible");
-                context.Responsibles.Add(responsible);
-                context.SaveChanges();
-
-                var mode = new Mode(_schema, "Mode");
-                context.Modes.Add(mode);
-                context.SaveChanges();
-
-                var step = new Step(_schema, mode, context.Responsibles.First());
-                var journey = new Journey(_schema, "Journey");
-                journey.AddStep(step);
-                context.Journeys.Add(journey);
-                context.SaveChanges();
+                var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
                 var requirementType1 = new RequirementType(_schema, _requirementType1Code, _requirementType1Title, 0);
                 context.RequirementTypes.Add(requirementType1);
@@ -148,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     "PurchaseOrderNo",
                     "Remark",
                     "TagFunctionCode",
-                    step,
+                    journey.Steps.ElementAt(0),
                     new List<Requirement>
                     {
                         requirementWithoutField,
@@ -178,8 +148,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 _secondNumberFieldId = numberFieldPrev3.Id;
                 _thirdNumberFieldId = numberFieldPrev1.Id;
             }
-
-            return dbContextOptions;
         }
 
         [TestMethod]
@@ -367,19 +335,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            var dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
-                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                 .Options;
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object,
+                _plantProviderMock.Object))
+            {
+                var query = new GetTagRequirementsQuery(0);
+                var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
 
-            using var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object);
-            var query = new GetTagRequirementsQuery(_tagId);
-            var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
+                var result = await dut.Handle(query, default);
 
-            var result = await dut.Handle(query, default);
-
-            Assert.IsNotNull(result);
-            Assert.AreEqual(ResultType.NotFound, result.ResultType);
-            Assert.IsNull(result.Data);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.NotFound, result.ResultType);
+                Assert.IsNull(result.Data);
+            }
         }
 
         private void AssertRequirements(List<RequirementDto> requirements)
