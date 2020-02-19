@@ -797,7 +797,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
-        #region GetCurrentValue
+        #region GetCurrentFieldValue
 
         [TestMethod]
         public void GetCurrentFieldValue_ShouldReturnNull_BeforeRecording()
@@ -919,7 +919,38 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
-        #region GetPreviousValue
+        #region GetCurrentComment
+
+        [TestMethod]
+        public void GetCurrentComment_ShouldReturnNull_BeforeRecording()
+        {
+            var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            Assert.IsNull(dut.GetCurrentComment());
+        }
+
+        [TestMethod]
+        public void GetCurrentComment_ShouldReturnComment()
+        {
+            var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {CheckBoxFieldId, "true"}
+                }, 
+                "CommentA",
+                _reqDefWithNumberAndCheckBoxFieldMock.Object);
+
+            // Assert
+            Assert.AreEqual("CommentA", dut.GetCurrentComment());
+        }
+
+        #endregion
+
+        #region GetPreviousFieldValue
 
         [TestMethod]
         public void GetPreviousFieldValue_GetCurrentFieldValue_ShouldReturnDifferentValues_DuringRecordingAndPreserving()

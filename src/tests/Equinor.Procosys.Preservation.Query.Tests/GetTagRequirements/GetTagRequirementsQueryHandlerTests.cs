@@ -243,7 +243,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirementsWithCheckBoxField_AfterRecordingCheckBoxField()
+        public async Task Handler_ShouldReturnsTagRequirementsWithCheckBoxFieldAndComment_AfterRecordingCheckBoxFieldAndComment()
         {
             var fieldId = _firstCbFieldId;
 
@@ -259,7 +259,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var requirement = context.Requirements.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
                 requirement.RecordValues(
                     new Dictionary<int, string> {{fieldId, "true"}},
-                    "",
+                    "CommentABC",
                     requirementDefinition);
                 context.SaveChanges();
             }
@@ -275,6 +275,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
 
                 var requirementWithTwoCheckBoxes = result.Data.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
+                Assert.AreEqual("CommentABC", requirementWithTwoCheckBoxes.Comment);
                 Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
 
                 var field = requirementWithTwoCheckBoxes.Fields.Single(f => f.Id == fieldId);
