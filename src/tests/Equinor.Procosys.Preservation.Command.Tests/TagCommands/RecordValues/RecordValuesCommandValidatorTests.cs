@@ -33,6 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(v => v.Exists(FieldId)).Returns(true);
             _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, It.IsAny<string>())).Returns(true);
+            _fieldValidatorMock.Setup(r => r.IsValidForRecording(FieldId)).Returns(true);
 
             _recordValuesCommandWithCommentOnly = new RecordValuesCommand(
                 TagId,
@@ -126,7 +127,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field value is not valid!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field value is not valid for field type!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenAnyFieldNotForRecording()
+        {
+            _fieldValidatorMock.Setup(r => r.IsValidForRecording(FieldId)).Returns(false);
+            
+            var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field values can not be recorded for field type!"));
         }
  
         [TestMethod]

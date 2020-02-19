@@ -627,6 +627,35 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
         }
 
+
+        [TestMethod]
+        public void RecordValues_ShouldDeleteExistingNumberValue_WhenNumberIsBlank()
+        {
+            var dut = new Requirement("SchemaA", TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            dut.StartPreservation(_utcNow);
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {NumberFieldId, "na"}
+                }, 
+                null,
+                _reqDefWithNumberFieldMock.Object);
+
+            // Assert
+            Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {NumberFieldId, string.Empty}
+                }, 
+                null,
+                _reqDefWithNumberFieldMock.Object);
+
+            // Assert
+            Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
+        }
         
         [TestMethod]
         public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_OneByOne()
