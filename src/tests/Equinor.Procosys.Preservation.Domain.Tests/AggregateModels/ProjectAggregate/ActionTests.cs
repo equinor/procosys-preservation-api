@@ -9,16 +9,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class ActionTests
     {
-        private const int ClearedById = 31;
-        private Mock<Person> _clearedByMock;
+        private const int ClosedById = 31;
+        private Mock<Person> _closedByMock;
         private DateTime _utcNow;
         private Action _dut;
 
         [TestInitialize]
         public void Setup()
         {
-            _clearedByMock = new Mock<Person>();
-            _clearedByMock.SetupGet(p => p.Id).Returns(ClearedById);
+            _closedByMock = new Mock<Person>();
+            _closedByMock.SetupGet(p => p.Id).Returns(ClosedById);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _dut = new Action("SchemaA", "DescA", _utcNow);
         }
@@ -30,8 +30,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual("SchemaA", _dut.Schema);
             Assert.IsFalse(_dut.DueTimeUtc.HasValue);
-            Assert.IsFalse(_dut.ClearedById.HasValue);
-            Assert.IsNull(_dut.ClearedAtUtc);
+            Assert.IsFalse(_dut.ClosedById.HasValue);
+            Assert.IsNull(_dut.ClosedAtUtc);
             Assert.AreEqual("DescA", _dut.Description);
         }
 
@@ -69,17 +69,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Clear_Unclear_ShouldToggleClearedData()
+        public void Close_ShouldSetClosedData()
         {
-            _dut.Clear(_utcNow, _clearedByMock.Object);
+            _dut.Close(_utcNow, _closedByMock.Object);
 
-            Assert.AreEqual(ClearedById, _dut.ClearedById);
-            Assert.AreEqual(_utcNow, _dut.ClearedAtUtc);
-
-            _dut.Unclear();
-
-            Assert.IsNull(_dut.ClearedById);
-            Assert.IsNull(_dut.ClearedAtUtc);
+            Assert.AreEqual(ClosedById, _dut.ClosedById);
+            Assert.AreEqual(_utcNow, _dut.ClosedAtUtc);
         }
     }
 }

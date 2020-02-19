@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
 
             builder.HasMany<Action>()
                 .WithOne()
-                .HasForeignKey(a => a.ClearedById)
+                .HasForeignKey(a => a.ClosedById)
                 .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired(false);
         }

@@ -22,9 +22,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public DateTime? DueTimeUtc { get; private set; }
 
-        public DateTime? ClearedAtUtc { get; private set; }
+        public DateTime? ClosedAtUtc { get; private set; }
 
-        public int? ClearedById { get; private set; }
+        public int? ClosedById { get; private set; }
 
         public void SetDueTime(DateTime? dueTimeUtc)
         {
@@ -35,25 +35,19 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             DueTimeUtc = dueTimeUtc;
         }
 
-        public void Clear(DateTime clearedAtUtc, Person clearedBy)
+        public void Close(DateTime closedAtUtc, Person closedBy)
         {
-            if (clearedBy == null)
+            if (closedBy == null)
             {
-                throw new ArgumentNullException(nameof(clearedBy));
+                throw new ArgumentNullException(nameof(closedBy));
             }
-            if (clearedAtUtc.Kind != DateTimeKind.Utc)
+            if (closedAtUtc.Kind != DateTimeKind.Utc)
             {
-                throw new ArgumentException($"{nameof(clearedAtUtc)} is not Utc");
+                throw new ArgumentException($"{nameof(closedAtUtc)} is not Utc");
             }
 
-            ClearedAtUtc = clearedAtUtc;
-            ClearedById = clearedBy.Id;
-        }
-
-        public void Unclear()
-        {
-            ClearedAtUtc = null;
-            ClearedById = null;
+            ClosedAtUtc = closedAtUtc;
+            ClosedById = closedBy.Id;
         }
     }
 }

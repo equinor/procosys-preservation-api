@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
             builder.Property(x => x.DueTimeUtc)
                 .HasConversion(PreservationContext.NullableDateTimeKindConverter);
             
-            builder.Property(x => x.ClearedAtUtc)
+            builder.Property(x => x.ClosedAtUtc)
                 .HasConversion(PreservationContext.NullableDateTimeKindConverter);
         }
     }
