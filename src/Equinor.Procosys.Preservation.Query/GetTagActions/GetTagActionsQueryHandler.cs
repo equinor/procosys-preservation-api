@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActions
 
         public async Task<Result<List<ActionDto>>> Handle(GetTagActionsQuery request, CancellationToken cancellationToken)
         {
-            // Get tag with all actions and all comments
+            // Get tag with all actions
             var tag = await
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Actions)
