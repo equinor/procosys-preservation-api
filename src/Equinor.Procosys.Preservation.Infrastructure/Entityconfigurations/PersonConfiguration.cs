@@ -31,6 +31,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
                 .HasForeignKey(a => a.ClosedById)
                 .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired(false);
+
+            builder.HasMany<ActionComment>()
+                .WithOne()
+                .HasForeignKey(a => a.CommentedById)
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired(false);
         }
     }
 }
