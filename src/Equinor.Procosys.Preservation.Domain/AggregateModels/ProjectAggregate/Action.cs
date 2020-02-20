@@ -5,13 +5,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Action : SchemaEntityBase
     {
+        public const int TitleLengthMax = 128;
         public const int DescriptionLengthMax = 4096;
 
         protected Action() : base(null)
         {
         }
 
-        public Action(string schema, string description, DateTime createdAtUtc, Person createdBy, DateTime? dueTimeUtc)
+        public Action(string schema, string title, string description, DateTime createdAtUtc, Person createdBy, DateTime? dueTimeUtc)
             : base(schema)
         {
             if (createdAtUtc.Kind != DateTimeKind.Utc)
@@ -23,12 +24,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(createdBy));
             }
+            Title = title;
             Description = description;
             CreatedAtUtc = createdAtUtc;
             CreatedById = createdBy.Id;
             SetDueTime(dueTimeUtc);
         }
 
+        public string Title { get; private set; }
         public string Description { get; private set; }
 
         public DateTime CreatedAtUtc { get; private set; }

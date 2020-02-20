@@ -51,6 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
                 dto.Action.Id, 
                 createdBy,
                 dto.Action.CreatedAtUtc,
+                dto.Action.Title,
                 dto.Action.Description,
                 dto.Action.DueTimeUtc,
                 dto.Action.IsClosed,

@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
             int id, 
             PersonDto createdBy,
             DateTime createdAt,
+            string title,
             string description,
             DateTime? dueTimeUtc,
             bool isClosed,
@@ -17,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
             Id = id;
             CreatedBy = createdBy;
             CreatedAt = createdAt;
+            Title = title;
             Description = description;
             DueTimeUtc = dueTimeUtc;
             IsClosed = isClosed;
@@ -28,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
         public int Id { get; }
         public PersonDto CreatedBy { get; }
         public DateTime CreatedAt { get; }
+        public string Title { get; }
         public string Description { get; }
         public DateTime? DueTimeUtc { get; }
         public bool IsClosed { get; }

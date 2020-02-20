@@ -6,16 +6,19 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActions
     {
         public ActionDto(
             int id, 
-            string description,
-            DateTime? dueTimeUtc)
+            string title,
+            DateTime? dueTimeUtc,
+            bool isClosed)
         {
             Id = id;
-            Description = description;
+            Title = title;
             DueTimeUtc = dueTimeUtc;
+            IsClosed = isClosed;
         }
 
         public int Id { get; }
-        public string Description { get; }
+        public string Title { get; }
         public DateTime? DueTimeUtc { get; }
+        public bool IsClosed { get; }
     }
 }
