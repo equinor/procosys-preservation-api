@@ -98,6 +98,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public FieldValue GetCurrentFieldValue(Field field)
             => ActivePeriod?.GetFieldValue(field.Id);
 
+        public string GetCurrentComment() => ActivePeriod?.Comment;
+
         public FieldValue GetPreviousFieldValue(Field field)
         {
             if (!field.ShowPrevious.HasValue || !field.ShowPrevious.Value)

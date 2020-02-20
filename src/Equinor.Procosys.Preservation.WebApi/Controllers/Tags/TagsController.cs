@@ -10,6 +10,8 @@ using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
+using Equinor.Procosys.Preservation.Query.GetTagActions;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.ProjectAggregate;
@@ -49,6 +51,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<RequirementDto>>> GetTagRequirements([FromRoute] int id)
         {
             var result = await _mediator.Send(new GetTagRequirementsQuery(id));
+            return this.FromResult(result);
+        }
+
+        [HttpGet("{id}/Actions")]
+        public async Task<ActionResult<List<ActionDto>>> GetTagActions([FromRoute] int id)
+        {
+            var result = await _mediator.Send(new GetTagActionsQuery(id));
+            return this.FromResult(result);
+        }
+
+        [HttpGet("{id}/Actions/{actionId}")]
+        public async Task<ActionResult<ActionDetailsDto>> GetTagActionDetails([FromRoute] int id, [FromRoute] int actionId)
+        {
+            var result = await _mediator.Send(new GetActionDetailsQuery(id, actionId));
             return this.FromResult(result);
         }
 

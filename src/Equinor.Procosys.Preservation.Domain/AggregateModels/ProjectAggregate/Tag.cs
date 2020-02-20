@@ -9,6 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
     public class Tag : SchemaEntityBase
     {
         private readonly List<Requirement> _requirements = new List<Requirement>();
+        private readonly List<Action> _actions = new List<Action>();
 
         public const int TagNoLengthMax = 255;
         public const int AreaCodeLengthMax = 255;
@@ -82,6 +83,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string TagFunctionCode { get; private set; }
         public string TagNo { get; private set; }
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
+        public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public bool IsVoided { get; private set; }
         public DateTime? NextDueTimeUtc => OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
 
@@ -106,6 +108,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _requirements.Add(requirement);
+        }
+
+        public void AddAction(Action action)
+        {
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            _actions.Add(action);
         }
 
         public void StartPreservation(DateTime startedAtUtc)

@@ -26,8 +26,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
             When(command => command.FieldValues.Any(), () =>
             {
                 RuleForEach(command => command.FieldValues)
+                    .Must(BeAFieldForRecording)
+                    .WithMessage((command, fv) => $"Field values can not be recorded for field type! Field={fv.Key}")
                     .Must(BeAValidValueForField)
-                    .WithMessage((command, fv) => $"Field value is not valid! Field={fv.Key} Value={fv.Value}")
+                    .WithMessage((command, fv) => $"Field value is not valid for field type! Field={fv.Key} Value={fv.Value}")
                     .Must(BeAnExistingField)
                     .WithMessage((command, fv) => $"Field doesn't exists! Field={fv.Key}")
                     .Must(NotBeAVoidedField)
@@ -46,6 +48,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
 
             bool HaveRequirementReadyForRecording(int tagId, int requirementId)
                 => tagValidator.HaveRequirementReadyForRecording(tagId, requirementId);
+
+            bool BeAFieldForRecording(KeyValuePair<int, string>  fieldValue)
+                => fieldValidator.IsValidForRecording(fieldValue.Key);
 
             bool BeAValidValueForField(KeyValuePair<int, string>  fieldValue)
                 => fieldValidator.IsValidValue(fieldValue.Key, fieldValue.Value);
