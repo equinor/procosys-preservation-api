@@ -26,12 +26,20 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public int? ClosedById { get; private set; }
 
+        public bool IsClosed => ClosedAtUtc.HasValue;
+
         public void SetDueTime(DateTime? dueTimeUtc)
         {
             if (dueTimeUtc.HasValue && dueTimeUtc.Value.Kind != DateTimeKind.Utc)
             {
                 throw new ArgumentException($"{nameof(dueTimeUtc)} is not Utc");
             }
+
+            if (IsClosed)
+            {
+                throw new Exception($"Action {Id} is closed");
+            }
+
             DueTimeUtc = dueTimeUtc;
         }
 

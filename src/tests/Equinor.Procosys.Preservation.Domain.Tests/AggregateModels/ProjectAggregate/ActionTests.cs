@@ -33,6 +33,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsFalse(_dut.ClosedById.HasValue);
             Assert.IsNull(_dut.ClosedAtUtc);
             Assert.AreEqual("DescA", _dut.Description);
+            Assert.IsFalse(_dut.IsClosed);
         }
 
         [TestMethod]
@@ -41,6 +42,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual("SchemaA", _dut.Schema);
             Assert.AreEqual(_utcNow, _dut.DueTimeUtc);
             Assert.AreEqual("DescA", _dut.Description);
+            Assert.IsFalse(_dut.IsClosed);
         }
 
         [TestMethod]
@@ -69,12 +71,25 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void SetDueTime_ShouldThrowException_WhenDueIsNotUtc()
+            => Assert.ThrowsException<ArgumentException>(()
+                => _dut.SetDueTime(DateTime.Now));
+
+        [TestMethod]
+        public void SetDueTime_ShouldThrowException_WhenIsClosed()
+        {
+            _dut.Close(_utcNow, _closedByMock.Object);
+            Assert.ThrowsException<Exception>(() => _dut.SetDueTime(_utcNow));
+        }
+
+        [TestMethod]
         public void Close_ShouldSetClosedData()
         {
             _dut.Close(_utcNow, _closedByMock.Object);
 
             Assert.AreEqual(ClosedById, _dut.ClosedById);
             Assert.AreEqual(_utcNow, _dut.ClosedAtUtc);
+            Assert.IsTrue(_dut.IsClosed);
         }
     }
 }
