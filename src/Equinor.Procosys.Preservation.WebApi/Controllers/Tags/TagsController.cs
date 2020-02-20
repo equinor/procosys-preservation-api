@@ -9,6 +9,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
@@ -105,12 +106,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [HttpPut("{id}/SetStep")]
-        public async Task<ActionResult> SetStep([FromRoute] int id, [FromBody] SetStepDto dto)
-        {
-            var result = await _mediator.Send(new SetStepCommand(id, dto.StepId));
-            return this.FromResult(result);
-        }
+        // todo remove handling of SetStepCommand if still not used in medio 2020
+        //[HttpPut("{id}/SetStep")]
+        //public async Task<ActionResult> SetStep([FromRoute] int id, [FromBody] SetStepDto dto)
+        //{
+        //    var result = await _mediator.Send(new SetStepCommand(id, dto.StepId));
+        //    return this.FromResult(result);
+        //}
 
         [HttpPut("{id}/StartPreservation")]
         public async Task<IActionResult> StartPreservation([FromRoute] int id)
@@ -137,6 +139,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> BulkPreserve([FromBody] List<int> tagIds)
         {
             var result = await _mediator.Send(new BulkPreserveCommand(tagIds));
+            return this.FromResult(result);
+        }
+
+        [HttpPut("Transfer")]
+        public async Task<IActionResult> Transfer([FromBody] List<int> tagIds)
+        {
+            var result = await _mediator.Send(new TransferCommand(tagIds));
             return this.FromResult(result);
         }
 

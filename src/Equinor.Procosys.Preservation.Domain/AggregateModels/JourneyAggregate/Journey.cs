@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
@@ -33,6 +34,18 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             _steps.Add(step);
+        }
+
+        public Step GetNextStep(int stepId)
+        {
+            var orderedSteps = _steps.OrderBy(r => r.SortKey).Where(r => !r.IsVoided).ToList();
+            var stepIndex = orderedSteps.FindIndex(s => s.Id == stepId);
+            if (stepIndex < orderedSteps.Count - 1)
+            {
+                return orderedSteps[stepIndex+1];
+            }
+
+            return null;
         }
     }
 }
