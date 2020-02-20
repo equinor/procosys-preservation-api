@@ -83,7 +83,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                         requirementDto.RequirementDefinition.Title,
                         requirement.NextDueTimeUtc,
                         requirement.ReadyToBePreserved,
-                        fields);
+                        fields,
+                        requirement.GetCurrentComment());
                 }).ToList();
             
             return new SuccessResult<List<RequirementDto>>(requirements);

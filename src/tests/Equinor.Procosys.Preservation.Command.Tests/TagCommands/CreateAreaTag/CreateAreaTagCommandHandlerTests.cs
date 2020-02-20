@@ -112,15 +112,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _projectRepositoryMock
                 .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult((Project)null));
 
-            // todo Later PBI 71457
             // Act
-            //var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_command, default);
 
             // Assert
-            //Assert.AreEqual(0, result.Errors.Count);
-            //Assert.AreEqual(0, _projectAddedToRepository.Id);
-            //Assert.AreEqual(TestProjectName, _projectAddedToRepository.Name);
-            //Assert.AreEqual(TestProjectDescription, _projectAddedToRepository.Description);
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(0, _projectAddedToRepository.Id);
+            Assert.AreEqual(TestProjectName, _projectAddedToRepository.Name);
+            // todo Later PBI 71457 since we don't have that endpoint getting project from MainApi yet
+            Assert.AreEqual("Dummy project description", _projectAddedToRepository.Description);
         }
 
         [TestMethod]
@@ -146,17 +146,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _projectRepositoryMock
                 .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult((Project)null));
 
-            // todo Later PBI 71457
             // Act
-            //var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_command, default);
 
             // Assert
-            //Assert.AreEqual(0, result.Errors.Count);
-            //Assert.AreEqual(1, result.Data.Count);
+            Assert.AreEqual(0, result.Errors.Count);
             
-            //var tags = _projectAddedToRepository.Tags;
-            //Assert.AreEqual(1, tags.Count);
-            //AssertTagProperties(_command1, tags.First());
+            var tags = _projectAddedToRepository.Tags;
+            Assert.AreEqual(1, tags.Count);
+            AssertTagProperties(_command, tags.First());
         }
 
         [TestMethod]

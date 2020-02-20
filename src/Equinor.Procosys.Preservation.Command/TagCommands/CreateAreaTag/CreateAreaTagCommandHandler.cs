@@ -54,10 +54,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             
             if (project == null)
             {
-                // todo Must get project from main here to be able to create it with Description. Later PBI 71457 since we don't have that endpoint in MainApi yet");
-                return new NotFoundResult<int>($"Project {request.ProjectName} not found in preservation");
-                //project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
-                //_projectRepository.Add(project);
+                // todo Must get project from main here to be able to create it with Description. Later PBI 71457 since we don't have that endpoint in MainApi yet
+                project = new Project(_plantProvider.Plant, request.ProjectName, "Dummy project description");
+                _projectRepository.Add(project);
             }
 
             var disciplines = await _disciplineApiService.GetDisciplines(_plantProvider.Plant);

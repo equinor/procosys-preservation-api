@@ -7,5 +7,7 @@
         bool IsVoided(int fieldId);
 
         bool IsValidValue(int fieldId, string value);
+        
+        bool IsValidForRecording(int fieldId);
     }
 }

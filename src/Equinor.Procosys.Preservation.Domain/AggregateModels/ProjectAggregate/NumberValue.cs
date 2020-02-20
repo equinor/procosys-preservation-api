@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public static bool IsValidValue(string value, out double? number)
         {
             number = null;
-            if (value.ToUpper() == "NA" || value.ToUpper() == "N/A")
+            if (string.IsNullOrEmpty(value) || value.ToUpper() == "NA" || value.ToUpper() == "N/A")
             {
                 return true;
             }

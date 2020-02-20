@@ -16,6 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
 
         private Requirement _requirement;
         private RecordValuesCommand _recordValuesCommandWithCheckedCheckBoxAndNaAsNumber;
+        private RecordValuesCommand _recordValuesCommandWithNullAsNumber;
         private RecordValuesCommandHandler _dut;
 
         [TestInitialize]
@@ -33,6 +34,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
                 {
                     {_checkBoxFieldId, "true"},
                     {_numberFieldId, "n/a"}
+                }, 
+                null);
+
+            _recordValuesCommandWithNullAsNumber = new RecordValuesCommand(
+                _tagId, 
+                _reqId, 
+                new Dictionary<int, string>
+                {
+                    {_numberFieldId, null}
                 }, 
                 null);
 
@@ -89,6 +99,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
             // Assert
             Assert.AreEqual(2, _requirement.ActivePeriod.FieldValues.Count);
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, _requirement.ActivePeriod.Status);
+        }
+
+        [TestMethod]
+        public async Task HandlingRecordValuesCommand_ShouldDoNothing_WhenRecordingNullAsNumber()
+        {
+            // Assert setup
+            Assert.AreEqual(0, _requirement.ActivePeriod.FieldValues.Count);
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, _requirement.ActivePeriod.Status);
+
+            // Act
+            await _dut.Handle(_recordValuesCommandWithNullAsNumber, default);
+            
+            // Assert
+            Assert.AreEqual(0, _requirement.ActivePeriod.FieldValues.Count);
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, _requirement.ActivePeriod.Status);
         }
 
         [TestMethod]
