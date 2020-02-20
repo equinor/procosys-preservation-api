@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         private int _tagId;
         private Action _action1;
         private Action _action2;
+        private DateTime _utcNow = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -27,6 +28,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
                 var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
+
+                var person = base.AddPerson(context, "Ole", "Lukkøye");
 
                 var tag = new Tag(_schema, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
                     journey.Steps.ElementAt(0),
@@ -37,9 +40,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
 
                 context.Tags.Add(tag);
 
-                _action1 = new Action(_schema, "Desc1", DateTime.UtcNow);
+                _action1 = new Action(_schema, "Desc1", _utcNow, person, _utcNow);
                 tag.AddAction(_action1);
-                _action2 = new Action(_schema, "Desc2", DateTime.UtcNow);
+                _action2 = new Action(_schema, "Desc2", _utcNow, person, _utcNow);
                 tag.AddAction(_action2);
                 context.SaveChanges();
 
