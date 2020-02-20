@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
@@ -17,9 +18,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
     public class GetTagActionsQueryHandlerTests : ReadOnlyTestsBase
     {
         private int _tagId;
-        private Action _action1;
-        private Action _action2;
+        private int _openActionId;
+        private int _closedActionId;
+        private Action _openAction;
+        private Action _closedAction;
         private DateTime _utcNow = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private Person _creator;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -29,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
 
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
 
-                var person = base.AddPerson(context, "Ole", "Lukkøye");
+                _creator = AddPerson(context, "Ole", "Lukkøye");
 
                 var tag = new Tag(_schema, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
                     journey.Steps.ElementAt(0),
@@ -40,13 +44,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
 
                 context.Tags.Add(tag);
 
-                _action1 = new Action(_schema, "Desc1", _utcNow, person, _utcNow);
-                tag.AddAction(_action1);
-                _action2 = new Action(_schema, "Desc2", _utcNow, person, _utcNow);
-                tag.AddAction(_action2);
+                _openAction = new Action(_schema, "Open", "Desc1", _utcNow, _creator, _utcNow);
+                tag.AddAction(_openAction);
+                _closedAction = new Action(_schema, "Closed", "Desc2", _utcNow, _creator, _utcNow);
+                _closedAction.Close(_utcNow, _creator);
+                tag.AddAction(_closedAction);
+
                 context.SaveChanges();
 
                 _tagId = tag.Id;
+                _openActionId = _openAction.Id;
+                _closedActionId = _closedAction.Id;
             }
         }
 
@@ -65,6 +73,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
                 
                 var actionDtos = result.Data;
                 Assert.AreEqual(2, actionDtos.Count);
+
+                AssertAction(actionDtos.Single(a => a.Id == _openActionId), _openAction);
+                AssertAction(actionDtos.Single(a => a.Id == _closedActionId), _closedAction);
             }
         }
 
@@ -82,6 +93,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
                 Assert.AreEqual(ResultType.NotFound, result.ResultType);
                 Assert.IsNull(result.Data);
             }
+        }
+
+        private void AssertAction(ActionDto actionDto, Action action)
+        {
+            Assert.AreEqual(action.Id, actionDto.Id);
+            Assert.AreEqual(action.Title, actionDto.Title);
+            Assert.AreEqual(action.IsClosed, actionDto.IsClosed);
+            Assert.AreEqual(action.DueTimeUtc, actionDto.DueTimeUtc);
         }
     }
 }
