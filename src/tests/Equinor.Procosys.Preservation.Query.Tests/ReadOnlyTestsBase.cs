@@ -2,6 +2,7 @@
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
@@ -71,6 +72,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests
             context.SaveChanges();
 
             return requirementType;
+        }
+
+        protected Person AddPerson(PreservationContext context, string firstName, string lastName)
+        {
+            var person = new Person(Guid.Empty, firstName, lastName);
+            context.Persons.Add(person);
+            context.SaveChanges();
+            return person;
         }
     }
 }

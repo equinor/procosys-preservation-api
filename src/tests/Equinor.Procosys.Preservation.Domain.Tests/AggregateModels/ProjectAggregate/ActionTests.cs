@@ -9,29 +9,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class ActionTests
     {
-        private const int ClosedById = 31;
-        private Mock<Person> _closedByMock;
+        private const int PersonId = 31;
+        private Mock<Person> _personMock;
         private DateTime _utcNow;
         private Action _dut;
 
         [TestInitialize]
         public void Setup()
         {
-            _closedByMock = new Mock<Person>();
-            _closedByMock.SetupGet(p => p.Id).Returns(ClosedById);
+            _personMock = new Mock<Person>();
+            _personMock.SetupGet(p => p.Id).Returns(PersonId);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _dut = new Action("SchemaA", "DescA", _utcNow);
+            _dut = new Action("SchemaA", "TitleA", "DescA", _utcNow, _personMock.Object, _utcNow);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithoutDue()
         {
-            _dut = new Action("SchemaA", "DescA", null);
+            _dut = new Action("SchemaA", "TitleA", "DescA", _utcNow, _personMock.Object, null);
 
             Assert.AreEqual("SchemaA", _dut.Schema);
             Assert.IsFalse(_dut.DueTimeUtc.HasValue);
             Assert.IsFalse(_dut.ClosedById.HasValue);
             Assert.IsNull(_dut.ClosedAtUtc);
+            Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual("DescA", _dut.Description);
             Assert.IsFalse(_dut.IsClosed);
         }
@@ -40,15 +41,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Constructor_ShouldSetProperties_WithDue()
         {
             Assert.AreEqual("SchemaA", _dut.Schema);
+            Assert.AreEqual(_utcNow, _dut.CreatedAtUtc);
+            Assert.AreEqual(PersonId, _dut.CreatedById);
             Assert.AreEqual(_utcNow, _dut.DueTimeUtc);
+            Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual("DescA", _dut.Description);
             Assert.IsFalse(_dut.IsClosed);
         }
 
         [TestMethod]
+        public void Constructor_ShouldThrowException_WhenCreatedIsNotUtc()
+            => Assert.ThrowsException<ArgumentException>(() =>
+                new Action("SchemaA", "", "", DateTime.Now, _personMock.Object, _utcNow)
+            );
+
+        [TestMethod]
+        public void Constructor_ShouldThrowException_WhenCreatedByIsNull()
+            => Assert.ThrowsException<ArgumentNullException>(() =>
+                new Action("SchemaA", "", "", _utcNow, null, _utcNow)
+            );
+
+        [TestMethod]
         public void Constructor_ShouldThrowException_WhenDueIsNotUtc()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new Action("SchemaA", "DescA", DateTime.Now)
+                new Action("SchemaA", "", "", _utcNow, _personMock.Object, DateTime.Now)
             );
 
         [TestMethod]
@@ -78,16 +94,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void SetDueTime_ShouldThrowException_WhenIsClosed()
         {
-            _dut.Close(_utcNow, _closedByMock.Object);
+            _dut.Close(_utcNow, _personMock.Object);
             Assert.ThrowsException<Exception>(() => _dut.SetDueTime(_utcNow));
         }
 
         [TestMethod]
         public void Close_ShouldSetClosedData()
         {
-            _dut.Close(_utcNow, _closedByMock.Object);
+            _dut.Close(_utcNow, _personMock.Object);
 
-            Assert.AreEqual(ClosedById, _dut.ClosedById);
+            Assert.AreEqual(PersonId, _dut.ClosedById);
             Assert.AreEqual(_utcNow, _dut.ClosedAtUtc);
             Assert.IsTrue(_dut.IsClosed);
         }

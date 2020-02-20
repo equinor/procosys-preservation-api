@@ -34,8 +34,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActions
                 .Actions
                 .Select(action => new ActionDto(
                     action.Id,
-                    action.Description,
-                    action.DueTimeUtc)).ToList();
+                    action.Title,
+                    action.DueTimeUtc,
+                    action.IsClosed)).ToList();
             
             return new SuccessResult<List<ActionDto>>(actions);
         }
