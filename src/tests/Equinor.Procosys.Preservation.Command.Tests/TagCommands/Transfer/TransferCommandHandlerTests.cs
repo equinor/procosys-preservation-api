@@ -60,6 +60,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
                 new List<Requirement> {new Mock<Requirement>().Object});
             _tag2Mock.SetupGet(t => t.Id).Returns(TagId2);
 
+            _tag1Mock.Object.StartPreservation(DateTime.UtcNow);
+            _tag2Mock.Object.StartPreservation(DateTime.UtcNow);
+
             var projectRepoMock = new Mock<IProjectRepository>();
             
             var tagIds = new List<int> {TagId1, TagId2};
@@ -73,17 +76,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         }
 
         [TestMethod]
-        public async Task HandlingTransferCommand_Should()
+        public async Task HandlingTransferCommand_ShouldTransferToNextStep()
         {
             await _dut.Handle(_command, default);
 
             Assert.AreEqual(Step2OnJourney1Id, _tag1Mock.Object.StepId);
             Assert.AreEqual(Step2OnJourney2Id, _tag2Mock.Object.StepId);
         }
-        
+
         [TestMethod]
         public async Task HandlingTransferCommand_ShouldThrowException_WhenTransferFromLastStep()
         {
+            // transfer to last step
             await _dut.Handle(_command, default);
 
             await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
