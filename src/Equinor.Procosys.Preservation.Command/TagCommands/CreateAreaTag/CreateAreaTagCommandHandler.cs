@@ -8,6 +8,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
+using Equinor.Procosys.Preservation.MainApi.Project;
 using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 using MediatR;
 using ServiceResult;
@@ -21,6 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
+        private readonly IProjectApiService _projectApiService;
         private readonly IDisciplineApiService _disciplineApiService;
         private readonly IAreaApiService _areaApiService;
 
@@ -30,6 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
+            IProjectApiService projectApiService,
             IDisciplineApiService disciplineApiService,
             IAreaApiService areaApiService)
         {
@@ -38,8 +41,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
-            _areaApiService = areaApiService;
+            _projectApiService = projectApiService;
             _disciplineApiService = disciplineApiService;
+            _areaApiService = areaApiService;
         }
 
         public async Task<Result<int>> Handle(CreateAreaTagCommand request, CancellationToken cancellationToken)
@@ -54,8 +58,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             
             if (project == null)
             {
-                // todo Must get project from main here to be able to create it with Description. Later PBI 71457 since we don't have that endpoint in MainApi yet
-                project = new Project(_plantProvider.Plant, request.ProjectName, "Dummy project description");
+                var mainProject = await _projectApiService.GetProject(_plantProvider.Plant, request.ProjectName);
+                if (mainProject == null)
+                {
+                    return new NotFoundResult<int>($"Project with name {request.ProjectName} not found");
+                }
+                project = new Project(_plantProvider.Plant, request.ProjectName, mainProject.Description);
                 _projectRepository.Add(project);
             }
 
