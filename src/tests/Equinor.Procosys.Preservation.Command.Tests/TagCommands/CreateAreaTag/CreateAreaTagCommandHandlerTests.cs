@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
+using Equinor.Procosys.Preservation.MainApi.Project;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.Requirement;
@@ -28,6 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         private Project _projectAddedToRepository;
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
+        private Mock<IProjectApiService> _projectApiServiceMock;
         private Mock<IDisciplineApiService> _disciplineApiServiceMock;
         private Mock<IAreaApiService> _areaApiServiceMock;
 
@@ -66,6 +68,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             var disciplineCode = "D";
             var areaCode = "A";
 
+            _projectApiServiceMock = new Mock<IProjectApiService>();
+            _projectApiServiceMock.Setup(s => s.GetProject(TestPlant, TestProjectName))
+                .Returns(Task.FromResult(new ProcosysProject {Description = "ProjectDescription"}));
+
             _disciplineApiServiceMock = new Mock<IDisciplineApiService>();
             _disciplineApiServiceMock.Setup(s => s.GetDisciplines(TestPlant))
                 .Returns(Task.FromResult(new List<ProcosysDiscipline>
@@ -101,6 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 _rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object,
+                _projectApiServiceMock.Object,
                 _disciplineApiServiceMock.Object,
                 _areaApiServiceMock.Object);
         }
@@ -119,8 +126,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, _projectAddedToRepository.Id);
             Assert.AreEqual(TestProjectName, _projectAddedToRepository.Name);
-            // todo Later PBI 71457 since we don't have that endpoint getting project from MainApi yet
-            Assert.AreEqual("Dummy project description", _projectAddedToRepository.Description);
+            Assert.AreEqual("ProjectDescription", _projectAddedToRepository.Description);
         }
 
         [TestMethod]
