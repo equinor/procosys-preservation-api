@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
+namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
 {
     public class RecordValuesCommandValidator : AbstractValidator<RecordValuesCommand>
     {

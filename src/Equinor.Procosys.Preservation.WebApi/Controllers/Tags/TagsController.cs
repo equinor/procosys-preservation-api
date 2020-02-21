@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
-using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
-using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
@@ -19,6 +18,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
+using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -159,6 +159,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     elementSelector => elementSelector.Value);
 
             var result = await _mediator.Send(new RecordValuesCommand(id, requirementId, fieldValues, requirementValuesDto?.Comment));
+            
+            return this.FromResult(result);
+        }
+
+        [HttpPost("{id}/Requirement/{requirementId}/Preserve")]
+        public async Task<IActionResult> Preserve([FromRoute] int id, [FromRoute] int requirementId)
+        {
+            var result = await _mediator.Send(new RequirementPreserveCommand(id, requirementId));
             
             return this.FromResult(result);
         }

@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.RecordValues
+namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
 {
     public class RecordValuesCommandHandler : IRequestHandler<RecordValuesCommand, Result<Unit>>
     {
