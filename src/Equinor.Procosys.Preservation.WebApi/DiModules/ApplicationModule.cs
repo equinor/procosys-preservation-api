@@ -22,6 +22,7 @@ using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();
+            services.AddScoped<IProjectApiService, MainApiProjectService>();
             services.AddScoped<IAreaApiService, MainApiAreaService>();
             services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
