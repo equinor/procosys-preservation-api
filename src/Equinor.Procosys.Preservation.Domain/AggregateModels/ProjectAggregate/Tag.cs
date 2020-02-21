@@ -122,11 +122,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void StartPreservation(DateTime startedAtUtc)
         {
-            if (!_requirements.Any())
+            if (!IsReadyToBeStarted())
             {
-                throw new Exception("Can't start preservation without requirements");
+                throw new Exception($"Preservation on {nameof(Tag)} {Id} can't start. Status = {Status}");
             }
-            foreach (var requirement in Requirements) // todo start only those not voided. Write tests
+            foreach (var requirement in Requirements.Where(r => !r.IsVoided))
             {
                 requirement.StartPreservation(startedAtUtc);
             }
@@ -178,6 +178,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             SetStep(journey.GetNextStep(StepId));
         }
+
+        private bool IsReadyToBeStarted()
+            => Status == PreservationStatus.NotStarted && _requirements.Any();
 
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
