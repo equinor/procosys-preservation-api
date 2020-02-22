@@ -91,15 +91,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByTagId_ReturnsProjectWith3Tags()
-        {
-            var result = await _dut.GetByTagIdAsync(TestTagId);
-
-            Assert.AreEqual(ProjectNameWithTags, result.Name);
-            Assert.AreEqual(3, result.Tags.Count);
-        }
-
-        [TestMethod]
         public async Task GetTagByTagId_ReturnsTag()
         {
             var result = await _dut.GetTagByTagIdAsync(TestTagId);
