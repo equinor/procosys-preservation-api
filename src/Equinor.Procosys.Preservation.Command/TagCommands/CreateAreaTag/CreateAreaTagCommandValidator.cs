@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Command.Validators.Project;
+using System.Threading;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Infrastructure.Validators.Project;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
@@ -22,9 +24,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 .Must((command, tagNo) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName))
                 .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo} Project={command.ProjectName}");
 
-            RuleFor(tag => tag.ProjectName)
-                .Must(NotBeAClosedProject)
-                .When(tag => ProjectExists(tag.ProjectName))
+            RuleFor(tag => tag)
+                .MustAsync((tag, token) => NotBeAnExistingAndClosedProjectAsync(tag.ProjectName, token))
                 .WithMessage(tag => $"Project is closed! Project={tag.ProjectName}");
 
             RuleFor(tag => tag.StepId)
@@ -49,9 +50,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
             bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.Exists(tagNo, projectName);
 
-            bool ProjectExists(string projectName) => projectValidator.Exists(projectName);
-
-            bool NotBeAClosedProject(string projectName) => !projectValidator.IsClosed(projectName);
+            async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken cancellationToken)
+                => !await projectValidator.IsExistingAndClosedAsync(projectName, cancellationToken);
 
             bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
 
