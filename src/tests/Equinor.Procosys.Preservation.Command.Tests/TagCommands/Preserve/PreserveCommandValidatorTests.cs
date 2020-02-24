@@ -27,10 +27,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId)).Returns(true);
-            _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId)).Returns(true);
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active)).Returns(true);
-            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, _utcNow)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, _utcNow, default)).Returns(Task.FromResult(true));
             _timeServiceMock = new Mock<ITimeService>();
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
             _command = new PreserveCommand(TagId);
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotExists()
         {
-            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId)).Returns(false);
+            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Validate_ShouldFail_WhenTagIsVoided()
         {
-            _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId)).Returns(true);
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Validate_ShouldFail_WhenPreservationIsNotActiveForTag()
         {
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active)).Returns(false);
+            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotReadyToBePreserved()
         {
-            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, _utcNow)).Returns(false);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, _utcNow, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         public void Validate_ShouldFailWith1Error_When2Errors()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId)).Returns(false);
+            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 

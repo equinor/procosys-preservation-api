@@ -31,8 +31,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId)).Returns(true);
-            _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecordingAsync(TagId, ReqId)).Returns(true);
+            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecordingAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(v => v.Exists(FieldId)).Returns(true);
             _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, It.IsAny<string>())).Returns(true);
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotExists()
         {
-            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId)).Returns(false);
+            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenTagIsVoided()
         {
-            _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId)).Returns(true);
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 
@@ -100,7 +100,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementIsNotReadyForRecording()
         {
-            _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecordingAsync(TagId, ReqId)).Returns(false);
+            _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecordingAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 
