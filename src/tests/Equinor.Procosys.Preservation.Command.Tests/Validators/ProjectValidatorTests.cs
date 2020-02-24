@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.Project;
+using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;

@@ -2,10 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
-using DomProject = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Project;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.Project
+namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
 {
     public class ProjectValidator : IProjectValidator
     {
@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Project
 
         public async Task<bool> ExistsAsync(string projectName, CancellationToken cancellationToken)
         {
-            var count = await (from p in _context.QuerySet<DomProject>()
+            var count = await (from p in _context.QuerySet<Project>()
                 where p.Name == projectName
                 select p).CountAsync(cancellationToken);
             return count > 0;
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Project
 
         public async Task<bool> IsExistingAndClosedAsync(string projectName, CancellationToken cancellationToken)
         {
-            var project = await (from p in _context.QuerySet<DomProject>()
+            var project = await (from p in _context.QuerySet<Project>()
                 where p.Name == projectName
                 select p).FirstOrDefaultAsync(cancellationToken);
 
@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Project
         public async Task<bool> IsClosedForTagAsync(int tagId, CancellationToken cancellationToken)
         {
             var project = await (from tag in _context.QuerySet<Domain.AggregateModels.ProjectAggregate.Tag>()
-                join p in _context.QuerySet<DomProject>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
                 where tag.Id == tagId
                 select p).FirstOrDefaultAsync(cancellationToken);
 

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
-using Equinor.Procosys.Preservation.Command.Validators.Project;
+using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

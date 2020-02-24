@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
-using Equinor.Procosys.Preservation.Command.Validators.Project;
+using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;

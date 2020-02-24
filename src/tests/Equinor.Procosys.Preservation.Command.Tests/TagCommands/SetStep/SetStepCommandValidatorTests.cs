@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
-using Equinor.Procosys.Preservation.Command.Validators.Project;
+using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
