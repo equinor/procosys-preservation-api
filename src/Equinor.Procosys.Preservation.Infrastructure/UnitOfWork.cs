@@ -44,7 +44,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
         private async Task SetAuditData()
         {
-            var auditables = _context.ChangeTracker.Entries<IAuditable>().Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
+            var auditables = _context
+                .ChangeTracker
+                .Entries<IAuditable>()
+                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
+
             if (auditables.Any())
             {
                 var now = _timeService.GetCurrentTimeUtc();
