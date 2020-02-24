@@ -11,6 +11,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Equinor.Procosys.Preservation.Infrastructure
 {
@@ -18,15 +19,21 @@ namespace Equinor.Procosys.Preservation.Infrastructure
     {
         private readonly IEventDispatcher _eventDispatcher;
         private readonly IPlantProvider _plantProvider;
+        private readonly ITimeService _timeService;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
         public PreservationContext(
             DbContextOptions<PreservationContext> options,
             IEventDispatcher eventDispatcher,
-            IPlantProvider plantProvider)
+            IPlantProvider plantProvider,
+            ITimeService timeService,
+            ICurrentUserProvider currentUserProvider)
             : base(options)
         {
             _eventDispatcher = eventDispatcher;
             _plantProvider = plantProvider;
+            _timeService = timeService;
+            _currentUserProvider = currentUserProvider;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -71,6 +78,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             await DispatchEvents(cancellationToken);
+            await SetAuditData();
             return await base.SaveChangesAsync(cancellationToken);
         }
 
@@ -89,5 +97,28 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             .HasQueryFilter(e => e.Schema == _plantProvider.Plant);
 
         public IQueryable<TEntity> QuerySet<TEntity>() where TEntity : class => Set<TEntity>().AsNoTracking();
+
+        private async Task SetAuditData()
+        {
+            var auditables = ChangeTracker.Entries<IAuditable>().Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
+            if (auditables.Any())
+            {
+                var now = _timeService.GetCurrentTimeUtc();
+                var currentUser = await _currentUserProvider.GetCurrentUserAsync();
+
+                foreach (var entry in auditables)
+                {
+                    switch (entry.State)
+                    {
+                        case EntityState.Added:
+                            entry.Entity.SetCreated(now, currentUser.Id);
+                            break;
+                        case EntityState.Modified:
+                            entry.Entity.SetModified(now, currentUser.Id);
+                            break;
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
@@ -25,7 +28,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                 using (var dbContext = new PreservationContext(
                     scope.ServiceProvider.GetRequiredService<DbContextOptions<PreservationContext>>(),
                     scope.ServiceProvider.GetRequiredService<IEventDispatcher>(),
-                    plantProvider))
+                    plantProvider,
+                    scope.ServiceProvider.GetRequiredService<ITimeService>(),
+                    scope.ServiceProvider.GetRequiredService<ICurrentUserProvider>()))
                 {
                     var unitOfWork = dbContext;
                     var personRepository = new PersonRepository(dbContext);
@@ -66,5 +71,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+        private class SeederUserProvider : ICurrentUserProvider
+        {
+            public Task<Person> GetCurrentUserAsync() => Task.FromResult(new Person(Guid.NewGuid(), "Seeder", "Seederson"));
+        }
     }
 }
