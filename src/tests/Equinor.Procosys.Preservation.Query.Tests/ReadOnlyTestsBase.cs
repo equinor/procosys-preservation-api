@@ -5,7 +5,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,13 +16,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests
     {
         protected const string _schema = "PCS$TEST";
         protected DbContextOptions<PreservationContext> _dbContextOptions;
-        protected Mock<IEventDispatcher> _eventDispatcherMock;
         protected Mock<IPlantProvider> _plantProviderMock;
 
         [TestInitialize]
         public void SetupBase()
         {
-            _eventDispatcherMock = new Mock<IEventDispatcher>();
             _plantProviderMock = new Mock<IPlantProvider>();
             _plantProviderMock.SetupGet(x => x.Plant).Returns(_schema);
 

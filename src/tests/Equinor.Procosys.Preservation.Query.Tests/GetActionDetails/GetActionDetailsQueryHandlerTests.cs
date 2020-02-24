@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            using (var context = new PreservationContext(dbContextOptions, _plantProviderMock.Object))
             {
                 var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsClosedAction()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
             {
                 var query = new GetActionDetailsQuery(_tagId, _closedActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsOpenAction()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
             {
                 var query = new GetActionDetailsQuery(_tagId, _openActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
             {
                 var query = new GetActionDetailsQuery(0, _closedActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfActionIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
             {
                 var query = new GetActionDetailsQuery(_tagId, 0);
                 var dut = new GetActionDetailsQueryHandler(context);
