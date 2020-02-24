@@ -180,7 +180,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         private bool IsReadyToBeStarted()
-            => Status == PreservationStatus.NotStarted && _requirements.Any();
+            => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
 
         private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
