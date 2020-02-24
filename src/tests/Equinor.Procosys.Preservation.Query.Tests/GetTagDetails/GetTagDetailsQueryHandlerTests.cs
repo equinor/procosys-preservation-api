@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
@@ -19,6 +21,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         private string _modeTitle = "M1";
         private string _respCode = "R1";
         private int _tagId;
+        private Mock<ITimeService> _timeServiceMock;
+        private DateTime _startedPreservationUtc;
+        private int _intervalWeeks = 2;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -44,10 +49,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                     journey.Steps.ElementAt(0),
                     new List<Requirement>
                     {
-                        new Requirement(_schema, 2, reqType.RequirementDefinitions.ElementAt(0))
+                        new Requirement(_schema, _intervalWeeks, reqType.RequirementDefinitions.ElementAt(0))
                     });
 
-                tag.StartPreservation(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
+                _timeServiceMock = new Mock<ITimeService>();
+                _startedPreservationUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+                _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservationUtc);
+                tag.StartPreservation(_startedPreservationUtc);
                 context.Tags.Add(tag);
                 context.SaveChanges();
 
@@ -60,8 +68,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
+                _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservationUtc.AddWeeks(_intervalWeeks));
+
                 var query = new GetTagDetailsQuery(_tagId);
-                var dut = new GetTagDetailsQueryHandler(context);
+                var dut = new GetTagDetailsQueryHandler(context, _timeServiceMock.Object);
 
                 var result = await dut.Handle(query, default);
 
@@ -81,6 +91,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(PreservationStatus.Active, dto.Status);
                 Assert.AreEqual("TagNo", dto.TagNo);
                 Assert.AreEqual(TagType.Standard, dto.TagType);
+                Assert.IsTrue(dto.ReadyToBePreserved);
             }
         }
 
@@ -91,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 _plantProviderMock.Object))
             {
                 var query = new GetTagDetailsQuery(0);
-                var dut = new GetTagDetailsQueryHandler(context);
+                var dut = new GetTagDetailsQueryHandler(context, _timeServiceMock.Object);
 
                 var result = await dut.Handle(query, default);
 
