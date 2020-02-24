@@ -102,5 +102,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 
             return step != null;
         }
+
+        public bool HaveRequirementReadyToBePreserved(int tagId, int requirementId)
+        {
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
+            if (tag == null)
+            {
+                return false;
+            }
+
+            var requirement = tag.Requirements.SingleOrDefault(r => r.Id == requirementId);
+
+            return requirement != null && requirement.ReadyToBePreserved;
+        }
     }
 }

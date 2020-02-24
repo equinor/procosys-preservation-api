@@ -80,13 +80,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
-            var preservationPeriod = PeriodReadyToBePreserved;
-            if (preservationPeriod == null)
+            if (!ReadyToBePreserved)
             {
-                throw new Exception($"{nameof(Requirement)} {Id} has not period {PreservationPeriodStatus.ReadyToBePreserved}");
+                throw new Exception($"{nameof(Requirement)} {Id} is not ready to be preserved");
             }
 
-            preservationPeriod.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
+            PeriodReadyToBePreserved.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
             AddNewPreservationPeriod(preservedAtUtc);
         }
 

@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
+namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.RecordValues
 {
     [TestClass]
     public class RecordValuesCommandValidatorTests

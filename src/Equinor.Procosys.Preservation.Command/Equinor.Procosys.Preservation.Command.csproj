@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="ResponsibleCommands\**" />
+    <EmbeddedResource Remove="ResponsibleCommands\**" />
+    <None Remove="ResponsibleCommands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.1" />
     <PackageReference Include="MediatR" Version="8.0.0" />
     <PackageReference Include="ServiceResult" Version="1.0.1" />
@@ -14,10 +20,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.MainApi\Equinor.Procosys.Preservation.MainApi.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ResponsibleCommands\" />
   </ItemGroup>
 
 </Project>
