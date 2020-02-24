@@ -2,7 +2,7 @@
 using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.Journey;
 using Equinor.Procosys.Preservation.Command.Validators.Mode;
-using Equinor.Procosys.Preservation.Command.Validators.Project;
+using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Responsible;
 using Equinor.Procosys.Preservation.Command.Validators.Step;

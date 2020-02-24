@@ -1,41 +1,35 @@
-﻿using System;
-using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
+﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
+namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preserve
 {
     [TestClass]
     public class PreserveCommandValidatorTests
     {
         private const int TagId = 7;
-        private DateTime _utcNow;
+        private const int RequirementId = 71;
         private PreserveCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
-        private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
 
         [TestInitialize]
         public void Setup_OkState()
         {
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.Exists(TagId)).Returns(true);
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirement(TagId)).Returns(true);
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatus(TagId, PreservationStatus.Active)).Returns(true);
-            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId, _utcNow)).Returns(true);
-            _timeServiceMock = new Mock<ITimeService>();
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
-            _command = new PreserveCommand(TagId);
+            _tagValidatorMock.Setup(r => r.HaveRequirementReadyToBePreserved(TagId, RequirementId)).Returns(true);
+            _command = new PreserveCommand(TagId, RequirementId);
 
-            _dut = new PreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _timeServiceMock.Object);
+            _dut = new PreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 
         [TestMethod]
@@ -95,15 +89,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotReadyToBePreserved()
+        public void Validate_ShouldFail_WhenRequirementNotReadyToBePreserved()
         {
-            _tagValidatorMock.Setup(r => r.ReadyToBePreserved(TagId, _utcNow)).Returns(false);
-            
+            _tagValidatorMock.Setup(r => r.HaveRequirementReadyToBePreserved(TagId, RequirementId)).Returns(false);
+
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is not ready to be preserved!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't have this requirement ready to be preserved!"));
         }
 
         [TestMethod]

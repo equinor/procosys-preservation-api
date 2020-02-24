@@ -34,12 +34,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             return tag != null && tag.IsVoided;
         }
 
-        public bool ProjectIsClosed(int tagId)
-        {
-            var project = _projectRepository.GetByTagIdAsync(tagId).Result;
-            return project != null && project.IsClosed;
-        }
-
         public bool VerifyPreservationStatus(int tagId, PreservationStatus status)
         {
             var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
@@ -101,6 +95,19 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             var step = journey?.GetNextStep(tag.StepId);
 
             return step != null;
+        }
+
+        public bool HaveRequirementReadyToBePreserved(int tagId, int requirementId)
+        {
+            var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;
+            if (tag == null)
+            {
+                return false;
+            }
+
+            var requirement = tag.Requirements.SingleOrDefault(r => r.Id == requirementId);
+
+            return requirement != null && requirement.ReadyToBePreserved;
         }
     }
 }

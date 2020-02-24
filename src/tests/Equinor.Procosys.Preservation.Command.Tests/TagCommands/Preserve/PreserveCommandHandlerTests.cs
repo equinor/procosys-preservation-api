@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _currentUserProvider = new Mock<ICurrentUserProvider>();
             _currentUserProvider
                 .Setup(x => x.GetCurrentUserAsync())
-                .Returns(Task.FromResult(new Person(new Guid("12345678-1234-1234-1234-123456789123"), "Firstname", "Lastname")));
+                .Returns(Task.FromResult(new Person(Guid.Empty, "Firstname", "Lastname")));
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tag));
             _startedPreservedAtUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
@@ -64,6 +64,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldPreserveRequirementsOnTag_IsDue()
         {
+            var req1WithTwoWeekIntervalInitialPeriod = _req1WithTwoWeekInterval.ActivePeriod;
+            var req2WithTwoWeekIntervalInitialPeriod = _req2WithTwoWeekInterval.ActivePeriod;
+            var req3WithFourWeekIntervalInitialPeriod = _req3WithFourWeekInterval.ActivePeriod;
+
             var preservedAtUtc = _startedPreservedAtUtc.AddWeeks(TwoWeeksInterval);
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(preservedAtUtc);
 
@@ -71,7 +75,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
 
             var expectedNextDueTimeUtc = preservedAtUtc.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtc, _req1WithTwoWeekInterval.NextDueTimeUtc);
+            Assert.IsNotNull(req1WithTwoWeekIntervalInitialPeriod.PreservationRecord);
             Assert.AreEqual(expectedNextDueTimeUtc, _req2WithTwoWeekInterval.NextDueTimeUtc);
+            Assert.IsNotNull(req2WithTwoWeekIntervalInitialPeriod.PreservationRecord);
+            Assert.IsNull(req3WithFourWeekIntervalInitialPeriod.PreservationRecord);
         }
 
         [TestMethod]

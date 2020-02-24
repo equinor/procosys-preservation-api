@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
-using Equinor.Procosys.Preservation.Query.GetTagDetails;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
@@ -84,8 +84,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
             {
-                var query = new GetTagDetailsQuery(0);
-                var dut = new GetTagDetailsQueryHandler(context);
+                var query = new GetTagActionsQuery(0);
+                var dut = new GetTagActionsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
 

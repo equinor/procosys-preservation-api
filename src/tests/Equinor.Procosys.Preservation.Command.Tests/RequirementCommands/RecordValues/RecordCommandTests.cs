@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.TagCommands.RecordValues;
+﻿using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.RecordValues
+namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.RecordValues
 {
     [TestClass]
     public class RecordCommandTests
