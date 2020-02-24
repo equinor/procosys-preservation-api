@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
+using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -16,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         private const int TagId2 = 8;
         private DateTime _utcNow;
         private BulkPreserveCommandValidator _dut;
+        private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<ITimeService> _timeServiceMock;
         private BulkPreserveCommand _command;
@@ -27,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         {
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _tagIds = new List<int> {TagId1, TagId2};
+            _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.Exists(TagId1)).Returns(true);
             _tagValidatorMock.Setup(r => r.Exists(TagId2)).Returns(true);
@@ -40,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
             _command = new BulkPreserveCommand(_tagIds);
 
-            _dut = new BulkPreserveCommandValidator(_tagValidatorMock.Object, _timeServiceMock.Object);
+            _dut = new BulkPreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _timeServiceMock.Object);
         }
 
         [TestMethod]
@@ -102,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public void Validate_ShouldFail_WhenProjectForAnyTagIsClosed()
         {
-            _tagValidatorMock.Setup(r => r.ProjectIsClosed(TagId1)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 
@@ -138,14 +142,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public void Validate_ShouldFailWith1Error_When2Errors()
         {
-            _tagValidatorMock.Setup(r => r.ProjectIsClosed(TagId1)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.Exists(TagId2)).Returns(false);
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
         }
     }
 }

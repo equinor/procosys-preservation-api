@@ -34,6 +34,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservati
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.MainApi.Tests", "tests\Equinor.Procosys.Preservation.MainApi.Tests\Equinor.Procosys.Preservation.MainApi.Tests.csproj", "{3628443D-47B4-4D7A-AB08-3E0F613E5015}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Equinor.Procosys.Preservation.Test.Common", "tests\Equinor.Procosys.Preservation.Test.Common\Equinor.Procosys.Preservation.Test.Common.csproj", "{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,10 @@ Global
 		{3628443D-47B4-4D7A-AB08-3E0F613E5015}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3628443D-47B4-4D7A-AB08-3E0F613E5015}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3628443D-47B4-4D7A-AB08-3E0F613E5015}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +105,7 @@ Global
 		{F8610A00-6320-46AD-AC74-70F2311DC062} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
 		{065C9A62-0885-4238-8893-B10BE15E5201} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
 		{3628443D-47B4-4D7A-AB08-3E0F613E5015} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
+		{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3} = {DFB50BC5-5201-42FD-A049-CF0259AA7AE8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C79730D0-E4C2-474A-9D04-1C07256B6DF3}

@@ -3,6 +3,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Query.Tests
+namespace Equinor.Procosys.Preservation.Test.Common
 {
     public abstract class ReadOnlyTestsBase
     {
@@ -19,13 +20,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IEventDispatcher> _eventDispatcherMock;
         protected Mock<IPlantProvider> _plantProviderMock;
+        protected IEventDispatcher _eventDispatcher;
+        protected IPlantProvider _plantProvider;
 
         [TestInitialize]
         public void SetupBase()
         {
             _eventDispatcherMock = new Mock<IEventDispatcher>();
+            _eventDispatcher = _eventDispatcherMock.Object;
             _plantProviderMock = new Mock<IPlantProvider>();
             _plantProviderMock.SetupGet(x => x.Plant).Returns(_schema);
+            _plantProvider = _plantProviderMock.Object;
 
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -80,6 +85,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests
             context.Persons.Add(person);
             context.SaveChanges();
             return person;
+        }
+
+        protected Project AddProject(PreservationContext context, string name, string description, bool isClosed = false)
+        {
+            var project = new Project(_schema, name, description);
+            if (isClosed)
+            {
+                project.Close();
+            }
+            context.Projects.Add(project);
+            context.SaveChanges();
+            return project;
         }
     }
 }

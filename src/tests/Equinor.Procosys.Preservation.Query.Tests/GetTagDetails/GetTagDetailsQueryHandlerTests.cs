@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -26,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var journey = AddJourneyWithStep(context, _journeyTitle, 
                     AddMode(context, _modeTitle), 
@@ -65,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         [TestMethod]
         public async Task Handler_ReturnsTagDetails()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservationUtc.AddWeeks(_intervalWeeks));
 

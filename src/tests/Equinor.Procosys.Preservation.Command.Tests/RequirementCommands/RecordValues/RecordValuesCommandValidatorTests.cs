@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
+using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -18,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         private const int ReqId = 21;
 
         private RecordValuesCommandValidator _dut;
+        private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IFieldValidator> _fieldValidatorMock;
         private RecordValuesCommand _recordValuesCommandWithCommentOnly;
@@ -26,10 +29,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestInitialize]
         public void Setup_OkState()
         {
+            _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(v => v.Exists(TagId)).Returns(true);
             _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecording(TagId, ReqId)).Returns(true);
-
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(v => v.Exists(FieldId)).Returns(true);
             _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, It.IsAny<string>())).Returns(true);
@@ -47,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
                 new Dictionary<int, string> {{FieldId, NumberAsString}},
                 Comment);
 
-            _dut = new RecordValuesCommandValidator(_tagValidatorMock.Object, _fieldValidatorMock.Object);
+            _dut = new RecordValuesCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _fieldValidatorMock.Object);
         }
 
         [TestMethod]
@@ -85,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenProjectForTagIsClosed()
         {
-            _tagValidatorMock.Setup(r => r.ProjectIsClosed(TagId)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 
@@ -145,7 +148,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFailWith2Errors_WhenErrorsIn2Rules()
         {
-            _tagValidatorMock.Setup(r => r.ProjectIsClosed(TagId)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, NumberAsString)).Returns(false);
 
             var result = _dut.Validate(_recordValuesCommandWithNormalNumber);

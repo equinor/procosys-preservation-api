@@ -11,8 +11,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
 
         bool IsVoided(int tagId);
         
-        bool ProjectIsClosed(int tagId);
-        
         bool VerifyPreservationStatus(int tagId, PreservationStatus status);
         
         bool HasANonVoidedRequirement(int tagId);

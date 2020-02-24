@@ -34,12 +34,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.Tag
             return tag != null && tag.IsVoided;
         }
 
-        public bool ProjectIsClosed(int tagId)
-        {
-            var project = _projectRepository.GetByTagIdAsync(tagId).Result;
-            return project != null && project.IsClosed;
-        }
-
         public bool VerifyPreservationStatus(int tagId, PreservationStatus status)
         {
             var tag = _projectRepository.GetTagByTagIdAsync(tagId).Result;

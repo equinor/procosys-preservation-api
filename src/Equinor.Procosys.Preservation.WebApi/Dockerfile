@@ -15,6 +15,7 @@ COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservatio
 COPY tests/Equinor.Procosys.Preservation.Query.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Query.Tests/
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
 COPY tests/Equinor.Procosys.Preservation.WebApi.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.WebApi.Tests/
+COPY tests/Equinor.Procosys.Preservation.Test.Common/*.csproj ./tests/Equinor.Procosys.Preservation.Test.Common/
 
 # Restore NuGet packages
 RUN dotnet restore
