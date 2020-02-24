@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
@@ -45,16 +45,16 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken cancellationToken)
                 => !await projectValidator.IsClosedForTagAsync(tagId, cancellationToken);
 
-            bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
+            bool BeAnExistingTag(int tagId) => tagValidator.ExistsAsync(tagId);
 
-            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoided(tagId);
+            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoidedAsync(tagId);
 
             bool BeAnExistingField(KeyValuePair<int, string> fieldValue) => fieldValidator.Exists(fieldValue.Key);
 
             bool NotBeAVoidedField(KeyValuePair<int, string>  fieldValue) => !fieldValidator.IsVoided(fieldValue.Key);
 
             bool HaveRequirementReadyForRecording(int tagId, int requirementId)
-                => tagValidator.HaveRequirementReadyForRecording(tagId, requirementId);
+                => tagValidator.HaveRequirementReadyForRecordingAsync(tagId, requirementId);
 
             bool BeAFieldForRecording(KeyValuePair<int, string>  fieldValue)
                 => fieldValidator.IsValidForRecording(fieldValue.Key);

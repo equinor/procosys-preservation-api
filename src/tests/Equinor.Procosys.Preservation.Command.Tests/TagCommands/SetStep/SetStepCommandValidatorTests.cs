@@ -2,7 +2,7 @@
 using Equinor.Procosys.Preservation.Command.TagCommands.SetStep;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.Exists(TagId)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId)).Returns(true);
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.Exists(StepId)).Returns(true);
             _command = new SetStepCommand(TagId, StepId);
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotExists()
         {
-            _tagValidatorMock.Setup(r => r.Exists(TagId)).Returns(false);
+            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId)).Returns(false);
             
             var result = _dut.Validate(_command);
 
@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
         [TestMethod]
         public void Validate_ShouldFail_WhenTagIsVoided()
         {
-            _tagValidatorMock.Setup(r => r.IsVoided(TagId)).Returns(true);
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId)).Returns(true);
             
             var result = _dut.Validate(_command);
 
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.SetStep
         [TestMethod]
         public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
         {
-            _tagValidatorMock.Setup(r => r.Exists(TagId)).Returns(false);
+            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId)).Returns(false);
             _stepValidatorMock.Setup(r => r.Exists(StepId)).Returns(false);
             
             var result = _dut.Validate(_command);

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 return lowerTagNos.Distinct().Count() == lowerTagNos.Count;
             }
 
-            bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.Exists(tagNo, projectName);
+            bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.ExistsAsync(tagNo, projectName);
 
             Task<bool> ProjectExistsAsync(string projectName, CancellationToken cancellationToken)
                 => projectValidator.ExistsAsync(projectName, cancellationToken);

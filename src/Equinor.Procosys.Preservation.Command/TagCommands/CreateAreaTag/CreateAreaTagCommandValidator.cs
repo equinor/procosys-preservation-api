@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 .WithMessage((command, req) =>
                     $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
 
-            bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.Exists(tagNo, projectName);
+            bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.ExistsAsync(tagNo, projectName);
 
             async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken cancellationToken)
                 => !await projectValidator.IsExistingAndClosedAsync(projectName, cancellationToken);

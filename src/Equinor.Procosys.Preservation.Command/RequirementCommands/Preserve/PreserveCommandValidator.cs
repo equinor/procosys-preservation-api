@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
@@ -29,14 +29,14 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken cancellationToken)
                 => !await projectValidator.IsClosedForTagAsync(tagId, cancellationToken);
 
-            bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
+            bool BeAnExistingTag(int tagId) => tagValidator.ExistsAsync(tagId);
 
-            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoided(tagId);
+            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoidedAsync(tagId);
 
-            bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatus(tagId, PreservationStatus.Active);
+            bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active);
 
             bool HaveRequirementReadyToBePreserved(int tagId, int requirementId)
-                => tagValidator.HaveRequirementReadyToBePreserved(tagId, requirementId);
+                => tagValidator.HaveRequirementReadyToBePreservedAsync(tagId, requirementId);
         }
     }
 }

@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyTagAlreadyExists()
         {
-            _tagValidatorMock.Setup(r => r.Exists(_command.GetTagNo(), _projectName)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ExistsAsync(_command.GetTagNo(), _projectName)).Returns(true);
             
             var result = _dut.Validate(_command);
 
@@ -206,7 +206,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         [TestMethod]
         public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
         {
-            _tagValidatorMock.Setup(r => r.Exists(_command.GetTagNo(), _projectName)).Returns(true);
+            _tagValidatorMock.Setup(r => r.ExistsAsync(_command.GetTagNo(), _projectName)).Returns(true);
             _rdValidatorMock.Setup(r => r.Exists(_rd2Id)).Returns(false);
             
             var result = _dut.Validate(_command);

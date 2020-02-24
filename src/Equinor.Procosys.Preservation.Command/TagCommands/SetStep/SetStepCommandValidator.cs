@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using FluentValidation;
 
@@ -34,9 +34,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.SetStep
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken cancellationToken)
                 => !await projectValidator.IsClosedForTagAsync(tagId, cancellationToken);
 
-            bool BeAnExistingTag(int tagId) => tagValidator.Exists(tagId);
+            bool BeAnExistingTag(int tagId) => tagValidator.ExistsAsync(tagId);
 
-            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoided(tagId);
+            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoidedAsync(tagId);
 
             bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
             

@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
 
         public async Task<bool> IsClosedForTagAsync(int tagId, CancellationToken cancellationToken)
         {
-            var project = await (from tag in _context.QuerySet<Domain.AggregateModels.ProjectAggregate.Tag>()
+            var project = await (from tag in _context.QuerySet<Tag>()
                 join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
                 where tag.Id == tagId
                 select p).FirstOrDefaultAsync(cancellationToken);
