@@ -16,27 +16,30 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
-                .Must(command => BeAnExistingTag(command.TagId))
+                .MustAsync((command, token) => BeAnExistingTag(command.TagId, token))
                 .WithMessage((x, id) => $"Tag doesn't exists! Tag={id}")
-                .Must(command => NotBeAVoidedTag(command.TagId))
+                .MustAsync((command, token) => NotBeAVoidedTag(command.TagId, token))
                 .WithMessage((x, id) => $"Tag is voided! Tag={id}")
-                .Must(command => PreservationIsStarted(command.TagId))
+                .MustAsync((command, token) => PreservationIsStarted(command.TagId, token))
                 .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
-                .Must((command, _) => HaveRequirementReadyToBePreserved(command.TagId, command.RequirementId))
+                .MustAsync((command, token) => HaveRequirementReadyToBePreserved(command.TagId, command.RequirementId, token))
                 .WithMessage((command, _) =>
                     $"Tag doesn't have this requirement ready to be preserved! Tag={command.TagId}. Requirement={command.RequirementId}");
             
-            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken cancellationToken)
-                => !await projectValidator.IsClosedForTagAsync(tagId, cancellationToken);
+            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
+                => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
-            bool BeAnExistingTag(int tagId) => tagValidator.ExistsAsync(tagId);
+            async Task<bool> BeAnExistingTag(int tagId, CancellationToken token)
+                => await tagValidator.ExistsAsync(tagId, token);
 
-            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoidedAsync(tagId);
+            async Task<bool> NotBeAVoidedTag(int tagId, CancellationToken token)
+                => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active);
+            async Task<bool> PreservationIsStarted(int tagId, CancellationToken token)
+                => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
 
-            bool HaveRequirementReadyToBePreserved(int tagId, int requirementId)
-                => tagValidator.HaveRequirementReadyToBePreservedAsync(tagId, requirementId);
+            async Task<bool> HaveRequirementReadyToBePreserved(int tagId, int requirementId, CancellationToken token)
+                =>  await tagValidator.HaveRequirementReadyToBePreservedAsync(tagId, requirementId, token);
         }
     }
 }

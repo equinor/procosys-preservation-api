@@ -23,18 +23,18 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                 .Must(BeUniqueTags)
                 .WithMessage("Tags must be unique!");
 
-            When(tag => tag.TagIds.Any() && BeUniqueTags(tag.TagIds), () =>
+            When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
             {
                 RuleForEach(command => command.TagIds)
                     .MustAsync((_, tagId, __, token) => NotBeAClosedProjectForTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Project for tag is closed! Tag={id}")
-                    .Must(BeAnExistingTag)
+                    .MustAsync((_, tagId, __, token) => BeAnExistingTag(tagId, token))
                     .WithMessage((_, id) => $"Tag doesn't exists! Tag={id}")
-                    .Must(NotBeAVoidedTag)
+                    .MustAsync((_, tagId, __, token) => NotBeAVoidedTag(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .Must(PreservationIsStarted)
+                    .MustAsync((_, tagId, __, token) => PreservationIsStarted(tagId, token))
                     .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to transfer! Tag={id}")
-                    .Must(HaveNextStep)
+                    .MustAsync((_, tagId, __, token) => HaveNextStep(tagId, token))
                     .WithMessage((_, id) => $"Tag doesn't have a next step to transfer to! Tag={id}");
             });
 
@@ -44,16 +44,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                 return ids.Distinct().Count() == ids.Count;
             }
             
-            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken cancellationToken)
-                => !await projectValidator.IsClosedForTagAsync(tagId, cancellationToken);
+            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
+                => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
-            bool BeAnExistingTag(int tagId) => tagValidator.ExistsAsync(tagId);
+            async Task<bool> BeAnExistingTag(int tagId, CancellationToken token)
+                => await tagValidator.ExistsAsync(tagId, token);
 
-            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoidedAsync(tagId);
+            async Task<bool> NotBeAVoidedTag(int tagId, CancellationToken token)
+                => ! await tagValidator.IsVoidedAsync(tagId, token);
 
-            bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active);
+            async Task<bool> PreservationIsStarted(int tagId, CancellationToken token)
+                => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
             
-            bool HaveNextStep(int tagId) => tagValidator.HaveNextStepAsync(tagId);
+            async Task<bool> HaveNextStep(int tagId, CancellationToken token)
+                => await tagValidator.HaveNextStepAsync(tagId, token);
         }
     }
 }

@@ -23,20 +23,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
                 .Must(BeUniqueTags)
                 .WithMessage("Tags must be unique!");
 
-            When(tag => tag.TagIds.Any() && BeUniqueTags(tag.TagIds), () =>
+            When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
             {
                 RuleForEach(command => command.TagIds)
                     .MustAsync((_, tagId, __, token) => NotBeAClosedProjectForTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Project for tag is closed! Tag={id}")
-                    .Must(BeAnExistingTag)
+                    .MustAsync((_, tagId, __, token) => BeAnExistingTag(tagId, token))
                     .WithMessage((_, id) => $"Tag doesn't exists! Tag={id}")
-                    .Must(NotBeAVoidedTag)
+                    .MustAsync((_, tagId, __, token) => NotBeAVoidedTag(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .Must(PreservationIsNotStarted)
+                    .MustAsync((_, tagId, __, token) => PreservationIsNotStarted(tagId, token))
                     .WithMessage((_, id) => $"Tag must have status {PreservationStatus.NotStarted} to start! Tag={id}")
-                    .Must(HaveAtLeastOneNonVoidedRequirement)
+                    .MustAsync((_, tagId, __, token) => HaveAtLeastOneNonVoidedRequirement(tagId, token))
                     .WithMessage((_, id) => $"Tag do not have any non voided requirement! Tag={id}")
-                    .Must(HaveExistingRequirementDefinitions)
+                    .MustAsync((_, tagId, __, token) => HaveExistingRequirementDefinitions(tagId, token))
                     .WithMessage((_, id) => $"A requirement definition doesn't exists! Tag={id}");
             });
 
@@ -46,18 +46,23 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
                 return ids.Distinct().Count() == ids.Count;
             }
             
-            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken cancellationToken)
-                => !await projectValidator.IsClosedForTagAsync(tagId, cancellationToken);
+            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
+                => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
-            bool BeAnExistingTag(int tagId) => tagValidator.ExistsAsync(tagId);
+            async Task<bool> BeAnExistingTag(int tagId, CancellationToken token)
+                => await tagValidator.ExistsAsync(tagId, token);
 
-            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoidedAsync(tagId);
+            async Task<bool> NotBeAVoidedTag(int tagId, CancellationToken token)
+                => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            bool PreservationIsNotStarted(int tagId) => tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.NotStarted);
+            async Task<bool> PreservationIsNotStarted(int tagId, CancellationToken token)
+                => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.NotStarted, token);
 
-            bool HaveAtLeastOneNonVoidedRequirement(int tagId) => tagValidator.HasANonVoidedRequirementAsync(tagId);
+            async Task<bool> HaveAtLeastOneNonVoidedRequirement(int tagId, CancellationToken token)
+                => await tagValidator.HasANonVoidedRequirementAsync(tagId, token);
             
-            bool HaveExistingRequirementDefinitions(int tagId) => tagValidator.AllRequirementDefinitionsExistAsync(tagId);
+            async Task<bool> HaveExistingRequirementDefinitions(int tagId, CancellationToken token)
+                => await tagValidator.AllRequirementDefinitionsExistAsync(tagId, token);
         }
     }
 }

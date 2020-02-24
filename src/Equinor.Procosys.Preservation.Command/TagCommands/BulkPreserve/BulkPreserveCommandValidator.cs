@@ -25,18 +25,18 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
                 .Must(BeUniqueTags)
                 .WithMessage("Tags must be unique!");
 
-            When(tag => tag.TagIds.Any() && BeUniqueTags(tag.TagIds), () =>
+            When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
             {
                 RuleForEach(command => command.TagIds)
                     .MustAsync((_, tagId, __, token) => NotBeAClosedProjectForTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Project for tag is closed! Tag={id}")
-                    .Must(BeAnExistingTag)
+                    .MustAsync((_, tagId, __, token) => BeAnExistingTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag doesn't exists! Tag={id}")
-                    .Must(NotBeAVoidedTag)
+                    .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .Must(PreservationIsStarted)
+                    .MustAsync((_, tagId, __, token) => PreservationIsStartedAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
-                    .Must(BeReadyToBePreserved)
+                    .MustAsync((_, tagId, __, token) => BeReadyToBePreservedAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag is not ready to be bulk preserved! Tag={id}");
             });
 
@@ -46,16 +46,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
                 return ids.Distinct().Count() == ids.Count;
             }
             
-            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken cancellationToken)
-                => !await projectValidator.IsClosedForTagAsync(tagId, cancellationToken);
+            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
+                => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
-            bool BeAnExistingTag(int tagId) => tagValidator.ExistsAsync(tagId);
+            async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
+                => await tagValidator.ExistsAsync(tagId, token);
 
-            bool NotBeAVoidedTag(int tagId) => !tagValidator.IsVoidedAsync(tagId);
+            async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
+                => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            bool PreservationIsStarted(int tagId) => tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active);
+            async Task<bool> PreservationIsStartedAsync(int tagId, CancellationToken token)
+                => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
             
-            bool BeReadyToBePreserved(int tagId) => tagValidator.ReadyToBePreservedAsync(tagId, timeService.GetCurrentTimeUtc());
+            async Task<bool> BeReadyToBePreservedAsync(int tagId, CancellationToken token)
+                => await tagValidator.ReadyToBePreservedAsync(tagId, timeService.GetCurrentTimeUtc(), token);
         }
     }
 }

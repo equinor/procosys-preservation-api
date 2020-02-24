@@ -20,13 +20,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            RuleFor(tag => tag.GetTagNo())
-                .Must((command, tagNo) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName))
-                .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo} Project={command.ProjectName}");
-
-            RuleFor(tag => tag)
-                .MustAsync((tag, token) => NotBeAnExistingAndClosedProjectAsync(tag.ProjectName, token))
-                .WithMessage(tag => $"Project is closed! Project={tag.ProjectName}");
+            RuleFor(command => command)
+                .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
+                .WithMessage(command => $"Project is closed! Project={command.ProjectName}")
+                .MustAsync((command, token) => NotBeAnExistingTagWithinProject(command.GetTagNo(), command.ProjectName, token))
+                .WithMessage(command => $"Tag already exists in scope for project! Tag={command.GetTagNo()} Project={command.ProjectName}");
 
             RuleFor(tag => tag.StepId)
                 .Must(BeAnExistingStep)
@@ -48,10 +46,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 .WithMessage((command, req) =>
                     $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
 
-            bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.ExistsAsync(tagNo, projectName);
+            async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken token)
+                => !await projectValidator.IsExistingAndClosedAsync(projectName, token);
 
-            async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken cancellationToken)
-                => !await projectValidator.IsExistingAndClosedAsync(projectName, cancellationToken);
+            async Task<bool> NotBeAnExistingTagWithinProject(string tagNo, string projectName, CancellationToken token)
+                => !await tagValidator.ExistsAsync(tagNo, projectName, token);
 
             bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
 
