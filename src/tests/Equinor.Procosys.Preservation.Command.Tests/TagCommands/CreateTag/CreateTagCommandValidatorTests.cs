@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.Validators.Project;
@@ -36,7 +37,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             _stepValidatorMock.Setup(r => r.Exists(_stepId)).Returns(true);
 
             _projectValidatorMock = new Mock<IProjectValidator>();
-            _projectValidatorMock.Setup(r => r.Exists(_projectName)).Returns(true);
 
             _rdValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _rdValidatorMock.Setup(r => r.Exists(_rd1Id)).Returns(true);
@@ -81,20 +81,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenProjectExistsAndProjectNotClosed()
-        {
-            _projectValidatorMock.Setup(r => r.Exists(_projectName)).Returns(true);
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsTrue(result.IsValid);
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenProjectExistsButClosed()
         {
-            _projectValidatorMock.Setup(r => r.Exists(_projectName)).Returns(true);
-            _projectValidatorMock.Setup(r => r.IsClosed(_projectName)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsExistingAndClosedAsync(_projectName, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 

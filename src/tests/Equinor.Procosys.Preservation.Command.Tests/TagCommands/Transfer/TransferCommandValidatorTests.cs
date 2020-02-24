@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Command.Validators.Project;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,6 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         private const int TagId1 = 7;
         private const int TagId2 = 8;
         private TransferCommandValidator _dut;
+        private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
         private TransferCommand _command;
 
@@ -22,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         public void Setup_OkState()
         {
             _tagIds = new List<int> {TagId1, TagId2};
+            _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.Exists(TagId1)).Returns(true);
             _tagValidatorMock.Setup(r => r.Exists(TagId2)).Returns(true);
@@ -33,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             _tagValidatorMock.Setup(r => r.HaveNextStep(TagId2)).Returns(true);
             _command = new TransferCommand(_tagIds);
 
-            _dut = new TransferCommandValidator(_tagValidatorMock.Object);
+            _dut = new TransferCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 
         [TestMethod]
@@ -95,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Validate_ShouldFail_WhenProjectForAnyTagIsClosed()
         {
-            _tagValidatorMock.Setup(r => r.ProjectIsClosed(TagId1)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 
@@ -131,14 +135,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Validate_ShouldFailWith1Error_When2Errors()
         {
-            _tagValidatorMock.Setup(r => r.ProjectIsClosed(TagId1)).Returns(true);
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.Exists(TagId2)).Returns(false);
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
         }
     }
 }

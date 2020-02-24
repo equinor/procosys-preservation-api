@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Validators.Project
+namespace Equinor.Procosys.Preservation.Command.Validators.Project
 {
     public interface IProjectValidator
     {

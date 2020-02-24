@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.Project;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Infrastructure.Validators.Project;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve

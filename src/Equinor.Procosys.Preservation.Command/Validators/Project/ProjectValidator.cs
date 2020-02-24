@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain;
 using Microsoft.EntityFrameworkCore;
 using DomProject = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Project;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Validators.Project
+namespace Equinor.Procosys.Preservation.Command.Validators.Project
 {
     public class ProjectValidator : IProjectValidator
     {
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Validators.Project
 
         public async Task<bool> IsClosedForTagAsync(int tagId, CancellationToken cancellationToken)
         {
-            var project = await (from tag in _context.QuerySet<Tag>()
+            var project = await (from tag in _context.QuerySet<Domain.AggregateModels.ProjectAggregate.Tag>()
                 join p in _context.QuerySet<DomProject>() on EF.Property<int>(tag, "ProjectId") equals p.Id
                 where tag.Id == tagId
                 select p).FirstOrDefaultAsync(cancellationToken);

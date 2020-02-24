@@ -2,6 +2,7 @@
 using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.Journey;
 using Equinor.Procosys.Preservation.Command.Validators.Mode;
+using Equinor.Procosys.Preservation.Command.Validators.Project;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Responsible;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
@@ -16,7 +17,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
-using Equinor.Procosys.Preservation.Infrastructure.Validators.Project;
 using Equinor.Procosys.Preservation.MainApi;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Client;

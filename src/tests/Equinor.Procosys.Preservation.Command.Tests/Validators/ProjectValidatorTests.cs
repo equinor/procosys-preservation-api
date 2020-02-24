@@ -1,66 +1,80 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.Project;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
     [TestClass]
-    public class ProjectValidatorTests
+    public class ProjectValidatorTests : ReadOnlyTestsBase
     {
-        private const string ProjectNameNotClosed = "P";
-        private const string ProjectNameClosed = "PClosed";
-        private ProjectValidator _dut;
+        private const string ProjectNameNotClosed = "Project name";
+        private const string ProjectNameClosed = "Project name (closed)";
 
-        [TestInitialize]
-        public void Setup()
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            var projectRepositoryMock = new Mock<IProjectRepository>();
-
-            var project = new Project("S", "P", "D");
-            var projectClosed = new Project("S", "P", "D");
-            projectClosed.Close();
-
-            projectRepositoryMock.Setup(r => r.GetByNameAsync(ProjectNameNotClosed)).Returns(Task.FromResult(project));
-            projectRepositoryMock.Setup(r => r.GetByNameAsync(ProjectNameClosed)).Returns(Task.FromResult(projectClosed));
-
-            _dut = new ProjectValidator(projectRepositoryMock.Object);
+            using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                AddProject(context, ProjectNameNotClosed, "Project description");
+                AddProject(context, ProjectNameClosed, "Project description", true);
+            }
         }
 
         [TestMethod]
-        public void ValidateExists_KnownName_ReturnsTrue()
+        public async Task ExistsAsync_KnownName_ReturnsTrue()
         {
-            var result = _dut.Exists(ProjectNameNotClosed);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.ExistsAsync(ProjectNameNotClosed, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateExists_UnknownName_ReturnsFalse()
+        public async Task ValidateExists_UnknownName_ReturnsFalse()
         {
-            var result = _dut.Exists("ASDR");
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.ExistsAsync("XX", default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsClosed_KnownClosed_ReturnsTrue()
+        public async Task IsExistingAndClosedAsync_KnownClosed_ReturnsTrue()
         {
-            var result = _dut.IsClosed(ProjectNameClosed);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.IsExistingAndClosedAsync(ProjectNameClosed, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsClosed_KnownNotClosed_ReturnsFalse()
+        public async Task IsExistingAndClosedAsync_KnownNotClosed_ReturnsFalse()
         {
-            var result = _dut.IsClosed(ProjectNameNotClosed);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.IsExistingAndClosedAsync(ProjectNameNotClosed, default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsClosed_UnknownName_ReturnsFalse()
+        public async Task IsExistingAndClosedAsync_UnknownName_ReturnsFalse()
         {
-            var result = _dut.IsClosed("ASD");
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.IsExistingAndClosedAsync("XX", default);
+                Assert.IsFalse(result);
+            }
         }
     }
 }

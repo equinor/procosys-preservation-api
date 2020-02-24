@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.Project;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
 using Equinor.Procosys.Preservation.Command.Validators.Tag;
-using Equinor.Procosys.Preservation.Infrastructure.Validators.Project;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
@@ -32,7 +32,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
             RuleFor(tag => tag)
                 .MustAsync((tag, token) => NotBeAnExistingAndClosedProjectAsync(tag.ProjectName, token))
-                .WhenAsync((tag, token) => ProjectExistsAsync(tag.ProjectName, token))
                 .WithMessage(tag => $"Project is closed! Project={tag.ProjectName}");
 
             RuleFor(tag => tag.StepId)

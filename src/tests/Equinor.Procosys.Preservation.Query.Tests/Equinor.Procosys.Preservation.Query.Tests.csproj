@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Query\Equinor.Procosys.Preservation.Query.csproj" />
+    <ProjectReference Include="..\Equinor.Procosys.Preservation.Test.Common\Equinor.Procosys.Preservation.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>
