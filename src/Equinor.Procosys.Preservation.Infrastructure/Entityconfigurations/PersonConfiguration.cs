@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
 
             builder.HasMany<PreservationRecord>()
                 .WithOne()
-                .HasForeignKey(pr => pr.PreservedByPersonId)
+                .HasForeignKey(pr => pr.PreservedById)
                 .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired(false);
 
