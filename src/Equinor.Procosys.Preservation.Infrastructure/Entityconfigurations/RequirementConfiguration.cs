@@ -23,6 +23,15 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasMany(x => x.PreservationPeriods)
                 .WithOne()
                 .IsRequired();
+
+            builder.Property(f => f.InitialPreservationPeriodStatus)
+                .HasConversion<string>()
+                .HasDefaultValue(PreservationPeriodStatus.NeedsUserInput)
+                .IsRequired();
+
+            builder.HasCheckConstraint(
+                "constraint_requirement_check_valid_initial_status",
+                $"{nameof(Requirement.InitialPreservationPeriodStatus)} in ('{PreservationPeriodStatus.NeedsUserInput}','{PreservationPeriodStatus.ReadyToBePreserved}')");
         }
     }
 }
