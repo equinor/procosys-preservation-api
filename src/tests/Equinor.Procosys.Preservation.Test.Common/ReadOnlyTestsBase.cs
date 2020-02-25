@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -97,6 +98,14 @@ namespace Equinor.Procosys.Preservation.Test.Common
             context.Projects.Add(project);
             context.SaveChanges();
             return project;
+        }
+
+        protected Tag AddTag(PreservationContext context, Project parentProject, string tagNo, string description, Step step, IEnumerable<Requirement> requirements)
+        {
+            var tag = new Tag(_schema, TagType.Standard, tagNo, description, "", "", "", "", "", "", "", "", step, requirements);
+            parentProject.AddTag(tag);
+            context.SaveChanges();
+            return tag;
         }
     }
 }

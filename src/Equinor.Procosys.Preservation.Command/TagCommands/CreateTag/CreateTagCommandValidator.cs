@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
@@ -20,33 +20,33 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            RuleFor(tag => tag.TagNos)
+            RuleFor(command => command.TagNos)
                 .Must(r => r.Any())
                 .WithMessage("At least 1 TagNo must be given!")
                 .Must(BeUniqueTagNos)
                 .WithMessage("TagNos must be unique!");
 
-            RuleForEach(tag => tag.TagNos)
-                .Must((command, tagNo) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName))
+            RuleFor(command => command)
+                .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
+                .WithMessage(command => $"Project is closed! Project={command.ProjectName}");
+
+            RuleForEach(command => command.TagNos)
+                .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName, token))
                 .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo} Project={command.ProjectName}");
 
-            RuleFor(tag => tag)
-                .MustAsync((tag, token) => NotBeAnExistingAndClosedProjectAsync(tag.ProjectName, token))
-                .WithMessage(tag => $"Project is closed! Project={tag.ProjectName}");
-
-            RuleFor(tag => tag.StepId)
+            RuleFor(command => command.StepId)
                 .Must(BeAnExistingStep)
                 .WithMessage(tag => $"Step doesn't exists! Step={tag.StepId}")
                 .Must(NotBeAVoidedStep)
                 .WithMessage(tag => $"Step is voided! Step={tag.StepId}");
 
-            RuleFor(tag => tag.Requirements)
+            RuleFor(command => command.Requirements)
                 .Must(r => r.Any())
                 .WithMessage(tag => $"At least 1 requirement must be given! Tag={tag.TagNos}")
                 .Must(BeUniqueRequirements)
                 .WithMessage(tag => $"Requirement definitions must be unique! Tag={tag.TagNos}");
 
-            RuleForEach(tag => tag.Requirements)
+            RuleForEach(command => command.Requirements)
                 .Must(BeAnExistingRequirementDefinition)
                 .WithMessage((command, req) =>
                     $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}")
@@ -60,13 +60,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 return lowerTagNos.Distinct().Count() == lowerTagNos.Count;
             }
 
-            bool NotBeAnExistingTagWithinProject(string tagNo, string projectName) => !tagValidator.Exists(tagNo, projectName);
+            async Task<bool> NotBeAnExistingTagWithinProject(string tagNo, string projectName, CancellationToken token) =>
+                !await tagValidator.ExistsAsync(tagNo, projectName, token);
 
-            Task<bool> ProjectExistsAsync(string projectName, CancellationToken cancellationToken)
-                => projectValidator.ExistsAsync(projectName, cancellationToken);
-
-            async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken cancellationToken)
-                => !await projectValidator.IsExistingAndClosedAsync(projectName, cancellationToken);
+            async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken token)
+                => !await projectValidator.IsExistingAndClosedAsync(projectName, token);
 
             bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);
 
