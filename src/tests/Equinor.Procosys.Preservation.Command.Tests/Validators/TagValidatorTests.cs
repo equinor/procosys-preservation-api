@@ -244,6 +244,23 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
+        public async Task HaveRequirementReadyToBePreservedAsync_KnownTag_ReturnsTrue_WhenStartedInSeparateContext()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).Single(t => t.Id == _tagNotStartedPreservationId);
+                tag.StartPreservation(_startedPreservationAtUtc);
+                context.SaveChanges();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new TagValidator(context);
+                var result = await dut.HaveRequirementReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
         public async Task HaveRequirementReadyForRecordingAsync_KnownTag_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
