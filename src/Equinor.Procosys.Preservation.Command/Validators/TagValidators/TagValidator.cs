@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> ReadyToBePreservedAsync(int tagId, DateTime preservedAtUtc, CancellationToken cancellationToken)
         {
-            var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
+            var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
                 where t.Id == tagId
                 select t).FirstOrDefaultAsync(cancellationToken);
             if (tag == null)
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag.IsReadyToBePreserved(preservedAtUtc);
         }
 
-        public async Task<bool> HaveRequirementReadyForRecordingAsync(int tagId, int requirementId, CancellationToken cancellationToken)
+        public async Task<bool> HaveRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken cancellationToken)
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
                 where t.Id == tagId
@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> HaveRequirementReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken cancellationToken)
         {
-            var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
+            var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
                 where t.Id == tagId
                 select t).FirstOrDefaultAsync(cancellationToken);
             if (tag == null)

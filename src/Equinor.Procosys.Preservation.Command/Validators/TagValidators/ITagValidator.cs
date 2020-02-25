@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         Task<bool> ReadyToBePreservedAsync(int tagId, DateTime preservedAtUtc, CancellationToken token);
         
-        Task<bool> HaveRequirementReadyForRecordingAsync(int tagId, int requirementId, CancellationToken token);
+        Task<bool> HaveRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token);
         
         Task<bool> HaveNextStepAsync(int tagId, CancellationToken token);
         
