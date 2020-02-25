@@ -345,7 +345,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var preservationRecord = dut.PreservationPeriods.First().PreservationRecord;
             Assert.IsNotNull(preservationRecord);
-            Assert.AreEqual(51, preservationRecord.PreservedByPersonId);
+            Assert.AreEqual(51, preservationRecord.PreservedById);
             Assert.AreEqual(_utcNow, preservationRecord.PreservedAtUtc);
         }
 

@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var record = dut.PreservationRecord;
             Assert.IsNotNull(record);
             Assert.AreEqual(PreservationPeriodStatus.Preserved, dut.Status);
-            Assert.AreEqual(PreservedById, record.PreservedByPersonId);
+            Assert.AreEqual(PreservedById, record.PreservedById);
             Assert.AreEqual(preservationTime, record.PreservedAtUtc);
             Assert.IsTrue(record.BulkPreserved);
         }

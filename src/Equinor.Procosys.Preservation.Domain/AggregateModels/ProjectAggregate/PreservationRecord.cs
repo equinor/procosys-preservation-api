@@ -27,12 +27,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"{nameof(preservedAtUtc)} is not Utc");
             }
             PreservedAtUtc = preservedAtUtc;
-            PreservedByPersonId = preservedBy.Id;
+            PreservedById = preservedBy.Id;
             BulkPreserved = bulkPreserved;
         }
 
         public DateTime PreservedAtUtc { get; private set; }
-        public int PreservedByPersonId { get; private set; }
+        public int PreservedById { get; private set; }
         public bool BulkPreserved { get; private set; }
     }
 }
