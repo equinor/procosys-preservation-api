@@ -61,9 +61,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _timeServiceMock.Object, _currentUserProviderMock.Object);
             await dut.SaveChangesAsync();
 
-            Assert.AreEqual(_currentTime, newMode.Created);
+            Assert.AreEqual(_currentTime, newMode.CreatedAtUtc);
             Assert.AreEqual(user.Id, newMode.CreatedById);
-            Assert.IsNull(newMode.Modified);
+            Assert.IsNull(newMode.ModifiedAtUtc);
             Assert.IsNull(newMode.ModifiedById);
         }
 
@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             newMode.Void();
             await dut.SaveChangesAsync();
 
-            Assert.AreEqual(_currentTime, newMode.Modified);
+            Assert.AreEqual(_currentTime, newMode.ModifiedAtUtc);
             Assert.AreEqual(user.Id, newMode.ModifiedById);
         }
     }

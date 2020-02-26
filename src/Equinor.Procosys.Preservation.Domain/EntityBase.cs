@@ -20,11 +20,11 @@ namespace Equinor.Procosys.Preservation.Domain
         public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly() ?? (_domainEvents = new List<INotification>()).AsReadOnly();
         public virtual int Id { get; protected set; }
 
-        public DateTime Created { get; private set; }
+        public DateTime CreatedAtUtc { get; private set; }
 
         public int CreatedById { get; private set; }
 
-        public DateTime? Modified { get; private set; }
+        public DateTime? ModifiedAtUtc { get; private set; }
 
         public int? ModifiedById { get; private set; }
 
@@ -38,15 +38,25 @@ namespace Equinor.Procosys.Preservation.Domain
 
         public void ClearDomainEvents() => _domainEvents.Clear();
 
-        public void SetCreated(DateTime creationDate, Person createdBy)
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
         {
-            Created = creationDate;
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} must be UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
             CreatedById = createdBy.Id;
         }
 
-        public void SetModified(DateTime modifiedDate, Person modifiedBy)
+        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
         {
-            Modified = modifiedDate;
+            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(modifiedAtUtc)} must be UTC");
+            }
+
+            ModifiedAtUtc = modifiedAtUtc;
             ModifiedById = modifiedBy.Id;
         }
     }
