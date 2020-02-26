@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
@@ -28,12 +27,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             // Get tag with all requirements and all previous preservation
             var tag = await
                 (from t in _context.QuerySet<Tag>()
-                        .Include(t => t.Requirements)
-                        .ThenInclude(r => r.PreservationPeriods)
-                        .ThenInclude(p => p.FieldValues)
-                    where t.Id == request.Id
-                    select t).FirstOrDefaultAsync(cancellationToken);
-            
+                        .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.PreservationRecord)
+                        .Include(p => p.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.FieldValues)
+                 where t.Id == request.Id
+                 select t).FirstOrDefaultAsync(cancellationToken);
+
             if (tag == null)
             {
                 return new NotFoundResult<List<RequirementDto>>($"Entity with ID {request.Id} not found");
