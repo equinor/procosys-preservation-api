@@ -136,6 +136,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentException($"Value {value} is not legal value for a {nameof(Field)} of type {field.FieldType}");
             }
+            
+            if (field.Schema != Schema)
+            {
+                throw new ArgumentException($"Can't add item in {field.Schema} to {Schema}");
+            }
 
             // save new value ONLY if CheckBox is Checked!
             if (!isChecked)

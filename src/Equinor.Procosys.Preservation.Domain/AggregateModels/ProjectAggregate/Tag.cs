@@ -106,6 +106,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(requirement));
             }
+            
+            if (requirement.Schema != Schema)
+            {
+                throw new ArgumentException($"Can't add item in {requirement.Schema} to {Schema}");
+            }
 
             _requirements.Add(requirement);
         }
@@ -115,6 +120,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             if (action == null)
             {
                 throw new ArgumentNullException(nameof(action));
+            }
+            
+            if (action.Schema != Schema)
+            {
+                throw new ArgumentException($"Can't add item in {action.Schema} to {Schema}");
             }
 
             _actions.Add(action);

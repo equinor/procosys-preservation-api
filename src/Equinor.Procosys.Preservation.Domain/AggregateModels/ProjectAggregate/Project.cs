@@ -34,6 +34,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(tag));
             }
 
+            if (tag.Schema != Schema)
+            {
+                throw new ArgumentException($"Can't add item in {tag.Schema} to {Schema}");
+            }
+
             _tags.Add(tag);
         }
 

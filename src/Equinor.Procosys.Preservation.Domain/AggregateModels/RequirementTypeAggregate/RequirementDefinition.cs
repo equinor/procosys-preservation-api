@@ -36,6 +36,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             {
                 throw new ArgumentNullException(nameof(field));
             }
+            
+            if (field.Schema != Schema)
+            {
+                throw new ArgumentException($"Can't add item in {field.Schema} to {Schema}");
+            }
 
             _fields.Add(field);
         }

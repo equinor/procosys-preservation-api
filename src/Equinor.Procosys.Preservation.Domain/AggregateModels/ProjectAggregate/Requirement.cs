@@ -153,7 +153,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
         {
             NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
+            var preservationPeriod = new PreservationPeriod(Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
         }
     }
