@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 {
     public abstract class ReadOnlyTestsBase
     {
-        protected const string TestPlant = "PCS$TEST";
+        protected const string TestPlant = "PlantA";
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IEventDispatcher> _eventDispatcherMock;
         protected Mock<IPlantProvider> _plantProviderMock;
@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Field AddInfoField(PreservationContext context, RequirementDefinition rd)
         {
-            var field = new Field(_schema, "", FieldType.Info, 0);
+            var field = new Field(TestPlant, "", FieldType.Info, 0);
             rd.AddField(field);
             context.SaveChanges();
             return field;
@@ -118,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Field NumberField(PreservationContext context, RequirementDefinition rd, string unit, bool showPrevious)
         {
-            var field = new Field(_schema, "", FieldType.Number, 0, unit, showPrevious);
+            var field = new Field(TestPlant, "", FieldType.Number, 0, unit, showPrevious);
             rd.AddField(field);
             context.SaveChanges();
             return field;
@@ -126,7 +126,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Field CheckBoxField(PreservationContext context, RequirementDefinition rd)
         {
-            var field = new Field(_schema, "", FieldType.CheckBox, 0);
+            var field = new Field(TestPlant, "", FieldType.CheckBox, 0);
             rd.AddField(field);
             context.SaveChanges();
             return field;
