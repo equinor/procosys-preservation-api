@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -295,10 +296,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
 
                 var fieldWithNa = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == fieldWithNaId);
-                AssertNaNumber(fieldWithNa);
+                AssertNaNumberInCurrentValue(fieldWithNa);
 
                 var fieldWithDouble = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == fieldWithDoubleId);
-                AssertNumber(fieldWithDouble, number);
+                AssertNumberInCurrentValue(fieldWithDouble, number);
             }
         }
 
@@ -327,6 +328,58 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 Assert.AreEqual(_firstNumberFieldId, requirementWithThreeNumbers.Fields.ElementAt(0).Id);
                 Assert.AreEqual(_secondNumberFieldId, requirementWithThreeNumbers.Fields.ElementAt(1).Id);
                 Assert.AreEqual(_thirdNumberFieldId, requirementWithThreeNumbers.Fields.ElementAt(2).Id);
+            }
+        }
+        
+        [TestMethod]
+        public async Task Handler_ShouldReturnsPreviousValues_AfterRecordingNumberFieldsAndPreserving()
+        {
+            var number = 1.91;
+            var numberAsString = number.ToString("F2");
+
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object,
+                _plantProviderMock.Object))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single();
+                tag.StartPreservation(_startedAtUtc);
+                context.SaveChanges();
+
+                var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
+                    .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
+                var requirement = context.Requirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
+                
+                requirement.RecordValues(
+                    new Dictionary<int, string>
+                    {
+                        {_firstNumberFieldId, numberAsString},
+                        {_secondNumberFieldId, numberAsString},
+                        {_thirdNumberFieldId, numberAsString}
+                    },
+                    "",
+                    requirementDefinition);
+                context.SaveChanges();
+
+                tag.Preserve(_startedAtUtc.AddWeeks(_interval), new Mock<Person>().Object);
+                context.SaveChanges();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var query = new GetTagRequirementsQuery(_tagId);
+                var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                var requirementWithThreeNumberShowPrev = result.Data.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
+                Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
+
+                foreach (var fieldDto in requirementWithThreeNumberShowPrev.Fields)
+                {
+                    AssertNumberInPreviousValue(fieldDto, number);
+                }
             }
         }
 
@@ -415,30 +468,40 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             Assert.AreEqual(_unit, f.Unit);
         }
 
-        private static void AssertNaNumber(FieldDto f)
+        private static void AssertNaNumberInCurrentValue(FieldDto f)
         {
-            var numberValue = AssertNumber(f);
+            var numberValue = AssertIsNumberDto(f.CurrentValue);
             Assert.IsTrue(numberValue.IsNA);
             Assert.IsFalse(numberValue.Value.HasValue);
         }
 
-        private static void AssertNumber(FieldDto f, double value)
+        private static void AssertNumberInCurrentValue(FieldDto f, double expectedValue)
         {
-            var numberValue = AssertNumber(f);
-            Assert.IsFalse(numberValue.IsNA);
-            Assert.IsTrue(numberValue.Value.HasValue);
-            Assert.AreEqual(value, numberValue.Value.Value);
+            var numberValue = AssertIsNumberDto(f.CurrentValue);
+            AssertNumberDto(numberValue, expectedValue);
         }
 
-        private static NumberDto AssertNumber(FieldDto f)
+        private static void AssertNumberInPreviousValue(FieldDto f, double expectedValue)
         {
-            var numberValue = f.CurrentValue as NumberDto;
-            Assert.IsNotNull(f);
-            Assert.IsNotNull(f.CurrentValue);
-            Assert.IsInstanceOfType(f.CurrentValue, typeof(NumberDto));
+            var numberValue = AssertIsNumberDto(f.PreviousValue);
+            AssertNumberDto(numberValue, expectedValue);
+        }
+
+        private static NumberDto AssertIsNumberDto(object numberDto)
+        {
+            Assert.IsInstanceOfType(numberDto, typeof(NumberDto));
+            var numberValue = numberDto as NumberDto;
+            Assert.IsNotNull(numberDto);
 
             Assert.IsNotNull(numberValue);
             return numberValue;
+        }
+
+        private static void AssertNumberDto(NumberDto numberValue, double expectedValue)
+        {
+            Assert.IsFalse(numberValue.IsNA);
+            Assert.IsTrue(numberValue.Value.HasValue);
+            Assert.AreEqual(expectedValue, numberValue.Value.Value);
         }
     }
 }

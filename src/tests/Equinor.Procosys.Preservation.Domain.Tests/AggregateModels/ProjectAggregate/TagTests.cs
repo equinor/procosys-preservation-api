@@ -208,6 +208,29 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(expectedNextDueTimeFirstUtc, dut.Requirements.ElementAt(0).NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeLaterUtc, dut.Requirements.ElementAt(1).NextDueTimeUtc);
         }
+
+        [TestMethod]
+        public void StartPreservation_ShouldStartOnEachNonVoidedRequirement()
+        {
+            var dut = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_NoneNeedInput_DifferentIntervals);
+            dut.Requirements.ElementAt(1).Void();
+
+            dut.StartPreservation(_utcNow);
+
+            var expectedNextDueTimeFirstUtc = _utcNow.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(expectedNextDueTimeFirstUtc, dut.Requirements.ElementAt(0).NextDueTimeUtc);
+            Assert.IsFalse(dut.Requirements.ElementAt(1).NextDueTimeUtc.HasValue);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldThrowException_IfAlreadyStarted()
+        {
+            var dut = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_NoneNeedInput_DifferentIntervals);
+
+            dut.StartPreservation(_utcNow);
+
+            Assert.ThrowsException<Exception>(() => dut.StartPreservation(_utcNow));
+        }
         
         [TestMethod]
         public void IsReadyToBePreserved_ShouldBeFalse_BeforePeriod()

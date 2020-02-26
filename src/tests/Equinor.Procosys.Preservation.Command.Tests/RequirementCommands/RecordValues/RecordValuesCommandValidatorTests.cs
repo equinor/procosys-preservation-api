@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.Validators.Field;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.Tag;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -31,8 +31,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(v => v.Exists(TagId)).Returns(true);
-            _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecording(TagId, ReqId)).Returns(true);
+            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.HaveRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(v => v.Exists(FieldId)).Returns(true);
             _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, It.IsAny<string>())).Returns(true);
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotExists()
         {
-            _tagValidatorMock.Setup(v => v.Exists(TagId)).Returns(false);
+            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenTagIsVoided()
         {
-            _tagValidatorMock.Setup(r => r.IsVoided(TagId)).Returns(true);
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 
@@ -98,15 +98,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementIsNotReadyForRecording()
+        public void Validate_ShouldFail_WhenRequirementDontHaveActivePeriod()
         {
-            _tagValidatorMock.Setup(v => v.HaveRequirementReadyForRecording(TagId, ReqId)).Returns(false);
+            _tagValidatorMock.Setup(v => v.HaveRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't have this requirement ready for recording!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't have this requirement with active period!"));
         }
 
         [TestMethod]

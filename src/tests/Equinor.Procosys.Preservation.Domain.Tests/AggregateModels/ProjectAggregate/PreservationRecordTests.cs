@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual("SchemaA", dut.Schema);
             Assert.AreEqual(_utcNow, dut.PreservedAtUtc);
-            Assert.AreEqual(_preservedById, dut.PreservedByPersonId);
+            Assert.AreEqual(_preservedById, dut.PreservedById);
             Assert.IsTrue(dut.BulkPreserved);
         }
 
