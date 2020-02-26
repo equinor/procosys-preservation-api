@@ -107,5 +107,29 @@ namespace Equinor.Procosys.Preservation.Test.Common
             context.SaveChanges();
             return tag;
         }
+
+        protected Field AddInfoField(PreservationContext context, RequirementDefinition rd)
+        {
+            var field = new Field(_schema, "", FieldType.Info, 0);
+            rd.AddField(field);
+            context.SaveChanges();
+            return field;
+        }
+
+        protected Field NumberField(PreservationContext context, RequirementDefinition rd, string unit, bool showPrevious)
+        {
+            var field = new Field(_schema, "", FieldType.Number, 0, unit, showPrevious);
+            rd.AddField(field);
+            context.SaveChanges();
+            return field;
+        }
+
+        protected Field CheckBoxField(PreservationContext context, RequirementDefinition rd)
+        {
+            var field = new Field(_schema, "", FieldType.CheckBox, 0);
+            rd.AddField(field);
+            context.SaveChanges();
+            return field;
+        }
     }
 }

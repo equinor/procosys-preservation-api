@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
-using Equinor.Procosys.Preservation.Command.Validators.Field;
+using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -34,9 +34,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(v => v.HaveRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
-            _fieldValidatorMock.Setup(v => v.Exists(FieldId)).Returns(true);
-            _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, It.IsAny<string>())).Returns(true);
-            _fieldValidatorMock.Setup(r => r.IsValidForRecording(FieldId)).Returns(true);
+            _fieldValidatorMock.Setup(v => v.ExistsAsync(FieldId, default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(r => r.IsValidValueAsync(FieldId, It.IsAny<string>(), default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(FieldId, default)).Returns(Task.FromResult(true));
 
             _recordValuesCommandWithCommentOnly = new RecordValuesCommand(
                 TagId,
@@ -112,7 +112,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyFieldNotExists()
         {
-            _fieldValidatorMock.Setup(r => r.Exists(FieldId)).Returns(false);
+            _fieldValidatorMock.Setup(r => r.ExistsAsync(FieldId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
 
@@ -124,7 +124,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyFieldNotValid()
         {
-            _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, NumberAsString)).Returns(false);
+            _fieldValidatorMock.Setup(r => r.IsValidValueAsync(FieldId, NumberAsString, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
 
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyFieldNotForRecording()
         {
-            _fieldValidatorMock.Setup(r => r.IsValidForRecording(FieldId)).Returns(false);
+            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(FieldId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
 
@@ -149,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         public void Validate_ShouldFailWith2Errors_WhenErrorsIn2Rules()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(r => r.IsValidValue(FieldId, NumberAsString)).Returns(false);
+            _fieldValidatorMock.Setup(r => r.IsValidValueAsync(FieldId, NumberAsString, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
             
