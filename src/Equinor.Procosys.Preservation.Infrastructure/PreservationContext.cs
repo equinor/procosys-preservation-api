@@ -15,13 +15,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure
     {
         private readonly IPlantProvider _plantProvider;
 
-        public PreservationContext(
-            DbContextOptions<PreservationContext> options,
-            IPlantProvider plantProvider)
-            : base(options)
-        {
-            _plantProvider = plantProvider;
-        }
+        public PreservationContext(DbContextOptions<PreservationContext> options, IPlantProvider plantProvider)
+            : base(options) => _plantProvider = plantProvider;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
