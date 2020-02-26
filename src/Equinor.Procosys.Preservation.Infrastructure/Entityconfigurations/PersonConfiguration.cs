@@ -3,12 +3,14 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
+namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class PersonConfiguration : IEntityTypeConfiguration<Person>
+    internal class PersonConfiguration : EntityBaseConfiguration<Person>
     {
-        public void Configure(EntityTypeBuilder<Person> builder)
+        public override void Configure(EntityTypeBuilder<Person> builder)
         {
+            base.Configure(builder);
+
             builder.Property(x => x.Oid)
                 .IsRequired();
 

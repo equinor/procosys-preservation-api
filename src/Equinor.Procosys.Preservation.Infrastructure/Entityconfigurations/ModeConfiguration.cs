@@ -1,14 +1,15 @@
 ﻿using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
+namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class ModeConfiguration : IEntityTypeConfiguration<Mode>
+    internal class ModeConfiguration : EntityBaseConfiguration<Mode>
     {
-        public void Configure(EntityTypeBuilder<Mode> builder)
+        public override void Configure(EntityTypeBuilder<Mode> builder)
         {
+            base.Configure(builder);
+
             builder.Property(x => x.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();

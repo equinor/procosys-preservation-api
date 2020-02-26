@@ -1,14 +1,15 @@
 ﻿using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class RequirementTypeConfiguration : IEntityTypeConfiguration<RequirementType>
+    internal class RequirementTypeConfiguration : EntityBaseConfiguration<RequirementType>
     {
-        public void Configure(EntityTypeBuilder<RequirementType> builder)
+        public override void Configure(EntityTypeBuilder<RequirementType> builder)
         {
+            base.Configure(builder);
+
             builder.Property(x => x.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();

@@ -5,12 +5,14 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
+namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class TagConfiguration : IEntityTypeConfiguration<Tag>
+    internal class TagConfiguration : EntityBaseConfiguration<Tag>
     {
-        public void Configure(EntityTypeBuilder<Tag> builder)
+        public override void Configure(EntityTypeBuilder<Tag> builder)
         {
+            base.Configure(builder);
+
             builder.Property(x => x.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();

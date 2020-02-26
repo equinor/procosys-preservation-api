@@ -1,14 +1,15 @@
 ﻿using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
+namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class ResponsibleConfiguration : IEntityTypeConfiguration<Responsible>
+    internal class ResponsibleConfiguration : EntityBaseConfiguration<Responsible>
     {
-        public void Configure(EntityTypeBuilder<Responsible> builder)
+        public override void Configure(EntityTypeBuilder<Responsible> builder)
         {
+            base.Configure(builder);
+
             builder.Property(x => x.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();

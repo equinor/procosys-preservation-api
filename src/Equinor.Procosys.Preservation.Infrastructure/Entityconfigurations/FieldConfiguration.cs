@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class FieldConfiguration : IEntityTypeConfiguration<Field>
+    internal class FieldConfiguration : EntityBaseConfiguration<Field>
     {
-        public void Configure(EntityTypeBuilder<Field> builder)
+        public override void Configure(EntityTypeBuilder<Field> builder)
         {
+            base.Configure(builder);
+
             builder.Property(f => f.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();

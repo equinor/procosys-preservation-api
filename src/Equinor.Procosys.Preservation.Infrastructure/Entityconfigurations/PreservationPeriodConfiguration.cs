@@ -5,12 +5,14 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
+namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class PreservationPeriodConfiguration : IEntityTypeConfiguration<PreservationPeriod>
+    internal class PreservationPeriodConfiguration : EntityBaseConfiguration<PreservationPeriod>
     {
-        public void Configure(EntityTypeBuilder<PreservationPeriod> builder)
+        public override void Configure(EntityTypeBuilder<PreservationPeriod> builder)
         {
+            base.Configure(builder);
+
             builder.Property(f => f.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();

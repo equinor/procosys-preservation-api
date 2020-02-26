@@ -1,14 +1,15 @@
 ﻿using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class FieldValueConfiguration : IEntityTypeConfiguration<FieldValue>
+    internal class FieldValueConfiguration : EntityBaseConfiguration<FieldValue>
     {
-        public void Configure(EntityTypeBuilder<FieldValue> builder)
+        public override void Configure(EntityTypeBuilder<FieldValue> builder)
         {
+            base.Configure(builder);
+
             builder.Property(f => f.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();

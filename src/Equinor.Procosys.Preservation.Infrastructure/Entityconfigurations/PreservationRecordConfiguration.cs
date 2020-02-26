@@ -1,14 +1,15 @@
 ﻿using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Entityconfigurations
+namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class PreservationRecordConfiguration : IEntityTypeConfiguration<PreservationRecord>
+    internal class PreservationRecordConfiguration : EntityBaseConfiguration<PreservationRecord>
     {
-        public void Configure(EntityTypeBuilder<PreservationRecord> builder)
+        public override void Configure(EntityTypeBuilder<PreservationRecord> builder)
         {
+            base.Configure(builder);
+
             builder.Property(f => f.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
