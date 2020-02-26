@@ -651,7 +651,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddAction_ShouldAddAction()
         {
-            var action = new Action("", "", "", _utcNow, _person, null);
+            var action = new Action("", "", "", null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
 
             Assert.AreEqual(action, _dutWithOneReqNotNeedInputTwoWeekInterval.Actions.First());

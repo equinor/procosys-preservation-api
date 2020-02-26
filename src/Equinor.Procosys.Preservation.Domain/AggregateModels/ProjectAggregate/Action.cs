@@ -12,31 +12,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public Action(string schema, string title, string description, DateTime createdAtUtc, Person createdBy, DateTime? dueTimeUtc)
+        public Action(string schema, string title, string description, DateTime? dueTimeUtc)
             : base(schema)
         {
-            if (createdAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(createdAtUtc)} is not Utc");
-            }
-
-            if (createdBy == null)
-            {
-                throw new ArgumentNullException(nameof(createdBy));
-            }
             Title = title;
             Description = description;
-            CreatedAtUtc = createdAtUtc;
-            CreatedById = createdBy.Id;
             SetDueTime(dueTimeUtc);
         }
 
         public string Title { get; private set; }
         public string Description { get; private set; }
-
-        public DateTime CreatedAtUtc { get; private set; }
-
-        public int CreatedById { get; private set; }
 
         public DateTime? DueTimeUtc { get; private set; }
 

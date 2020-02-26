@@ -337,8 +337,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             var number = 1.91;
             var numberAsString = number.ToString("F2");
 
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcherMock.Object,
-                _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single();
                 tag.StartPreservation(_startedAtUtc);
@@ -363,7 +362,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 context.SaveChanges();
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetTagRequirementsQuery(_tagId);
                 var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);

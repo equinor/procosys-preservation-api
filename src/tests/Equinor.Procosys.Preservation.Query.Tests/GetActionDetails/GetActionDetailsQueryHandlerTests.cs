@@ -47,9 +47,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
                 context.Tags.Add(tag);
 
-                _openAction = new Action(_schema, "Open", "Desc1", _utcNow, _creator, _dueUtc);
+                _openAction = new Action(_schema, "Open", "Desc1", _dueUtc);
                 tag.AddAction(_openAction);
-                _closedAction = new Action(_schema, "Closed", "Desc2", _utcNow, _creator, _dueUtc);
+                _closedAction = new Action(_schema, "Closed", "Desc2", _dueUtc);
                 _closedAction.Close(_utcNow, _closer);
                 tag.AddAction(_closedAction);
 
