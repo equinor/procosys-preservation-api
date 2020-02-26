@@ -9,25 +9,35 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class NumberValueTests
     {
+        private Mock<Field> _fieldMock;
+        private const string TestPlant = "PlantA";
+        private const int FieldId = 23;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _fieldMock = new Mock<Field>();
+            _fieldMock.SetupGet(f => f.Id).Returns(FieldId);
+            _fieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+        }
+
         [TestMethod]
         public void Constructor_ShouldSetProperties_WhenNullValue()
         {
-            var fieldMock = new Mock<Field>();
-            fieldMock.SetupGet(f => f.Id).Returns(54);
             
-            var dut = new NumberValue("SchemaA", fieldMock.Object, "N/A");
+            var dut = new NumberValue(TestPlant, _fieldMock.Object, "N/A");
 
-            Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual(54, dut.FieldId);
+            Assert.AreEqual(TestPlant, dut.Schema);
+            Assert.AreEqual(FieldId, dut.FieldId);
             Assert.IsFalse(dut.Value.HasValue);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties_WhenIntValue()
         {
-            var dut = new NumberValue("SchemaA", new Mock<Field>().Object, "141");
+            var dut = new NumberValue(TestPlant, _fieldMock.Object, "141");
 
-            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual(TestPlant, dut.Schema);
             Assert.IsTrue(dut.Value.HasValue);
             Assert.AreEqual(141, dut.Value.Value);
         }
@@ -37,9 +47,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var number = 1282.91;
             var numberAsString = number.ToString("F2");
-            var dut = new NumberValue("SchemaA", new Mock<Field>().Object, numberAsString);
+            var dut = new NumberValue(TestPlant, _fieldMock.Object, numberAsString);
 
-            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual(TestPlant, dut.Schema);
             Assert.IsTrue(dut.Value.HasValue);
             Assert.AreEqual(number, dut.Value.Value);
         }
@@ -47,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenIllegalValue()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new NumberValue("SchemaA", new Mock<Field>().Object, "ABC")
+                new NumberValue(TestPlant, _fieldMock.Object, "ABC")
             );
 
         [TestMethod]

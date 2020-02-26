@@ -23,6 +23,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"Value {value} is not a legal value for a {nameof(NumberValue)}");
             }
 
+            if (field.Schema != schema)
+            {
+                throw new ArgumentException($"Can't relate item in {field.Schema} to item in {schema}");
+            }
+
             Value = number;
         }
 

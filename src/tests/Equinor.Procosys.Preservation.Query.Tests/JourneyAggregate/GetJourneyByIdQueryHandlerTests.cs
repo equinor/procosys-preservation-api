@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
     [TestClass]
     public class GetJourneyByIdQueryHandlerTests
     {
+        private const string TestPlant = "PlantA";
         private const int JourneyId = 162;
         private const int ModeId = 72;
         private const int RespId = 17;
@@ -29,13 +30,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         {
             var modeMock = new Mock<Mode>();
             modeMock.SetupGet(m => m.Id).Returns(ModeId);
+            modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
 
             var respMock = new Mock<Responsible>();
-            respMock.SetupGet(m => m.Id).Returns(RespId);
+            respMock.SetupGet(r => r.Id).Returns(RespId);
+            respMock.SetupGet(r => r.Schema).Returns(TestPlant);
 
-            _step = new Step("SchemaA", modeMock.Object, respMock.Object);
+            _step = new Step(TestPlant, modeMock.Object, respMock.Object);
 
-            _journey = new Journey("SchemaA", "TitleA");
+            _journey = new Journey(TestPlant, "TitleA");
             _journey.AddStep(_step);
 
             _modeRepoMock = new Mock<IModeRepository>();

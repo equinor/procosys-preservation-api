@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -7,7 +8,6 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
@@ -23,11 +23,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
             {
+                var step = AddJourneyWithStep(context, "J", AddMode(context, "M"), AddResponsible(context, "R")).Steps.First();
                 var notClosedProject = AddProject(context, ProjectNameNotClosed, "Project description");
                 var closedProject = AddProject(context, ProjectNameClosed, "Project description", true);
-                var t1 = AddTag(context, notClosedProject, "T1", "Tag description", new Mock<Step>().Object, new List<Requirement>{ new Mock<Requirement>().Object});
+
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D").RequirementDefinitions.First();
+
+                var req = new Requirement(TestPlant, 2, rd);
+                var t1 = AddTag(context, notClosedProject, "T1", "Tag description", step, new List<Requirement>{ req });
                 _tagInNotClosedProjectId = t1.Id;
-                var t2 = AddTag(context, closedProject, "T2", "Tag description", new Mock<Step>().Object, new List<Requirement>{ new Mock<Requirement>().Object});
+                var t2 = AddTag(context, closedProject, "T2", "Tag description", step, new List<Requirement>{ req });
                 _tagInClosedProjectId = t2.Id;
             }
         }

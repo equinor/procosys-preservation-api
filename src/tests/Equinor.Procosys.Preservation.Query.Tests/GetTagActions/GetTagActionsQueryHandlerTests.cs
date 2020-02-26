@@ -35,18 +35,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
 
                 _creator = AddPerson(context, "Ole", "Lukkøye");
 
-                var tag = new Tag(_schema, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
+                var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
                     journey.Steps.ElementAt(0),
                     new List<Requirement>
                     {
-                        new Requirement(_schema, 2, reqType.RequirementDefinitions.ElementAt(0))
+                        new Requirement(TestPlant, 2, reqType.RequirementDefinitions.ElementAt(0))
                     });
 
                 context.Tags.Add(tag);
 
-                _openAction = new Action(_schema, "Open", "Desc1", _utcNow, _creator, _utcNow);
+                _openAction = new Action(TestPlant, "Open", "Desc1", _utcNow, _creator, _utcNow);
                 tag.AddAction(_openAction);
-                _closedAction = new Action(_schema, "Closed", "Desc2", _utcNow, _creator, _utcNow);
+                _closedAction = new Action(TestPlant, "Closed", "Desc2", _utcNow, _creator, _utcNow);
                 _closedAction.Close(_utcNow, _creator);
                 tag.AddAction(_closedAction);
 
