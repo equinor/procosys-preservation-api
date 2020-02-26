@@ -1,8 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.Field;
+using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
@@ -21,48 +20,50 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
-                .MustAsync((command, token) => BeAnExistingTag(command.TagId, token))
+                .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag doesn't exists! Tag={command.TagId}")
-                .MustAsync((command, token) => NotBeAVoidedTag(command.TagId, token))
+                .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
-                .MustAsync((command, token) => HaveRequirementWithActivePeriod(command.TagId, command.RequirementId, token))
+                .MustAsync((command, token) => HaveRequirementWithActivePeriodAsync(command.TagId, command.RequirementId, token))
                 .WithMessage(command =>
                     $"Tag doesn't have this requirement with active period! Tag={command.TagId}. Requirement={command.RequirementId}");
 
             When(command => command.FieldValues.Any(), () =>
             {
                 RuleForEach(command => command.FieldValues)
-                    .Must(BeAFieldForRecording)
+                    .MustAsync((command, fv, token) => BeAFieldForRecordingAsync(fv.Key, token))
                     .WithMessage((command, fv) => $"Field values can not be recorded for field type! Field={fv.Key}")
-                    .Must(BeAValidValueForField)
+                    .MustAsync((command, fv, token) => BeAValidValueForFieldAsync(fv.Key, fv.Value, token))
                     .WithMessage((command, fv) => $"Field value is not valid for field type! Field={fv.Key} Value={fv.Value}")
-                    .Must(BeAnExistingField)
+                    .MustAsync((command, fv, token) => BeAnExistingFieldAsync(fv.Key, token))
                     .WithMessage((command, fv) => $"Field doesn't exists! Field={fv.Key}")
-                    .Must(NotBeAVoidedField)
+                    .MustAsync((command, fv, token) => NotBeAVoidedFieldAsync(fv.Key, token))
                     .WithMessage((command, fv) => $"Field is voided! Field={fv.Key}");
             });
                         
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
-            async Task<bool> BeAnExistingTag(int tagId, CancellationToken token)
+            async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
 
-            async Task<bool> NotBeAVoidedTag(int tagId, CancellationToken token)
+            async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> HaveRequirementWithActivePeriod(int tagId, int requirementId, CancellationToken token)
+            async Task<bool> HaveRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token)
                 => await tagValidator.HaveRequirementWithActivePeriodAsync(tagId, requirementId, token);
 
-            bool BeAnExistingField(KeyValuePair<int, string> fieldValue) => fieldValidator.Exists(fieldValue.Key);
+            async Task<bool> BeAnExistingFieldAsync(int fieldId, CancellationToken token)
+                => await fieldValidator.ExistsAsync(fieldId, token);
 
-            bool NotBeAVoidedField(KeyValuePair<int, string>  fieldValue) => !fieldValidator.IsVoided(fieldValue.Key);
+            async Task<bool> NotBeAVoidedFieldAsync(int fieldId, CancellationToken token)
+                => !await fieldValidator.IsVoidedAsync(fieldId, token);
 
-            bool BeAFieldForRecording(KeyValuePair<int, string>  fieldValue)
-                => fieldValidator.IsValidForRecording(fieldValue.Key);
+            async Task<bool> BeAFieldForRecordingAsync(int fieldId, CancellationToken token)
+                => await fieldValidator.IsValidForRecordingAsync(fieldId, token);
 
-            bool BeAValidValueForField(KeyValuePair<int, string>  fieldValue)
-                => fieldValidator.IsValidValue(fieldValue.Key, fieldValue.Value);
+            async Task<bool> BeAValidValueForFieldAsync(int fieldId, string value, CancellationToken token)
+                => await fieldValidator.IsValidValueAsync(fieldId, value, token);
         }
     }
 }
