@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
     [TestClass]
     public class GetAllJourneysQueryHandlerTests
     {
+        private const string TestPlant = "PlantA";
         private const int ModeId = 72;
         private const int RespId = 17;
         private Mock<IJourneyRepository> _journeyRepoMock;
@@ -30,19 +31,21 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         {
             var modeMock = new Mock<Mode>();
             modeMock.SetupGet(m => m.Id).Returns(ModeId);
+            modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
 
             var respMock = new Mock<Responsible>();
-            respMock.SetupGet(m => m.Id).Returns(RespId);
+            respMock.SetupGet(r => r.Id).Returns(RespId);
+            respMock.SetupGet(r => r.Schema).Returns(TestPlant);
 
-            _step = new Step("SchemaA", modeMock.Object, respMock.Object);
-            _stepVoided = new Step("SchemaA", modeMock.Object, respMock.Object);
+            _step = new Step(TestPlant, modeMock.Object, respMock.Object);
+            _stepVoided = new Step(TestPlant, modeMock.Object, respMock.Object);
             _stepVoided.Void();
 
-            _journey = new Journey("SchemaA", "TitleA");
+            _journey = new Journey(TestPlant, "TitleA");
             _journey.AddStep(_step);
             _journey.AddStep(_stepVoided);
 
-            _journeyVoided = new Journey("SchemaA", "TitleB");
+            _journeyVoided = new Journey(TestPlant, "TitleB");
             _journeyVoided.Void();
             
             _modeRepoMock = new Mock<IModeRepository>();

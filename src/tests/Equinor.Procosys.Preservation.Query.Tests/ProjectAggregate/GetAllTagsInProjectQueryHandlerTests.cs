@@ -47,18 +47,22 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             
             var modeMock = new Mock<Mode>(plant, ModeTitle);
             modeMock.SetupGet(m => m.Id).Returns(modeId);
+            modeMock.SetupGet(m => m.Schema).Returns(plant);
 
             var respMock = new Mock<Responsible>(plant, ResponsibleCode);
             respMock.SetupGet(r => r.Id).Returns(respId);
+            respMock.SetupGet(r => r.Schema).Returns(plant);
             
             var step1Mock = new Mock<Step>(plant, modeMock.Object, respMock.Object);
             step1Mock.SetupGet(s => s.Id).Returns(step1Id);
+            step1Mock.SetupGet(s => s.Schema).Returns(plant);
             step1Mock.Object.SortKey = 10;
             var step2Mock = new Mock<Step>(plant, modeMock.Object, respMock.Object);
             step2Mock.SetupGet(s => s.Id).Returns(step2Id);
+            step2Mock.SetupGet(s => s.Schema).Returns(plant);
             step2Mock.Object.SortKey = 20;
 
-            var journey = new Journey("","");
+            var journey = new Journey(plant,"");
             journey.AddStep(step1Mock.Object);
             journey.AddStep(step2Mock.Object);
 

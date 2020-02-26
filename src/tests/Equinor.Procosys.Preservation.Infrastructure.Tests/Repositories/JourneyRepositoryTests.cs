@@ -28,14 +28,24 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         public void Setup()
         {
             var modeMock = new Mock<Mode>();
-            modeMock.SetupGet(s => s.Id).Returns(ModeId);
+            modeMock.SetupGet(m => m.Id).Returns(ModeId);
+            modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
+            
+            var responsibleMock = new Mock<Responsible>();
+            responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
+
             var stepMock1 = new Mock<Step>();
             stepMock1.SetupGet(s => s.Id).Returns(StepId1);
-            var stepMock2 = new Mock<Step>(TestPlant, modeMock.Object, new Mock<Responsible>().Object);
+            stepMock1.SetupGet(s => s.Schema).Returns(TestPlant);
+            var stepMock2 = new Mock<Step>(TestPlant, modeMock.Object, responsibleMock.Object);
             stepMock2.SetupGet(s => s.Id).Returns(StepId2);
+            stepMock2.SetupGet(s => s.Schema).Returns(TestPlant);
 
             var journeyWithSteps = new Journey(TestPlant, TestJourney);
-            journeyWithSteps.AddStep(new Mock<Step>().Object);
+            var stepMock3 = new Mock<Step>();
+            stepMock3.SetupGet(s => s.Schema).Returns(TestPlant);
+
+            journeyWithSteps.AddStep(stepMock3.Object);
             journeyWithSteps.AddStep(stepMock1.Object);
             journeyWithSteps.AddStep(stepMock2.Object);
             

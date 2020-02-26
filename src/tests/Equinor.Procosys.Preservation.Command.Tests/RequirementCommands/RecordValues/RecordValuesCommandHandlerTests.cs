@@ -48,20 +48,24 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
 
             var requirementDefinitionWith2FieldsMock = new Mock<RequirementDefinition>();
             requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(_reqId);
+            requirementDefinitionWith2FieldsMock.SetupGet(r => r.Schema).Returns(TestPlant);
             
             var checkBoxFieldMock = new Mock<Field>("", "", FieldType.CheckBox, 0, null, null);
             checkBoxFieldMock.SetupGet(f => f.Id).Returns(_checkBoxFieldId);
+            checkBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(checkBoxFieldMock.Object);
 
             var numberFieldMock = new Mock<Field>("", "", FieldType.Number, 0, "mm", false);
             numberFieldMock.SetupGet(f => f.Id).Returns(_numberFieldId);
+            numberFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(numberFieldMock.Object);
 
             var requirementMock = new Mock<Requirement>("", 2, requirementDefinitionWith2FieldsMock.Object);
             requirementMock.SetupGet(r => r.Id).Returns(_reqId);
+            requirementMock.SetupGet(r => r.Schema).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
-            var tag = new Tag("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", new Mock<Step>().Object, new List<Requirement>
+            var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", new Mock<Step>().Object, new List<Requirement>
             {
                 _requirement
             });

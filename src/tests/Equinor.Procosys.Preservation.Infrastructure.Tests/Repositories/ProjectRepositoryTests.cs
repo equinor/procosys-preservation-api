@@ -2,7 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,12 +30,18 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         [TestInitialize]
         public void Setup()
         {
-            var step = new Mock<Step>().Object;
+            var modeMock = new Mock<Mode>();
+            modeMock.SetupGet(x => x.Schema).Returns(TestPlant);
+
+            var responsibleMock = new Mock<Responsible>();
+            responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
+
+            var step = new Step(TestPlant, modeMock.Object, responsibleMock.Object);
             var requirements = new List<Requirement>
             {
-                new Mock<Requirement>().Object,
-                new Mock<Requirement>().Object,
-                new Mock<Requirement>().Object,
+                new Requirement(TestPlant, 1, new Mock<RequirementDefinition>().Object),
+                new Requirement(TestPlant, 2, new Mock<RequirementDefinition>().Object),
+                new Requirement(TestPlant, 4, new Mock<RequirementDefinition>().Object)
             };
 
             var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1");
@@ -40,6 +49,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagX", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "R", "TF", step, requirements));
             _testTagMock = new Mock<Tag>();
             _testTagMock.SetupGet(t => t.Id).Returns(TestTagId);
+            _testTagMock.SetupGet(t => t.Schema).Returns(TestPlant);
             project1.AddTag(_testTagMock.Object);
             
             var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2");

@@ -14,6 +14,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class TagTests
     {
+        private const string TestPlant = "PlantA";
+
         private const int TwoWeeksInterval = 2;
         private const int ThreeWeeksInterval = 3;
         private Person _person;
@@ -46,30 +48,32 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _step1Mock = new Mock<Step>();
             _step1Mock.SetupGet(x => x.Id).Returns(3);
+            _step1Mock.SetupGet(x => x.Schema).Returns(TestPlant);
             _step1Mock.Object.SortKey = 10;
             _step2Mock = new Mock<Step>();
             _step2Mock.SetupGet(x => x.Id).Returns(4);
+            _step2Mock.SetupGet(x => x.Schema).Returns(TestPlant);
             _step2Mock.Object.SortKey = 20;
 
             _person = new Mock<Person>().Object;
 
-            _journey = new Journey("","");
+            _journey = new Journey(TestPlant,"");
             _journey.AddStep(_step1Mock.Object);
             _journey.AddStep(_step2Mock.Object);
 
-            _reqDef1NotNeedInput = new RequirementDefinition("", "", 2, 0);
-            _reqDef1NotNeedInput.AddField(new Field("", "", FieldType.Info, 0));
-            _reqDef2NotNeedInput = new RequirementDefinition("", "", 2, 0);
-            _reqDef2NotNeedInput.AddField(new Field("", "", FieldType.Info, 0));
-            _reqDef1NeedInput = new RequirementDefinition("", "", 1, 0);
-            _reqDef1NeedInput.AddField(new Field("", "", FieldType.CheckBox, 0));
-            _reqDef2NeedInput = new RequirementDefinition("", "", 1, 0);
-            _reqDef2NeedInput.AddField(new Field("", "", FieldType.CheckBox, 0));
+            _reqDef1NotNeedInput = new RequirementDefinition(TestPlant, "", 2, 0);
+            _reqDef1NotNeedInput.AddField(new Field(TestPlant, "", FieldType.Info, 0));
+            _reqDef2NotNeedInput = new RequirementDefinition(TestPlant, "", 2, 0);
+            _reqDef2NotNeedInput.AddField(new Field(TestPlant, "", FieldType.Info, 0));
+            _reqDef1NeedInput = new RequirementDefinition(TestPlant, "", 1, 0);
+            _reqDef1NeedInput.AddField(new Field(TestPlant, "", FieldType.CheckBox, 0));
+            _reqDef2NeedInput = new RequirementDefinition(TestPlant, "", 1, 0);
+            _reqDef2NeedInput.AddField(new Field(TestPlant, "", FieldType.CheckBox, 0));
             
-            _reqNotNeedInputTwoWeekInterval = new Requirement("", TwoWeeksInterval, _reqDef1NotNeedInput);
-            _reqNotNeedInputThreeWeekInterval = new Requirement("", ThreeWeeksInterval, _reqDef2NotNeedInput);
-            _reqNeedInputTwoWeekInterval = new Requirement("", TwoWeeksInterval, _reqDef1NeedInput);
-            _reqNeedInputThreeWeekInterval = new Requirement("", ThreeWeeksInterval, _reqDef2NeedInput);
+            _reqNotNeedInputTwoWeekInterval = new Requirement(TestPlant, TwoWeeksInterval, _reqDef1NotNeedInput);
+            _reqNotNeedInputThreeWeekInterval = new Requirement(TestPlant, ThreeWeeksInterval, _reqDef2NotNeedInput);
+            _reqNeedInputTwoWeekInterval = new Requirement(TestPlant, TwoWeeksInterval, _reqDef1NeedInput);
+            _reqNeedInputThreeWeekInterval = new Requirement(TestPlant, ThreeWeeksInterval, _reqDef2NeedInput);
 
             _twoReqs_NoneNeedInput_DifferentIntervals = new List<Requirement>
             {
@@ -106,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dueTimeForThreeWeeksInterval = _utcNow.AddWeeks(ThreeWeeksInterval);
 
             _dutWithOneReqNotNeedInputTwoWeekInterval = new Tag(
-                "SchemaA",
+                TestPlant,
                 TagType.Standard,
                 "TagNoA",
                 "DescA", 
@@ -125,7 +129,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual("SchemaA", _dutWithOneReqNotNeedInputTwoWeekInterval.Schema);
+            Assert.AreEqual(TestPlant, _dutWithOneReqNotNeedInputTwoWeekInterval.Schema);
             Assert.AreEqual("TagNoA", _dutWithOneReqNotNeedInputTwoWeekInterval.TagNo);
             Assert.AreEqual("DescA", _dutWithOneReqNotNeedInputTwoWeekInterval.Description);
             Assert.AreEqual("AreaCodeA", _dutWithOneReqNotNeedInputTwoWeekInterval.AreaCode);
@@ -651,7 +655,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddAction_ShouldAddAction()
         {
-            var action = new Action("", "", "", _utcNow, _person, null);
+            var action = new Action(TestPlant, "", "", _utcNow, _person, null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
 
             Assert.AreEqual(action, _dutWithOneReqNotNeedInputTwoWeekInterval.Actions.First());
