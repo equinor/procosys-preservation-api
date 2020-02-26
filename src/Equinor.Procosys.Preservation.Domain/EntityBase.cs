@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using MediatR;
 
 namespace Equinor.Procosys.Preservation.Domain
@@ -37,16 +38,16 @@ namespace Equinor.Procosys.Preservation.Domain
 
         public void ClearDomainEvents() => _domainEvents.Clear();
 
-        public void SetCreated(DateTime creationDate, int createdById)
+        public void SetCreated(DateTime creationDate, Person createdBy)
         {
             Created = creationDate;
-            CreatedById = createdById;
+            CreatedById = createdBy.Id;
         }
 
-        public void SetModified(DateTime modifiedDate, int modifiedById)
+        public void SetModified(DateTime modifiedDate, Person modifiedBy)
         {
             Modified = modifiedDate;
-            ModifiedById = modifiedById;
+            ModifiedById = modifiedBy.Id;
         }
     }
 }

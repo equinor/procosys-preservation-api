@@ -59,10 +59,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure
                     switch (entry.State)
                     {
                         case EntityState.Added:
-                            entry.Entity.SetCreated(now, currentUser.Id);
+                            entry.Entity.SetCreated(now, currentUser);
                             break;
                         case EntityState.Modified:
-                            entry.Entity.SetModified(now, currentUser.Id);
+                            entry.Entity.SetModified(now, currentUser);
                             break;
                     }
                 }

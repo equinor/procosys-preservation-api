@@ -1,4 +1,5 @@
 ﻿using System;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 
 namespace Equinor.Procosys.Preservation.Domain
 {
@@ -19,15 +20,15 @@ namespace Equinor.Procosys.Preservation.Domain
         /// This is used by the context and should NOT be used by anyone else.
         /// </summary>
         /// <param name="creationDate">Creation date and time</param>
-        /// <param name="createdById">Id of the user who created the entity</param>
-        void SetCreated(DateTime creationDate, int createdById);
+        /// <param name="createdBy">The user who created the entity</param>
+        void SetCreated(DateTime creationDate, Person createdBy);
 
         /// <summary>
         /// Method to set modification data on an entity.
         /// This is used by the context and should NOT be used by anyone else.
         /// </summary>
         /// <param name="modifiedDate">Modification date and time</param>
-        /// <param name="modifiedById">Id of the user who modified the entity</param>
-        void SetModified(DateTime modifiedDate, int modifiedById);
+        /// <param name="modifiedBy">The user who modified the entity</param>
+        void SetModified(DateTime modifiedDate, Person modifiedBy);
     }
 }
