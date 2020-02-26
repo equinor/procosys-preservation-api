@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             if (tag.Schema != Schema)
             {
-                throw new ArgumentException($"Can't add item in {tag.Schema} to {Schema}");
+                throw new ArgumentException($"Can't relate item in {tag.Schema} to item in {Schema}");
             }
 
             _tags.Add(tag);

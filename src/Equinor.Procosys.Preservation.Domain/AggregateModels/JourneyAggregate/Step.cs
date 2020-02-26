@@ -28,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             {
                 throw new ArgumentException($"Can't relate item in {mode.Schema} to item in {schema}");
             }
+
             if (responsible.Schema != schema)
             {
                 throw new ArgumentException($"Can't relate item in {responsible.Schema} to item in {schema}");

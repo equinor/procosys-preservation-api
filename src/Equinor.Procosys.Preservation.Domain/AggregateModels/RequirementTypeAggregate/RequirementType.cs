@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             
             if (requirementDefinition.Schema != Schema)
             {
-                throw new ArgumentException($"Can't add item in {requirementDefinition.Schema} to {Schema}");
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {Schema}");
             }
 
             _requirementDefinitions.Add(requirementDefinition);

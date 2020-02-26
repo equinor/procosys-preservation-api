@@ -139,7 +139,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             
             if (field.Schema != Schema)
             {
-                throw new ArgumentException($"Can't add item in {field.Schema} to {Schema}");
+                throw new ArgumentException($"Can't relate item in {field.Schema} to item in {Schema}");
             }
 
             // save new value ONLY if CheckBox is Checked!

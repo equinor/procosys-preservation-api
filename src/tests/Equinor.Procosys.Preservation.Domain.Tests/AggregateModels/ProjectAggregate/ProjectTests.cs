@@ -38,7 +38,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddTag_ShouldAddTagToTagsList()
         {
-            var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", new Mock<Step>().Object, new List<Requirement>{new Mock<Requirement>().Object});
+            var stepMock = new Mock<Step>();
+            stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            var reqMock = new Mock<Requirement>();
+            reqMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>{reqMock.Object});
 
             _dut.AddTag(tag);
 

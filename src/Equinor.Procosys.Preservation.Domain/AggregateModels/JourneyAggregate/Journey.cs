@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             
             if (step.Schema != Schema)
             {
-                throw new ArgumentException($"Can't add item in {step.Schema} to {Schema}");
+                throw new ArgumentException($"Can't relate item in {step.Schema} to item in {Schema}");
             }
 
             _steps.Add(step);

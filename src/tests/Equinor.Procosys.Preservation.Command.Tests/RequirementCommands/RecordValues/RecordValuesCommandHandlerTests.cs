@@ -13,7 +13,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
     [TestClass]
     public class RecordValuesCommandHandlerTests : CommandHandlerTestsBase
     {
-
         private Requirement _requirement;
         private RecordValuesCommand _recordValuesCommandWithCheckedCheckBoxAndNaAsNumber;
         private RecordValuesCommand _recordValuesCommandWithNullAsNumber;
@@ -50,22 +49,24 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(_reqId);
             requirementDefinitionWith2FieldsMock.SetupGet(r => r.Schema).Returns(TestPlant);
             
-            var checkBoxFieldMock = new Mock<Field>("", "", FieldType.CheckBox, 0, null, null);
+            var checkBoxFieldMock = new Mock<Field>(TestPlant, "", FieldType.CheckBox, 0, null, null);
             checkBoxFieldMock.SetupGet(f => f.Id).Returns(_checkBoxFieldId);
             checkBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(checkBoxFieldMock.Object);
 
-            var numberFieldMock = new Mock<Field>("", "", FieldType.Number, 0, "mm", false);
+            var numberFieldMock = new Mock<Field>(TestPlant, "", FieldType.Number, 0, "mm", false);
             numberFieldMock.SetupGet(f => f.Id).Returns(_numberFieldId);
             numberFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(numberFieldMock.Object);
 
-            var requirementMock = new Mock<Requirement>("", 2, requirementDefinitionWith2FieldsMock.Object);
+            var requirementMock = new Mock<Requirement>(TestPlant, 2, requirementDefinitionWith2FieldsMock.Object);
             requirementMock.SetupGet(r => r.Id).Returns(_reqId);
             requirementMock.SetupGet(r => r.Schema).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
-            var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", new Mock<Step>().Object, new List<Requirement>
+            var stepMock = new Mock<Step>();
+            stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _requirement
             });

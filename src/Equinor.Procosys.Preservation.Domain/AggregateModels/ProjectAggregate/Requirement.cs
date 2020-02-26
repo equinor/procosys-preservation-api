@@ -23,6 +23,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
+            
+            if (requirementDefinition.Schema != schema)
+            {
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {schema}");
+            }
 
             IntervalWeeks = intervalWeeks;
             RequirementDefinitionId = requirementDefinition.Id;

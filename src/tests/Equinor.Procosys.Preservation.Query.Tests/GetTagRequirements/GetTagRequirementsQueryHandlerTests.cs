@@ -65,50 +65,50 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
-                var requirementType1 = new RequirementType(_schema, _requirementType1Code, _requirementType1Title, 0);
+                var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, 0);
                 context.RequirementTypes.Add(requirementType1);
-                var requirementType2 = new RequirementType(_schema, _requirementType2Code, _requirementType2Title, 0);
+                var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, 0);
                 context.RequirementTypes.Add(requirementType2);
                 context.SaveChanges();
 
-                var requirementDefinitionWithoutField = new RequirementDefinition(_schema, _requirementDefinitionWithoutFieldTitle, 2, 1);
+                var requirementDefinitionWithoutField = new RequirementDefinition(TestPlant, _requirementDefinitionWithoutFieldTitle, 2, 1);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithoutField);
 
-                var requirementDefinitionWithOneInfo = new RequirementDefinition(_schema, _requirementDefinitionWithOneInfoTitle, 2, 1);
-                var infoField = new Field(_schema, "Label for Info", FieldType.Info, 0);
+                var requirementDefinitionWithOneInfo = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneInfoTitle, 2, 1);
+                var infoField = new Field(TestPlant, "Label for Info", FieldType.Info, 0);
                 requirementDefinitionWithOneInfo.AddField(infoField);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithOneInfo);
 
-                var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(_schema, _requirementDefinitionWithTwoCheckBoxesTitle, 2, 1);
-                var cbField1 = new Field(_schema, "Label for checkBox - second", FieldType.CheckBox, 10);
-                var cbField2 = new Field(_schema, "Label for checkBox - first", FieldType.CheckBox, 2);
+                var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(TestPlant, _requirementDefinitionWithTwoCheckBoxesTitle, 2, 1);
+                var cbField1 = new Field(TestPlant, "Label for checkBox - second", FieldType.CheckBox, 10);
+                var cbField2 = new Field(TestPlant, "Label for checkBox - first", FieldType.CheckBox, 2);
                 requirementDefinitionWithTwoCheckBoxes.AddField(cbField1);
                 requirementDefinitionWithTwoCheckBoxes.AddField(cbField2);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithTwoCheckBoxes);
 
-                var requirementDefinitionWithThreeNumberShowPrev = new RequirementDefinition(_schema, _requirementDefinitionWithThreeNumberShowPrevTitle, 2, 1);
-                var numberFieldPrev1 = new Field(_schema, "Label for number - third", FieldType.Number, 15, _unit, true);
-                var numberFieldPrev2 = new Field(_schema, "Label for number - first", FieldType.Number, 2, _unit, true);
-                var numberFieldPrev3 = new Field(_schema, "Label for number - second", FieldType.Number, 10, _unit, true);
+                var requirementDefinitionWithThreeNumberShowPrev = new RequirementDefinition(TestPlant, _requirementDefinitionWithThreeNumberShowPrevTitle, 2, 1);
+                var numberFieldPrev1 = new Field(TestPlant, "Label for number - third", FieldType.Number, 15, _unit, true);
+                var numberFieldPrev2 = new Field(TestPlant, "Label for number - first", FieldType.Number, 2, _unit, true);
+                var numberFieldPrev3 = new Field(TestPlant, "Label for number - second", FieldType.Number, 10, _unit, true);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev1);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev2);
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev3);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithThreeNumberShowPrev);
 
-                var requirementDefinitionWithOneNumberNoPrev = new RequirementDefinition(_schema, _requirementDefinitionWithOneNumberNoPrevTitle, 2, 1);
-                var numberFieldNoPrev = new Field(_schema, "Label for number", FieldType.Number, 10, _unit, false);
+                var requirementDefinitionWithOneNumberNoPrev = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneNumberNoPrevTitle, 2, 1);
+                var numberFieldNoPrev = new Field(TestPlant, "Label for number", FieldType.Number, 10, _unit, false);
                 requirementDefinitionWithOneNumberNoPrev.AddField(numberFieldNoPrev);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithOneNumberNoPrev);
 
                 context.SaveChanges();
 
-                var requirementWithoutField = new Requirement(_schema, _interval, requirementDefinitionWithoutField);
-                var requirementWithOneInfo = new Requirement(_schema, _interval, requirementDefinitionWithOneInfo);
-                var requirementWithTwoCheckBoxes = new Requirement(_schema, _interval, requirementDefinitionWithTwoCheckBoxes);
-                var requirementWithOneNumberNoPrev = new Requirement(_schema, _interval, requirementDefinitionWithOneNumberNoPrev);
-                var requirementWithThreeNumberShowPrev = new Requirement(_schema, _interval, requirementDefinitionWithThreeNumberShowPrev);
+                var requirementWithoutField = new Requirement(TestPlant, _interval, requirementDefinitionWithoutField);
+                var requirementWithOneInfo = new Requirement(TestPlant, _interval, requirementDefinitionWithOneInfo);
+                var requirementWithTwoCheckBoxes = new Requirement(TestPlant, _interval, requirementDefinitionWithTwoCheckBoxes);
+                var requirementWithOneNumberNoPrev = new Requirement(TestPlant, _interval, requirementDefinitionWithOneNumberNoPrev);
+                var requirementWithThreeNumberShowPrev = new Requirement(TestPlant, _interval, requirementDefinitionWithThreeNumberShowPrev);
                 
-                var tag = new Tag(_schema,
+                var tag = new Tag(TestPlant,
                     TagType.Standard, 
                     "TagNo",
                     "Description",

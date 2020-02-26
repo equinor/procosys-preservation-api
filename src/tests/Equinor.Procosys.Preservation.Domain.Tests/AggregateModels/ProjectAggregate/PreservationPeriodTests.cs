@@ -195,6 +195,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
             var fMock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
             fMock.SetupGet(f => f.Id).Returns(12);
+            fMock.SetupGet(f => f.Schema).Returns(TestPlant);
             var field = fMock.Object;
 
             dut.RecordValueForField(field, "NA");
