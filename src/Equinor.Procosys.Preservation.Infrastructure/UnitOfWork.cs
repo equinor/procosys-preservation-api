@@ -47,7 +47,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             var auditables = _context
                 .ChangeTracker
                 .Entries<IAuditable>()
-                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
+                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified)
+                .ToList();
 
             if (auditables.Any())
             {
