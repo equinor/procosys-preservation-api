@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 {
     public abstract class ReadOnlyTestsBase
     {
-        protected const string _schema = "PCS$TEST";
+        protected const string TestPlant = "PCS$TEST";
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IEventDispatcher> _eventDispatcherMock;
         protected Mock<IPlantProvider> _plantProviderMock;
@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _eventDispatcherMock = new Mock<IEventDispatcher>();
             _eventDispatcher = _eventDispatcherMock.Object;
             _plantProviderMock = new Mock<IPlantProvider>();
-            _plantProviderMock.SetupGet(x => x.Plant).Returns(_schema);
+            _plantProviderMock.SetupGet(x => x.Plant).Returns(TestPlant);
             _plantProvider = _plantProviderMock.Object;
 
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Responsible AddResponsible(PreservationContext context, string code)
         {
-            var responsible = new Responsible(_schema, code);
+            var responsible = new Responsible(TestPlant, code);
             context.Responsibles.Add(responsible);
             context.SaveChanges();
             return responsible;
@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Mode AddMode(PreservationContext context, string title)
         {
-            var mode = new Mode(_schema, title);
+            var mode = new Mode(TestPlant, title);
             context.Modes.Add(mode);
             context.SaveChanges();
             return mode;
@@ -60,8 +60,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Journey AddJourneyWithStep(PreservationContext context, string title, Mode mode, Responsible responsible)
         {
-            var journey = new Journey(_schema, title);
-            journey.AddStep(new Step(_schema, mode, responsible));
+            var journey = new Journey(TestPlant, title);
+            journey.AddStep(new Step(TestPlant, mode, responsible));
             context.Journeys.Add(journey);
             context.SaveChanges();
             return journey;
@@ -69,11 +69,11 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string type, string def)
         {
-            var requirementType = new RequirementType(_schema, $"Code{type}", $"Title{type}", 0);
+            var requirementType = new RequirementType(TestPlant, $"Code{type}", $"Title{type}", 0);
             context.RequirementTypes.Add(requirementType);
             context.SaveChanges();
 
-            var requirementDefinition = new RequirementDefinition(_schema, $"Title{def}", 2, 1);
+            var requirementDefinition = new RequirementDefinition(TestPlant, $"Title{def}", 2, 1);
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChanges();
 
@@ -90,7 +90,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Project AddProject(PreservationContext context, string name, string description, bool isClosed = false)
         {
-            var project = new Project(_schema, name, description);
+            var project = new Project(TestPlant, name, description);
             if (isClosed)
             {
                 project.Close();
@@ -102,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Tag AddTag(PreservationContext context, Project parentProject, string tagNo, string description, Step step, IEnumerable<Requirement> requirements)
         {
-            var tag = new Tag(_schema, TagType.Standard, tagNo, description, "", "", "", "", "", "", "", "", step, requirements);
+            var tag = new Tag(TestPlant, TagType.Standard, tagNo, description, "", "", "", "", "", "", "", "", step, requirements);
             parentProject.AddTag(tag);
             context.SaveChanges();
             return tag;

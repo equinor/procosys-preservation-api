@@ -23,6 +23,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
+            
+            if (requirementDefinition.Schema != schema)
+            {
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {schema}");
+            }
 
             IntervalWeeks = intervalWeeks;
             RequirementDefinitionId = requirementDefinition.Id;
@@ -153,7 +158,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
         {
             NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
+            var preservationPeriod = new PreservationPeriod(Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
         }
     }

@@ -10,6 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class PreservationPeriodTests
     {
+        private const string TestPlant = "PlantA";
         private Field _checkBoxField;
         private Field _infoField;
         private const int PreservedById = 31;
@@ -19,8 +20,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestInitialize]
         public void Setup()
         {
-            _checkBoxField = new Field("", "", FieldType.CheckBox, 0);
-            _infoField = new Field("", "", FieldType.Info, 0);
+            _checkBoxField = new Field(TestPlant, "", FieldType.CheckBox, 0);
+            _infoField = new Field(TestPlant, "", FieldType.Info, 0);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _preservedByMock = new Mock<Person>();
             _preservedByMock.SetupGet(p => p.Id).Returns(PreservedById);
@@ -29,9 +30,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
 
-            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual(TestPlant, dut.Schema);
             Assert.AreEqual(_utcNow, dut.DueTimeUtc);
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.Status);
             Assert.IsNull(dut.PreservationRecord);
@@ -40,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldAllowStatusNeedsUserInput()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.NeedsUserInput);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.NeedsUserInput);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.Status);
         }
@@ -48,25 +49,25 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenStatusIsPreserved()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.Preserved)
+                new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.Preserved)
             );
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenStatusIsStopped()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.Stopped)
+                new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.Stopped)
             );
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenDateNotUtc()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new PreservationPeriod("SchemaA", DateTime.Now, PreservationPeriodStatus.NeedsUserInput)
+                new PreservationPeriod(TestPlant, DateTime.Now, PreservationPeriodStatus.NeedsUserInput)
             );
 
         [TestMethod]
         public void SetComment_ShouldSetComment()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
 
             dut.SetComment("Comment");
 
@@ -76,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void SetComment_ShouldThrowException_AfterPreserved()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
             dut.SetComment("Comment");
             Assert.AreEqual("Comment", dut.Comment);
 
@@ -89,7 +90,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Preserve_ShouldPreserve_WhenReadyToBePreserved()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.Status);
             Assert.IsNull(dut.PreservationRecord);
 
@@ -109,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Preserve_ShouldThrowException_WhenPreserveTwice()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
             Assert.IsNull(dut.PreservationRecord);
             var preservationTime = _utcNow.AddDays(12);
             dut.Preserve(preservationTime, _preservedByMock.Object, true);
@@ -122,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Preserve_ShouldThrowException_WhenNeedsUserInput()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.NeedsUserInput);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.NeedsUserInput);
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.Status);
 
             // act
@@ -132,7 +133,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Preserve_ShouldThrowException_WhenDateNotUtc()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.Status);
 
             // act
@@ -144,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValueForField_ShouldAddFieldValueToFieldValuesList_ForCheckBoxField()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
 
             dut.RecordValueForField(_checkBoxField, "true");
 
@@ -154,7 +155,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValueForField_ShouldThrowException_ForInfoField()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
 
             Assert.ThrowsException<Exception>(() => dut.RecordValueForField(_infoField, "abc"));
             Assert.AreEqual(0, dut.FieldValues.Count);
@@ -163,7 +164,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValueForField_ShouldThrowException_AfterPreserved()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
             dut.Preserve(_utcNow, _preservedByMock.Object, true);
 
             Assert.ThrowsException<Exception>(() => dut.RecordValueForField(_checkBoxField, "true"));
@@ -174,9 +175,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetFieldValue_ShouldGetACheckBoxCheckedValue_AfterRecordingCheckBoxValue()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
-            var fMock = new Mock<Field>("", "", FieldType.CheckBox, 0, null, null);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var fMock = new Mock<Field>(TestPlant, "", FieldType.CheckBox, 0, null, null);
             fMock.SetupGet(f => f.Id).Returns(12);
+            fMock.SetupGet(f => f.Schema).Returns(TestPlant);
             var field = fMock.Object;
 
             dut.RecordValueForField(field, "true");
@@ -190,9 +192,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetFieldValue_ShouldGetANumberValue_AfterRecordingNumber()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
             var fMock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
             fMock.SetupGet(f => f.Id).Returns(12);
+            fMock.SetupGet(f => f.Schema).Returns(TestPlant);
             var field = fMock.Object;
 
             dut.RecordValueForField(field, "NA");
@@ -206,7 +209,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetFieldValue_ShouldReturnNull_ForUnknownField()
         {
-            var dut = new PreservationPeriod("SchemaA", _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
+            var dut = new PreservationPeriod(TestPlant, _utcNow, PreservationPeriodStatus.ReadyToBePreserved);
 
             Assert.IsNull(dut.GetFieldValue(12));
         }

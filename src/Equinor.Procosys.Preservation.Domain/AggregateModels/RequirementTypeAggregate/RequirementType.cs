@@ -35,6 +35,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
+            
+            if (requirementDefinition.Schema != Schema)
+            {
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {Schema}");
+            }
 
             _requirementDefinitions.Add(requirementDefinition);
         }

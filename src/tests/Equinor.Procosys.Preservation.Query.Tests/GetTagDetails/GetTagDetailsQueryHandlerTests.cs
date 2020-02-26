@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                     AddResponsible(context, _respCode));
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
 
-                var tag = new Tag(_schema,
+                var tag = new Tag(TestPlant,
                     TagType.Standard,
                     "TagNo",
                     "Description",
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                     journey.Steps.ElementAt(0),
                     new List<Requirement>
                     {
-                        new Requirement(_schema, _intervalWeeks, reqType.RequirementDefinitions.ElementAt(0))
+                        new Requirement(TestPlant, _intervalWeeks, reqType.RequirementDefinitions.ElementAt(0))
                     });
 
                 _timeServiceMock = new Mock<ITimeService>();

@@ -28,19 +28,20 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestInitialize]
         public void Setup()
         {
+            var plant = "PCS$TESTPLANT";
             _repoMock = new Mock<IRequirementTypeRepository>();
 
-            _infoField = new Field("SchemaA", "LabelA", FieldType.Info, 10);
-            _numberField = new Field("SchemaB", "LabelB", FieldType.Number, 20, "UnitA", true);
-            _checkboxField = new Field("SchemaC", "LabelC", FieldType.CheckBox, 30);
-            _attachmentField = new Field("SchemaD", "LabelD", FieldType.Attachment, 40);
+            _infoField = new Field(plant, "LabelA", FieldType.Info, 10);
+            _numberField = new Field(plant, "LabelB", FieldType.Number, 20, "UnitA", true);
+            _checkboxField = new Field(plant, "LabelC", FieldType.CheckBox, 30);
+            _attachmentField = new Field(plant, "LabelD", FieldType.Attachment, 40);
 
-            _requirementDefWithInfo = new RequirementDefinition("SchemaA", "DefWithInfo", 8, 140);
-            _requirementDefWithNumber = new RequirementDefinition("SchemaB", "DefWithNumber", 8, 130);
-            _requirementDefWithCheckbox = new RequirementDefinition("SchemaC", "DefWithCheckbox", 8, 120);
-            _requirementDefWithAttachment = new RequirementDefinition("SchemaD", "DefWithAttachment", 8, 110);
+            _requirementDefWithInfo = new RequirementDefinition(plant, "DefWithInfo", 8, 140);
+            _requirementDefWithNumber = new RequirementDefinition(plant, "DefWithNumber", 8, 130);
+            _requirementDefWithCheckbox = new RequirementDefinition(plant, "DefWithCheckbox", 8, 120);
+            _requirementDefWithAttachment = new RequirementDefinition(plant, "DefWithAttachment", 8, 110);
 
-            _requirementType = new RequirementType("SchemaA", "CodeA", "TitleA", 10);
+            _requirementType = new RequirementType(plant, "CodeA", "TitleA", 10);
 
             _requirementDefWithInfo.AddField(_infoField);
             _requirementDefWithNumber.AddField(_numberField);

@@ -2,22 +2,22 @@
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.RequirementTypeAggregate
 {
     [TestClass]
     public class RequirementDefinitionTests
     {
+        private const string TestPlant = "PlantA";
         private RequirementDefinition _dut;
 
         [TestInitialize]
-        public void Setup() => _dut = new RequirementDefinition("SchemaA", "TitleA", 4, 10);
+        public void Setup() => _dut = new RequirementDefinition(TestPlant, "TitleA", 4, 10);
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual("SchemaA", _dut.Schema);
+            Assert.AreEqual(TestPlant, _dut.Schema);
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual(4, _dut.DefaultIntervalWeeks);
             Assert.AreEqual(10, _dut.SortKey);
@@ -32,41 +32,35 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void AddField_ShouldThrowExceptionTest_ForNullField()
         {
-            var dut = new RequirementDefinition("", "", 0, 0);
-
-            Assert.ThrowsException<ArgumentNullException>(() => dut.AddField(null));
-            Assert.AreEqual(0, dut.Fields.Count);
+            Assert.ThrowsException<ArgumentNullException>(() => _dut.AddField(null));
+            Assert.AreEqual(0, _dut.Fields.Count);
         }
 
         [TestMethod]
         public void AddField_ShouldAddFieldToFieldsList()
         {
-            var f = new Mock<Field>();
+            var f = new Field(TestPlant, "", FieldType.Info, 1);
 
-            var dut = new RequirementDefinition("", "", 0, 0);
-            dut.AddField(f.Object);
+            _dut.AddField(f);
 
-            Assert.AreEqual(1, dut.Fields.Count);
-            Assert.IsTrue(dut.Fields.Contains(f.Object));
+            Assert.AreEqual(1, _dut.Fields.Count);
+            Assert.IsTrue(_dut.Fields.Contains(f));
         }
 
         [TestMethod]
         public void AddInfoField_ShouldNotCauseRequirementDefinitionNeedingInput()
         {
-            var f = new Field("", "", FieldType.Info, 1);
-
-            var dut = new RequirementDefinition("", "", 0, 0);
+            var f = new Field(TestPlant, "", FieldType.Info, 1);
             Assert.IsFalse(_dut.NeedsUserInput);
             
-            dut.AddField(f);
-
+            _dut.AddField(f);
             Assert.IsFalse(_dut.NeedsUserInput);
         }
 
         [TestMethod]
         public void AddNumberField_ShouldCauseRequirementDefinitionNeedingInput()
         {
-            var f = new Field("", "", FieldType.Number, 1, "u", false);
+            var f = new Field(TestPlant, "", FieldType.Number, 1, "u", false);
 
             Assert.IsFalse(_dut.NeedsUserInput);
             
@@ -78,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void AddCheckBoxField_ShouldCauseRequirementDefinitionNeedingInput()
         {
-            var f = new Field("", "", FieldType.CheckBox, 1);
+            var f = new Field(TestPlant, "", FieldType.CheckBox, 1);
 
             Assert.IsFalse(_dut.NeedsUserInput);
             
@@ -90,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void AddAttachmentField_ShouldCauseRequirementDefinitionNeedingInput()
         {
-            var f = new Field("", "", FieldType.Attachment, 1);
+            var f = new Field(TestPlant, "", FieldType.Attachment, 1);
 
             Assert.IsFalse(_dut.NeedsUserInput);
             
@@ -114,32 +108,28 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void OrderedFields_ShouldReturnAllFieldsOrdered()
         {
-            var f1 = new Field("", "First", FieldType.Info, 10);
-            var f2 = new Field("", "Second", FieldType.Info, 5);
+            var f1 = new Field(TestPlant, "First", FieldType.Info, 10);
+            var f2 = new Field(TestPlant, "Second", FieldType.Info, 5);
 
-            var dut = new RequirementDefinition("", "", 0, 0);
-            
-            dut.AddField(f1);
-            dut.AddField(f2);
+            _dut.AddField(f1);
+            _dut.AddField(f2);
 
-            Assert.AreEqual(dut.Fields.Count, dut.OrderedFields().Count());
-            Assert.AreEqual(f2, dut.OrderedFields().ElementAt(0));
-            Assert.AreEqual(f1, dut.OrderedFields().ElementAt(1));
+            Assert.AreEqual(_dut.Fields.Count, _dut.OrderedFields().Count());
+            Assert.AreEqual(f2, _dut.OrderedFields().ElementAt(0));
+            Assert.AreEqual(f1, _dut.OrderedFields().ElementAt(1));
         }
 
         [TestMethod]
         public void OrderedFields_ShouldNotReturnVoidedFields()
         {
-            var f1 = new Field("", "First", FieldType.Info, 10);
-            var f2 = new Field("", "Second", FieldType.Info, 5);
+            var f1 = new Field(TestPlant, "First", FieldType.Info, 10);
+            var f2 = new Field(TestPlant, "Second", FieldType.Info, 5);
 
-            var dut = new RequirementDefinition("", "", 0, 0);
-            
-            dut.AddField(f1);
-            dut.AddField(f2);
+            _dut.AddField(f1);
+            _dut.AddField(f2);
             f2.Void();
 
-            Assert.AreEqual(dut.Fields.Count-1, dut.OrderedFields().Count());
+            Assert.AreEqual(_dut.Fields.Count-1, _dut.OrderedFields().Count());
         }
     }
 }
