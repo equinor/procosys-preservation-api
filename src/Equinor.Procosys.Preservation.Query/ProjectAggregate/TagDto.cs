@@ -12,7 +12,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             string calloffNo,
             string commPkgNo,
             string disciplineCode,
-            RequirementDto firstUpcomingRequirement,
             bool isVoided,
             string mcPkgNo, 
             string mode,
@@ -34,7 +33,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             CommPkgNo = commPkgNo;
             Description = tagDescription;
             DisciplineCode = disciplineCode;
-            FirstUpcomingRequirement = firstUpcomingRequirement;
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             Mode = mode;
@@ -55,7 +53,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public string CommPkgNo { get; }
         public string Description { get; }
         public string DisciplineCode { get; }
-        public RequirementDto FirstUpcomingRequirement { get; }
         public int Id { get; }
         public bool IsVoided { get; }
         public string McPkgNo { get; }

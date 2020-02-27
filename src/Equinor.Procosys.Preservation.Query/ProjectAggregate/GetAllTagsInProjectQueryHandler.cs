@@ -74,14 +74,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                             r.IsReadyAndDueToBePreserved(now)))
                     .ToList();
 
-                var firstUpcomingRequirement = tag.FirstUpcomingRequirement(now);
-
-                RequirementDto firstUpcomingRequirementDto = null;
-                if (firstUpcomingRequirement != null)
-                {
-                    firstUpcomingRequirementDto = requirementDtos.Single(r => r.Id == firstUpcomingRequirement.Id);
-                }
-
                 var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
                 var step = steps.Single(s => s.Id == tag.StepId);
                 var mode = modes.Single(m => m.Id == step.ModeId);
@@ -92,7 +84,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.Calloff,
                     tag.CommPkgNo,
                     tag.DisciplineCode,
-                    firstUpcomingRequirementDto,
                     tag.IsVoided,
                     tag.McPkgNo,
                     mode.Title,
