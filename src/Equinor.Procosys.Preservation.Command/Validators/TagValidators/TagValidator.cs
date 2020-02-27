@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return step != null;
         }
 
-        public async Task<bool> HaveRequirementReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken cancellationToken)
+        public async Task<bool> HasRequirementReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken cancellationToken)
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
                 where t.Id == tagId

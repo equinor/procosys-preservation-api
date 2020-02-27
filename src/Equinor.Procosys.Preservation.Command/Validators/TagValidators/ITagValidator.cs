@@ -25,6 +25,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         
         Task<bool> HaveNextStepAsync(int tagId, CancellationToken token);
         
-        Task<bool> HaveRequirementReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken token);
+        Task<bool> HasRequirementReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken token);
     }
 }

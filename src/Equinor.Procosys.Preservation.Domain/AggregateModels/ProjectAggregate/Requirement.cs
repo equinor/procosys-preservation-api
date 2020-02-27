@@ -8,7 +8,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Requirement : SchemaEntityBase
     {
-        private readonly PreservationPeriodStatus _initialPreservationPeriodStatus;
+        public const int InitialPreservationPeriodStatusMax = 64;
+
+        // _initialPreservationPeriodStatus is made as DB property. Can't be readonly
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private PreservationPeriodStatus _initialPreservationPeriodStatus;
         private readonly List<PreservationPeriod> _preservationPeriods = new List<PreservationPeriod>();
 
         protected Requirement()
@@ -42,7 +46,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; private set; }
         public IReadOnlyCollection<PreservationPeriod> PreservationPeriods => _preservationPeriods.AsReadOnly();
-
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
