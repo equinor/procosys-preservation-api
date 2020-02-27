@@ -34,6 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tagId, __, token) => PreservationIsStarted(tagId, token))
                     .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to transfer! Tag={id}")
+                    .MustAsync((_, tagId, __, token) => TagTypeCanBeTransferred(tagId, token))
+                    .WithMessage((_, id) => $"Tags of this type can not be transferred! Tag={id}")
                     .MustAsync((_, tagId, __, token) => HaveNextStep(tagId, token))
                     .WithMessage((_, id) => $"Tag doesn't have a next step to transfer to! Tag={id}");
             });
@@ -55,6 +57,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
 
             async Task<bool> PreservationIsStarted(int tagId, CancellationToken token)
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
+
+            async Task<bool> TagTypeCanBeTransferred(int tagId, CancellationToken token)
+                => await tagValidator.TagTypeCanBeTransferredAsync(tagId, token);
             
             async Task<bool> HaveNextStep(int tagId, CancellationToken token)
                 => await tagValidator.HaveNextStepAsync(tagId, token);
