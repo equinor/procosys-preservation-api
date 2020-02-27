@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    [Migration("20200226135751_PreservationPeriodStatusUpdate")]
-    partial class PreservationPeriodStatusUpdate
+    [Migration("20200227093447_InitialPreservationPeriodStatus")]
+    partial class InitialPreservationPeriodStatus
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -325,12 +325,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("InitialPreservationPeriodStatus")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
-                        .HasDefaultValue("NeedsUserInput");
-
                     b.Property<int>("IntervalWeeks")
                         .HasColumnType("int");
 
@@ -351,6 +345,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
+                    b.Property<string>("_initialPreservationPeriodStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(64)")
+                        .HasMaxLength(64)
+                        .HasDefaultValue("NeedsUserInput");
+
                     b.HasKey("Id");
 
                     b.HasIndex("RequirementDefinitionId");
@@ -359,7 +360,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("Requirements");
 
-                    b.HasCheckConstraint("constraint_requirement_check_valid_initial_status", "InitialPreservationPeriodStatus in ('NeedsUserInput','ReadyToBePreserved')");
+                    b.HasCheckConstraint("constraint_requirement_check_valid_initial_status", "_initialPreservationPeriodStatus in ('NeedsUserInput','ReadyToBePreserved')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Tag", b =>

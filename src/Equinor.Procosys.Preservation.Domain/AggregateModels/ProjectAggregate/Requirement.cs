@@ -8,6 +8,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Requirement : SchemaEntityBase
     {
+        public const int InitialPreservationPeriodStatusMax = 64;
+
         // _initialPreservationPeriodStatus is made as DB property. Can't be readonly
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private PreservationPeriodStatus _initialPreservationPeriodStatus;

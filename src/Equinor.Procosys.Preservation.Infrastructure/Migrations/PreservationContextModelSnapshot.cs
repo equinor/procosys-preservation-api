@@ -346,7 +346,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<string>("_initialPreservationPeriodStatus")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("nvarchar(64)")
+                        .HasMaxLength(64)
                         .HasDefaultValue("NeedsUserInput");
 
                     b.HasKey("Id");

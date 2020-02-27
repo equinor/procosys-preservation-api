@@ -27,6 +27,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             builder.Property(InitialPreservationPeriodStatusPropertyName)
+                .HasMaxLength(Requirement.InitialPreservationPeriodStatusMax)
                 .HasConversion<string>()
                 .HasDefaultValue(PreservationPeriodStatus.NeedsUserInput)
                 .IsRequired();
