@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             };
             _currentUserProvider = new Mock<ICurrentUserProvider>();
             _currentUserProvider
-                .Setup(x => x.GetCurrentUserAsync())
+                .Setup(x => x.GetCurrentUser())
                 .Returns(Task.FromResult(new Person(Guid.Empty, "Firstname", "Lastname")));
             var tagIds = new List<int> {TagId1, TagId2};
             _projectRepoMock = new Mock<IProjectRepository>();

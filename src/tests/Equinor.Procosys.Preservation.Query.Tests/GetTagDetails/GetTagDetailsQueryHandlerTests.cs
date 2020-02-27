@@ -29,6 +29,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProviderMock.Object))
             {
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+
                 var journey = AddJourneyWithStep(context, _journeyTitle, 
                     AddMode(context, _modeTitle), 
                     AddResponsible(context, _respCode));

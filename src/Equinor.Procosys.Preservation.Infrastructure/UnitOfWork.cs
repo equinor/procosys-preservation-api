@@ -45,17 +45,32 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
         private async Task SetAuditData()
         {
-            var now = _timeService.GetCurrentTimeUtc();
-            var currentUser = await _currentUserProvider.GetCurrentUserAsync();
+            var addedEntries = _context
+                .ChangeTracker
+                .Entries<ICreationAuditable>()
+                .Where(x => x.State == EntityState.Added)
+                .ToList();
+            var modifiedEntries = _context
+                .ChangeTracker
+                .Entries<IModificationAuditable>()
+                .Where(x => x.State == EntityState.Modified)
+                .ToList();
 
-            foreach (var entry in _context.ChangeTracker.Entries<ICreationAuditable>().Where(x => x.State == EntityState.Added))
+            if (addedEntries.Any() || modifiedEntries.Any())
             {
-                entry.Entity.SetCreated(now, currentUser);
-            }
+                var now = _timeService.GetCurrentTimeUtc();
+                var currentUserOid = _currentUserProvider.GetCurrentUser();
+                var currentUser = await _context.Persons.SingleOrDefaultAsync(p => p.Oid == currentUserOid);
 
-            foreach (var entry in _context.ChangeTracker.Entries<IModificationAuditable>().Where(x => x.State == EntityState.Modified))
-            {
-                entry.Entity.SetModified(now, currentUser);
+                foreach (var entry in addedEntries)
+                {
+                    entry.Entity.SetCreated(now, currentUser);
+                }
+
+                foreach (var entry in modifiedEntries)
+                {
+                    entry.Entity.SetModified(now, currentUser);
+                }
             }
         }
     }

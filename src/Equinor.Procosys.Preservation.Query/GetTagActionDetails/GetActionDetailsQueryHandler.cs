@@ -18,22 +18,22 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
 
         public async Task<Result<ActionDetailsDto>> Handle(GetActionDetailsQuery request, CancellationToken cancellationToken)
         {
-            // Get tag with all actions
             var dto = await
                 (from a in _context.QuerySet<Action>()
-                  // also join tag to return null if request.TagId not exists
-                  join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
-                  join createdUser in _context.QuerySet<Person>() on EF.Property<int>(a, "CreatedById") equals createdUser.Id
-                  //from closedUser in _context.QuerySet<Person>()
-                  //    .Where(p => p.Id == EF.Property<int>(a, "ClosedById")).DefaultIfEmpty() // left join
-                    where a.Id == request.ActionId
-                    select new Dto
-                    {
-                        Action = a,
-                        //CreatedBy = createdUser,
-                        //ClosedBy = closedUser
-                    }).FirstOrDefaultAsync(cancellationToken);
-            
+                     // also join tag to return null if request.TagId not exists
+                 join tag in _context.QuerySet<Tag>() on request.TagId equals tag.Id
+                 join createdUser in _context.QuerySet<Person>()
+                     on EF.Property<int>(a, "CreatedById") equals createdUser.Id
+                 from closedUser in _context.QuerySet<Person>()
+                     .Where(p => p.Id == EF.Property<int>(a, "ClosedById")).DefaultIfEmpty() // left join
+                 where a.Id == request.ActionId
+                 select new Dto
+                 {
+                     Action = a,
+                     CreatedBy = createdUser,
+                     ClosedBy = closedUser
+                 }).FirstOrDefaultAsync(cancellationToken);
+
             if (dto == null)
             {
                 return new NotFoundResult<ActionDetailsDto>($"Tag with ID {request.TagId} or Action with ID {request.ActionId} not found");

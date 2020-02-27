@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
                 .Setup(x => x.HttpContext.User.Claims)
                 .Returns(new List<Claim> { new Claim(OidKey, _okOid.ToString()) });
 
-            var currentUser = await _dut.GetCurrentUserAsync();
+            var currentUser = await _dut.GetCurrentUser();
 
             Assert.AreEqual(_user, currentUser);
         }
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
                 .Setup(x => x.HttpContext.User.Claims)
                 .Returns(new List<Claim> { new Claim(OidKey, wrongOid.ToString()) });
 
-            var currentUser = await _dut.GetCurrentUserAsync();
+            var currentUser = await _dut.GetCurrentUser();
 
             Assert.IsNull(currentUser);
         }

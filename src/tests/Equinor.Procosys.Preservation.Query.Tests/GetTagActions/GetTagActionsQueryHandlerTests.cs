@@ -29,11 +29,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProviderMock.Object))
             {
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+
                 var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
 
-                _creator = AddPerson(context, "Ole", "Lukkøye");
+                _creator = AddPerson(context, Guid.Empty, "Ole", "Lukkøye");
 
                 var tag = new Tag(_schema, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
                     journey.Steps.ElementAt(0),

@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
     public abstract class ReadOnlyTestsBase
     {
         protected const string _schema = "PCS$TEST";
+        protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IPlantProvider> _plantProviderMock;
         protected IPlantProvider _plantProvider;
@@ -34,8 +35,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _plantProvider = _plantProviderMock.Object;
 
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(x => x.GetCurrentUserAsync())
-                .Returns(Task.FromResult(new Person(new Guid("12345678-1234-1234-1234-123456789123"), "Test", "McTester")));
+            currentUserProviderMock.Setup(x => x.GetCurrentUser())
+                .Returns(_currentUserOid);
             _currentUserProvider = currentUserProviderMock.Object;
 
             var eventDispatcher = new Mock<IEventDispatcher>();
@@ -93,9 +94,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return requirementType;
         }
 
-        protected Person AddPerson(PreservationContext context, string firstName, string lastName)
+        protected Person AddPerson(PreservationContext context, Guid oid, string firstName, string lastName)
         {
-            var person = new Person(Guid.Empty, firstName, lastName);
+            var person = new Person(oid, firstName, lastName);
             context.Persons.Add(person);
             new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
             return person;

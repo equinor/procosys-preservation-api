@@ -19,18 +19,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
             _personRepository = personRepository;
         }
 
-        public async Task<Person> GetCurrentUserAsync()
+        public Guid GetCurrentUser()
         {
             var oidClaim = _accessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == Oid);
-            if (oidClaim == null)
+            if (Guid.TryParse(oidClaim?.Value, out var oid))
             {
-                return null;
+                return oid;
             }
-
-            var oidString = oidClaim.Value;
-            var oid = Guid.Parse(oidString);
-            var user = await _personRepository.GetByOidAsync(oid);
-            return user;
+            throw new Exception("Unable to determine current user");
         }
     }
 }
