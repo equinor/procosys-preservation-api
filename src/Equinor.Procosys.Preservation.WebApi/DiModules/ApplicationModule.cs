@@ -1,10 +1,10 @@
 ﻿using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
-using Equinor.Procosys.Preservation.Command.Validators.Mode;
+using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
-using Equinor.Procosys.Preservation.Command.Validators.Responsible;
+using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Step;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain;

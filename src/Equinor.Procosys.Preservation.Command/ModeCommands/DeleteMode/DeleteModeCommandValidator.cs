@@ -1,4 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Command.Validators.Mode;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
@@ -9,19 +11,22 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
             
-            RuleFor(x => x.ModeId)
-                .Must(BeAnExistingMode)
-                .WithMessage(x => $"Mode doesn't exists! Mode={x.ModeId}")
-                .Must(BeAVoidedMode)
-                .WithMessage(x => $"Mode is not voided! Mode={x.ModeId}")
-                .Must(NotBeUsedInAnyStep)
-                .WithMessage(x => $"Mode is used in step(s)! Mode={x.ModeId}");
+            RuleFor(command => command)
+                .MustAsync((command, token) => BeAnExistingMode(command.ModeId, token))
+                .WithMessage(command => $"Mode doesn't exists! Mode={command.ModeId}")
+                .MustAsync((command, token) => BeAVoidedMode(command.ModeId, token))
+                .WithMessage(command => $"Mode is not voided! Mode={command.ModeId}")
+                .MustAsync((command, token) => NotBeUsedInAnyStep(command.ModeId, token))
+                .WithMessage(command => $"Mode is used in step(s)! Mode={command.ModeId}");
 
-            bool BeAnExistingMode(int modeId) => modeValidator.Exists(modeId);
+            async Task<bool> BeAnExistingMode(int modeId, CancellationToken token)
+                => await modeValidator.ExistsAsync(modeId, token);
 
-            bool BeAVoidedMode(int modeId) => modeValidator.IsVoided(modeId);
-            
-            bool NotBeUsedInAnyStep(int modeId) => !modeValidator.IsUsedInStep(modeId);
+            async Task<bool> BeAVoidedMode(int modeId, CancellationToken token)
+                => await modeValidator.IsVoidedAsync(modeId, token);
+
+            async Task<bool> NotBeUsedInAnyStep(int modeId, CancellationToken token)
+                => !await modeValidator.IsUsedInStepAsync(modeId, token);
         }
     }
 }
