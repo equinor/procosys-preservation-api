@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateExists_KnownTitle_ReturnsTrue()
+        public async Task ExistsAsync_KnownTitle_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateExists_KnownId_ReturnsTrue()
+        public async Task ExistsAsync_KnownId_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateExists_UnknownTitle_ReturnsFalse()
+        public async Task ExistsAsync_UnknownTitle_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateExists_UnknownId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownId_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateIsVoided_KnownVoided_ReturnsTrue()
+        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateIsVoided_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateIsVoided_UnknownId_ReturnsFalse()
+        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateIsUsedInStep_KnownId_ReturnsTrue()
+        public async Task IsUsedInStepAsync_KnownId_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ValidateIsUsedInStep_UnknownId_ReturnsFalse()
+        public async Task IsUsedInStepAsync_UnknownId_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
