@@ -1,5 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
-using Equinor.Procosys.Preservation.Command.Validators.Journey;
+﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
+using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Mode;
 using Equinor.Procosys.Preservation.Command.Validators.Responsible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         public void Setup_OkState()
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
-            _journeyValidatorMock.Setup(r => r.Exists(_journeyId)).Returns(true);
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.Exists(_modeId)).Returns(true);
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
@@ -45,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenJourneyNotExists()
         {
-            _journeyValidatorMock.Setup(r => r.Exists(_journeyId)).Returns(false);
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
@@ -81,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenJourneyIsVoided()
         {
-            _journeyValidatorMock.Setup(r => r.IsVoided(_journeyId)).Returns(true);
+            _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_journeyId, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 
@@ -117,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Validate_ShouldFailWith3Errors_WhenErrorsInAllRules()
         {
-            _journeyValidatorMock.Setup(r => r.Exists(_journeyId)).Returns(false);
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
             _modeValidatorMock.Setup(r => r.Exists(_modeId)).Returns(false);
             _responsibleValidatorMock.Setup(r => r.Exists(_responsibleId)).Returns(false);
             
@@ -130,11 +131,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Validate_ShouldFailWith3Errors_WhenAllValidatorsFail()
         {
-            _journeyValidatorMock.Setup(r => r.Exists(_journeyId)).Returns(false);
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
             _modeValidatorMock.Setup(r => r.Exists(_modeId)).Returns(false);
             _responsibleValidatorMock.Setup(r => r.Exists(_responsibleId)).Returns(false);
 
-            _journeyValidatorMock.Setup(r => r.IsVoided(_journeyId)).Returns(true);
+            _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_journeyId, default)).Returns(Task.FromResult(true));
             _modeValidatorMock.Setup(r => r.IsVoided(_modeId)).Returns(true);
             _responsibleValidatorMock.Setup(r => r.IsVoided(_responsibleId)).Returns(true);
 

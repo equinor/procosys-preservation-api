@@ -1,4 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Command.Validators.Journey;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.Mode;
 using Equinor.Procosys.Preservation.Command.Validators.Responsible;
 using FluentValidation;
@@ -14,10 +16,10 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            RuleFor(x => x.JourneyId)
-                .Must(BeAnExistingJourney)
+            RuleFor(command => command)
+                .MustAsync((command, token) => BeAnExistingJourney(command.JourneyId, token))
                 .WithMessage(x => $"Journey doesn't exists! Journey={x.JourneyId}")
-                .Must(NotBeAVoidedJourney)
+                .MustAsync((command, token) => NotBeAVoidedJourney(command.JourneyId, token))
                 .WithMessage(x => $"Journey is voided! Journey={x.JourneyId}");
 
             RuleFor(x => x.ModeId)
@@ -32,13 +34,15 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 .Must(NotBeAVoidedResponsible)
                 .WithMessage(x => $"Responsible is voided! Responsible={x.ResponsibleId}");
 
-            bool BeAnExistingJourney(int journeyId) => journeyValidator.Exists(journeyId);
+            async Task<bool> BeAnExistingJourney(int journeyId, CancellationToken token)
+                => await journeyValidator.ExistsAsync(journeyId, token);
             
             bool BeAnExistingMode(int modeId) => modeValidator.Exists(modeId);
 
             bool BeAnExistingResponsible(int responsibleId) => responsibleValidator.Exists(responsibleId);
 
-            bool NotBeAVoidedJourney(int journeyId) => !journeyValidator.IsVoided(journeyId);
+            async Task<bool> NotBeAVoidedJourney(int journeyId, CancellationToken token)
+                => !await journeyValidator.IsVoidedAsync(journeyId, token);
             
             bool NotBeAVoidedMode(int modeId) => !modeValidator.IsVoided(modeId);
 

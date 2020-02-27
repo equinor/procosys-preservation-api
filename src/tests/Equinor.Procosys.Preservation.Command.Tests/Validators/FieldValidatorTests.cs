@@ -24,7 +24,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _infoFieldId = AddInfoField(context, rd).Id;
                 _numberFieldId = NumberField(context, rd, "mm", true).Id;
                 _checkBoxFieldId = CheckBoxField(context, rd).Id;
-                context.SaveChanges();
             }
         }
 
