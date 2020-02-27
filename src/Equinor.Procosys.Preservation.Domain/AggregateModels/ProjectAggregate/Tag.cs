@@ -155,9 +155,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             Status = PreservationStatus.Active;
         }
 
-        public Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
-            => GetUpComingRequirements(currentTimeUtc).FirstOrDefault();
-
         public bool IsReadyToBePreserved(DateTime currentTimeUtc)
             => Status == PreservationStatus.Active && 
                FirstUpcomingRequirement(currentTimeUtc) != null;
@@ -215,5 +212,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
             }
         }
+
+        private Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
+            => GetUpComingRequirements(currentTimeUtc).FirstOrDefault();
     }
 }
