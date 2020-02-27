@@ -8,6 +8,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Requirement : SchemaEntityBase
     {
+        // _initialPreservationPeriodStatus is made as DB property. Can't be readonly
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private PreservationPeriodStatus _initialPreservationPeriodStatus;
         private readonly List<PreservationPeriod> _preservationPeriods = new List<PreservationPeriod>();
 
         protected Requirement()
@@ -26,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             IntervalWeeks = intervalWeeks;
             RequirementDefinitionId = requirementDefinition.Id;
             
-            InitialPreservationPeriodStatus = requirementDefinition.NeedsUserInput
+            _initialPreservationPeriodStatus = requirementDefinition.NeedsUserInput
                 ? PreservationPeriodStatus.NeedsUserInput
                 : PreservationPeriodStatus.ReadyToBePreserved;
         }
@@ -36,7 +39,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; private set; }
         public IReadOnlyCollection<PreservationPeriod> PreservationPeriods => _preservationPeriods.AsReadOnly();
-        public PreservationPeriodStatus InitialPreservationPeriodStatus { get; private set; }
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
@@ -152,7 +154,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
         {
             NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, InitialPreservationPeriodStatus);
+            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
         }
     }

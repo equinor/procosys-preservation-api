@@ -8,6 +8,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
     internal class RequirementConfiguration : IEntityTypeConfiguration<Requirement>
     {
+        private readonly string InitialPreservationPeriodStatusPropertyName = "_initialPreservationPeriodStatus";
+
         public void Configure(EntityTypeBuilder<Requirement> builder)
         {
             builder.Property(x => x.Schema)
@@ -24,14 +26,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .WithOne()
                 .IsRequired();
 
-            builder.Property(f => f.InitialPreservationPeriodStatus)
+            builder.Property(InitialPreservationPeriodStatusPropertyName)
                 .HasConversion<string>()
                 .HasDefaultValue(PreservationPeriodStatus.NeedsUserInput)
                 .IsRequired();
 
             builder.HasCheckConstraint(
                 "constraint_requirement_check_valid_initial_status",
-                $"{nameof(Requirement.InitialPreservationPeriodStatus)} in ('{PreservationPeriodStatus.NeedsUserInput}','{PreservationPeriodStatus.ReadyToBePreserved}')");
+                $"{InitialPreservationPeriodStatusPropertyName} in ('{PreservationPeriodStatus.NeedsUserInput}','{PreservationPeriodStatus.ReadyToBePreserved}')");
         }
     }
 }

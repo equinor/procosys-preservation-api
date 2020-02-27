@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
                 .WithMessage((x, id) => $"Tag is voided! Tag={id}")
                 .MustAsync((command, token) => PreservationIsStarted(command.TagId, token))
                 .WithMessage((x, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
-                .MustAsync((command, token) => HaveRequirementReadyToBePreserved(command.TagId, command.RequirementId, token))
+                .MustAsync((command, token) => HasRequirementReadyToBePreserved(command.TagId, command.RequirementId, token))
                 .WithMessage((command, _) =>
                     $"Tag doesn't have this requirement ready to be preserved! Tag={command.TagId}. Requirement={command.RequirementId}");
             
@@ -38,8 +38,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
             async Task<bool> PreservationIsStarted(int tagId, CancellationToken token)
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
 
-            async Task<bool> HaveRequirementReadyToBePreserved(int tagId, int requirementId, CancellationToken token)
-                =>  await tagValidator.HaveRequirementReadyToBePreservedAsync(tagId, requirementId, token);
+            async Task<bool> HasRequirementReadyToBePreserved(int tagId, int requirementId, CancellationToken token)
+                =>  await tagValidator.HasRequirementReadyToBePreservedAsync(tagId, requirementId, token);
         }
     }
 }

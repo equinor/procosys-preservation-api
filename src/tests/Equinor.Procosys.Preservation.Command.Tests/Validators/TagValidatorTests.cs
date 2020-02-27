@@ -222,29 +222,29 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HaveRequirementReadyToBePreservedAsync_KnownTag_ReturnsFalse()
+        public async Task HasRequirementReadyToBePreservedAsync_KnownTag_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.HaveRequirementReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
+                var result = await dut.HasRequirementReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task HaveRequirementReadyToBePreservedAsync_KnownTag_ReturnsTrue()
+        public async Task HasRequirementReadyToBePreservedAsync_KnownTag_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.HaveRequirementReadyToBePreservedAsync(_tagStartedPreservationId, _reqStartedPreservationId, default);
+                var result = await dut.HasRequirementReadyToBePreservedAsync(_tagStartedPreservationId, _reqStartedPreservationId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task HaveRequirementReadyToBePreservedAsync_KnownTag_ReturnsTrue_WhenStartedInSeparateContext()
+        public async Task HasRequirementReadyToBePreservedAsync_KnownTag_ReturnsTrue_WhenStartedInSeparateContext()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
@@ -255,7 +255,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.HaveRequirementReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
+                var result = await dut.HasRequirementReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
                 Assert.IsTrue(result);
             }
         }
