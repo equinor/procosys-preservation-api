@@ -30,9 +30,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D").RequirementDefinitions.First();
 
                 var req = new Requirement(TestPlant, 2, rd);
-                var t1 = AddTag(context, notClosedProject, "T1", "Tag description", step, new List<Requirement>{ req });
+                var t1 = AddTag(context, notClosedProject, TagType.Standard, "T1", "Tag description", step, new List<Requirement>{ req });
                 _tagInNotClosedProjectId = t1.Id;
-                var t2 = AddTag(context, closedProject, "T2", "Tag description", step, new List<Requirement>{ req });
+                var t2 = AddTag(context, closedProject, TagType.Standard, "T2", "Tag description", step, new List<Requirement>{ req });
                 _tagInClosedProjectId = t2.Id;
             }
         }
