@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -7,6 +8,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -20,6 +22,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IPlantProvider> _plantProviderMock;
         protected IPlantProvider _plantProvider;
+        protected ICurrentUserProvider _currentUserProvider;
+        protected IEventDispatcher _eventDispatcher;
+        protected ITimeService _timeService;
 
         [TestInitialize]
         public void SetupBase()
@@ -27,6 +32,19 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _plantProviderMock = new Mock<IPlantProvider>();
             _plantProviderMock.SetupGet(x => x.Plant).Returns(_schema);
             _plantProvider = _plantProviderMock.Object;
+
+            var currentUserProviderMock = new Mock<ICurrentUserProvider>();
+            currentUserProviderMock.Setup(x => x.GetCurrentUserAsync())
+                .Returns(Task.FromResult(new Person(new Guid("12345678-1234-1234-1234-123456789123"), "Test", "McTester")));
+            _currentUserProvider = currentUserProviderMock.Object;
+
+            var eventDispatcher = new Mock<IEventDispatcher>();
+            _eventDispatcher = eventDispatcher.Object;
+
+            var timeService = new Mock<ITimeService>();
+            timeService.Setup(x => x.GetCurrentTimeUtc())
+                .Returns(new DateTime(2020, 2, 1, 12, 0, 0, DateTimeKind.Utc));
+            _timeService = timeService.Object;
 
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -41,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var responsible = new Responsible(_schema, code);
             context.Responsibles.Add(responsible);
-            context.SaveChanges();
+            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
             return responsible;
         }
 
@@ -49,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var mode = new Mode(_schema, title);
             context.Modes.Add(mode);
-            context.SaveChanges();
+            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
             return mode;
         }
 
@@ -58,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var journey = new Journey(_schema, title);
             journey.AddStep(new Step(_schema, mode, responsible));
             context.Journeys.Add(journey);
-            context.SaveChanges();
+            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
             return journey;
         }
 
@@ -66,11 +84,11 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var requirementType = new RequirementType(_schema, $"Code{type}", $"Title{type}", 0);
             context.RequirementTypes.Add(requirementType);
-            context.SaveChanges();
+            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
 
             var requirementDefinition = new RequirementDefinition(_schema, $"Title{def}", 2, 1);
             requirementType.AddRequirementDefinition(requirementDefinition);
-            context.SaveChanges();
+            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
 
             return requirementType;
         }
@@ -79,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var person = new Person(Guid.Empty, firstName, lastName);
             context.Persons.Add(person);
-            context.SaveChanges();
+            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
             return person;
         }
 
@@ -91,7 +109,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 project.Close();
             }
             context.Projects.Add(project);
-            context.SaveChanges();
+            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
             return project;
         }
 
@@ -99,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var tag = new Tag(_schema, TagType.Standard, tagNo, description, "", "", "", "", "", "", "", "", step, requirements);
             parentProject.AddTag(tag);
-            context.SaveChanges();
+            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
             return tag;
         }
     }

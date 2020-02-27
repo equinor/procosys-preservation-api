@@ -1,19 +1,19 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class ActionConfiguration : EntityBaseConfiguration<Action>
+    internal class ActionConfiguration : IEntityTypeConfiguration<Action>
     {
-        public override void Configure(EntityTypeBuilder<Action> builder)
+        public void Configure(EntityTypeBuilder<Action> builder)
         {
-            base.Configure(builder);
+            builder.ConfigureSchema();
+            builder.ConfigureCreationAudit();
+            builder.ConfigureModificationAudit();
 
-            builder.Property(f => f.Schema)
-                .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
-                .IsRequired();
-            
             builder.Property(x => x.Title)
                 .HasMaxLength(Action.TitleLengthMax)
                 .IsRequired();
@@ -21,6 +21,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.Description)
                 .HasMaxLength(Action.DescriptionLengthMax)
                 .IsRequired();
+
+            builder.HasOne<Person>()
+                .WithMany()
+                .HasForeignKey(x => x.ClosedById)
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Property(x => x.DueTimeUtc)
                 .HasConversion(PreservationContext.NullableDateTimeKindConverter);

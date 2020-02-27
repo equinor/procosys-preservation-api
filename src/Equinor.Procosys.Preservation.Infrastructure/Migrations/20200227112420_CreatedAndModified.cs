@@ -1,11 +1,308 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
-    public partial class CreatedAndModifiedConstraint : Migration
+    public partial class CreatedAndModified : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "Tags",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "Tags",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Tags",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Tags",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "Step",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "Step",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Step",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Step",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "Responsibles",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "Responsibles",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Responsibles",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Responsibles",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "RequirementTypes",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "RequirementTypes",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "RequirementTypes",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "RequirementTypes",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "Requirements",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "Requirements",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Requirements",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Requirements",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "RequirementDefinitions",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "RequirementDefinitions",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "RequirementDefinitions",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "RequirementDefinitions",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "Projects",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "Projects",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Projects",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Projects",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "PreservationRecords",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "PreservationRecords",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "PreservationRecords",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "PreservationRecords",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "PreservationPeriods",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "PreservationPeriods",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "PreservationPeriods",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "PreservationPeriods",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Persons",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Persons",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "Modes",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "Modes",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Modes",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Modes",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "Journeys",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "Journeys",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Journeys",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Journeys",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "FieldValues",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "FieldValues",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "CreatedAtUtc",
+                table: "Fields",
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
+
+            migrationBuilder.AddColumn<int>(
+                name: "CreatedById",
+                table: "Fields",
+                nullable: false,
+                defaultValue: 0);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Fields",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Fields",
+                nullable: true);
+
+            migrationBuilder.AddColumn<DateTime>(
+                name: "ModifiedAtUtc",
+                table: "Actions",
+                nullable: true);
+
+            migrationBuilder.AddColumn<int>(
+                name: "ModifiedById",
+                table: "Actions",
+                nullable: true);
+
             migrationBuilder.CreateIndex(
                 name: "IX_Tags_CreatedById",
                 table: "Tags",
@@ -97,11 +394,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Persons_CreatedById",
-                table: "Persons",
-                column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Persons_ModifiedById",
                 table: "Persons",
                 column: "ModifiedById");
@@ -130,11 +422,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "IX_FieldValues_CreatedById",
                 table: "FieldValues",
                 column: "CreatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FieldValues_ModifiedById",
-                table: "FieldValues",
-                column: "ModifiedById");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Fields_CreatedById",
@@ -180,13 +467,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 principalColumn: "Id");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_FieldValues_Persons_ModifiedById",
-                table: "FieldValues",
-                column: "ModifiedById",
-                principalTable: "Persons",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
                 name: "FK_Journeys_Persons_CreatedById",
                 table: "Journeys",
                 column: "CreatedById",
@@ -211,13 +491,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "FK_Modes_Persons_ModifiedById",
                 table: "Modes",
                 column: "ModifiedById",
-                principalTable: "Persons",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Persons_Persons_CreatedById",
-                table: "Persons",
-                column: "CreatedById",
                 principalTable: "Persons",
                 principalColumn: "Id");
 
@@ -374,10 +647,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 table: "FieldValues");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_FieldValues_Persons_ModifiedById",
-                table: "FieldValues");
-
-            migrationBuilder.DropForeignKey(
                 name: "FK_Journeys_Persons_CreatedById",
                 table: "Journeys");
 
@@ -392,10 +661,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
             migrationBuilder.DropForeignKey(
                 name: "FK_Modes_Persons_ModifiedById",
                 table: "Modes");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Persons_Persons_CreatedById",
-                table: "Persons");
 
             migrationBuilder.DropForeignKey(
                 name: "FK_Persons_Persons_ModifiedById",
@@ -546,10 +811,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 table: "PreservationPeriods");
 
             migrationBuilder.DropIndex(
-                name: "IX_Persons_CreatedById",
-                table: "Persons");
-
-            migrationBuilder.DropIndex(
                 name: "IX_Persons_ModifiedById",
                 table: "Persons");
 
@@ -574,10 +835,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 table: "FieldValues");
 
             migrationBuilder.DropIndex(
-                name: "IX_FieldValues_ModifiedById",
-                table: "FieldValues");
-
-            migrationBuilder.DropIndex(
                 name: "IX_Fields_CreatedById",
                 table: "Fields");
 
@@ -587,6 +844,222 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
             migrationBuilder.DropIndex(
                 name: "IX_Actions_ModifiedById",
+                table: "Actions");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "Tags");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "Tags");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Tags");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Tags");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "Step");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "Step");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Step");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Step");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "Responsibles");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "Responsibles");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Responsibles");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Responsibles");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "RequirementTypes");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "RequirementTypes");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "RequirementTypes");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "RequirementTypes");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "Requirements");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "Requirements");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Requirements");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Requirements");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "RequirementDefinitions");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "RequirementDefinitions");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "RequirementDefinitions");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "RequirementDefinitions");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "Projects");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "Projects");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Projects");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Projects");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "PreservationRecords");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "PreservationRecords");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "PreservationRecords");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "PreservationRecords");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "PreservationPeriods");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "PreservationPeriods");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "PreservationPeriods");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "PreservationPeriods");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Persons");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Persons");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "Modes");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "Modes");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Modes");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Modes");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "Journeys");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "Journeys");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Journeys");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Journeys");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "FieldValues");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "FieldValues");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedAtUtc",
+                table: "Fields");
+
+            migrationBuilder.DropColumn(
+                name: "CreatedById",
+                table: "Fields");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Fields");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
+                table: "Fields");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedAtUtc",
+                table: "Actions");
+
+            migrationBuilder.DropColumn(
+                name: "ModifiedById",
                 table: "Actions");
         }
     }

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Project : SchemaEntityBase, IAggregateRoot
+    public class Project : SchemaEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         private readonly List<Tag> _tags = new List<Tag>();
         
@@ -26,6 +28,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string Description { get; private set; }
         public bool IsClosed { get; private set; }
         public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
+        public DateTime CreatedAtUtc { get; private set; }
+        public int CreatedById { get; private set; }
+        public DateTime? ModifiedAtUtc { get; private set; }
+        public int? ModifiedById { get; private set; }
 
         public void AddTag(Tag tag)
         {
@@ -38,5 +44,27 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public void Close() => IsClosed = true;
+
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        {
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
+            CreatedById = createdBy.Id;
+        }
+
+        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        {
+            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
+            }
+
+            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedById = modifiedBy.Id;
+        }
     }
 }

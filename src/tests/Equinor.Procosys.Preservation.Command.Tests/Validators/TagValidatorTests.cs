@@ -32,6 +32,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
+                var uow = new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider);
+
                 var project = AddProject(context, ProjectName, "Project description");
                 var journey = AddJourneyWithStep(context, "J", AddMode(context, "M1"), AddResponsible(context, "R1"));
                 journey.AddStep(new Step(_schema, AddMode(context, "M2"), AddResponsible(context, "R2")));

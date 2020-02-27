@@ -1,21 +1,27 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class PreservationRecordConfiguration : EntityBaseConfiguration<PreservationRecord>
+    internal class PreservationRecordConfiguration : IEntityTypeConfiguration<PreservationRecord>
     {
-        public override void Configure(EntityTypeBuilder<PreservationRecord> builder)
+        public void Configure(EntityTypeBuilder<PreservationRecord> builder)
         {
-            base.Configure(builder);
+            builder.ConfigureSchema();
+            builder.ConfigureCreationAudit();
+            builder.ConfigureModificationAudit();
 
-            builder.Property(f => f.Schema)
-                .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
-                .IsRequired();
-            
             builder.Property(x => x.PreservedAtUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
+
+            builder
+                .HasOne<Person>()
+                .WithMany()
+                .HasForeignKey(x => x.PreservedById)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

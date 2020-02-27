@@ -1,13 +1,13 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.Audit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
+namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions
 {
-    public class EntityBaseConfiguration<TEntity> : IEntityTypeConfiguration<TEntity> where TEntity : EntityBase
+    public static class AuditableConfigurationExtensions
     {
-        public virtual void Configure(EntityTypeBuilder<TEntity> builder)
+        public static void ConfigureCreationAudit<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, ICreationAuditable
         {
             builder
                 .Property(x => x.CreatedAtUtc)
@@ -18,7 +18,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.CreatedById)
                 .OnDelete(DeleteBehavior.NoAction);
+        }
 
+        public static void ConfigureModificationAudit<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : class, IModificationAuditable
+        {
             builder
                 .Property(x => x.ModifiedAtUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
@@ -27,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasOne<Person>()
                 .WithMany()
                 .HasForeignKey(x => x.ModifiedById)
+                .IsRequired(false)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }

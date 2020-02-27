@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class RequirementDefinition : SchemaEntityBase
+    public class RequirementDefinition : SchemaEntityBase, ICreationAuditable, IModificationAuditable
     {
         private readonly List<Field> _fields = new List<Field>();
         
@@ -30,6 +32,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public IReadOnlyCollection<Field> Fields => _fields.AsReadOnly();
         public bool NeedsUserInput => _fields.Any(f => f.NeedsUserInput);
 
+        public DateTime CreatedAtUtc { get; private set; }
+        public int CreatedById { get; private set; }
+        public DateTime? ModifiedAtUtc { get; private set; }
+        public int? ModifiedById { get; private set; }
+
         public void AddField(Field field)
         {
             if (field == null)
@@ -49,5 +56,27 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public void UnVoid() => IsVoided = false;
 
         public override string ToString() => Title;
+
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        {
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
+            CreatedById = createdBy.Id;
+        }
+
+        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        {
+            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
+            }
+
+            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedById = modifiedBy.Id;
+        }
     }
 }

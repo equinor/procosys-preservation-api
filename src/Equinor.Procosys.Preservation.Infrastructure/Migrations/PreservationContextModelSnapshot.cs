@@ -162,12 +162,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("int");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("nvarchar(64)")
@@ -188,8 +182,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
 
                     b.HasIndex("ModifiedById");
 
@@ -275,12 +267,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("ModifiedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ModifiedById")
-                        .HasColumnType("int");
-
                     b.Property<int>("PreservationPeriodId")
                         .HasColumnType("int");
 
@@ -294,8 +280,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("FieldId");
-
-                    b.HasIndex("ModifiedById");
 
                     b.HasIndex("PreservationPeriodId");
 
@@ -898,12 +882,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 {
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
                         .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
-                        .WithMany()
                         .HasForeignKey("ModifiedById")
                         .OnDelete(DeleteBehavior.NoAction);
                 });
@@ -918,7 +896,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
                         .WithMany()
                         .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
                         .WithMany()
@@ -943,11 +922,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.Field", null)
                         .WithMany()
                         .HasForeignKey("FieldId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
-                        .WithMany()
-                        .HasForeignKey("ModifiedById")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationPeriod", null)
@@ -997,7 +971,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
                         .WithMany()
                         .HasForeignKey("PreservedById")
-                        .OnDelete(DeleteBehavior.NoAction);
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Project", b =>

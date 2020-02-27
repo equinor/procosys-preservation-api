@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.Audit;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 
@@ -44,29 +45,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
         private async Task SetAuditData()
         {
-            var auditables = _context
-                .ChangeTracker
-                .Entries<IAuditable>()
-                .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified)
-                .ToList();
+            var now = _timeService.GetCurrentTimeUtc();
+            var currentUser = await _currentUserProvider.GetCurrentUserAsync();
 
-            if (auditables.Any())
+            foreach (var entry in _context.ChangeTracker.Entries<ICreationAuditable>().Where(x => x.State == EntityState.Added))
             {
-                var now = _timeService.GetCurrentTimeUtc();
-                var currentUser = await _currentUserProvider.GetCurrentUserAsync();
+                entry.Entity.SetCreated(now, currentUser);
+            }
 
-                foreach (var entry in auditables)
-                {
-                    switch (entry.State)
-                    {
-                        case EntityState.Added:
-                            entry.Entity.SetCreated(now, currentUser);
-                            break;
-                        case EntityState.Modified:
-                            entry.Entity.SetModified(now, currentUser);
-                            break;
-                    }
-                }
+            foreach (var entry in _context.ChangeTracker.Entries<IModificationAuditable>().Where(x => x.State == EntityState.Modified))
+            {
+                entry.Entity.SetModified(now, currentUser);
             }
         }
     }

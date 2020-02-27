@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class TagConfiguration : EntityBaseConfiguration<Tag>
+    internal class TagConfiguration : IEntityTypeConfiguration<Tag>
     {
-        public override void Configure(EntityTypeBuilder<Tag> builder)
+        public void Configure(EntityTypeBuilder<Tag> builder)
         {
-            base.Configure(builder);
-
-            builder.Property(x => x.Schema)
-                .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
-                .IsRequired();
+            builder.ConfigureSchema();
+            builder.ConfigureCreationAudit();
+            builder.ConfigureModificationAudit();
 
             builder.Property(x => x.Description)
                 .HasMaxLength(Tag.DescriptionLengthMax)
@@ -55,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             builder.HasCheckConstraint("constraint_tag_check_valid_status", $"{nameof(Tag.Status)} in ({GetValidStatuses()})");
-            
+
             builder.HasCheckConstraint("constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})");
         }
 

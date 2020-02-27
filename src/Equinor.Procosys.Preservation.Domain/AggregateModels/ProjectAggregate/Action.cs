@@ -1,9 +1,10 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Action : SchemaEntityBase
+    public class Action : SchemaEntityBase, ICreationAuditable, IModificationAuditable
     {
         public const int TitleLengthMax = 128;
         public const int DescriptionLengthMax = 4096;
@@ -22,14 +23,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public string Title { get; private set; }
         public string Description { get; private set; }
-
         public DateTime? DueTimeUtc { get; private set; }
-
         public DateTime? ClosedAtUtc { get; private set; }
-
         public int? ClosedById { get; private set; }
-
         public bool IsClosed => ClosedAtUtc.HasValue;
+        public DateTime CreatedAtUtc { get; private set; }
+        public int CreatedById { get; private set; }
+        public DateTime? ModifiedAtUtc { get; private set; }
+        public int? ModifiedById { get; private set; }
+
 
         public void SetDueTime(DateTime? dueTimeUtc)
         {
@@ -59,6 +61,28 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             ClosedAtUtc = closedAtUtc;
             ClosedById = closedBy.Id;
+        }
+
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        {
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
+            CreatedById = createdBy.Id;
+        }
+
+        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        {
+            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
+            }
+
+            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedById = modifiedBy.Id;
         }
     }
 }

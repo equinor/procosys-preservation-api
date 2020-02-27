@@ -1,21 +1,19 @@
 ﻿using System;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class PreservationPeriodConfiguration : EntityBaseConfiguration<PreservationPeriod>
+    internal class PreservationPeriodConfiguration : IEntityTypeConfiguration<PreservationPeriod>
     {
-        public override void Configure(EntityTypeBuilder<PreservationPeriod> builder)
+        public void Configure(EntityTypeBuilder<PreservationPeriod> builder)
         {
-            base.Configure(builder);
-
-            builder.Property(f => f.Schema)
-                .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
-                .IsRequired();
+            builder.ConfigureSchema();
+            builder.ConfigureCreationAudit();
+            builder.ConfigureModificationAudit();
 
             builder.Property(x => x.Comment)
                 .HasMaxLength(PreservationPeriod.CommentLengthMax);

@@ -41,25 +41,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Constructor_ShouldSetProperties_WithDue()
         {
             Assert.AreEqual("SchemaA", _dut.Schema);
-            Assert.AreEqual(_utcNow, _dut.CreatedAtUtc);
-            Assert.AreEqual(PersonId, _dut.CreatedById);
             Assert.AreEqual(_utcNow, _dut.DueTimeUtc);
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual("DescA", _dut.Description);
             Assert.IsFalse(_dut.IsClosed);
         }
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenCreatedIsNotUtc()
-            => Assert.ThrowsException<ArgumentException>(() =>
-                new Action("SchemaA", "", "", _utcNow)
-            );
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenCreatedByIsNull()
-            => Assert.ThrowsException<ArgumentNullException>(() =>
-                new Action("SchemaA", "", "", _utcNow)
-            );
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenDueIsNotUtc()
