@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag.IsReadyToBePreserved(preservedAtUtc);
         }
 
-        public async Task<bool> HaveRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken cancellationToken)
+        public async Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken cancellationToken)
         {
             var tag = await GetTagWithPreservationPeriods(tagId, cancellationToken);
             if (tag == null)
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return step != null;
         }
 
-        public async Task<bool> HasRequirementReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken cancellationToken)
+        public async Task<bool> RequirementIsReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken cancellationToken)
         {
             var tag = await GetTagWithPreservationPeriods(tagId, cancellationToken);
             if (tag == null)
@@ -123,6 +123,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         public async Task<bool> TagTypeCanBeTransferredAsync(int tagId, CancellationToken cancellationToken)
         {
             var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            if (tag == null)
+            {
+                return false;
+            }
 
             return tag.TagType == TagType.PreArea || tag.TagType == TagType.Standard;
         }

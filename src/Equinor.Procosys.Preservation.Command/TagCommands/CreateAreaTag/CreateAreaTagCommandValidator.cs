@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
                 .WithMessage(command => $"Project is closed! Project={command.ProjectName}")
-                .MustAsync((command, token) => NotBeAnExistingTagWithinProject(command.GetTagNo(), command.ProjectName, token))
+                .MustAsync((command, token) => NotBeAnExistingTagWithinProjectAsync(command.GetTagNo(), command.ProjectName, token))
                 .WithMessage(command => $"Tag already exists in scope for project! Tag={command.GetTagNo()} Project={command.ProjectName}");
 
             RuleFor(tag => tag.StepId)
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken token)
                 => !await projectValidator.IsExistingAndClosedAsync(projectName, token);
 
-            async Task<bool> NotBeAnExistingTagWithinProject(string tagNo, string projectName, CancellationToken token)
+            async Task<bool> NotBeAnExistingTagWithinProjectAsync(string tagNo, string projectName, CancellationToken token)
                 => !await tagValidator.ExistsAsync(tagNo, projectName, token);
 
             bool BeAnExistingStep(int stepId) => stepValidator.Exists(stepId);

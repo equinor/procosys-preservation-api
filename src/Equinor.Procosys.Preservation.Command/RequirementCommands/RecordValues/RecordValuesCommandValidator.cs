@@ -21,11 +21,11 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
-                .MustAsync((command, token) => BeAnExistingTag(command.TagId, token))
+                .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag doesn't exists! Tag={command.TagId}")
-                .MustAsync((command, token) => NotBeAVoidedTag(command.TagId, token))
+                .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
-                .MustAsync((command, token) => HaveRequirementWithActivePeriod(command.TagId, command.RequirementId, token))
+                .MustAsync((command, token) => HasRequirementWithActivePeriodAsync(command.TagId, command.RequirementId, token))
                 .WithMessage(command =>
                     $"Tag doesn't have this requirement with active period! Tag={command.TagId}. Requirement={command.RequirementId}");
 
@@ -45,14 +45,14 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
-            async Task<bool> BeAnExistingTag(int tagId, CancellationToken token)
+            async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
 
-            async Task<bool> NotBeAVoidedTag(int tagId, CancellationToken token)
+            async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> HaveRequirementWithActivePeriod(int tagId, int requirementId, CancellationToken token)
-                => await tagValidator.HaveRequirementWithActivePeriodAsync(tagId, requirementId, token);
+            async Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token)
+                => await tagValidator.HasRequirementWithActivePeriodAsync(tagId, requirementId, token);
 
             bool BeAnExistingField(KeyValuePair<int, string> fieldValue) => fieldValidator.Exists(fieldValue.Key);
 
