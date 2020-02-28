@@ -14,6 +14,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
     public class UnitOfWorkTests
     {
         private const string Plant = "PCS$TESTPLANT";
+        private Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private readonly DateTime _currentTime = new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
         private DbContextOptions<PreservationContext> _dbContextOptions;
         private Mock<IPlantProvider> _plantProviderMock;
@@ -47,13 +48,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         {
             using var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object);
 
-            var user = new Person(Guid.NewGuid(), "Current", "User");
+            var user = new Person(_currentUserOid, "Current", "User");
             context.Persons.Add(user);
             context.SaveChanges();
 
             _currentUserProviderMock
                 .Setup(x => x.GetCurrentUser())
-                .Returns(Task.FromResult(user));
+                .Returns(_currentUserOid);
 
             var newMode = new Mode(Plant, "TestMode");
             context.Modes.Add(newMode);
@@ -72,13 +73,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         {
             using var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object);
 
-            var user = new Person(Guid.NewGuid(), "Current", "User");
+            var user = new Person(_currentUserOid, "Current", "User");
             context.Persons.Add(user);
             context.SaveChanges();
 
             _currentUserProviderMock
                 .Setup(x => x.GetCurrentUser())
-                .Returns(Task.FromResult(user));
+                .Returns(_currentUserOid);
 
             var newMode = new Mode(Plant, "TestMode");
             context.Modes.Add(newMode);
