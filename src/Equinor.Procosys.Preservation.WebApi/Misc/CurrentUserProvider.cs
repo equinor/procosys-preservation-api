@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Misc
