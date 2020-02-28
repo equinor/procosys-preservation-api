@@ -10,61 +10,59 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
     [TestClass]
     public class StepTests
     {
+        private const string TestPlant = "PlantA";
         private Mock<Mode> _modeMock;
         private Mock<Responsible> _responsibleMock;
+        private Step _dut;
 
         [TestInitialize]
         public void Setup()
         {
             _modeMock = new Mock<Mode>();
             _modeMock.SetupGet(x => x.Id).Returns(3);
+            _modeMock.SetupGet(x => x.Schema).Returns(TestPlant);
 
             _responsibleMock = new Mock<Responsible>();
             _responsibleMock.SetupGet(x => x.Id).Returns(4);
+            _responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
+
+            _dut = new Step(TestPlant, _modeMock.Object, _responsibleMock.Object);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new Step("SchemaA", _modeMock.Object, _responsibleMock.Object);
-
-            Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual(_modeMock.Object.Id, dut.ModeId);
-            Assert.AreEqual(_responsibleMock.Object.Id, dut.ResponsibleId);
+            Assert.AreEqual(TestPlant, _dut.Schema);
+            Assert.AreEqual(_modeMock.Object.Id, _dut.ModeId);
+            Assert.AreEqual(_responsibleMock.Object.Id, _dut.ResponsibleId);
         }
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenModeNotGiven()
         {
-            var responsible = new Mock<Responsible>();
-            responsible.SetupGet(x => x.Id).Returns(4);
-
             Assert.ThrowsException<ArgumentNullException>(() =>
-                new Step("SchemaA", null, responsible.Object)
+                new Step(TestPlant, null, _responsibleMock.Object)
                 );
         }
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenResponsibleNotGiven()
         {
-            var mode = new Mock<Mode>();
-
             Assert.ThrowsException<ArgumentNullException>(() =>
-                new Step("SchemaA", mode.Object, null)
+                new Step(TestPlant, _modeMock.Object, null)
                 );
         }
 
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()
         {
-            var dut = new Step("SchemaA", _modeMock.Object, _responsibleMock.Object);
-            Assert.IsFalse(dut.IsVoided);
+            Assert.IsFalse(_dut.IsVoided);
 
-            dut.Void();
-            Assert.IsTrue(dut.IsVoided);
+            _dut.Void();
+            Assert.IsTrue(_dut.IsVoided);
 
-            dut.UnVoid();
-            Assert.IsFalse(dut.IsVoided);
+            _dut.UnVoid();
+            Assert.IsFalse(_dut.IsVoided);
         }
     }
 }

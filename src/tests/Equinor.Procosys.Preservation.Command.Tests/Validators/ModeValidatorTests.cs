@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class ModeValidatorTests
     {
+        private const string TestPlant = "PlantA";
         private const string ModeTitle = "ModeNotVoided";
         private const string ModeVoidedTitle = "ModeVoided";
         private const int ModeIdNonVoided = 1;
@@ -21,12 +22,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestInitialize]
         public void Setup()
         {
+            var modeMock = new Mock<Mode>();
+            modeMock.SetupGet(x => x.Id).Returns(3);
+            modeMock.SetupGet(x => x.Schema).Returns(TestPlant);
+
+            var responsibleMock = new Mock<Responsible>();
+            responsibleMock.SetupGet(x => x.Id).Returns(4);
+            responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
+
+            var step = new Step(TestPlant, modeMock.Object, responsibleMock.Object);
+
             var modeRepositoryMock = new Mock<IModeRepository>();
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
             journeyRepositoryMock.Setup(r => r.GetStepsByModeIdAsync(ModeIdNonVoided)).Returns(
                 Task.FromResult(new List<Step>
                 {
-                    new Step("S", new Mock<Mode>().Object, new Mock<Responsible>().Object)
+                    step
                 }));
 
             var mode = new Mode("S", ModeTitle);

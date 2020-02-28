@@ -31,19 +31,23 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         {
             var step1OnJourney1Mock = new Mock<Step>();
             step1OnJourney1Mock.SetupGet(x => x.Id).Returns(Step1OnJourney1Id);
+            step1OnJourney1Mock.SetupGet(x => x.Schema).Returns(TestPlant);
             var step2OnJourney1Mock = new Mock<Step>();
             step2OnJourney1Mock.SetupGet(x => x.Id).Returns(Step2OnJourney1Id);
+            step2OnJourney1Mock.SetupGet(x => x.Schema).Returns(TestPlant);
 
-            var journey1 = new Journey("","");
+            var journey1 = new Journey(TestPlant,"");
             journey1.AddStep(step1OnJourney1Mock.Object);
             journey1.AddStep(step2OnJourney1Mock.Object);
 
             var step1OnJourney2Mock = new Mock<Step>();
             step1OnJourney2Mock.SetupGet(x => x.Id).Returns(Step1OnJourney2Id);
+            step1OnJourney2Mock.SetupGet(x => x.Schema).Returns(TestPlant);
             var step2OnJourney2Mock = new Mock<Step>();
             step2OnJourney2Mock.SetupGet(x => x.Id).Returns(Step2OnJourney2Id);
+            step2OnJourney2Mock.SetupGet(x => x.Schema).Returns(TestPlant);
 
-            var journey2 = new Journey("","");
+            var journey2 = new Journey(TestPlant,"");
             journey2.AddStep(step1OnJourney2Mock.Object);
             journey2.AddStep(step2OnJourney2Mock.Object);
 
@@ -52,13 +56,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
                 .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> {Step1OnJourney1Id, Step1OnJourney2Id}))
                 .Returns(Task.FromResult(new List<Journey> {journey1, journey2}));
 
-            _tag1Mock = new Mock<Tag>("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", step1OnJourney1Mock.Object,
-                new List<Requirement> {new Mock<Requirement>().Object});
+            var reqMock1 = new Mock<Requirement>();
+            reqMock1.SetupGet(r => r.Schema).Returns(TestPlant);
+            _tag1Mock = new Mock<Tag>(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", step1OnJourney1Mock.Object,
+                new List<Requirement> {reqMock1.Object});
             _tag1Mock.SetupGet(t => t.Id).Returns(TagId1);
+            _tag1Mock.SetupGet(t => t.Schema).Returns(TestPlant);
 
-            _tag2Mock = new Mock<Tag>("", TagType.Standard, "", "", "", "", "", "", "", "", "", "", step1OnJourney2Mock.Object,
-                new List<Requirement> {new Mock<Requirement>().Object});
+            var reqMock2 = new Mock<Requirement>();
+            reqMock2.SetupGet(r => r.Schema).Returns(TestPlant);
+            _tag2Mock = new Mock<Tag>(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", step1OnJourney2Mock.Object,
+                new List<Requirement> {reqMock2.Object});
             _tag2Mock.SetupGet(t => t.Id).Returns(TagId2);
+            _tag2Mock.SetupGet(t => t.Schema).Returns(TestPlant);
 
             _tag1Mock.Object.StartPreservation(DateTime.UtcNow);
             _tag2Mock.Object.StartPreservation(DateTime.UtcNow);

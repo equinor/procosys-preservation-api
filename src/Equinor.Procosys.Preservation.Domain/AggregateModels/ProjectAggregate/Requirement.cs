@@ -9,7 +9,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Requirement : SchemaEntityBase, ICreationAuditable, IModificationAuditable
     {
-        private readonly PreservationPeriodStatus _initialPreservationPeriodStatus;
+        public const int InitialPreservationPeriodStatusMax = 64;
+
+        // _initialPreservationPeriodStatus is made as DB property. Can't be readonly
+        // ReSharper disable once FieldCanBeMadeReadOnly.Local
+        private PreservationPeriodStatus _initialPreservationPeriodStatus;
         private readonly List<PreservationPeriod> _preservationPeriods = new List<PreservationPeriod>();
 
         protected Requirement()
@@ -23,6 +27,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             if (requirementDefinition == null)
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
+            }
+            
+            if (requirementDefinition.Schema != schema)
+            {
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {schema}");
             }
 
             IntervalWeeks = intervalWeeks;
@@ -38,7 +47,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; private set; }
         public IReadOnlyCollection<PreservationPeriod> PreservationPeriods => _preservationPeriods.AsReadOnly();
-
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
@@ -159,7 +167,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
         {
             NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(base.Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
+            var preservationPeriod = new PreservationPeriod(Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
         }
 

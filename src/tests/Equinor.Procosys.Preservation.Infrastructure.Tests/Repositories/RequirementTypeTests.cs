@@ -24,11 +24,16 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         {
             
             var requirementType = new RequirementType(TestPlant, "C1", "T1", 0);
-            var rdMock = new Mock<RequirementDefinition>();
-            rdMock.SetupGet(r => r.Id).Returns(ReqDefId);
-            requirementType.AddRequirementDefinition(rdMock.Object);
-            requirementType.AddRequirementDefinition(new Mock<RequirementDefinition>().Object);
-            requirementType.AddRequirementDefinition(new Mock<RequirementDefinition>().Object);
+            var rdMock1 = new Mock<RequirementDefinition>();
+            rdMock1.SetupGet(r => r.Id).Returns(ReqDefId);
+            rdMock1.SetupGet(r => r.Schema).Returns(TestPlant);
+            var rdMock2 = new Mock<RequirementDefinition>();
+            rdMock2.SetupGet(r => r.Schema).Returns(TestPlant);
+            var rdMock3 = new Mock<RequirementDefinition>();
+            rdMock3.SetupGet(r => r.Schema).Returns(TestPlant);
+            requirementType.AddRequirementDefinition(rdMock1.Object);
+            requirementType.AddRequirementDefinition(rdMock2.Object);
+            requirementType.AddRequirementDefinition(rdMock3.Object);
             
             _requirementTypes = new List<RequirementType>
             {

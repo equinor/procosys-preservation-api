@@ -18,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
     [TestClass]
     public class GetAllTagsInProjectQueryHandlerTests
     {
+        private const string TestPlant = "PlantA";
         private const string ModeTitle = "Hookup";
         private const string ResponsibleCode = "EQC";
         private DateTime _utcNow;
@@ -43,27 +44,32 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var step2Id = 12;
             var modeId = 12;
             var respId = 22;
-            var plant = "PCS$TESTPLANT";
             
-            var modeMock = new Mock<Mode>(plant, ModeTitle);
+            var modeMock = new Mock<Mode>(TestPlant, ModeTitle);
             modeMock.SetupGet(m => m.Id).Returns(modeId);
+            modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
 
-            var respMock = new Mock<Responsible>(plant, ResponsibleCode);
+            var respMock = new Mock<Responsible>(TestPlant, ResponsibleCode);
             respMock.SetupGet(r => r.Id).Returns(respId);
+            respMock.SetupGet(r => r.Schema).Returns(TestPlant);
             
-            var step1Mock = new Mock<Step>(plant, modeMock.Object, respMock.Object);
+            var step1Mock = new Mock<Step>(TestPlant, modeMock.Object, respMock.Object);
             step1Mock.SetupGet(s => s.Id).Returns(step1Id);
+            step1Mock.SetupGet(s => s.Schema).Returns(TestPlant);
             step1Mock.Object.SortKey = 10;
-            var step2Mock = new Mock<Step>(plant, modeMock.Object, respMock.Object);
+            var step2Mock = new Mock<Step>(TestPlant, modeMock.Object, respMock.Object);
             step2Mock.SetupGet(s => s.Id).Returns(step2Id);
+            step2Mock.SetupGet(s => s.Schema).Returns(TestPlant);
             step2Mock.Object.SortKey = 20;
 
-            var journey = new Journey("","");
+            var journey = new Journey(TestPlant,"");
             journey.AddStep(step1Mock.Object);
             journey.AddStep(step2Mock.Object);
 
+            var rdMock = new Mock<RequirementDefinition>();
+            rdMock.SetupGet(rd => rd.Schema).Returns(TestPlant);
             _tagNotStartedPreservation = new Tag(
-                plant,
+                TestPlant,
                 TagType.Standard,
                 "TagNo1",
                 "Desc",
@@ -78,10 +84,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 step1Mock.Object,
                 new List<Requirement>
                 {
-                    new Requirement(plant, IntervalWeeks, new Mock<RequirementDefinition>().Object)
+                    new Requirement(TestPlant, IntervalWeeks, rdMock.Object)
                 });
             _tagStartedPreservation = new Tag(
-                plant,
+                TestPlant,
                 TagType.Standard,
                 "TagNo2",
                 "Desc",
@@ -96,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 step1Mock.Object,
                 new List<Requirement>
                 {
-                    new Requirement(plant, IntervalWeeks, new Mock<RequirementDefinition>().Object)
+                    new Requirement(TestPlant, IntervalWeeks, rdMock.Object)
                 });
 
             _tagStartedPreservation.StartPreservation(_utcNow);
@@ -189,7 +195,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var tagDto = result.Data.First(t => t.Status == PreservationStatus.NotStarted);
             var requirementDto = tagDto.Requirements.First();
 
-            Assert.IsNull(tagDto.FirstUpcomingRequirement);
             Assert.IsFalse(requirementDto.NextDueTimeUtc.HasValue);
             Assert.IsFalse(requirementDto.NextDueWeeks.HasValue);
             Assert.IsNull(requirementDto.NextDueAsYearAndWeek);
@@ -208,17 +213,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(IntervalWeeks, requirementDto.NextDueWeeks);
             Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
             Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
-            Assert.IsNull(tagDto.FirstUpcomingRequirement);
-        }
-
-        [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnFirstUpcomingRequirement_WhenNotDue()
-        {
-            var result = await _dut.Handle(_query, default);
-
-            var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
-
-            Assert.IsNull(tagDto.FirstUpcomingRequirement);
         }
 
         [TestMethod]
@@ -231,19 +225,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
             Assert.IsTrue(tagActiveDto.ReadyToBeTransferred);
             Assert.IsFalse(tagNotStartedDto.ReadyToBeTransferred);
-        }
-
-        [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectFirstUpcomingRequirement_OnDue()
-        {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow.AddWeeks(IntervalWeeks));
-            var result = await _dut.Handle(_query, default);
-
-            var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
-            var requirementDto = tagDto.Requirements.First();
-
-            Assert.IsNotNull(tagDto.FirstUpcomingRequirement);
-            Assert.AreEqual(requirementDto, tagDto.FirstUpcomingRequirement);
         }
 
         [TestMethod]

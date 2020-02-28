@@ -11,6 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class StepValidatorTests
     {
+        private const string TestPlant = "PlantA";
         private const int StepIdNonVoided = 1;
         private const int StepIdVoided = 2;
         private StepValidator _dut;
@@ -18,10 +19,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestInitialize]
         public void Setup()
         {
+            var modeMock = new Mock<Mode>();
+            modeMock.SetupGet(x => x.Id).Returns(3);
+            modeMock.SetupGet(x => x.Schema).Returns(TestPlant);
+
+            var responsibleMock = new Mock<Responsible>();
+            responsibleMock.SetupGet(x => x.Id).Returns(4);
+            responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
 
-            var step = new Step("S", new Mock<Mode>().Object, new Mock<Responsible>().Object);
-            var stepVoided = new Step("S", new Mock<Mode>().Object, new Mock<Responsible>().Object);
+            var step = new Step(TestPlant, modeMock.Object, responsibleMock.Object);
+            var stepVoided = new Step(TestPlant, modeMock.Object, responsibleMock.Object);
             stepVoided.Void();
 
             journeyRepositoryMock.Setup(r => r.GetStepByStepIdAsync(StepIdNonVoided)).Returns(Task.FromResult(step));
