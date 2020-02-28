@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
         public async Task<Result<IEnumerable<ResponsibleDto>>> Handle(GetAllResponsiblesQuery request, CancellationToken cancellationToken)
         {
             var responsibles = await _responsibleRepository.GetAllAsync();
-            return new SuccessResult<IEnumerable<ResponsibleDto>>(responsibles.Select(responsible => new ResponsibleDto(responsible.Id, responsible.Name)));
+            return new SuccessResult<IEnumerable<ResponsibleDto>>(responsibles.Select(responsible => new ResponsibleDto(responsible.Id, responsible.Code)));
         }
     }
 }

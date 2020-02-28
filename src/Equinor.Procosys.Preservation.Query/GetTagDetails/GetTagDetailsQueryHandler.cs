@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         McPkgNo = tag.McPkgNo,
                                         Mode = mode.Title,
                                         PurchaseOrderNo = tag.PurchaseOrderNo,
-                                        ResponsibleName = responsible.Name,
+                                        ResponsibleName = responsible.Code,
                                         Status = tag.Status,
                                         TagNo = tag.TagNo,
                                         TagType = tag.TagType,

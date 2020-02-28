@@ -2,18 +2,23 @@
 {
     public class Responsible : SchemaEntityBase, IAggregateRoot
     {
-        public const int NameLengthMax = 255;
+        public const int CodeLengthMax = 255;
+        public const int TitleLengthMax = 255;
 
         protected Responsible()
             : base(null)
         {
         }
 
-        public Responsible(string schema, string name)
-            : base(schema) => Name = name;
+        public Responsible(string schema, string code, string title)
+            : base(schema)
+        {
+            Code = code;
+            Title = title;
+        }
 
-        public string Name { get; private set; } // todo replace Responsible.Name with Responsible.Code (after first demo)
-        // todo Add Responsible.Title
+        public string Code { get; private set; }
+        public string Title { get; private set; }
         public bool IsVoided { get; private set; }
 
         public void Void() => IsVoided = true;

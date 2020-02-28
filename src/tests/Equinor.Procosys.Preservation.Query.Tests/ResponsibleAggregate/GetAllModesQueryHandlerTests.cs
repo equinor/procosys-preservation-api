@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ResponsibleAggregate
         [TestInitialize]
         public void Setup()
         {
-            _responsible = new Responsible("S", "Responsible");
+            _responsible = new Responsible("S", "Code", "Title");
 
             _responsibleRepoMock = new Mock<IResponsibleRepository>();
             _responsibleRepoMock.Setup(r => r.GetAllAsync())
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ResponsibleAggregate
             var responsibles = result.Data.ToList();
             
             Assert.AreEqual(3, responsibles.Count);
-            Assert.AreEqual(_responsible.Name, responsibles.First().Name);
+            Assert.AreEqual(_responsible.Code, responsibles.First().Name);
         }
     }
 }

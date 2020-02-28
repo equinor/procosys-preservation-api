@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Responsible AddResponsible(PreservationContext context, string code)
         {
-            var responsible = new Responsible(TestPlant, code);
+            var responsible = new Responsible(TestPlant, code, "Title");
             context.Responsibles.Add(responsible);
             context.SaveChanges();
             return responsible;
