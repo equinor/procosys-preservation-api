@@ -583,6 +583,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.ThrowsException<ArgumentNullException>(() => dut.Transfer(null));
         }
+                
+        [TestMethod]
+        public void Transfer_ShouldThrowException_WhenTagIsSiteArea()
+        {
+            var dut = new Tag(TestPlant, TagType.SiteArea, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation(_utcNow);
+
+            Assert.ThrowsException<Exception>(() => dut.Transfer(_journey));
+        }
 
         [TestMethod]
         public void IsReadyToBeTransferred_ShouldBeFalse_BeforePreservationStarted()

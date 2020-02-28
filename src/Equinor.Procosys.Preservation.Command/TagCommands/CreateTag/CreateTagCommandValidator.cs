@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 .WithMessage(command => $"Project is closed! Project={command.ProjectName}");
 
             RuleForEach(command => command.TagNos)
-                .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName, token))
+                .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProjectAsync(tagNo, command.ProjectName, token))
                 .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo} Project={command.ProjectName}");
 
             RuleFor(command => command.StepId)
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 return lowerTagNos.Distinct().Count() == lowerTagNos.Count;
             }
 
-            async Task<bool> NotBeAnExistingTagWithinProject(string tagNo, string projectName, CancellationToken token) =>
+            async Task<bool> NotBeAnExistingTagWithinProjectAsync(string tagNo, string projectName, CancellationToken token) =>
                 !await tagValidator.ExistsAsync(tagNo, projectName, token);
 
             async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken token)
