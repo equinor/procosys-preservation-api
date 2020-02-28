@@ -21,6 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private const string TagNo2 = "PA-14";
         private int _tagNotStartedPreservationId;
         private int _tagStartedPreservationId;
+        private int _siteAreaTagId;
         private int _tagInFirstStepId;
         private int _tagInLastStepId;
         private const int IntervalWeeks = 4;
@@ -39,15 +40,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D").RequirementDefinitions.First();
                 var reqStartedPreservation = new Requirement(TestPlant, IntervalWeeks, rd);
                 var reqNotStartedPreservation = new Requirement(TestPlant, IntervalWeeks, rd);
+                var reqSiteArea = new Requirement(TestPlant, IntervalWeeks, rd);
 
-                var tagNotStartedPreservation = AddTag(context, project, TagNo1, "Tag description", journey.Steps.First(), new List<Requirement> {reqNotStartedPreservation});
-                _tagNotStartedPreservationId = _tagInFirstStepId = tagNotStartedPreservation.Id;
+                var tagNotStartedPreservation = AddTag(context, project, TagType.Standard, TagNo1, "Tag description", journey.Steps.First(), new List<Requirement> {reqNotStartedPreservation});
 
-                var tagStartedPreservation = AddTag(context, project, TagNo2, "", journey.Steps.Last(), new List<Requirement>{reqStartedPreservation});
+                var tagStartedPreservation = AddTag(context, project, TagType.Standard, TagNo2, "", journey.Steps.Last(), new List<Requirement>{reqStartedPreservation});
                 tagStartedPreservation.StartPreservation(_startedPreservationAtUtc);
 
+                var siteAreaTag = AddTag(context, project, TagType.SiteArea, "#SITE-E-A1", "Tag description", journey.Steps.First(), new List<Requirement> {reqSiteArea});
+
+                _tagNotStartedPreservationId = _tagInFirstStepId = tagNotStartedPreservation.Id;
                 _tagStartedPreservationId = tagStartedPreservation.Id;
                 _tagInLastStepId = tagStartedPreservation.Id;
+                _siteAreaTagId = siteAreaTag.Id;
 
                 _reqStartedPreservationId = reqStartedPreservation.Id;
                 _reqNotStartedPreservationId = reqNotStartedPreservation.Id;
@@ -222,35 +227,85 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HaveRequirementReadyToBePreservedAsync_KnownTag_ReturnsFalse()
+        public async Task RequirementIsReadyToBePreservedAsync_KnownTag_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.HaveRequirementReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
+                var result = await dut.RequirementIsReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task HaveRequirementReadyToBePreservedAsync_KnownTag_ReturnsTrue()
+        public async Task RequirementIsReadyToBePreservedAsync_KnownTag_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.HaveRequirementReadyToBePreservedAsync(_tagStartedPreservationId, _reqStartedPreservationId, default);
+                var result = await dut.RequirementIsReadyToBePreservedAsync(_tagStartedPreservationId, _reqStartedPreservationId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task HaveRequirementReadyForRecordingAsync_KnownTag_ReturnsTrue()
+        public async Task RequirementIsReadyToBePreservedAsync_KnownTag_ReturnsTrue_WhenStartedInSeparateContext()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).Single(t => t.Id == _tagNotStartedPreservationId);
+                tag.StartPreservation(_startedPreservationAtUtc);
+                context.SaveChanges();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new TagValidator(context);
+                var result = await dut.RequirementIsReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasRequirementReadyForRecordingAsync_KnownTag_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.HaveRequirementWithActivePeriodAsync(_tagStartedPreservationId, _reqStartedPreservationId, default);
+                var result = await dut.HasRequirementWithActivePeriodAsync(_tagStartedPreservationId, _reqStartedPreservationId, default);
                 Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task TagTypeCanBeTransferredAsync_StandardTag_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new TagValidator(context);
+                var result = await dut.TagTypeCanBeTransferredAsync(_tagStartedPreservationId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task TagTypeCanBeTransferredAsync_SiteAreaTag_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new TagValidator(context);
+                var result = await dut.TagTypeCanBeTransferredAsync(_siteAreaTagId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task TagTypeCanBeTransferredAsync_UnknownTag_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new TagValidator(context);
+                var result = await dut.TagTypeCanBeTransferredAsync(0, default);
+                Assert.IsFalse(result);
             }
         }
     }

@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 .WithMessage("Requirement definitions must be unique!");
 
             RuleForEach(command => command.TagNos)
-                .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProject(tagNo, command.ProjectName, token))
+                .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProjectAsync(tagNo, command.ProjectName, token))
                 .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo} Project={command.ProjectName}");
 
             RuleFor(command => command)
@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is voided! Step={command.StepId}");
 
-            RuleForEach(tag => tag.Requirements)
+            RuleForEach(command => command.Requirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) =>
                     $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}")
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                 return reqIds.Distinct().Count() == reqIds.Count;
             }
 
-            async Task<bool> NotBeAnExistingTagWithinProject(string tagNo, string projectName, CancellationToken token) =>
+            async Task<bool> NotBeAnExistingTagWithinProjectAsync(string tagNo, string projectName, CancellationToken token) =>
                 !await tagValidator.ExistsAsync(tagNo, projectName, token);
 
             async Task<bool> NotBeAnExistingAndClosedProjectAsync(string projectName, CancellationToken token)

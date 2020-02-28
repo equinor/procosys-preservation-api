@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
                 .WithMessage(command => $"Tag doesn't exists! Tag={command.TagId}")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
-                .MustAsync((command, token) => HaveRequirementWithActivePeriodAsync(command.TagId, command.RequirementId, token))
+                .MustAsync((command, token) => HasRequirementWithActivePeriodAsync(command.TagId, command.RequirementId, token))
                 .WithMessage(command =>
                     $"Tag doesn't have this requirement with active period! Tag={command.TagId}. Requirement={command.RequirementId}");
 
@@ -50,8 +50,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> HaveRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token)
-                => await tagValidator.HaveRequirementWithActivePeriodAsync(tagId, requirementId, token);
+            async Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token)
+                => await tagValidator.HasRequirementWithActivePeriodAsync(tagId, requirementId, token);
 
             async Task<bool> BeAnExistingFieldAsync(int fieldId, CancellationToken token)
                 => await fieldValidator.ExistsAsync(fieldId, token);

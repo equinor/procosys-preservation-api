@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(v => v.HaveRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(v => v.ExistsAsync(FieldId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock.Setup(r => r.IsValidValueAsync(FieldId, It.IsAny<string>(), default)).Returns(Task.FromResult(true));
@@ -100,7 +100,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDontHaveActivePeriod()
         {
-            _tagValidatorMock.Setup(v => v.HaveRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
 

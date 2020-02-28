@@ -195,7 +195,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             var tagDto = result.Data.First(t => t.Status == PreservationStatus.NotStarted);
             var requirementDto = tagDto.Requirements.First();
 
-            Assert.IsNull(tagDto.FirstUpcomingRequirement);
             Assert.IsFalse(requirementDto.NextDueTimeUtc.HasValue);
             Assert.IsFalse(requirementDto.NextDueWeeks.HasValue);
             Assert.IsNull(requirementDto.NextDueAsYearAndWeek);
@@ -214,17 +213,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual(IntervalWeeks, requirementDto.NextDueWeeks);
             Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
             Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
-            Assert.IsNull(tagDto.FirstUpcomingRequirement);
-        }
-
-        [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnFirstUpcomingRequirement_WhenNotDue()
-        {
-            var result = await _dut.Handle(_query, default);
-
-            var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
-
-            Assert.IsNull(tagDto.FirstUpcomingRequirement);
         }
 
         [TestMethod]
@@ -237,19 +225,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
             Assert.IsTrue(tagActiveDto.ReadyToBeTransferred);
             Assert.IsFalse(tagNotStartedDto.ReadyToBeTransferred);
-        }
-
-        [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectFirstUpcomingRequirement_OnDue()
-        {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow.AddWeeks(IntervalWeeks));
-            var result = await _dut.Handle(_query, default);
-
-            var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
-            var requirementDto = tagDto.Requirements.First();
-
-            Assert.IsNotNull(tagDto.FirstUpcomingRequirement);
-            Assert.AreEqual(requirementDto, tagDto.FirstUpcomingRequirement);
         }
 
         [TestMethod]

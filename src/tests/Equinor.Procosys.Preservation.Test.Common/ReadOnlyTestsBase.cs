@@ -100,9 +100,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return project;
         }
 
-        protected Tag AddTag(PreservationContext context, Project parentProject, string tagNo, string description, Step step, IEnumerable<Requirement> requirements)
+        protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo, string description, Step step, IEnumerable<Requirement> requirements)
         {
-            var tag = new Tag(TestPlant, TagType.Standard, tagNo, description, "", "", "", "", "", "", "", "", step, requirements);
+            var tag = new Tag(TestPlant, tagType, tagNo, description, "", "", "", "", "", "", "", "", step, requirements);
             parentProject.AddTag(tag);
             context.SaveChanges();
             return tag;

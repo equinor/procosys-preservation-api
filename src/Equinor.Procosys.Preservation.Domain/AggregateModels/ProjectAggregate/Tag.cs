@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             if (!IsReadyToBeStarted())
             {
-                throw new Exception($"Preservation on {nameof(Tag)} {Id} can't start. Status = {Status}");
+                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not start. Status = {Status}");
             }
             foreach (var requirement in Requirements.Where(r => !r.IsVoided))
             {
@@ -154,9 +154,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationStatus.Active;
         }
-
-        public Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
-            => GetUpComingRequirements(currentTimeUtc).FirstOrDefault();
 
         public bool IsReadyToBePreserved(DateTime currentTimeUtc)
             => Status == PreservationStatus.Active && 
@@ -187,14 +184,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(journey));
             }
 
-            return Status == PreservationStatus.Active && journey.GetNextStep(StepId) != null;
+            return Status == PreservationStatus.Active && TagType != TagType.SiteArea && journey.GetNextStep(StepId) != null;
         }
 
         public void Transfer(Journey journey)
         {
             if (!IsReadyToBeTransferred(journey))
             {
-                throw new Exception($"{nameof(Tag)} {Id} is not ready to be transferred");
+                throw new Exception($"{nameof(Tag)} {Id} can not be transferred");
             }
 
             SetStep(journey.GetNextStep(StepId));
@@ -215,5 +212,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
             }
         }
+
+        private Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
+            => GetUpComingRequirements(currentTimeUtc).FirstOrDefault();
     }
 }
