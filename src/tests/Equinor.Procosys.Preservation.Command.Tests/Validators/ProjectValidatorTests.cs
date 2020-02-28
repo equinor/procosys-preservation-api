@@ -23,6 +23,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+
                 var notClosedProject = AddProject(context, ProjectNameNotClosed, "Project description");
                 var closedProject = AddProject(context, ProjectNameClosed, "Project description", true);
                 var t1 = AddTag(context, notClosedProject, "T1", "Tag description", new Mock<Step>().Object, new List<Requirement>{ new Mock<Requirement>().Object});

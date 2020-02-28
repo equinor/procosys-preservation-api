@@ -21,8 +21,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         private const int PreservedById = 81;
         private const int Interval = 2;
 
+        private Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private DateTime _utcNow;
         private Mock<IProjectRepository> _projectRepoMock;
+        private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
@@ -47,13 +49,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
                 _requirement
             });
             _currentUserProvider = new Mock<ICurrentUserProvider>();
-            var personMock = new Mock<Person>();
             _currentUserProvider
                 .Setup(x => x.GetCurrentUser())
-                .Returns(personMock.Object.Oid);
-            personMock.SetupGet(p => p.Id).Returns(PreservedById);
+                .Returns(_currentUserOid);
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tag));
+            _personRepoMock = new Mock<IPersonRepository>();
+            _personRepoMock
+                .Setup(x => x.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
+                .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
             _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
@@ -62,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             _tag.StartPreservation(_utcNow.AddDays(-1));
             _initialPreservationPeriod = _requirement.PreservationPeriods.Single();
 
-            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
+            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _personRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
         }
 
         [TestMethod]

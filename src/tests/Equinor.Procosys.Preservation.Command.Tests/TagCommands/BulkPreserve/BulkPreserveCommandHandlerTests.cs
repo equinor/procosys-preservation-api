@@ -20,8 +20,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         private const int TwoWeeksInterval = 2;
         private const int FourWeeksInterval = 4;
 
+        private Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private DateTime _startedPreservedAtUtc;
         private Mock<IProjectRepository> _projectRepoMock;
+        private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private Mock<ITimeService> _timeServiceMock;
         private BulkPreserveCommand _command;
@@ -59,10 +61,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _currentUserProvider = new Mock<ICurrentUserProvider>();
             _currentUserProvider
                 .Setup(x => x.GetCurrentUser())
-                .Returns(Task.FromResult(new Person(Guid.Empty, "Firstname", "Lastname")));
+                .Returns(_currentUserOid);
             var tagIds = new List<int> {TagId1, TagId2};
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
+            _personRepoMock = new Mock<IPersonRepository>();
+            _personRepoMock
+                .Setup(x => x.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
+                .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
             _startedPreservedAtUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
             _command = new BulkPreserveCommand(tagIds);
@@ -72,6 +78,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
 
             _dut = new BulkPreserveCommandHandler(
                 _projectRepoMock.Object,
+                _personRepoMock.Object,
                 _timeServiceMock.Object,
                 UnitOfWorkMock.Object,
                 _currentUserProvider.Object);
