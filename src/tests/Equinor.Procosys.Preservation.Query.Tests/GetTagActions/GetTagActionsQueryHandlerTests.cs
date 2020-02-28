@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProviderMock.Object))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         [TestMethod]
         public async Task Handler_ReturnsActions()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetTagActionsQuery(_tagId);
                 var dut = new GetTagActionsQueryHandler(context);
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetTagActionsQuery(0);
                 var dut = new GetTagActionsQueryHandler(context);

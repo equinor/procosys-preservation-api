@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProviderMock.Object))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
@@ -157,7 +157,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         [TestMethod]
         public async Task Handler_ShouldReturnsTagRequirements_NoDueDates_BeforePreservationStarted()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetTagRequirementsQuery(_tagId);
                 var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);
@@ -183,14 +183,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         [TestMethod]
         public async Task Handler_ShouldReturnsTagRequirements_AfterPreservationStarted()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single();
                 tag.StartPreservation(_startedAtUtc);
                 context.SaveChanges();
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetTagRequirementsQuery(_tagId);
                 var dut = new GetTagRequirementsQueryHandler(context, _timeServiceMock.Object);

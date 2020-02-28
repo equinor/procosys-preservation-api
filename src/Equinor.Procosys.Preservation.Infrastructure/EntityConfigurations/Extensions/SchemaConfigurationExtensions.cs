@@ -5,11 +5,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Exte
 {
     public static class SchemaConfigurationExtensions
     {
-        public static void ConfigureSchema<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : SchemaEntityBase
-        {
+        public static void ConfigureSchema<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : SchemaEntityBase =>
             builder.Property(x => x.Schema)
                 .HasMaxLength(SchemaEntityBase.SchemaLengthMax)
                 .IsRequired();
-        }
     }
 }

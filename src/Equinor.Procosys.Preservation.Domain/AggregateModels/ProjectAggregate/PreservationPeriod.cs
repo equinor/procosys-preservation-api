@@ -135,6 +135,28 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
 
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        {
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
+            CreatedById = createdBy.Id;
+        }
+
+        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        {
+            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
+            }
+
+            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedById = modifiedBy.Id;
+        }
+
         private void RecordCheckBoxValueForField(Field field, string value)
         {
             if (!CheckBoxChecked.IsValidValue(value, out var isChecked))
@@ -176,28 +198,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 _fieldValues.Remove(fieldValue);
             }
-        }
-
-        public void SetCreated(DateTime createdAtUtc, Person createdBy)
-        {
-            if (createdAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
-            }
-
-            CreatedAtUtc = createdAtUtc;
-            CreatedById = createdBy.Id;
-        }
-
-        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
-        {
-            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
-            }
-
-            ModifiedAtUtc = modifiedAtUtc;
-            ModifiedById = modifiedBy.Id;
         }
     }
 }

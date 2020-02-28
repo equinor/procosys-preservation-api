@@ -1,5 +1,4 @@
 ﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

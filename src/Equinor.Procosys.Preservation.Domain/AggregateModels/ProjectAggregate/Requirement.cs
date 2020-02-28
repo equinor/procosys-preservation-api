@@ -47,15 +47,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; private set; }
         public IReadOnlyCollection<PreservationPeriod> PreservationPeriods => _preservationPeriods.AsReadOnly();
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
-
-        public bool ReadyToBePreserved => PeriodReadyToBePreserved != null;
-
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+
+        public void Void() => IsVoided = true;
+        public void UnVoid() => IsVoided = false;
+
+        public bool ReadyToBePreserved => PeriodReadyToBePreserved != null;
 
         public override string ToString() => $"Interval {IntervalWeeks}, NextDue {NextDueTimeUtc}, ReqDefId {RequirementDefinitionId}";
 
@@ -161,16 +161,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             period.SetComment(comment);
         }
 
-        private PreservationPeriod PeriodReadyToBePreserved
-            => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
-
-        private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
-        {
-            NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
-            _preservationPeriods.Add(preservationPeriod);
-        }
-
         public void SetCreated(DateTime createdAtUtc, Person createdBy)
         {
             if (createdAtUtc.Kind != DateTimeKind.Utc)
@@ -191,6 +181,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             ModifiedAtUtc = modifiedAtUtc;
             ModifiedById = modifiedBy.Id;
+        }
+
+        private PreservationPeriod PeriodReadyToBePreserved
+            => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
+
+        private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
+        {
+            NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
+            var preservationPeriod = new PreservationPeriod(Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
+            _preservationPeriods.Add(preservationPeriod);
         }
     }
 }

@@ -10,10 +10,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
         private const string Oid = "http://schemas.microsoft.com/identity/claims/objectidentifier";
         private readonly IHttpContextAccessor _accessor;
 
-        public CurrentUserProvider(IHttpContextAccessor accessor)
-        {
-            _accessor = accessor;
-        }
+        public CurrentUserProvider(IHttpContextAccessor accessor) => _accessor = accessor;
 
         public Guid GetCurrentUser()
         {

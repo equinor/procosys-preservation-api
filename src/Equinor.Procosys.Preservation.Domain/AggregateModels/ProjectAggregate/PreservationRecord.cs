@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class PreservationRecord : SchemaEntityBase, ICreationAuditable, IModificationAuditable
+    public class PreservationRecord : SchemaEntityBase, ICreationAuditable
     {
         public const int CommentLengthMax = 2048;
 
@@ -37,8 +37,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool BulkPreserved { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
-        public DateTime? ModifiedAtUtc { get; private set; }
-        public int? ModifiedById { get; private set; }
 
         public void SetCreated(DateTime createdAtUtc, Person createdBy)
         {
@@ -49,17 +47,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             CreatedAtUtc = createdAtUtc;
             CreatedById = createdBy.Id;
-        }
-
-        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
-        {
-            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
-            }
-
-            ModifiedAtUtc = modifiedAtUtc;
-            ModifiedById = modifiedBy.Id;
         }
     }
 }

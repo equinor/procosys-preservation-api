@@ -32,7 +32,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
-
         public void SetDueTime(DateTime? dueTimeUtc)
         {
             if (dueTimeUtc.HasValue && dueTimeUtc.Value.Kind != DateTimeKind.Utc)

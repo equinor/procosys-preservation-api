@@ -203,22 +203,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             SetStep(journey.GetNextStep(StepId));
         }
 
-        private bool IsReadyToBeStarted()
-            => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
-
-        private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
-        {
-            if (!IsReadyToBePreserved(preservedAtUtc))
-            {
-                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
-            }
-
-            foreach (var requirement in GetUpComingRequirements(preservedAtUtc))
-            {
-                requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
-            }
-        }
-
         public void SetCreated(DateTime createdAtUtc, Person createdBy)
         {
             if (createdAtUtc.Kind != DateTimeKind.Utc)
@@ -239,6 +223,22 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             ModifiedAtUtc = modifiedAtUtc;
             ModifiedById = modifiedBy.Id;
+        }
+
+        private bool IsReadyToBeStarted()
+            => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
+
+        private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
+        {
+            if (!IsReadyToBePreserved(preservedAtUtc))
+            {
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
+            }
+
+            foreach (var requirement in GetUpComingRequirements(preservedAtUtc))
+            {
+                requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
+            }
         }
 
         private Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
