@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             true,
             "PoNo",
             "Remark!",
-            new List<RequirementDto> {new RequirementDto(0, 0, default, default, false, false)},
+            new List<RequirementDto> {new RequirementDto(0, null, default, default, false)},
             "Resp",
             PreservationStatus.Active,
             "TagFunctionCode",

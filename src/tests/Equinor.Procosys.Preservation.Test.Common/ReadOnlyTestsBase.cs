@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string type, string def)
         {
-            var requirementType = new RequirementType(TestPlant, $"Code{type}", $"Title{type}", 0);
+            var requirementType = new RequirementType(TestPlant, type, $"Title{type}", 0);
             context.RequirementTypes.Add(requirementType);
             context.SaveChanges();
 
