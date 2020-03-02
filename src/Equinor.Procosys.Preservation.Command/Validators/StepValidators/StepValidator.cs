@@ -15,10 +15,9 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
 
         public async Task<bool> ExistsAsync(int stepId, CancellationToken token)
         {
-            var count = await (from s in _context.QuerySet<Step>()
+            return await (from s in _context.QuerySet<Step>()
                 where s.Id == stepId
-                select s).CountAsync(token);
-            return count > 0;
+                select s).AnyAsync(token);
         }
 
         public async Task<bool> IsVoidedAsync(int stepId, CancellationToken token)

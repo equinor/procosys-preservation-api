@@ -13,13 +13,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
 
         public RequirementDefinitionValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(int requirementDefinitionId, CancellationToken token)
-        { 
-            var count = await (from rd in _context.QuerySet<RequirementDefinition>()
+        public async Task<bool> ExistsAsync(int requirementDefinitionId, CancellationToken token) =>
+            await (from rd in _context.QuerySet<RequirementDefinition>()
                 where rd.Id == requirementDefinitionId
-                select rd).CountAsync(token);
-            return count > 0;
-        }
+                select rd).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(int requirementDefinitionId, CancellationToken token)
         {

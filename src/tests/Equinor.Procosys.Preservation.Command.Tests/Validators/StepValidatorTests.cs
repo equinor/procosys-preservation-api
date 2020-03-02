@@ -11,13 +11,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class StepValidatorTests : ReadOnlyTestsBase
     {
-        private int StepId;
+        private int _stepId;
                         
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
             {
-                StepId = AddJourneyWithStep(context, "J", AddMode(context, "M"), AddResponsible(context, "R")).Steps.First().Id;
+                _stepId = AddJourneyWithStep(context, "J", AddMode(context, "M"), AddResponsible(context, "R")).Steps.First().Id;
             }
         }
 
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.ExistsAsync(StepId, default);
+                var result = await dut.ExistsAsync(_stepId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
-                var step = context.Step.Single(s => s.Id == StepId);
+                var step = context.Step.Single(s => s.Id == _stepId);
                 step.Void();
                 context.SaveChanges();
             }
@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsVoidedAsync(StepId, default);
+                var result = await dut.IsVoidedAsync(_stepId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsVoidedAsync(StepId, default);
+                var result = await dut.IsVoidedAsync(_stepId, default);
                 Assert.IsFalse(result);
             }
         }

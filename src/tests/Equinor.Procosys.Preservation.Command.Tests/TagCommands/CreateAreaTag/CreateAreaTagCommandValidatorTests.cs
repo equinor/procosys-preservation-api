@@ -192,7 +192,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_When2ErrorsWithinSameRule()
+        public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(false));
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(true));

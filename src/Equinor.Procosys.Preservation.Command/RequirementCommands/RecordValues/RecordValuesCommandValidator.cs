@@ -31,14 +31,14 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             When(command => command.FieldValues.Any(), () =>
             {
                 RuleForEach(command => command.FieldValues)
-                    .MustAsync((command, fv, token) => BeAFieldForRecordingAsync(fv.Key, token))
-                    .WithMessage((command, fv) => $"Field values can not be recorded for field type! Field={fv.Key}")
-                    .MustAsync((command, fv, token) => BeAValidValueForFieldAsync(fv.Key, fv.Value, token))
-                    .WithMessage((command, fv) => $"Field value is not valid for field type! Field={fv.Key} Value={fv.Value}")
-                    .MustAsync((command, fv, token) => BeAnExistingFieldAsync(fv.Key, token))
-                    .WithMessage((command, fv) => $"Field doesn't exists! Field={fv.Key}")
-                    .MustAsync((command, fv, token) => NotBeAVoidedFieldAsync(fv.Key, token))
-                    .WithMessage((command, fv) => $"Field is voided! Field={fv.Key}");
+                    .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.Key, token))
+                    .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.Key}")
+                    .MustAsync((_, fv, token) => BeAValidValueForFieldAsync(fv.Key, fv.Value, token))
+                    .WithMessage((_, fv) => $"Field value is not valid for field type! Field={fv.Key} Value={fv.Value}")
+                    .MustAsync((_, fv, token) => BeAnExistingFieldAsync(fv.Key, token))
+                    .WithMessage((_, fv) => $"Field doesn't exists! Field={fv.Key}")
+                    .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.Key, token))
+                    .WithMessage((_, fv) => $"Field is voided! Field={fv.Key}");
             });
                         
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)

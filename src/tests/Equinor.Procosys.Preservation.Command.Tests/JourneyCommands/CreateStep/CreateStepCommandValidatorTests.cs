@@ -116,29 +116,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_WhenErrorsInAllRules()
+        public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(false));
             _responsibleValidatorMock.Setup(r => r.ExistsAsync(_responsibleId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFailWith1Error_When3ValidatorsFail()
-        {
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
-            _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(false));
-            _responsibleValidatorMock.Setup(r => r.ExistsAsync(_responsibleId, default)).Returns(Task.FromResult(false));
-
-            _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_journeyId, default)).Returns(Task.FromResult(true));
-            _modeValidatorMock.Setup(r => r.IsVoidedAsync(_modeId, default)).Returns(Task.FromResult(true));
-            _responsibleValidatorMock.Setup(r => r.IsVoidedAsync(_responsibleId, default)).Returns(Task.FromResult(true));
-
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);

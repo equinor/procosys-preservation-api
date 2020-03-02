@@ -144,9 +144,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field values can not be recorded for field type!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
+        {
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+        }
  
         [TestMethod]
-        public void Validate_ShouldFailWith2Errors_WhenErrorsIn2Rules()
+        public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock.Setup(r => r.IsValidValueAsync(FieldId, NumberAsString, default)).Returns(Task.FromResult(false));

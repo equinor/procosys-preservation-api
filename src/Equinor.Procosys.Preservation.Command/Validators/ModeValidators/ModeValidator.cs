@@ -13,21 +13,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ModeValidators
 
         public ModeValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(int modeId, CancellationToken token)
-        {
-            var count = await (from m in _context.QuerySet<Mode>()
+        public async Task<bool> ExistsAsync(int modeId, CancellationToken token) =>
+            await (from m in _context.QuerySet<Mode>()
                 where m.Id == modeId
-                select m).CountAsync(token);
-            return count > 0;
-        }
-        
-        public async Task<bool> ExistsAsync(string title, CancellationToken token)
-        {
-            var count = await (from m in _context.QuerySet<Mode>()
+                select m).AnyAsync(token);
+
+        public async Task<bool> ExistsAsync(string title, CancellationToken token) =>
+            await (from m in _context.QuerySet<Mode>()
                 where m.Title == title
-                select m).CountAsync(token);
-            return count > 0;
-        }
+                select m).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(int modeId, CancellationToken token)
         {

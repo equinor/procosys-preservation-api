@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     public class ModeValidatorTests : ReadOnlyTestsBase
     {
         private const string ModeTitle = "TestMode";
-        private int ModeId;
+        private int _modeId;
                 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var mode = AddMode(context, ModeTitle);
                 var responsible = AddResponsible(context, "R");
                 AddJourneyWithStep(context, "J", mode, responsible);
-                ModeId = mode.Id;
+                _modeId = mode.Id;
             }
         }
 
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.ExistsAsync(ModeId, default);
+                var result = await dut.ExistsAsync(_modeId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
-                var mode = context.Modes.Single(m => m.Id == ModeId);
+                var mode = context.Modes.Single(m => m.Id == _modeId);
                 mode.Void();
                 context.SaveChanges();
             }
@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.IsVoidedAsync(ModeId, default);
+                var result = await dut.IsVoidedAsync(_modeId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.IsVoidedAsync(ModeId, default);
+                var result = await dut.IsVoidedAsync(_modeId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.IsUsedInStepAsync(ModeId, default);
+                var result = await dut.IsUsedInStepAsync(_modeId, default);
                 Assert.IsTrue(result);
             }
         }

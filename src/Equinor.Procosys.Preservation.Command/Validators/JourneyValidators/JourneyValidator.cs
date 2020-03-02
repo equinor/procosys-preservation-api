@@ -13,21 +13,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
 
         public JourneyValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(int journeyId, CancellationToken token)
-        {
-            var count = await (from j in _context.QuerySet<Journey>()
+        public async Task<bool> ExistsAsync(int journeyId, CancellationToken token) =>
+            await (from j in _context.QuerySet<Journey>()
                 where j.Id == journeyId
-                select j).CountAsync(token);
-            return count > 0;
-        }
+                select j).AnyAsync(token);
 
-        public async Task<bool> ExistsAsync(string title, CancellationToken token)
-        {
-            var count = await (from j in _context.QuerySet<Journey>()
+        public async Task<bool> ExistsAsync(string title, CancellationToken token) =>
+            await (from j in _context.QuerySet<Journey>()
                 where j.Title == title
-                select j).CountAsync(token);
-            return count > 0;
-        }
+                select j).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(int journeyId, CancellationToken token)
         {

@@ -11,13 +11,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class RequirementDefinitionValidatorTests : ReadOnlyTestsBase
     {
-        private int ReqDefId;
+        private int _reqDefId;
                         
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
             {
-                ReqDefId = AddRequirementTypeWith1DefWithoutField(context, "R", "D").RequirementDefinitions.First().Id;
+                _reqDefId = AddRequirementTypeWith1DefWithoutField(context, "R", "D").RequirementDefinitions.First().Id;
             }
         }
 
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.ExistsAsync(ReqDefId, default);
+                var result = await dut.ExistsAsync(_reqDefId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -48,14 +48,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
-                var reqDef = context.RequirementDefinitions.Single(rd => rd.Id == ReqDefId);
+                var reqDef = context.RequirementDefinitions.Single(rd => rd.Id == _reqDefId);
                 reqDef.Void();
                 context.SaveChanges();
             }
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.IsVoidedAsync(ReqDefId, default);
+                var result = await dut.IsVoidedAsync(_reqDefId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.IsVoidedAsync(ReqDefId, default);
+                var result = await dut.IsVoidedAsync(_reqDefId, default);
                 Assert.IsFalse(result);
             }
         }

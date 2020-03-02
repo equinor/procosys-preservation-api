@@ -14,13 +14,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
 
         public FieldValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(int fieldId, CancellationToken token)
-        {
-            var count = await (from f in _context.QuerySet<Field>()
+        public async Task<bool> ExistsAsync(int fieldId, CancellationToken token) =>
+            await (from f in _context.QuerySet<Field>()
                 where f.Id == fieldId
-                select f).CountAsync(token);
-            return count > 0;
-        }
+                select f).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(int fieldId, CancellationToken token)
         {

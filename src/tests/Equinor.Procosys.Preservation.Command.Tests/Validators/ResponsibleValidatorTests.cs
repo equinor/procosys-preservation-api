@@ -11,13 +11,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class ResponsibleValidatorTests : ReadOnlyTestsBase
     {
-        private int ResponsibleId;
+        private int _responsibleId;
                         
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
             {
-                ResponsibleId = AddResponsible(context, "R").Id;
+                _responsibleId = AddResponsible(context, "R").Id;
             }
         }
 
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new ResponsibleValidator(context);
-                var result = await dut.ExistsAsync(ResponsibleId, default);
+                var result = await dut.ExistsAsync(_responsibleId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -48,14 +48,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
-                var responsible = context.Responsibles.Single(r => r.Id == ResponsibleId);
+                var responsible = context.Responsibles.Single(r => r.Id == _responsibleId);
                 responsible.Void();
                 context.SaveChanges();
             }
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new ResponsibleValidator(context);
-                var result = await dut.IsVoidedAsync(ResponsibleId, default);
+                var result = await dut.IsVoidedAsync(_responsibleId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
             {
                 var dut = new ResponsibleValidator(context);
-                var result = await dut.IsVoidedAsync(ResponsibleId, default);
+                var result = await dut.IsVoidedAsync(_responsibleId, default);
                 Assert.IsFalse(result);
             }
         }
