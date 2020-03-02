@@ -24,6 +24,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             RuleForEach(x => x.Requirements)
                 .Must(RequirementMustHavePositiveInterval)
                 .WithMessage($"{nameof(TagRequirementDto.IntervalWeeks)} must be positive");
+
+            RuleFor(x => x.Remark)
+                .MaximumLength(Tag.RemarkLengthMax);
             
             bool RequirementMustHavePositiveInterval(TagRequirementDto dto) => dto.IntervalWeeks > 0;
         }

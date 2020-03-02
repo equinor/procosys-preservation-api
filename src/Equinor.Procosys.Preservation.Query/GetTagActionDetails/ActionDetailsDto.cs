@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
         {
             Id = id;
             CreatedBy = createdBy;
-            CreatedAt = createdAt;
+            CreatedAtUtc = createdAt;
             Title = title;
             Description = description;
             DueTimeUtc = dueTimeUtc;
@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
 
         public int Id { get; }
         public PersonDto CreatedBy { get; }
-        public DateTime CreatedAt { get; }
+        public DateTime CreatedAtUtc { get; }
         public string Title { get; }
         public string Description { get; }
         public DateTime? DueTimeUtc { get; }

@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
             var responsibleIds = journey.Steps.Select(x => x.ResponsibleId);
 
             var modes = (await _modeRepository.GetByIdsAsync(modeIds)).Select(x => new ModeDto(x.Id, x.Title));
-            var responsibles = (await _responsibleRepository.GetByIdsAsync(responsibleIds)).Select(x => new ResponsibleDto(x.Id, x.Name));
+            var responsibles = (await _responsibleRepository.GetByIdsAsync(responsibleIds)).Select(x => new ResponsibleDto(x.Id, x.Code));
 
             var journeyDto = new JourneyDto(
                 journey.Id,
