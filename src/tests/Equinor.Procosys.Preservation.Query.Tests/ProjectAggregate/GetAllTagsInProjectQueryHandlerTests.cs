@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             modeMock.SetupGet(m => m.Id).Returns(modeId);
             modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
 
-            var respMock = new Mock<Responsible>(TestPlant, ResponsibleCode);
+            var respMock = new Mock<Responsible>(TestPlant, ResponsibleCode, "ResponsibleTitle");
             respMock.SetupGet(r => r.Id).Returns(respId);
             respMock.SetupGet(r => r.Schema).Returns(TestPlant);
             

@@ -13,8 +13,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureCreationAudit();
             builder.ConfigureModificationAudit();
 
-            builder.Property(x => x.Name)
-                .HasMaxLength(Responsible.NameLengthMax)
+            builder.Property(x => x.Code)
+                .HasMaxLength(Responsible.CodeLengthMax)
+                .IsRequired();
+
+            builder.Property(x => x.Title)
+                .HasMaxLength(Responsible.TitleLengthMax)
                 .IsRequired();
         }
     }

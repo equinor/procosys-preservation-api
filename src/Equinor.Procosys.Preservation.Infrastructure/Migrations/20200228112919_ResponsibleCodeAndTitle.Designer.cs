@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200228112919_ResponsibleCodeAndTitle")]
+    partial class ResponsibleCodeAndTitle
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -79,7 +81,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("ResponsibleId");
 
-                    b.ToTable("Steps");
+                    b.ToTable("Step");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate.Mode", b =>
@@ -568,15 +570,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("IsVoided")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
+                    b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<bool>("IsVoided")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Schema")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);

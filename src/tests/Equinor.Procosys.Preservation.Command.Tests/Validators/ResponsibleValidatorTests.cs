@@ -18,8 +18,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             var respRepoMock = new Mock<IResponsibleRepository>();
 
-            var responsible = new Responsible("S", "R");
-            var responsibleVoided = new Responsible("S", "R");
+            var responsible = new Responsible("S", "R", "T");
+            var responsibleVoided = new Responsible("S", "R", "T");
             responsibleVoided.Void();
 
             respRepoMock.Setup(r => r.GetByIdAsync(ResponsibleIdNonVoided)).Returns(Task.FromResult(responsible));

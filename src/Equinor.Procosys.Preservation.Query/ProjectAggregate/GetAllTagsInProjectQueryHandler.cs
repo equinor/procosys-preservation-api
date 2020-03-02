@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.PurchaseOrderNo,
                     tag.Remark,
                     requirementDtos,
-                    resp.Name,
+                    resp.Code,
                     tag.Status,
                     tag.TagFunctionCode,
                     tag.Description,
