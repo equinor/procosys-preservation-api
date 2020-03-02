@@ -7,24 +7,21 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
     {
         public RequirementDto(
             int id,
-            int requirementDefinitionId,
+            string requirementTypeCode,
             DateTime? nextDueTimeUtc,
             int? nextDueWeeks,
-            bool readyToBePreserved,
-            bool readyToBeBulkPreserved
-            )
+            bool readyToBePreserved)
         {
             Id = id;
-            RequirementDefinitionId = requirementDefinitionId;
+            RequirementTypeCode = requirementTypeCode;
             NextDueTimeUtc = nextDueTimeUtc;
             NextDueWeeks = nextDueWeeks;            
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
             ReadyToBePreserved = readyToBePreserved;
-            ReadyToBeBulkPreserved = readyToBeBulkPreserved;
         }
 
         public int Id { get; }
-        public int RequirementDefinitionId { get; }
+        public string RequirementTypeCode { get; }
         public DateTime? NextDueTimeUtc { get; }
         public string NextDueAsYearAndWeek { get; }
 
@@ -33,6 +30,5 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         /// </summary>
         public int? NextDueWeeks { get; }
         public bool ReadyToBePreserved { get; }
-        public bool ReadyToBeBulkPreserved { get; }
     }
 }
