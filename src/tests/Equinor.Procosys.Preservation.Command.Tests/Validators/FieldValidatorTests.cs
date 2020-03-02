@@ -1,138 +1,192 @@
-﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.Field;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
+using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
     [TestClass]
-    public class FieldValidatorTests
+    public class FieldValidatorTests : ReadOnlyTestsBase
     {
-        private const int InfoFieldIdNonVoided = 1;
-        private const int InfoFieldIdVoided = 2;
-        private const int CheckBoxFieldId = 3;
-        private const int NumberFieldId = 4;
-        private FieldValidator _dut;
+        private int _infoFieldId;
+        private int _checkBoxFieldId;
+        private int _numberFieldId;
 
-        [TestInitialize]
-        public void Setup()
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            var rtRepoMock = new Mock<IRequirementTypeRepository>();
+            using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D").RequirementDefinitions.Single();
 
-            var nonVoidedInfoField = new Field("", "", FieldType.Info, 0);
-            var voidedInfoField = new Field("", "", FieldType.Info, 0);
-            voidedInfoField.Void();
-            var checkBoxField = new Field("", "", FieldType.CheckBox, 0);
-            var numberField = new Field("", "", FieldType.Number, 0, "mm", true);
-
-            rtRepoMock.Setup(r => r.GetFieldByIdAsync(InfoFieldIdNonVoided)).Returns(Task.FromResult(nonVoidedInfoField));
-            rtRepoMock.Setup(r => r.GetFieldByIdAsync(InfoFieldIdVoided)).Returns(Task.FromResult(voidedInfoField));
-            rtRepoMock.Setup(r => r.GetFieldByIdAsync(CheckBoxFieldId)).Returns(Task.FromResult(checkBoxField));
-            rtRepoMock.Setup(r => r.GetFieldByIdAsync(NumberFieldId)).Returns(Task.FromResult(numberField));
-
-            _dut = new FieldValidator(rtRepoMock.Object);
+                _infoFieldId = AddInfoField(context, rd).Id;
+                _numberFieldId = NumberField(context, rd, "mm", true).Id;
+                _checkBoxFieldId = CheckBoxField(context, rd).Id;
+            }
         }
 
         [TestMethod]
-        public void Exists_KnownId_ReturnsTrue()
+        public async Task ExistsAsync_KnownId_ReturnsTrue()
         {
-            var result = _dut.Exists(InfoFieldIdNonVoided);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.ExistsAsync(_infoFieldId, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void Exists_UnknownId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownId_ReturnsFalse()
         {
-            var result = _dut.Exists(126234);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.ExistsAsync(126234, default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void IsVoided_KnownVoided_ReturnsTrue()
+        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
         {
-            var result = _dut.IsVoided(InfoFieldIdVoided);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var field = context.Fields.Single(f => f.Id == _infoFieldId);
+                field.Void();
+                context.SaveChanges();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsVoidedAsync(_infoFieldId, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void IsVoided_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
         {
-            var result = _dut.IsVoided(InfoFieldIdNonVoided);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsVoidedAsync(_infoFieldId, default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void IsVoided_UnknownId_ReturnsFalse()
+        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
         {
-            var result = _dut.IsVoided(126234);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsVoidedAsync(126234, default);
+                Assert.IsFalse(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_ReturnsTrue_OnNumberField_ForNA()
+        public async Task IsValidValueAsync_ReturnsTrue_OnNumberField_ForNA()
         {
-            var result = _dut.IsValidValue(NumberFieldId, "NA");
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_numberFieldId, "NA", default);
+                Assert.IsTrue(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_ReturnsTrue_OnNumberField_ForNAWithSlash()
+        public async Task IsValidValueAsync_ReturnsTrue_OnNumberField_ForNAWithSlash()
         {
-            var result = _dut.IsValidValue(NumberFieldId, "n/a");
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_numberFieldId, "n/a", default);
+                Assert.IsTrue(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_OnNumberField_IsNotCaseSensitive()
+        public async Task IsValidValueAsync_OnNumberField_IsNotCaseSensitive()
         {
-            var result = _dut.IsValidValue(NumberFieldId, "nA");
-            Assert.IsTrue(result);
-            result = _dut.IsValidValue(NumberFieldId, "n/A");
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_numberFieldId, "nA", default);
+                Assert.IsTrue(result);
+                result = await dut.IsValidValueAsync(_numberFieldId, "n/A", default);
+                Assert.IsTrue(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_ReturnsTrue_OnNumberField_ForNumber()
+        public async Task IsValidValueAsync_ReturnsTrue_OnNumberField_ForNumber()
         {
-            var result = _dut.IsValidValue(NumberFieldId, "12");
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_numberFieldId, "12", default);
+                Assert.IsTrue(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_ReturnsFalse_OnNumberField_ForText()
+        public async Task IsValidValueAsync_ReturnsFalse_OnNumberField_ForText()
         {
-            var result = _dut.IsValidValue(NumberFieldId, "abc");
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_numberFieldId, "abc", default);
+                Assert.IsFalse(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_ReturnsTrue_OnCheckBoxField_ForTrue()
+        public async Task IsValidValueAsync_ReturnsTrue_OnCheckBoxField_ForTrue()
         {
-            var result = _dut.IsValidValue(CheckBoxFieldId, "True");
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_checkBoxFieldId, "True", default);
+                Assert.IsTrue(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_OnCheckBoxField_IsNotCaseSensitive()
+        public async Task IsValidValueAsync_OnCheckBoxField_IsNotCaseSensitive()
         {
-            var result = _dut.IsValidValue(CheckBoxFieldId, "TruE");
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_checkBoxFieldId, "TruE", default);
+                Assert.IsTrue(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_ReturnsTrue_OnCheckBoxField_ForFalse()
+        public async Task IsValidValueAsync_ReturnsTrue_OnCheckBoxField_ForFalse()
         {
-            var result = _dut.IsValidValue(CheckBoxFieldId, "False");
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_checkBoxFieldId, "False", default);
+                Assert.IsTrue(result);
+            }
         }
         
         [TestMethod]
-        public void IsValidValue_ReturnsFalse_OnCheckBoxField_ForText()
+        public async Task IsValidValueAsync_ReturnsFalse_OnCheckBoxField_ForText()
         {
-            var result = _dut.IsValidValue(CheckBoxFieldId, "abc");
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidValueAsync(_checkBoxFieldId, "abc", default);
+                Assert.IsFalse(result);
+            }
         }
-
     }
 }

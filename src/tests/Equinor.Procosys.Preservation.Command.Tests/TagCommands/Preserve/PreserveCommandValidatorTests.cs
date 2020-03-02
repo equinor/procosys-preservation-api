@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith1Error_When2Errors()
+        public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));

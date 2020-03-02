@@ -1,4 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Command.Validators.Journey;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
@@ -7,11 +9,12 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
     {
         public CreateJourneyCommandValidator(IJourneyValidator journeyValidator)
         {
-            RuleFor(x => x.Title)
-                .Must(HaveUniqueTitle)
-                .WithMessage(x => $"Journey with title already exists! Journey={x.Title}");
+            RuleFor(command => command)
+                .MustAsync((command, token) => HaveUniqueTitleAsync(command.Title, token))
+                .WithMessage(command => $"Journey with title already exists! Journey={command.Title}");
 
-            bool HaveUniqueTitle(string title) => !journeyValidator.Exists(title);
+            async Task<bool> HaveUniqueTitleAsync(string title, CancellationToken token)
+                => !await journeyValidator.ExistsAsync(title, token);
         }
     }
 }
