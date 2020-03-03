@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "Tags",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "Step",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "Responsibles",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "RequirementTypes",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -105,7 +105,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "Requirements",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -127,7 +127,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "RequirementDefinitions",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -149,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "Projects",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -171,7 +171,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "PreservationRecords",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -193,7 +193,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "PreservationPeriods",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -225,7 +225,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "Modes",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -247,7 +247,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "Journeys",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
@@ -269,7 +269,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "FieldValues",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "CreatedAtUtc",
@@ -281,7 +281,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "CreatedById",
                 table: "Fields",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 1);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "ModifiedAtUtc",
