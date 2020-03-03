@@ -13,13 +13,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
 
         public ProjectValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(string projectName, CancellationToken cancellationToken)
-        {
-            var count = await (from p in _context.QuerySet<Project>()
+        public async Task<bool> ExistsAsync(string projectName, CancellationToken cancellationToken) =>
+            await (from p in _context.QuerySet<Project>()
                 where p.Name == projectName
-                select p).CountAsync(cancellationToken);
-            return count > 0;
-        }
+                select p).AnyAsync(cancellationToken);
 
         public async Task<bool> IsExistingAndClosedAsync(string projectName, CancellationToken cancellationToken)
         {

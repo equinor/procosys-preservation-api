@@ -1,66 +1,87 @@
-﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
+using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
     [TestClass]
-    public class RequirementDefinitionValidatorTests
+    public class RequirementDefinitionValidatorTests : ReadOnlyTestsBase
     {
-        private const int ReqDefIdNonVoided = 1;
-        private const int ReqDefIdVoided = 2;
-        private RequirementDefinitionValidator _dut;
-
-        [TestInitialize]
-        public void Setup()
+        private int _reqDefId;
+                        
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            var reqTypeRepoMock = new Mock<IRequirementTypeRepository>();
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            {
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
-            var reqDef = new RequirementDefinition("S", "T", 1, 0);
-            var reqDefVoided = new RequirementDefinition("S", "T", 1, 0);
-            reqDefVoided.Void();
-
-            reqTypeRepoMock.Setup(r => r.GetRequirementDefinitionByIdAsync(ReqDefIdNonVoided)).Returns(Task.FromResult(reqDef));
-            reqTypeRepoMock.Setup(r => r.GetRequirementDefinitionByIdAsync(ReqDefIdVoided)).Returns(Task.FromResult(reqDefVoided));
-
-            _dut = new RequirementDefinitionValidator(reqTypeRepoMock.Object);
+                _reqDefId = AddRequirementTypeWith1DefWithoutField(context, "R", "D").RequirementDefinitions.First().Id;
+            }
         }
 
         [TestMethod]
-        public void ValidateExists_KnownId_ReturnsTrue()
+        public async Task ExistsAsync_KnownId_ReturnsTrue()
         {
-            var result = _dut.Exists(ReqDefIdNonVoided);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.ExistsAsync(_reqDefId, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateExists_UnknownId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownId_ReturnsFalse()
         {
-            var result = _dut.Exists(126234);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.ExistsAsync(126234, default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsVoided_KnownVoided_ReturnsTrue()
+        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
         {
-            var result = _dut.IsVoided(ReqDefIdVoided);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var reqDef = context.RequirementDefinitions.Single(rd => rd.Id == _reqDefId);
+                reqDef.Void();
+                context.SaveChanges();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.IsVoidedAsync(_reqDefId, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsVoided_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
         {
-            var result = _dut.IsVoided(ReqDefIdNonVoided);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.IsVoidedAsync(_reqDefId, default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsVoided_UnknownId_ReturnsFalse()
+        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
         {
-            var result = _dut.IsVoided(126234);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.IsVoidedAsync(126234, default);
+                Assert.IsFalse(result);
+            }
         }
     }
 }

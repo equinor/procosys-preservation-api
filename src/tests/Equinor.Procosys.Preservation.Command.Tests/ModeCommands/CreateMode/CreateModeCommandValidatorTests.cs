@@ -1,5 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
-using Equinor.Procosys.Preservation.Command.Validators.Mode;
+﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
+using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -18,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
         public void Setup_OkState()
         {
             _modeValidatorMock = new Mock<IModeValidator>();
-            _modeValidatorMock.Setup(r => r.Exists(_title)).Returns(false);
+            _modeValidatorMock.Setup(r => r.ExistsAsync(_title, default)).Returns(Task.FromResult(false));
             _command = new CreateModeCommand(_title);
 
             _dut = new CreateModeCommandValidator(_modeValidatorMock.Object);
@@ -35,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
         [TestMethod]
         public void Validate_ShouldFail_WhenModeAlreadyExists()
         {
-            _modeValidatorMock.Setup(r => r.Exists(_title)).Returns(true);
+            _modeValidatorMock.Setup(r => r.ExistsAsync(_title, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 

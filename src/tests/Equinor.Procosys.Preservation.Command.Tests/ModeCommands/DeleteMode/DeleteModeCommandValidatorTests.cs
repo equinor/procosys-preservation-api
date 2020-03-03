@@ -1,5 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
-using Equinor.Procosys.Preservation.Command.Validators.Mode;
+﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
+using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -18,8 +19,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         public void Setup_OkState()
         {
             _modeValidatorMock = new Mock<IModeValidator>();
-            _modeValidatorMock.Setup(r => r.Exists(_id)).Returns(true);
-            _modeValidatorMock.Setup(r => r.IsVoided(_id)).Returns(true);
+            _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
+            _modeValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(true));
             _command = new DeleteModeCommand(_id);
 
             _dut = new DeleteModeCommandValidator(_modeValidatorMock.Object);
@@ -36,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         [TestMethod]
         public void Validate_ShouldFail_WhenModeNotExists()
         {
-            _modeValidatorMock.Setup(r => r.Exists(_id)).Returns(false);
+            _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
@@ -48,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         [TestMethod]
         public void Validate_ShouldFail_WhenModeNotVoided()
         {
-            _modeValidatorMock.Setup(r => r.IsVoided(_id)).Returns(false);
+            _modeValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
@@ -60,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         [TestMethod]
         public void Validate_ShouldFail_WhenModeIsUsedInAStep()
         {
-            _modeValidatorMock.Setup(r => r.IsUsedInStep(_id)).Returns(true);
+            _modeValidatorMock.Setup(r => r.IsUsedInStepAsync(_id, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 

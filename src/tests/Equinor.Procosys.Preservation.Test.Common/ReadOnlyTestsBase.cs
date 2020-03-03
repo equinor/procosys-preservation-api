@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 {
     public abstract class ReadOnlyTestsBase
     {
-        protected const string TestPlant = "PCS$TEST";
+        protected const string TestPlant = "PlantA";
         protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IPlantProvider> _plantProviderMock;
@@ -119,6 +119,30 @@ namespace Equinor.Procosys.Preservation.Test.Common
             parentProject.AddTag(tag);
             new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
             return tag;
+        }
+
+        protected Field AddInfoField(PreservationContext context, RequirementDefinition rd)
+        {
+            var field = new Field(TestPlant, "", FieldType.Info, 0);
+            rd.AddField(field);
+            context.SaveChanges();
+            return field;
+        }
+
+        protected Field NumberField(PreservationContext context, RequirementDefinition rd, string unit, bool showPrevious)
+        {
+            var field = new Field(TestPlant, "", FieldType.Number, 0, unit, showPrevious);
+            rd.AddField(field);
+            context.SaveChanges();
+            return field;
+        }
+
+        protected Field CheckBoxField(PreservationContext context, RequirementDefinition rd)
+        {
+            var field = new Field(TestPlant, "", FieldType.CheckBox, 0);
+            rd.AddField(field);
+            context.SaveChanges();
+            return field;
         }
     }
 }

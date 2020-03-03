@@ -1,84 +1,110 @@
-﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.Journey;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
     [TestClass]
-    public class JourneyValidatorTests
+    public class JourneyValidatorTests : ReadOnlyTestsBase
     {
-        private const string JourneyTitle = "JourneyNotVoided";
-        private const string JourneyTitleVoided = "JourneyNotVoided";
-        private const int JourneyIdNonVoided = 1;
-        private const int JourneyIdVoided = 2;
-        private JourneyValidator _dut;
-
-        [TestInitialize]
-        public void Setup()
+        private const string JourneyTitle = "Journey";
+        private int _journeyId;
+        
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            var journeyRepositoryMock = new Mock<IJourneyRepository>();
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            {
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
-            var journey = new Journey("S", JourneyTitle);
-            var journeyVoided = new Journey("S", JourneyTitleVoided);
-            journeyVoided.Void();
-
-            journeyRepositoryMock.Setup(r => r.GetByTitleAsync(JourneyTitle)).Returns(Task.FromResult(journey));
-            journeyRepositoryMock.Setup(r => r.GetByIdAsync(JourneyIdNonVoided)).Returns(Task.FromResult(journey));
-            journeyRepositoryMock.Setup(r => r.GetByIdAsync(JourneyIdVoided)).Returns(Task.FromResult(journeyVoided));
-            journeyRepositoryMock.Setup(r => r.Exists(JourneyIdNonVoided)).Returns(Task.FromResult(true));
-
-            _dut = new JourneyValidator(journeyRepositoryMock.Object);
+                _journeyId = AddJourneyWithStep(context, JourneyTitle, AddMode(context, "M"), AddResponsible(context, "R")).Id;
+            }
         }
 
         [TestMethod]
-        public void ValidateExists_KnownTitle_ReturnsTrue()
+        public async Task ExistsAsync_KnownTitle_ReturnsTrue()
         {
-            var result = _dut.Exists(JourneyTitle);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.ExistsAsync(JourneyTitle, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateExists_KnownId_ReturnsTrue()
+        public async Task ExistsAsync_KnownId_ReturnsTrue()
         {
-            var result = _dut.Exists(JourneyIdNonVoided);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.ExistsAsync(_journeyId, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateExists_UnknownTitle_ReturnsFalse()
+        public async Task ExistsAsync_UnknownTitle_ReturnsFalse()
         {
-            var result = _dut.Exists("XXX");
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.ExistsAsync("XXX", default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateExists_UnknownId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownId_ReturnsFalse()
         {
-            var result = _dut.Exists(126234);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.ExistsAsync(126234, default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsVoided_KnownVoided_ReturnsTrue()
+        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
         {
-            var result = _dut.IsVoided(JourneyIdVoided);
-            Assert.IsTrue(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var journey = context.Journeys.Single(j => j.Id == _journeyId);
+                journey.Void();
+                context.SaveChanges();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsVoidedAsync(_journeyId, default);
+                Assert.IsTrue(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsVoided_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
         {
-            var result = _dut.IsVoided(JourneyIdNonVoided);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsVoidedAsync(_journeyId, default);
+                Assert.IsFalse(result);
+            }
         }
 
         [TestMethod]
-        public void ValidateIsVoided_UnknownId_ReturnsFalse()
+        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
         {
-            var result = _dut.IsVoided(126234);
-            Assert.IsFalse(result);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsVoidedAsync(126234, default);
+                Assert.IsFalse(result);
+            }
         }
     }
 }

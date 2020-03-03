@@ -14,22 +14,16 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public TagValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(int tagId, CancellationToken cancellationToken)
-        {
-            var count = await (from t in _context.QuerySet<Tag>()
+        public async Task<bool> ExistsAsync(int tagId, CancellationToken cancellationToken) =>
+            await (from t in _context.QuerySet<Tag>()
                 where t.Id == tagId
-                select t).CountAsync(cancellationToken);
-            return count > 0;
-        }
+                select t).AnyAsync(cancellationToken);
 
-        public async Task<bool> ExistsAsync(string tagNo, string projectName, CancellationToken cancellationToken)
-        {
-            var count = await (from tag in _context.QuerySet<Tag>()
+        public async Task<bool> ExistsAsync(string tagNo, string projectName, CancellationToken cancellationToken) =>
+            await (from tag in _context.QuerySet<Tag>()
                 join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
                 where tag.TagNo == tagNo && p.Name == projectName
-                select p).CountAsync(cancellationToken);
-            return count > 0;
-        }
+                select p).AnyAsync(cancellationToken);
 
         public async Task<bool> IsVoidedAsync(int tagId, CancellationToken cancellationToken)
         {
