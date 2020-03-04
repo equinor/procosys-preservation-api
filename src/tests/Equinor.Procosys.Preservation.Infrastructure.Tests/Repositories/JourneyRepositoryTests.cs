@@ -15,10 +15,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
     [TestClass]
     public class JourneyRepositoryTests : RepositoryTestBase
     {
-        private const string TestJourney = "J1";
-        private const int ModeId = 11;
-        private const int StepId1 = 51;
-        private const int StepId2 = 52;
+        private const int StepId = 51;
         private List<Journey> _journeys;
         private Mock<DbSet<Journey>> _dbSetMock;
 
@@ -28,32 +25,22 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         public void Setup()
         {
             var modeMock = new Mock<Mode>();
-            modeMock.SetupGet(m => m.Id).Returns(ModeId);
             modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
             
             var responsibleMock = new Mock<Responsible>();
             responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
 
             var stepMock1 = new Mock<Step>();
-            stepMock1.SetupGet(s => s.Id).Returns(StepId1);
+            stepMock1.SetupGet(s => s.Id).Returns(StepId);
             stepMock1.SetupGet(s => s.Schema).Returns(TestPlant);
-            var stepMock2 = new Mock<Step>(TestPlant, modeMock.Object, responsibleMock.Object);
-            stepMock2.SetupGet(s => s.Id).Returns(StepId2);
-            stepMock2.SetupGet(s => s.Schema).Returns(TestPlant);
 
-            var journeyWithSteps = new Journey(TestPlant, TestJourney);
-            var stepMock3 = new Mock<Step>();
-            stepMock3.SetupGet(s => s.Schema).Returns(TestPlant);
+            var journey = new Journey(TestPlant, "J");
 
-            journeyWithSteps.AddStep(stepMock3.Object);
-            journeyWithSteps.AddStep(stepMock1.Object);
-            journeyWithSteps.AddStep(stepMock2.Object);
+            journey.AddStep(stepMock1.Object);
             
             _journeys = new List<Journey>
             {
-                journeyWithSteps,
-                new Journey(TestPlant, "J2"),
-                new Journey(TestPlant, "J3")
+                journey
             };
             
             _dbSetMock = _journeys.AsQueryable().BuildMockDbSet();
@@ -67,71 +54,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByTitle_KnownTitle_ReturnsJourneysWith3Steps()
-        {
-            var result = await _dut.GetByTitleAsync(TestJourney);
-
-            Assert.AreEqual(TestJourney, result.Title);
-            Assert.AreEqual(3, result.Steps.Count);
-        }
-
-        [TestMethod]
-        public async Task GetByTitle_UnknownTitle_ReturnsNull()
-        {
-            var result = await _dut.GetByTitleAsync("XJ");
-
-            Assert.IsNull(result);
-        }
-
-        [TestMethod]
-        public async Task GetJourneyByStepId_KnownId_ReturnsJourneysWith3Steps()
-        {
-            var result = await _dut.GetJourneyByStepIdAsync(StepId1);
-
-            Assert.AreEqual(TestJourney, result.Title);
-            Assert.AreEqual(3, result.Steps.Count);
-        }
-
-        [TestMethod]
-        public async Task GetJourneyByStepId_UnknownId_ReturnsNull()
-        {
-            var result = await _dut.GetJourneyByStepIdAsync(99);
-
-            Assert.IsNull(result);
-        }
-
-        [TestMethod]
         public async Task GetStepByStepId_KnownId_ReturnsStep()
         {
-            var result = await _dut.GetStepByStepIdAsync(StepId1);
+            var result = await _dut.GetStepByStepIdAsync(StepId);
 
-            Assert.AreEqual(StepId1, result.Id);
-        }
-
-        [TestMethod]
-        public async Task GetStepsByStepIds_KnownIds_Returns2Steps()
-        {
-            var result = await _dut.GetStepsByStepIdsAsync(new List<int>{StepId1, StepId2});
-
-            Assert.AreEqual(2, result.Count);
-            Assert.IsTrue(result.Any(s => s.Id == StepId1));
-            Assert.IsTrue(result.Any(s => s.Id == StepId2));
-        }
-
-        [TestMethod]
-        public async Task GetStepsByStepIds_UnKnownIds_ReturnsEmptyList()
-        {
-            var result = await _dut.GetStepsByStepIdsAsync(new List<int>{123512});
-
-            Assert.AreEqual(0, result.Count);
-        }
-
-        [TestMethod]
-        public async Task GetStepsByStepIds_NoIds_ReturnsEmptyList()
-        {
-            var result = await _dut.GetStepsByStepIdsAsync(new List<int>());
-
-            Assert.AreEqual(0, result.Count);
+            Assert.AreEqual(StepId, result.Id);
         }
 
         [TestMethod]
@@ -140,15 +67,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             var result = await _dut.GetStepByStepIdAsync(99);
 
             Assert.IsNull(result);
-        }
-
-        [TestMethod]
-        public async Task GetStepsByModeId_KnownId_ReturnsStep()
-        {
-            var result = await _dut.GetStepsByModeIdAsync(ModeId);
-
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(ModeId, result.First().ModeId);
         }
     }
 }

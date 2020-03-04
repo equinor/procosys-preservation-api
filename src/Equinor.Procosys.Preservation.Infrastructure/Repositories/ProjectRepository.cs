@@ -31,12 +31,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .SelectMany(project => project.Tags)
                 .FirstOrDefaultAsync(tag => tag.Id == tagId);
 
-        public Task<Tag> GetTagByTagNoAsync(string tagNo, string projectName)
-            => DefaultQuery
-                .Where(project => project.Name == projectName)
-                .SelectMany(project => project.Tags)
-                .FirstOrDefaultAsync(tag => tag.TagNo == tagNo);
-
         public Task<List<Tag>> GetTagsByTagIdsAsync(IEnumerable<int> tagIds)
             => DefaultQuery
                 .SelectMany(project => project.Tags)

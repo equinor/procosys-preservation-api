@@ -20,7 +20,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         private const string ProjectNameWithTags = "ProjectName1";
         private const string ProjectNameWithoutTags = "ProjectName2";
         private List<Project> _projects;
-        private const string TestTagNo = "TagX";
         private const int TestTagId = 71;
         private Mock<Tag> _testTagMock;
         private Mock<DbSet<Project>> _dbSetMock;
@@ -108,22 +107,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             var result = await _dut.GetTagByTagIdAsync(TestTagId);
 
             Assert.AreEqual(TestTagId, result.Id);
-        }
-
-        [TestMethod]
-        public async Task GetTagByTagNo_InProjectWithTag_ReturnsTag()
-        {
-            var result = await _dut.GetTagByTagNoAsync(TestTagNo, ProjectNameWithTags);
-
-            Assert.AreEqual(TestTagNo, result.TagNo);
-        }
-
-        [TestMethod]
-        public async Task GetTagByTagNo_InProjectWithoutTags_ReturnsNoTag()
-        {
-            var result = await _dut.GetTagByTagNoAsync(TestTagNo, ProjectNameWithoutTags);
-
-            Assert.IsNull(result);
         }
 
         [TestMethod]
