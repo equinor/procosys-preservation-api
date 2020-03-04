@@ -18,6 +18,6 @@ namespace Equinor.Procosys.Preservation.Domain.Audit
         /// </summary>
         /// <param name="modifiedAtUtc">Modification date and time</param>
         /// <param name="modifiedBy">The user who modified the entity</param>
-        void SetModified(DateTime modifiedAtUtc, Person modifiedBy);
+        void SetModified(Person modifiedBy);
     }
 }

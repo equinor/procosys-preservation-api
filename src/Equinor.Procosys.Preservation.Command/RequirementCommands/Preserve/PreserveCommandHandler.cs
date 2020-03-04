@@ -15,18 +15,15 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
         private readonly IPersonRepository _personRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly ITimeService _timeService;
 
         public PreserveCommandHandler(
             IProjectRepository projectRepository,
             IPersonRepository personRepository,
-            ITimeService timeService,
             IUnitOfWork unitOfWork,
             ICurrentUserProvider currentUserProvider)
         {
             _projectRepository = projectRepository;
             _personRepository = personRepository;
-            _timeService = timeService;
             _unitOfWork = unitOfWork;
             _currentUserProvider = currentUserProvider;
         }
@@ -37,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
             var requirement = tag.Requirements.Single(r => r.Id == request.RequirementId);
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUser());
 
-            requirement.Preserve(_timeService.GetCurrentTimeUtc(), currentUser, false);
+            requirement.Preserve(currentUser, false);
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             

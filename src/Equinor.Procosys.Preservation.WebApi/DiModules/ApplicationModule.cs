@@ -80,7 +80,6 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IFieldValidator, FieldValidator>();
 
             // Singleton - Created the first time they are requested
-            services.AddSingleton<ITimeService, TimeService>();
         }
     }
 }

@@ -12,17 +12,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure
     {
         private readonly PreservationContext _context;
         private readonly IEventDispatcher _eventDispatcher;
-        private readonly ITimeService _timeService;
         private readonly ICurrentUserProvider _currentUserProvider;
 
         public UnitOfWork(PreservationContext context,
             IEventDispatcher eventDispatcher,
-            ITimeService timeService,
             ICurrentUserProvider currentUserProvider)
         {
             _context = context;
             _eventDispatcher = eventDispatcher;
-            _timeService = timeService;
             _currentUserProvider = currentUserProvider;
         }
 
@@ -58,18 +55,18 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
             if (addedEntries.Any() || modifiedEntries.Any())
             {
-                var now = _timeService.GetCurrentTimeUtc();
+                var now = TimeService.UtcNow;
                 var currentUserOid = _currentUserProvider.GetCurrentUser();
                 var currentUser = await _context.Persons.SingleOrDefaultAsync(p => p.Oid == currentUserOid);
 
                 foreach (var entry in addedEntries)
                 {
-                    entry.Entity.SetCreated(now, currentUser);
+                    entry.Entity.SetCreated(currentUser);
                 }
 
                 foreach (var entry in modifiedEntries)
                 {
-                    entry.Entity.SetModified(now, currentUser);
+                    entry.Entity.SetModified(currentUser);
                 }
             }
         }
