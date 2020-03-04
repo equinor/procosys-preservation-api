@@ -93,6 +93,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.Calloff,
                     tag.CommPkgNo,
                     tag.DisciplineCode,
+                    false,
                     tag.IsVoided,
                     tag.McPkgNo,
                     outerDto.Mode.Title,

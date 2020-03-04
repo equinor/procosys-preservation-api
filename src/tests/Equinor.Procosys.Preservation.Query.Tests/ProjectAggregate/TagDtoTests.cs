@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             "CommPkgNo",
             "DisciplineCode",
             true,
+            true,
             "McPkgNo",
             "Mode",
             true,
@@ -42,6 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             Assert.AreEqual("CommPkgNo", _dut.CommPkgNo);
             Assert.AreEqual("DisciplineCode", _dut.DisciplineCode);
             Assert.AreEqual(TagType.Standard, _dut.TagType);
+            Assert.IsTrue(_dut.IsNew);
             Assert.IsTrue(_dut.IsVoided);
             Assert.AreEqual("McPkgNo", _dut.McPkgNo);
             Assert.AreEqual("Mode", _dut.Mode);
