@@ -5,15 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200225121146_InitialPreservationPeriodStatus.cs" />
-    <Compile Remove="Migrations\20200225121146_InitialPreservationPeriodStatus.Designer.cs" />
-    <Compile Remove="Migrations\20200226135751_PreservationPeriodStatusUpdate.cs" />
-    <Compile Remove="Migrations\20200226135751_PreservationPeriodStatusUpdate.Designer.cs" />
-    <Compile Remove="Migrations\20200227073055_PrivateInitialPreservationPeriodStatus.cs" />
-    <Compile Remove="Migrations\20200227073055_PrivateInitialPreservationPeriodStatus.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.2">

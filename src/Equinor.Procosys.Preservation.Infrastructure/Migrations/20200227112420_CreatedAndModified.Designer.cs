@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200227112420_CreatedAndModified")]
+    partial class CreatedAndModified
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,8 +28,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<string>("Schema")
                         .IsRequired()
@@ -41,6 +55,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
                     b.ToTable("Journeys");
                 });
 
@@ -51,6 +69,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 
@@ -58,6 +82,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ModeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
                         .HasColumnType("int");
 
                     b.Property<int>("ResponsibleId")
@@ -73,13 +103,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
                     b.HasIndex("JourneyId");
 
                     b.HasIndex("ModeId");
 
+                    b.HasIndex("ModifiedById");
+
                     b.HasIndex("ResponsibleId");
 
-                    b.ToTable("Steps");
+                    b.ToTable("Step");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate.Mode", b =>
@@ -89,8 +123,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<string>("Schema")
                         .IsRequired()
@@ -103,6 +149,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasMaxLength(255);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
 
                     b.ToTable("Modes");
                 });
@@ -124,10 +174,18 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("Oid")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ModifiedById");
 
                     b.ToTable("Persons");
                 });
@@ -159,6 +217,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<DateTime?>("DueTimeUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
                     b.Property<string>("Schema")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
@@ -178,6 +242,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("ModifiedById");
+
                     b.HasIndex("TagId");
 
                     b.ToTable("Actions");
@@ -189,6 +255,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
 
                     b.Property<int>("FieldId")
                         .HasColumnType("int");
@@ -206,6 +278,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasMaxLength(255);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("FieldId");
 
@@ -227,8 +301,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(2048)")
                         .HasMaxLength(2048);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("DueTimeUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<int?>("PreservationRecordId")
                         .HasColumnType("int");
@@ -249,6 +335,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
                     b.HasIndex("PreservationRecordId");
 
                     b.HasIndex("RequirementId");
@@ -268,6 +358,18 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<bool>("BulkPreserved")
                         .HasColumnType("bit");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("PreservedAtUtc")
                         .HasColumnType("datetime2");
 
@@ -281,6 +383,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
                     b.HasIndex("PreservedById");
 
                     b.ToTable("PreservationRecords");
@@ -293,6 +399,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(1000)")
@@ -300,6 +412,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<bool>("IsClosed")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -313,6 +431,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
                     b.ToTable("Projects");
                 });
 
@@ -323,11 +445,23 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<int>("IntervalWeeks")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("NextDueTimeUtc")
                         .HasColumnType("datetime2");
@@ -343,22 +477,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
-                    b.Property<string>("_initialPreservationPeriodStatus")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(64)")
-                        .HasMaxLength(64)
-                        .HasDefaultValue("NeedsUserInput");
-
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
 
                     b.HasIndex("RequirementDefinitionId");
 
                     b.HasIndex("TagId");
 
                     b.ToTable("Requirements");
-
-                    b.HasCheckConstraint("constraint_requirement_check_valid_initial_status", "_initialPreservationPeriodStatus in ('NeedsUserInput','ReadyToBePreserved')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Tag", b =>
@@ -378,6 +507,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<string>("CommPkgNo")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
@@ -392,6 +527,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<string>("McPkgNo")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
@@ -433,6 +574,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("StepId");
@@ -451,6 +596,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<string>("FieldType")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -464,6 +615,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<int>("RequirementDefinitionId")
                         .HasColumnType("int");
@@ -485,6 +642,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
                     b.HasIndex("RequirementDefinitionId");
 
                     b.ToTable("Fields");
@@ -499,11 +660,23 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<int>("DefaultIntervalWeeks")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<int>("RequirementTypeId")
                         .HasColumnType("int");
@@ -523,6 +696,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
                     b.HasIndex("RequirementTypeId");
 
                     b.ToTable("RequirementDefinitions");
@@ -540,8 +717,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(32)")
                         .HasMaxLength(32);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<string>("Schema")
                         .IsRequired()
@@ -558,6 +747,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
+
                     b.ToTable("RequirementTypes");
                 });
 
@@ -568,8 +761,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime?>("ModifiedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ModifiedById")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -582,6 +787,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasMaxLength(255);
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("ModifiedById");
 
                     b.ToTable("Responsibles");
                 });
@@ -613,8 +822,28 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("NumberValue");
                 });
 
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+                });
+
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Step", b =>
                 {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", null)
                         .WithMany("Steps")
                         .HasForeignKey("JourneyId");
@@ -625,11 +854,38 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", null)
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate.Mode", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action", b =>
@@ -642,6 +898,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
                         .WithMany()
                         .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Tag", null)
@@ -653,6 +915,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue", b =>
                 {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.Field", null)
                         .WithMany()
                         .HasForeignKey("FieldId")
@@ -667,6 +935,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationPeriod", b =>
                 {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationRecord", "PreservationRecord")
                         .WithMany()
                         .HasForeignKey("PreservationRecordId");
@@ -682,12 +961,49 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 {
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
                         .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
                         .HasForeignKey("PreservedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Project", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
                         .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement", b =>
                 {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", null)
                         .WithMany()
                         .HasForeignKey("RequirementDefinitionId")
@@ -703,6 +1019,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Tag", b =>
                 {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Project", null)
                         .WithMany("Tags")
                         .HasForeignKey("ProjectId")
@@ -718,6 +1045,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.Field", b =>
                 {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", null)
                         .WithMany("Fields")
                         .HasForeignKey("RequirementDefinitionId")
@@ -727,11 +1065,50 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", b =>
                 {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType", null)
                         .WithMany("RequirementDefinitions")
                         .HasForeignKey("RequirementTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("ModifiedById")
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 #pragma warning restore 612, 618
         }

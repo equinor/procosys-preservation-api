@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class PreservationPeriod : SchemaEntityBase
+    public class PreservationPeriod : SchemaEntityBase, ICreationAuditable, IModificationAuditable
     {
         private readonly List<FieldValue> _fieldValues = new List<FieldValue>();
 
@@ -40,6 +41,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string Comment { get; set; }
         public PreservationRecord PreservationRecord { get; private set; }
         public IReadOnlyCollection<FieldValue> FieldValues => _fieldValues.AsReadOnly();
+        public DateTime CreatedAtUtc { get; private set; }
+        public int CreatedById { get; private set; }
+        public DateTime? ModifiedAtUtc { get; private set; }
+        public int? ModifiedById { get; private set; }
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
         {
@@ -129,6 +134,28 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
+
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        {
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
+            CreatedById = createdBy.Id;
+        }
+
+        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        {
+            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
+            }
+
+            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedById = modifiedBy.Id;
+        }
 
         private void RecordCheckBoxValueForField(Field field, string value)
         {

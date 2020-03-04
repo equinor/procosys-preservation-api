@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Tag : SchemaEntityBase
+    public class Tag : SchemaEntityBase, ICreationAuditable, IModificationAuditable
     {
         private readonly List<Requirement> _requirements = new List<Requirement>();
         private readonly List<Action> _actions = new List<Action>();
@@ -97,6 +98,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public bool IsVoided { get; private set; }
         public DateTime? NextDueTimeUtc => OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
+
+        public DateTime CreatedAtUtc { get; private set; }
+        public int CreatedById { get; private set; }
+        public DateTime? ModifiedAtUtc { get; private set; }
+        public int? ModifiedById { get; private set; }
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
@@ -195,6 +201,28 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             SetStep(journey.GetNextStep(StepId));
+        }
+
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        {
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
+            CreatedById = createdBy.Id;
+        }
+
+        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        {
+            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
+            }
+
+            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedById = modifiedBy.Id;
         }
 
         private bool IsReadyToBeStarted()

@@ -1,7 +1,5 @@
 ﻿using System.Linq;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -9,44 +7,22 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure
 {
-    public class PreservationContext : DbContext, IUnitOfWork, IReadOnlyContext
+    public class PreservationContext : DbContext, IReadOnlyContext
     {
-        private readonly IEventDispatcher _eventDispatcher;
         private readonly IPlantProvider _plantProvider;
 
-        public PreservationContext(
-            DbContextOptions<PreservationContext> options,
-            IEventDispatcher eventDispatcher,
-            IPlantProvider plantProvider)
-            : base(options)
-        {
-            _eventDispatcher = eventDispatcher;
-            _plantProvider = plantProvider;
-        }
+        public PreservationContext(DbContextOptions<PreservationContext> options, IPlantProvider plantProvider)
+            : base(options) => _plantProvider = plantProvider;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             SetGlobalPlantFilter(modelBuilder);
-        }
-
-        private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
-        {
-            // Set global query filter on entities inheriting from SchemaEntityBase
-            // https://gunnarpeipman.com/ef-core-global-query-filters/
-            foreach (var type in TypeProvider.GetEntityTypes(typeof(IDomainMarker).GetTypeInfo().Assembly, typeof(SchemaEntityBase)))
-            {
-                typeof(PreservationContext)
-                .GetMethod(nameof(PreservationContext.SetGlobalQueryFilter))
-                ?.MakeGenericMethod(type)
-                .Invoke(this, new object[] { modelBuilder });
-            }
         }
 
         public static DateTimeKindConverter DateTimeKindConverter { get; } = new DateTimeKindConverter();
@@ -68,19 +44,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public virtual DbSet<FieldValue> FieldValues { get; set; }
         public virtual DbSet<Action> Actions { get; set; }
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
         {
-            await DispatchEvents(cancellationToken);
-            return await base.SaveChangesAsync(cancellationToken);
-        }
-
-        private async Task DispatchEvents(CancellationToken cancellationToken = default)
-        {
-            var entities = ChangeTracker
-                .Entries<EntityBase>()
-                .Where(x => x.Entity.DomainEvents != null && x.Entity.DomainEvents.Any())
-                .Select(x => x.Entity);
-            await _eventDispatcher.DispatchAsync(entities, cancellationToken);
+            // Set global query filter on entities inheriting from SchemaEntityBase
+            // https://gunnarpeipman.com/ef-core-global-query-filters/
+            foreach (var type in TypeProvider.GetEntityTypes(typeof(IDomainMarker).GetTypeInfo().Assembly, typeof(SchemaEntityBase)))
+            {
+                typeof(PreservationContext)
+                .GetMethod(nameof(PreservationContext.SetGlobalQueryFilter))
+                ?.MakeGenericMethod(type)
+                .Invoke(this, new object[] { modelBuilder });
+            }
         }
 
         public void SetGlobalQueryFilter<T>(ModelBuilder builder) where T : SchemaEntityBase =>

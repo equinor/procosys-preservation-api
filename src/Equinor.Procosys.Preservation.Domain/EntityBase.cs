@@ -10,11 +10,6 @@ namespace Equinor.Procosys.Preservation.Domain
     {
         private List<INotification> _domainEvents;
 
-        // Needed for EF Core
-        protected EntityBase()
-        {
-        }
-
         public IReadOnlyCollection<INotification> DomainEvents => _domainEvents?.AsReadOnly() ?? (_domainEvents = new List<INotification>()).AsReadOnly();
         public virtual int Id { get; protected set; }
 

@@ -1,8 +1,10 @@
 ﻿using System;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class Field : SchemaEntityBase
+    public class Field : SchemaEntityBase, ICreationAuditable, IModificationAuditable
     {
         public const int LabelLengthMax = 255;
         public const int UnitLengthMax = 32;
@@ -45,9 +47,36 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             FieldType == FieldType.Attachment ||
             FieldType == FieldType.CheckBox;
 
+        public DateTime CreatedAtUtc { get; private set; }
+        public int CreatedById { get; private set; }
+        public DateTime? ModifiedAtUtc { get; private set; }
+        public int? ModifiedById { get; private set; }
+
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
         public override string ToString() => Label;
+
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        {
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
+            CreatedById = createdBy.Id;
+        }
+
+        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        {
+            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
+            }
+
+            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedById = modifiedBy.Id;
+        }
     }
 }

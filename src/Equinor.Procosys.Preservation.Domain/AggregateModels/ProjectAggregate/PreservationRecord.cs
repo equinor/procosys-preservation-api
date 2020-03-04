@@ -1,9 +1,10 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class PreservationRecord : SchemaEntityBase
+    public class PreservationRecord : SchemaEntityBase, ICreationAuditable
     {
         public const int CommentLengthMax = 2048;
 
@@ -34,5 +35,18 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime PreservedAtUtc { get; private set; }
         public int PreservedById { get; private set; }
         public bool BulkPreserved { get; private set; }
+        public DateTime CreatedAtUtc { get; private set; }
+        public int CreatedById { get; private set; }
+
+        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        {
+            if (createdAtUtc.Kind != DateTimeKind.Utc)
+            {
+                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
+            }
+
+            CreatedAtUtc = createdAtUtc;
+            CreatedById = createdBy.Id;
+        }
     }
 }

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Misc
@@ -11,26 +9,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
     {
         private const string Oid = "http://schemas.microsoft.com/identity/claims/objectidentifier";
         private readonly IHttpContextAccessor _accessor;
-        private readonly IPersonRepository _personRepository;
 
-        public CurrentUserProvider(IHttpContextAccessor accessor, IPersonRepository personRepository)
-        {
-            _accessor = accessor;
-            _personRepository = personRepository;
-        }
+        public CurrentUserProvider(IHttpContextAccessor accessor) => _accessor = accessor;
 
-        public async Task<Person> GetCurrentUserAsync()
+        public Guid GetCurrentUser()
         {
             var oidClaim = _accessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == Oid);
-            if (oidClaim == null)
+            if (Guid.TryParse(oidClaim?.Value, out var oid))
             {
-                return null;
+                return oid;
             }
-
-            var oidString = oidClaim.Value;
-            var oid = Guid.Parse(oidString);
-            var user = await _personRepository.GetByOidAsync(oid);
-            return user;
+            throw new Exception("Unable to determine current user");
         }
     }
 }

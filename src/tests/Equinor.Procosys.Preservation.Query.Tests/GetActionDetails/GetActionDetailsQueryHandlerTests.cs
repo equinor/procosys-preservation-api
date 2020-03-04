@@ -24,19 +24,20 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         private Action _closedAction;
         private static DateTime _utcNow = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static DateTime _dueUtc = _utcNow.AddDays(30);
-        private Person _creator;
         private Person _closer;
+        private Person _currentUser;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
+                _currentUser = AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+                _closer = AddPerson(context, Guid.Empty, "Jon", "Blund");
+
                 var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
 
-                _creator = AddPerson(context, "Ole", "Lukkøye");
-                _closer = AddPerson(context, "Jon", "Blund");
 
                 var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
                     journey.Steps.ElementAt(0),
@@ -47,13 +48,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
                 context.Tags.Add(tag);
 
-                _openAction = new Action(TestPlant, "Open", "Desc1", _utcNow, _creator, _dueUtc);
+                _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
                 tag.AddAction(_openAction);
-                _closedAction = new Action(TestPlant, "Closed", "Desc2", _utcNow, _creator, _dueUtc);
+                _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
                 _closedAction.Close(_utcNow, _closer);
                 tag.AddAction(_closedAction);
 
-                context.SaveChanges();
+                new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
 
                 _tagId = tag.Id;
                 _openActionId = _openAction.Id;
@@ -64,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsClosedAction()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetActionDetailsQuery(_tagId, _closedActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -83,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsOpenAction()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetActionDetailsQuery(_tagId, _openActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -100,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetActionDetailsQuery(0, _closedActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -116,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfActionIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetActionDetailsQuery(_tagId, 0);
                 var dut = new GetActionDetailsQueryHandler(context);

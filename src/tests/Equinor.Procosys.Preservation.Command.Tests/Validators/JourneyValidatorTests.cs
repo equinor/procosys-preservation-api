@@ -16,8 +16,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+
                 _journeyId = AddJourneyWithStep(context, JourneyTitle, AddMode(context, "M"), AddResponsible(context, "R")).Id;
             }
         }
@@ -25,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_KnownTitle_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsAsync(JourneyTitle, default);
@@ -36,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_KnownId_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsAsync(_journeyId, default);
@@ -47,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_UnknownTitle_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsAsync("XXX", default);
@@ -58,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_UnknownId_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsAsync(126234, default);
@@ -69,13 +71,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var journey = context.Journeys.Single(j => j.Id == _journeyId);
                 journey.Void();
                 context.SaveChanges();
             }
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsVoidedAsync(_journeyId, default);
@@ -86,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsVoidedAsync(_journeyId, default);
@@ -97,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsVoidedAsync(126234, default);

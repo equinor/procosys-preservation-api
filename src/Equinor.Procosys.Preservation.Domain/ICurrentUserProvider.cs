@@ -1,10 +1,9 @@
-﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+﻿using System;
 
 namespace Equinor.Procosys.Preservation.Domain
 {
     public interface ICurrentUserProvider
     {
-        Task<Person> GetCurrentUserAsync();
+        Guid GetCurrentUser();
     }
 }

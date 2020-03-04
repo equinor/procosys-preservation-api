@@ -20,13 +20,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(PersonId);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _dut = new Action("SchemaA", "TitleA", "DescA", _utcNow, _personMock.Object, _utcNow);
+            _dut = new Action("SchemaA", "TitleA", "DescA", _utcNow);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithoutDue()
         {
-            _dut = new Action("SchemaA", "TitleA", "DescA", _utcNow, _personMock.Object, null);
+            _dut = new Action("SchemaA", "TitleA", "DescA", null);
 
             Assert.AreEqual("SchemaA", _dut.Schema);
             Assert.IsFalse(_dut.DueTimeUtc.HasValue);
@@ -41,8 +41,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Constructor_ShouldSetProperties_WithDue()
         {
             Assert.AreEqual("SchemaA", _dut.Schema);
-            Assert.AreEqual(_utcNow, _dut.CreatedAtUtc);
-            Assert.AreEqual(PersonId, _dut.CreatedById);
             Assert.AreEqual(_utcNow, _dut.DueTimeUtc);
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual("DescA", _dut.Description);
@@ -50,21 +48,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Constructor_ShouldThrowException_WhenCreatedIsNotUtc()
-            => Assert.ThrowsException<ArgumentException>(() =>
-                new Action("SchemaA", "", "", DateTime.Now, _personMock.Object, _utcNow)
-            );
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenCreatedByIsNull()
-            => Assert.ThrowsException<ArgumentNullException>(() =>
-                new Action("SchemaA", "", "", _utcNow, null, _utcNow)
-            );
-
-        [TestMethod]
         public void Constructor_ShouldThrowException_WhenDueIsNotUtc()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new Action("SchemaA", "", "", _utcNow, _personMock.Object, DateTime.Now)
+                new Action("SchemaA", "", "", DateTime.Now)
             );
 
         [TestMethod]

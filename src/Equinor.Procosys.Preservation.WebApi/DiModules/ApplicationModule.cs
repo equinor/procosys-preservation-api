@@ -51,16 +51,9 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             // Scoped - Created once per client request (connection)
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
             services.AddScoped<IPlantProvider, PlantProvider>();
-            services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();
-            services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
-            services.AddScoped<ITagApiService, MainApiTagService>();
-            services.AddScoped<IPlantApiService, MainApiPlantService>();
-            services.AddScoped<IProjectApiService, MainApiProjectService>();
-            services.AddScoped<IAreaApiService, MainApiAreaService>();
-            services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
-            services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
-            services.AddScoped<IReadOnlyContext>(x => x.GetRequiredService<PreservationContext>());
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IReadOnlyContext, PreservationContext>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
@@ -68,6 +61,14 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IResponsibleRepository, ResponsibleRepository>();
             services.AddScoped<IRequirementTypeRepository, RequirementTypeRepository>();
             services.AddScoped<IPersonRepository, PersonRepository>();
+
+            services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();
+            services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
+            services.AddScoped<ITagApiService, MainApiTagService>();
+            services.AddScoped<IPlantApiService, MainApiPlantService>();
+            services.AddScoped<IProjectApiService, MainApiProjectService>();
+            services.AddScoped<IAreaApiService, MainApiAreaService>();
+            services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
             
             services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
             services.AddScoped<ITagValidator, TagValidator>();

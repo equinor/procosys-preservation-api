@@ -19,8 +19,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         private const int TwoWeeksInterval = 2;
         private const int FourWeeksInterval = 4;
 
+        private Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private DateTime _startedPreservedAtUtc;
         private Mock<IProjectRepository> _projectRepoMock;
+        private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
@@ -50,17 +52,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             });
             _currentUserProvider = new Mock<ICurrentUserProvider>();
             _currentUserProvider
-                .Setup(x => x.GetCurrentUserAsync())
-                .Returns(Task.FromResult(new Person(Guid.Empty, "Firstname", "Lastname")));
+                .Setup(x => x.GetCurrentUser())
+                .Returns(_currentUserOid);
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tag));
+            _personRepoMock = new Mock<IPersonRepository>();
+            _personRepoMock
+                .Setup(x => x.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
+                .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
             _startedPreservedAtUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeServiceMock = new Mock<ITimeService>();
             _command = new PreserveCommand(TagId);
 
             _tag.StartPreservation(_startedPreservedAtUtc);
 
-            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
+            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _personRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
         }
 
         [TestMethod]

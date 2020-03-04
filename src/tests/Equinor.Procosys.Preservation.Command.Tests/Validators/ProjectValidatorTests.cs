@@ -20,8 +20,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+
                 var step = AddJourneyWithStep(context, "J", AddMode(context, "M"), AddResponsible(context, "R")).Steps.First();
                 var notClosedProject = AddProject(context, ProjectNameNotClosed, "Project description");
                 var closedProject = AddProject(context, ProjectNameClosed, "Project description", true);
@@ -39,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_KnownName_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.ExistsAsync(ProjectNameNotClosed, default);
@@ -50,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_UnknownName_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.ExistsAsync("XX", default);
@@ -61,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsExistingAndClosedAsync_KnownClosed_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.IsExistingAndClosedAsync(ProjectNameClosed, default);
@@ -72,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsExistingAndClosedAsync_KnownNotClosed_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.IsExistingAndClosedAsync(ProjectNameNotClosed, default);
@@ -83,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsExistingAndClosedAsync_UnknownName_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.IsExistingAndClosedAsync("XX", default);
@@ -94,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsClosedForTagAsync_KnownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.IsClosedForTagAsync(_tagInNotClosedProjectId, default);
@@ -105,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsClosedForTagAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.IsClosedForTagAsync(_tagInClosedProjectId, default);
@@ -116,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsClosedForTagAsync_UnknownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _eventDispatcher, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.IsClosedForTagAsync(0, default);
