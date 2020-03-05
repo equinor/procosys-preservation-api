@@ -11,6 +11,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "NextDueTimeUtc",
                 table: "Tags",
                 nullable: true);
+
+            migrationBuilder.Sql(@"update Tags set NextDueTimeUtc=
+                   (select top 1 r.NextDueTimeUtc 
+	                from Requirements r 
+	                where r.TagId=Tags.Id 
+	                order by r.NextDueTimeUtc)");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
