@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public bool IsVoided { get; private set; }
-        public DateTime? NextDueTimeUtc => OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
+        public DateTime? NextDueTimeUtc { get; private set;  }
 
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
@@ -106,6 +106,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
+
+        public void UpdateNextDueTimeUtc()
+            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
 
         public void SetStep(Step step)
         {
@@ -159,6 +162,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             Status = PreservationStatus.Active;
+            UpdateNextDueTimeUtc();
         }
 
         public bool IsReadyToBePreserved(DateTime currentTimeUtc)
@@ -239,6 +243,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
             }
+        
+            UpdateNextDueTimeUtc();
         }
 
         private Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)

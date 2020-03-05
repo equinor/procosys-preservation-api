@@ -38,7 +38,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUser());
 
             requirement.Preserve(_timeService.GetCurrentTimeUtc(), currentUser, false);
-            
+            tag.UpdateNextDueTimeUtc();
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
             return new SuccessResult<Unit>(Unit.Value);

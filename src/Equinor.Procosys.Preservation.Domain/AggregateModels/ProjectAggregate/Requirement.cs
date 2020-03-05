@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new Exception($"{nameof(Requirement)} {Id} already have an active {nameof(PreservationPeriod)}. Can't start");
             }
-            AddNewPreservationPeriod(startedAtUtc);
+            PrepareNewPreservation(startedAtUtc);
         }
 
         public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
@@ -100,7 +100,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             PeriodReadyToBePreserved.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
-            AddNewPreservationPeriod(preservedAtUtc);
+            PrepareNewPreservation(preservedAtUtc);
         }
 
         public PreservationPeriod ActivePeriod
@@ -186,7 +186,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private PreservationPeriod PeriodReadyToBePreserved
             => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
 
-        private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
+        private void PrepareNewPreservation(DateTime offsetTimeUtc)
         {
             NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
             var preservationPeriod = new PreservationPeriod(Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
