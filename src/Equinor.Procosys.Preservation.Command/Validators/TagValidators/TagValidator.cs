@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return reqDefCount == reqDefIds.Count;
         }
 
-        public async Task<bool> ReadyToBePreservedAsync(int tagId, DateTime preservedAtUtc, CancellationToken cancellationToken)
+        public async Task<bool> ReadyToBePreservedAsync(int tagId, CancellationToken cancellationToken)
         {
             var tag = await GetTagWithPreservationPeriods(tagId, cancellationToken);
             if (tag == null)
@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 return false;
             }
 
-            return tag.IsReadyToBePreserved(preservedAtUtc);
+            return tag.IsReadyToBePreserved();
         }
 
         public async Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken cancellationToken)

@@ -17,13 +17,10 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
     public class GetAllTagsInProjectQueryHandler : IRequestHandler<GetAllTagsInProjectQuery, Result<IEnumerable<TagDto>>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly ITimeService _timeService;
 
         public GetAllTagsInProjectQueryHandler(
-            IReadOnlyContext context,
-            ITimeService timeService)
+            IReadOnlyContext context)
         {
-            _timeService = timeService;
             _context = context;
         }
 
@@ -69,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     }
                 ).ToListAsync(cancellationToken);
 
-            var now = _timeService.GetCurrentTimeUtc();
+            var now = TimeService.UtcNow;
 
             var tagDtos = orderedDtos.Select(outerDto =>
             {

@@ -26,14 +26,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
 
-        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        public void SetCreated(Person createdBy)
         {
-            if (createdAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
-            }
-
-            CreatedAtUtc = createdAtUtc;
+            CreatedAtUtc = TimeService.UtcNow;
             CreatedById = createdBy.Id;
         }
     }

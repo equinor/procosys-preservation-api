@@ -130,25 +130,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
 
-        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        public void SetCreated(Person createdBy)
         {
-            if (createdAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
-            }
-
-            CreatedAtUtc = createdAtUtc;
+            CreatedAtUtc = TimeService.UtcNow;
             CreatedById = createdBy.Id;
         }
 
-        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        public void SetModified(Person modifiedBy)
         {
-            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
-            }
-
-            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedAtUtc = TimeService.UtcNow;
             ModifiedById = modifiedBy.Id;
         }
 

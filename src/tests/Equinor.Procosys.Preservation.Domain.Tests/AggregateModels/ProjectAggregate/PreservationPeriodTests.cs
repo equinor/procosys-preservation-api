@@ -81,7 +81,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.SetComment("Comment");
             Assert.AreEqual("Comment", dut.Comment);
 
-            dut.Preserve(_utcNow, _preservedByMock.Object, true);
+            dut.Preserve(_preservedByMock.Object, true);
 
             Assert.ThrowsException<Exception>(() => dut.SetComment("X"));
             Assert.AreEqual("Comment", dut.Comment);
@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // act
             var preservationTime = _utcNow.AddDays(12);
-            dut.Preserve(preservationTime, _preservedByMock.Object, true);
+            dut.Preserve(TimeService.Setup(, _preservedByMock.Object, true);
 
             // assert
             var record = dut.PreservationRecord;

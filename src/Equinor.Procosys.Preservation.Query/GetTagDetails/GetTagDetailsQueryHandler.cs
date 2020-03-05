@@ -15,17 +15,15 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
     public class GetTagDetailsQueryHandler : IRequestHandler<GetTagDetailsQuery, Result<TagDetailsDto>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly ITimeService _timeService;
 
-        public GetTagDetailsQueryHandler(IReadOnlyContext context, ITimeService timeService)
+        public GetTagDetailsQueryHandler(IReadOnlyContext context)
         {
             _context = context;
-            _timeService = timeService;
         }
 
         public async Task<Result<TagDetailsDto>> Handle(GetTagDetailsQuery request, CancellationToken cancellationToken)
         {
-            var now = _timeService.GetCurrentTimeUtc();
+            var now = TimeService.UtcNow;
 
             // Requirements and it's PreservationPeriods needs to be included so tag.IsReadyToBePreserved calculates as it should
             var tagDetails = await (from tag in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
