@@ -1,6 +1,7 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -9,14 +10,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class PreservationRecordTests
     {
-        private DateTime _utcNow;
+        private ManualTimeProvider _timeProvider;
         private int _preservedById = 99;
         private Mock<Person> _preservedByMock;
 
         [TestInitialize]
         public void Setup()
         {
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            _timeProvider = new ManualTimeProvider();
+            _timeProvider.UtcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _preservedByMock = new Mock<Person>();
             _preservedByMock.SetupGet(p => p.Id).Returns(_preservedById);
         }
@@ -24,10 +26,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new PreservationRecord("SchemaA", _utcNow, _preservedByMock.Object, true);
+            var dut = new PreservationRecord("SchemaA", _preservedByMock.Object, true);
 
             Assert.AreEqual("SchemaA", dut.Schema);
-            Assert.AreEqual(_utcNow, dut.PreservedAtUtc);
+            Assert.AreEqual(_timeProvider.UtcNow, dut.PreservedAtUtc);
             Assert.AreEqual(_preservedById, dut.PreservedById);
             Assert.IsTrue(dut.BulkPreserved);
         }
@@ -35,13 +37,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenPreservedByNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
-                new PreservationRecord("SchemaA", _utcNow, null, true)
+                new PreservationRecord("SchemaA", null, true)
             );
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenDateNotUtc()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new PreservationRecord("SchemaA", DateTime.Now, _preservedByMock.Object, true)
+                new PreservationRecord("SchemaA", _preservedByMock.Object, true)
             );
     }
 }

@@ -25,7 +25,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
-        private Mock<ITimeService> _timeServiceMock;
         private BulkPreserveCommand _command;
         private Tag _tag1;
         private Tag _tag2;
@@ -71,17 +70,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _personRepoMock
                 .Setup(x => x.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
-            _startedPreservedAtUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeServiceMock = new Mock<ITimeService>();
             _command = new BulkPreserveCommand(tagIds);
 
-            _tag1.StartPreservation(_startedPreservedAtUtc);
-            _tag2.StartPreservation(_startedPreservedAtUtc);
+            _tag1.StartPreservation();
+            _tag2.StartPreservation();
 
             _dut = new BulkPreserveCommandHandler(
                 _projectRepoMock.Object,
                 _personRepoMock.Object,
-                _timeServiceMock.Object,
                 UnitOfWorkMock.Object,
                 _currentUserProvider.Object);
         }
@@ -97,8 +93,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             var req2OnTag1WithFourWeekIntervalInitialPeriod = _req2OnTag1WithFourWeekInterval.ActivePeriod;
             var req2OnTag2WithFourWeekIntervalInitialPeriod = _req2OnTag2WithFourWeekInterval.ActivePeriod;
             
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(currentTimeUtc);
-
             await _dut.Handle(_command, default);
 
             var expectedNextDueTimeUtcForTwoWeeksInterval = currentTimeUtc.AddWeeks(TwoWeeksInterval);
@@ -119,8 +113,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         {
             var currentTimeUtc = _startedPreservedAtUtc.AddWeeks(FourWeeksInterval);
             
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(currentTimeUtc);
-
             await _dut.Handle(_command, default);
 
             var expectedNextDueTimeUtcForTwoWeeksInterval = currentTimeUtc.AddWeeks(TwoWeeksInterval);
@@ -135,8 +127,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldThrowException_WhenBeforeDueForAnyRequirement()
         {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc);
-
             await Assert.ThrowsExceptionAsync<Exception>(() =>
                 _dut.Handle(_command, default)
             );
@@ -145,7 +135,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
         {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(TwoWeeksInterval));
+            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
@@ -154,7 +144,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
         {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(FourWeeksInterval));
+            _timeProvider.UtcNow = _utcNow.AddWeeks(FourWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
@@ -162,9 +152,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
 
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldNotSave_WhenBeforeDueForAnyRequirement()
-        {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc);
-            
+        {            
             await Assert.ThrowsExceptionAsync<Exception>(() =>
                 _dut.Handle(_command, default)
             );

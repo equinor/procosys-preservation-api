@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _closedAction.Close(_utcNow, _closer);
                 tag.AddAction(_closedAction);
 
-                new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+                new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync(default).Wait();
 
                 _tagId = tag.Id;
                 _openActionId = _openAction.Id;

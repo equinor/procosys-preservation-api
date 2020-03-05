@@ -70,8 +70,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             _tag2Mock.SetupGet(t => t.Id).Returns(TagId2);
             _tag2Mock.SetupGet(t => t.Schema).Returns(TestPlant);
 
-            _tag1Mock.Object.StartPreservation(DateTime.UtcNow);
-            _tag2Mock.Object.StartPreservation(DateTime.UtcNow);
+            _tag1Mock.Object.StartPreservation();
+            _tag2Mock.Object.StartPreservation();
 
             var projectRepoMock = new Mock<IProjectRepository>();
             

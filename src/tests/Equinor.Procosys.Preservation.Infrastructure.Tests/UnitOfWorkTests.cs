@@ -19,7 +19,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         private DbContextOptions<PreservationContext> _dbContextOptions;
         private Mock<IPlantProvider> _plantProviderMock;
         private Mock<IEventDispatcher> _eventDispatcherMock;
-        private Mock<ITimeService> _timeServiceMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
 
         [TestInitialize]
@@ -34,11 +33,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
                 .Returns(Plant);
 
             _eventDispatcherMock = new Mock<IEventDispatcher>();
-
-            _timeServiceMock = new Mock<ITimeService>();
-            _timeServiceMock
-                .Setup(x => x.GetCurrentTimeUtc())
-                .Returns(_currentTime);
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
         }
@@ -59,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             var newMode = new Mode(Plant, "TestMode");
             context.Modes.Add(newMode);
 
-            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _timeServiceMock.Object, _currentUserProviderMock.Object);
+            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
             await dut.SaveChangesAsync();
 
             Assert.AreEqual(_currentTime, newMode.CreatedAtUtc);
@@ -84,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             var newMode = new Mode(Plant, "TestMode");
             context.Modes.Add(newMode);
 
-            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _timeServiceMock.Object, _currentUserProviderMock.Object);
+            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
             await dut.SaveChangesAsync();
 
             newMode.Void();

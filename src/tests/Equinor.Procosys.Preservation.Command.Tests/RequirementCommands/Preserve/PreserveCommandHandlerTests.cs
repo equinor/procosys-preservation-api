@@ -26,7 +26,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
-        private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
         private Tag _tag;
         private Requirement _requirement;
@@ -61,15 +60,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             _personRepoMock
                 .Setup(x => x.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeServiceMock = new Mock<ITimeService>();
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
+
             _command = new PreserveCommand(TagId, RequirementId);
 
-            _tag.StartPreservation(_utcNow.AddDays(-1));
+            _timeProvider.UtcNow = _utcNow.AddDays(-1);
+            _tag.StartPreservation();
+            _timeProvider.UtcNow = _utcNow;
             _initialPreservationPeriod = _requirement.PreservationPeriods.Single();
 
-            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _personRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
+            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _personRepoMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
         }
 
         [TestMethod]

@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
                 _requirement
             });
 
-            tag.StartPreservation(new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc));
+            tag.StartPreservation();
             Assert.AreEqual(PreservationStatus.Active, tag.Status);
             Assert.IsTrue(_requirement.HasActivePeriod);
 

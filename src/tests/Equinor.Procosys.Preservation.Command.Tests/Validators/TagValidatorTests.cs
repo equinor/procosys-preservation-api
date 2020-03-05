@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
-                var uow = new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider);
+                var uow = new UnitOfWork(context, _eventDispatcher, _currentUserProvider);
 
                 var project = AddProject(context, ProjectName, "Project description");
                 var journey = AddJourneyWithStep(context, "J", AddMode(context, "M1"), AddResponsible(context, "R1"));
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var tagNotStartedPreservation = AddTag(context, project, TagType.Standard, TagNo1, "Tag description", journey.Steps.First(), new List<Requirement> {reqNotStartedPreservation});
 
                 var tagStartedPreservation = AddTag(context, project, TagType.Standard, TagNo2, "", journey.Steps.Last(), new List<Requirement>{reqStartedPreservation});
-                tagStartedPreservation.StartPreservation(_startedPreservationAtUtc);
+                tagStartedPreservation.StartPreservation();
 
                 var siteAreaTag = AddTag(context, project, TagType.SiteArea, "#SITE-E-A1", "Tag description", journey.Steps.First(), new List<Requirement> {reqSiteArea});
 
@@ -214,7 +214,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.ReadyToBePreservedAsync(_tagNotStartedPreservationId, _startedPreservationAtUtc.AddWeeks(IntervalWeeks), default);
+                _timeProvider.UtcNow = _timeProvider.UtcNow.AddWeeks(IntervalWeeks);
+                var result = await dut.ReadyToBePreservedAsync(_tagNotStartedPreservationId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -225,7 +226,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.ReadyToBePreservedAsync(_tagStartedPreservationId, _startedPreservationAtUtc.AddWeeks(IntervalWeeks), default);
+                _timeProvider.UtcNow = _timeProvider.UtcNow.AddWeeks(IntervalWeeks);
+                var result = await dut.ReadyToBePreservedAsync(_tagStartedPreservationId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -258,7 +260,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).Single(t => t.Id == _tagNotStartedPreservationId);
-                tag.StartPreservation(_startedPreservationAtUtc);
+                tag.StartPreservation();
                 context.SaveChanges();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))

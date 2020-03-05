@@ -25,7 +25,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         private string _modeTitleStep2 = "M2";
         private string _respCodeStep2 = "R2";
         private string _reqTypeCode = "ROT";
-        private Mock<ITimeService> _timeServiceMock;
         private int _intervalWeeks = 2;
         private GetAllTagsInProjectQuery _query;
         private string _stdTagPrefix = "StdTagNo";
@@ -118,9 +117,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
                 }
                 context.SaveChanges();
 
-                _timeServiceMock = new Mock<ITimeService>();
-                _startedPreservationUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-                _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservationUtc);
                 _query = new GetAllTagsInProjectQuery(_projectName);
             }
         }
@@ -130,7 +126,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
 
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -142,7 +138,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
 
                 // 30 tags added in setup, but 20 of them in project PX
@@ -155,7 +151,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
 
                 var tagDto = result.Data.First();
@@ -187,7 +183,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
 
                 var tagDto = result.Data.First(t => t.Status == PreservationStatus.NotStarted);
@@ -207,7 +203,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
 
                 var tagDto = result.Data.First(t => t.Status == PreservationStatus.Active);
@@ -225,7 +221,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
                 var tagNotStartedDto = result.Data.First(t => t.Status == PreservationStatus.NotStarted);
                 Assert.IsFalse(tagNotStartedDto.ReadyToBeTransferred);
@@ -239,7 +235,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
 
                 var stdTagActiveDto = result.Data.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
@@ -259,7 +255,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
 
                 var stdTagActiveDto = result.Data.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
@@ -275,7 +271,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var dut = new GetAllTagsInProjectQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(new GetAllTagsInProjectQuery("NO"), default);
 
                 Assert.AreEqual(0, result.Data.Count());
@@ -287,7 +283,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var tags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ToList();
-                tags.ForEach(t => t.StartPreservation(_startedPreservationUtc));
+                tags.ForEach(t => t.StartPreservation());
                 context.SaveChanges();
             }
         }
