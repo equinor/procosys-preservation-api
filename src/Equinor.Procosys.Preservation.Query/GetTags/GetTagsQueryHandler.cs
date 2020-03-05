@@ -128,9 +128,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                 case SortingDirection.Asc:
                     switch (sorting.SortingColumn)
                     {
-                        //case SortingColumn.NextDue:
-                        //    queryable = queryable.OrderBy(dto => dto.Tag.NextDueTimeUtc);
-                        //    break;
+                        case SortingColumn.Due:
+                            queryable = queryable.OrderBy(dto => dto.Tag.NextDueTimeUtc);
+                            break;
                         case SortingColumn.Status:
                             queryable = queryable.OrderBy(dto => dto.Tag.Status);
                             break;
@@ -164,9 +164,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                 case SortingDirection.Desc:
                     switch (sorting.SortingColumn)
                     {
-                        //case SortingColumn.NextDue:
-                        //    queryable = queryable.OrderByDescending(dto => dto.Tag.NextDueTimeUtc);
-                        //    break;
+                        case SortingColumn.Due:
+                            queryable = queryable.OrderByDescending(dto => dto.Tag.NextDueTimeUtc);
+                            break;
                         case SortingColumn.Status:
                             queryable = queryable.OrderByDescending(dto => dto.Tag.Status);
                             break;

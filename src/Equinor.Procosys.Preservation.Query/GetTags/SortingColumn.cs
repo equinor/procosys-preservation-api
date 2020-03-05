@@ -2,7 +2,7 @@
 {
     public enum SortingColumn
     {
-        //NextDue,
+        Due,
         Status,
         TagNo,
         Description,
