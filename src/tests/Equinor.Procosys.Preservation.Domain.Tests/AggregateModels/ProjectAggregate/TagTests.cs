@@ -141,6 +141,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual("TagFunctionCodeA", _dutWithOneReqNotNeedInputTwoWeekInterval.TagFunctionCode);
             Assert.AreEqual(_step1Mock.Object.Id, _dutWithOneReqNotNeedInputTwoWeekInterval.StepId);
             Assert.AreEqual(TagType.Standard, _dutWithOneReqNotNeedInputTwoWeekInterval.TagType);
+            Assert.IsNull(_dutWithOneReqNotNeedInputTwoWeekInterval.NextDueTimeUtc);
             var requirements = _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements;
             Assert.AreEqual(1, requirements.Count);
             
@@ -201,7 +202,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void StartPreservation_ShouldSetCorrectNextDueDateOnEachRequirement()
+        public void StartPreservation_ShouldSetCorrectNextDueDateOnTagAndEachRequirement()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_NoneNeedInput_DifferentIntervals);
 
@@ -211,19 +212,21 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var expectedNextDueTimeLaterUtc = _utcNow.AddWeeks(ThreeWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeFirstUtc, dut.Requirements.ElementAt(0).NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeLaterUtc, dut.Requirements.ElementAt(1).NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeFirstUtc, dut.NextDueTimeUtc);
         }
 
         [TestMethod]
         public void StartPreservation_ShouldStartOnEachNonVoidedRequirement()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_NoneNeedInput_DifferentIntervals);
-            dut.Requirements.ElementAt(1).Void();
+            dut.Requirements.ElementAt(0).Void();
 
             dut.StartPreservation(_utcNow);
 
-            var expectedNextDueTimeFirstUtc = _utcNow.AddWeeks(TwoWeeksInterval);
-            Assert.AreEqual(expectedNextDueTimeFirstUtc, dut.Requirements.ElementAt(0).NextDueTimeUtc);
-            Assert.IsFalse(dut.Requirements.ElementAt(1).NextDueTimeUtc.HasValue);
+            var expectedNextDueTime = _utcNow.AddWeeks(dut.Requirements.ElementAt(1).IntervalWeeks);
+            Assert.AreEqual(expectedNextDueTime, dut.Requirements.ElementAt(1).NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTime, dut.NextDueTimeUtc);
+            Assert.IsFalse(dut.Requirements.ElementAt(0).NextDueTimeUtc.HasValue);
         }
 
         [TestMethod]
@@ -282,7 +285,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                    
             Assert.ThrowsException<Exception>(() 
                 => _dutWithOneReqNotNeedInputTwoWeekInterval.Preserve(_utcNow, _person));
-     
         }
 
         [TestMethod]
@@ -541,6 +543,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual(1, dut.OrderedRequirements().Count());
         }
+
         [TestMethod]
         public void OrderedRequirements_ShouldChange_WhenPreserve()
         {
@@ -554,6 +557,24 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void NextDueTime_ShouldChange_WhenPreserve()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            dut.StartPreservation(_utcNow);
+            
+            var requirement = dut.OrderedRequirements().First();
+            var oldNextTime = requirement.NextDueTimeUtc;
+            Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, requirement);
+            Assert.AreEqual(requirement.NextDueTimeUtc, dut.NextDueTimeUtc);
+            dut.Preserve(_dueTimeForTwoWeeksInterval, _person);
+
+            requirement = dut.OrderedRequirements().First();
+            Assert.AreEqual(_reqNotNeedInputThreeWeekInterval, requirement);
+            Assert.AreEqual(requirement.NextDueTimeUtc, dut.NextDueTimeUtc);
+            Assert.AreNotEqual(oldNextTime, requirement.NextDueTimeUtc);
+        }
+
+        [TestMethod]
         public void OrderedRequirements_ShouldChange_WhenBulkPreserve()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
@@ -563,6 +584,24 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.BulkPreserve(_dueTimeForTwoWeeksInterval, _person);
 
             Assert.AreEqual(_reqNotNeedInputThreeWeekInterval, dut.OrderedRequirements().First());
+        }
+
+        [TestMethod]
+        public void NextDueTime_ShouldChange_WhenBulkPreserve()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            dut.StartPreservation(_utcNow);
+            
+            var requirement = dut.OrderedRequirements().First();
+            var oldNextTime = requirement.NextDueTimeUtc;
+            Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, requirement);
+            Assert.AreEqual(requirement.NextDueTimeUtc, dut.NextDueTimeUtc);
+            dut.BulkPreserve(_dueTimeForTwoWeeksInterval, _person);
+
+            requirement = dut.OrderedRequirements().First();
+            Assert.AreEqual(_reqNotNeedInputThreeWeekInterval, requirement);
+            Assert.AreEqual(requirement.NextDueTimeUtc, dut.NextDueTimeUtc);
+            Assert.AreNotEqual(oldNextTime, requirement.NextDueTimeUtc);
         }
 
         [TestMethod]
