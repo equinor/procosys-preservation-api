@@ -107,9 +107,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public void UpdateNextDueTimeUtc()
-            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
-
         public void SetStep(Step step)
         {
             if (step == null)
@@ -168,9 +165,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool IsReadyToBePreserved(DateTime currentTimeUtc)
             => Status == PreservationStatus.Active && 
                FirstUpcomingRequirement(currentTimeUtc) != null;
-
+           
         public void Preserve(DateTime preservedAtUtc, Person preservedBy)
             => Preserve(preservedAtUtc, preservedBy, false);
+        
+        public void Preserve(DateTime preservedAtUtc, Person preservedBy, int requirementId)
+        {
+            var requirement = Requirements.Single(r => r.Id == requirementId);
+            requirement.Preserve(preservedAtUtc, preservedBy, false);
+            UpdateNextDueTimeUtc();
+        }
 
         public void BulkPreserve(DateTime preservedAtUtc, Person preservedBy)
             => Preserve(preservedAtUtc, preservedBy, true);
@@ -249,5 +253,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
             => GetUpComingRequirements(currentTimeUtc).FirstOrDefault();
+
+        private void UpdateNextDueTimeUtc()
+            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
     }
 }

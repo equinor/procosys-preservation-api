@@ -12,9 +12,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class RequirementTests
     {
+        #region Setup
+
         private const string TestPlant = "PlantA";
     
-        #region Setup
         private const int InfoFieldId = 5;
         private const int CheckBoxFieldId = 11;
         private const int NumberFieldId = 12;
