@@ -2,23 +2,26 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
-using Equinor.Procosys.Preservation.Command.TagCommands;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
-using Equinor.Procosys.Preservation.Query.ProjectAggregate;
+using Equinor.Procosys.Preservation.Query.GetTags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
+using GetAllTagsInProjectQuery = Equinor.Procosys.Preservation.Query.ProjectAggregate.GetAllTagsInProjectQuery;
+using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.Requirement;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
+using TagDto = Equinor.Procosys.Preservation.Query.ProjectAggregate.TagDto;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -37,6 +40,41 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<IEnumerable<TagDto>>> GetAllTagsInProject([FromQuery] string projectName)    
         {
             var result = await _mediator.Send(new GetAllTagsInProjectQuery(projectName));
+            return this.FromResult(result);
+        }
+        
+        [HttpGet("Filtered")]
+        public async Task<ActionResult<IEnumerable<TagDto>>> GetTags(
+            [FromQuery] string projectName,
+            [FromQuery] PreservationStatus? preservationStatus,
+            [FromQuery] IEnumerable<int> responsibleIds,
+            [FromQuery] IEnumerable<int> requirementTypeIds,
+            [FromQuery] IEnumerable<int> modeIds,
+            [FromQuery] IEnumerable<int> stepIds,
+            [FromQuery] string tagNo,
+            [FromQuery] string mcPkgNo,
+            [FromQuery] string callOff,
+            SortingColumn sortingColumn,
+            SortingDirection sortingDirection,
+            int page = 0,
+            int pageSize = 20
+        )
+        {
+            var query = new GetTagsQuery(
+                new Sorting(sortingDirection, sortingColumn),
+                new Filter(
+                    projectName,
+                    preservationStatus,
+                    responsibleIds,
+                    requirementTypeIds,
+                    modeIds,
+                    stepIds,
+                    tagNo,
+                    mcPkgNo,
+                    callOff),
+                new Paging(page, pageSize)
+            );
+            var result = await _mediator.Send(query);
             return this.FromResult(result);
         }
 
