@@ -15,6 +15,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Equinor.Procosys.Preservation.MainApi;
@@ -35,6 +36,8 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
     {
         public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
+            TimeService.SetProvider(new SystemTimeProvider());
+
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
 
             services.AddDbContext<PreservationContext>(options =>
