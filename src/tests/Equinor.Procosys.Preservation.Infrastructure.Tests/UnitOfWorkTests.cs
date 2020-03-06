@@ -45,20 +45,19 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         [TestMethod]
         public async Task SaveChangesAsync_SetsCreatedProperties_WhenCreated()
         {
-            using var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object);
+            using var dut = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
 
             var user = new Person(_currentUserOid, "Current", "User");
-            context.Persons.Add(user);
-            context.SaveChanges();
+            dut.Persons.Add(user);
+            dut.SaveChanges();
 
             _currentUserProviderMock
                 .Setup(x => x.GetCurrentUser())
                 .Returns(_currentUserOid);
 
             var newMode = new Mode(Plant, "TestMode");
-            context.Modes.Add(newMode);
+            dut.Modes.Add(newMode);
 
-            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
             await dut.SaveChangesAsync();
 
             Assert.AreEqual(_currentTime, newMode.CreatedAtUtc);
@@ -70,20 +69,19 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         [TestMethod]
         public async Task SaveChangesAsync_SetsModifiedProperties_WhenModified()
         {
-            using var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object);
+            using var dut = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
 
             var user = new Person(_currentUserOid, "Current", "User");
-            context.Persons.Add(user);
-            context.SaveChanges();
+            dut.Persons.Add(user);
+            dut.SaveChanges();
 
             _currentUserProviderMock
                 .Setup(x => x.GetCurrentUser())
                 .Returns(_currentUserOid);
 
             var newMode = new Mode(Plant, "TestMode");
-            context.Modes.Add(newMode);
+            dut.Modes.Add(newMode);
 
-            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
             await dut.SaveChangesAsync();
 
             newMode.Void();

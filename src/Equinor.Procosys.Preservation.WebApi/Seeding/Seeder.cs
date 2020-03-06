@@ -28,7 +28,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
 
                 using (var dbContext = new PreservationContext(
                     scope.ServiceProvider.GetRequiredService<DbContextOptions<PreservationContext>>(),
-                    plantProvider))
+                    plantProvider,
+                    scope.ServiceProvider.GetRequiredService<IEventDispatcher>(),
+                    new SeederUserProvider()))
                 {
                     // If the seeder user exists in the database, it's already been seeded. Don't seed again.
                     if (await dbContext.Persons.AnyAsync(p => p.Oid == s_seederUser.Oid))
@@ -43,10 +45,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     dbContext.Persons.Add(s_seederUser);
                     await dbContext.SaveChangesAsync(cancellationToken);
 
-                    var unitOfWork = new UnitOfWork(
-                        dbContext,
-                        scope.ServiceProvider.GetRequiredService<IEventDispatcher>(),
-                        new SeederUserProvider());
                     var personRepository = new PersonRepository(dbContext);
                     var journeyRepository = new JourneyRepository(dbContext);
                     var modeRepository = new ModeRepository(dbContext);
@@ -55,31 +53,31 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     var projectRepository = new ProjectRepository(dbContext);
 
                     personRepository.AddUsers(250);
-                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
 
                     responsibleRepository.AddResponsibles(250, plantProvider.Plant);
-                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
 
                     modeRepository.AddModes(250, plantProvider.Plant);
-                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
 
                     var modes = await modeRepository.GetAllAsync();
                     var responsibles = await responsibleRepository.GetAllAsync();
                     journeyRepository.AddJourneys(250, plantProvider.Plant, modes, responsibles);
-                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
 
                     requirementTypeRepository.AddRequirementTypes(250, plantProvider.Plant);
-                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
 
                     projectRepository.AddProjects(50, plantProvider.Plant);
-                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
                     var projects = await projectRepository.GetAllAsync();
 
                     var steps = (await journeyRepository.GetAllAsync()).SelectMany(x => x.Steps).ToList();
                     var requirementDefinitions = (await requirementTypeRepository.GetAllAsync()).SelectMany(x => x.RequirementDefinitions).ToList();
 
                     projects.AddTags(100, plantProvider.Plant, steps, requirementDefinitions);
-                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                    await dbContext.SaveChangesAsync(cancellationToken);
                 }
             }
         }
