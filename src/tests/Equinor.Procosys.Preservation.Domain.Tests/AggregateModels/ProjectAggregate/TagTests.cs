@@ -579,7 +579,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, dut.OrderedRequirements().First());
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
             dut.Preserve(_person);
 
             Assert.AreEqual(_reqNotNeedInputThreeWeekInterval, dut.OrderedRequirements().First());

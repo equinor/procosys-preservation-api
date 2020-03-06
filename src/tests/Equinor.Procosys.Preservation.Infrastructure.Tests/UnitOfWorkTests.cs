@@ -4,6 +4,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -20,6 +21,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         private Mock<IPlantProvider> _plantProviderMock;
         private Mock<IEventDispatcher> _eventDispatcherMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
+        private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void Setup()
@@ -35,6 +37,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             _eventDispatcherMock = new Mock<IEventDispatcher>();
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
+
+            _timeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
+            TimeService.SetProvider(_timeProvider);
         }
 
         [TestMethod]

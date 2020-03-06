@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _eventDispatcher = eventDispatcher.Object;
 
             _timeProvider = new ManualTimeProvider();
-            _timeProvider.UtcNow =  new DateTime(2020, 2, 1, 12, 0, 0, DateTimeKind.Utc);
+            _timeProvider.UtcNow =  new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
             TimeService.SetProvider(_timeProvider);
 
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()

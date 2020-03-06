@@ -25,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests
                 .Returns(TestPlant);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeProvider = new ManualTimeProvider(_utcNow);
+            TimeService.SetProvider(_timeProvider);
         }
     }
 }

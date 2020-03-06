@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _timeProvider = new ManualTimeProvider();
             _timeProvider.UtcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            TimeService.SetProvider(_timeProvider);
             _preservedByMock = new Mock<Person>();
             _preservedByMock.SetupGet(p => p.Id).Returns(_preservedById);
         }
@@ -38,12 +39,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Constructor_ShouldThrowException_WhenPreservedByNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
                 new PreservationRecord("SchemaA", null, true)
-            );
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenDateNotUtc()
-            => Assert.ThrowsException<ArgumentException>(() =>
-                new PreservationRecord("SchemaA", _preservedByMock.Object, true)
             );
     }
 }

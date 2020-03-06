@@ -71,6 +71,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeProvider = new ManualTimeProvider();
             _timeProvider.UtcNow = _utcNow;
+            TimeService.SetProvider(_timeProvider);
         }
 
         #endregion
@@ -389,10 +390,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement(TestPlant, intervalWeeks, _reqDefWithInfoFieldMock.Object);
             dut.StartPreservation();
 
-            var preservedTime = _utcNow.AddDays(5);
+            _timeProvider.UtcNow = TimeService.UtcNow.AddDays(5);
             dut.Preserve(new Mock<Person>().Object, false);
             
-            var expectedNextDueTimeUtc = preservedTime.AddWeeks(intervalWeeks);
+            var expectedNextDueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);
             Assert.AreEqual(2, dut.PreservationPeriods.Count);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Last().DueTimeUtc);
         }

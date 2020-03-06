@@ -22,7 +22,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         private const int Interval = 2;
 
         private Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
-        private DateTime _utcNow;
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;

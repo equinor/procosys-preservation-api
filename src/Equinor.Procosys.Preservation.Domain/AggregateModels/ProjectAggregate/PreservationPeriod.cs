@@ -23,10 +23,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             DateTime dueTimeUtc,
             PreservationPeriodStatus status) : base(schema)
         {
-            if (dueTimeUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(dueTimeUtc)} is not Utc");
-            }
 
             if (status != PreservationPeriodStatus.NeedsUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
             {

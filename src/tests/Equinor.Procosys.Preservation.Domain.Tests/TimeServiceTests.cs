@@ -10,6 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         [TestMethod]
         public void ReturnsTimeAsUtc()
         {
+            TimeService.SetProvider(new ValidTimeProvider());
             var time = TimeService.UtcNow;
 
             Assert.AreEqual(DateTimeKind.Utc, time.Kind);
@@ -25,6 +26,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         public void Setup_ThrowsException_WhenProviderDoesNotReturnTimeInUtc()
         {
             Assert.ThrowsException<ArgumentException>(() =>TimeService.SetProvider(new InvalidTimeProvider()));
+        }
+
+        public class ValidTimeProvider : ITimeProvider
+        {
+            public DateTime UtcNow => new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         }
 
         public class InvalidTimeProvider : ITimeProvider

@@ -189,6 +189,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
+                _timeProvider.UtcNow = _timeProvider.UtcNow.AddWeeks(_requestTimeAfterPreservationStartedInWeeks);
+
                 var query = new GetTagRequirementsQuery(_tagId);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
