@@ -113,7 +113,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
             Assert.IsNull(dut.PreservationRecord);
-            var preservationTime = _timeProvider.UtcNow.AddDays(12);
             dut.Preserve(_preservedByMock.Object, true);
 
             // act
