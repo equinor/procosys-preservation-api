@@ -9,12 +9,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Heartbeat
     [Route("Heartbeat")]
     public class HeartbeatController : ControllerBase
     {
-        private readonly ITimeService _timeService;
         private readonly ILogger<HeartbeatController> _logger;
 
-        public HeartbeatController(ITimeService timeService, ILogger<HeartbeatController> logger)
+        public HeartbeatController(ILogger<HeartbeatController> logger)
         {
-            _timeService = timeService;
             _logger = logger;
         }
 
@@ -22,7 +20,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Heartbeat
         [HttpGet("IsAlive")]
         public IActionResult IsAlive()
         {
-            var timestampString = $"{_timeService.GetCurrentTimeUtc():yyyy-MM-dd HH:mm:ss} UTC";
+            var timestampString = $"{TimeService.UtcNow:yyyy-MM-dd HH:mm:ss} UTC";
             _logger.LogDebug($"The application is running at {timestampString}");
             return new JsonResult(new
             {

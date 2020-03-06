@@ -14,12 +14,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
     public class GetTagRequirementsQueryHandler : IRequestHandler<GetTagRequirementsQuery, Result<List<RequirementDto>>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly ITimeService _timeService;
 
-        public GetTagRequirementsQueryHandler(IReadOnlyContext context, ITimeService timeService)
+        public GetTagRequirementsQueryHandler(IReadOnlyContext context)
         {
             _context = context;
-            _timeService = timeService;
         }
 
         public async Task<Result<List<RequirementDto>>> Handle(GetTagRequirementsQuery request, CancellationToken cancellationToken)
@@ -75,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                     return new RequirementDto(
                         requirement.Id,
                         requirement.IntervalWeeks,
-                        requirement.GetNextDueInWeeks(_timeService.GetCurrentTimeUtc()),
+                        requirement.GetNextDueInWeeks(),
                         requirementDto.ReqTypeCode,
                         requirementDto.ReqTypeTitle,
                         requirementDto.RequirementDefinition.Title,

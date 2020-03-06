@@ -23,10 +23,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             DateTime dueTimeUtc,
             PreservationPeriodStatus status) : base(schema)
         {
-            if (dueTimeUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(dueTimeUtc)} is not Utc");
-            }
 
             if (status != PreservationPeriodStatus.NeedsUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
             {
@@ -46,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
-        public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
+        public void Preserve(Person preservedBy, bool bulkPreserved)
         {
             if (PreservationRecord != null)
             {
@@ -58,13 +54,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)}. Can't preserve");
             }
 
-            if (preservedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(preservedAtUtc)} is not Utc");
-            }
-
             Status = PreservationPeriodStatus.Preserved;
-            PreservationRecord = new PreservationRecord(base.Schema, preservedAtUtc, preservedBy, bulkPreserved);
+            PreservationRecord = new PreservationRecord(base.Schema, preservedBy, bulkPreserved);
         }
 
         public void UpdateStatus(RequirementDefinition requirementDefinition)
@@ -135,25 +126,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
 
-        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        public void SetCreated(Person createdBy)
         {
-            if (createdAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
-            }
-
-            CreatedAtUtc = createdAtUtc;
+            CreatedAtUtc = TimeService.UtcNow;
             CreatedById = createdBy.Id;
         }
 
-        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        public void SetModified(Person modifiedBy)
         {
-            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
-            }
-
-            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedAtUtc = TimeService.UtcNow;
             ModifiedById = modifiedBy.Id;
         }
 

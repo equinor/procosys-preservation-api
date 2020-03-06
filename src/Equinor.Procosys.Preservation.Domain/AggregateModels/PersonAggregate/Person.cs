@@ -25,14 +25,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
-        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        public void SetModified(Person modifiedBy)
         {
-            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
-            }
-
-            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedAtUtc = TimeService.UtcNow;
             ModifiedById = modifiedBy.Id;
         }
     }

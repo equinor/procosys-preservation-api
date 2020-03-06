@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Equinor.Procosys.Preservation.Test.Common;
 
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
@@ -27,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private Mock<RequirementDefinition> _reqDefWithNumberFieldMock;
         private Mock<RequirementDefinition> _reqDefWithNumberAndCheckBoxFieldMock;
         private DateTime _utcNow;
+        private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void Setup()
@@ -67,6 +69,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(4);
             
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            _timeProvider = new ManualTimeProvider(_utcNow);
+            TimeService.SetProvider(_timeProvider);
         }
 
         #endregion
@@ -82,7 +86,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(_reqDefWithCheckBoxFieldMock.Object.Id, dut.RequirementDefinitionId);
             Assert.IsFalse(dut.IsVoided);
             Assert.IsFalse(dut.ReadyToBePreserved);
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(_utcNow.AddWeeks(TwoWeeksInterval)));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
         }
 
         [TestMethod]
@@ -109,7 +114,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             var expectedNextDueTimeUtc = _utcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
@@ -120,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.IsTrue(dut.HasActivePeriod);
             Assert.IsNotNull(dut.ActivePeriod);
@@ -131,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.IsFalse(dut.ReadyToBePreserved);
         }
@@ -141,7 +146,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.IsTrue(dut.ReadyToBePreserved);
         }
@@ -154,65 +159,62 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void IsReadyAndDueToBePreserved_ShouldBeFalse_BeforePeriod()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            var sameDayAsStart = _utcNow;
-
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(sameDayAsStart));
-            Assert.AreEqual(2, dut.GetNextDueInWeeks(sameDayAsStart));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(2, dut.GetNextDueInWeeks());
         }
 
         [TestMethod]
         public void IsReadyAndDueToBePreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            var spotOnTime = _utcNow.AddWeeks(TwoWeeksInterval);
-
-            Assert.IsTrue(dut.IsReadyAndDueToBePreserved(spotOnTime));
-            Assert.AreEqual(0, dut.GetNextDueInWeeks(spotOnTime));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(0, dut.GetNextDueInWeeks());
         }
 
         [TestMethod]
         public void IsReadyAndDueToBePreserved_ShouldBeFalse_InPeriod_WhenNeedInput()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            var spotOnTime = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
 
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(spotOnTime));
-            Assert.AreEqual(0, dut.GetNextDueInWeeks(spotOnTime));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(0, dut.GetNextDueInWeeks());
         }
 
         [TestMethod]
         public void IsReadyAndDueToBePreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            var twoWeekOverdue = _utcNow.AddWeeks(TwoWeeksInterval + TwoWeeksInterval);
+            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
 
-            Assert.IsTrue(dut.IsReadyAndDueToBePreserved(twoWeekOverdue));
-            Assert.AreEqual(-2, dut.GetNextDueInWeeks(twoWeekOverdue));
+            Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(-2, dut.GetNextDueInWeeks());
         }
 
         [TestMethod]
         public void IsReadyAndDueToBePreserved_ShouldBeFalse_OnOverdue_WhenNeedInput()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            var twoWeekOverdue = _utcNow.AddWeeks(TwoWeeksInterval+TwoWeeksInterval);
+            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
 
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(twoWeekOverdue));
-            Assert.AreEqual(-2, dut.GetNextDueInWeeks(twoWeekOverdue));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(-2, dut.GetNextDueInWeeks());
         }
 
         #endregion
@@ -224,9 +226,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved(_utcNow.AddDays(2)));
+            _timeProvider.Elapse(TimeSpan.FromDays(2));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
         }
 
         [TestMethod]
@@ -234,9 +237,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
-            Assert.ThrowsException<Exception>(() => dut.StartPreservation(_utcNow)
+            Assert.ThrowsException<Exception>(() => dut.StartPreservation()
             );
         }
 
@@ -245,7 +248,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             var expectedNextDueTimeUtc = _utcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(1, dut.PreservationPeriods.Count);
@@ -257,7 +260,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.IsNull(dut.PreservationPeriods.First().PreservationRecord);
         }
@@ -267,7 +270,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.PreservationPeriods.First().Status);
         }
@@ -277,7 +280,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.PreservationPeriods.First().Status);
         }
@@ -292,7 +295,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
 
             Assert.ThrowsException<Exception>(() =>
-                dut.Preserve(_utcNow, new Mock<Person>().Object, false)
+                dut.Preserve(new Mock<Person>().Object, false)
             );
         }
 
@@ -300,10 +303,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Preserve_ShouldThrowException_WhenPreservationPeriodNeedsInput()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() =>
-                dut.Preserve(_utcNow, new Mock<Person>().Object, false)
+                dut.Preserve(new Mock<Person>().Object, false)
             );
         }
 
@@ -311,10 +314,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Preserve_ShouldThrowException_WhenPreservedByNoGiven()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                dut.Preserve(_utcNow, null, false)
+                dut.Preserve(null, false)
             );
         }
                 
@@ -323,12 +326,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
 
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
-            var preservedTime = _utcNow.AddDays(5);
-            dut.Preserve(preservedTime, new Mock<Person>().Object, false);
+            _timeProvider.Elapse(TimeSpan.FromDays(5));
+            dut.Preserve(new Mock<Person>().Object, false);
             
-            var expectedNextDueTimeUtc = preservedTime.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
         }
 
@@ -336,9 +339,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Preserve_ShouldSetStatusPreserveOnReadyPreservationPeriod()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
-            dut.Preserve(_utcNow, new Mock<Person>().Object, false);
+            dut.Preserve(new Mock<Person>().Object, false);
 
             Assert.AreEqual(PreservationPeriodStatus.Preserved, dut.PreservationPeriods.First().Status);
         }
@@ -347,11 +350,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Preserve_ShouldCreatePreservationRecordOnReadyPreservationPeriod()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             var personMock = new Mock<Person>();
             personMock.SetupGet(p => p.Id).Returns(51);
-            dut.Preserve(_utcNow, personMock.Object, false);
+            dut.Preserve(personMock.Object, false);
 
             var preservationRecord = dut.PreservationPeriods.First().PreservationRecord;
             Assert.IsNotNull(preservationRecord);
@@ -363,8 +366,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Preserve_ShouldCreatePreservationRecordWithBulk_WhenBulkPreserve()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
-            dut.Preserve(_utcNow, new Mock<Person>().Object, true);
+            dut.StartPreservation();
+            dut.Preserve(new Mock<Person>().Object, true);
 
             Assert.IsTrue(dut.PreservationPeriods.First().PreservationRecord.BulkPreserved);
         }
@@ -373,8 +376,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Preserve_ShouldCreatePreservationRecordWithoutBulk_WhenNotBulkPreserve()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
-            dut.Preserve(_utcNow, new Mock<Person>().Object, false);
+            dut.StartPreservation();
+            dut.Preserve(new Mock<Person>().Object, false);
 
             Assert.IsFalse(dut.PreservationPeriods.First().PreservationRecord.BulkPreserved);
         }
@@ -384,12 +387,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var intervalWeeks = 2;
             var dut = new Requirement(TestPlant, intervalWeeks, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
-            var preservedTime = _utcNow.AddDays(5);
-            dut.Preserve(preservedTime, new Mock<Person>().Object, false);
+            _timeProvider.Elapse(TimeSpan.FromDays(5));
+            dut.Preserve(new Mock<Person>().Object, false);
             
-            var expectedNextDueTimeUtc = preservedTime.AddWeeks(intervalWeeks);
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(intervalWeeks);
             Assert.AreEqual(2, dut.PreservationPeriods.Count);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Last().DueTimeUtc);
         }
@@ -398,12 +401,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Preserve_ShouldAddNewPreservationPeriodEachTime()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             var preserveCount = 15;
             for (var i = 0; i < preserveCount; i++)
             {
-                dut.Preserve(_utcNow, new Mock<Person>().Object, false);
+                dut.Preserve(new Mock<Person>().Object, false);
             }
             
             Assert.AreEqual(preserveCount+1, dut.PreservationPeriods.Count);
@@ -427,7 +430,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldThrowException_WhenReqDefNotGiven()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.ThrowsException<ArgumentNullException>(() =>
                 dut.RecordValues(null, null, null)
@@ -438,7 +441,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldThrowException_WhenRecordingOnWrongDefinition()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() =>
                 dut.RecordValues(null, null, _reqDefWithCheckBoxFieldMock.Object)
@@ -449,7 +452,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldThrowException_WhenFieldIsInfo()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() =>
                 dut.RecordValues(
@@ -463,7 +466,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_WithComment_ShouldUpdateCommentOnActivePeriod()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(null, "Abc", _reqDefWithCheckBoxFieldMock.Object);
             Assert.AreEqual("Abc", dut.ActivePeriod.Comment);
@@ -476,7 +479,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_WithCheckBoxChecked_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -498,7 +501,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_WithCheckBoxUnchecked_ShouldDoNothing_WhenNoValueExistsInAdvance()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -517,7 +520,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_WithNaAsNumber_ShouldCreateNumberValueWithNullValue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -541,7 +544,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var number = 1282.91;
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -566,7 +569,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_WithNoNumber_ShouldDoNothing_WhenNoValueExistsInAdvance()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -584,7 +587,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldDeleteExistingCheckBoxValue_WhenCheckBoxIsUnchecked()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -612,7 +615,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldDeleteExistingNumberValue_WhenNumberIsNull()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -642,7 +645,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldDeleteExistingNumberValue_WhenNumberIsBlank()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -671,7 +674,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_OneByOne()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -700,7 +703,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -719,7 +722,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ToggleReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_ThenRemoveCheckBox()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -749,7 +752,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldToggleReadyToBePreserved_WhenRecordingCheckBoxValue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -779,7 +782,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_ShouldToggleReadyToBePreserved_WhenRecordingNumberValue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -813,7 +816,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetCurrentFieldValue_ShouldReturnNull_BeforeRecording()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.IsNull(dut.GetCurrentFieldValue(_numberFieldMock.Object));
         }
@@ -822,7 +825,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetCurrentFieldValue_ShouldReturnNull_ForUnknownField()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.IsNull(dut.GetCurrentFieldValue(new Mock<Field>().Object));
         }
@@ -831,7 +834,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetCurrentFieldValue_ShouldReturnCheckBoxValue_AfterRecordingCheckBoxTrue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -852,7 +855,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetCurrentFieldValue_ShouldReturnNull_AfterRecordingCheckBoxTrue_ThenRecordCheckBoxFalse()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -881,7 +884,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetCurrentFieldValue_ShouldReturnNumberValue_AfterRecordingNumber()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -902,7 +905,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetCurrentFieldValue_ShouldReturnNull_AfterRecordingNumber_ThenRecordNull()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -935,7 +938,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetCurrentComment_ShouldReturnNull_BeforeRecording()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.IsNull(dut.GetCurrentComment());
         }
@@ -944,7 +947,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetCurrentComment_ShouldReturnComment()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -966,25 +969,24 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetPreviousFieldValue_GetCurrentFieldValue_ShouldReturnDifferentValues_DuringRecordingAndPreserving()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             AssertNumber(null, dut.GetCurrentFieldValue(_numberFieldMock.Object));
             AssertNumber(null, dut.GetPreviousFieldValue(_numberFieldMock.Object));
 
-            var preserveTimeUtc = RecordAndPreseve(_utcNow, dut, 7, null);
+            RecordAndPreseve(dut, 7, null);
 
-            preserveTimeUtc = RecordAndPreseve(preserveTimeUtc, dut, 14.1, 7);
+             RecordAndPreseve(dut, 14.1, 7);
 
-            RecordAndPreseve(preserveTimeUtc, dut, 200, 14.1);
+            RecordAndPreseve(dut, 200, 14.1);
         }
 
-        private DateTime RecordAndPreseve(
-            DateTime timeUtc,
+        private void RecordAndPreseve(
             Requirement dut,
             double numberToRecord,
             double? expectedPreviousRecorded)
         {
-            var preserveTimeUtc = timeUtc.AddDays(5);
+            _timeProvider.Elapse(TimeSpan.FromDays(5));
 
             dut.RecordValues(
                 new Dictionary<int, string>
@@ -998,12 +1000,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             AssertNumber(expectedPreviousRecorded, dut.GetPreviousFieldValue(_numberFieldMock.Object));
 
             // preserve and get a new period
-            dut.Preserve(preserveTimeUtc, new Mock<Person>().Object, false);
+            dut.Preserve(new Mock<Person>().Object, false);
 
             AssertNumber(null, dut.GetCurrentFieldValue(_numberFieldMock.Object));
             AssertNumber(numberToRecord, dut.GetPreviousFieldValue(_numberFieldMock.Object));
-
-            return preserveTimeUtc;
         }
 
         private static void AssertNumber(double? expectedValue, FieldValue value)
@@ -1025,7 +1025,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void GetPreviousFieldValue_ShouldReturnNull_ForUnknownField()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
-            dut.StartPreservation(_utcNow);
+            dut.StartPreservation();
 
             Assert.IsNull(dut.GetPreviousFieldValue(new Mock<Field>().Object));
         }

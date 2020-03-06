@@ -4,6 +4,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -19,8 +20,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         private DbContextOptions<PreservationContext> _dbContextOptions;
         private Mock<IPlantProvider> _plantProviderMock;
         private Mock<IEventDispatcher> _eventDispatcherMock;
-        private Mock<ITimeService> _timeServiceMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
+        private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void Setup()
@@ -35,12 +36,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
 
             _eventDispatcherMock = new Mock<IEventDispatcher>();
 
-            _timeServiceMock = new Mock<ITimeService>();
-            _timeServiceMock
-                .Setup(x => x.GetCurrentTimeUtc())
-                .Returns(_currentTime);
-
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
+
+            _timeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
+            TimeService.SetProvider(_timeProvider);
         }
 
         [TestMethod]
@@ -59,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             var newMode = new Mode(Plant, "TestMode");
             context.Modes.Add(newMode);
 
-            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _timeServiceMock.Object, _currentUserProviderMock.Object);
+            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
             await dut.SaveChangesAsync();
 
             Assert.AreEqual(_currentTime, newMode.CreatedAtUtc);
@@ -84,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             var newMode = new Mode(Plant, "TestMode");
             context.Modes.Add(newMode);
 
-            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _timeServiceMock.Object, _currentUserProviderMock.Object);
+            var dut = new UnitOfWork(context, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
             await dut.SaveChangesAsync();
 
             newMode.Void();

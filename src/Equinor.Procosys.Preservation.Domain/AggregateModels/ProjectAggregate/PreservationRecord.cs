@@ -15,7 +15,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         
         public PreservationRecord(
             string schema,
-            DateTime preservedAtUtc,
             Person preservedBy,
             bool bulkPreserved) : base(schema)
         {
@@ -23,11 +22,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(preservedBy));
             }
-            if (preservedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(preservedAtUtc)} is not Utc");
-            }
-            PreservedAtUtc = preservedAtUtc;
+            PreservedAtUtc = TimeService.UtcNow;
             PreservedById = preservedBy.Id;
             BulkPreserved = bulkPreserved;
         }
@@ -38,14 +33,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
 
-        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        public void SetCreated(Person createdBy)
         {
-            if (createdAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
-            }
-
-            CreatedAtUtc = createdAtUtc;
+            CreatedAtUtc = TimeService.UtcNow;
             CreatedById = createdBy.Id;
         }
     }
