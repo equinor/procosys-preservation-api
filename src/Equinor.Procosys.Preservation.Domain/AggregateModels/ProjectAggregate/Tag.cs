@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public bool IsVoided { get; private set; }
-        public DateTime? NextDueTimeUtc => OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
+        public DateTime? NextDueTimeUtc { get; private set;  }
 
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
@@ -130,6 +130,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _requirements.Add(requirement);
+            UpdateNextDueTimeUtc();
         }
 
         public void AddAction(Action action)
@@ -159,6 +160,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             Status = PreservationStatus.Active;
+            UpdateNextDueTimeUtc();
         }
 
         public bool IsReadyToBePreserved()
@@ -167,7 +169,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void Preserve(Person preservedBy)
             => Preserve(preservedBy, false);
-
+                
+        public void Preserve(Person preservedBy, int requirementId)
+        {
+            var requirement = Requirements.Single(r => r.Id == requirementId);
+            requirement.Preserve(preservedBy, false);
+            UpdateNextDueTimeUtc();
+        }
         public void BulkPreserve(Person preservedBy)
             => Preserve(preservedBy, true);
 
@@ -229,9 +237,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 requirement.Preserve(preservedBy, bulkPreserved);
             }
+        
+            UpdateNextDueTimeUtc();
         }
 
         private Requirement FirstUpcomingRequirement()
             => GetUpComingRequirements().FirstOrDefault();
+
+        private void UpdateNextDueTimeUtc()
+            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
     }
 }

@@ -77,6 +77,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
 
             var expectedNextDueTimeUtc = _utcNow.AddWeeks(Interval);
             Assert.AreEqual(expectedNextDueTimeUtc, _requirement.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _tag.NextDueTimeUtc);
             Assert.IsNotNull(_initialPreservationPeriod.PreservationRecord);
         }
 

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -31,11 +30,10 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
         public async Task<Result<Unit>> Handle(PreserveCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
-            var requirement = tag.Requirements.Single(r => r.Id == request.RequirementId);
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUser());
 
-            requirement.Preserve(currentUser, false);
-            
+            tag.Preserve(currentUser, request.RequirementId);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
             return new SuccessResult<Unit>(Unit.Value);

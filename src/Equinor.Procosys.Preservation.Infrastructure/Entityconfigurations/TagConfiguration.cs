@@ -51,6 +51,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasConversion<string>()
                 .HasDefaultValue(TagType.Standard)
                 .IsRequired();
+            
+            builder.Property(x => x.NextDueTimeUtc)
+                .HasConversion(PreservationContext.NullableDateTimeKindConverter);
 
             builder.HasCheckConstraint("constraint_tag_check_valid_status", $"{nameof(Tag.Status)} in ({GetValidStatuses()})");
 
