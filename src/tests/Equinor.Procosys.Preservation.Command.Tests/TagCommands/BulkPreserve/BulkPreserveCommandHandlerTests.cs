@@ -94,7 +94,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             await _dut.Handle(_command, default);
 
-            var expectedNextDueTimeUtcForTwoWeeksInterval = TimeService.UtcNow.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeUtcForTwoWeeksInterval = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtcForTwoWeeksInterval, _req1OnTag1WithTwoWeekInterval.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtcForTwoWeeksInterval, _req1OnTag2WithTwoWeekInterval.NextDueTimeUtc);
 
@@ -114,11 +114,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
 
             await _dut.Handle(_command, default);
 
-            var expectedNextDueTimeUtcForTwoWeeksInterval = TimeService.UtcNow.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeUtcForTwoWeeksInterval = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtcForTwoWeeksInterval, _req1OnTag1WithTwoWeekInterval.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtcForTwoWeeksInterval, _req1OnTag2WithTwoWeekInterval.NextDueTimeUtc);
 
-            var expectedNextDueTimeUtcForFourWeeksInterval = TimeService.UtcNow.AddWeeks(FourWeeksInterval);
+            var expectedNextDueTimeUtcForFourWeeksInterval = _timeProvider.UtcNow.AddWeeks(FourWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtcForFourWeeksInterval, _req2OnTag1WithFourWeekInterval.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtcForFourWeeksInterval, _req2OnTag2WithFourWeekInterval.NextDueTimeUtc);
         }

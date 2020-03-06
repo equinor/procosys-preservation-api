@@ -392,7 +392,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _timeProvider.Elapse(TimeSpan.FromDays(5));
             dut.Preserve(new Mock<Person>().Object, false);
             
-            var expectedNextDueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(intervalWeeks);
             Assert.AreEqual(2, dut.PreservationPeriods.Count);
             Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.Last().DueTimeUtc);
         }
