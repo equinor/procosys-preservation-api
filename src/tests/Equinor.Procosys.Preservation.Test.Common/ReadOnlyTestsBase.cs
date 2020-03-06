@@ -41,8 +41,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var eventDispatcher = new Mock<IEventDispatcher>();
             _eventDispatcher = eventDispatcher.Object;
 
-            _timeProvider = new ManualTimeProvider();
-            _timeProvider.UtcNow =  new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc);
+            _timeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
             TimeService.SetProvider(_timeProvider);
 
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()

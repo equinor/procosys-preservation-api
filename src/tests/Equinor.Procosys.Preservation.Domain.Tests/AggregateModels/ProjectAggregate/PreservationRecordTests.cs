@@ -17,8 +17,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestInitialize]
         public void Setup()
         {
-            _timeProvider = new ManualTimeProvider();
-            _timeProvider.UtcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            _timeProvider = new ManualTimeProvider(new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc));
             TimeService.SetProvider(_timeProvider);
             _preservedByMock = new Mock<Person>();
             _preservedByMock.SetupGet(p => p.Id).Returns(_preservedById);

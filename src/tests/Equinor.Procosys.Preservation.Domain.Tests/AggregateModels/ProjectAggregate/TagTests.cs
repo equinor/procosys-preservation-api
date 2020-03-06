@@ -106,10 +106,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             };
 
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeProvider = new ManualTimeProvider
-            {
-                UtcNow = _utcNow
-            };
+            _timeProvider = new ManualTimeProvider(_utcNow);
             TimeService.SetProvider(_timeProvider);
 
             _dutWithOneReqNotNeedInputTwoWeekInterval = new Tag(
@@ -157,11 +154,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved());
             
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved());
 
-            _timeProvider.UtcNow = _utcNow;
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.SetTime(_utcNow);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved());
         }
 
@@ -259,7 +256,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved());
         }
         
@@ -269,7 +266,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval + TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays((TwoWeeksInterval + TwoWeeksInterval) * 7));
             Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved());
         }
 
@@ -281,7 +278,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval + TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays((TwoWeeksInterval + TwoWeeksInterval) * 7));
             Assert.IsFalse(dut.IsReadyToBePreserved());
         }
 
@@ -301,7 +298,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
             Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             _dutWithOneReqNotNeedInputTwoWeekInterval.Preserve(_person);
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
         }
@@ -312,7 +309,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
             Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             _dutWithOneReqNotNeedInputTwoWeekInterval.Preserve(_person);
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
         }
@@ -323,7 +320,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
             Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_person);
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
@@ -337,7 +334,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _oneReq_NeedInputTwoWeekInterval);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.ThrowsException<Exception>(() => dut.Preserve(_person));
         }
 
@@ -347,7 +344,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.ThrowsException<Exception>(() => dut.Preserve(_person));
         }
         
@@ -358,7 +355,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             dut.Requirements.ElementAt(0).Void();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             Assert.ThrowsException<Exception>(() => dut.Preserve(_person));
         }
 
@@ -368,7 +365,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_NoneNeedInput_DifferentIntervals);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.ThrowsException<ArgumentNullException>(() => dut.Preserve(null));
         }
         
@@ -383,7 +380,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(1, req1.PreservationPeriods.Count);
             Assert.AreEqual(1, req2.PreservationPeriods.Count);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             dut.Preserve(_person);
             Assert.AreEqual(2, req1.PreservationPeriods.Count);
             Assert.AreEqual(1, req2.PreservationPeriods.Count);
@@ -395,7 +392,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _oneReq_NeedInputTwoWeekInterval);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.ThrowsException<Exception>(() => dut.BulkPreserve(_person));
         }
 
@@ -405,7 +402,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.ThrowsException<Exception>(() => dut.BulkPreserve(_person));
         }
 
@@ -416,7 +413,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             dut.Requirements.ElementAt(0).Void();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             Assert.ThrowsException<Exception>(() => dut.BulkPreserve(_person));
         }
 
@@ -426,7 +423,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_NoneNeedInput_DifferentIntervals);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.ThrowsException<ArgumentNullException>(() => dut.BulkPreserve(null));
         }
 
@@ -445,7 +442,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
             Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_person);
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
         }
@@ -456,7 +453,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
             Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_person);
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
         }
@@ -467,7 +464,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
             Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             _dutWithOneReqNotNeedInputTwoWeekInterval.BulkPreserve(_person);
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
 
@@ -486,7 +483,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(1, req1.PreservationPeriods.Count);
             Assert.AreEqual(1, req2.PreservationPeriods.Count);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             dut.BulkPreserve(_person);
             Assert.AreEqual(2, req1.PreservationPeriods.Count);
             Assert.AreEqual(1, req2.PreservationPeriods.Count);
@@ -497,7 +494,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             Assert.AreEqual(0, dut.GetUpComingRequirements().Count());
         }
         
@@ -516,7 +513,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             Assert.AreEqual(2, dut.GetUpComingRequirements().Count());
         }
         
@@ -526,7 +523,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             Assert.AreEqual(1, dut.GetUpComingRequirements().Count());
         }
         
@@ -536,7 +533,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             Assert.AreEqual(1, dut.GetUpComingRequirements().Count());
         }
         
@@ -547,7 +544,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             dut.Requirements.ElementAt(0).Void();
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(ThreeWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(ThreeWeeksInterval * 7));
             Assert.AreEqual(1, dut.GetUpComingRequirements().Count());
         }
         
@@ -579,7 +576,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, dut.OrderedRequirements().First());
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             dut.Preserve(_person);
 
             Assert.AreEqual(_reqNotNeedInputThreeWeekInterval, dut.OrderedRequirements().First());
@@ -592,7 +589,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.AreEqual(_reqNotNeedInputTwoWeekInterval, dut.OrderedRequirements().First());
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             dut.BulkPreserve(_person);
 
             Assert.AreEqual(_reqNotNeedInputThreeWeekInterval, dut.OrderedRequirements().First());

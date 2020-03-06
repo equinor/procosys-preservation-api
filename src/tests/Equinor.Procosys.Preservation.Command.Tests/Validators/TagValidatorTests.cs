@@ -214,7 +214,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                _timeProvider.UtcNow = _timeProvider.UtcNow.AddWeeks(IntervalWeeks);
+                _timeProvider.Elapse(TimeSpan.FromDays(IntervalWeeks * 7));
                 var result = await dut.ReadyToBePreservedAsync(_tagNotStartedPreservationId, default);
                 Assert.IsFalse(result);
             }
@@ -226,7 +226,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var dut = new TagValidator(context);
-                _timeProvider.UtcNow = _timeProvider.UtcNow.AddWeeks(IntervalWeeks);
+                _timeProvider.Elapse(TimeSpan.FromDays(IntervalWeeks * 7));
                 var result = await dut.ReadyToBePreservedAsync(_tagStartedPreservationId, default);
                 Assert.IsTrue(result);
             }

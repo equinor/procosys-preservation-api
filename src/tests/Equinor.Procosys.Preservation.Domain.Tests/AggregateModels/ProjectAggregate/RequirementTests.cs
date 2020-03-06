@@ -69,8 +69,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(4);
             
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeProvider = new ManualTimeProvider();
-            _timeProvider.UtcNow = _utcNow;
+            _timeProvider = new ManualTimeProvider(_utcNow);
             TimeService.SetProvider(_timeProvider);
         }
 
@@ -87,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(_reqDefWithCheckBoxFieldMock.Object.Id, dut.RequirementDefinitionId);
             Assert.IsFalse(dut.IsVoided);
             Assert.IsFalse(dut.ReadyToBePreserved);
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
         }
 
@@ -174,7 +173,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
             Assert.AreEqual(0, dut.GetNextDueInWeeks());
         }
@@ -186,7 +185,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
 
             Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
             Assert.AreEqual(0, dut.GetNextDueInWeeks());
@@ -199,7 +198,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval + TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays((TwoWeeksInterval + TwoWeeksInterval) * 7));
 
             Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
             Assert.AreEqual(-2, dut.GetNextDueInWeeks());
@@ -212,7 +211,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval + TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays((TwoWeeksInterval + TwoWeeksInterval) * 7));
 
             Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
             Assert.AreEqual(-2, dut.GetNextDueInWeeks());
@@ -229,7 +228,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _utcNow.AddDays(2);
+            _timeProvider.Elapse(TimeSpan.FromDays(2));
             Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
         }
 
@@ -329,7 +328,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = _timeProvider.UtcNow.AddDays(5);
+            _timeProvider.Elapse(TimeSpan.FromDays(5));
             dut.Preserve(new Mock<Person>().Object, false);
             
             var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
@@ -390,7 +389,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement(TestPlant, intervalWeeks, _reqDefWithInfoFieldMock.Object);
             dut.StartPreservation();
 
-            _timeProvider.UtcNow = TimeService.UtcNow.AddDays(5);
+            _timeProvider.Elapse(TimeSpan.FromDays(5));
             dut.Preserve(new Mock<Person>().Object, false);
             
             var expectedNextDueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);
@@ -987,7 +986,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             double numberToRecord,
             double? expectedPreviousRecorded)
         {
-            _timeProvider.UtcNow = _timeProvider.UtcNow.AddDays(5);
+            _timeProvider.Elapse(TimeSpan.FromDays(5));
 
             dut.RecordValues(
                 new Dictionary<int, string>

@@ -29,7 +29,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         private GetAllTagsInProjectQuery _query;
         private string _stdTagPrefix = "StdTagNo";
         private string _siteTagPrefix = "SiteTagNo";
-        private DateTime _startedPreservationUtc;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {

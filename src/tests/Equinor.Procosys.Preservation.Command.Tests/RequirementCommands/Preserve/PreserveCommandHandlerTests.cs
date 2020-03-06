@@ -62,9 +62,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
 
             _command = new PreserveCommand(TagId, RequirementId);
 
-            _timeProvider.UtcNow = _utcNow.AddDays(-1);
+            _timeProvider.Elapse(TimeSpan.FromDays(-1));
             _tag.StartPreservation();
-            _timeProvider.UtcNow = _utcNow;
+            _timeProvider.SetTime(_utcNow);
             _initialPreservationPeriod = _requirement.PreservationPeriods.Single();
 
             _dut = new PreserveCommandHandler(_projectRepoMock.Object, _personRepoMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);

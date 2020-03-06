@@ -91,7 +91,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             var req2OnTag1WithFourWeekIntervalInitialPeriod = _req2OnTag1WithFourWeekInterval.ActivePeriod;
             var req2OnTag2WithFourWeekIntervalInitialPeriod = _req2OnTag2WithFourWeekInterval.ActivePeriod;
 
-            _timeProvider.UtcNow = TimeService.UtcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             await _dut.Handle(_command, default);
 
             var expectedNextDueTimeUtcForTwoWeeksInterval = TimeService.UtcNow.AddWeeks(TwoWeeksInterval);
@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldPreserveAllRequirementsOnAllTags_WhenOnDueAtLatestRequirement()
         {
-            _timeProvider.UtcNow = _utcNow.AddWeeks(FourWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(FourWeeksInterval * 7));
 
             await _dut.Handle(_command, default);
 
@@ -134,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
         {
-            _timeProvider.UtcNow = _utcNow.AddWeeks(TwoWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
@@ -143,7 +143,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
         {
-            _timeProvider.UtcNow = _utcNow.AddWeeks(FourWeeksInterval);
+            _timeProvider.Elapse(TimeSpan.FromDays(FourWeeksInterval * 7));
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);

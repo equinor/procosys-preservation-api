@@ -24,10 +24,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _checkBoxField = new Field(TestPlant, "", FieldType.CheckBox, 0);
             _infoField = new Field(TestPlant, "", FieldType.Info, 0);
 
-            _timeProvider = new ManualTimeProvider
-            {
-                UtcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc)
-            };
+            _timeProvider = new ManualTimeProvider(new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc));
             TimeService.SetProvider(_timeProvider);
             _preservedByMock = new Mock<Person>();
             _preservedByMock.SetupGet(p => p.Id).Returns(PreservedById);
@@ -95,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsNull(dut.PreservationRecord);
 
             // act
-            _timeProvider.UtcNow = TimeService.UtcNow.AddDays(12);
+            _timeProvider.Elapse(TimeSpan.FromDays(12));
             dut.Preserve(_preservedByMock.Object, true);
 
             // assert

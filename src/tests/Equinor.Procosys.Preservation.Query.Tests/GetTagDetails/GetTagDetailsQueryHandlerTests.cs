@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                _timeProvider.UtcNow = _timeProvider.UtcNow.AddWeeks(_intervalWeeks);
+                _timeProvider.Elapse(TimeSpan.FromDays(_intervalWeeks * 7));
 
                 var query = new GetTagDetailsQuery(_tagId);
                 var dut = new GetTagDetailsQueryHandler(context);

@@ -15,7 +15,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
     [TestClass]
     public class StartPreservationCommandHandlerTests : CommandHandlerTestsBase
     {
-        private DateTime _utcNow;
         private Mock<IProjectRepository> _tagRepoMock;
         private StartPreservationCommand _command;
         private Tag _tag1;
@@ -67,7 +66,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             var tagIds = new List<int> {_tagId1, _tagId2};
             _tagRepoMock = new Mock<IProjectRepository>();
             _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _command = new StartPreservationCommand(tagIds);
 
             _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, UnitOfWorkMock.Object);
