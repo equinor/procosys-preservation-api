@@ -21,8 +21,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         private string _modeTitle = "M1";
         private string _respCode = "R1";
         private int _tagId;
-        private Mock<ITimeService> _timeServiceMock;
-        private DateTime _startedPreservationUtc;
         private int _intervalWeeks = 2;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -54,10 +52,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                         new Requirement(TestPlant, _intervalWeeks, reqType.RequirementDefinitions.ElementAt(0))
                     });
 
-                _timeServiceMock = new Mock<ITimeService>();
-                _startedPreservationUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-                _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservationUtc);
-                tag.StartPreservation(_startedPreservationUtc);
+                tag.StartPreservation();
                 context.Tags.Add(tag);
                 context.SaveChanges();
 
@@ -70,10 +65,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservationUtc.AddWeeks(_intervalWeeks));
+                _timeProvider.ElapseWeeks(_intervalWeeks);
 
                 var query = new GetTagDetailsQuery(_tagId);
-                var dut = new GetTagDetailsQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetTagDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
 
@@ -103,7 +98,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
                 var query = new GetTagDetailsQuery(0);
-                var dut = new GetTagDetailsQueryHandler(context, _timeServiceMock.Object);
+                var dut = new GetTagDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
 

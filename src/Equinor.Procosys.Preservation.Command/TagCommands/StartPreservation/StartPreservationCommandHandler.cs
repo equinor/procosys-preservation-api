@@ -11,12 +11,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly ITimeService _timeService;
 
-        public StartPreservationCommandHandler(IProjectRepository projectRepository, ITimeService timeService, IUnitOfWork unitOfWork)
+        public StartPreservationCommandHandler(IProjectRepository projectRepository, IUnitOfWork unitOfWork)
         {
             _projectRepository = projectRepository;
-            _timeService = timeService;
             _unitOfWork = unitOfWork;
         }
 
@@ -25,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
             var tags = await _projectRepository.GetTagsByTagIdsAsync(request.TagIds);
             foreach (var tag in tags)
             {
-                tag.StartPreservation(_timeService.GetCurrentTimeUtc());
+                tag.StartPreservation();
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);

@@ -14,18 +14,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
         private readonly IPersonRepository _personRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly ITimeService _timeService;
 
         public BulkPreserveCommandHandler(
             IProjectRepository projectRepository,
             IPersonRepository personRepository,
-            ITimeService timeService,
             IUnitOfWork unitOfWork,
             ICurrentUserProvider currentUserProvider)
         {
             _projectRepository = projectRepository;
             _personRepository = personRepository;
-            _timeService = timeService;
             _unitOfWork = unitOfWork;
             _currentUserProvider = currentUserProvider;
         }
@@ -37,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
 
             foreach (var tag in tags)
             {
-                tag.BulkPreserve(_timeService.GetCurrentTimeUtc(), currentUser);
+                tag.BulkPreserve(currentUser);
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);

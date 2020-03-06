@@ -18,7 +18,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         private PreserveCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
-        private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
 
         [TestInitialize]
@@ -30,12 +29,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, _utcNow, default)).Returns(Task.FromResult(true));
-            _timeServiceMock = new Mock<ITimeService>();
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, default)).Returns(Task.FromResult(true));
             _command = new PreserveCommand(TagId);
 
-            _dut = new PreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _timeServiceMock.Object);
+            _dut = new PreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 
         [TestMethod]
@@ -97,7 +94,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotReadyToBePreserved()
         {
-            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, _utcNow, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 

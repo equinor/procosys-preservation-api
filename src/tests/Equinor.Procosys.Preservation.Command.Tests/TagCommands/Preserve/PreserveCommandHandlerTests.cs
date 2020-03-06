@@ -20,11 +20,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         private const int FourWeeksInterval = 4;
 
         private Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
-        private DateTime _startedPreservedAtUtc;
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
-        private Mock<ITimeService> _timeServiceMock;
         private PreserveCommand _command;
         private Tag _tag;
         private Requirement _req1WithTwoWeekInterval;
@@ -60,13 +58,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _personRepoMock
                 .Setup(x => x.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
-            _startedPreservedAtUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeServiceMock = new Mock<ITimeService>();
             _command = new PreserveCommand(TagId);
 
-            _tag.StartPreservation(_startedPreservedAtUtc);
+            _tag.StartPreservation();
 
-            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _personRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
+            _dut = new PreserveCommandHandler(_projectRepoMock.Object, _personRepoMock.Object, UnitOfWorkMock.Object, _currentUserProvider.Object);
         }
 
         [TestMethod]
@@ -76,12 +72,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             var req2WithTwoWeekIntervalInitialPeriod = _req2WithTwoWeekInterval.ActivePeriod;
             var req3WithFourWeekIntervalInitialPeriod = _req3WithFourWeekInterval.ActivePeriod;
 
-            var preservedAtUtc = _startedPreservedAtUtc.AddWeeks(TwoWeeksInterval);
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(preservedAtUtc);
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
 
             await _dut.Handle(_command, default);
 
-            var expectedNextDueTimeUtc = preservedAtUtc.AddWeeks(TwoWeeksInterval);
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
             Assert.AreEqual(expectedNextDueTimeUtc, _req1WithTwoWeekInterval.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _tag.NextDueTimeUtc);
             Assert.IsNotNull(req1WithTwoWeekIntervalInitialPeriod.PreservationRecord);
@@ -93,8 +88,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldSkipPreservingRequirementsOnTag_NotDue()
         {
-            var preservedAtUtc = _startedPreservedAtUtc.AddWeeks(TwoWeeksInterval);
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(preservedAtUtc);
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
             var oldNextDue = _req3WithFourWeekInterval.NextDueTimeUtc;
 
             await _dut.Handle(_command, default);
@@ -105,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
         {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(TwoWeeksInterval));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
@@ -114,7 +108,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
         {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc.AddWeeks(FourWeeksInterval));
+            _timeProvider.ElapseWeeks(FourWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
@@ -123,8 +117,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldNotSave_WhenBeforeDueForAnyRequirement()
         {
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_startedPreservedAtUtc);
-
             await Assert.ThrowsExceptionAsync<Exception>(() =>
                 _dut.Handle(_command, default)
             );

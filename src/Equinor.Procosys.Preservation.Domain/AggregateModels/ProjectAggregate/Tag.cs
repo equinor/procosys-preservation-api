@@ -147,7 +147,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             _actions.Add(action);
         }
 
-        public void StartPreservation(DateTime startedAtUtc)
+        public void StartPreservation()
         {
             if (!IsReadyToBeStarted())
             {
@@ -155,34 +155,33 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             foreach (var requirement in Requirements.Where(r => !r.IsVoided))
             {
-                requirement.StartPreservation(startedAtUtc);
+                requirement.StartPreservation();
             }
 
             Status = PreservationStatus.Active;
             UpdateNextDueTimeUtc();
         }
 
-        public bool IsReadyToBePreserved(DateTime currentTimeUtc)
+        public bool IsReadyToBePreserved()
             => Status == PreservationStatus.Active && 
-               FirstUpcomingRequirement(currentTimeUtc) != null;
-           
-        public void Preserve(DateTime preservedAtUtc, Person preservedBy)
-            => Preserve(preservedAtUtc, preservedBy, false);
-        
-        public void Preserve(DateTime preservedAtUtc, Person preservedBy, int requirementId)
+               FirstUpcomingRequirement() != null;
+
+        public void Preserve(Person preservedBy)
+            => Preserve(preservedBy, false);
+                
+        public void Preserve(Person preservedBy, int requirementId)
         {
             var requirement = Requirements.Single(r => r.Id == requirementId);
-            requirement.Preserve(preservedAtUtc, preservedBy, false);
+            requirement.Preserve(preservedBy, false);
             UpdateNextDueTimeUtc();
         }
+        public void BulkPreserve(Person preservedBy)
+            => Preserve(preservedBy, true);
 
-        public void BulkPreserve(DateTime preservedAtUtc, Person preservedBy)
-            => Preserve(preservedAtUtc, preservedBy, true);
-
-        public IEnumerable<Requirement> GetUpComingRequirements(DateTime currentTimeUtc)
+        public IEnumerable<Requirement> GetUpComingRequirements()
         {
             var GetUpComingRequirements = OrderedRequirements()
-                .Where(r => r.IsReadyAndDueToBePreserved(currentTimeUtc));
+                .Where(r => r.IsReadyAndDueToBePreserved());
             return GetUpComingRequirements;
         }
 
@@ -211,48 +210,38 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             SetStep(journey.GetNextStep(StepId));
         }
 
-        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        public void SetCreated(Person createdBy)
         {
-            if (createdAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
-            }
-
-            CreatedAtUtc = createdAtUtc;
+            CreatedAtUtc = TimeService.UtcNow;
             CreatedById = createdBy.Id;
         }
 
-        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        public void SetModified(Person modifiedBy)
         {
-            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
-            }
-
-            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedAtUtc = TimeService.UtcNow;
             ModifiedById = modifiedBy.Id;
         }
 
         private bool IsReadyToBeStarted()
             => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
 
-        private void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
+        private void Preserve(Person preservedBy, bool bulkPreserved)
         {
-            if (!IsReadyToBePreserved(preservedAtUtc))
+            if (!IsReadyToBePreserved())
             {
                 throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
             }
 
-            foreach (var requirement in GetUpComingRequirements(preservedAtUtc))
+            foreach (var requirement in GetUpComingRequirements())
             {
-                requirement.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
+                requirement.Preserve(preservedBy, bulkPreserved);
             }
         
             UpdateNextDueTimeUtc();
         }
 
-        private Requirement FirstUpcomingRequirement(DateTime currentTimeUtc)
-            => GetUpComingRequirements(currentTimeUtc).FirstOrDefault();
+        private Requirement FirstUpcomingRequirement()
+            => GetUpComingRequirements().FirstOrDefault();
 
         private void UpdateNextDueTimeUtc()
             => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;

@@ -17,13 +17,10 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
     public class GetAllTagsInProjectQueryHandler : IRequestHandler<GetAllTagsInProjectQuery, Result<IEnumerable<TagDto>>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly ITimeService _timeService;
 
         public GetAllTagsInProjectQueryHandler(
-            IReadOnlyContext context,
-            ITimeService timeService)
+            IReadOnlyContext context)
         {
-            _timeService = timeService;
             _context = context;
         }
 
@@ -69,8 +66,6 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     }
                 ).ToListAsync(cancellationToken);
 
-            var now = _timeService.GetCurrentTimeUtc();
-
             var tagDtos = orderedDtos.Select(outerDto =>
             {
                 var tag = outerDto.Tag;
@@ -83,8 +78,8 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                                 r.Id,
                                 reqTypeDto.RequirementTypeCode,
                                 r.NextDueTimeUtc,
-                                r.GetNextDueInWeeks(now),
-                                r.IsReadyAndDueToBePreserved(now));
+                                r.GetNextDueInWeeks(),
+                                r.IsReadyAndDueToBePreserved());
                         })
                     .ToList();
 
@@ -97,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
                     tag.IsVoided,
                     tag.McPkgNo,
                     outerDto.Mode.Title,
-                    tag.IsReadyToBePreserved(now),
+                    tag.IsReadyToBePreserved(),
                     tag.IsReadyToBeTransferred(outerDto.Journey),
                     tag.PurchaseOrderNo,
                     tag.Remark,

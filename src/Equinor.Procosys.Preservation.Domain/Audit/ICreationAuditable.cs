@@ -18,6 +18,6 @@ namespace Equinor.Procosys.Preservation.Domain.Audit
         /// </summary>
         /// <param name="createdAtUtc">Creation date and time</param>
         /// <param name="createdBy">The user who created the entity</param>
-        void SetCreated(DateTime createdAtUtc, Person createdBy);
+        void SetCreated(Person createdBy);
     }
 }

@@ -46,7 +46,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     var unitOfWork = new UnitOfWork(
                         dbContext,
                         scope.ServiceProvider.GetRequiredService<IEventDispatcher>(),
-                        scope.ServiceProvider.GetRequiredService<ITimeService>(),
                         new SeederUserProvider());
                     var personRepository = new PersonRepository(dbContext);
                     var journeyRepository = new JourneyRepository(dbContext);
