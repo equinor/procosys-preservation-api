@@ -72,8 +72,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             var req2WithTwoWeekIntervalInitialPeriod = _req2WithTwoWeekInterval.ActivePeriod;
             var req3WithFourWeekIntervalInitialPeriod = _req3WithFourWeekInterval.ActivePeriod;
 
-            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
-            
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+
             await _dut.Handle(_command, default);
 
             var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldSkipPreservingRequirementsOnTag_NotDue()
         {
-            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
             var oldNextDue = _req3WithFourWeekInterval.NextDueTimeUtc;
 
             await _dut.Handle(_command, default);
@@ -98,7 +98,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
         {
-            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
         {
-            _timeProvider.Elapse(TimeSpan.FromDays(FourWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(FourWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);

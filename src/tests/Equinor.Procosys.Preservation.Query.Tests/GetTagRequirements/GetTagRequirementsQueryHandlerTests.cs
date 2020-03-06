@@ -189,7 +189,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                _timeProvider.Elapse(TimeSpan.FromDays(_requestTimeAfterPreservationStartedInWeeks * 7));
+                _timeProvider.ElapseWeeks(_requestTimeAfterPreservationStartedInWeeks);
 
                 var query = new GetTagRequirementsQuery(_tagId);
                 var dut = new GetTagRequirementsQueryHandler(context);
@@ -359,7 +359,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     requirementDefinition);
                 context.SaveChanges();
 
-                _timeProvider.Elapse(TimeSpan.FromDays(_interval * 7));
+                _timeProvider.ElapseWeeks(_interval);
                 tag.Preserve(new Mock<Person>().Object);
                 context.SaveChanges();
             }

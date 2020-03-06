@@ -23,6 +23,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         public void Elapse(TimeSpan elapsedTime) => UtcNow += elapsedTime;
 
+        public void ElapseWeeks(int weeks) => Elapse(TimeSpan.FromDays(weeks * 7));
+
         public void SetTime(DateTime now) => UtcNow = now;
     }
 }

@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -91,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             var req2OnTag1WithFourWeekIntervalInitialPeriod = _req2OnTag1WithFourWeekInterval.ActivePeriod;
             var req2OnTag2WithFourWeekIntervalInitialPeriod = _req2OnTag2WithFourWeekInterval.ActivePeriod;
 
-            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
             await _dut.Handle(_command, default);
 
             var expectedNextDueTimeUtcForTwoWeeksInterval = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
@@ -110,7 +111,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldPreserveAllRequirementsOnAllTags_WhenOnDueAtLatestRequirement()
         {
-            _timeProvider.Elapse(TimeSpan.FromDays(FourWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(FourWeeksInterval);
 
             await _dut.Handle(_command, default);
 
@@ -134,7 +135,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForFirstRequirement()
         {
-            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
@@ -143,7 +144,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public async Task HandlingBulkPreserveCommand_ShouldSave_WhenOnDueForLastRequirement()
         {
-            _timeProvider.Elapse(TimeSpan.FromDays(FourWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(FourWeeksInterval);
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);

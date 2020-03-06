@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(_reqDefWithCheckBoxFieldMock.Object.Id, dut.RequirementDefinitionId);
             Assert.IsFalse(dut.IsVoided);
             Assert.IsFalse(dut.ReadyToBePreserved);
-            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
             Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
         }
 
@@ -173,7 +173,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
             Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
             Assert.AreEqual(0, dut.GetNextDueInWeeks());
         }
@@ -185,7 +185,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            _timeProvider.Elapse(TimeSpan.FromDays(TwoWeeksInterval * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
 
             Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
             Assert.AreEqual(0, dut.GetNextDueInWeeks());
@@ -198,7 +198,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            _timeProvider.Elapse(TimeSpan.FromDays((TwoWeeksInterval + TwoWeeksInterval) * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
 
             Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
             Assert.AreEqual(-2, dut.GetNextDueInWeeks());
@@ -211,7 +211,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            _timeProvider.Elapse(TimeSpan.FromDays((TwoWeeksInterval + TwoWeeksInterval) * 7));
+            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
 
             Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
             Assert.AreEqual(-2, dut.GetNextDueInWeeks());
