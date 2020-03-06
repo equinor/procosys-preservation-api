@@ -20,5 +20,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         }
 
         public DateTime UtcNow { get; set; }
+
+        public void Elapse(TimeSpan elapsedTime) => UtcNow += elapsedTime;
     }
 }
