@@ -113,7 +113,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.Preserve(_preservedByMock.Object, true);
 
             // act
-            preservationTime = preservationTime.AddDays(1);
             Assert.ThrowsException<Exception>(() => dut.Preserve(_preservedByMock.Object, true));
         }
 
