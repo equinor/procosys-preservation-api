@@ -55,7 +55,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
             if (addedEntries.Any() || modifiedEntries.Any())
             {
-                var now = TimeService.UtcNow;
                 var currentUserOid = _currentUserProvider.GetCurrentUser();
                 var currentUser = await _context.Persons.SingleOrDefaultAsync(p => p.Oid == currentUserOid);
 
