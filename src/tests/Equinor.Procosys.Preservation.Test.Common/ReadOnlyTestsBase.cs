@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         protected IPlantProvider _plantProvider;
         protected ICurrentUserProvider _currentUserProvider;
         protected IEventDispatcher _eventDispatcher;
-        protected ITimeService _timeService;
+        protected ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void SetupBase()
@@ -41,10 +41,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var eventDispatcher = new Mock<IEventDispatcher>();
             _eventDispatcher = eventDispatcher.Object;
 
-            var timeService = new Mock<ITimeService>();
-            timeService.Setup(x => x.GetCurrentTimeUtc())
-                .Returns(new DateTime(2020, 2, 1, 12, 0, 0, DateTimeKind.Utc));
-            _timeService = timeService.Object;
+            _timeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
+            TimeService.SetProvider(_timeProvider);
 
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
@@ -59,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var responsible = new Responsible(TestPlant, code, "Title");
             context.Responsibles.Add(responsible);
-            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+            new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
             return responsible;
         }
 
@@ -67,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var mode = new Mode(TestPlant, title);
             context.Modes.Add(mode);
-            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+            new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
             return mode;
         }
 
@@ -76,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var journey = new Journey(TestPlant, title);
             journey.AddStep(new Step(TestPlant, mode, responsible));
             context.Journeys.Add(journey);
-            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+            new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
             return journey;
         }
 
@@ -84,11 +82,11 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var requirementType = new RequirementType(TestPlant, type, $"Title{type}", 0);
             context.RequirementTypes.Add(requirementType);
-            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+            new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
 
             var requirementDefinition = new RequirementDefinition(TestPlant, $"Title{def}", 2, 1);
             requirementType.AddRequirementDefinition(requirementDefinition);
-            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+            new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
 
             return requirementType;
         }
@@ -97,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var person = new Person(oid, firstName, lastName);
             context.Persons.Add(person);
-            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+            new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
             return person;
         }
 
@@ -109,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 project.Close();
             }
             context.Projects.Add(project);
-            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+            new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
             return project;
         }
 
@@ -117,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var tag = new Tag(TestPlant, tagType, tagNo, description, "", "", "", "", "", "", "", "", step, requirements);
             parentProject.AddTag(tag);
-            new UnitOfWork(context, _eventDispatcher, _timeService, _currentUserProvider).SaveChangesAsync(default).Wait();
+            new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
             return tag;
         }
 

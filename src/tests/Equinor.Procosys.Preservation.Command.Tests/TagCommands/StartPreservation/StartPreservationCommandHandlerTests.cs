@@ -15,9 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
     [TestClass]
     public class StartPreservationCommandHandlerTests : CommandHandlerTestsBase
     {
-        private DateTime _utcNow;
         private Mock<IProjectRepository> _tagRepoMock;
-        private Mock<ITimeService> _timeServiceMock;
         private StartPreservationCommand _command;
         private Tag _tag1;
         private Tag _tag2;
@@ -68,12 +66,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             var tagIds = new List<int> {_tagId1, _tagId2};
             _tagRepoMock = new Mock<IProjectRepository>();
             _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeServiceMock = new Mock<ITimeService>();
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
             _command = new StartPreservationCommand(tagIds);
 
-            _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, _timeServiceMock.Object, UnitOfWorkMock.Object);
+            _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, UnitOfWorkMock.Object);
         }
 
         [TestMethod]
@@ -98,6 +93,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag1.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag2.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag2.NextDueTimeUtc);
+
+            Assert.AreEqual(expectedNextDueTimeUtc, _tag1.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _tag2.NextDueTimeUtc);
         }
 
         [TestMethod]

@@ -12,8 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
     {
         public PreserveCommandValidator(
             IProjectValidator projectValidator,
-            ITagValidator tagValidator,
-            ITimeService timeService)
+            ITagValidator tagValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
             
@@ -42,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
 
             async Task<bool> BeReadyToBePreservedAsync(int tagId, CancellationToken token)
-                => await tagValidator.ReadyToBePreservedAsync(tagId, timeService.GetCurrentTimeUtc(), token);
+                => await tagValidator.ReadyToBePreservedAsync(tagId, token);
         }
     }
 }

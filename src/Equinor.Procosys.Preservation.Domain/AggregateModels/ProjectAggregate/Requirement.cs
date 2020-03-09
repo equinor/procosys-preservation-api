@@ -59,48 +59,48 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public override string ToString() => $"Interval {IntervalWeeks}, NextDue {NextDueTimeUtc}, ReqDefId {RequirementDefinitionId}";
 
-        public int? GetNextDueInWeeks(DateTime timeUtc)
+        public int? GetNextDueInWeeks()
         {
             if (!NextDueTimeUtc.HasValue)
             {
                 return null;
             }
 
-            return timeUtc.GetWeeksUntil(NextDueTimeUtc.Value);
+            return TimeService.UtcNow.GetWeeksUntil(NextDueTimeUtc.Value);
         }
         
-        public bool IsReadyAndDueToBePreserved(DateTime currentTimeUtc)
+        public bool IsReadyAndDueToBePreserved()
         {
             if (!ReadyToBePreserved)
             {
                 return false;
             }
 
-            var nextDueInWeeks = GetNextDueInWeeks(currentTimeUtc);
+            var nextDueInWeeks = GetNextDueInWeeks();
 
             return nextDueInWeeks.HasValue && nextDueInWeeks.Value <= 0;
         }
 
         public bool HasActivePeriod => ActivePeriod != null;
 
-        public void StartPreservation(DateTime startedAtUtc)
+        public void StartPreservation()
         {
             if (HasActivePeriod)
             {
                 throw new Exception($"{nameof(Requirement)} {Id} already have an active {nameof(PreservationPeriod)}. Can't start");
             }
-            AddNewPreservationPeriod(startedAtUtc);
+            PrepareNewPreservation();
         }
 
-        public void Preserve(DateTime preservedAtUtc, Person preservedBy, bool bulkPreserved)
+        public void Preserve(Person preservedBy, bool bulkPreserved)
         {
             if (!ReadyToBePreserved)
             {
                 throw new Exception($"{nameof(Requirement)} {Id} is not ready to be preserved");
             }
 
-            PeriodReadyToBePreserved.Preserve(preservedAtUtc, preservedBy, bulkPreserved);
-            AddNewPreservationPeriod(preservedAtUtc);
+            PeriodReadyToBePreserved.Preserve(preservedBy, bulkPreserved);
+            PrepareNewPreservation();
         }
 
         public PreservationPeriod ActivePeriod
@@ -161,34 +161,24 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             period.SetComment(comment);
         }
 
-        public void SetCreated(DateTime createdAtUtc, Person createdBy)
+        public void SetCreated(Person createdBy)
         {
-            if (createdAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(createdAtUtc)} is not UTC");
-            }
-
-            CreatedAtUtc = createdAtUtc;
+            CreatedAtUtc = TimeService.UtcNow;
             CreatedById = createdBy.Id;
         }
 
-        public void SetModified(DateTime modifiedAtUtc, Person modifiedBy)
+        public void SetModified(Person modifiedBy)
         {
-            if (modifiedAtUtc.Kind != DateTimeKind.Utc)
-            {
-                throw new ArgumentException($"{nameof(modifiedAtUtc)} is not UTC");
-            }
-
-            ModifiedAtUtc = modifiedAtUtc;
+            ModifiedAtUtc = TimeService.UtcNow;
             ModifiedById = modifiedBy.Id;
         }
 
         private PreservationPeriod PeriodReadyToBePreserved
             => PreservationPeriods.SingleOrDefault(pp => pp.Status == PreservationPeriodStatus.ReadyToBePreserved);
 
-        private void AddNewPreservationPeriod(DateTime offsetTimeUtc)
+        private void PrepareNewPreservation()
         {
-            NextDueTimeUtc = offsetTimeUtc.AddWeeks(IntervalWeeks);
+            NextDueTimeUtc = TimeService.UtcNow.AddWeeks(IntervalWeeks);
             var preservationPeriod = new PreservationPeriod(Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
         }

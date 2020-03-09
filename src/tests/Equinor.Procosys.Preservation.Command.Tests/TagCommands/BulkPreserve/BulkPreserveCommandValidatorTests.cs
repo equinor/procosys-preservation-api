@@ -20,7 +20,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         private BulkPreserveCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
-        private Mock<ITimeService> _timeServiceMock;
         private BulkPreserveCommand _command;
 
         private List<int> _tagIds;
@@ -38,13 +37,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId1, _utcNow, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId2, _utcNow, default)).Returns(Task.FromResult(true));
-            _timeServiceMock = new Mock<ITimeService>();
-            _timeServiceMock.Setup(t => t.GetCurrentTimeUtc()).Returns(_utcNow);
+            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId2, default)).Returns(Task.FromResult(true));
             _command = new BulkPreserveCommand(_tagIds);
 
-            _dut = new BulkPreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _timeServiceMock.Object);
+            _dut = new BulkPreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 
         [TestMethod]
@@ -130,7 +127,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotReadyToBeBulkPreserved()
         {
-            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId1, _utcNow, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId1, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
