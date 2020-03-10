@@ -86,11 +86,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
             if (!orderedDtos.Any())
             {
-                return new SuccessResult<TagsResult>(new TagsResult());
+                return new SuccessResult<TagsResult>(new TagsResult {Tags = new List<TagDto>()});
             }
 
             var tagsIds = orderedDtos.Select(t => t.TagId);
 
+            // get tags again, including Requirements and PreservationPeriods. See comment above
             var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
                     where tagsIds.Contains(tag.Id)
                     select tag)
@@ -132,6 +133,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     tagDto.Calloff,
                     tagDto.CommPkgNo,
                     tagDto.DisciplineCode,
+                    false, 
                     tagDto.IsVoided,
                     tagDto.McPkgNo,
                     tagDto.ModeTitle,

@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             string calloffNo,
             string commPkgNo,
             string disciplineCode,
+            bool isNew,
             bool isVoided,
             string mcPkgNo, 
             string mode,
@@ -29,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             CommPkgNo = commPkgNo;
             Description = tagDescription;
             DisciplineCode = disciplineCode;
+            IsNew = isNew;
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             Mode = mode;
@@ -46,6 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         public string Description { get; }
         public string DisciplineCode { get; }
         public int Id { get; }
+        public bool IsNew { get; }
         public bool IsVoided { get; }
         public string McPkgNo { get; }
         public string Mode { get; }
