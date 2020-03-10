@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             IEnumerable<DueFilterType> dueFilters,
             PreservationStatus? preservationStatus,
             IEnumerable<int> requirementTypeIds,
-            IEnumerable<int> disciplineIds,
+            IEnumerable<string> disciplineCodes,
             IEnumerable<int> responsibleIds,
             IEnumerable<string> tagFunctionCodes,
             IEnumerable<int> modeIds,
@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             DueFilters = dueFilters ?? new List<DueFilterType>();
             PreservationStatus = preservationStatus;
             RequirementTypeIds = requirementTypeIds ?? new List<int>();
-            DisciplineIds = disciplineIds ?? new List<int>();
+            DisciplineCodes = disciplineCodes ?? new List<string>();
             ResponsibleIds = responsibleIds ?? new List<int>();
             TagFunctionCodes = tagFunctionCodes ?? new List<string>();
             ModeIds = modeIds ?? new List<int>();
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         public IEnumerable<DueFilterType> DueFilters { get; }
         public PreservationStatus? PreservationStatus { get;  }
         public IEnumerable<int> RequirementTypeIds { get; }
-        public IEnumerable<int> DisciplineIds { get; }
+        public IEnumerable<string> DisciplineCodes { get; }
         public IEnumerable<int> ResponsibleIds { get; }
         public IEnumerable<string> TagFunctionCodes { get; }
         public IEnumerable<int> ModeIds { get; }

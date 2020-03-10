@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public IEnumerable<DueFilterType> DueFilters { get; set; }
         public PreservationStatus? PreservationStatus { get; set; }
         public IEnumerable<int> RequirementTypeIds { get; set; }
-        public IEnumerable<int> DisciplineIds { get; set; }
+        public IEnumerable<string> DisciplineCodes { get; set; }
         public IEnumerable<int> ResponsibleIds { get; set; }
         public IEnumerable<string> TagFunctionCodes { get; set; }
         public IEnumerable<int> ModeIds { get; set; }

@@ -8,7 +8,6 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
@@ -46,7 +45,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     filter.DueFilters,
                     filter.PreservationStatus,
                     filter.RequirementTypeIds,
-                    filter.DisciplineIds,
+                    filter.DisciplineCodes,
                     filter.ResponsibleIds,
                     filter.TagFunctionCodes,
                     filter.ModeIds,

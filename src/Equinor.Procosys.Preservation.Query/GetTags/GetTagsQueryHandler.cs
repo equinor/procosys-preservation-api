@@ -49,6 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                       (string.IsNullOrEmpty(request.Filter.CallOffStartsWith) || tag.Calloff.StartsWith(request.Filter.CallOffStartsWith)) &&
                       (!request.Filter.RequirementTypeIds.Any() || reqTypeFiltered) &&
                       (!request.Filter.TagFunctionCodes.Any() || request.Filter.TagFunctionCodes.Contains(tag.TagFunctionCode)) &&
+                      (!request.Filter.DisciplineCodes.Any() || request.Filter.DisciplineCodes.Contains(tag.DisciplineCode)) &&
                       (!request.Filter.ResponsibleIds.Any() || request.Filter.ResponsibleIds.Contains(responsible.Id)) &&
                       (!request.Filter.JourneyIds.Any() || request.Filter.JourneyIds.Contains(journey.Id)) &&
                       (!request.Filter.ModeIds.Any() || request.Filter.ModeIds.Contains(mode.Id)) &&

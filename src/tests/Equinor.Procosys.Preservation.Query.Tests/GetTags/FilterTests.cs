@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 new List<DueFilterType>{DueFilterType.ThisWeek},
                 PreservationStatus.NotStarted,
                 new List<int>{1},
-                new List<int>{2},
+                new List<string>{"DI"},
                 new List<int>{3},
                 new List<string>{"TF"},
                 new List<int>{5},
@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.AreEqual("TAG", dut.TagNoStartsWith);
             Assert.IsTrue(dut.PreservationStatus.HasValue);
             Assert.AreEqual(PreservationStatus.NotStarted, dut.PreservationStatus.Value);
-            Assert.AreEqual(2, dut.DisciplineIds.Single());
+            Assert.AreEqual(2, dut.DisciplineCodes.Single());
             Assert.AreEqual(DueFilterType.ThisWeek, dut.DueFilters.Single());
             Assert.AreEqual(6, dut.JourneyIds.Single());
             Assert.AreEqual(5, dut.ModeIds.Single());
@@ -44,6 +44,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.AreEqual(3, dut.ResponsibleIds.Single());
             Assert.AreEqual(7, dut.StepIds.Single());
             Assert.AreEqual("TF", dut.TagFunctionCodes.Single());
+            Assert.AreEqual("DI", dut.DisciplineCodes.Single());
         }
 
         [TestMethod]
@@ -57,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.IsNull(dut.PurchaseOrderNoStartsWith);
             Assert.IsNull(dut.TagNoStartsWith);
             Assert.IsFalse(dut.PreservationStatus.HasValue);
-            Assert.AreEqual(0, dut.DisciplineIds.Count());
+            Assert.AreEqual(0, dut.DisciplineCodes.Count());
             Assert.AreEqual(0, dut.DueFilters.Count());
             Assert.AreEqual(0, dut.JourneyIds.Count());
             Assert.AreEqual(0, dut.ModeIds.Count());
