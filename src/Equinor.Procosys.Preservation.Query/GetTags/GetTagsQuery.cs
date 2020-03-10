@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTags
 {
-    public class GetTagsQuery : IRequest<Result<IEnumerable<TagDto>>>
+    public class GetTagsQuery : IRequest<Result<TagsResult>>
     {
         public GetTagsQuery(Sorting sorting, Filter filter, Paging paging)
         {

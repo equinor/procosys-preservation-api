@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,67 +12,96 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
+using RequirementType = Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType;
 
 namespace Equinor.Procosys.Preservation.Query.GetTags
 {
-    public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<IEnumerable<TagDto>>>
+    public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<TagsResult>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly ITimeService _timeService;
 
         public GetTagsQueryHandler(
-            IReadOnlyContext context,
-            ITimeService timeService)
-        {
-            _timeService = timeService;
+            IReadOnlyContext context) =>
             _context = context;
-        }
 
-        public async Task<Result<IEnumerable<TagDto>>> Handle(GetTagsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<TagsResult>> Handle(GetTagsQuery request, CancellationToken cancellationToken)
         {
-            var queryable = from tag in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
+            // No .Include() here. EF do not support .Include together with selecting a projection (dto).
+            // If the select-statement select tag so queryable has been of type IQueryable<Tag>, .Include(t => t.Requirements) work fine
+            var queryable = from tag in _context.QuerySet<Tag>()
+                join project in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals project.Id
                 join step in _context.QuerySet<Step>() on tag.StepId equals step.Id
-                join journey in _context.QuerySet<Journey>().Include(j => j.Steps) on EF.Property<int>(step, "JourneyId") equals journey.Id
+                join journey in _context.QuerySet<Journey>() on EF.Property<int>(step, "JourneyId") equals journey.Id
                 join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
                 join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
-                join project in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals project.Id
-                //from req in _context.QuerySet<Requirement>()
-                //join reqDef in _context.QuerySet<RequirementDefinition>() on req.RequirementDefinitionId equals reqDef.Id
-                //join reqType in _context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals reqType.Id
+                let reqTypeFiltered = (from req in _context.QuerySet<Requirement>()
+                    join reqDef in _context.QuerySet<RequirementDefinition>() on req.RequirementDefinitionId equals reqDef.Id
+                    join reqType in _context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals reqType.Id
+                    where EF.Property<int>(req, "TagId") == tag.Id &&
+                          request.Filter.RequirementTypeIds.Contains(reqType.Id)
+                    select reqType.Id).Any()
                 where project.Name == request.Filter.ProjectName &&
                       (!request.Filter.PreservationStatus.HasValue || tag.Status == request.Filter.PreservationStatus.Value) &&
-                      (string.IsNullOrEmpty(request.Filter.TagNo) || tag.TagNo.Contains(request.Filter.TagNo)) &&
-                      (string.IsNullOrEmpty(request.Filter.McPkgNo) || tag.McPkgNo.Contains(request.Filter.McPkgNo)) &&
+                      (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) || tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&
+                      (string.IsNullOrEmpty(request.Filter.CommPkgNoStartsWith) || tag.CommPkgNo.StartsWith(request.Filter.CommPkgNoStartsWith)) &&
+                      (string.IsNullOrEmpty(request.Filter.McPkgNoStartsWith) || tag.McPkgNo.StartsWith(request.Filter.McPkgNoStartsWith)) &&
+                      (string.IsNullOrEmpty(request.Filter.PurchaseOrderNoStartsWith) || tag.PurchaseOrderNo.StartsWith(request.Filter.PurchaseOrderNoStartsWith)) &&
+                      (string.IsNullOrEmpty(request.Filter.CallOffStartsWith) || tag.Calloff.StartsWith(request.Filter.CallOffStartsWith)) &&
+                      (!request.Filter.RequirementTypeIds.Any() || reqTypeFiltered) &&
+                      (!request.Filter.TagFunctionCodes.Any() || request.Filter.TagFunctionCodes.Contains(tag.TagFunctionCode)) &&
                       (!request.Filter.ResponsibleIds.Any() || request.Filter.ResponsibleIds.Contains(responsible.Id)) &&
-                      //(!request.Filter.RequirementTypeIds.Any() || request.Filter.RequirementTypeIds.Contains(reqType.Id)) &&
+                      (!request.Filter.JourneyIds.Any() || request.Filter.JourneyIds.Contains(journey.Id)) &&
                       (!request.Filter.ModeIds.Any() || request.Filter.ModeIds.Contains(mode.Id)) &&
                       (!request.Filter.StepIds.Any() || request.Filter.StepIds.Contains(step.Id))
                 select new Dto
                 {
-                    Tag = tag,
-                    Responsible = responsible,
-                    Mode = mode,
-                    Journey = journey
+                    TagId = tag.Id,
+                    AreaCode = tag.AreaCode,
+                    Calloff = tag.Calloff,
+                    CommPkgNo = tag.CommPkgNo,
+                    Description = tag.Description,
+                    DisciplineCode = tag.DisciplineCode,
+                    IsVoided = tag.IsVoided,
+                    McPkgNo = tag.McPkgNo,
+                    NextDueTimeUtc = tag.NextDueTimeUtc,
+                    PurchaseOrderNo = tag.PurchaseOrderNo,
+                    Status = tag.Status,
+                    TagFunctionCode = tag.TagFunctionCode,
+                    TagNo = tag.TagNo,
+                    ResponsibleCode = responsible.Code,
+                    ModeTitle = mode.Title
                 };
 
+            queryable = AddDueFilter(request.Filter.DueFilters.ToList(), queryable);
+
+            var result = new TagsResult();
+
+            // todo spawn 2 threads: CountAsync in one and filtered/paged query in another
+            result.MaxAvailable = await queryable.CountAsync(cancellationToken);
+
             queryable = AddSorting(request.Sorting, queryable);
-            
-            var orderedDtos = await queryable
-                .Skip(request.Paging.Page*request.Paging.Size)
-                .Take(request.Paging.Size)
-                .ToListAsync(cancellationToken);
+            queryable = AddPaging(request.Paging, queryable);
+
+            var orderedDtos = await queryable.ToListAsync(cancellationToken);
 
             if (!orderedDtos.Any())
             {
-                return new SuccessResult<IEnumerable<TagDto>>(new List<TagDto>());
+                return new SuccessResult<TagsResult>(new TagsResult());
             }
 
-            var reqDefIds = orderedDtos.Select(dto => dto.Tag).SelectMany(t => t.Requirements)
+            var tagsIds = orderedDtos.Select(t => t.TagId);
+
+            var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
+                    where tagsIds.Contains(tag.Id)
+                    select tag)
+                .ToListAsync(cancellationToken);
+
+            var requirementDefinitionIds = tagsWithRequirements.SelectMany(t => t.Requirements)
                 .Select(r => r.RequirementDefinitionId).Distinct();
 
             var reqTypeDtos = await (from rd in _context.QuerySet<RequirementDefinition>()
                     join rt in _context.QuerySet<RequirementType>() on EF.Property<int>(rd, "RequirementTypeId") equals rt.Id
-                    where reqDefIds.Contains(rd.Id)
+                    where requirementDefinitionIds.Contains(rd.Id)
                     select new ReqTypeDto
                     {
                         RequirementDefinitionId = rd.Id,
@@ -79,12 +109,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     }
                 ).ToListAsync(cancellationToken);
 
-            var now = _timeService.GetCurrentTimeUtc();
-
-            var tagDtos = orderedDtos.Select(outerDto =>
+            result.Tags = orderedDtos.Select(tagDto =>
             {
-                var tag = outerDto.Tag;
-                var requirementDtos = tag.OrderedRequirements().Select(
+                var tagWithRequirement = tagsWithRequirements.Single(t => t.Id == tagDto.TagId);
+
+                var requirementDtos = tagWithRequirement.OrderedRequirements().Select(
                         r =>
                         {
                             var reqTypeDto =
@@ -93,32 +122,47 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                                 r.Id,
                                 reqTypeDto.RequirementTypeCode,
                                 r.NextDueTimeUtc,
-                                r.GetNextDueInWeeks(now),
-                                r.IsReadyAndDueToBePreserved(now));
+                                r.GetNextDueInWeeks(),
+                                r.IsReadyAndDueToBePreserved());
                         })
                     .ToList();
 
-                return new TagDto(tag.Id,
-                    tag.AreaCode,
-                    tag.Calloff,
-                    tag.CommPkgNo,
-                    tag.DisciplineCode,
-                    tag.IsVoided,
-                    tag.McPkgNo,
-                    outerDto.Mode.Title,
-                    tag.IsReadyToBePreserved(now),
-                    tag.IsReadyToBeTransferred(outerDto.Journey),
-                    tag.PurchaseOrderNo,
-                    tag.Remark,
+                return new TagDto(tagDto.TagId,
+                    tagDto.AreaCode,
+                    tagDto.Calloff,
+                    tagDto.CommPkgNo,
+                    tagDto.DisciplineCode,
+                    tagDto.IsVoided,
+                    tagDto.McPkgNo,
+                    tagDto.ModeTitle,
+                    tagDto.PurchaseOrderNo,
                     requirementDtos,
-                    outerDto.Responsible.Code,
-                    tag.Status,
-                    tag.TagFunctionCode,
-                    tag.Description,
-                    tag.TagNo,
-                    tag.TagType);
+                    tagDto.ResponsibleCode,
+                    tagDto.Status,
+                    tagDto.TagFunctionCode,
+                    tagDto.Description,
+                    tagDto.TagNo);
             });
-            return new SuccessResult<IEnumerable<TagDto>>(tagDtos);
+            return new SuccessResult<TagsResult>(result);
+        }
+
+        private IQueryable<Dto> AddDueFilter(List<DueFilterType> dueFilters, IQueryable<Dto> queryable)
+        {
+            if (!dueFilters.Any())
+            {
+                return queryable;
+            }
+
+            // todo
+            return queryable;
+        }
+
+        private static IQueryable<Dto> AddPaging(Paging paging, IQueryable<Dto> queryable)
+        {
+            queryable = queryable
+                .Skip(paging.Page * paging.Size)
+                .Take(paging.Size);
+            return queryable;
         }
 
         private static IQueryable<Dto> AddSorting(Sorting sorting, IQueryable<Dto> queryable)
@@ -129,34 +173,34 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     switch (sorting.SortingColumn)
                     {
                         case SortingColumn.Due:
-                            queryable = queryable.OrderBy(dto => dto.Tag.NextDueTimeUtc);
+                            queryable = queryable.OrderBy(dto => dto.NextDueTimeUtc);
                             break;
                         case SortingColumn.Status:
-                            queryable = queryable.OrderBy(dto => dto.Tag.Status);
+                            queryable = queryable.OrderBy(dto => dto.Status);
                             break;
                         case SortingColumn.TagNo:
-                            queryable = queryable.OrderBy(dto => dto.Tag.TagNo);
+                            queryable = queryable.OrderBy(dto => dto.TagNo);
                             break;
                         case SortingColumn.Description:
-                            queryable = queryable.OrderBy(dto => dto.Tag.Description);
+                            queryable = queryable.OrderBy(dto => dto.Description);
                             break;
                         case SortingColumn.Responsible:
-                            queryable = queryable.OrderBy(dto => dto.Responsible.Code);
+                            queryable = queryable.OrderBy(dto => dto.ResponsibleCode);
                             break;
                         case SortingColumn.Mode:
-                            queryable = queryable.OrderBy(dto => dto.Mode.Title);
+                            queryable = queryable.OrderBy(dto => dto.ModeTitle);
                             break;
                         case SortingColumn.PO:
-                            queryable = queryable.OrderBy(dto => dto.Tag.Calloff);
+                            queryable = queryable.OrderBy(dto => dto.Calloff);
                             break;
                         case SortingColumn.Area:
-                            queryable = queryable.OrderBy(dto => dto.Tag.AreaCode);
+                            queryable = queryable.OrderBy(dto => dto.AreaCode);
                             break;
                         case SortingColumn.Discipline:
-                            queryable = queryable.OrderBy(dto => dto.Tag.DisciplineCode);
+                            queryable = queryable.OrderBy(dto => dto.DisciplineCode);
                             break;
                         default:
-                            queryable = queryable.OrderBy(dto => dto.Tag.Id);
+                            queryable = queryable.OrderBy(dto => dto.TagId);
                             break;
                     }
 
@@ -165,34 +209,34 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     switch (sorting.SortingColumn)
                     {
                         case SortingColumn.Due:
-                            queryable = queryable.OrderByDescending(dto => dto.Tag.NextDueTimeUtc);
+                            queryable = queryable.OrderByDescending(dto => dto.NextDueTimeUtc);
                             break;
                         case SortingColumn.Status:
-                            queryable = queryable.OrderByDescending(dto => dto.Tag.Status);
+                            queryable = queryable.OrderByDescending(dto => dto.Status);
                             break;
                         case SortingColumn.TagNo:
-                            queryable = queryable.OrderByDescending(dto => dto.Tag.TagNo);
+                            queryable = queryable.OrderByDescending(dto => dto.TagNo);
                             break;
                         case SortingColumn.Description:
-                            queryable = queryable.OrderByDescending(dto => dto.Tag.Description);
+                            queryable = queryable.OrderByDescending(dto => dto.Description);
                             break;
                         case SortingColumn.Responsible:
-                            queryable = queryable.OrderByDescending(dto => dto.Responsible.Code);
+                            queryable = queryable.OrderByDescending(dto => dto.ResponsibleCode);
                             break;
                         case SortingColumn.Mode:
-                            queryable = queryable.OrderByDescending(dto => dto.Mode.Title);
+                            queryable = queryable.OrderByDescending(dto => dto.ModeTitle);
                             break;
                         case SortingColumn.PO:
-                            queryable = queryable.OrderByDescending(dto => dto.Tag.Calloff);
+                            queryable = queryable.OrderByDescending(dto => dto.Calloff);
                             break;
                         case SortingColumn.Area:
-                            queryable = queryable.OrderByDescending(dto => dto.Tag.AreaCode);
+                            queryable = queryable.OrderByDescending(dto => dto.AreaCode);
                             break;
                         case SortingColumn.Discipline:
-                            queryable = queryable.OrderByDescending(dto => dto.Tag.DisciplineCode);
+                            queryable = queryable.OrderByDescending(dto => dto.DisciplineCode);
                             break;
                         default:
-                            queryable = queryable.OrderByDescending(dto => dto.Tag.Id);
+                            queryable = queryable.OrderByDescending(dto => dto.TagId);
                             break;
                     }
 
@@ -204,10 +248,21 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
         private class Dto
         {
-            public Tag Tag { get; set; }
-            public Responsible Responsible { get; set; }
-            public Journey Journey { get; set; }
-            public Mode Mode { get; set; }
+            public int TagId { get; set; }
+            public DateTime? NextDueTimeUtc { get; set; }
+            public PreservationStatus Status { get; set; }
+            public string Description { get; set; }
+            public string ResponsibleCode { get; set; }
+            public string ModeTitle { get; set; }
+            public string Calloff { get; set; }
+            public string AreaCode { get; set; }
+            public string DisciplineCode { get; set; }
+            public string TagNo { get; set; }
+            public string CommPkgNo { get; set; }
+            public bool IsVoided { get; set; }
+            public string McPkgNo { get; set; }
+            public string PurchaseOrderNo { get; set; }
+            public string TagFunctionCode { get; set; }
         }
 
         private class ReqTypeDto

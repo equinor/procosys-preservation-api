@@ -47,31 +47,44 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<IEnumerable<TagDto>>> GetTags(
             [FromQuery] string projectName,
             [FromQuery] PreservationStatus? preservationStatus,
-            [FromQuery] IEnumerable<int> responsibleIds,
             [FromQuery] IEnumerable<int> requirementTypeIds,
+            [FromQuery] IEnumerable<DueFilterType> dueFilters,
+            [FromQuery] IEnumerable<int> responsibleIds,
+            [FromQuery] IEnumerable<int> disciplineIds,
+            [FromQuery] IEnumerable<string> tagFunctionCodes,
             [FromQuery] IEnumerable<int> modeIds,
+            [FromQuery] IEnumerable<int> journeyIds,
             [FromQuery] IEnumerable<int> stepIds,
-            [FromQuery] string tagNo,
-            [FromQuery] string mcPkgNo,
-            [FromQuery] string callOff,
-            SortingColumn sortingColumn,
-            SortingDirection sortingDirection,
+            [FromQuery] string tagNoStartsWith,
+            [FromQuery] string commPkgNoStartsWith,
+            [FromQuery] string mcPkgNoStartsWith,
+            [FromQuery] string purchaseOrderNoStartsWith,
+            [FromQuery] string callOffStartsWith,
+            SortingColumn sortingColumn = SortingColumn.Due,
+            SortingDirection sortingDirection = SortingDirection.Asc,
             int page = 0,
             int pageSize = 20
         )
         {
+            // todo validation of project page and pagesize
             var query = new GetTagsQuery(
                 new Sorting(sortingDirection, sortingColumn),
                 new Filter(
                     projectName,
+                    dueFilters,
                     preservationStatus,
-                    responsibleIds,
                     requirementTypeIds,
+                    disciplineIds,
+                    responsibleIds,
+                    tagFunctionCodes,
                     modeIds,
+                    journeyIds,
                     stepIds,
-                    tagNo,
-                    mcPkgNo,
-                    callOff),
+                    tagNoStartsWith,
+                    commPkgNoStartsWith,
+                    mcPkgNoStartsWith,
+                    purchaseOrderNoStartsWith,
+                    callOffStartsWith),
                 new Paging(page, pageSize)
             );
             var result = await _mediator.Send(query);

@@ -15,17 +15,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             bool isVoided,
             string mcPkgNo, 
             string mode,
-            bool readyToBePreserved,
-            bool readyToBeTransferred,
             string purchaseOrderNo,
-            string remark,
             IEnumerable<RequirementDto> requirements,
             string responsibleCode,
             PreservationStatus status,
             string tagFunctionCode,
             string tagDescription,
-            string tagNo,
-            TagType tagType)
+            string tagNo)
         {
             Id = id;
             AreaCode = areaCode;
@@ -36,16 +32,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             Mode = mode;
-            ReadyToBePreserved = readyToBePreserved;
-            ReadyToBeTransferred = readyToBeTransferred;
             PurchaseOrderNo = purchaseOrderNo;
-            Remark = remark;
             TagNo = tagNo;
             ResponsibleCode = responsibleCode;
             Status = status;
             TagFunctionCode = tagFunctionCode;
             Requirements = requirements ?? throw new ArgumentNullException(nameof(requirements));
-            TagType = tagType;
         }
 
         public string AreaCode { get; }
@@ -58,14 +50,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         public string McPkgNo { get; }
         public string Mode { get; }
         public string PurchaseOrderNo { get; }
-        public string Remark { get; }
-        public bool ReadyToBePreserved { get; }
-        public bool ReadyToBeTransferred { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
         public string ResponsibleCode { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
-        public TagType TagType { get; }
     }
 }
