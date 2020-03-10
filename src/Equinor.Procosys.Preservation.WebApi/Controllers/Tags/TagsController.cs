@@ -17,11 +17,9 @@ using Equinor.Procosys.Preservation.Query.GetTags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
-using GetAllTagsInProjectQuery = Equinor.Procosys.Preservation.Query.ProjectAggregate.GetAllTagsInProjectQuery;
 using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.Requirement;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
-using TagDto = Equinor.Procosys.Preservation.Query.ProjectAggregate.TagDto;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -37,18 +35,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public TagsController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagDto>>> GetAllTagsInProject([FromQuery] string projectName)    
-        {
-            var result = await _mediator.Send(new GetAllTagsInProjectQuery(projectName));
-            return this.FromResult(result);
-        }
-        
-        [HttpGet("Filtered")]
         public async Task<ActionResult<IEnumerable<TagDto>>> GetTags(
             [FromQuery] string projectName,
             [FromQuery] PreservationStatus? preservationStatus,
-            [FromQuery] IEnumerable<int> requirementTypeIds,
             [FromQuery] IEnumerable<DueFilterType> dueFilters,
+            [FromQuery] IEnumerable<int> requirementTypeIds,
             [FromQuery] IEnumerable<int> responsibleIds,
             [FromQuery] IEnumerable<int> disciplineIds,
             [FromQuery] IEnumerable<string> tagFunctionCodes,
@@ -66,7 +57,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             int pageSize = 20
         )
         {
-            // todo validation of project page and pagesize
+            // todo validation of projectName, page and pageSize
             var query = new GetTagsQuery(
                 new Sorting(sortingDirection, sortingColumn),
                 new Filter(
