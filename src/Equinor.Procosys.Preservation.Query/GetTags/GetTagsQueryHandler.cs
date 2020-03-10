@@ -169,10 +169,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
         private static IQueryable<Dto> AddSorting(Sorting sorting, IQueryable<Dto> queryable)
         {
-            switch (sorting.SortingDirection)
+            switch (sorting.Direction)
             {
                 case SortingDirection.Asc:
-                    switch (sorting.SortingColumn)
+                    switch (sorting.Column)
                     {
                         case SortingColumn.Due:
                             queryable = queryable.OrderBy(dto => dto.NextDueTimeUtc);
@@ -208,7 +208,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
                     break;
                 case SortingDirection.Desc:
-                    switch (sorting.SortingColumn)
+                    switch (sorting.Column)
                     {
                         case SortingColumn.Due:
                             queryable = queryable.OrderByDescending(dto => dto.NextDueTimeUtc);

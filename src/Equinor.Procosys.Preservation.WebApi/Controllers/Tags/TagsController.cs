@@ -36,47 +36,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TagDto>>> GetTags(
-            [FromQuery] string projectName,
-            [FromQuery] PreservationStatus? preservationStatus,
-            [FromQuery] IEnumerable<DueFilterType> dueFilters,
-            [FromQuery] IEnumerable<int> requirementTypeIds,
-            [FromQuery] IEnumerable<int> responsibleIds,
-            [FromQuery] IEnumerable<int> disciplineIds,
-            [FromQuery] IEnumerable<string> tagFunctionCodes,
-            [FromQuery] IEnumerable<int> modeIds,
-            [FromQuery] IEnumerable<int> journeyIds,
-            [FromQuery] IEnumerable<int> stepIds,
-            [FromQuery] string tagNoStartsWith,
-            [FromQuery] string commPkgNoStartsWith,
-            [FromQuery] string mcPkgNoStartsWith,
-            [FromQuery] string purchaseOrderNoStartsWith,
-            [FromQuery] string callOffStartsWith,
-            SortingColumn sortingColumn = SortingColumn.Due,
-            SortingDirection sortingDirection = SortingDirection.Asc,
-            int page = 0,
-            int pageSize = 20
-        )
+            [FromQuery] FilterDto filter,
+            [FromQuery] SortingDto sorting,
+            [FromQuery] PagingDto paging)
         {
-            // todo validation of projectName, page and pageSize
             var query = new GetTagsQuery(
-                new Sorting(sortingDirection, sortingColumn),
-                new Filter(
-                    projectName,
-                    dueFilters,
-                    preservationStatus,
-                    requirementTypeIds,
-                    disciplineIds,
-                    responsibleIds,
-                    tagFunctionCodes,
-                    modeIds,
-                    journeyIds,
-                    stepIds,
-                    tagNoStartsWith,
-                    commPkgNoStartsWith,
-                    mcPkgNoStartsWith,
-                    purchaseOrderNoStartsWith,
-                    callOffStartsWith),
-                new Paging(page, pageSize)
+                new Sorting(sorting.Direction, sorting.Column),
+                new Filter(filter.ProjectName,
+                    filter.DueFilters,
+                    filter.PreservationStatus,
+                    filter.RequirementTypeIds,
+                    filter.DisciplineIds,
+                    filter.ResponsibleIds,
+                    filter.TagFunctionCodes,
+                    filter.ModeIds,
+                    filter.JourneyIds,
+                    filter.StepIds,
+                    filter.TagNoStartsWith,
+                    filter.CommPkgNoStartsWith,
+                    filter.McPkgNoStartsWith,
+                    filter.PurchaseOrderNoStartsWith,
+                    filter.CallOffStartsWith),
+                new Paging(paging.Page, paging.Size)
             );
             var result = await _mediator.Send(query);
             return this.FromResult(result);
