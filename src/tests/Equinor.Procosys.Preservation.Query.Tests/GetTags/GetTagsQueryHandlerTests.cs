@@ -270,6 +270,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
+                Assert.AreEqual(0, result.Data.MaxAvailable);
                 Assert.AreEqual(0, result.Data.Tags.Count());
             }
         }
@@ -286,6 +287,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(1, result.Data.MaxAvailable);
                 Assert.AreEqual(1, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -306,6 +308,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(2, result.Data.MaxAvailable);
                 Assert.AreEqual(2, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -326,6 +329,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(2, result.Data.MaxAvailable);
                 Assert.AreEqual(2, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -346,6 +350,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(2, result.Data.MaxAvailable);
                 Assert.AreEqual(2, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -366,6 +371,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(2, result.Data.MaxAvailable);
                 Assert.AreEqual(2, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -396,6 +402,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(20, result.Data.MaxAvailable);
                 Assert.AreEqual(20, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -415,6 +422,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(10, result.Data.MaxAvailable);
                 Assert.AreEqual(10, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -435,6 +443,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(2, result.Data.MaxAvailable);
                 Assert.AreEqual(2, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -454,6 +463,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(20, result.Data.MaxAvailable);
                 Assert.AreEqual(20, tags.Count); // 20 because responsible is the same on first step on both journeys
                 foreach (var tag in tags)
                 {
@@ -474,6 +484,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(2, result.Data.MaxAvailable);
                 Assert.AreEqual(2, tags.Count);
                 foreach (var tag in tags)
                 {
@@ -493,6 +504,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(20, result.Data.MaxAvailable);
                 Assert.AreEqual(20, tags.Count); // 20 because mode is the same on first step on both journeys
                 foreach (var tag in tags)
                 {
@@ -512,6 +524,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(10, result.Data.MaxAvailable);
                 Assert.AreEqual(10, tags.Count);
             }
         }
@@ -519,15 +532,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnStep()
         {
+            var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, new List<int>{_step1Onjourney1Id}, null, null, null, null, null);
             IEnumerable<int> tagIdsToTransfer;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, new List<int>{_step1Onjourney1Id}, null, null, null, null, null);
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(10, result.Data.MaxAvailable);
                 Assert.AreEqual(10, tags.Count);
                 tagIdsToTransfer = tags.Select(t => t.Id).Take(5);
             }
@@ -537,13 +551,43 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
-                var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, new List<int>{_step1Onjourney1Id}, null, null, null, null, null);
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
                 var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(5, result.Data.MaxAvailable);
                 Assert.AreEqual(5, tags.Count);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterWhenAllFiltersSet()
+        {
+            var filter = new Filter(_projectName,
+                null,
+                PreservationStatus.NotStarted,
+                new List<int>{_reqType1Id},
+                new List<string>{$"{_disciplinePrefix}-0"}, 
+                new List<int>{_resp1Id}, 
+                new List<string>{$"{_tagFunctionPrefix}-0"}, 
+                new List<int>{_mode1Id}, 
+                new List<int>{_journeyId1}, 
+                new List<int>{_step1Onjourney1Id},
+                $"{_stdTagPrefix}-0", 
+                $"{_commPkgPrefix}-0",
+                $"{_mcPkgPrefix}-0", 
+                $"{_poPrefix}-0", 
+                $"{_callOffPrefix}-0");
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+
+                var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
+
+                var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(1, result.Data.MaxAvailable);
+                Assert.AreEqual(1, tags.Count);
             }
         }
 
