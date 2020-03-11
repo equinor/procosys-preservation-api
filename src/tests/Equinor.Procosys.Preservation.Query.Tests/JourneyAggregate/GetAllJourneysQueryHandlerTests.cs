@@ -1,108 +1,107 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.JourneyAggregate;
+using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
 {
     [TestClass]
-    public class GetAllJourneysQueryHandlerTests
+    public class GetAllJourneysQueryHandlerTests : ReadOnlyTestsBase
     {
-        private const string TestPlant = "PlantA";
-        private const int ModeId = 72;
-        private const int RespId = 17;
-        private Mock<IJourneyRepository> _journeyRepoMock;
-        private Mock<IModeRepository> _modeRepoMock;
-        private Mock<IResponsibleRepository> _respRepoMock;
-        private Journey _journey;
-        private Journey _journeyVoided;
-        private Step _step;
-        private Step _stepVoided;
+        private readonly string _journeyTitle = "J1";
+        private readonly string _mode1Title = "M1";
+        private readonly string _mode2Title = "M2";
+        private readonly string _responsible1Code = "R1";
+        private readonly string _responsible2Code = "R2";
+        private int _mode1Id;
+        private int _mode2Id;
+        private int _responsible1Id;
+        private int _responsible2Id;
 
-        private GetAllJourneysQueryHandler _dut;
-
-        [TestInitialize]
-        public void Setup()
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            var modeMock = new Mock<Mode>();
-            modeMock.SetupGet(m => m.Id).Returns(ModeId);
-            modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
-
-            var respMock = new Mock<Responsible>();
-            respMock.SetupGet(r => r.Id).Returns(RespId);
-            respMock.SetupGet(r => r.Schema).Returns(TestPlant);
-
-            _step = new Step(TestPlant, modeMock.Object, respMock.Object);
-            _stepVoided = new Step(TestPlant, modeMock.Object, respMock.Object);
-            _stepVoided.Void();
-
-            _journey = new Journey(TestPlant, "TitleA");
-            _journey.AddStep(_step);
-            _journey.AddStep(_stepVoided);
-
-            _journeyVoided = new Journey(TestPlant, "TitleB");
-            _journeyVoided.Void();
-            
-            _modeRepoMock = new Mock<IModeRepository>();
-            _modeRepoMock.Setup(r => r.GetByIdsAsync(It.IsAny<IEnumerable<int>>()))
-                .Returns(Task.FromResult(new List<Mode> {modeMock.Object}));
-            
-            _respRepoMock = new Mock<IResponsibleRepository>();
-            _respRepoMock.Setup(r => r.GetByIdsAsync(It.IsAny<IEnumerable<int>>()))
-                .Returns(Task.FromResult(new List<Responsible> {respMock.Object}));
-
-            var journeys = new List<Journey>
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
-                _journey,
-                _journeyVoided
-            };
-            _journeyRepoMock = new Mock<IJourneyRepository>();
-            _journeyRepoMock.Setup(r => r.GetAllAsync()).Returns(Task.FromResult(journeys));
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
-            
-            _dut = new GetAllJourneysQueryHandler(_journeyRepoMock.Object, _modeRepoMock.Object, _respRepoMock.Object);
+                var mode1 = AddMode(context, _mode1Title);
+                var responsible1 = AddResponsible(context, _responsible1Code);
+                var journey = AddJourneyWithStep(context, _journeyTitle, mode1, responsible1);
+
+                var mode2 = AddMode(context, _mode2Title);
+                var responsible2 = AddResponsible(context, _responsible2Code);
+                journey.AddStep(new Step(TestPlant, mode2, responsible2));
+                context.SaveChanges();
+
+                _mode1Id = mode1.Id;
+                _mode2Id = mode2.Id;
+                _responsible1Id = responsible1.Id;
+                _responsible2Id = responsible2.Id;
+            }
         }
 
         [TestMethod]
         public async Task HandleGetAllJourneysQuery_ShouldReturnNonVoidedJourneysOnly_WhenNotGettingVoided()
         {
-            var result = await _dut.Handle(new GetAllJourneysQuery(false), default);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetAllJourneysQueryHandler(context);
 
-            var journeys = result.Data.ToList();
+                var result = await dut.Handle(new GetAllJourneysQuery(false), default);
 
-            Assert.AreEqual(1, journeys.Count);
-            var journey = journeys.First();
+                var journeys = result.Data.ToList();
+
+                Assert.AreEqual(1, journeys.Count);
+                var journey = journeys.First();
             
-            Assert.AreEqual(_journey.Title, journey.Title);
+                Assert.IsFalse(journey.IsVoided);
+                Assert.AreEqual(_journeyTitle, journey.Title);
             
-            var steps = journey.Steps.ToList();
-            Assert.AreEqual(1, steps.Count);
+                var steps = journey.Steps.ToList();
+                Assert.AreEqual(2, steps.Count);
 
-            var step = steps.First();
-            Assert.IsNotNull(step.Mode);
-            Assert.IsNotNull(step.Responsible);
-            Assert.AreEqual(ModeId, step.Mode.Id);
-            Assert.AreEqual(RespId, step.Responsible.Id);
+                AssertStep(steps.ElementAt(0), _mode1Id, _responsible1Id, _mode1Title, _responsible1Code, false);
+                AssertStep(steps.ElementAt(1), _mode2Id, _responsible2Id, _mode2Title, _responsible2Code, false);
+            }
         }
 
         [TestMethod]
         public async Task HandleGetAllJourneysQuery_ShouldReturnVoidedJourneys_WhenGettingVoided()
         {
-            var result = await _dut.Handle(new GetAllJourneysQuery(true), default);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var journey = context.Journeys.Include(j => j.Steps).First();
+                journey.Void();
+                journey.Steps.ToList().ForEach(s => s.Void());
+                context.SaveChanges();
+            }
 
-            var journeys = result.Data.ToList();
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetAllJourneysQueryHandler(context);
+                var result = await dut.Handle(new GetAllJourneysQuery(true), default);
 
-            Assert.AreEqual(2, journeys.Count);
-            Assert.IsTrue(journeys.Any(j => j.IsVoided));
+                var journeys = result.Data.ToList();
+                Assert.AreEqual(1, journeys.Count);
+                var journey = journeys.First();
+                Assert.IsTrue(journey.IsVoided);
+                Assert.IsTrue(journey.Steps.All(s => s.IsVoided));
+            }
+        }
 
-            var steps = journeys.First().Steps.ToList();
-            Assert.AreEqual(2, steps.Count);
-            Assert.IsTrue(steps.Any(s => s.IsVoided));
+        private void AssertStep(StepDto step, int modeId, int responsibleId, string modeTitle, string responsibleCode, bool isVoided)
+        {
+            Assert.IsNotNull(step.Mode);
+            Assert.IsNotNull(step.Responsible);
+            Assert.AreEqual(isVoided, step.IsVoided);
+            Assert.AreEqual(modeId, step.Mode.Id);
+            Assert.AreEqual(modeTitle, step.Mode.Title);
+            Assert.AreEqual(responsibleId, step.Responsible.Id);
+            Assert.AreEqual(responsibleCode, step.Responsible.Code);
         }
     }
 }
