@@ -31,11 +31,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
-                var uow = new UnitOfWork(context, _eventDispatcher, _currentUserProvider);
 
                 var project = AddProject(context, ProjectName, "Project description");
                 var journey = AddJourneyWithStep(context, "J", AddMode(context, "M1"), AddResponsible(context, "R1"));
@@ -67,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.ExistsAsync(TagNo1, ProjectName, default);
@@ -78,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_UnknownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.ExistsAsync("X", ProjectName, default);
@@ -89,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_NotVoidedTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.IsVoidedAsync(_tagNotStartedPreservationId, default);
@@ -100,13 +98,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_VoidedTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Single(t => t.Id == _tagNotStartedPreservationId);
                 tag.Void();
                 context.SaveChanges();
             }
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.IsVoidedAsync(_tagNotStartedPreservationId, default);
@@ -117,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_UnknownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.IsVoidedAsync(0, default);
@@ -128,7 +126,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task AllRequirementDefinitionsExistAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.AllRequirementDefinitionsExistAsync(_tagNotStartedPreservationId, default);
@@ -139,7 +137,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task HasANonVoidedRequirementAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.HasANonVoidedRequirementAsync(_tagNotStartedPreservationId, default);
@@ -150,13 +148,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task HasANonVoidedRequirementAsync_KnownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var req = context.Requirements.Single(r => r.Id == _reqNotStartedPreservationId);
                 req.Void();
                 context.SaveChanges();
             }
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.HasANonVoidedRequirementAsync(_tagNotStartedPreservationId, default);
@@ -167,7 +165,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task HaveNextStepAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.HaveNextStepAsync(_tagInFirstStepId, default);
@@ -178,7 +176,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task HaveNextStepAsync_KnownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.HaveNextStepAsync(_tagInLastStepId, default);
@@ -189,7 +187,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task VerifyPreservationStatusAsync_KnownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.VerifyPreservationStatusAsync(_tagNotStartedPreservationId, PreservationStatus.Completed, default);
@@ -200,7 +198,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task VerifyPreservationStatusAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.VerifyPreservationStatusAsync(_tagNotStartedPreservationId, PreservationStatus.NotStarted, default);
@@ -211,7 +209,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ReadyToBePreservedAsync_KnownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 _timeProvider.ElapseWeeks(IntervalWeeks);
@@ -223,7 +221,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ReadyToBePreservedAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 _timeProvider.ElapseWeeks(IntervalWeeks);
@@ -235,7 +233,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task RequirementIsReadyToBePreservedAsync_KnownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.RequirementIsReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
@@ -246,7 +244,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task RequirementIsReadyToBePreservedAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.RequirementIsReadyToBePreservedAsync(_tagStartedPreservationId, _reqStartedPreservationId, default);
@@ -257,13 +255,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task RequirementIsReadyToBePreservedAsync_KnownTag_ReturnsTrue_WhenStartedInSeparateContext()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).Single(t => t.Id == _tagNotStartedPreservationId);
                 tag.StartPreservation();
                 context.SaveChanges();
             }
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.RequirementIsReadyToBePreservedAsync(_tagNotStartedPreservationId, _reqNotStartedPreservationId, default);
@@ -274,7 +272,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task HasRequirementReadyForRecordingAsync_KnownTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.HasRequirementWithActivePeriodAsync(_tagStartedPreservationId, _reqStartedPreservationId, default);
@@ -285,7 +283,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task TagTypeCanBeTransferredAsync_StandardTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.TagTypeCanBeTransferredAsync(_tagStartedPreservationId, default);
@@ -296,7 +294,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task TagTypeCanBeTransferredAsync_SiteAreaTag_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.TagTypeCanBeTransferredAsync(_siteAreaTagId, default);
@@ -307,7 +305,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task TagTypeCanBeTransferredAsync_UnknownTag_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
                 var result = await dut.TagTypeCanBeTransferredAsync(0, default);
