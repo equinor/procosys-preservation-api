@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.AreEqual("TAG", dut.TagNoStartsWith);
             Assert.IsTrue(dut.PreservationStatus.HasValue);
             Assert.AreEqual(PreservationStatus.NotStarted, dut.PreservationStatus.Value);
-            Assert.AreEqual(2, dut.DisciplineCodes.Single());
+            Assert.AreEqual("DI", dut.DisciplineCodes.Single());
             Assert.AreEqual(DueFilterType.ThisWeek, dut.DueFilters.Single());
             Assert.AreEqual(6, dut.JourneyIds.Single());
             Assert.AreEqual(5, dut.ModeIds.Single());
