@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -135,7 +135,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectNumberOfItems()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -148,7 +148,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectDto()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -180,7 +180,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnDueInfo_WhenPreservationNotStarted()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -200,7 +200,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             StartPreservationOnAllTags();
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -218,7 +218,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnReadyToBeTransferred_BeforePreservationStarted()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -232,7 +232,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         {
             StartPreservationOnAllTags();
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -252,7 +252,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
             
             TransferAllStandardTags();
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -268,7 +268,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnNoElements_WhenThereIsNoTags()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllTagsInProjectQueryHandler(context);
                 var result = await dut.Handle(new GetAllTagsInProjectQuery("NO"), default);
@@ -279,7 +279,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
         private void StartPreservationOnAllTags()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ToList();
                 tags.ForEach(t => t.StartPreservation());
@@ -289,7 +289,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
 
         private void TransferAllStandardTags()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var journeys = context.Journeys.Include(j => j.Steps).ToList();
                 var standardTags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)

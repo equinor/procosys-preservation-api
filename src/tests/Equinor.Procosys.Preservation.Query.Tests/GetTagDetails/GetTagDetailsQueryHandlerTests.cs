@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         [TestMethod]
         public async Task Handler_ReturnsTagDetails()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _timeProvider.ElapseWeeks(_intervalWeeks);
 
@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var query = new GetTagDetailsQuery(0);
                 var dut = new GetTagDetailsQueryHandler(context);

@@ -12,12 +12,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             DbOptions = new DbContextOptions<PreservationContext>();
             EventDispatcherMock = new Mock<IEventDispatcher>();
             PlantProviderMock = new Mock<IPlantProvider>();
-            ContextMock = new Mock<PreservationContext>(DbOptions, PlantProviderMock.Object);
+            CurrentUserProviderMock = new Mock<ICurrentUserProvider>();
+            ContextMock = new Mock<PreservationContext>(DbOptions, PlantProviderMock.Object, EventDispatcherMock.Object, CurrentUserProviderMock.Object);
         }
 
         public DbContextOptions<PreservationContext> DbOptions { get; }
         public Mock<IEventDispatcher> EventDispatcherMock { get; }
         public Mock<IPlantProvider> PlantProviderMock { get; }
         public Mock<PreservationContext> ContextMock { get; }
+        public Mock<ICurrentUserProvider> CurrentUserProviderMock { get; }
     }
 }

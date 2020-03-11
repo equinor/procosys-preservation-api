@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
         [TestMethod]
         public async Task HandleGetAllModesQueryHandler_ShouldReturnModes()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllModesQueryHandler(context);
 

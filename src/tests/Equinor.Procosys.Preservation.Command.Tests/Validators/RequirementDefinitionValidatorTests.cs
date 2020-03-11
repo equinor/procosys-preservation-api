@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                         
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_KnownId_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.ExistsAsync(_reqDefId, default);
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_UnknownId_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.ExistsAsync(126234, default);
@@ -48,13 +48,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var reqDef = context.RequirementDefinitions.Single(rd => rd.Id == _reqDefId);
                 reqDef.Void();
                 context.SaveChanges();
             }
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.IsVoidedAsync(_reqDefId, default);
@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.IsVoidedAsync(_reqDefId, default);
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.IsVoidedAsync(126234, default);

@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public async Task HandleGetAllJourneysQuery_ShouldReturnNonVoidedJourneysOnly_WhenNotGettingVoided()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllJourneysQueryHandler(context);
 
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public async Task HandleGetAllJourneysQuery_ShouldReturnVoidedJourneys_WhenGettingVoided()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var journey = context.Journeys.Include(j => j.Steps).First();
                 journey.Void();
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
                 context.SaveChanges();
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllJourneysQueryHandler(context);
                 var result = await dut.Handle(new GetAllJourneysQuery(true), default);
