@@ -93,6 +93,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag1.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req1OnTag2.NextDueTimeUtc);
             Assert.AreEqual(expectedNextDueTimeUtc, _req2OnTag2.NextDueTimeUtc);
+
+            Assert.AreEqual(expectedNextDueTimeUtc, _tag1.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, _tag2.NextDueTimeUtc);
         }
 
         [TestMethod]

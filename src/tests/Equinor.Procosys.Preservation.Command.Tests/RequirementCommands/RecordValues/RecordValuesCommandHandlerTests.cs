@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -14,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
     public class RecordValuesCommandHandlerTests : CommandHandlerTestsBase
     {
         private Requirement _requirement;
-        private RecordValuesCommand _recordValuesCommandWithCheckedCheckBoxAndNaAsNumber;
+        private RecordValuesCommand _recordValuesCommandWithCheckedCheckBoxAndNumber;
         private RecordValuesCommand _recordValuesCommandWithNullAsNumber;
         private RecordValuesCommandHandler _dut;
 
@@ -26,13 +25,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             var _numberFieldId = 12;
             var _reqId = 21;
 
-            _recordValuesCommandWithCheckedCheckBoxAndNaAsNumber = new RecordValuesCommand(
+            _recordValuesCommandWithCheckedCheckBoxAndNumber = new RecordValuesCommand(
                 _tagId, 
                 _reqId, 
                 new Dictionary<int, string>
                 {
                     {_checkBoxFieldId, "true"},
-                    {_numberFieldId, "n/a"}
+                    {_numberFieldId, "21"}
                 }, 
                 null);
 
@@ -99,7 +98,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, _requirement.ActivePeriod.Status);
 
             // Act
-            await _dut.Handle(_recordValuesCommandWithCheckedCheckBoxAndNaAsNumber, default);
+            await _dut.Handle(_recordValuesCommandWithCheckedCheckBoxAndNumber, default);
             
             // Assert
             Assert.AreEqual(2, _requirement.ActivePeriod.FieldValues.Count);
@@ -125,7 +124,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         public async Task HandlingRecordValuesCommand_ShouldSave()
         {
             // Act
-            await _dut.Handle(_recordValuesCommandWithCheckedCheckBoxAndNaAsNumber, default);
+            await _dut.Handle(_recordValuesCommandWithCheckedCheckBoxAndNumber, default);
             
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
