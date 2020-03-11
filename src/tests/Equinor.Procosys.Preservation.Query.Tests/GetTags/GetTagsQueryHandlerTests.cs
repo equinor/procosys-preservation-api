@@ -193,6 +193,21 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
 
         [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyPageButMaxAvailable_WhenGettingBeondLastPage()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+                var paging = new Paging(1, 50);
+                var result = await dut.Handle(new GetTagsQuery(_sorting, _filter, paging), default);
+
+                // 30 tags added in setup, but 20 of them in project PX
+                Assert.AreEqual(20, result.Data.MaxAvailable);
+                Assert.AreEqual(0, result.Data.Tags.Count());
+            }
+        }
+
+        [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectDto()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))

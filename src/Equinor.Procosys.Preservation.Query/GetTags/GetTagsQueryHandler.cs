@@ -82,14 +82,17 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
             var resultTask = queryable.ToListAsync(cancellationToken);
 
-            Task.WaitAll(countTask, resultTask);
-
             var maxAvailable = await countTask;
             var orderedDtos = await resultTask;
 
             if (!orderedDtos.Any())
             {
-                return new SuccessResult<TagsResult>(new TagsResult {Tags = new List<TagDto>()});
+                return new SuccessResult<TagsResult>(
+                    new TagsResult
+                    {
+                        MaxAvailable = maxAvailable,
+                        Tags = new List<TagDto>()
+                    });
             }
 
             var tagsIds = orderedDtos.Select(t => t.TagId);
