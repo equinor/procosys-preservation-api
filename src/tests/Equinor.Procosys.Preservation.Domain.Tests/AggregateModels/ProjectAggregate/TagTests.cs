@@ -799,6 +799,27 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+
+        #region IsReadyToBeStarted
+
+        [TestMethod]
+        public void IsReadyToBeStarted_ShouldBeTrue_BeforePreservationStarted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+
+            Assert.IsTrue(dut.IsReadyToBeStarted());
+        }
+        
+        [TestMethod]
+        public void IsReadyToBeStarted_ShouldBeFalse_AfterPreservationStarted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.IsFalse(dut.IsReadyToBeStarted());
+        }
+
+        #endregion
         
         #region AddAction
 

@@ -56,21 +56,23 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                       (!request.Filter.StepIds.Any() || request.Filter.StepIds.Contains(step.Id))
                 select new Dto
                 {
-                    TagId = tag.Id,
                     AreaCode = tag.AreaCode,
                     Calloff = tag.Calloff,
                     CommPkgNo = tag.CommPkgNo,
                     Description = tag.Description,
                     DisciplineCode = tag.DisciplineCode,
                     IsVoided = tag.IsVoided,
+                    JourneyId = journey.Id,
+                    ModeTitle = mode.Title,
                     McPkgNo = tag.McPkgNo,
                     NextDueTimeUtc = tag.NextDueTimeUtc,
                     PurchaseOrderNo = tag.PurchaseOrderNo,
+                    ResponsibleCode = responsible.Code,
                     Status = tag.Status,
                     TagFunctionCode = tag.TagFunctionCode,
+                    TagId = tag.Id,
                     TagNo = tag.TagNo,
-                    ResponsibleCode = responsible.Code,
-                    ModeTitle = mode.Title
+                    TagType = tag.TagType
                 };
 
             queryable = AddDueFilter(request.Filter.DueFilters.ToList(), queryable);
@@ -95,18 +97,27 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     });
             }
 
-            var tagsIds = orderedDtos.Select(t => t.TagId);
+            var tagsIds = orderedDtos.Select(dto => dto.TagId);
+            var journeyIds = orderedDtos.Select(dto => dto.JourneyId);
 
             // get tags again, including Requirements and PreservationPeriods. See comment above
-            var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
+            var tagsWithRequirementsTask = (from tag in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
                     where tagsIds.Contains(tag.Id)
                     select tag)
                 .ToListAsync(cancellationToken);
 
+            // get Journeys with Steps to be able to calculate if Tag is ReadyToBeTransferred
+            var journeysWithStepsTask = (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
+                    where journeyIds.Contains(j.Id)
+                    select j)
+                .ToListAsync(cancellationToken);
+
+            var tagsWithRequirements = await tagsWithRequirementsTask;
+
             var requirementDefinitionIds = tagsWithRequirements.SelectMany(t => t.Requirements)
                 .Select(r => r.RequirementDefinitionId).Distinct();
 
-            var reqTypeDtos = await (from rd in _context.QuerySet<RequirementDefinition>()
+            var reqTypeDtosTask = (from rd in _context.QuerySet<RequirementDefinition>()
                     join rt in _context.QuerySet<RequirementType>() on EF.Property<int>(rd, "RequirementTypeId") equals rt.Id
                     where requirementDefinitionIds.Contains(rd.Id)
                     select new ReqTypeDto
@@ -116,14 +127,17 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     }
                 ).ToListAsync(cancellationToken);
 
+            var journeysWithSteps = await journeysWithStepsTask;
+            var reqTypeDtos = await reqTypeDtosTask;
+
             var result = new TagsResult
             {
                 MaxAvailable = maxAvailable,
                 Tags = orderedDtos.Select(tagDto =>
                 {
-                    var tagWithRequirement = tagsWithRequirements.Single(t => t.Id == tagDto.TagId);
+                    var tagWithRequirements = tagsWithRequirements.Single(t => t.Id == tagDto.TagId);
 
-                    var requirementDtos = tagWithRequirement.OrderedRequirements().Select(
+                    var requirementDtos = tagWithRequirements.OrderedRequirements().Select(
                             r =>
                             {
                                 var reqTypeDto =
@@ -138,6 +152,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                             })
                         .ToList();
 
+                    var journeyWithSteps = journeysWithSteps.Single(j => j.Id == tagDto.JourneyId);
+
+                    var isReadyToBePreserved = tagWithRequirements.IsReadyToBePreserved();
+                    var isReadyToBeStarted = tagWithRequirements.IsReadyToBeStarted();
+                    var isReadyToBeTransferred = tagWithRequirements.IsReadyToBeTransferred(journeyWithSteps);
+
                     return new TagDto(tagDto.TagId,
                         tagDto.AreaCode,
                         tagDto.Calloff,
@@ -147,13 +167,17 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                         tagDto.IsVoided,
                         tagDto.McPkgNo,
                         tagDto.ModeTitle,
+                        isReadyToBePreserved,
+                        isReadyToBeStarted,
+                        isReadyToBeTransferred,
                         tagDto.PurchaseOrderNo,
                         requirementDtos,
                         tagDto.ResponsibleCode,
                         tagDto.Status,
                         tagDto.TagFunctionCode,
                         tagDto.Description,
-                        tagDto.TagNo);
+                        tagDto.TagNo,
+                        tagDto.TagType);
                 })
             };
 
@@ -262,21 +286,23 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
         private class Dto
         {
-            public int TagId { get; set; }
-            public DateTime? NextDueTimeUtc { get; set; }
-            public PreservationStatus Status { get; set; }
-            public string Description { get; set; }
-            public string ResponsibleCode { get; set; }
-            public string ModeTitle { get; set; }
-            public string Calloff { get; set; }
             public string AreaCode { get; set; }
-            public string DisciplineCode { get; set; }
-            public string TagNo { get; set; }
+            public string Calloff { get; set; }
             public string CommPkgNo { get; set; }
+            public string Description { get; set; }
+            public string DisciplineCode { get; set; }
             public bool IsVoided { get; set; }
+            public int JourneyId { get; set; }
             public string McPkgNo { get; set; }
+            public string ModeTitle { get; set; }
+            public DateTime? NextDueTimeUtc { get; set; }
             public string PurchaseOrderNo { get; set; }
+            public string ResponsibleCode { get; set; }
+            public PreservationStatus Status { get; set; }
+            public int TagId { get; set; }
             public string TagFunctionCode { get; set; }
+            public string TagNo { get; set; }
+            public TagType TagType { get; set; }
         }
 
         private class ReqTypeDto

@@ -22,13 +22,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             true,
             "McPkgNo",
             "Mode",
+            true,
+            true,
+            true,
             "PoNo",
             new List<RequirementDto> {new RequirementDto(0, null, default, default, false)},
             "Resp",
             PreservationStatus.Active,
             "TagFunctionCode",
             "TagDesc",
-            "TagNo");
+            "TagNo",
+            TagType.Standard);
 
         [TestMethod]
         public void Constructor_SetsProperties()
@@ -42,6 +46,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.IsTrue(_dut.IsVoided);
             Assert.AreEqual("McPkgNo", _dut.McPkgNo);
             Assert.AreEqual("Mode", _dut.Mode);
+            Assert.IsTrue(_dut.ReadyToBePreserved);
+            Assert.IsTrue(_dut.ReadyToBeStarted);
+            Assert.IsTrue(_dut.ReadyToBeTransferred);
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.IsNotNull(_dut.Requirements);
@@ -50,6 +57,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.AreEqual("Resp", _dut.ResponsibleCode);
             Assert.AreEqual("TagFunctionCode", _dut.TagFunctionCode);
             Assert.AreEqual("TagNo", _dut.TagNo);
+            Assert.AreEqual(TagType.Standard, _dut.TagType);
         }
     }
 }

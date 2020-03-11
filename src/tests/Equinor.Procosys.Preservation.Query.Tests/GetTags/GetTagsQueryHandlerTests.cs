@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -193,7 +194,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyPageButMaxAvailable_WhenGettingBeondLastPage()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyPageButMaxAvailable_WhenGettingBehindLastPage()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
             {
@@ -272,6 +273,91 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 Assert.AreEqual(_intervalWeeks, requirementDto.NextDueWeeks);
                 Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
                 Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectStatuses_BeforePreservationStarted()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+                var result = await dut.Handle(_query, default);
+                var tagNotStartedDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted);
+                Assert.IsFalse(tagNotStartedDto.ReadyToBePreserved);
+                Assert.IsTrue(tagNotStartedDto.ReadyToBeStarted);
+                Assert.IsFalse(tagNotStartedDto.ReadyToBeTransferred);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectStatuses_WhenPreservationStarted()
+        {
+            StartPreservationOnAllTags();
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+                var result = await dut.Handle(_query, default);
+
+                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
+                var siteTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.SiteArea);
+
+                Assert.IsTrue(stdTagActiveDto.ReadyToBeTransferred);
+                Assert.IsFalse(stdTagActiveDto.ReadyToBeStarted);
+                Assert.IsFalse(siteTagActiveDto.ReadyToBeTransferred);
+                Assert.IsFalse(siteTagActiveDto.ReadyToBeStarted);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnReadyToBeTransferredForStandardTags_WhenTransferredToLastStep()
+        {
+            StartPreservationOnAllTags();
+            
+            TransferAllStandardTags();
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+                var result = await dut.Handle(_query, default);
+
+                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
+
+                Assert.IsFalse(stdTagActiveDto.ReadyToBeTransferred);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnReadyToBePreserved_BeforeDue()
+        {
+            StartPreservationOnAllTags();
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+                var result = await dut.Handle(_query, default);
+
+                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
+
+                Assert.IsFalse(stdTagActiveDto.ReadyToBePreserved);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnReadyToBePreserved_WhenDue()
+        {
+            StartPreservationOnAllTags();
+            _timeProvider.ElapseWeeks(_intervalWeeks);
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+                var result = await dut.Handle(_query, default);
+
+                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
+
+                Assert.IsTrue(stdTagActiveDto.ReadyToBePreserved);
             }
         }
 
@@ -626,6 +712,22 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var tags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ToList();
                 tags.ForEach(t => t.StartPreservation());
+                context.SaveChanges();
+            }
+        }
+
+        private void TransferAllStandardTags()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            {
+                var journeys = context.Journeys.Include(j => j.Steps).ToList();
+                var standardTags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
+                    .Where(t => t.TagType == TagType.Standard).ToList();
+                foreach (var standardTag in standardTags)
+                {
+                    var journey = journeys.Single(j => j.Steps.Any(s => s.Id == standardTag.StepId));
+                    standardTag.Transfer(journey);
+                }
                 context.SaveChanges();
             }
         }
