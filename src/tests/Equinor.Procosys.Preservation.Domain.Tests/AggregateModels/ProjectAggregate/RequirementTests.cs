@@ -19,14 +19,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     
         private const int InfoFieldId = 5;
         private const int CheckBoxFieldId = 11;
-        private const int NumberFieldId = 12;
+        private const int NumberField1Id = 12;
+        private const int NumberField2Id = 22;
+        private const int NumberField3Id = 32;
         private const int TwoWeeksInterval = 2;
         private Mock<Field> _infoFieldMock;
         private Mock<Field> _checkBoxFieldMock;
-        private Mock<Field> _numberFieldMock;
+        private Mock<Field> _numberField1Mock;
+        private Mock<Field> _numberField2Mock;
+        private Mock<Field> _numberField3Mock;
         private Mock<RequirementDefinition> _reqDefWithInfoFieldMock;
         private Mock<RequirementDefinition> _reqDefWithCheckBoxFieldMock;
-        private Mock<RequirementDefinition> _reqDefWithNumberFieldMock;
+        private Mock<RequirementDefinition> _reqDefWithOneNumberFieldMock;
+        private Mock<RequirementDefinition> _reqDefWithTwoNumberFieldsMock;
         private Mock<RequirementDefinition> _reqDefWithNumberAndCheckBoxFieldMock;
         private DateTime _utcNow;
         private ManualTimeProvider _timeProvider;
@@ -42,9 +47,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _checkBoxFieldMock.SetupGet(f => f.Id).Returns(CheckBoxFieldId);
             _checkBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
 
-            _numberFieldMock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
-            _numberFieldMock.SetupGet(f => f.Id).Returns(NumberFieldId);
-            _numberFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _numberField1Mock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
+            _numberField1Mock.SetupGet(f => f.Id).Returns(NumberField1Id);
+            _numberField1Mock.SetupGet(f => f.Schema).Returns(TestPlant);
+
+            _numberField2Mock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
+            _numberField2Mock.SetupGet(f => f.Id).Returns(NumberField2Id);
+            _numberField2Mock.SetupGet(f => f.Schema).Returns(TestPlant);
+
+            _numberField3Mock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
+            _numberField3Mock.SetupGet(f => f.Id).Returns(NumberField3Id);
+            _numberField3Mock.SetupGet(f => f.Schema).Returns(TestPlant);
             
             _reqDefWithInfoFieldMock = new Mock<RequirementDefinition>();
             _reqDefWithInfoFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
@@ -54,19 +67,25 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDefWithCheckBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
             _reqDefWithCheckBoxFieldMock.Object.AddField(_checkBoxFieldMock.Object);
             
-            _reqDefWithNumberFieldMock = new Mock<RequirementDefinition>();
-            _reqDefWithNumberFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
-            _reqDefWithNumberFieldMock.Object.AddField(_numberFieldMock.Object);
+            _reqDefWithOneNumberFieldMock = new Mock<RequirementDefinition>();
+            _reqDefWithOneNumberFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _reqDefWithOneNumberFieldMock.Object.AddField(_numberField1Mock.Object);
+            
+            _reqDefWithTwoNumberFieldsMock = new Mock<RequirementDefinition>();
+            _reqDefWithTwoNumberFieldsMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _reqDefWithTwoNumberFieldsMock.Object.AddField(_numberField2Mock.Object);
+            _reqDefWithTwoNumberFieldsMock.Object.AddField(_numberField3Mock.Object);
             
             _reqDefWithNumberAndCheckBoxFieldMock = new Mock<RequirementDefinition>();
             _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
-            _reqDefWithNumberAndCheckBoxFieldMock.Object.AddField(_numberFieldMock.Object);
+            _reqDefWithNumberAndCheckBoxFieldMock.Object.AddField(_numberField1Mock.Object);
             _reqDefWithNumberAndCheckBoxFieldMock.Object.AddField(_checkBoxFieldMock.Object);
 
             _reqDefWithInfoFieldMock.SetupGet(rd => rd.Id).Returns(1);
             _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
             _reqDefWithCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(2);
-            _reqDefWithNumberFieldMock.SetupGet(rd => rd.Id).Returns(3);
+            _reqDefWithOneNumberFieldMock.SetupGet(rd => rd.Id).Returns(3);
+            _reqDefWithTwoNumberFieldsMock.SetupGet(rd => rd.Id).Returns(13);
             _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(4);
             
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
@@ -441,7 +460,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValues_ShouldThrowException_WhenRecordingOnWrongDefinition()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() =>
@@ -520,23 +539,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValues_WithNaAsNumber_ShouldCreateNumberValueWithNullValue()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, "n/a"}
+                    {NumberField1Id, "n/a"}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             var fieldValues = dut.ActivePeriod.FieldValues;
             Assert.AreEqual(1, fieldValues.Count);
             var fv = fieldValues.First();
             Assert.IsInstanceOfType(fv, typeof(NumberValue));
-            Assert.AreEqual(NumberFieldId, fv.FieldId);
+            Assert.AreEqual(NumberField1Id, fv.FieldId);
             Assert.IsNull(((NumberValue)fv).Value);
         }
 
@@ -544,23 +563,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RecordValues_WithNumber_ShouldCreateNumberValueWithCorrectValue()
         {
             var number = 1282.91;
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, number.ToString("F2")}
+                    {NumberField1Id, number.ToString("F2")}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             var fieldValues = dut.ActivePeriod.FieldValues;
             Assert.AreEqual(1, fieldValues.Count);
             var fv = fieldValues.First();
             Assert.IsInstanceOfType(fv, typeof(NumberValue));
-            Assert.AreEqual(NumberFieldId, fv.FieldId);
+            Assert.AreEqual(NumberField1Id, fv.FieldId);
             var numberValue = (NumberValue)fv;
             Assert.IsTrue( numberValue.Value.HasValue);
             Assert.AreEqual(number, numberValue.Value.Value);
@@ -569,16 +588,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValues_WithNoNumber_ShouldDoNothing_WhenNoValueExistsInAdvance()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, null}
+                    {NumberField1Id, null}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
@@ -615,16 +634,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValues_ShouldDeleteExistingNumberValue_WhenNumberIsNull()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, "na"}
+                    {NumberField1Id, "na"}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
@@ -632,10 +651,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, null}
+                    {NumberField1Id, null}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
@@ -645,16 +664,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValues_ShouldDeleteExistingNumberValue_WhenNumberIsBlank()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, "na"}
+                    {NumberField1Id, "na"}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
@@ -662,10 +681,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, string.Empty}
+                    {NumberField1Id, string.Empty}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
@@ -691,13 +710,42 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, "na"}
+                    {NumberField1Id, "1"}
                 }, 
                 null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
+        }
+        
+        [TestMethod]
+        public void RecordValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordNaForSingleNumber_TogetherWithCheckBox()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {CheckBoxFieldId, "true"}
+                }, 
+                null,
+                _reqDefWithNumberAndCheckBoxFieldMock.Object);
+
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
+            Assert.IsFalse(dut.ReadyToBePreserved);
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {NumberField1Id, "na"}
+                }, 
+                null,
+                _reqDefWithNumberAndCheckBoxFieldMock.Object);
+
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
+            Assert.IsFalse(dut.ReadyToBePreserved);
         }
 
         [TestMethod]
@@ -710,10 +758,67 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"},
-                    {NumberFieldId, "na"}
+                    {NumberField1Id, "1"}
                 }, 
                 null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
+
+            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
+            Assert.IsTrue(dut.ReadyToBePreserved);
+        }
+
+        [TestMethod]
+        public void RecordValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_WithNaForSingleNumber()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {CheckBoxFieldId, "true"},
+                    {NumberField1Id, "na"}
+                }, 
+                null,
+                _reqDefWithNumberAndCheckBoxFieldMock.Object);
+
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
+            Assert.IsFalse(dut.ReadyToBePreserved);
+        }
+
+        [TestMethod]
+        public void RecordValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_WithNaForAllNumbers()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithTwoNumberFieldsMock.Object);
+            dut.StartPreservation();
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {NumberField2Id, "NA"},
+                    {NumberField3Id, "n/a"}
+                }, 
+                null,
+                _reqDefWithTwoNumberFieldsMock.Object);
+
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
+            Assert.IsFalse(dut.ReadyToBePreserved);
+        }
+
+        [TestMethod]
+        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_WithNaForSomeNumbers()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithTwoNumberFieldsMock.Object);
+            dut.StartPreservation();
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {NumberField2Id, "1"},
+                    {NumberField3Id, "n/a"}
+                }, 
+                null,
+                _reqDefWithTwoNumberFieldsMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
@@ -729,7 +834,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new Dictionary<int, string>
                 {
                     {CheckBoxFieldId, "true"},
-                    {NumberFieldId, "na"}
+                    {NumberField1Id, "1"}
                 }, 
                 null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
@@ -782,16 +887,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordValues_ShouldToggleReadyToBePreserved_WhenRecordingNumberValue()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, "1"}
+                    {NumberField1Id, "1"}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
@@ -800,11 +905,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, null}
+                    {NumberField1Id, null}
                 }, 
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
+            Assert.IsFalse(dut.ReadyToBePreserved);
+        }
+
+        [TestMethod]
+        public void RecordValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordNaForSingleNumber()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.RecordValues(
+                new Dictionary<int, string>
+                {
+                    {NumberField1Id, "na"}
+                }, 
+                null,
+                _reqDefWithOneNumberFieldMock.Object);
+
+            // Assert
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
             Assert.IsFalse(dut.ReadyToBePreserved);
         }
@@ -816,16 +940,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetCurrentFieldValue_ShouldReturnNull_BeforeRecording()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
-            Assert.IsNull(dut.GetCurrentFieldValue(_numberFieldMock.Object));
+            Assert.IsNull(dut.GetCurrentFieldValue(_numberField1Mock.Object));
         }
 
         [TestMethod]
         public void GetCurrentFieldValue_ShouldReturnNull_ForUnknownField()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             Assert.IsNull(dut.GetCurrentFieldValue(new Mock<Field>().Object));
@@ -890,13 +1014,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, "123"}
+                    {NumberField1Id, "123"}
                 }, 
                 null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
-            var value = dut.GetCurrentFieldValue(_numberFieldMock.Object);
+            var value = dut.GetCurrentFieldValue(_numberField1Mock.Object);
 
             Assert.IsNotNull(value);
             Assert.IsInstanceOfType(value, typeof(NumberValue));
@@ -911,24 +1035,24 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, "123"}
+                    {NumberField1Id, "123"}
                 }, 
                 null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
-            Assert.IsNotNull(dut.GetCurrentFieldValue(_numberFieldMock.Object));
+            Assert.IsNotNull(dut.GetCurrentFieldValue(_numberField1Mock.Object));
 
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, null}
+                    {NumberField1Id, null}
                 }, 
                 null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
-            Assert.IsNull(dut.GetCurrentFieldValue(_numberFieldMock.Object));
+            Assert.IsNull(dut.GetCurrentFieldValue(_numberField1Mock.Object));
         }
 
         #endregion
@@ -938,7 +1062,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetCurrentComment_ShouldReturnNull_BeforeRecording()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             Assert.IsNull(dut.GetCurrentComment());
@@ -969,11 +1093,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetPreviousFieldValue_GetCurrentFieldValue_ShouldReturnDifferentValues_DuringRecordingAndPreserving()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
-            AssertNumber(null, dut.GetCurrentFieldValue(_numberFieldMock.Object));
-            AssertNumber(null, dut.GetPreviousFieldValue(_numberFieldMock.Object));
+            AssertNumber(null, dut.GetCurrentFieldValue(_numberField1Mock.Object));
+            AssertNumber(null, dut.GetPreviousFieldValue(_numberField1Mock.Object));
 
             RecordAndPreseve(dut, 7, null);
 
@@ -992,19 +1116,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.RecordValues(
                 new Dictionary<int, string>
                 {
-                    {NumberFieldId, numberToRecord.ToString("F2")}
+                    {NumberField1Id, numberToRecord.ToString("F2")}
                 },
                 null,
-                _reqDefWithNumberFieldMock.Object);
+                _reqDefWithOneNumberFieldMock.Object);
 
-            AssertNumber(numberToRecord, dut.GetCurrentFieldValue(_numberFieldMock.Object));
-            AssertNumber(expectedPreviousRecorded, dut.GetPreviousFieldValue(_numberFieldMock.Object));
+            AssertNumber(numberToRecord, dut.GetCurrentFieldValue(_numberField1Mock.Object));
+            AssertNumber(expectedPreviousRecorded, dut.GetPreviousFieldValue(_numberField1Mock.Object));
 
             // preserve and get a new period
             dut.Preserve(new Mock<Person>().Object, false);
 
-            AssertNumber(null, dut.GetCurrentFieldValue(_numberFieldMock.Object));
-            AssertNumber(numberToRecord, dut.GetPreviousFieldValue(_numberFieldMock.Object));
+            AssertNumber(null, dut.GetCurrentFieldValue(_numberField1Mock.Object));
+            AssertNumber(numberToRecord, dut.GetPreviousFieldValue(_numberField1Mock.Object));
         }
 
         private static void AssertNumber(double? expectedValue, FieldValue value)
@@ -1025,7 +1149,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void GetPreviousFieldValue_ShouldReturnNull_ForUnknownField()
         {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberFieldMock.Object);
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             Assert.IsNull(dut.GetPreviousFieldValue(new Mock<Field>().Object));

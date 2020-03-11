@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
@@ -154,7 +154,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -166,7 +166,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectNumber()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -180,7 +180,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnPage()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var paging = new Paging(0, 5);
@@ -195,7 +195,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyPageButMaxAvailable_WhenGettingBehindLastPage()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var paging = new Paging(1, 50);
@@ -210,7 +210,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectDto()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -242,7 +242,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnDueInfo_WhenPreservationNotStarted()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -262,7 +262,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             StartPreservationOnAllTags();
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -280,7 +280,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectStatuses_BeforePreservationStarted()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -296,7 +296,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             StartPreservationOnAllTags();
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -318,7 +318,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             
             TransferAllStandardTags();
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -334,7 +334,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             StartPreservationOnAllTags();
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -351,7 +351,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             StartPreservationOnAllTags();
             _timeProvider.ElapseWeeks(_intervalWeeks);
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var result = await dut.Handle(_query, default);
@@ -365,7 +365,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldReturnNoElements_WhenThereIsNoTags()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var filter = new Filter("NO", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
@@ -380,7 +380,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnTagNo()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var tagNoStartsWith = $"{_stdTagPrefix}-0";
@@ -401,7 +401,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnCommPkg()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var commPkgNoStartsWith = $"{_commPkgPrefix}-0";
@@ -422,7 +422,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnMcPkg()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var mcPkgNoStartsWith = $"{_mcPkgPrefix}-0";
@@ -443,7 +443,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnPurchaseOrder()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var purchaseOrderNoStartsWith = $"{_poPrefix}-0";
@@ -464,7 +464,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnCallOff()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
                 var callOffStartsWith = $"{_callOffPrefix}-0";
@@ -486,7 +486,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnPreservationStatus()
         {
             var filter = new Filter(_projectName, null, PreservationStatus.Active, null, null, null, null, null, null, null, null, null, null, null, null);
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
 
@@ -497,7 +497,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             
             StartPreservationOnAllTags();
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
 
@@ -516,7 +516,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnRequirementType()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter(_projectName, null, null, new List<int>{_reqType1Id}, null, null, null, null, null, null, null, null, null, null, null);
                 var dut = new GetTagsQueryHandler(context);
@@ -536,7 +536,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnDisciplineCode()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var diCode = $"{_disciplinePrefix}-0";
                 var filter = new Filter(_projectName, null, null, null, new List<string>{diCode}, null, null, null, null, null, null, null, null, null, null);
@@ -557,7 +557,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnResponsible()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter(_projectName, null, null, null, null, new List<int>{_resp1Id}, null, null, null, null, null, null, null, null, null);
                 var dut = new GetTagsQueryHandler(context);
@@ -577,7 +577,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnTagFunctionCode()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tfCode = $"{_tagFunctionPrefix}-0";
                 var filter = new Filter(_projectName, null, null, null, null, null, new List<string>{tfCode}, null, null, null, null, null, null, null, null);
@@ -598,7 +598,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnMode()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter(_projectName, null, null, null, null, null, null, new List<int>{_mode1Id}, null, null, null, null, null, null, null);
                 var dut = new GetTagsQueryHandler(context);
@@ -618,7 +618,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnJourney()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter(_projectName, null, null, null, null, null, null, null, new List<int>{_journeyId1}, null, null, null, null, null, null);
                 var dut = new GetTagsQueryHandler(context);
@@ -636,7 +636,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, new List<int>{_step1Onjourney1Id}, null, null, null, null, null);
             IEnumerable<int> tagIdsToTransfer;
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
 
@@ -651,7 +651,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             StartPreservationOnAllTags();
             TransferTags(tagIdsToTransfer);
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
 
@@ -681,7 +681,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 $"{_mcPkgPrefix}-0", 
                 $"{_poPrefix}-0", 
                 $"{_callOffPrefix}-0");
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
 
@@ -695,7 +695,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
         private void TransferTags(IEnumerable<int> tagIds)
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 foreach (var tagId in tagIds)
                 {
@@ -709,7 +709,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
         private void StartPreservationOnAllTags()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ToList();
                 tags.ForEach(t => t.StartPreservation());
@@ -719,7 +719,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
         private void TransferAllStandardTags()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var journeys = context.Journeys.Include(j => j.Steps).ToList();
                 var standardTags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
