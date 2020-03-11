@@ -28,13 +28,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
             // count before adding sorting/paging
             var countTask = queryable.CountAsync(cancellationToken);
+            var maxAvailable = await countTask;
 
             queryable = AddSorting(request.Sorting, queryable);
             queryable = AddPaging(request.Paging, queryable);
 
             var resultTask = queryable.ToListAsync(cancellationToken);
 
-            var maxAvailable = await countTask;
             var orderedDtos = await resultTask;
 
             if (!orderedDtos.Any())
@@ -55,14 +55,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     where tagsIds.Contains(tag.Id)
                     select tag)
                 .ToListAsync(cancellationToken);
+            var tagsWithRequirements = await tagsWithRequirementsTask;
 
             // get Journeys with Steps to be able to calculate ReadyToBeTransferred + NextMode + NextResponsible
             var journeysWithStepsTask = (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
                     where journeyIds.Contains(j.Id)
                     select j)
                 .ToListAsync(cancellationToken);
-
-            var tagsWithRequirements = await tagsWithRequirementsTask;
             var journeysWithSteps = await journeysWithStepsTask;
 
             // enrich DTO to be able to get distinct NextSteps to query database for distinct NextMode + NextResponsible
@@ -79,9 +78,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             var nextModesTask = (from m in _context.QuerySet<Mode>()
                 where nextModeIds.Contains(m.Id)
                 select m).ToListAsync(cancellationToken);
+            var nextModes = await nextModesTask;
+
             var nextResponsibleTask = (from r in _context.QuerySet<Responsible>()
                 where nextResponsibleIds.Contains(r.Id)
                 select r).ToListAsync(cancellationToken);
+            var nextResponsibles = await nextResponsibleTask;
+            
             var reqTypesTask = (from rd in _context.QuerySet<RequirementDefinition>()
                     join rt in _context.QuerySet<RequirementType>() on EF.Property<int>(rd, "RequirementTypeId") equals rt.Id
                     where requirementDefinitionIds.Contains(rd.Id)
@@ -91,9 +94,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                         RequirementTypeCode = rt.Code
                     }
                 ).ToListAsync(cancellationToken);
-
-            var nextModes = await nextModesTask;
-            var nextResponsibles = await nextResponsibleTask;
             var reqTypes = await reqTypesTask;
 
             var result = CreateResult(maxAvailable, orderedDtos, tagsWithRequirements, reqTypes, nextModes, nextResponsibles);
