@@ -164,7 +164,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectNumber()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectCounts()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -178,7 +178,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnPage()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnPageSize()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -690,6 +690,37 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var tags = result.Data.Tags.ToList();
                 Assert.AreEqual(1, result.Data.MaxAvailable);
                 Assert.AreEqual(1, tags.Count);
+            }
+        }
+                
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldSortOnTagNo()
+        {
+            // filter on specific journey. Will get 10 standard tags
+            var filter = new Filter(_projectName, null, null, null, null, null, null, null, new List<int>{_journeyId1}, null, null, null, null, null, null);
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+                var sorting = new Sorting(SortingDirection.Asc, SortingColumn.TagNo);
+
+                var result = await dut.Handle(new GetTagsQuery(sorting, filter, _paging), default);
+                var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(10, tags.Count);
+                Assert.AreEqual($"{_stdTagPrefix}-0", tags.First().TagNo);
+                Assert.AreEqual($"{_stdTagPrefix}-9", tags.Last().TagNo);
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context);
+                var sorting = new Sorting(SortingDirection.Desc, SortingColumn.TagNo);
+
+                var result = await dut.Handle(new GetTagsQuery(sorting, filter, _paging), default);
+                var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(10, tags.Count);
+                Assert.AreEqual($"{_stdTagPrefix}-9", tags.First().TagNo);
+                Assert.AreEqual($"{_stdTagPrefix}-0", tags.Last().TagNo);
             }
         }
 
