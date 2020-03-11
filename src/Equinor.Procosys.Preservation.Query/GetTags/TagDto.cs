@@ -16,6 +16,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             bool isVoided,
             string mcPkgNo, 
             string mode,
+            string nextMode,
+            string nextResponsibleCode,
             bool readyToBePreserved,
             bool readyToBeStarted,
             bool readyToBeTransferred,
@@ -38,6 +40,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             Mode = mode;
+            NextMode = nextMode;
+            NextResponsibleCode = nextResponsibleCode;
             ReadyToBePreserved = readyToBePreserved;
             ReadyToBeStarted = readyToBeStarted;
             ReadyToBeTransferred = readyToBeTransferred;
@@ -60,6 +64,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         public bool IsVoided { get; }
         public string McPkgNo { get; }
         public string Mode { get; }
+        public string NextMode { get; }
+        public string NextResponsibleCode { get; }
         public string PurchaseOrderNo { get; }
         public bool ReadyToBePreserved { get; }
         public bool ReadyToBeStarted { get; }

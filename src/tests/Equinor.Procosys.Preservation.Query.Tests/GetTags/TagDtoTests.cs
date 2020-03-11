@@ -22,6 +22,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             true,
             "McPkgNo",
             "Mode",
+            "NextMode",
+            "NextResp",
             true,
             true,
             true,
@@ -46,6 +48,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.IsTrue(_dut.IsVoided);
             Assert.AreEqual("McPkgNo", _dut.McPkgNo);
             Assert.AreEqual("Mode", _dut.Mode);
+            Assert.AreEqual("NextMode", _dut.NextMode);
+            Assert.AreEqual("NextResp", _dut.NextResponsibleCode);
             Assert.IsTrue(_dut.ReadyToBePreserved);
             Assert.IsTrue(_dut.ReadyToBeStarted);
             Assert.IsTrue(_dut.ReadyToBeTransferred);

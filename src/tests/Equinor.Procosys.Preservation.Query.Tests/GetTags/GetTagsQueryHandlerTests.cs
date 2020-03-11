@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -227,6 +226,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 Assert.AreEqual(tag.McPkgNo, tagDto.McPkgNo);
                 Assert.AreEqual(_mode1, tagDto.Mode);
                 Assert.AreEqual(_resp1, tagDto.ResponsibleCode);
+                Assert.AreEqual(_mode2, tagDto.NextMode);
+                Assert.AreEqual(_resp2, tagDto.NextResponsibleCode);
                 Assert.AreEqual(tag.Description, tagDto.Description);
                 Assert.AreEqual(tag.PurchaseOrderNo, tagDto.PurchaseOrderNo);
 
