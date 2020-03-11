@@ -75,15 +75,17 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
             queryable = AddDueFilter(request.Filter.DueFilters.ToList(), queryable);
 
-            var result = new TagsResult();
-
-            // todo spawn 2 threads: CountAsync in one and filtered/paged query in another
-            result.MaxAvailable = await queryable.CountAsync(cancellationToken);
+            var countTask = queryable.CountAsync(cancellationToken);
 
             queryable = AddSorting(request.Sorting, queryable);
             queryable = AddPaging(request.Paging, queryable);
 
-            var orderedDtos = await queryable.ToListAsync(cancellationToken);
+            var resultTask = queryable.ToListAsync(cancellationToken);
+
+            Task.WaitAll(countTask, resultTask);
+
+            var maxAvailable = await countTask;
+            var orderedDtos = await resultTask;
 
             if (!orderedDtos.Any())
             {
@@ -111,41 +113,47 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     }
                 ).ToListAsync(cancellationToken);
 
-            result.Tags = orderedDtos.Select(tagDto =>
+            var result = new TagsResult
             {
-                var tagWithRequirement = tagsWithRequirements.Single(t => t.Id == tagDto.TagId);
+                MaxAvailable = maxAvailable,
+                Tags = orderedDtos.Select(tagDto =>
+                {
+                    var tagWithRequirement = tagsWithRequirements.Single(t => t.Id == tagDto.TagId);
 
-                var requirementDtos = tagWithRequirement.OrderedRequirements().Select(
-                        r =>
-                        {
-                            var reqTypeDto =
-                                reqTypeDtos.Single(innerDto => innerDto.RequirementDefinitionId == r.RequirementDefinitionId);
-                            return new RequirementDto(
-                                r.Id,
-                                reqTypeDto.RequirementTypeCode,
-                                r.NextDueTimeUtc,
-                                r.GetNextDueInWeeks(),
-                                r.IsReadyAndDueToBePreserved());
-                        })
-                    .ToList();
+                    var requirementDtos = tagWithRequirement.OrderedRequirements().Select(
+                            r =>
+                            {
+                                var reqTypeDto =
+                                    reqTypeDtos.Single(innerDto =>
+                                        innerDto.RequirementDefinitionId == r.RequirementDefinitionId);
+                                return new RequirementDto(
+                                    r.Id,
+                                    reqTypeDto.RequirementTypeCode,
+                                    r.NextDueTimeUtc,
+                                    r.GetNextDueInWeeks(),
+                                    r.IsReadyAndDueToBePreserved());
+                            })
+                        .ToList();
 
-                return new TagDto(tagDto.TagId,
-                    tagDto.AreaCode,
-                    tagDto.Calloff,
-                    tagDto.CommPkgNo,
-                    tagDto.DisciplineCode,
-                    false, 
-                    tagDto.IsVoided,
-                    tagDto.McPkgNo,
-                    tagDto.ModeTitle,
-                    tagDto.PurchaseOrderNo,
-                    requirementDtos,
-                    tagDto.ResponsibleCode,
-                    tagDto.Status,
-                    tagDto.TagFunctionCode,
-                    tagDto.Description,
-                    tagDto.TagNo);
-            });
+                    return new TagDto(tagDto.TagId,
+                        tagDto.AreaCode,
+                        tagDto.Calloff,
+                        tagDto.CommPkgNo,
+                        tagDto.DisciplineCode,
+                        false,
+                        tagDto.IsVoided,
+                        tagDto.McPkgNo,
+                        tagDto.ModeTitle,
+                        tagDto.PurchaseOrderNo,
+                        requirementDtos,
+                        tagDto.ResponsibleCode,
+                        tagDto.Status,
+                        tagDto.TagFunctionCode,
+                        tagDto.Description,
+                        tagDto.TagNo);
+                })
+            };
+
             return new SuccessResult<TagsResult>(result);
         }
 
