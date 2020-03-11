@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _closedAction.Close(_utcNow, _closer);
                 tag.AddAction(_closedAction);
 
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait(); // todo should we perform this in all tests
 
                 _tagId = tag.Id;
                 _openActionId = _openAction.Id;
