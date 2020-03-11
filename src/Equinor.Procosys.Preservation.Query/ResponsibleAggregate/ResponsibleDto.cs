@@ -2,13 +2,13 @@
 {
     public class ResponsibleDto
     {
-        public ResponsibleDto(int id, string name)
+        public ResponsibleDto(int id, string code)
         {
             Id = id;
-            Name = name;
+            Code = code;
         }
 
         public int Id { get; }
-        public string Name { get; }
+        public string Code { get; }
     }
 }
