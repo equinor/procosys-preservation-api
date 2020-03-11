@@ -78,13 +78,13 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return journey;
         }
 
-        protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string type, string def)
+        protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string type, string def, int sortKey = 0)
         {
-            var requirementType = new RequirementType(TestPlant, type, $"Title{type}", 0);
+            var requirementType = new RequirementType(TestPlant, type, $"Title{type}", sortKey);
             context.RequirementTypes.Add(requirementType);
             new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
 
-            var requirementDefinition = new RequirementDefinition(TestPlant, $"Title{def}", 2, 1);
+            var requirementDefinition = new RequirementDefinition(TestPlant, def, 2, 1);
             requirementType.AddRequirementDefinition(requirementDefinition);
             new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
 
@@ -119,25 +119,25 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return tag;
         }
 
-        protected Field AddInfoField(PreservationContext context, RequirementDefinition rd)
+        protected Field AddInfoField(PreservationContext context, RequirementDefinition rd, string label)
         {
-            var field = new Field(TestPlant, "", FieldType.Info, 0);
+            var field = new Field(TestPlant, label, FieldType.Info, 0);
             rd.AddField(field);
             context.SaveChanges();
             return field;
         }
 
-        protected Field NumberField(PreservationContext context, RequirementDefinition rd, string unit, bool showPrevious)
+        protected Field AddNumberField(PreservationContext context, RequirementDefinition rd, string label, string unit, bool showPrevious)
         {
-            var field = new Field(TestPlant, "", FieldType.Number, 0, unit, showPrevious);
+            var field = new Field(TestPlant, label, FieldType.Number, 0, unit, showPrevious);
             rd.AddField(field);
             context.SaveChanges();
             return field;
         }
 
-        protected Field CheckBoxField(PreservationContext context, RequirementDefinition rd)
+        protected Field AddCheckBoxField(PreservationContext context, RequirementDefinition rd, string label)
         {
-            var field = new Field(TestPlant, "", FieldType.CheckBox, 0);
+            var field = new Field(TestPlant, label, FieldType.CheckBox, 0);
             rd.AddField(field);
             context.SaveChanges();
             return field;

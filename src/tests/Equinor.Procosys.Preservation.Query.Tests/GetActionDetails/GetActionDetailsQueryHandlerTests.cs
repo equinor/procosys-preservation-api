@@ -25,19 +25,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         private static DateTime _utcNow = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static DateTime _dueUtc = _utcNow.AddDays(30);
         private Person _closer;
-        private Person _currentUser;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider))
             {
-                _currentUser = AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
                 _closer = AddPerson(context, Guid.Empty, "Jon", "Blund");
 
                 var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
-
 
                 var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
                     journey.Steps.ElementAt(0),
@@ -54,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _closedAction.Close(_utcNow, _closer);
                 tag.AddAction(_closedAction);
 
-                new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync(default).Wait();
+                new UnitOfWork(context, _eventDispatcher, _currentUserProvider).SaveChangesAsync().Wait();
 
                 _tagId = tag.Id;
                 _openActionId = _openAction.Id;
