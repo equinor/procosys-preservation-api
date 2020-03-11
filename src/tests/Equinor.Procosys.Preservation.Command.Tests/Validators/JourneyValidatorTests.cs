@@ -14,9 +14,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private const string JourneyTitle = "Journey";
         private int _journeyId;
         
-        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> _dbContextOptions)
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
