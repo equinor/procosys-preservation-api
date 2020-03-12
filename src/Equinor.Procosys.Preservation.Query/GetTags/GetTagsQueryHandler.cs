@@ -27,15 +27,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             var queryable = CreateQueryableWithFilter(request);
 
             // count before adding sorting/paging
-            var countTask = queryable.CountAsync(cancellationToken);
-            var maxAvailable = await countTask;
+            var maxAvailable = await queryable.CountAsync(cancellationToken);
 
             queryable = AddSorting(request.Sorting, queryable);
             queryable = AddPaging(request.Paging, queryable);
 
-            var resultTask = queryable.ToListAsync(cancellationToken);
-
-            var orderedDtos = await resultTask;
+            var orderedDtos = await queryable.ToListAsync(cancellationToken);
 
             if (!orderedDtos.Any())
             {
@@ -51,18 +48,19 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
 
             // get tags again, including Requirements and PreservationPeriods. See comment in CreateQueryable regarding Include and EF
-            var tagsWithRequirementsTask = (from tag in _context.QuerySet<Tag>().Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods)
+            var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>()
+                        .Include(t => t.Requirements)
+                        .ThenInclude(r => r.PreservationPeriods)
                     where tagsIds.Contains(tag.Id)
                     select tag)
                 .ToListAsync(cancellationToken);
-            var tagsWithRequirements = await tagsWithRequirementsTask;
 
             // get Journeys with Steps to be able to calculate ReadyToBeTransferred + NextMode + NextResponsible
-            var journeysWithStepsTask = (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
+            var journeysWithSteps = await (from j in _context.QuerySet<Journey>()
+                        .Include(j => j.Steps)
                     where journeyIds.Contains(j.Id)
                     select j)
                 .ToListAsync(cancellationToken);
-            var journeysWithSteps = await journeysWithStepsTask;
 
             // enrich DTO to be able to get distinct NextSteps to query database for distinct NextMode + NextResponsible
             foreach (var dto in orderedDtos)
@@ -75,17 +73,15 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             var nextResponsibleIds = orderedDtos.Where(dto => dto.NextStep != null).Select(dto => dto.NextStep.ResponsibleId).Distinct();
             var requirementDefinitionIds = tagsWithRequirements.SelectMany(t => t.Requirements).Select(r => r.RequirementDefinitionId).Distinct();
 
-            var nextModesTask = (from m in _context.QuerySet<Mode>()
+            var nextModes = await (from m in _context.QuerySet<Mode>()
                 where nextModeIds.Contains(m.Id)
                 select m).ToListAsync(cancellationToken);
-            var nextModes = await nextModesTask;
 
-            var nextResponsibleTask = (from r in _context.QuerySet<Responsible>()
+            var nextResponsibles = await (from r in _context.QuerySet<Responsible>()
                 where nextResponsibleIds.Contains(r.Id)
                 select r).ToListAsync(cancellationToken);
-            var nextResponsibles = await nextResponsibleTask;
             
-            var reqTypesTask = (from rd in _context.QuerySet<RequirementDefinition>()
+            var reqTypes = await (from rd in _context.QuerySet<RequirementDefinition>()
                     join rt in _context.QuerySet<RequirementType>() on EF.Property<int>(rd, "RequirementTypeId") equals rt.Id
                     where requirementDefinitionIds.Contains(rd.Id)
                     select new ReqTypeDto
@@ -94,7 +90,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                         RequirementTypeCode = rt.Code
                     }
                 ).ToListAsync(cancellationToken);
-            var reqTypes = await reqTypesTask;
 
             var result = CreateResult(maxAvailable, orderedDtos, tagsWithRequirements, reqTypes, nextModes, nextResponsibles);
 
