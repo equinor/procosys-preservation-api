@@ -41,21 +41,23 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var query = new GetTagsQuery(
                 new Sorting(sorting.Direction, sorting.Column),
-                new Filter(filter.ProjectName,
-                    filter.DueFilters,
-                    filter.PreservationStatus,
-                    filter.RequirementTypeIds,
-                    filter.DisciplineCodes,
-                    filter.ResponsibleIds,
-                    filter.TagFunctionCodes,
-                    filter.ModeIds,
-                    filter.JourneyIds,
-                    filter.StepIds,
-                    filter.TagNoStartsWith,
-                    filter.CommPkgNoStartsWith,
-                    filter.McPkgNoStartsWith,
-                    filter.PurchaseOrderNoStartsWith,
-                    filter.CallOffStartsWith),
+                new Filter(filter.ProjectName)
+                {
+                    DueFilters = filter.DueFilters,
+                    PreservationStatus = filter.PreservationStatus,
+                    RequirementTypeIds = filter.RequirementTypeIds,
+                    DisciplineCodes = filter.DisciplineCodes,
+                    ResponsibleIds = filter.ResponsibleIds,
+                    TagFunctionCodes = filter.TagFunctionCodes,
+                    ModeIds = filter.ModeIds,
+                    JourneyIds = filter.JourneyIds,
+                    StepIds = filter.StepIds,
+                    TagNoStartsWith = filter.TagNoStartsWith,
+                    CommPkgNoStartsWith = filter.CommPkgNoStartsWith,
+                    McPkgNoStartsWith = filter.McPkgNoStartsWith,
+                    PurchaseOrderNoStartsWith = filter.PurchaseOrderNoStartsWith,
+                    CallOffStartsWith = filter.CallOffStartsWith
+                },
                 new Paging(paging.Page, paging.Size)
             );
             var result = await _mediator.Send(query);

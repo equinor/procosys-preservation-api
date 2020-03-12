@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 context.SaveChanges();
 
                 _sorting = new Sorting(SortingDirection.Asc, SortingColumn.TagNo);
-                _filter = new Filter(_projectName, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                _filter = new Filter(_projectName);
                 _paging = new Paging(0, 50);
                 _query = new GetTagsQuery(_sorting, _filter, _paging);
             }
@@ -368,7 +368,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
-                var filter = new Filter("NO", null, null, null, null, null, null, null, null, null, null, null, null, null, null);
+                var filter = new Filter("NO");
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
@@ -384,7 +384,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var dut = new GetTagsQueryHandler(context);
                 var tagNoStartsWith = $"{_stdTagPrefix}-0";
-                var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, null, tagNoStartsWith, null, null, null, null);
+                var filter = new Filter(_projectName) {TagNoStartsWith = tagNoStartsWith};
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
@@ -405,7 +405,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var dut = new GetTagsQueryHandler(context);
                 var commPkgNoStartsWith = $"{_commPkgPrefix}-0";
-                var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, null, null, commPkgNoStartsWith, null, null, null);
+                var filter = new Filter(_projectName) {CommPkgNoStartsWith = commPkgNoStartsWith};
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
@@ -426,7 +426,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var dut = new GetTagsQueryHandler(context);
                 var mcPkgNoStartsWith = $"{_mcPkgPrefix}-0";
-                var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, null, null, null, mcPkgNoStartsWith, null, null);
+                var filter = new Filter(_projectName) {McPkgNoStartsWith = mcPkgNoStartsWith};
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
@@ -447,7 +447,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var dut = new GetTagsQueryHandler(context);
                 var purchaseOrderNoStartsWith = $"{_poPrefix}-0";
-                var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, null, null, null, null, purchaseOrderNoStartsWith, null);
+                var filter = new Filter(_projectName) {PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith};
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
@@ -468,7 +468,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var dut = new GetTagsQueryHandler(context);
                 var callOffStartsWith = $"{_callOffPrefix}-0";
-                var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, null, null, null, null, null, callOffStartsWith);
+                var filter = new Filter(_projectName) {CallOffStartsWith = callOffStartsWith};
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
 
@@ -485,7 +485,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnPreservationStatus()
         {
-            var filter = new Filter(_projectName, null, PreservationStatus.Active, null, null, null, null, null, null, null, null, null, null, null, null);
+                var filter = new Filter(_projectName) {PreservationStatus = PreservationStatus.Active};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
@@ -518,7 +518,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter(_projectName, null, null, new List<int>{_reqType1Id}, null, null, null, null, null, null, null, null, null, null, null);
+                var filter = new Filter(_projectName) {RequirementTypeIds = new List<int>{_reqType1Id}};
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
@@ -539,7 +539,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var diCode = $"{_disciplinePrefix}-0";
-                var filter = new Filter(_projectName, null, null, null, new List<string>{diCode}, null, null, null, null, null, null, null, null, null, null);
+                var filter = new Filter(_projectName) {DisciplineCodes = new List<string>{diCode}};
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
@@ -559,7 +559,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter(_projectName, null, null, null, null, new List<int>{_resp1Id}, null, null, null, null, null, null, null, null, null);
+                var filter = new Filter(_projectName) {ResponsibleIds = new List<int>{_resp1Id}};
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
@@ -580,7 +580,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tfCode = $"{_tagFunctionPrefix}-0";
-                var filter = new Filter(_projectName, null, null, null, null, null, new List<string>{tfCode}, null, null, null, null, null, null, null, null);
+                var filter = new Filter(_projectName) {TagFunctionCodes = new List<string>{tfCode}};
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
@@ -600,7 +600,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter(_projectName, null, null, null, null, null, null, new List<int>{_mode1Id}, null, null, null, null, null, null, null);
+                var filter = new Filter(_projectName) {ModeIds = new List<int>{_mode1Id}};
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
@@ -620,7 +620,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter(_projectName, null, null, null, null, null, null, null, new List<int>{_journeyId1}, null, null, null, null, null, null);
+                var filter = new Filter(_projectName) {JourneyIds = new List<int>{_journeyId1}};
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_sorting, filter, _paging), default);
@@ -634,7 +634,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnStep()
         {
-            var filter = new Filter(_projectName, null, null, null, null, null, null, null, null, new List<int>{_step1Onjourney1Id}, null, null, null, null, null);
+                var filter = new Filter(_projectName) {StepIds = new List<int>{_step1Onjourney1Id}};
             IEnumerable<int> tagIdsToTransfer;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -666,21 +666,22 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterWhenAllFiltersSet()
         {
-            var filter = new Filter(_projectName,
-                null,
-                PreservationStatus.NotStarted,
-                new List<int>{_reqType1Id},
-                new List<string>{$"{_disciplinePrefix}-0"}, 
-                new List<int>{_resp1Id}, 
-                new List<string>{$"{_tagFunctionPrefix}-0"}, 
-                new List<int>{_mode1Id}, 
-                new List<int>{_journeyId1}, 
-                new List<int>{_step1Onjourney1Id},
-                $"{_stdTagPrefix}-0", 
-                $"{_commPkgPrefix}-0",
-                $"{_mcPkgPrefix}-0", 
-                $"{_poPrefix}-0", 
-                $"{_callOffPrefix}-0");
+            var filter = new Filter(_projectName)
+            {
+                PreservationStatus = PreservationStatus.NotStarted,
+                RequirementTypeIds = new List<int> {_reqType1Id},
+                DisciplineCodes = new List<string> {$"{_disciplinePrefix}-0"},
+                ResponsibleIds = new List<int> {_resp1Id},
+                TagFunctionCodes = new List<string> {$"{_tagFunctionPrefix}-0"},
+                ModeIds = new List<int> {_mode1Id},
+                JourneyIds = new List<int> {_journeyId1},
+                StepIds = new List<int> {_step1Onjourney1Id},
+                TagNoStartsWith = $"{_stdTagPrefix}-0",
+                CommPkgNoStartsWith = $"{_commPkgPrefix}-0",
+                McPkgNoStartsWith = $"{_mcPkgPrefix}-0",
+                PurchaseOrderNoStartsWith = $"{_poPrefix}-0",
+                CallOffStartsWith = $"{_callOffPrefix}-0"
+            };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
@@ -697,7 +698,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         public async Task HandleGetAllTagsInProjectQuery_ShouldSortOnTagNo()
         {
             // filter on specific journey. Will get 10 standard tags
-            var filter = new Filter(_projectName, null, null, null, null, null, null, null, new List<int>{_journeyId1}, null, null, null, null, null, null);
+            var filter = new Filter(_projectName) {JourneyIds = new List<int>{_journeyId1}};
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

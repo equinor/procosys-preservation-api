@@ -6,58 +6,29 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 {
     public class Filter
     {
-        public Filter(
-            string projectName,
-            IEnumerable<DueFilterType> dueFilters,
-            PreservationStatus? preservationStatus,
-            IEnumerable<int> requirementTypeIds,
-            IEnumerable<string> disciplineCodes,
-            IEnumerable<int> responsibleIds,
-            IEnumerable<string> tagFunctionCodes,
-            IEnumerable<int> modeIds,
-            IEnumerable<int> journeyIds,
-            IEnumerable<int> stepIds,
-            string tagNoStartsWith, 
-            string commPkgNoStartsWith,
-            string mcPkgNoStartsWith,
-            string purchaseOrderNoStartsWith,
-            string callOffStartsWith)
+        public Filter(string projectName)
         {
             if (string.IsNullOrEmpty(projectName))
             {
                 throw new ArgumentNullException(nameof(projectName));
             }
             ProjectName = projectName;
-            DueFilters = dueFilters ?? new List<DueFilterType>();
-            PreservationStatus = preservationStatus;
-            RequirementTypeIds = requirementTypeIds ?? new List<int>();
-            DisciplineCodes = disciplineCodes ?? new List<string>();
-            ResponsibleIds = responsibleIds ?? new List<int>();
-            TagFunctionCodes = tagFunctionCodes ?? new List<string>();
-            ModeIds = modeIds ?? new List<int>();
-            JourneyIds = journeyIds ?? new List<int>();
-            StepIds = stepIds ?? new List<int>();
-            TagNoStartsWith = tagNoStartsWith;
-            McPkgNoStartsWith = mcPkgNoStartsWith;
-            CallOffStartsWith = callOffStartsWith;
-            PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith;
-            CommPkgNoStartsWith = commPkgNoStartsWith;
         }
 
         public string ProjectName { get; }
-        public IEnumerable<DueFilterType> DueFilters { get; }
-        public PreservationStatus? PreservationStatus { get;  }
-        public IEnumerable<int> RequirementTypeIds { get; }
-        public IEnumerable<string> DisciplineCodes { get; }
-        public IEnumerable<int> ResponsibleIds { get; }
-        public IEnumerable<string> TagFunctionCodes { get; }
-        public IEnumerable<int> ModeIds { get; }
-        public IEnumerable<int> JourneyIds { get; }
-        public IEnumerable<int> StepIds { get; }
-        public string TagNoStartsWith { get; }
-        public string CommPkgNoStartsWith { get; }
-        public string McPkgNoStartsWith { get; }
-        public string CallOffStartsWith { get; }
-        public string PurchaseOrderNoStartsWith { get; }
+        public IEnumerable<DueFilterType> DueFilters { get; set; } = new List<DueFilterType>();
+        public PreservationStatus? PreservationStatus { get; set; }
+        public IEnumerable<int> RequirementTypeIds { get; set; } = new List<int>();
+        public IEnumerable<string> DisciplineCodes { get; set; } = new List<string>();
+        public IEnumerable<int> ResponsibleIds { get; set; } = new List<int>();
+        public IEnumerable<string> TagFunctionCodes { get; set; } = new List<string>();
+        public IEnumerable<int> ModeIds { get; set; } = new List<int>();
+        public IEnumerable<int> JourneyIds { get; set; } = new List<int>();
+        public IEnumerable<int> StepIds { get; set; } = new List<int>();
+        public string TagNoStartsWith { get; set; }
+        public string CommPkgNoStartsWith { get; set; }
+        public string McPkgNoStartsWith { get; set; }
+        public string CallOffStartsWith { get; set; }
+        public string PurchaseOrderNoStartsWith { get; set; }
     }
 }
