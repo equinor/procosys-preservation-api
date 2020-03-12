@@ -233,7 +233,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         {
             switch (sorting.Direction)
             {
-                case SortingDirection.Asc:
+                default:
                     switch (sorting.Column)
                     {
                         case SortingColumn.Due:
@@ -303,7 +303,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                             queryable = queryable.OrderByDescending(dto => dto.TagId);
                             break;
                     }
-
                     break;
             }
 
