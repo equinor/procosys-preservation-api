@@ -234,33 +234,33 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             switch (sorting.Direction)
             {
                 default:
-                    switch (sorting.Column)
+                    switch (sorting.Property)
                     {
-                        case SortingColumn.Due:
+                        case SortingProperty.Due:
                             queryable = queryable.OrderBy(dto => dto.NextDueTimeUtc);
                             break;
-                        case SortingColumn.Status:
+                        case SortingProperty.Status:
                             queryable = queryable.OrderBy(dto => dto.Status);
                             break;
-                        case SortingColumn.TagNo:
+                        case SortingProperty.TagNo:
                             queryable = queryable.OrderBy(dto => dto.TagNo);
                             break;
-                        case SortingColumn.Description:
+                        case SortingProperty.Description:
                             queryable = queryable.OrderBy(dto => dto.Description);
                             break;
-                        case SortingColumn.Responsible:
+                        case SortingProperty.Responsible:
                             queryable = queryable.OrderBy(dto => dto.ResponsibleCode);
                             break;
-                        case SortingColumn.Mode:
+                        case SortingProperty.Mode:
                             queryable = queryable.OrderBy(dto => dto.ModeTitle);
                             break;
-                        case SortingColumn.PO:
+                        case SortingProperty.PO:
                             queryable = queryable.OrderBy(dto => dto.Calloff);
                             break;
-                        case SortingColumn.Area:
+                        case SortingProperty.Area:
                             queryable = queryable.OrderBy(dto => dto.AreaCode);
                             break;
-                        case SortingColumn.Discipline:
+                        case SortingProperty.Discipline:
                             queryable = queryable.OrderBy(dto => dto.DisciplineCode);
                             break;
                         default:
@@ -270,33 +270,33 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
                     break;
                 case SortingDirection.Desc:
-                    switch (sorting.Column)
+                    switch (sorting.Property)
                     {
-                        case SortingColumn.Due:
+                        case SortingProperty.Due:
                             queryable = queryable.OrderByDescending(dto => dto.NextDueTimeUtc);
                             break;
-                        case SortingColumn.Status:
+                        case SortingProperty.Status:
                             queryable = queryable.OrderByDescending(dto => dto.Status);
                             break;
-                        case SortingColumn.TagNo:
+                        case SortingProperty.TagNo:
                             queryable = queryable.OrderByDescending(dto => dto.TagNo);
                             break;
-                        case SortingColumn.Description:
+                        case SortingProperty.Description:
                             queryable = queryable.OrderByDescending(dto => dto.Description);
                             break;
-                        case SortingColumn.Responsible:
+                        case SortingProperty.Responsible:
                             queryable = queryable.OrderByDescending(dto => dto.ResponsibleCode);
                             break;
-                        case SortingColumn.Mode:
+                        case SortingProperty.Mode:
                             queryable = queryable.OrderByDescending(dto => dto.ModeTitle);
                             break;
-                        case SortingColumn.PO:
+                        case SortingProperty.PO:
                             queryable = queryable.OrderByDescending(dto => dto.Calloff);
                             break;
-                        case SortingColumn.Area:
+                        case SortingProperty.Area:
                             queryable = queryable.OrderByDescending(dto => dto.AreaCode);
                             break;
-                        case SortingColumn.Discipline:
+                        case SortingProperty.Discipline:
                             queryable = queryable.OrderByDescending(dto => dto.DisciplineCode);
                             break;
                         default:

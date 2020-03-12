@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromQuery] PagingDto paging)
         {
             var query = new GetTagsQuery(
-                new Sorting(sorting.Direction, sorting.Column),
+                new Sorting(sorting.Direction, sorting.Property),
                 new Filter(filter.ProjectName)
                 {
                     DueFilters = filter.DueFilters,

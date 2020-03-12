@@ -144,7 +144,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 }
                 context.SaveChanges();
 
-                _sorting = new Sorting(SortingDirection.Asc, SortingColumn.TagNo);
+                _sorting = new Sorting(SortingDirection.Asc, SortingProperty.TagNo);
                 _filter = new Filter(_projectName);
                 _paging = new Paging(0, 50);
                 _query = new GetTagsQuery(_sorting, _filter, _paging);
@@ -703,7 +703,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
-                var sorting = new Sorting(SortingDirection.Asc, SortingColumn.TagNo);
+                var sorting = new Sorting(SortingDirection.Asc, SortingProperty.TagNo);
 
                 var result = await dut.Handle(new GetTagsQuery(sorting, filter, _paging), default);
                 var tags = result.Data.Tags.ToList();
@@ -715,7 +715,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context);
-                var sorting = new Sorting(SortingDirection.Desc, SortingColumn.TagNo);
+                var sorting = new Sorting(SortingDirection.Desc, SortingProperty.TagNo);
 
                 var result = await dut.Handle(new GetTagsQuery(sorting, filter, _paging), default);
                 var tags = result.Data.Tags.ToList();

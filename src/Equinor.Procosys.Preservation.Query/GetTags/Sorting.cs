@@ -2,13 +2,13 @@
 {
     public class Sorting
     {
-        public Sorting(SortingDirection direction, SortingColumn column)
+        public Sorting(SortingDirection direction, SortingProperty property)
         {
             Direction = direction;
-            Column = column;
+            Property = property;
         }
 
         public SortingDirection Direction { get;  }
-        public SortingColumn Column { get;  }
+        public SortingProperty Property { get;  }
     }
 }
