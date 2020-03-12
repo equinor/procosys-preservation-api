@@ -167,9 +167,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     join reqType in _context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals
                         reqType.Id
                     where EF.Property<int>(req, "TagId") == tag.Id &&
-                          request.Filter.RequirementTypeIds.Contains(reqType.Id)
+                        request.Filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
-                where project.Name == request.Filter.ProjectName &&
+                where project.Name == request.ProjectName &&
                       (!request.Filter.PreservationStatus.HasValue || tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
                        tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&

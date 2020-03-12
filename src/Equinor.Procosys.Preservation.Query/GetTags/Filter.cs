@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTags
 {
     public class Filter
     {
-        public Filter(string projectName)
-        {
-            if (string.IsNullOrEmpty(projectName))
-            {
-                throw new ArgumentNullException(nameof(projectName));
-            }
-            ProjectName = projectName;
-        }
-
-        public string ProjectName { get; }
         public IEnumerable<DueFilterType> DueFilters { get; set; } = new List<DueFilterType>();
         public PreservationStatus? PreservationStatus { get; set; }
         public IEnumerable<int> RequirementTypeIds { get; set; } = new List<int>();

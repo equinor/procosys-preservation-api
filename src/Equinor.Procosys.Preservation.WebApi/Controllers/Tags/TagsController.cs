@@ -171,8 +171,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         private static GetTagsQuery CreateGetTagsQuery(FilterDto filter, SortingDto sorting, PagingDto paging)
         {
             var query = new GetTagsQuery(
+                filter.ProjectName,
                 new Sorting(sorting.Direction, sorting.Property),
-                new Filter(filter.ProjectName),
+                new Filter(),
                 new Paging(paging.Page, paging.Size)
             );
             if (filter.DueFilters != null)

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using System.Linq;
 using Equinor.Procosys.Preservation.Query.GetTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -13,8 +10,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public void Constructor_SetsProperties()
         {
-            var dut = new Filter("PX");
-            Assert.AreEqual("PX", dut.ProjectName);
+            var dut = new Filter();
             Assert.IsNull(dut.CallOffStartsWith);
             Assert.IsNull(dut.CommPkgNoStartsWith);
             Assert.IsNull(dut.McPkgNoStartsWith);
@@ -30,9 +26,5 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.AreEqual(0, dut.StepIds.Count());
             Assert.AreEqual(0, dut.TagFunctionCodes.Count());
         }
-
-        [TestMethod]
-        public void Constructor_ShouldThrowException_WhenProjectNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() => new Filter(null));
     }
 }
