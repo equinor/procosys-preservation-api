@@ -36,12 +36,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
             if (!orderedDtos.Any())
             {
-                return new SuccessResult<TagsResult>(
-                    new TagsResult
-                    {
-                        MaxAvailable = maxAvailable,
-                        Tags = new List<TagDto>()
-                    });
+                return new SuccessResult<TagsResult>(new TagsResult(maxAvailable, null));
             }
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId);
@@ -104,59 +99,56 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             List<Mode> nextModes,
             List<Responsible> nextResponsibles)
         {
-            var result = new TagsResult
+            var tags = orderedDtos.Select(dto =>
             {
-                MaxAvailable = maxAvailable,
-                Tags = orderedDtos.Select(dto =>
-                {
-                    var tagWithRequirements = tagsWithRequirements.Single(t => t.Id == dto.TagId);
-                    var requirementDtos = tagWithRequirements.OrderedRequirements().Select(
-                            r =>
-                            {
-                                var reqTypeDto =
-                                    reqTypes.Single(innerDto =>
-                                        innerDto.RequirementDefinitionId == r.RequirementDefinitionId);
-                                return new RequirementDto(
-                                    r.Id,
-                                    reqTypeDto.RequirementTypeCode,
-                                    r.NextDueTimeUtc,
-                                    r.GetNextDueInWeeks(),
-                                    r.IsReadyAndDueToBePreserved());
-                            })
-                        .ToList();
-                    var isReadyToBePreserved = tagWithRequirements.IsReadyToBePreserved();
-                    var isReadyToBeStarted = tagWithRequirements.IsReadyToBeStarted();
-                    var isReadyToBeTransferred = tagWithRequirements.IsReadyToBeTransferred(dto.JourneyWithSteps);
+                var tagWithRequirements = tagsWithRequirements.Single(t => t.Id == dto.TagId);
+                var requirementDtos = tagWithRequirements.OrderedRequirements().Select(
+                        r =>
+                        {
+                            var reqTypeDto =
+                                reqTypes.Single(innerDto =>
+                                    innerDto.RequirementDefinitionId == r.RequirementDefinitionId);
+                            return new RequirementDto(
+                                r.Id,
+                                reqTypeDto.RequirementTypeCode,
+                                r.NextDueTimeUtc,
+                                r.GetNextDueInWeeks(),
+                                r.IsReadyAndDueToBePreserved());
+                        })
+                    .ToList();
+                var isReadyToBePreserved = tagWithRequirements.IsReadyToBePreserved();
+                var isReadyToBeStarted = tagWithRequirements.IsReadyToBeStarted();
+                var isReadyToBeTransferred = tagWithRequirements.IsReadyToBeTransferred(dto.JourneyWithSteps);
 
-                    var nextMode = dto.NextStep != null ? nextModes.Single(m => m.Id == dto.NextStep.ModeId) : null;
-                    var nextResponsible = dto.NextStep != null
-                        ? nextResponsibles.Single(m => m.Id == dto.NextStep.ResponsibleId)
-                        : null;
+                var nextMode = dto.NextStep != null ? nextModes.Single(m => m.Id == dto.NextStep.ModeId) : null;
+                var nextResponsible = dto.NextStep != null
+                    ? nextResponsibles.Single(m => m.Id == dto.NextStep.ResponsibleId)
+                    : null;
 
-                    return new TagDto(dto.TagId,
-                        dto.AreaCode,
-                        dto.Calloff,
-                        dto.CommPkgNo,
-                        dto.DisciplineCode,
-                        false,
-                        dto.IsVoided,
-                        dto.McPkgNo,
-                        dto.ModeTitle,
-                        nextMode?.Title,
-                        nextResponsible?.Code,
-                        isReadyToBePreserved,
-                        isReadyToBeStarted,
-                        isReadyToBeTransferred,
-                        dto.PurchaseOrderNo,
-                        requirementDtos,
-                        dto.ResponsibleCode,
-                        dto.Status,
-                        dto.TagFunctionCode,
-                        dto.Description,
-                        dto.TagNo,
-                        dto.TagType);
-                })
-            };
+                return new TagDto(dto.TagId,
+                    dto.AreaCode,
+                    dto.Calloff,
+                    dto.CommPkgNo,
+                    dto.DisciplineCode,
+                    false,
+                    dto.IsVoided,
+                    dto.McPkgNo,
+                    dto.ModeTitle,
+                    nextMode?.Title,
+                    nextResponsible?.Code,
+                    isReadyToBePreserved,
+                    isReadyToBeStarted,
+                    isReadyToBeTransferred,
+                    dto.PurchaseOrderNo,
+                    requirementDtos,
+                    dto.ResponsibleCode,
+                    dto.Status,
+                    dto.TagFunctionCode,
+                    dto.Description,
+                    dto.TagNo,
+                    dto.TagType);
+            });
+            var result = new TagsResult(maxAvailable, tags);
             return result;
         }
 
