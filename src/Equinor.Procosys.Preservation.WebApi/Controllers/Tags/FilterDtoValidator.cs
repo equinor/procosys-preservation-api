@@ -1,5 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -12,8 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             RuleFor(x => x.ProjectName)
                 .NotNull()
-                .NotEmpty()
-                .MaximumLength(Project.NameLengthMax);
+                .NotEmpty();
         }
     }
 }
