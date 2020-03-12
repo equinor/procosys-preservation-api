@@ -9,8 +9,10 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using ServiceResult;
 using RequirementType = Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType;
 
@@ -19,8 +21,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
     public class GetTagsQueryHandler : IRequestHandler<GetTagsQuery, Result<TagsResult>>
     {
         private readonly IReadOnlyContext _context;
+        private readonly int _tagIsNewHours;
 
-        public GetTagsQueryHandler(IReadOnlyContext context) => _context = context;
+        public GetTagsQueryHandler(IReadOnlyContext context, IOptionsMonitor<ApiOptions> options)
+        {
+            _context = context;
+            _tagIsNewHours = options.CurrentValue.TagIsNewHours;
+        }
 
         public async Task<Result<TagsResult>> Handle(GetTagsQuery request, CancellationToken cancellationToken)
         {
@@ -86,12 +93,18 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     }
                 ).ToListAsync(cancellationToken);
 
-            var result = CreateResult(maxAvailable, orderedDtos, tagsWithRequirements, reqTypes, nextModes, nextResponsibles);
+            var result = CreateResult(
+                maxAvailable,
+                orderedDtos,
+                tagsWithRequirements,
+                reqTypes, 
+                nextModes,
+                nextResponsibles);
 
             return new SuccessResult<TagsResult>(result);
         }
 
-        private static TagsResult CreateResult(
+        private TagsResult CreateResult(
             int maxAvailable,
             List<Dto> orderedDtos,
             List<Tag> tagsWithRequirements,
@@ -116,6 +129,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                                 r.IsReadyAndDueToBePreserved());
                         })
                     .ToList();
+
+                var isNew = IsNew(tagWithRequirements);
                 var isReadyToBePreserved = tagWithRequirements.IsReadyToBePreserved();
                 var isReadyToBeStarted = tagWithRequirements.IsReadyToBeStarted();
                 var isReadyToBeTransferred = tagWithRequirements.IsReadyToBeTransferred(dto.JourneyWithSteps);
@@ -130,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     dto.Calloff,
                     dto.CommPkgNo,
                     dto.DisciplineCode,
-                    false,
+                    isNew,
                     dto.IsVoided,
                     dto.McPkgNo,
                     dto.ModeTitle,
@@ -150,6 +165,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             });
             var result = new TagsResult(maxAvailable, tags);
             return result;
+        }
+
+        private bool IsNew(Tag tag)
+        {
+            var lastTimeIsNew = tag.CreatedAtUtc.AddHours(_tagIsNewHours);
+            return TimeService.UtcNow < lastTimeIsNew;
         }
 
         private IQueryable<Dto> CreateQueryableWithFilter(GetTagsQuery request)
