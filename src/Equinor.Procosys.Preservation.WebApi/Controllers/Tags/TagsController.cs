@@ -39,27 +39,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromQuery] SortingDto sorting,
             [FromQuery] PagingDto paging)
         {
-            var query = new GetTagsQuery(
-                new Sorting(sorting.Direction, sorting.Property),
-                new Filter(filter.ProjectName)
-                {
-                    DueFilters = filter.DueFilters,
-                    PreservationStatus = filter.PreservationStatus,
-                    RequirementTypeIds = filter.RequirementTypeIds,
-                    DisciplineCodes = filter.DisciplineCodes,
-                    ResponsibleIds = filter.ResponsibleIds,
-                    TagFunctionCodes = filter.TagFunctionCodes,
-                    ModeIds = filter.ModeIds,
-                    JourneyIds = filter.JourneyIds,
-                    StepIds = filter.StepIds,
-                    TagNoStartsWith = filter.TagNoStartsWith,
-                    CommPkgNoStartsWith = filter.CommPkgNoStartsWith,
-                    McPkgNoStartsWith = filter.McPkgNoStartsWith,
-                    PurchaseOrderNoStartsWith = filter.PurchaseOrderNoStartsWith,
-                    CallOffStartsWith = filter.CallOffStartsWith
-                },
-                new Paging(paging.Page, paging.Size)
-            );
+            var query = CreateGetTagsQuery(filter, sorting, paging);
+
             var result = await _mediator.Send(query);
             return this.FromResult(result);
         }
@@ -185,6 +166,86 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var result = await _mediator.Send(new RequirementPreserveCommand(id, requirementId));
             
             return this.FromResult(result);
+        }
+
+        private static GetTagsQuery CreateGetTagsQuery(FilterDto filter, SortingDto sorting, PagingDto paging)
+        {
+            var query = new GetTagsQuery(
+                new Sorting(sorting.Direction, sorting.Property),
+                new Filter(filter.ProjectName),
+                new Paging(paging.Page, paging.Size)
+            );
+            if (filter.DueFilters != null)
+            {
+                query.Filter.DueFilters = filter.DueFilters;
+            }
+
+            if (filter.PreservationStatus.HasValue)
+            {
+                query.Filter.PreservationStatus = filter.PreservationStatus;
+            }
+
+            if (filter.RequirementTypeIds != null)
+            {
+                query.Filter.RequirementTypeIds = filter.RequirementTypeIds;
+            }
+
+            if (filter.DisciplineCodes != null)
+            {
+                query.Filter.DisciplineCodes = filter.DisciplineCodes;
+            }
+
+            if (filter.ResponsibleIds != null)
+            {
+                query.Filter.ResponsibleIds = filter.ResponsibleIds;
+            }
+
+            if (filter.TagFunctionCodes != null)
+            {
+                query.Filter.TagFunctionCodes = filter.TagFunctionCodes;
+            }
+
+            if (filter.ModeIds != null)
+            {
+                query.Filter.ModeIds = filter.ModeIds;
+            }
+
+            if (filter.JourneyIds != null)
+            {
+                query.Filter.JourneyIds = filter.JourneyIds;
+            }
+
+            if (filter.StepIds != null)
+            {
+                query.Filter.StepIds = filter.StepIds;
+            }
+
+            if (filter.TagNoStartsWith != null)
+            {
+                query.Filter.TagNoStartsWith = filter.TagNoStartsWith;
+            }
+
+            if (filter.CommPkgNoStartsWith != null)
+            {
+                query.Filter.CommPkgNoStartsWith = filter.CommPkgNoStartsWith;
+            }
+
+            if (filter.McPkgNoStartsWith != null)
+            {
+                query.Filter.McPkgNoStartsWith = filter.McPkgNoStartsWith;
+            }
+
+            if (filter.PurchaseOrderNoStartsWith != null)
+            {
+                query.Filter.PurchaseOrderNoStartsWith = filter.PurchaseOrderNoStartsWith;
+            }
+
+            if (filter.CallOffStartsWith != null)
+            {
+                query.Filter.CallOffStartsWith = filter.CallOffStartsWith;
+            }
+
+            return query;
         }
     }
 }
