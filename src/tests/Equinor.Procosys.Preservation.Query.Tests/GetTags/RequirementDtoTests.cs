@@ -1,8 +1,8 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Query.ProjectAggregate;
+using Equinor.Procosys.Preservation.Query.GetTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.ProjectAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 {
     [TestClass]
     public class RequirementDtoTests

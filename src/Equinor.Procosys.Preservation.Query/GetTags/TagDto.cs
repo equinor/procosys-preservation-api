@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
+namespace Equinor.Procosys.Preservation.Query.GetTags
 {
     public class TagDto
     {
@@ -16,10 +16,12 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             bool isVoided,
             string mcPkgNo, 
             string mode,
+            string nextMode,
+            string nextResponsibleCode,
             bool readyToBePreserved,
+            bool readyToBeStarted,
             bool readyToBeTransferred,
             string purchaseOrderNo,
-            string remark,
             IEnumerable<RequirementDto> requirements,
             string responsibleCode,
             PreservationStatus status,
@@ -38,10 +40,12 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
             IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             Mode = mode;
+            NextMode = nextMode;
+            NextResponsibleCode = nextResponsibleCode;
             ReadyToBePreserved = readyToBePreserved;
+            ReadyToBeStarted = readyToBeStarted;
             ReadyToBeTransferred = readyToBeTransferred;
             PurchaseOrderNo = purchaseOrderNo;
-            Remark = remark;
             TagNo = tagNo;
             ResponsibleCode = responsibleCode;
             Status = status;
@@ -60,9 +64,11 @@ namespace Equinor.Procosys.Preservation.Query.ProjectAggregate
         public bool IsVoided { get; }
         public string McPkgNo { get; }
         public string Mode { get; }
+        public string NextMode { get; }
+        public string NextResponsibleCode { get; }
         public string PurchaseOrderNo { get; }
-        public string Remark { get; }
         public bool ReadyToBePreserved { get; }
+        public bool ReadyToBeStarted { get; }
         public bool ReadyToBeTransferred { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public PreservationStatus Status { get; }
