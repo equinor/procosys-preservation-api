@@ -2,22 +2,25 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
     public class GetAllRequirementTypesQueryHandler : IRequestHandler<GetAllRequirementTypesQuery, Result<IEnumerable<RequirementTypeDto>>>
     {
-        private readonly IRequirementTypeRepository _requirementTypeRepository;
+        private readonly IReadOnlyContext _context;
 
-        public GetAllRequirementTypesQueryHandler(IRequirementTypeRepository requirementTypeRepository) =>
-            _requirementTypeRepository = requirementTypeRepository;
+        public GetAllRequirementTypesQueryHandler(IReadOnlyContext context) => _context = context;
 
         public async Task<Result<IEnumerable<RequirementTypeDto>>> Handle(GetAllRequirementTypesQuery request, CancellationToken cancellationToken)
         {
-            var requirementTypes = await _requirementTypeRepository.GetAllAsync();
+            var requirementTypes = await (from m in _context.QuerySet<RequirementType>()
+                    .Include(rt => rt.RequirementDefinitions).ThenInclude(rd => rd.Fields)
+                select m).ToListAsync(cancellationToken);
 
             var dtos =
                 requirementTypes.Where(rt => !rt.IsVoided || request.IncludeVoided).Select(rt

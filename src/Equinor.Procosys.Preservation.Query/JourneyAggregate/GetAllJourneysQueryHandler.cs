@@ -2,38 +2,39 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 {
     public class GetAllJourneysQueryHandler : IRequestHandler<GetAllJourneysQuery, Result<IEnumerable<JourneyDto>>>
     {
-        private readonly IJourneyRepository _journeyRepository;
-        private readonly IModeRepository _modeRepository;
-        private readonly IResponsibleRepository _responsibleRepository;
+        private readonly IReadOnlyContext _context;
 
-        public GetAllJourneysQueryHandler(IJourneyRepository journeyRepository, IModeRepository modeRepository, IResponsibleRepository responsibleRepository)
-        {
-            _journeyRepository = journeyRepository;
-            _modeRepository = modeRepository;
-            _responsibleRepository = responsibleRepository;
-        }
+        public GetAllJourneysQueryHandler(IReadOnlyContext context) => _context = context;
 
         public async Task<Result<IEnumerable<JourneyDto>>> Handle(GetAllJourneysQuery request, CancellationToken cancellationToken)
         {
-            var journeys = await _journeyRepository.GetAllAsync();
+            var journeys = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
+                    select j).ToListAsync(cancellationToken);
 
             var modeIds = journeys.SelectMany(j => j.Steps).Select(x => x.ModeId).Distinct();
             var responsibleIds = journeys.SelectMany(j => j.Steps).Select(x => x.ResponsibleId).Distinct();
 
-            var modes = (await _modeRepository.GetByIdsAsync(modeIds)).Select(x => new ModeDto(x.Id, x.Title));
-            var responsibles = (await _responsibleRepository.GetByIdsAsync(responsibleIds)).Select(x => new ResponsibleDto(x.Id, x.Code));
+            var modes = await (from m in _context.QuerySet<Mode>()
+                where modeIds.Contains(m.Id)
+                select m).ToListAsync(cancellationToken);
+
+            var responsibles = await (from r in _context.QuerySet<Responsible>()
+                where responsibleIds.Contains(r.Id)
+                select r).ToListAsync(cancellationToken);
 
             var journeyDtos =
                 journeys.Where(j => !j.IsVoided || request.IncludeVoided)
@@ -42,11 +43,18 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                         j.Title,
                         j.IsVoided,
                         j.Steps.Where(s => !s.IsVoided || request.IncludeVoided)
-                            .Select(s => new StepDto(
-                                s.Id,
-                                s.IsVoided,
-                                modes.FirstOrDefault(m => m.Id == s.ModeId),
-                                responsibles.FirstOrDefault(r => r.Id == s.ResponsibleId)))));
+                            .Select(s =>
+                            {
+                                var modeDto = modes
+                                    .Where(m => m.Id == s.ModeId)
+                                    .Select(m => new ModeDto(m.Id, m.Title))
+                                    .Single();
+                                var responsibleDto = responsibles
+                                    .Where(r => r.Id == s.ResponsibleId)
+                                    .Select(r => new ResponsibleDto(r.Id, r.Code))
+                                    .Single();
+                                return new StepDto(s.Id, s.IsVoided, modeDto, responsibleDto);
+                            })));
             
             return new SuccessResult<IEnumerable<JourneyDto>>(journeyDtos);
         }

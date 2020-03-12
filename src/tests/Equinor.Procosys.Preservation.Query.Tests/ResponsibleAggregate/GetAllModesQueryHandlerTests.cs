@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ResponsibleAggregate
             var responsibles = result.Data.ToList();
             
             Assert.AreEqual(3, responsibles.Count);
-            Assert.AreEqual(_responsible.Code, responsibles.First().Name);
+            Assert.AreEqual(_responsible.Code, responsibles.First().Code);
         }
     }
 }

@@ -1,47 +1,45 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
+using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
 {
     [TestClass]
-    public class GetAllModesQueryHandlerTests
+    public class GetAllModesQueryHandlerTests : ReadOnlyTestsBase
     {
-        private Mock<IModeRepository> _modeRepoMock;
-        private Mode _mode;
+        private readonly string _mode1Title = "M1";
+        private readonly string _mode2Title = "M2";
 
-        private GetAllModesQueryHandler _dut;
-
-        [TestInitialize]
-        public void Setup()
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            _mode = new Mode("S", "Mode");
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
-            _modeRepoMock = new Mock<IModeRepository>();
-            _modeRepoMock.Setup(r => r.GetAllAsync())
-                .Returns(Task.FromResult(new List<Mode>
-                {
-                    _mode,
-                    new Mock<Mode>().Object,
-                    new Mock<Mode>().Object
-                }));
-            
-            _dut = new GetAllModesQueryHandler(_modeRepoMock.Object);
+                AddMode(context, _mode1Title);
+                AddMode(context, _mode2Title);
+            }
         }
 
         [TestMethod]
         public async Task HandleGetAllModesQueryHandler_ShouldReturnModes()
         {
-            var result = await _dut.Handle(new GetAllModesQuery(), default);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetAllModesQueryHandler(context);
 
-            var modes = result.Data.ToList();
-            
-            Assert.AreEqual(3, modes.Count);
-            Assert.AreEqual(_mode.Title, modes.First().Title);
+                var result = await dut.Handle(new GetAllModesQuery(), default);
+
+                var modes = result.Data.ToList();
+
+                Assert.AreEqual(2, modes.Count);
+                Assert.AreEqual(_mode1Title, modes.First().Title);
+                Assert.AreEqual(_mode2Title, modes.Last().Title);
+            }
         }
     }
 }
