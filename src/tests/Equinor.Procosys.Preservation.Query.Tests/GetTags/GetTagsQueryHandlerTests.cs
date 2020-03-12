@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -7,7 +8,9 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTags;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
@@ -35,13 +38,20 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         private string _poPrefix = "PO";
         private string _tagFunctionPrefix = "TF";
         private int _journeyId1;
-        private int _step1Onjourney1Id;
+        private int _step1OnJourney1Id;
         private int _reqType1Id;
         private int _resp1Id;
         private int _mode1Id;
+        private int _tagIsNewHours = 12;
+        private Mock<IOptionsMonitor<ApiOptions>> _apiOptionsMock;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
+            _apiOptionsMock = new Mock<IOptionsMonitor<ApiOptions>>();
+            _apiOptionsMock
+                .Setup(x => x.CurrentValue)
+                .Returns(new ApiOptions { TagIsNewHours = _tagIsNewHours });
+
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
@@ -61,12 +71,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var journey2With1Steps = AddJourneyWithStep(context, _journeyTitle2, mode1, responsible1);
                 var step1OnJourney2 = journey2With1Steps.Steps.ElementAt(0);
                 var step1OnJourney1 = journey1With2Steps.Steps.ElementAt(0);
-                _step1Onjourney1Id = step1OnJourney1.Id;
+                _step1OnJourney1Id = step1OnJourney1.Id;
 
                 var step2OnJourney1 = new Step(TestPlant, mode2, responsible2);
 
                 journey1With2Steps.AddStep(step2OnJourney1);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 var reqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqType1Code, "D1");
                 _reqType1Id = reqType1.Id;
@@ -139,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 
                     projectAnother.AddTag(tag);
                 }
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 _query = new GetTagsQuery(_projectName);
             }
@@ -150,7 +160,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -162,7 +172,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 // 30 tags added in setup, but 20 of them in project PX
@@ -176,7 +186,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var paging = new Paging(0, 5);
                 var result = await dut.Handle(new GetTagsQuery(_projectName, paging: paging), default);
 
@@ -191,7 +201,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var paging = new Paging(1, 50);
                 var result = await dut.Handle(new GetTagsQuery(_projectName, paging: paging), default);
 
@@ -206,7 +216,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 var tagDto = result.Data.Tags.First(t => t.TagNo.StartsWith(_stdTagPrefix));
@@ -238,7 +248,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 var tagDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted);
@@ -258,7 +268,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 var tagDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active);
@@ -276,7 +286,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
                 var tagNotStartedDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted);
                 Assert.IsFalse(tagNotStartedDto.ReadyToBePreserved);
@@ -292,7 +302,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
@@ -314,7 +324,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
@@ -330,7 +340,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
@@ -347,7 +357,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
@@ -361,7 +371,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery("NO"), default);
 
@@ -375,7 +385,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var tagNoStartsWith = $"{_stdTagPrefix}-0";
                 var filter = new Filter {TagNoStartsWith = tagNoStartsWith};
 
@@ -396,7 +406,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var commPkgNoStartsWith = $"{_commPkgPrefix}-0";
                 var filter = new Filter {CommPkgNoStartsWith = commPkgNoStartsWith};
 
@@ -417,7 +427,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var mcPkgNoStartsWith = $"{_mcPkgPrefix}-0";
                 var filter = new Filter {McPkgNoStartsWith = mcPkgNoStartsWith};
 
@@ -438,7 +448,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var purchaseOrderNoStartsWith = $"{_poPrefix}-0";
                 var filter = new Filter {PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith};
 
@@ -459,7 +469,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var callOffStartsWith = $"{_callOffPrefix}-0";
                 var filter = new Filter {CallOffStartsWith = callOffStartsWith};
 
@@ -481,7 +491,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var filter = new Filter {PreservationStatus = PreservationStatus.Active};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -492,7 +502,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -512,7 +522,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter {RequirementTypeIds = new List<int>{_reqType1Id}};
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -533,7 +543,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var diCode = $"{_disciplinePrefix}-0";
                 var filter = new Filter {DisciplineCodes = new List<string>{diCode}};
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -553,7 +563,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter {ResponsibleIds = new List<int>{_resp1Id}};
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -574,7 +584,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var tfCode = $"{_tagFunctionPrefix}-0";
                 var filter = new Filter {TagFunctionCodes = new List<string>{tfCode}};
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -594,7 +604,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter {ModeIds = new List<int>{_mode1Id}};
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -614,7 +624,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter {JourneyIds = new List<int>{_journeyId1}};
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -627,11 +637,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnStep()
         {
-                var filter = new Filter {StepIds = new List<int>{_step1Onjourney1Id}};
+                var filter = new Filter {StepIds = new List<int>{_step1OnJourney1Id}};
             IEnumerable<int> tagIdsToTransfer;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -646,7 +656,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -668,7 +678,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 TagFunctionCodes = new List<string> {$"{_tagFunctionPrefix}-0"},
                 ModeIds = new List<int> {_mode1Id},
                 JourneyIds = new List<int> {_journeyId1},
-                StepIds = new List<int> {_step1Onjourney1Id},
+                StepIds = new List<int> {_step1OnJourney1Id},
                 TagNoStartsWith = $"{_stdTagPrefix}-0",
                 CommPkgNoStartsWith = $"{_commPkgPrefix}-0",
                 McPkgNoStartsWith = $"{_mcPkgPrefix}-0",
@@ -677,7 +687,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
 
@@ -695,7 +705,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var sorting = new Sorting(SortingDirection.Asc, SortingProperty.TagNo);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, sorting, filter), default);
@@ -707,7 +717,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagsQueryHandler(context);
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var sorting = new Sorting(SortingDirection.Desc, SortingProperty.TagNo);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, sorting, filter), default);
@@ -715,6 +725,31 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 Assert.AreEqual(10, tags.Count);
                 Assert.AreEqual($"{_stdTagPrefix}-9", tags.First().TagNo);
                 Assert.AreEqual($"{_stdTagPrefix}-0", tags.Last().TagNo);
+            }
+        }
+                
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnIsNew_BeforeNewPeriodHasElapsed()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+                var result = await dut.Handle(_query, default);
+                Assert.IsTrue(result.Data.Tags.All(t => t.IsNew));
+            }
+        }
+                
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnIsFalse_AfterNewPeriodHasElapsed()
+        {
+            var timeSpan = new TimeSpan(_tagIsNewHours+1, 0, 0);
+            _timeProvider.Elapse(timeSpan);
+ 
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+                var result = await dut.Handle(_query, default);
+                Assert.IsFalse(result.Data.Tags.Any(t => t.IsNew));
             }
         }
 
@@ -728,7 +763,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                     var journey = context.Journeys.Include(j => j.Steps).Single(j => j.Steps.Any(s => s.Id == tag.StepId));
                     tag.Transfer(journey);
                 }
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -738,7 +773,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var tags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ToList();
                 tags.ForEach(t => t.StartPreservation());
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -754,7 +789,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                     var journey = journeys.Single(j => j.Steps.Any(s => s.Id == standardTag.StepId));
                     standardTag.Transfer(journey);
                 }
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
         }
     }
