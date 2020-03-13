@@ -194,10 +194,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                        (request.Filter.DueFilters.Contains(DueFilterType.OverDue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
                        (request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) && tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) ||
                        (request.Filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
-                      (!request.Filter.ActionFilters.Any() || 
-                       (request.Filter.ActionFilters.Contains(ActionFilterType.OverDue) && anyOpenActions) ||
-                       (request.Filter.ActionFilters.Contains(ActionFilterType.Open) && anyOpenActions) ||
-                       (request.Filter.ActionFilters.Contains(ActionFilterType.Closed) && anyClosedActions)) &&
+                      (!request.Filter.ActionStatus.HasValue || 
+                       (request.Filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
+                       (request.Filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
+                       (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions) ||
+                       (request.Filter.ActionStatus == ActionStatus.None && !anyOpenActions && !anyClosedActions)) &&
                       (!request.Filter.PreservationStatus.HasValue || tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
                        tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&

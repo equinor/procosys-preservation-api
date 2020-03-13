@@ -7,8 +7,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     public class FilterDto
     {
         public string ProjectName { get; set; }
-        public IEnumerable<ActionFilterType> ActionFilters { get; set; }
         public IEnumerable<DueFilterType> DueFilters { get; set; }
+        public ActionStatus? ActionStatus { get; set; }
         public PreservationStatus? PreservationStatus { get; set; }
         public IEnumerable<int> RequirementTypeIds { get; set; }
         public IEnumerable<string> DisciplineCodes { get; set; }

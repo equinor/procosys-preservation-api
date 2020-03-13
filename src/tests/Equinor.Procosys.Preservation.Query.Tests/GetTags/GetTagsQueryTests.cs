@@ -34,13 +34,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
 
             Assert.IsNotNull(dut.Filter);
             Assert.IsFalse(dut.Filter.PreservationStatus.HasValue);
+            Assert.IsFalse(dut.Filter.ActionStatus.HasValue);
             Assert.IsNull(dut.Filter.CallOffStartsWith);
             Assert.IsNull(dut.Filter.CommPkgNoStartsWith);
             Assert.IsNull(dut.Filter.McPkgNoStartsWith);
             Assert.IsNull(dut.Filter.PurchaseOrderNoStartsWith);
             Assert.IsNull(dut.Filter.TagNoStartsWith);
-            Assert.IsNotNull(dut.Filter.ActionFilters);
-            Assert.AreEqual(0, dut.Filter.ActionFilters.Count());
             Assert.IsNotNull(dut.Filter.DueFilters);
             Assert.AreEqual(0, dut.Filter.DueFilters.Count());
             Assert.IsNotNull(dut.Filter.DisciplineCodes);

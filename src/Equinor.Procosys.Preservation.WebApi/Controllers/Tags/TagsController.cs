@@ -177,9 +177,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 new Paging(paging.Page, paging.Size)
             );
 
-            if (filter.ActionFilters != null)
+            if (filter.ActionStatus.HasValue)
             {
-                query.Filter.ActionFilters = filter.ActionFilters;
+                query.Filter.ActionStatus = filter.ActionStatus;
             }
 
             if (filter.DueFilters != null)
