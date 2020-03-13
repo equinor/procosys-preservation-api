@@ -154,6 +154,16 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
         private IQueryable<Dto> CreateQueryableWithFilter(GetTagsQuery request)
         {
+            var startOfThisWeekUtc = DateTime.MinValue;
+            var startOfNextWeekUtc = DateTime.MinValue;
+            var startOfTwoWeeksUtc = DateTime.MinValue;
+            if (request.Filter.DueFilters.Any())
+            {
+                startOfThisWeekUtc = TimeService.UtcNow.StartOfWeek();
+                startOfNextWeekUtc = startOfThisWeekUtc.AddWeeks(1);
+                startOfTwoWeeksUtc = startOfThisWeekUtc.AddWeeks(2);
+
+            }
             // No .Include() here. EF do not support .Include together with selecting a projection (dto).
             // If the select-statement select tag so queryable has been of type IQueryable<Tag>, .Include(t => t.Requirements) work fine
             var queryable = from tag in _context.QuerySet<Tag>()
@@ -170,6 +180,14 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                         request.Filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
                 where project.Name == request.ProjectName &&
+                      (
+                          (request.Filter.DueFilters.Contains(DueFilterType.OverDue) && 
+                           tag.NextDueTimeUtc < startOfThisWeekUtc) || 
+                          (request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) && 
+                           tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) || 
+                          (request.Filter.DueFilters.Contains(DueFilterType.NextWeek) && 
+                           tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)
+                      ) &&
                       (!request.Filter.PreservationStatus.HasValue || tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
                        tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&
