@@ -180,14 +180,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                         request.Filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
                 where project.Name == request.ProjectName &&
-                      (
-                          (request.Filter.DueFilters.Contains(DueFilterType.OverDue) && 
-                           tag.NextDueTimeUtc < startOfThisWeekUtc) || 
-                          (request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) && 
-                           tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) || 
-                          (request.Filter.DueFilters.Contains(DueFilterType.NextWeek) && 
-                           tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)
-                      ) &&
+                      (!request.Filter.DueFilters.Contains(DueFilterType.OverDue) || 
+                            tag.NextDueTimeUtc < startOfThisWeekUtc) &&
+                      (!request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) || 
+                            (tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc)) &&
+                      (!request.Filter.DueFilters.Contains(DueFilterType.NextWeek) || 
+                            (tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
                       (!request.Filter.PreservationStatus.HasValue || tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
                        tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&
