@@ -154,12 +154,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
         private IQueryable<Dto> CreateQueryableWithFilter(GetTagsQuery request)
         {
+            var now = TimeService.UtcNow;
             var startOfThisWeekUtc = DateTime.MinValue;
             var startOfNextWeekUtc = DateTime.MinValue;
             var startOfTwoWeeksUtc = DateTime.MinValue;
             if (request.Filter.DueFilters.Any())
             {
-                startOfThisWeekUtc = TimeService.UtcNow.StartOfWeek();
+                startOfThisWeekUtc = now.StartOfWeek();
                 startOfNextWeekUtc = startOfThisWeekUtc.AddWeeks(1);
                 startOfTwoWeeksUtc = startOfThisWeekUtc.AddWeeks(2);
 
@@ -180,12 +181,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                         request.Filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
                 where project.Name == request.ProjectName &&
-                      (!request.Filter.DueFilters.Contains(DueFilterType.OverDue) || 
-                            tag.NextDueTimeUtc < startOfThisWeekUtc) &&
-                      (!request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) || 
-                            (tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc)) &&
-                      (!request.Filter.DueFilters.Contains(DueFilterType.NextWeek) || 
-                            (tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
+                      (!request.Filter.DueFilters.Any() || 
+                        (request.Filter.DueFilters.Contains(DueFilterType.OverDue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
+                        (request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) && tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) ||
+                        (request.Filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
                       (!request.Filter.PreservationStatus.HasValue || tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
                        tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&

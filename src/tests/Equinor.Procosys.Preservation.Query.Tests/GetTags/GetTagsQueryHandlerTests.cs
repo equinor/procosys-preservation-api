@@ -576,6 +576,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 Assert.AreEqual(0, result.Data.MaxAvailable);
                 Assert.AreEqual(0, tags.Count);
             }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var filter = new Filter {DueFilters = new List<DueFilterType>{DueFilterType.OverDue, DueFilterType.ThisWeek, DueFilterType.NextWeek}};
+                var dut = new GetTagsQueryHandler(context);
+
+                var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
+
+                var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(20, result.Data.MaxAvailable);
+                Assert.AreEqual(20, tags.Count);
+            }
         }
 
         [TestMethod]
@@ -619,6 +631,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 Assert.AreEqual(0, result.Data.MaxAvailable);
                 Assert.AreEqual(0, tags.Count);
             }
+       
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var filter = new Filter {DueFilters = new List<DueFilterType>{DueFilterType.OverDue, DueFilterType.ThisWeek, DueFilterType.NextWeek}};
+                var dut = new GetTagsQueryHandler(context);
+
+                var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
+
+                var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(20, result.Data.MaxAvailable);
+                Assert.AreEqual(20, tags.Count);
+            }
         }
 
         [TestMethod]
@@ -654,6 +678,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var filter = new Filter {DueFilters = new List<DueFilterType>{DueFilterType.OverDue}};
+                var dut = new GetTagsQueryHandler(context);
+
+                var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
+
+                var tags = result.Data.Tags.ToList();
+                Assert.AreEqual(20, result.Data.MaxAvailable);
+                Assert.AreEqual(20, tags.Count);
+            }
+       
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var filter = new Filter {DueFilters = new List<DueFilterType>{DueFilterType.OverDue, DueFilterType.ThisWeek, DueFilterType.NextWeek}};
                 var dut = new GetTagsQueryHandler(context);
 
                 var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
