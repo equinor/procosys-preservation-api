@@ -1,5 +1,6 @@
 ﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
@@ -20,5 +21,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
         public Journey Journey2With1Steps { get; set; }
         public RequirementType ReqType1 { get; set; }
         public RequirementType ReqType2 { get; set; }
+        public Person Person { get; set; }
     }
 }

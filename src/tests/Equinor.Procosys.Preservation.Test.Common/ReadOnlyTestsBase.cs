@@ -166,12 +166,12 @@ namespace Equinor.Procosys.Preservation.Test.Common
             //  - 10 tags on project 2 (P2), all tags same as 10 first in P1
             //  - requirement period for all 30 tags is 2 weeks
             var _projectName1 = "P1";
-            var _projectName2 = "P2|";
+            var _projectName2 = "P2";
             var _journeyTitle1 = "J1";
             var _journeyTitle2 = "J2";
             var _mode1 = "M1";
-            var _resp1 = "R1";
             var _mode2 = "M2";
+            var _resp1 = "R1";
             var _resp2 = "R2";
             var _reqType1Code = "ROT";
             var _reqType2Code = "AREA";
@@ -183,25 +183,29 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var _commPkgPrefix = "COMM";
             var _poPrefix = "PO";
             var _tagFunctionPrefix = "TF";
-            var testDataSet = new TestDataSet();
-
-            testDataSet.Project1 = AddProject(context, _projectName1, "Project 1 description");
-
-            testDataSet.Mode1 = AddMode(context, _mode1);
-            testDataSet.Responsible1 = AddResponsible(context, _resp1);
-            testDataSet.Mode2 = AddMode(context, _mode2);
-            testDataSet.Responsible2 = AddResponsible(context, _resp2);
+            
+            var testDataSet = new TestDataSet
+            {
+                Person = AddPerson(context, _currentUserOid, "Ole", "Lukkøye"),
+                Project1 = AddProject(context, _projectName1, "Project 1 description"),
+                Project2 = AddProject(context, _projectName2, "Project 2 description"),
+                Mode1 = AddMode(context, _mode1),
+                Responsible1 = AddResponsible(context, _resp1),
+                Mode2 = AddMode(context, _mode2),
+                Responsible2 = AddResponsible(context, _resp2),
+                ReqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqType1Code, "D1"),
+                ReqType2 = AddRequirementTypeWith1DefWithoutField(context, _reqType2Code, "D2")
+            };
 
             testDataSet.Journey1With2Steps =
                 AddJourneyWithStep(context, _journeyTitle1, testDataSet.Mode1, testDataSet.Responsible1);
             testDataSet.Journey2With1Steps =
                 AddJourneyWithStep(context, _journeyTitle2, testDataSet.Mode1, testDataSet.Responsible1);
-            var step2OnJourney1 = new Step(TestPlant, testDataSet.Mode2, testDataSet.Responsible2);
 
+            var step2OnJourney1 = new Step(TestPlant, testDataSet.Mode2, testDataSet.Responsible2);
             testDataSet.Journey1With2Steps.AddStep(step2OnJourney1);
             context.SaveChanges();
 
-            testDataSet.ReqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqType1Code, "D1");
             for (var i = 0; i < 10; i++)
             {
                 var tag = new Tag(TestPlant,
@@ -225,7 +229,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 testDataSet.Project1.AddTag(tag);
             }
 
-            testDataSet.ReqType2 = AddRequirementTypeWith1DefWithoutField(context, _reqType2Code, "D2");
             for (var i = 0; i < 10; i++)
             {
                 var tag = new Tag(TestPlant,
@@ -249,7 +252,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 testDataSet.Project1.AddTag(tag);
             }
 
-            testDataSet.Project2 = AddProject(context, _projectName2, "Project 2 description");
             for (var i = 0; i < 10; i++)
             {
                 var tag = new Tag(TestPlant,
@@ -272,6 +274,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 
                 testDataSet.Project2.AddTag(tag);
             }
+            
             context.SaveChanges();
 
             return testDataSet;

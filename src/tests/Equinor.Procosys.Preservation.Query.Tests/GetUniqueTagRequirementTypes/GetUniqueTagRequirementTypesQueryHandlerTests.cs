@@ -14,18 +14,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
     {
         private TestDataSet _testDataSet;
         private GetUniqueTagRequirementTypesQuery _queryForProject1;
-        private GetUniqueTagRequirementTypesQuery _queryForProject2;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
                 _testDataSet = ApplyTestDataSet(context);
 
                 _queryForProject1 = new GetUniqueTagRequirementTypesQuery(_testDataSet.Project1.Name);
-                _queryForProject2 = new GetUniqueTagRequirementTypesQuery(_testDataSet.Project2.Name);
             }
         }
 
@@ -47,16 +43,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetUniqueTagRequirementTypesQueryHandler(context);
+                
                 var result = await dut.Handle(_queryForProject1, default);
-
                 Assert.AreEqual(2, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.ReqType1.Code));
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.ReqType2.Code));
 
-                result = await dut.Handle(_queryForProject2, default);
-
+                result = await dut.Handle(new GetUniqueTagRequirementTypesQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.ReqType1.Code));
+
+                result = await dut.Handle(new GetUniqueTagRequirementTypesQuery("Unknown"), default);
+                Assert.AreEqual(0, result.Data.Count);
             }
         }
     }
