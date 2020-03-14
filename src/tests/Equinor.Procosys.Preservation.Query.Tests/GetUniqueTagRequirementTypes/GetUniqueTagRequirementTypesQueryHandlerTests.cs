@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _testDataSet = ApplyTestDataSet(context);
+                _testDataSet = AddTestDataSet(context);
 
                 _queryForProject1 = new GetUniqueTagRequirementTypesQuery(_testDataSet.Project1.Name);
             }

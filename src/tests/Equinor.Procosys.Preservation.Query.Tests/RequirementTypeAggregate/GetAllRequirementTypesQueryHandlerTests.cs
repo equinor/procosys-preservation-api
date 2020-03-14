@@ -31,16 +31,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 var rd2 = new RequirementDefinition(TestPlant, "D2", 2, 1);
                 rd2.Void();
                 reqType1.AddRequirementDefinition(rd2);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 AddNumberField(context, rd1, _numberLabel, _numberUnit, true);
                 var f = AddNumberField(context, rd1, "NUMBER", "mm", true);
                 f.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 var reqType2 = AddRequirementTypeWith1DefWithoutField(context, "T2", "D2", 7);
                 reqType2.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
                 AddRequirementTypeWith1DefWithoutField(context, "T3", "D3", 10000);
                 AddRequirementTypeWith1DefWithoutField(context, "T4", "D4", 1);
             }

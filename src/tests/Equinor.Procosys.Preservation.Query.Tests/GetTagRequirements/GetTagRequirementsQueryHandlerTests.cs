@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 context.RequirementTypes.Add(requirementType1);
                 var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, 0);
                 context.RequirementTypes.Add(requirementType2);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 var requirementDefinitionWithoutField = new RequirementDefinition(TestPlant, _requirementDefinitionWithoutFieldTitle, 2, 1);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithoutField);
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 requirementDefinitionWithOneNumberNoPrev.AddField(numberFieldNoPrev);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithOneNumberNoPrev);
 
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 var requirementWithoutField = new Requirement(TestPlant, _interval, requirementDefinitionWithoutField);
                 var requirementWithOneInfo = new Requirement(TestPlant, _interval, requirementDefinitionWithOneInfo);
@@ -129,7 +129,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                         requirementWithThreeNumberShowPrev
                     });
                 context.Tags.Add(tag);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 _tagId = tag.Id;
 
@@ -184,7 +184,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single();
                 tag.StartPreservation();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -221,7 +221,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single();
                 tag.StartPreservation();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithTwoCheckBoxesId);
@@ -230,7 +230,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     new Dictionary<int, string> {{fieldId, "true"}},
                     "CommentABC",
                     requirementDefinition);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
@@ -266,7 +266,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single();
                 tag.StartPreservation();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
@@ -280,7 +280,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     },
                     "",
                     requirementDefinition);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
@@ -342,7 +342,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single();
                 tag.StartPreservation();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
@@ -357,11 +357,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     },
                     "",
                     requirementDefinition);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 _timeProvider.ElapseWeeks(_interval);
                 tag.Preserve(new Mock<Person>().Object);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

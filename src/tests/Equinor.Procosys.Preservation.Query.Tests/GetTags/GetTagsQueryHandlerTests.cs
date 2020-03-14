@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var step2OnJourney1 = new Step(TestPlant, mode2, responsible2);
 
                 journey1With2Steps.AddStep(step2OnJourney1);
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 var reqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqType1Code, "D1");
                 _reqType1Id = reqType1.Id;
@@ -139,7 +139,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 
                     projectAnother.AddTag(tag);
                 }
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 _query = new GetTagsQuery(_projectName);
             }
@@ -728,7 +728,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                     var journey = context.Journeys.Include(j => j.Steps).Single(j => j.Steps.Any(s => s.Id == tag.StepId));
                     tag.Transfer(journey);
                 }
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -738,7 +738,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var tags = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ToList();
                 tags.ForEach(t => t.StartPreservation());
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -754,7 +754,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                     var journey = journeys.Single(j => j.Steps.Any(s => s.Id == standardTag.StepId));
                     standardTag.Transfer(journey);
                 }
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
         }
     }

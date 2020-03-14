@@ -151,7 +151,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return field;
         }
 
-        protected TestDataSet ApplyTestDataSet(PreservationContext context)
+        protected TestDataSet AddTestDataSet(PreservationContext context)
         {
             // Test data set:
             //  - 2 journeys:
