@@ -78,8 +78,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return mode;
         }
 
-        protected Journey AddJourneyWithStep(PreservationContext context, string title, Mode mode,
-            Responsible responsible)
+        protected Journey AddJourneyWithStep(PreservationContext context, string title, Mode mode, Responsible responsible)
         {
             var journey = new Journey(TestPlant, title);
             journey.AddStep(new Step(TestPlant, mode, responsible));
@@ -88,8 +87,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return journey;
         }
 
-        protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string type,
-            string def, int sortKey = 0)
+        protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string type, string def, int sortKey = 0)
         {
             var requirementType = new RequirementType(TestPlant, type, $"Title{type}", sortKey);
             context.RequirementTypes.Add(requirementType);
@@ -110,8 +108,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return person;
         }
 
-        protected Project AddProject(PreservationContext context, string name, string description,
-            bool isClosed = false)
+        protected Project AddProject(PreservationContext context, string name, string description, bool isClosed = false)
         {
             var project = new Project(TestPlant, name, description);
             if (isClosed)
@@ -124,8 +121,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return project;
         }
 
-        protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo,
-            string description, Step step, IEnumerable<Requirement> requirements)
+        protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo, string description, Step step, IEnumerable<Requirement> requirements)
         {
             var tag = new Tag(TestPlant, tagType, tagNo, description, "", "", "", "", "", "", "", "", step,
                 requirements);
@@ -142,8 +138,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return field;
         }
 
-        protected Field AddNumberField(PreservationContext context, RequirementDefinition rd, string label, string unit,
-            bool showPrevious)
+        protected Field AddNumberField(PreservationContext context, RequirementDefinition rd, string label, string unit, bool showPrevious)
         {
             var field = new Field(TestPlant, label, FieldType.Number, 0, unit, showPrevious);
             rd.AddField(field);
