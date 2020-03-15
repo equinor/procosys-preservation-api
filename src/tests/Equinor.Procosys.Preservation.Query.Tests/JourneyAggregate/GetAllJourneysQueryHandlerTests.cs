@@ -30,11 +30,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
 
                 var mode1 = AddMode(context, _mode1Title);
                 var responsible1 = AddResponsible(context, _responsible1Code);
-                var journey = AddJourneyWithStep(context, _journeyTitle, mode1, responsible1);
+                var journey = AddJourneyWithStep(context, _journeyTitle, "S1", mode1, responsible1);
 
                 var mode2 = AddMode(context, _mode2Title);
                 var responsible2 = AddResponsible(context, _responsible2Code);
-                journey.AddStep(new Step(TestPlant, mode2, responsible2));
+                journey.AddStep(new Step(TestPlant, "S2", mode2, responsible2));
                 context.SaveChanges();
 
                 _mode1Id = mode1.Id;

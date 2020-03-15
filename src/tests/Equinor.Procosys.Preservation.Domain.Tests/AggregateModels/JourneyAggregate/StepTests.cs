@@ -26,13 +26,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _responsibleMock.SetupGet(x => x.Id).Returns(4);
             _responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
 
-            _dut = new Step(TestPlant, _modeMock.Object, _responsibleMock.Object);
+            _dut = new Step(TestPlant, "S", _modeMock.Object, _responsibleMock.Object);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
             Assert.AreEqual(TestPlant, _dut.Schema);
+            Assert.AreEqual("S", _dut.Title);
             Assert.AreEqual(_modeMock.Object.Id, _dut.ModeId);
             Assert.AreEqual(_responsibleMock.Object.Id, _dut.ResponsibleId);
         }
@@ -41,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         public void Constructor_ShouldThrowException_WhenModeNotGiven()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
-                new Step(TestPlant, null, _responsibleMock.Object)
+                new Step(TestPlant, "S", null, _responsibleMock.Object)
                 );
         }
 
@@ -49,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         public void Constructor_ShouldThrowException_WhenResponsibleNotGiven()
         {
             Assert.ThrowsException<ArgumentNullException>(() =>
-                new Step(TestPlant, _modeMock.Object, null)
+                new Step(TestPlant, "S", _modeMock.Object, null)
                 );
         }
 

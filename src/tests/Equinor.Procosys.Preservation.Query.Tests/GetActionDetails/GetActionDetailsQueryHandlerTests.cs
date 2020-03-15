@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
                 _closer = AddPerson(context, Guid.Empty, "Jon", "Blund");
 
-                var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
+                var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
 

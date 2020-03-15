@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             respMock.SetupGet(r => r.Id).Returns(RespId);
             respMock.SetupGet(r => r.Schema).Returns(TestPlant);
 
-            _step = new Step(TestPlant, modeMock.Object, respMock.Object);
+            _step = new Step(TestPlant, "S", modeMock.Object, respMock.Object);
 
             _journey = new Journey(TestPlant, "TitleA");
             _journey.AddStep(_step);

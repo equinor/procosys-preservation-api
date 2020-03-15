@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
-                var step = AddJourneyWithStep(context, "J", AddMode(context, "M"), AddResponsible(context, "R")).Steps.First();
+                var step = AddJourneyWithStep(context, "J", "S", AddMode(context, "M"), AddResponsible(context, "R")).Steps.First();
                 var notClosedProject = AddProject(context, ProjectNameNotClosed, "Project description");
                 var closedProject = AddProject(context, ProjectNameClosed, "Project description", true);
 

@@ -56,14 +56,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var mode2 = AddMode(context, _mode2);
                 var responsible2 = AddResponsible(context, _resp2);
 
-                var journey1With2Steps = AddJourneyWithStep(context, _journeyTitle1, mode1, responsible1);
+                var journey1With2Steps = AddJourneyWithStep(context, _journeyTitle1, "S1", mode1, responsible1);
                 _journeyId1 = journey1With2Steps.Id;
-                var journey2With1Steps = AddJourneyWithStep(context, _journeyTitle2, mode1, responsible1);
+                var journey2With1Steps = AddJourneyWithStep(context, _journeyTitle2, "S1", mode1, responsible1);
                 var step1OnJourney2 = journey2With1Steps.Steps.ElementAt(0);
                 var step1OnJourney1 = journey1With2Steps.Steps.ElementAt(0);
                 _step1Onjourney1Id = step1OnJourney1.Id;
 
-                var step2OnJourney1 = new Step(TestPlant, mode2, responsible2);
+                var step2OnJourney1 = new Step(TestPlant, "S", mode2, responsible2);
 
                 journey1With2Steps.AddStep(step2OnJourney1);
                 context.SaveChanges();

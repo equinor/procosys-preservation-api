@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
             {
                 AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
 
-                var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
+                var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
 

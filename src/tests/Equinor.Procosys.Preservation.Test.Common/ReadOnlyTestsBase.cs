@@ -69,10 +69,10 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return mode;
         }
 
-        protected Journey AddJourneyWithStep(PreservationContext context, string title, Mode mode, Responsible responsible)
+        protected Journey AddJourneyWithStep(PreservationContext context, string journeyTitle, string stepTitle, Mode mode, Responsible responsible)
         {
-            var journey = new Journey(TestPlant, title);
-            journey.AddStep(new Step(TestPlant, mode, responsible));
+            var journey = new Journey(TestPlant, journeyTitle);
+            journey.AddStep(new Step(TestPlant, stepTitle, mode, responsible));
             context.Journeys.Add(journey);
             context.SaveChangesAsync().Wait();
             return journey;

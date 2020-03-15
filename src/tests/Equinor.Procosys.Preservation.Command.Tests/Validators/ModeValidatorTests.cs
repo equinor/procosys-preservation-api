@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
                 var mode = AddMode(context, ModeTitle);
                 var responsible = AddResponsible(context, "R");
-                AddJourneyWithStep(context, "J", mode, responsible);
+                AddJourneyWithStep(context, "J", "S", mode, responsible);
                 _modeId = mode.Id;
             }
         }
