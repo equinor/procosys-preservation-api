@@ -44,8 +44,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
                 var projectPx = AddProject(context, _projectName, "Project description");
                 var projectAnother = AddProject(context, "Another", "Project description");
 

@@ -35,8 +35,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _plantProvider = _plantProviderMock.Object;
 
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(x => x.GetCurrentUser())
-                .Returns(_currentUserOid);
+            currentUserProviderMock.Setup(x => x.GetCurrentUser()).Returns(_currentUserOid);
             _currentUserProvider = currentUserProviderMock.Object;
 
             var eventDispatcher = new Mock<IEventDispatcher>();
@@ -48,6 +47,15 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
+
+            // ensure current user exists in db
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                if (context.Persons.SingleOrDefault(p => p.Oid == _currentUserOid) == null)
+                {
+                    AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+                }
+            }
 
             SetupNewDatabase(_dbContextOptions);
         }
@@ -186,7 +194,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             
             var testDataSet = new TestDataSet
             {
-                Person = AddPerson(context, _currentUserOid, "Ole", "Lukkøye"),
+                CurrentUser = context.Persons.Single(p => p.Oid == _currentUserOid),
                 Project1 = AddProject(context, _projectName1, "Project 1 description"),
                 Project2 = AddProject(context, _projectName2, "Project 2 description"),
                 Mode1 = AddMode(context, _mode1),

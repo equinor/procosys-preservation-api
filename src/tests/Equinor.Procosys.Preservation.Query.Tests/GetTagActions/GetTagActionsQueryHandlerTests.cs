@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
                 _openAction = new Action(TestPlant, "Open", "Desc1", _utcNow);
                 tag.AddAction(_openAction);
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _utcNow);
-                _closedAction.Close(_utcNow, _testDataSet.Person);
+                _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
 
                 context.SaveChangesAsync().Wait();

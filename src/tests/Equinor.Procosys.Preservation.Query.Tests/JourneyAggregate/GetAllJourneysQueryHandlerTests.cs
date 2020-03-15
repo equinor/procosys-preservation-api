@@ -26,8 +26,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
                 var mode1 = AddMode(context, _mode1Title);
                 var responsible1 = AddResponsible(context, _responsible1Code);
                 var journey = AddJourneyWithStep(context, _journeyTitle, mode1, responsible1);

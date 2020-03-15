@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
                 tag.AddAction(_openAction);
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
-                _closedAction.Close(_utcNow, _testDataSet.Person);
+                _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
                 context.SaveChangesAsync().Wait();
 
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 
                 var actionDetailDto = result.Data;
 
-                AssertClosedAction(actionDetailDto, _closedAction, _testDataSet.Person);
+                AssertClosedAction(actionDetailDto, _closedAction, _testDataSet.CurrentUser);
             }
         }
 

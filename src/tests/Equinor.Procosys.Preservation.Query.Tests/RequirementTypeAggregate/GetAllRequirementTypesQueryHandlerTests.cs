@@ -22,8 +22,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-                
                 var reqType1 = AddRequirementTypeWith1DefWithoutField(context, _rtType1, _rdTitle1, 999);
                 _reqType1Id = reqType1.Id;
 
