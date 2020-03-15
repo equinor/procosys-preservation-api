@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var mode = context.Modes.Single(m => m.Id == _modeId);
                 mode.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

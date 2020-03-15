@@ -132,7 +132,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.Info, 0);
             rd.AddField(field);
-            context.SaveChanges();
+            context.SaveChangesAsync().Wait();
             return field;
         }
 
@@ -140,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.Number, 0, unit, showPrevious);
             rd.AddField(field);
-            context.SaveChanges();
+            context.SaveChangesAsync().Wait();
             return field;
         }
 
@@ -148,7 +148,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.CheckBox, 0);
             rd.AddField(field);
-            context.SaveChanges();
+            context.SaveChangesAsync().Wait();
             return field;
         }
 
@@ -205,7 +205,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
             var step2OnJourney1 = new Step(TestPlant, testDataSet.Mode2, testDataSet.Responsible2);
             testDataSet.Journey1With2Steps.AddStep(step2OnJourney1);
-            context.SaveChanges();
+            context.SaveChangesAsync().Wait();
 
             for (var i = 0; i < 10; i++)
             {
@@ -276,7 +276,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 testDataSet.Project2.AddTag(tag);
             }
             
-            context.SaveChanges();
+            context.SaveChangesAsync().Wait();
 
             return testDataSet;
         }

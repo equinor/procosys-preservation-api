@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var reqDef = context.RequirementDefinitions.Single(rd => rd.Id == _reqDefId);
                 reqDef.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

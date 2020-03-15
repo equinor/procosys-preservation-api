@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var journey = context.Journeys.Single(j => j.Id == _journeyId);
                 journey.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
