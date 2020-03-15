@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
             for (var i = 0; i < entryCount; i++)
             {
                 var journey = new Journey(plant, $"Journey-{i}");
-                var step = new Step(plant, modes[rand.Next(modes.Count)], responsibles[rand.Next(responsibles.Count)]);
+                var step = new Step(plant, $"Step-{i}", modes[rand.Next(modes.Count)], responsibles[rand.Next(responsibles.Count)]);
                 journey.AddStep(step);
                 journeyRepository.Add(journey);
             }
