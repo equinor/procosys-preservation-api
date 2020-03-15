@@ -213,6 +213,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                       (!request.Filter.RequirementTypeIds.Any() || anyReqTypeFiltered) &&
                       (!request.Filter.TagFunctionCodes.Any() ||
                        request.Filter.TagFunctionCodes.Contains(tag.TagFunctionCode)) &&
+                      (!request.Filter.AreaCodes.Any() || request.Filter.AreaCodes.Contains(tag.AreaCode)) &&
                       (!request.Filter.DisciplineCodes.Any() || request.Filter.DisciplineCodes.Contains(tag.DisciplineCode)) &&
                       (!request.Filter.ResponsibleIds.Any() || request.Filter.ResponsibleIds.Contains(responsible.Id)) &&
                       (!request.Filter.JourneyIds.Any() || request.Filter.JourneyIds.Contains(journey.Id)) &&

@@ -197,6 +197,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 query.Filter.RequirementTypeIds = filter.RequirementTypeIds;
             }
 
+            if (filter.AreaCodes != null)
+            {
+                query.Filter.AreaCodes = filter.AreaCodes;
+            }
+
             if (filter.DisciplineCodes != null)
             {
                 query.Filter.DisciplineCodes = filter.DisciplineCodes;

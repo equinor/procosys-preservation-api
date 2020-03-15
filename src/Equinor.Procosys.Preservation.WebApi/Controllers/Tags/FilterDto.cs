@@ -11,6 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public ActionStatus? ActionStatus { get; set; }
         public PreservationStatus? PreservationStatus { get; set; }
         public IEnumerable<int> RequirementTypeIds { get; set; }
+        public IEnumerable<string> AreaCodes { get; set; }
         public IEnumerable<string> DisciplineCodes { get; set; }
         public IEnumerable<int> ResponsibleIds { get; set; }
         public IEnumerable<string> TagFunctionCodes { get; set; }

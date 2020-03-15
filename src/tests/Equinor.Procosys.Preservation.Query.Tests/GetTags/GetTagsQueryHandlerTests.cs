@@ -30,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         private string _stdTagPrefix = "StdTagNo";
         private string _siteTagPrefix = "SiteTagNo";
         private string _callOffPrefix = "CO";
+        private string _areaPrefix = "AREA";
         private string _disciplinePrefix = "DI";
         private string _mcPkgPrefix = "MC";
         private string _commPkgPrefix = "COMM";
@@ -78,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                         TagType.Standard,
                         $"{_stdTagPrefix}-{i}",
                         "Description",
-                        "AreaCode",
+                        $"{_areaPrefix}-{i}",
                         $"{_callOffPrefix}-{i}",
                         $"{_disciplinePrefix}-{i}",
                         $"{_mcPkgPrefix}-{i}",
@@ -102,7 +103,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                         TagType.SiteArea,
                         $"{_siteTagPrefix}-{i}",
                         "Description",
-                        "AreaCode",
+                        $"{_areaPrefix}-{i}",
                         $"{_callOffPrefix}-{i}",
                         $"{_disciplinePrefix}-{i}",
                         $"{_mcPkgPrefix}-{i}",
@@ -737,6 +738,24 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
 
         [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnAreaCode()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var diCode = $"{_areaPrefix}-0";
+                var filter = new Filter {AreaCodes = new List<string>{diCode}};
+                var dut = new GetTagsQueryHandler(context);
+
+                var result = await dut.Handle(new GetTagsQuery(_projectName, filter: filter), default);
+                AssertCount(result.Data, 2);
+                foreach (var tag in result.Data.Tags)
+                {
+                    Assert.AreEqual(diCode, tag.AreaCode);
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnDisciplineCode()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -852,6 +871,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 PreservationStatus = PreservationStatus.NotStarted,
                 RequirementTypeIds = new List<int> {_reqType1Id},
+                AreaCodes = new List<string> {$"{_areaPrefix}-0"},
                 DisciplineCodes = new List<string> {$"{_disciplinePrefix}-0"},
                 ResponsibleIds = new List<int> {_resp1Id},
                 TagFunctionCodes = new List<string> {$"{_tagFunctionPrefix}-0"},
