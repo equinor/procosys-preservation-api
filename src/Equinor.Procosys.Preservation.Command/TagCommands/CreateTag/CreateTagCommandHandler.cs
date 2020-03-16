@@ -85,6 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                     tagDetails.CommPkgNo,
                     tagDetails.PurchaseOrderNo,
                     request.Remark,
+                    null,
                     tagDetails.TagFunctionCode,
                     step,
                     requirements);
