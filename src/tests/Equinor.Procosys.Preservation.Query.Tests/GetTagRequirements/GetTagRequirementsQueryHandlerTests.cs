@@ -118,6 +118,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     "CommPkgNo",
                     "PurchaseOrderNo",
                     "Remark",
+                    "SA",
                     "TagFunctionCode",
                     journey.Steps.ElementAt(0),
                     new List<Requirement>

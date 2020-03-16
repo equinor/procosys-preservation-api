@@ -83,6 +83,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                         $"{_commPkgPrefix}-{i}",
                         $"{_poPrefix}-{i}",
                         "Remark",
+                        "SA",
                         $"{_tagFunctionPrefix}-{i}",
                         step1OnJourney1,
                         new List<Requirement>
@@ -107,6 +108,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                         $"{_commPkgPrefix}-{i}",
                         $"{_poPrefix}-{i}",
                         "Remark",
+                        "SA",
                         $"{_tagFunctionPrefix}-{i}",
                         step1OnJourney2,
                         new List<Requirement>
@@ -130,6 +132,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                         "CommPkgNo",
                         "PurchaseOrderNo",
                         "Remark",
+                        "SA",
                         "TagFunctionCode",
                         journey1With2Steps.Steps.ElementAt(0),
                         new List<Requirement>

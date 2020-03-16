@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
 
                 _creator = AddPerson(context, Guid.Empty, "Ole", "Lukkøye");
 
-                var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
+                var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "",
                     journey.Steps.ElementAt(0),
                     new List<Requirement>
                     {

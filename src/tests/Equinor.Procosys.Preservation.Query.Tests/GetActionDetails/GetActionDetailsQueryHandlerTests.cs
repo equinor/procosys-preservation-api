@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
                 var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
 
-                var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "",
+                var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "",
                     journey.Steps.ElementAt(0),
                     new List<Requirement>
                     {

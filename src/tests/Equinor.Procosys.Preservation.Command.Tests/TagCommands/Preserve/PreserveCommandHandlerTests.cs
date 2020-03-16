@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _req1WithTwoWeekInterval = new Requirement(TestPlant, TwoWeeksInterval, rdMock.Object);
             _req2WithTwoWeekInterval = new Requirement(TestPlant, TwoWeeksInterval, rdMock.Object);
             _req3WithFourWeekInterval = new Requirement(TestPlant, FourWeeksInterval, rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
+            _tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _req1WithTwoWeekInterval, 
                 _req2WithTwoWeekInterval,
