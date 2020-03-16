@@ -54,7 +54,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                     new Requirement(_rd2Id, 1)
                 },
                 "Desc",
-                "Remark");
+                "Remark",
+                "SA");
 
             _dut = new CreateAreaTagCommandValidator(
                 _tagValidatorMock.Object, 
@@ -157,7 +158,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 _stepId,
                 new List<Requirement>(),
                 "DescriptionA",
-                "RemarkA");
+                "RemarkA",
+                "SA_A");
             
             var result = _dut.Validate(command);
 
@@ -182,7 +184,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                     new Requirement(_rd1Id, 1)
                 },
                 "DescriptionA",
-                "RemarkA");
+                "RemarkA",
+                "SA_A");
             
             var result = _dut.Validate(command);
 

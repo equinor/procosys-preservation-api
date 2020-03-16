@@ -16,7 +16,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             int stepId,
             IEnumerable<Requirement> requirements, 
             string description,
-            string remark)
+            string remark,
+            string storageArea)
         {
             ProjectName = projectName;
             TagType = tagType;
@@ -27,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             Requirements = requirements ?? new List<Requirement>();
             Description = description;
             Remark = remark;
+            StorageArea = storageArea;
         }
 
         public string ProjectName { get; }
@@ -38,6 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         public IEnumerable<Requirement> Requirements { get; }
         public string Description { get; }
         public string Remark { get; }
+        public string StorageArea { get; }
 
         public string GetTagNo()
         {

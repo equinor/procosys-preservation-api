@@ -106,7 +106,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     dto.StepId,
                     requirements,
                     dto.Description,
-                    dto.Remark));
+                    dto.Remark,
+                    dto.StorageArea));
 
             return this.FromResult(result);
         }
