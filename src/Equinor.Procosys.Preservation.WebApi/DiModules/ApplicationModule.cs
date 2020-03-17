@@ -39,6 +39,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             TimeService.SetProvider(new SystemTimeProvider());
 
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
+            services.Configure<TagOptions>(configuration.GetSection("ApiOptions"));
 
             services.AddDbContext<PreservationContext>(options =>
             {
