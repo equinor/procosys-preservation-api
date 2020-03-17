@@ -16,10 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
     {
         private readonly IReadOnlyContext _context;
 
-        public GetTagDetailsQueryHandler(IReadOnlyContext context)
-        {
-            _context = context;
-        }
+        public GetTagDetailsQueryHandler(IReadOnlyContext context) => _context = context;
 
         public async Task<Result<TagDetailsDto>> Handle(GetTagDetailsQuery request, CancellationToken cancellationToken)
         {
@@ -40,8 +37,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         McPkgNo = tag.McPkgNo,
                                         Mode = mode.Title,
                                         PurchaseOrderNo = tag.PurchaseOrderNo,
+                                        Remark = tag.Remark,
                                         ResponsibleName = responsible.Code,
                                         Status = tag.Status,
+                                        StorageArea = tag.StorageArea,
                                         TagNo = tag.TagNo,
                                         TagType = tag.TagType,
                                         ReadyToBePreserved = tag.IsReadyToBePreserved()
