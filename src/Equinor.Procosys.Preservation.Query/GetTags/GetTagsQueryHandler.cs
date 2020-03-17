@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using ServiceResult;
 using RequirementType = Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType;
+using PreservationAction = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.Query.GetTags
 {
@@ -140,6 +141,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     : null;
 
                 return new TagDto(dto.TagId,
+                    dto.GetActionStatus(),
                     dto.AreaCode,
                     dto.Calloff,
                     dto.CommPkgNo,
@@ -174,6 +176,17 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
         private IQueryable<Dto> CreateQueryableWithFilter(GetTagsQuery request)
         {
+            var nowUtc = TimeService.UtcNow;
+            var startOfThisWeekUtc = DateTime.MinValue;
+            var startOfNextWeekUtc = DateTime.MinValue;
+            var startOfTwoWeeksUtc = DateTime.MinValue;
+            if (request.Filter.DueFilters.Any())
+            {
+                startOfThisWeekUtc = nowUtc.StartOfWeek();
+                startOfNextWeekUtc = startOfThisWeekUtc.AddWeeks(1);
+                startOfTwoWeeksUtc = startOfThisWeekUtc.AddWeeks(2);
+
+            }
             // No .Include() here. EF do not support .Include together with selecting a projection (dto).
             // If the select-statement select tag so queryable has been of type IQueryable<Tag>, .Include(t => t.Requirements) work fine
             var queryable = from tag in _context.QuerySet<Tag>()
@@ -182,14 +195,30 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                 join journey in _context.QuerySet<Journey>() on EF.Property<int>(step, "JourneyId") equals journey.Id
                 join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
                 join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
-                let reqTypeFiltered = (from req in _context.QuerySet<Requirement>()
+                let anyReqTypeFiltered = (from req in _context.QuerySet<Requirement>()
                     join reqDef in _context.QuerySet<RequirementDefinition>() on req.RequirementDefinitionId equals reqDef.Id
-                    join reqType in _context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals
-                        reqType.Id
-                    where EF.Property<int>(req, "TagId") == tag.Id &&
-                        request.Filter.RequirementTypeIds.Contains(reqType.Id)
+                    join reqType in _context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals reqType.Id
+                    where EF.Property<int>(req, "TagId") == tag.Id && request.Filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
+                let anyOverDueActions = (from a in _context.QuerySet<PreservationAction>()
+                    where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue && a.DueTimeUtc < nowUtc
+                    select a.Id).Any()
+                let anyOpenActions = (from a in _context.QuerySet<PreservationAction>()
+                    where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue
+                    select a.Id).Any()
+                let anyClosedActions = (from a in _context.QuerySet<PreservationAction>()
+                    where EF.Property<int>(a, "TagId") == tag.Id && a.ClosedAtUtc.HasValue
+                    select a.Id).Any()
                 where project.Name == request.ProjectName &&
+                      (!request.Filter.DueFilters.Any() || 
+                       (request.Filter.DueFilters.Contains(DueFilterType.OverDue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
+                       (request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) && tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) ||
+                       (request.Filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
+                      (!request.Filter.ActionStatus.HasValue || 
+                       (request.Filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
+                       (request.Filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
+                       (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions) ||
+                       (request.Filter.ActionStatus == ActionStatus.None && !anyOpenActions && !anyClosedActions)) &&
                       (!request.Filter.PreservationStatus.HasValue || tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
                        tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&
@@ -201,9 +230,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                        tag.PurchaseOrderNo.StartsWith(request.Filter.PurchaseOrderNoStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.CallOffStartsWith) ||
                        tag.Calloff.StartsWith(request.Filter.CallOffStartsWith)) &&
-                      (!request.Filter.RequirementTypeIds.Any() || reqTypeFiltered) &&
+                      (!request.Filter.RequirementTypeIds.Any() || anyReqTypeFiltered) &&
                       (!request.Filter.TagFunctionCodes.Any() ||
                        request.Filter.TagFunctionCodes.Contains(tag.TagFunctionCode)) &&
+                      (!request.Filter.AreaCodes.Any() || request.Filter.AreaCodes.Contains(tag.AreaCode)) &&
                       (!request.Filter.DisciplineCodes.Any() || request.Filter.DisciplineCodes.Contains(tag.DisciplineCode)) &&
                       (!request.Filter.ResponsibleIds.Any() || request.Filter.ResponsibleIds.Contains(responsible.Id)) &&
                       (!request.Filter.JourneyIds.Any() || request.Filter.JourneyIds.Contains(journey.Id)) &&
@@ -212,6 +242,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                 select new Dto
                 {
                     AreaCode = tag.AreaCode,
+                    AnyOverDueActions = anyOverDueActions,
+                    AnyOpenActions = anyOpenActions,
+                    AnyClosedActions = anyClosedActions,
                     Calloff = tag.Calloff,
                     CommPkgNo = tag.CommPkgNo,
                     Description = tag.Description,
@@ -324,6 +357,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         private class Dto
         {
             public string AreaCode { get; set; }
+            public bool AnyOverDueActions { get; set; }
+            public bool AnyOpenActions { get; set; }
+            public bool AnyClosedActions { get; set; }
             public string Calloff { get; set; }
             public string CommPkgNo { get; set; }
             public string Description { get; set; }
@@ -344,6 +380,24 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             
             public Journey JourneyWithSteps { get; set; }
             public Step NextStep { get; set; }
+
+            public ActionStatus GetActionStatus()
+            {
+                if (AnyOverDueActions)
+                {
+                    return ActionStatus.HasOverDue;
+                }
+                if (AnyOpenActions)
+                {
+                    return ActionStatus.HasOpen;
+                }
+                if (AnyClosedActions)
+                {
+                    return ActionStatus.HasClosed;
+                }
+
+                return ActionStatus.None;
+            }
         }
 
         private class ReqTypeDto
