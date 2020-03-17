@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -22,37 +19,24 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         private int _closedActionId;
         private Action _openAction;
         private Action _closedAction;
-        private DateTime _utcNow = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private Person _creator;
+        private readonly DateTime _utcNow = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private TestDataSet _testDataSet;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+                _testDataSet = AddTestDataSet(context);
 
-                var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
-
-                var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
-
-                _creator = AddPerson(context, Guid.Empty, "Ole", "Lukkøye");
-
-                var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "",
-                    journey.Steps.ElementAt(0),
-                    new List<Requirement>
-                    {
-                        new Requirement(TestPlant, 2, reqType.RequirementDefinitions.ElementAt(0))
-                    });
-
-                context.Tags.Add(tag);
+                var tag = _testDataSet.Project1.Tags.First();
 
                 _openAction = new Action(TestPlant, "Open", "Desc1", _utcNow);
                 tag.AddAction(_openAction);
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _utcNow);
-                _closedAction.Close(_utcNow, _creator);
+                _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
 
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 _tagId = tag.Id;
                 _openActionId = _openAction.Id;

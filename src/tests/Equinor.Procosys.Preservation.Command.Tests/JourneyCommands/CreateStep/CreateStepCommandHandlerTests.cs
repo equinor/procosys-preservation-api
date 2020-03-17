@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
                 .Setup(r => r.GetByIdAsync(ResponsibleId))
                 .Returns(Task.FromResult(_responsibleMock.Object));
 
-            _command = new CreateStepCommand(JourneyId, ModeId, ResponsibleId);
+            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleId);
 
             _dut = new CreateStepCommandHandler(_journeyRepositoryMock.Object,
                 _modeRepositoryMock.Object,
@@ -69,6 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             // Assert
             Assert.AreEqual(1, _journey.Steps.Count);
             var stepAdded = _journey.Steps.First();
+            Assert.AreEqual("S", stepAdded.Title);
             Assert.AreEqual(ModeId, stepAdded.ModeId);
             Assert.AreEqual(ResponsibleId, stepAdded.ResponsibleId);
         }

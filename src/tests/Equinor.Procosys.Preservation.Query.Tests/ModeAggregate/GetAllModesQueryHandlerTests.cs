@@ -18,8 +18,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
                 AddMode(context, _mode1Title);
                 AddMode(context, _mode2Title);
             }

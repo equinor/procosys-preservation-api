@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -25,7 +23,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private int _tagInFirstStepId;
         private int _tagInLastStepId;
         private const int IntervalWeeks = 4;
-        private readonly DateTime _startedPreservationAtUtc = new DateTime(2020, 1, 2, 0, 0, 0, DateTimeKind.Utc);
         private int _reqStartedPreservationId;
         private int _reqNotStartedPreservationId;
 
@@ -33,11 +30,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
                 var project = AddProject(context, ProjectName, "Project description");
-                var journey = AddJourneyWithStep(context, "J", AddMode(context, "M1"), AddResponsible(context, "R1"));
-                journey.AddStep(new Step(TestPlant, AddMode(context, "M2"), AddResponsible(context, "R2")));
+                var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1"), AddResponsible(context, "R1"));
+                journey.AddStep(new Step(TestPlant, "S2", AddMode(context, "M2"), AddResponsible(context, "R2")));
 
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D").RequirementDefinitions.First();
                 var reqStartedPreservation = new Requirement(TestPlant, IntervalWeeks, rd);
@@ -58,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
                 _reqStartedPreservationId = reqStartedPreservation.Id;
                 _reqNotStartedPreservationId = reqNotStartedPreservation.Id;
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -102,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var tag = context.Tags.Single(t => t.Id == _tagNotStartedPreservationId);
                 tag.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -152,7 +147,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var req = context.Requirements.Single(r => r.Id == _reqNotStartedPreservationId);
                 req.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -259,7 +254,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var tag = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).Single(t => t.Id == _tagNotStartedPreservationId);
                 tag.StartPreservation();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

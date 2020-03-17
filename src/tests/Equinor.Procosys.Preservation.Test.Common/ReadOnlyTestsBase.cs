@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -34,8 +35,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _plantProvider = _plantProviderMock.Object;
 
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(x => x.GetCurrentUser())
-                .Returns(_currentUserOid);
+            currentUserProviderMock.Setup(x => x.GetCurrentUser()).Returns(_currentUserOid);
             _currentUserProvider = currentUserProviderMock.Object;
 
             var eventDispatcher = new Mock<IEventDispatcher>();
@@ -47,7 +47,16 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())
                 .Options;
-            
+
+            // ensure current user exists in db
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                if (context.Persons.SingleOrDefault(p => p.Oid == _currentUserOid) == null)
+                {
+                    AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+                }
+            }
+
             SetupNewDatabase(_dbContextOptions);
         }
 
@@ -69,10 +78,10 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return mode;
         }
 
-        protected Journey AddJourneyWithStep(PreservationContext context, string title, Mode mode, Responsible responsible)
+        protected Journey AddJourneyWithStep(PreservationContext context, string journeyTitle, string stepTitle, Mode mode, Responsible responsible)
         {
-            var journey = new Journey(TestPlant, title);
-            journey.AddStep(new Step(TestPlant, mode, responsible));
+            var journey = new Journey(TestPlant, journeyTitle);
+            journey.AddStep(new Step(TestPlant, stepTitle, mode, responsible));
             context.Journeys.Add(journey);
             context.SaveChangesAsync().Wait();
             return journey;
@@ -123,7 +132,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.Info, 0);
             rd.AddField(field);
-            context.SaveChanges();
+            context.SaveChangesAsync().Wait();
             return field;
         }
 
@@ -131,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.Number, 0, unit, showPrevious);
             rd.AddField(field);
-            context.SaveChanges();
+            context.SaveChangesAsync().Wait();
             return field;
         }
 
@@ -139,8 +148,132 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.CheckBox, 0);
             rd.AddField(field);
-            context.SaveChanges();
+            context.SaveChangesAsync().Wait();
             return field;
+        }
+
+        protected TestDataSet AddTestDataSet(PreservationContext context)
+        {
+            // Test data set:
+            //  - 2 journeys:
+            //      - first with 2 steps
+            //      - second wth 1 step
+            //  - 2 requirement types with one definition in each
+            //  - First step in both journeys has mode 1/responsible 1
+            //  - Second step in first journey has mode 2/responsible 2
+            //  - 20 tags in project 1 (P1).
+            //      - 10 first tags is standard, all in first step in journey 1, all has requirement of type 1
+            //      - 10 last tags is area, all in first step in journey 2, all has requirement of type 2
+            //  - 10 tags on project 2 (P2), all tags same as 10 first in P1
+            //  - requirement period for all 30 tags is 2 weeks
+            var _projectName1 = "P1";
+            var _projectName2 = "P2";
+            var _journeyTitle1 = "J1";
+            var _journeyTitle2 = "J2";
+            var _mode1 = "M1";
+            var _mode2 = "M2";
+            var _resp1 = "R1";
+            var _resp2 = "R2";
+            var _reqType1Code = "ROT";
+            var _reqType2Code = "AREA";
+            
+            var testDataSet = new TestDataSet
+            {
+                CurrentUser = context.Persons.Single(p => p.Oid == _currentUserOid),
+                Project1 = AddProject(context, _projectName1, "Project 1 description"),
+                Project2 = AddProject(context, _projectName2, "Project 2 description"),
+                Mode1 = AddMode(context, _mode1),
+                Responsible1 = AddResponsible(context, _resp1),
+                Mode2 = AddMode(context, _mode2),
+                Responsible2 = AddResponsible(context, _resp2),
+                ReqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqType1Code, "D1"),
+                ReqType2 = AddRequirementTypeWith1DefWithoutField(context, _reqType2Code, "D2")
+            };
+
+            testDataSet.Journey1With2Steps =
+                AddJourneyWithStep(context, _journeyTitle1, "Step1", testDataSet.Mode1, testDataSet.Responsible1);
+            testDataSet.Journey2With1Steps =
+                AddJourneyWithStep(context, _journeyTitle2, "Step1", testDataSet.Mode1, testDataSet.Responsible1);
+
+            var step2OnJourney1 = new Step(TestPlant, "Step2", testDataSet.Mode2, testDataSet.Responsible2);
+            testDataSet.Journey1With2Steps.AddStep(step2OnJourney1);
+            context.SaveChangesAsync().Wait();
+
+            for (var i = 0; i < 10; i++)
+            {
+                var tag = new Tag(TestPlant,
+                    TagType.Standard,
+                    $"{testDataSet.StdTagPrefix}-{i}",
+                    "Description",
+                    $"{testDataSet.AreaPrefix}-{i}",
+                    $"{testDataSet.CallOffPrefix}-{i}",
+                    $"{testDataSet.DisciplinePrefix}-{i}",
+                    $"{testDataSet.McPkgPrefix}-{i}",
+                    $"{testDataSet.CommPkgPrefix}-{i}",
+                    $"{testDataSet.PoPrefix}-{i}",
+                    "Remark",
+                    "SA",
+                    $"{testDataSet.TagFunctionPrefix}-{i}",
+                    testDataSet.Journey1With2Steps.Steps.ElementAt(0),
+                    new List<Requirement>
+                    {
+                        new Requirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
+                    });
+
+                testDataSet.Project1.AddTag(tag);
+            }
+
+            for (var i = 0; i < 10; i++)
+            {
+                var tag = new Tag(TestPlant,
+                    TagType.SiteArea,
+                    $"{testDataSet.SiteTagPrefix}-{i}",
+                    "Description",
+                    $"{testDataSet.AreaPrefix}-{i}",
+                    $"{testDataSet.CallOffPrefix}-{i}",
+                    $"{testDataSet.DisciplinePrefix}-{i}",
+                    $"{testDataSet.McPkgPrefix}-{i}",
+                    $"{testDataSet.CommPkgPrefix}-{i}",
+                    $"{testDataSet.PoPrefix}-{i}",
+                    "Remark",
+                    "SA",
+                    $"{testDataSet.TagFunctionPrefix}-{i}",
+                    testDataSet.Journey2With1Steps.Steps.ElementAt(0),
+                    new List<Requirement>
+                    {
+                        new Requirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType2.RequirementDefinitions.ElementAt(0))
+                    });
+
+                testDataSet.Project1.AddTag(tag);
+            }
+
+            for (var i = 0; i < 10; i++)
+            {
+                var tag = new Tag(TestPlant,
+                    TagType.Standard,
+                    $"Another-{i}",
+                    "Description",
+                    "AreaCode",
+                    "Calloff",
+                    "DisciplineCode",
+                    "McPkgNo",
+                    "CommPkgNo",
+                    "PurchaseOrderNo",
+                    "Remark",
+                    "SA",
+                    "TagFunctionCode",
+                    testDataSet.Journey1With2Steps.Steps.ElementAt(0),
+                    new List<Requirement>
+                    {
+                        new Requirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
+                    });
+                
+                testDataSet.Project2.AddTag(tag);
+            }
+            
+            context.SaveChangesAsync().Wait();
+
+            return testDataSet;
         }
     }
 }

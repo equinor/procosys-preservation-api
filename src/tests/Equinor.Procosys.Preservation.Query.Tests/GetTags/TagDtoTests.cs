@@ -14,6 +14,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestInitialize]
         public void Setup() => _dut = new TagDto(
             1,
+            ActionStatus.HasOverDue,
             "AreaCode",
             "CallOffNo",
             "CommPkgNo",
@@ -40,6 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         public void Constructor_SetsProperties()
         {
             Assert.AreEqual(1, _dut.Id);
+            Assert.AreEqual(ActionStatus.HasOverDue, _dut.ActionStatus);
             Assert.AreEqual("AreaCode", _dut.AreaCode);
             Assert.AreEqual("CallOffNo", _dut.CalloffNo);
             Assert.AreEqual("CommPkgNo", _dut.CommPkgNo);

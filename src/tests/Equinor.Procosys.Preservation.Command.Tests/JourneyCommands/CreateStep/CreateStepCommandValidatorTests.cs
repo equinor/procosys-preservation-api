@@ -3,6 +3,7 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
+using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -13,10 +14,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
     {
         private CreateStepCommandValidator _dut;
         private Mock<IJourneyValidator> _journeyValidatorMock;
+        private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IModeValidator> _modeValidatorMock;
         private Mock<IResponsibleValidator> _responsibleValidatorMock;
         private CreateStepCommand _command;
 
+        private string _stepTitle = "S";
         private int _journeyId = 1;
         private int _modeId = 2;
         private int _responsibleId = 3;
@@ -28,11 +31,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
+            _stepValidatorMock = new Mock<IStepValidator>();
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
             _responsibleValidatorMock.Setup(r => r.ExistsAsync(_responsibleId, default)).Returns(Task.FromResult(true));
-            _command = new CreateStepCommand(_journeyId, _modeId, _responsibleId);
+            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleId);
 
-            _dut = new CreateStepCommandValidator(_journeyValidatorMock.Object, _modeValidatorMock.Object, _responsibleValidatorMock.Object);
+            _dut = new CreateStepCommandValidator(_journeyValidatorMock.Object, _stepValidatorMock.Object, _modeValidatorMock.Object, _responsibleValidatorMock.Object);
         }
 
         [TestMethod]
@@ -113,6 +117,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Responsible is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenStepExistsWithTitle()
+        {
+            _stepValidatorMock.Setup(r => r.ExistsAsync(_journeyId, _stepTitle, default)).Returns(Task.FromResult(true));
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step with title already exists in journey!"));
         }
 
         [TestMethod]

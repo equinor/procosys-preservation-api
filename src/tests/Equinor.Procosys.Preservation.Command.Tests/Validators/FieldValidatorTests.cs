@@ -19,8 +19,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D").RequirementDefinitions.Single();
 
                 _infoFieldId = AddInfoField(context, rd, "I").Id;
@@ -58,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var field = context.Fields.Single(f => f.Id == _infoFieldId);
                 field.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

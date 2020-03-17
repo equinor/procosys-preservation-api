@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             var responsibleMock = new Mock<Responsible>();
             responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
 
-            var step = new Step(TestPlant, modeMock.Object, responsibleMock.Object);
+            var step = new Step(TestPlant, "S", modeMock.Object, responsibleMock.Object);
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Schema).Returns(TestPlant);
             var requirements = new List<Requirement>

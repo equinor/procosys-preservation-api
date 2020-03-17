@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         [HttpPost("{id}/AddStep")]
         public async Task<ActionResult> AddStep([FromRoute] int id, [FromBody] CreateStepDto dto)
         {
-            var result = await _mediator.Send(new CreateStepCommand(id, dto.ModeId, dto.ResponsibleId));
+            var result = await _mediator.Send(new CreateStepCommand(id, dto.Title, dto.ModeId, dto.ResponsibleId));
             return this.FromResult(result);
         }
     }

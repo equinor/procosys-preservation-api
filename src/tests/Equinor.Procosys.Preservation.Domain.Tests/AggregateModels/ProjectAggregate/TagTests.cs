@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             _person = new Mock<Person>().Object;
 
-            _journey = new Journey(TestPlant,"");
+            _journey = new Journey(TestPlant, "J");
             _journey.AddStep(_step1Mock.Object);
             _journey.AddStep(_step2Mock.Object);
 
