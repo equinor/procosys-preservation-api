@@ -200,6 +200,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(0, dut.Requirements.Count());
             Assert.IsNull(dut.Description);
             Assert.IsNull(dut.Remark);
+            Assert.IsNull(dut.StorageArea);
         }
     }
 }

@@ -112,7 +112,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                     new Requirement(ReqDefId1, Interval1),
                     new Requirement(ReqDefId2, Interval2),
                 },
-                null);
+                "Remark",
+                "SA");
             
             _dut = new CreateTagCommandHandler(
                 _projectRepositoryMock.Object,
@@ -173,8 +174,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             
             var tags = _projectAddedToRepository.Tags;
             Assert.AreEqual(2, tags.Count);
-            AssertTagProperties(_mainTagDetails1, tags.First());
-            AssertTagProperties(_mainTagDetails2, tags.Last());
+            AssertTagProperties(_command, _mainTagDetails1, tags.First());
+            AssertTagProperties(_command, _mainTagDetails2, tags.Last());
         }
 
         [TestMethod]
@@ -195,8 +196,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             
             var tags = project.Tags;
             Assert.AreEqual(2, tags.Count);
-            AssertTagProperties(_mainTagDetails1, tags.First());
-            AssertTagProperties(_mainTagDetails2, tags.Last());
+            AssertTagProperties(_command, _mainTagDetails1, tags.First());
+            AssertTagProperties(_command, _mainTagDetails2, tags.Last());
         }
 
         [TestMethod]
@@ -209,7 +210,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
-        private void AssertTagProperties(ProcosysTagDetails mainTagDetails, Tag tagAddedToProject)
+        private void AssertTagProperties(CreateTagCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject)
         {
             Assert.AreEqual(mainTagDetails.AreaCode, tagAddedToProject.AreaCode);
             Assert.AreEqual(mainTagDetails.CallOffNo, tagAddedToProject.Calloff);
@@ -219,6 +220,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.AreEqual(TagType.Standard, tagAddedToProject.TagType);
             Assert.AreEqual(mainTagDetails.McPkgNo, tagAddedToProject.McPkgNo);
             Assert.AreEqual(mainTagDetails.Description, tagAddedToProject.Description);
+            Assert.AreEqual(command.Remark, tagAddedToProject.Remark);
+            Assert.AreEqual(command.StorageArea, tagAddedToProject.StorageArea);
             Assert.AreEqual(mainTagDetails.PurchaseOrderNo, tagAddedToProject.PurchaseOrderNo);
             Assert.AreEqual(TestPlant, tagAddedToProject.Schema);
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
