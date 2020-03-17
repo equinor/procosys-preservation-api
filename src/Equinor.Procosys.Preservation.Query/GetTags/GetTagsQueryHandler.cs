@@ -159,6 +159,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     requirementDtos,
                     dto.ResponsibleCode,
                     dto.Status,
+                    dto.StorageArea,
                     dto.TagFunctionCode,
                     dto.Description,
                     dto.TagNo,
@@ -228,6 +229,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                        tag.McPkgNo.StartsWith(request.Filter.McPkgNoStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.PurchaseOrderNoStartsWith) ||
                        tag.PurchaseOrderNo.StartsWith(request.Filter.PurchaseOrderNoStartsWith)) &&
+                      (string.IsNullOrEmpty(request.Filter.StorageAreaStartsWith) ||
+                       tag.StorageArea.StartsWith(request.Filter.StorageAreaStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.CallOffStartsWith) ||
                        tag.Calloff.StartsWith(request.Filter.CallOffStartsWith)) &&
                       (!request.Filter.RequirementTypeIds.Any() || anyReqTypeFiltered) &&
@@ -258,6 +261,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     ResponsibleCode = responsible.Code,
                     Status = tag.Status,
                     StepId = step.Id,
+                    StorageArea = tag.StorageArea,
                     TagFunctionCode = tag.TagFunctionCode,
                     TagId = tag.Id,
                     TagNo = tag.TagNo,
@@ -372,6 +376,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             public string PurchaseOrderNo { get; set; }
             public string ResponsibleCode { get; set; }
             public PreservationStatus Status { get; set; }
+            public string StorageArea { get; set; }
             public int StepId { get; set; }
             public int TagId { get; set; }
             public string TagFunctionCode { get; set; }
