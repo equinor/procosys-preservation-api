@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                                     .Where(r => r.Id == s.ResponsibleId)
                                     .Select(r => new ResponsibleDto(r.Id, r.Code))
                                     .Single();
-                                return new StepDto(s.Id, s.IsVoided, modeDto, responsibleDto);
+                                return new StepDto(s.Id, s.Title, s.IsVoided, modeDto, responsibleDto);
                             })));
             
             return new SuccessResult<IEnumerable<JourneyDto>>(journeyDtos);

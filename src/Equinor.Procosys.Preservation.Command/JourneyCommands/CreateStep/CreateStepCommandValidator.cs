@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
+using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
@@ -11,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
     {
         public CreateStepCommandValidator(
             IJourneyValidator journeyValidator,
+            IStepValidator stepValidator,
             IModeValidator modeValidator,
             IResponsibleValidator responsibleValidator)
         {
@@ -28,7 +30,12 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 .MustAsync((command, token) => BeAnExistingResponsibleAsync(command.ResponsibleId, token))
                 .WithMessage(command => $"Responsible doesn't exists! Responsible={command.ResponsibleId}")
                 .MustAsync((command, token) => NotBeAVoidedResponsibleAsync(command.ResponsibleId, token))
-                .WithMessage(command => $"Responsible is voided! Responsible={command.ResponsibleId}");
+                .WithMessage(command => $"Responsible is voided! Responsible={command.ResponsibleId}")
+                .MustAsync((command, token) => HaveUniqueStepTitleAsync(command.JourneyId, command.Title, token))
+                .WithMessage(command => $"Step with title already exists in journey! Step={command.Title}");
+
+            async Task<bool> HaveUniqueStepTitleAsync(int journeyId, string stepTitle, CancellationToken token)
+                => !await stepValidator.ExistsAsync(journeyId, stepTitle, token);
 
             async Task<bool> BeAnExistingJourney(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);

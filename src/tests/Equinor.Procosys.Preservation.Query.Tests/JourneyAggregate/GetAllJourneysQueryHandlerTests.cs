@@ -13,6 +13,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
     public class GetAllJourneysQueryHandlerTests : ReadOnlyTestsBase
     {
         private readonly string _journeyTitle = "J1";
+        private readonly string _step1Title = "S1";
+        private readonly string _step2Title = "S2";
         private readonly string _mode1Title = "M1";
         private readonly string _mode2Title = "M2";
         private readonly string _responsible1Code = "R1";
@@ -28,11 +30,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             {
                 var mode1 = AddMode(context, _mode1Title);
                 var responsible1 = AddResponsible(context, _responsible1Code);
-                var journey = AddJourneyWithStep(context, _journeyTitle, mode1, responsible1);
+                var journey = AddJourneyWithStep(context, _journeyTitle, _step1Title, mode1, responsible1);
 
                 var mode2 = AddMode(context, _mode2Title);
                 var responsible2 = AddResponsible(context, _responsible2Code);
-                journey.AddStep(new Step(TestPlant, mode2, responsible2));
+                journey.AddStep(new Step(TestPlant, _step2Title, mode2, responsible2));
                 context.SaveChangesAsync().Wait();
 
                 _mode1Id = mode1.Id;
@@ -62,8 +64,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
                 var steps = journey.Steps.ToList();
                 Assert.AreEqual(2, steps.Count);
 
-                AssertStep(steps.ElementAt(0), _mode1Id, _responsible1Id, _mode1Title, _responsible1Code, false);
-                AssertStep(steps.ElementAt(1), _mode2Id, _responsible2Id, _mode2Title, _responsible2Code, false);
+                AssertStep(steps.ElementAt(0), _step1Title, _mode1Id, _responsible1Id, _mode1Title, _responsible1Code, false);
+                AssertStep(steps.ElementAt(1), _step2Title, _mode2Id, _responsible2Id, _mode2Title, _responsible2Code, false);
             }
         }
 
@@ -91,10 +93,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             }
         }
 
-        private void AssertStep(StepDto step, int modeId, int responsibleId, string modeTitle, string responsibleCode, bool isVoided)
+        private void AssertStep(StepDto step, string title, int modeId, int responsibleId, string modeTitle, string responsibleCode, bool isVoided)
         {
             Assert.IsNotNull(step.Mode);
             Assert.IsNotNull(step.Responsible);
+            Assert.AreEqual(title, step.Title);
             Assert.AreEqual(isVoided, step.IsVoided);
             Assert.AreEqual(modeId, step.Mode.Id);
             Assert.AreEqual(modeTitle, step.Mode.Title);

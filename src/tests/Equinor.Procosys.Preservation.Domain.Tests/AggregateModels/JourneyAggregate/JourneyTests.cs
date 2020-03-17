@@ -23,6 +23,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.IsFalse(_dut.IsVoided);
             Assert.AreEqual(0, _dut.Steps.Count);
         }
+        
+        [TestMethod]
+        public void Constructor_ShouldThrowException_WhenTitleNotGiven() =>
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                new Journey(TestPlant, null)
+            );
 
         [TestMethod]
         public void AddStep_ShouldThrowException_WhenStepNotGiven()

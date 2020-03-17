@@ -78,10 +78,10 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return mode;
         }
 
-        protected Journey AddJourneyWithStep(PreservationContext context, string title, Mode mode, Responsible responsible)
+        protected Journey AddJourneyWithStep(PreservationContext context, string journeyTitle, string stepTitle, Mode mode, Responsible responsible)
         {
-            var journey = new Journey(TestPlant, title);
-            journey.AddStep(new Step(TestPlant, mode, responsible));
+            var journey = new Journey(TestPlant, journeyTitle);
+            journey.AddStep(new Step(TestPlant, stepTitle, mode, responsible));
             context.Journeys.Add(journey);
             context.SaveChangesAsync().Wait();
             return journey;
@@ -191,11 +191,11 @@ namespace Equinor.Procosys.Preservation.Test.Common
             };
 
             testDataSet.Journey1With2Steps =
-                AddJourneyWithStep(context, _journeyTitle1, testDataSet.Mode1, testDataSet.Responsible1);
+                AddJourneyWithStep(context, _journeyTitle1, "Step1", testDataSet.Mode1, testDataSet.Responsible1);
             testDataSet.Journey2With1Steps =
-                AddJourneyWithStep(context, _journeyTitle2, testDataSet.Mode1, testDataSet.Responsible1);
+                AddJourneyWithStep(context, _journeyTitle2, "Step1", testDataSet.Mode1, testDataSet.Responsible1);
 
-            var step2OnJourney1 = new Step(TestPlant, testDataSet.Mode2, testDataSet.Responsible2);
+            var step2OnJourney1 = new Step(TestPlant, "Step2", testDataSet.Mode2, testDataSet.Responsible2);
             testDataSet.Journey1With2Steps.AddStep(step2OnJourney1);
             context.SaveChangesAsync().Wait();
 

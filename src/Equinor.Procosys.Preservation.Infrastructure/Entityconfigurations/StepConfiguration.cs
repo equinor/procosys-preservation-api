@@ -19,6 +19,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.HasOne<Mode>();
             builder.HasOne<Responsible>();
             builder.HasMany<Tag>();
+
+            builder.Property(x => x.Title)
+                .HasMaxLength(Step.TitleLengthMax)
+                .IsRequired();
         }
     }
 }

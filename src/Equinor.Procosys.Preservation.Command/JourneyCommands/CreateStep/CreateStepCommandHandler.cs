@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 
             var responsible = await _responsibleRepository.GetByIdAsync(request.ResponsibleId);
 
-            journey.AddStep(new Step(_plantProvider.Plant, mode, responsible));
+            journey.AddStep(new Step(_plantProvider.Plant, request.Title, mode, responsible));
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<Unit>(Unit.Value);

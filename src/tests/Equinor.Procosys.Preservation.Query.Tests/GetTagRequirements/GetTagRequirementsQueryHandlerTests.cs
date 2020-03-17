@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var journey = AddJourneyWithStep(context, "J1", AddMode(context, "M1"), AddResponsible(context, "R1"));
+                var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1"), AddResponsible(context, "R1"));
 
                 var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, 0);
                 context.RequirementTypes.Add(requirementType1);

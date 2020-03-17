@@ -3,12 +3,12 @@ using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 {
-    public class CreateJourneyDtoValidator : AbstractValidator<CreateJourneyDto>
+    public class CreateStepDtoValidator : AbstractValidator<CreateStepDto>
     {
-        public CreateJourneyDtoValidator()
+        public CreateStepDtoValidator()
             => RuleFor(x => x.Title)
                 .NotNull()
-                .MinimumLength(Journey.TitleLengthMin)
-                .MaximumLength(Journey.TitleLengthMax);
+                .MinimumLength(Step.TitleLengthMin)
+                .MaximumLength(Step.TitleLengthMax);
     }
 }

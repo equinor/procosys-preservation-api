@@ -14,6 +14,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         public void Constructor_ShouldSetProperties()
         {
             var stepDto = new StepDto(2,
+                "S",
                 true,
                 new ModeDto(3, "M"),
                 new ResponsibleDto(4, "R"));
