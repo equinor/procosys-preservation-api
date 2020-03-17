@@ -212,7 +212,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     $"{testDataSet.CommPkgPrefix}-{i}",
                     $"{testDataSet.PoPrefix}-{i}",
                     "Remark",
-                    "SA",
+                    $"{testDataSet.StorageAreaPrefix}-{i}",
                     $"{testDataSet.TagFunctionPrefix}-{i}",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),
                     new List<Requirement>
@@ -236,7 +236,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     $"{testDataSet.CommPkgPrefix}-{i}",
                     $"{testDataSet.PoPrefix}-{i}",
                     "Remark",
-                    "SA",
+                    $"{testDataSet.StorageAreaPrefix}-{i}",
                     $"{testDataSet.TagFunctionPrefix}-{i}",
                     testDataSet.Journey2With1Steps.Steps.ElementAt(0),
                     new List<Requirement>
@@ -260,7 +260,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     "CommPkgNo",
                     "PurchaseOrderNo",
                     "Remark",
-                    "SA",
+                    "StorageArea",
                     "TagFunctionCode",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),
                     new List<Requirement>
