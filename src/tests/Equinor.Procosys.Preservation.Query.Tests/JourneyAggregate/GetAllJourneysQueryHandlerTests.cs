@@ -26,8 +26,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
                 var mode1 = AddMode(context, _mode1Title);
                 var responsible1 = AddResponsible(context, _responsible1Code);
                 var journey = AddJourneyWithStep(context, _journeyTitle, mode1, responsible1);
@@ -35,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
                 var mode2 = AddMode(context, _mode2Title);
                 var responsible2 = AddResponsible(context, _responsible2Code);
                 journey.AddStep(new Step(TestPlant, mode2, responsible2));
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
 
                 _mode1Id = mode1.Id;
                 _mode2Id = mode2.Id;
@@ -77,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
                 var journey = context.Journeys.Include(j => j.Steps).First();
                 journey.Void();
                 journey.Steps.ToList().ForEach(s => s.Void());
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

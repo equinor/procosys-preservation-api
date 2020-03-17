@@ -15,10 +15,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
     {
         private readonly IReadOnlyContext _context;
 
-        public GetTagRequirementsQueryHandler(IReadOnlyContext context)
-        {
-            _context = context;
-        }
+        public GetTagRequirementsQueryHandler(IReadOnlyContext context) => _context = context;
 
         public async Task<Result<List<RequirementDto>>> Handle(GetTagRequirementsQuery request, CancellationToken cancellationToken)
         {
@@ -26,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             var tag = await
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.PreservationRecord)
-                        .Include(p => p.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.FieldValues)
+                        .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.FieldValues)
                  where t.Id == request.Id
                  select t).FirstOrDefaultAsync(cancellationToken);
 
