@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
     {
         public TagDto(
             int id,
+            ActionStatus actionStatus,
             string areaCode,
             string calloffNo,
             string commPkgNo,
@@ -31,6 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             TagType tagType)
         {
             Id = id;
+            ActionStatus = actionStatus;
             AreaCode = areaCode;
             CalloffNo = calloffNo;
             CommPkgNo = commPkgNo;
@@ -54,6 +56,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             TagType = tagType;
         }
 
+        public ActionStatus ActionStatus { get; }
         public string AreaCode { get; }
         public string CalloffNo { get; }
         public string CommPkgNo { get; }

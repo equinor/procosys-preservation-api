@@ -15,8 +15,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
     [TestClass]
     public class TagsControllerTests
     {
-        private Mock<IMediator> _mediatorMock = new Mock<IMediator>();
-        private CreateTagDto _createTagDto = new CreateTagDto();
+        private readonly Mock<IMediator> _mediatorMock = new Mock<IMediator>();
+        private readonly CreateTagDto _createTagDto = new CreateTagDto();
         private TagsController _dut;
 
         [TestInitialize]

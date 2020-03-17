@@ -176,6 +176,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 new Filter(),
                 new Paging(paging.Page, paging.Size)
             );
+
+            if (filter.ActionStatus.HasValue)
+            {
+                query.Filter.ActionStatus = filter.ActionStatus;
+            }
+
             if (filter.DueFilters != null)
             {
                 query.Filter.DueFilters = filter.DueFilters;
@@ -189,6 +195,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             if (filter.RequirementTypeIds != null)
             {
                 query.Filter.RequirementTypeIds = filter.RequirementTypeIds;
+            }
+
+            if (filter.AreaCodes != null)
+            {
+                query.Filter.AreaCodes = filter.AreaCodes;
             }
 
             if (filter.DisciplineCodes != null)
