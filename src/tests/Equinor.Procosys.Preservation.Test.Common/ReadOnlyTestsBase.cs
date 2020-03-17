@@ -176,14 +176,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var _resp2 = "R2";
             var _reqType1Code = "ROT";
             var _reqType2Code = "AREA";
-            var _stdTagPrefix = "StdTagNo";
-            var _siteTagPrefix = "SiteTagNo";
-            var _callOffPrefix = "CO";
-            var _disciplinePrefix = "DI";
-            var _mcPkgPrefix = "MC";
-            var _commPkgPrefix = "COMM";
-            var _poPrefix = "PO";
-            var _tagFunctionPrefix = "TF";
             
             var testDataSet = new TestDataSet
             {
@@ -211,16 +203,16 @@ namespace Equinor.Procosys.Preservation.Test.Common
             {
                 var tag = new Tag(TestPlant,
                     TagType.Standard,
-                    $"{_stdTagPrefix}-{i}",
+                    $"{testDataSet.StdTagPrefix}-{i}",
                     "Description",
-                    "AreaCode",
-                    $"{_callOffPrefix}-{i}",
-                    $"{_disciplinePrefix}-{i}",
-                    $"{_mcPkgPrefix}-{i}",
-                    $"{_commPkgPrefix}-{i}",
-                    $"{_poPrefix}-{i}",
+                    $"{testDataSet.AreaPrefix}-{i}",
+                    $"{testDataSet.CallOffPrefix}-{i}",
+                    $"{testDataSet.DisciplinePrefix}-{i}",
+                    $"{testDataSet.McPkgPrefix}-{i}",
+                    $"{testDataSet.CommPkgPrefix}-{i}",
+                    $"{testDataSet.PoPrefix}-{i}",
                     "Remark",
-                    $"{_tagFunctionPrefix}-{i}",
+                    $"{testDataSet.TagFunctionPrefix}-{i}",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),
                     new List<Requirement>
                     {
@@ -234,16 +226,16 @@ namespace Equinor.Procosys.Preservation.Test.Common
             {
                 var tag = new Tag(TestPlant,
                     TagType.SiteArea,
-                    $"{_siteTagPrefix}-{i}",
+                    $"{testDataSet.SiteTagPrefix}-{i}",
                     "Description",
-                    "AreaCode",
-                    $"{_callOffPrefix}-{i}",
-                    $"{_disciplinePrefix}-{i}",
-                    $"{_mcPkgPrefix}-{i}",
-                    $"{_commPkgPrefix}-{i}",
-                    $"{_poPrefix}-{i}",
+                    $"{testDataSet.AreaPrefix}-{i}",
+                    $"{testDataSet.CallOffPrefix}-{i}",
+                    $"{testDataSet.DisciplinePrefix}-{i}",
+                    $"{testDataSet.McPkgPrefix}-{i}",
+                    $"{testDataSet.CommPkgPrefix}-{i}",
+                    $"{testDataSet.PoPrefix}-{i}",
                     "Remark",
-                    $"{_tagFunctionPrefix}-{i}",
+                    $"{testDataSet.TagFunctionPrefix}-{i}",
                     testDataSet.Journey2With1Steps.Steps.ElementAt(0),
                     new List<Requirement>
                     {

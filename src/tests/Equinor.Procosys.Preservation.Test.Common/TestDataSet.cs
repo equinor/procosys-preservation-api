@@ -10,6 +10,15 @@ namespace Equinor.Procosys.Preservation.Test.Common
     public class TestDataSet
     {
         public readonly int IntervalWeeks = 2;
+        public readonly string StdTagPrefix = "StdTagNo";
+        public readonly string SiteTagPrefix = "SiteTagNo";
+        public readonly string CallOffPrefix = "CO";
+        public readonly string AreaPrefix = "AREA";
+        public readonly string DisciplinePrefix = "DI";
+        public readonly string McPkgPrefix = "MC";
+        public readonly string CommPkgPrefix = "COMM";
+        public readonly string PoPrefix = "PO";
+        public readonly string TagFunctionPrefix = "TF";
 
         public Project Project1 { get; set; }
         public Project Project2 { get; set; }
