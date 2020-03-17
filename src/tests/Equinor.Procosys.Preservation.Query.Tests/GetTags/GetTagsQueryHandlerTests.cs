@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -43,14 +44,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         private int _resp1Id;
         private int _mode1Id;
         private int _tagIsNewHours = 12;
-        private Mock<IOptionsMonitor<ApiOptions>> _apiOptionsMock;
+        private Mock<IOptionsMonitor<TagOptions>> _apiOptionsMock;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            _apiOptionsMock = new Mock<IOptionsMonitor<ApiOptions>>();
+            _apiOptionsMock = new Mock<IOptionsMonitor<TagOptions>>();
             _apiOptionsMock
                 .Setup(x => x.CurrentValue)
-                .Returns(new ApiOptions { TagIsNewHours = _tagIsNewHours });
+                .Returns(new TagOptions { IsNewHours = _tagIsNewHours });
 
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

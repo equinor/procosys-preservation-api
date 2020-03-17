@@ -9,7 +9,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Infrastructure;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -23,10 +22,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         private readonly IReadOnlyContext _context;
         private readonly int _tagIsNewHours;
 
-        public GetTagsQueryHandler(IReadOnlyContext context, IOptionsMonitor<ApiOptions> options)
+        public GetTagsQueryHandler(IReadOnlyContext context, IOptionsMonitor<TagOptions> options)
         {
             _context = context;
-            _tagIsNewHours = options.CurrentValue.TagIsNewHours;
+            _tagIsNewHours = options.CurrentValue.IsNewHours;
         }
 
         public async Task<Result<TagsResult>> Handle(GetTagsQuery request, CancellationToken cancellationToken)
