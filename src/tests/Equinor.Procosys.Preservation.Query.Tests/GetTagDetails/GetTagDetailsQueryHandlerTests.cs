@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -14,46 +13,19 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
     [TestClass]
     public class GetTagDetailsQueryHandlerTests : ReadOnlyTestsBase
     {
-        private string _journeyTitle = "J1";
-        private string _modeTitle = "M1";
-        private string _respCode = "R1";
-        private int _tagId;
-        private int _intervalWeeks = 2;
+        private Tag _testTag;
+        private TestDataSet _testDataSet;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
+                _testDataSet = AddTestDataSet(context);
 
-                var journey = AddJourneyWithStep(context, _journeyTitle, "S", 
-                    AddMode(context, _modeTitle), 
-                    AddResponsible(context, _respCode));
-                var reqType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1");
+                _testTag = _testDataSet.Project1.Tags.First();
 
-                var tag = new Tag(TestPlant,
-                    TagType.Standard,
-                    "TagNo",
-                    "Description",
-                    "AreaCode",
-                    "Calloff",
-                    "DisciplineCode",
-                    "McPkgNo",
-                    "CommPkgNo",
-                    "PurchaseOrderNo",
-                    "Remark",
-                    "TagFunctionCode",
-                    journey.Steps.ElementAt(0),
-                    new List<Requirement>
-                    {
-                        new Requirement(TestPlant, _intervalWeeks, reqType.RequirementDefinitions.ElementAt(0))
-                    });
-
-                tag.StartPreservation();
-                context.Tags.Add(tag);
-                context.SaveChanges();
-
-                _tagId = tag.Id;
+                _testTag.StartPreservation();
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -62,9 +34,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _timeProvider.ElapseWeeks(_intervalWeeks);
+                _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
 
-                var query = new GetTagDetailsQuery(_tagId);
+                var query = new GetTagDetailsQuery(_testTag.Id);
                 var dut = new GetTagDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -73,19 +45,24 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
                 
                 var dto = result.Data;
-                Assert.AreEqual("AreaCode", dto.AreaCode);
-                Assert.AreEqual("CommPkgNo", dto.CommPkgNo);
-                Assert.AreEqual("Description", dto.Description);
-                Assert.AreEqual(_tagId, dto.Id);
-                Assert.AreEqual(_journeyTitle, dto.JourneyTitle);
-                Assert.AreEqual("McPkgNo", dto.McPkgNo);
-                Assert.AreEqual(_modeTitle, dto.Mode);
-                Assert.AreEqual("PurchaseOrderNo", dto.PurchaseOrderNo);
-                Assert.AreEqual(_respCode, dto.ResponsibleName);
+                Assert.AreEqual(_testTag.AreaCode, dto.AreaCode);
+                Assert.AreEqual(_testTag.CommPkgNo, dto.CommPkgNo);
+                Assert.AreEqual(_testTag.Description, dto.Description);
+                Assert.AreEqual(_testTag.Id, dto.Id);
+                Assert.AreEqual(_testTag.McPkgNo, dto.McPkgNo);
+                Assert.AreEqual(_testTag.PurchaseOrderNo, dto.PurchaseOrderNo);
                 Assert.AreEqual(PreservationStatus.Active, dto.Status);
-                Assert.AreEqual("TagNo", dto.TagNo);
-                Assert.AreEqual(TagType.Standard, dto.TagType);
-                Assert.IsTrue(dto.ReadyToBePreserved);
+                Assert.AreEqual(_testTag.TagNo, dto.TagNo);
+                Assert.AreEqual(_testTag.TagType, dto.TagType);
+                Assert.AreEqual(_testTag.IsReadyToBePreserved(), dto.ReadyToBePreserved);
+
+                var step = context.Steps.Single(s => s.Id == _testTag.StepId);
+                var mode = context.Modes.Single(m => m.Id == step.ModeId);
+                var resp = context.Responsibles.Single(r => r.Id == step.ResponsibleId);
+                var journey = context.Journeys.Single(j => j.Steps.Any(s => s.Id == step.Id));
+                Assert.AreEqual(journey.Title, dto.JourneyTitle);
+                Assert.AreEqual(mode.Title, dto.Mode);
+                Assert.AreEqual(resp.Code, dto.ResponsibleName);
             }
         }
 

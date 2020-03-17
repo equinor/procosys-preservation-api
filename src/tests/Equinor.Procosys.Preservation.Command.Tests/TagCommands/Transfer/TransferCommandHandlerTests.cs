@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             step2OnJourney1Mock.SetupGet(x => x.Id).Returns(Step2OnJourney1Id);
             step2OnJourney1Mock.SetupGet(x => x.Schema).Returns(TestPlant);
 
-            var journey1 = new Journey(TestPlant,"");
+            var journey1 = new Journey(TestPlant, "J1");
             journey1.AddStep(step1OnJourney1Mock.Object);
             journey1.AddStep(step2OnJourney1Mock.Object);
 
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             step2OnJourney2Mock.SetupGet(x => x.Id).Returns(Step2OnJourney2Id);
             step2OnJourney2Mock.SetupGet(x => x.Schema).Returns(TestPlant);
 
-            var journey2 = new Journey(TestPlant,"");
+            var journey2 = new Journey(TestPlant, "J2");
             journey2.AddStep(step1OnJourney2Mock.Object);
             journey2.AddStep(step2OnJourney2Mock.Object);
 

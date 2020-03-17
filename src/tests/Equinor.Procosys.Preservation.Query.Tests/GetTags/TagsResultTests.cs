@@ -14,6 +14,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             var tagDto = new TagDto(
                 1,
+                ActionStatus.HasOverDue,
                 "AreaCode",
                 "CallOffNo",
                 "CommPkgNo",

@@ -17,6 +17,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.IsNull(dut.PurchaseOrderNoStartsWith);
             Assert.IsNull(dut.TagNoStartsWith);
             Assert.IsFalse(dut.PreservationStatus.HasValue);
+            Assert.IsFalse(dut.ActionStatus.HasValue);
+            Assert.AreEqual(0, dut.AreaCodes.Count());
             Assert.AreEqual(0, dut.DisciplineCodes.Count());
             Assert.AreEqual(0, dut.DueFilters.Count());
             Assert.AreEqual(0, dut.JourneyIds.Count());

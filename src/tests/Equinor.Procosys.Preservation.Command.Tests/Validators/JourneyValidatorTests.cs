@@ -18,8 +18,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddPerson(context, _currentUserOid, "Ole", "Lukkøye");
-
                 _journeyId = AddJourneyWithStep(context, JourneyTitle, "S", AddMode(context, "M"), AddResponsible(context, "R")).Id;
             }
         }
@@ -75,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var journey = context.Journeys.Single(j => j.Id == _journeyId);
                 journey.Void();
-                context.SaveChanges();
+                context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
