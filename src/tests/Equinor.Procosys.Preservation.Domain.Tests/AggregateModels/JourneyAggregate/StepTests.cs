@@ -39,20 +39,22 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void Constructor_ShouldThrowException_WhenModeNotGiven()
-        {
+        public void Constructor_ShouldThrowException_WhenTitleNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() =>
-                new Step(TestPlant, "S", null, _responsibleMock.Object)
-                );
-        }
+                new Step(TestPlant, null, _modeMock.Object, _responsibleMock.Object)
+            );
 
         [TestMethod]
-        public void Constructor_ShouldThrowException_WhenResponsibleNotGiven()
-        {
+        public void Constructor_ShouldThrowException_WhenModeNotGiven() =>
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                new Step(TestPlant, "S", null, _responsibleMock.Object)
+            );
+
+        [TestMethod]
+        public void Constructor_ShouldThrowException_WhenResponsibleNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() =>
                 new Step(TestPlant, "S", _modeMock.Object, null)
-                );
-        }
+            );
 
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()

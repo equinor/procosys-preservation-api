@@ -31,11 +31,11 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 .WithMessage(command => $"Responsible doesn't exists! Responsible={command.ResponsibleId}")
                 .MustAsync((command, token) => NotBeAVoidedResponsibleAsync(command.ResponsibleId, token))
                 .WithMessage(command => $"Responsible is voided! Responsible={command.ResponsibleId}")
-                .MustAsync((command, token) => HaveUniqueTitleAsync(command.JourneyId, command.Title, token))
+                .MustAsync((command, token) => HaveUniqueStepTitleAsync(command.JourneyId, command.Title, token))
                 .WithMessage(command => $"Step with title already exists in journey! Step={command.Title}");
 
-            async Task<bool> HaveUniqueTitleAsync(int journeyId, string title, CancellationToken token)
-                => !await stepValidator.ExistsAsync(journeyId, title, token);
+            async Task<bool> HaveUniqueStepTitleAsync(int journeyId, string stepTitle, CancellationToken token)
+                => !await stepValidator.ExistsAsync(journeyId, stepTitle, token);
 
             async Task<bool> BeAnExistingJourney(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);

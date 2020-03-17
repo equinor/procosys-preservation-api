@@ -18,6 +18,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public Step(string schema, string title, Mode mode, Responsible responsible)
             : base(schema)
         {
+            if (string.IsNullOrEmpty(title))
+            {
+                throw new ArgumentNullException(nameof(title));
+            }
+
             if (mode == null)
             {
                 throw new ArgumentNullException(nameof(mode));

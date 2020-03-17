@@ -18,10 +18,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 where s.Id == stepId
                 select s).AnyAsync(token);
 
-        public async Task<bool> ExistsAsync(int journeyId, string title, CancellationToken token)
+        public async Task<bool> ExistsAsync(int journeyId, string stepTitle, CancellationToken token)
             => await (from s in _context.QuerySet<Step>()
                 join j in _context.QuerySet<Journey>() on EF.Property<int>(s, "JourneyId") equals j.Id
-                where s.Title == title && s.Id == journeyId
+                where s.Title == stepTitle && s.Id == journeyId
                 select s).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(int stepId, CancellationToken token)
