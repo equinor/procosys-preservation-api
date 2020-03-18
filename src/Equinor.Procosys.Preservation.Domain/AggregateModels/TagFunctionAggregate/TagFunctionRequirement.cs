@@ -5,14 +5,14 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {
-    public class Requirement : SchemaEntityBase, ICreationAuditable, IModificationAuditable
+    public class TagFunctionRequirement : SchemaEntityBase, ICreationAuditable, IModificationAuditable
     {
-        protected Requirement()
+        protected TagFunctionRequirement()
             : base(null)
         {
         }
 
-        public Requirement(string schema, int intervalWeeks, RequirementDefinition requirementDefinition)
+        public TagFunctionRequirement(string schema, int intervalWeeks, RequirementDefinition requirementDefinition)
             : base(schema)
         {
             if (requirementDefinition == null)

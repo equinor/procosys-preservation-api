@@ -9,9 +9,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
     {
         public const int CodeLengthMax = 255;
         public const int DescriptionLengthMax = 255;
-        public const int TagFunctionCodeLengthMax = 255;
+        public const int RegisterCodeLengthMax = 255;
 
-        private readonly List<Requirement> _requirements = new List<Requirement>();
+        private readonly List<TagFunctionRequirement> _requirements = new List<TagFunctionRequirement>();
 
         protected TagFunction()
             : base(null)
@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
             RegisterCode = registerCode;
         }
 
-        public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
+        public IReadOnlyCollection<TagFunctionRequirement> Requirements => _requirements.AsReadOnly();
         public string Code { get; private set; }
         public string Description { get; private set; }
         public string RegisterCode { get; private set; }
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public void AddRequirement(Requirement requirement)
+        public void AddRequirement(TagFunctionRequirement requirement)
         {
             if (requirement == null)
             {
