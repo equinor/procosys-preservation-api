@@ -16,7 +16,6 @@ namespace Equinor.Procosys.Preservation.Domain.Audit
         /// Method to set creation data on an entity.
         /// This is used by the context and should NOT be used by anyone else.
         /// </summary>
-        /// <param name="createdAtUtc">Creation date and time</param>
         /// <param name="createdBy">The user who created the entity</param>
         void SetCreated(Person createdBy);
     }

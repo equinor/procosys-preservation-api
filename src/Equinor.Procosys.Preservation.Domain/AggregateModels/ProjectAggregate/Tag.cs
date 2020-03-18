@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private readonly List<Action> _actions = new List<Action>();
 
         public const int TagNoLengthMax = 255;
+        public const int TagFunctionCodeLengthMax = 255;
         public const int AreaCodeLengthMax = 255;
         public const int DisciplineCodeLengthMax = 255;
         public const int DescriptionLengthMax = 255;
