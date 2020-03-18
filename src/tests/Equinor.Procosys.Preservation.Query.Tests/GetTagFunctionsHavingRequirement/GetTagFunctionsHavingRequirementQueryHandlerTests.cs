@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagFunctionsHavingRequirement;
@@ -13,27 +12,50 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionsHavingRequire
     [TestClass]
     public class GetTagFunctionsHavingRequirementQueryHandlerTests : ReadOnlyTestsBase
     {
-        private TagFunction _tfWithRequirement;
-        private RequirementDefinition _requirementDefinition;
-
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                _tfWithRequirement = AddTagFunction(context, "TFC2", "RC1");
-                var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R");
-                _requirementDefinition = rt.RequirementDefinitions.First();
-                _tfWithRequirement.AddRequirement(new TagFunctionRequirement(TestPlant, 4, _requirementDefinition));
+        }
 
-                AddTagFunction(context, "TFC1", "RC1");
-                
-                context.SaveChangesAsync().Wait();
+        [TestMethod]
+        public async Task HandleGetTagFunctionQuery_NoTagFunctiona_ShouldReturnEmptyList()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagFunctionsHavingRequirementQueryHandler(context);
+                var result = await dut.Handle(new GetTagFunctionsHavingRequirementQuery(), default);
+
+                Assert.AreEqual(0, result.Data.Count());
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetTagFunctionQuery_NoTagFunctionsWithRequirement_ShouldReturnEmptyList()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                AddTagFunction(context, "TF2", "RC");
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagFunctionsHavingRequirementQueryHandler(context);
+                var result = await dut.Handle(new GetTagFunctionsHavingRequirementQuery(), default);
+
+                Assert.AreEqual(0, result.Data.Count());
             }
         }
 
         [TestMethod]
         public async Task HandleGetTagFunctionQuery_KnownTagFunction_ShouldReturnTagFunctionWithAllPropertiesSet()
         {
+            TagFunction tf;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                tf = AddTagFunction(context, "TFC", "RC");
+                var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R");
+                tf.AddRequirement(new TagFunctionRequirement(TestPlant, 4, rt.RequirementDefinitions.First()));
+                
+                context.SaveChangesAsync().Wait();
+            }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagFunctionsHavingRequirementQueryHandler(context);
@@ -42,8 +64,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionsHavingRequire
                 var tagFunctions = result.Data.ToList();
 
                 Assert.AreEqual(1, tagFunctions.Count);
-                Assert.AreEqual(_tfWithRequirement.Code, tagFunctions.Single().Code);
-                Assert.AreEqual(_tfWithRequirement.RegisterCode, tagFunctions.Single().RegisterCode);
+                Assert.AreEqual(tf.Code, tagFunctions.Single().Code);
+                Assert.AreEqual(tf.RegisterCode, tagFunctions.Single().RegisterCode);
             }
         }
     }
