@@ -7,20 +7,20 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagFunction
+namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
 {
-    public class GetTagFunctionQueryHandler : IRequestHandler<GetTagFunctionQuery, Result<TagFunctionDto>>
+    public class GetTagFunctionsHavingRequirementQueryHandler : IRequestHandler<GetTagFunctionQuery, Result<TagFunctionDetailsDto>>
     {
         private readonly IReadOnlyContext _context;
 
-        public GetTagFunctionQueryHandler(IReadOnlyContext context) => _context = context;
+        public GetTagFunctionsHavingRequirementQueryHandler(IReadOnlyContext context) => _context = context;
 
-        public async Task<Result<TagFunctionDto>> Handle(GetTagFunctionQuery request, CancellationToken cancellationToken)
+        public async Task<Result<TagFunctionDetailsDto>> Handle(GetTagFunctionQuery request, CancellationToken cancellationToken)
         {
             var tagFunctionDto = await (from tagFunction in _context.QuerySet<TagFunction>().Include(tf => tf.Requirements)
                     where tagFunction.Code == request.TagFunctionCode &&
                           tagFunction.RegisterCode == request.RegisterCode
-                    select new TagFunctionDto(
+                    select new TagFunctionDetailsDto(
                         tagFunction.Id,
                         tagFunction.Code,
                         tagFunction.Description,
@@ -31,10 +31,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunction
             
             if (tagFunctionDto == null)
             {
-                return new NotFoundResult<TagFunctionDto>($"{nameof(TagFunction)} with Code {request.TagFunctionCode} not found in register {request.RegisterCode}");
+                return new NotFoundResult<TagFunctionDetailsDto>($"{nameof(TagFunction)} with Code {request.TagFunctionCode} not found in register {request.RegisterCode}");
             }
 
-            return new SuccessResult<TagFunctionDto>(tagFunctionDto);
+            return new SuccessResult<TagFunctionDetailsDto>(tagFunctionDto);
         }
     }
 }

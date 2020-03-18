@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.GetTagFunction;
+using Equinor.Procosys.Preservation.Query.GetTagFunctionDetails;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunction
+namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
 {
     [TestClass]
     public class GetTagFunctionQueryQueryHandlerTests : ReadOnlyTestsBase
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunction
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagFunctionQueryHandler(context);
+                var dut = new GetTagFunctionsHavingRequirementQueryHandler(context);
                 var result = await dut.Handle(new GetTagFunctionQuery(_tf.Code, _tf.RegisterCode), default);
 
                 var tagFunction = result.Data;
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunction
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetTagFunctionQueryHandler(context);
+                var dut = new GetTagFunctionsHavingRequirementQueryHandler(context);
                 var result = await dut.Handle(new GetTagFunctionQuery("XX", _tf.RegisterCode), default);
                 Assert.IsNull(result.Data);
             }

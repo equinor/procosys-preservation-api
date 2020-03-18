@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagFunction
+namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
 {
-    public class TagFunctionDto
+    public class TagFunctionDetailsDto
     {
-        public TagFunctionDto(int id, string code, string description, string registerCode, bool isVoided, IEnumerable<RequirementDto> requirements)
+        public TagFunctionDetailsDto(int id, string code, string description, string registerCode, bool isVoided, IEnumerable<RequirementDto> requirements)
         {
             Id = id;
             Code = code;

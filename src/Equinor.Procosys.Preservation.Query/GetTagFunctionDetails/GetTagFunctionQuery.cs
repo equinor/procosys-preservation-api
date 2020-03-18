@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagFunction
+namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
 {
-    public class GetTagFunctionQuery : IRequest<Result<TagFunctionDto>>
+    public class GetTagFunctionQuery : IRequest<Result<TagFunctionDetailsDto>>
     {
         public GetTagFunctionQuery(string tagFunctionCode, string registerCode)
         {

@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Query.GetTagFunction;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Query.GetTagFunctionDetails;
+using Equinor.Procosys.Preservation.Query.GetTagFunctionsHavingRequirement;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
@@ -14,10 +16,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
 
         public TagFunctionsController(IMediator mediator) => _mediator = mediator;
 
-        [HttpGet]
-        public async Task<ActionResult<TagFunctionDto>> GetAllTagFunctions([FromQuery] string tagFunctionCode, [FromQuery] string registerCode)
+        [HttpGet("HavingRequirement")]
+        public async Task<ActionResult<IEnumerable<TagFunctionDto>>> GetTagFunctionsHavingRequirement()
         {
-            var result = await _mediator.Send(new GetTagFunctionQuery(tagFunctionCode, registerCode));
+            var result = await _mediator.Send(new GetTagFunctionsHavingRequirementQuery());
+            return this.FromResult(result);
+        }
+
+        [HttpGet("{code}")]
+        public async Task<ActionResult<TagFunctionDetailsDto>> GetTagFunctionDetails([FromRoute] string code, [FromQuery] string registerCode)
+        {
+            var result = await _mediator.Send(new GetTagFunctionQuery(code, registerCode));
             return this.FromResult(result);
         }
     }

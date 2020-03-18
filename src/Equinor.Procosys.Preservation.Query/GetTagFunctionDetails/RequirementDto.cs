@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetTagFunction
+﻿namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
 {
     public class RequirementDto
     {
