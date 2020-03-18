@@ -26,6 +26,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
                 throw new ArgumentNullException(nameof(code));
             }
 
+            if (string.IsNullOrEmpty(registerCode))
+            {
+                throw new ArgumentNullException(nameof(registerCode));
+            }
+
             Code = code;
             Description = description;
             RegisterCode = registerCode;
