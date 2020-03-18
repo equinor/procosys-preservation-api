@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagFunctionAggregate
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("TFC", dut.Code);
             Assert.AreEqual("D", dut.Description);
-            Assert.AreEqual("TC", dut.RegisterCode);
+            Assert.AreEqual("RC", dut.RegisterCode);
             Assert.IsTrue(dut.IsVoided);
             Assert.AreEqual(1, dut.Requirements.Count());
             Assert.AreEqual(reqDto, dut.Requirements.First());
