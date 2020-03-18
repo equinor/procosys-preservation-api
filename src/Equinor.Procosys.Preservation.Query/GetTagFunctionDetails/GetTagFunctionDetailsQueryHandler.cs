@@ -9,13 +9,13 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
 {
-    public class GetTagFunctionsHavingRequirementQueryHandler : IRequestHandler<GetTagFunctionQuery, Result<TagFunctionDetailsDto>>
+    public class GetTagFunctionsHavingRequirementQueryHandler : IRequestHandler<GetTagFunctionDetailsQuery, Result<TagFunctionDetailsDto>>
     {
         private readonly IReadOnlyContext _context;
 
         public GetTagFunctionsHavingRequirementQueryHandler(IReadOnlyContext context) => _context = context;
 
-        public async Task<Result<TagFunctionDetailsDto>> Handle(GetTagFunctionQuery request, CancellationToken cancellationToken)
+        public async Task<Result<TagFunctionDetailsDto>> Handle(GetTagFunctionDetailsQuery request, CancellationToken cancellationToken)
         {
             var tagFunctionDto = await (from tagFunction in _context.QuerySet<TagFunction>().Include(tf => tf.Requirements)
                     where tagFunction.Code == request.TagFunctionCode &&

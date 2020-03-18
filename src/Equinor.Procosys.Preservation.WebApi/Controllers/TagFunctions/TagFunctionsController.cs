@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         [HttpGet("{code}")]
         public async Task<ActionResult<TagFunctionDetailsDto>> GetTagFunctionDetails([FromRoute] string code, [FromQuery] string registerCode)
         {
-            var result = await _mediator.Send(new GetTagFunctionQuery(code, registerCode));
+            var result = await _mediator.Send(new GetTagFunctionDetailsQuery(code, registerCode));
             return this.FromResult(result);
         }
     }

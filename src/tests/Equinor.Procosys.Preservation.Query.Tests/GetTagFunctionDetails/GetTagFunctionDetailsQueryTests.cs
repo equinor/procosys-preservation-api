@@ -4,12 +4,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
 {
     [TestClass]
-    public class GetTagFunctionQueryTests
+    public class GetTagFunctionDetailsQueryTests
     {
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new GetTagFunctionQuery("A", "B");
+            var dut = new GetTagFunctionDetailsQuery("A", "B");
             Assert.AreEqual("A", dut.TagFunctionCode);
             Assert.AreEqual("B", dut.RegisterCode);
         }

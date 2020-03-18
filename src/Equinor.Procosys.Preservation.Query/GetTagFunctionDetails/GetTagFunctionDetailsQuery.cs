@@ -3,9 +3,9 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
 {
-    public class GetTagFunctionQuery : IRequest<Result<TagFunctionDetailsDto>>
+    public class GetTagFunctionDetailsQuery : IRequest<Result<TagFunctionDetailsDto>>
     {
-        public GetTagFunctionQuery(string tagFunctionCode, string registerCode)
+        public GetTagFunctionDetailsQuery(string tagFunctionCode, string registerCode)
         {
             TagFunctionCode = tagFunctionCode;
             RegisterCode = registerCode;
