@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibleCodes;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
@@ -22,19 +23,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
             return this.FromResult(result);
         }
 
-        // Henning: I've added code for 2 more endpoints to let you see how I think .... one endpoint pr. filter type. There will be for Responsible, Area, Mode, Discipline, TagFunction too
-        // Implementation inside each GetUniqueTagXXXXXQuery will be as GetUniqueTagRequirementTypesQuery: pick unique used values for all tags in project to give user filter value to choose from
-        //[HttpGet("Steps")]
-        //public async Task<ActionResult<List<StepDto>>> GetSteps([FromQuery] string projectName)
-        //{
-        //    var result = await _mediator.Send(new GetUniqueTagStepsQuery(projectName));
-        //    return this.FromResult(result);
-        //}
+        [HttpGet("Responsibles")]
+        public async Task<ActionResult<List<ResponsibleDto>>> GetJourneys([FromQuery] string projectName)
+        {
+            var result = await _mediator.Send(new GetUniqueTagResponsibleCodesQuery(projectName));
+            return this.FromResult(result);
+        }
 
         //[HttpGet("Journeys")]
         //public async Task<ActionResult<List<JourneyDto>>> GetJourneys([FromQuery] string projectName)
         //{
-        //    var result = await _mediator.Send(new GetUniqueTagJourneys|Query(projectName));
+        //    var result = await _mediator.Send(new GetUniqueTagJourneysQuery(projectName));
         //    return this.FromResult(result);
         //}
     }
