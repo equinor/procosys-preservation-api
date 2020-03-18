@@ -16,9 +16,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         public TagFunctionsController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagFunctionDto>>> GetAllTagFunctions([FromQuery] bool includeVoided = false)
+        public async Task<ActionResult<TagFunctionDto>> GetAllTagFunctions([FromQuery] string tagFunctionCode, [FromQuery] string registerCode)
         {
-            var result = await _mediator.Send(new GetAllTagFunctionsQuery(includeVoided));
+            var result = await _mediator.Send(new GetTagFunctionQuery(tagFunctionCode, registerCode));
             return this.FromResult(result);
         }
     }
