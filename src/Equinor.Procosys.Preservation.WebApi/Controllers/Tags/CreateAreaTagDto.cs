@@ -13,5 +13,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public IEnumerable<TagRequirementDto> Requirements { get; set; }
         public string Description { get; set; }
         public string Remark { get; set; }
+        public string StorageArea { get; set; }
     }
 }

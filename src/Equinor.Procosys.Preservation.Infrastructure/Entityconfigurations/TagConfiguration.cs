@@ -22,6 +22,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.Remark)
                 .HasMaxLength(Tag.RemarkLengthMax);
 
+            builder.Property(x => x.StorageArea)
+                .HasMaxLength(Tag.StorageAreaLengthMax);
+
             builder.Property(x => x.TagNo)
                 .HasMaxLength(Tag.TagNoLengthMax)
                 .IsRequired();

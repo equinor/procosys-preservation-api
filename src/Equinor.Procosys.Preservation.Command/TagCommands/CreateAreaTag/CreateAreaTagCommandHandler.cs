@@ -105,6 +105,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 null,
                 null,
                 request.Remark,
+                request.StorageArea,
                 null,
                 step,
                 requirements);

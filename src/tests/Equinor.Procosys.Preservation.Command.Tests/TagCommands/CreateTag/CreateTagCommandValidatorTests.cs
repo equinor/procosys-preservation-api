@@ -51,6 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                     new Requirement(_rd1Id, 1),
                     new Requirement(_rd2Id, 1)
                 },
+                null,
                 null);
 
             _dut = new CreateTagCommandValidator(
@@ -150,6 +151,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 _projectName,
                 _stepId,
                 new List<Requirement>(),
+                null,
                 null);
             
             var result = _dut.Validate(command);
@@ -167,6 +169,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 _projectName,
                 _stepId,
                 new List<Requirement>{new Requirement(_rd1Id, 1)},
+                null,
                 null);
             
             var result = _dut.Validate(command);
@@ -184,6 +187,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 _projectName,
                 _stepId,
                 new List<Requirement>{new Requirement(_rd1Id, 1)},
+                null,
                 null);
             
             var result = _dut.Validate(command);
@@ -205,6 +209,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                     new Requirement(_rd1Id, 1),
                     new Requirement(_rd1Id, 1)
                 },
+                null,
                 null);
             
             var result = _dut.Validate(command);

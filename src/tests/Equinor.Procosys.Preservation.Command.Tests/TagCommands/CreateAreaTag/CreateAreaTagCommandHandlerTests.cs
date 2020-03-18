@@ -102,7 +102,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                     new Requirement(ReqDefId2, Interval2),
                 },
                 null,
-                null);
+                "Remark",
+                "SA");
 
             _dut = new CreateAreaTagCommandHandler(
                 _projectRepositoryMock.Object,
@@ -208,6 +209,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(command.TagType, tagAddedToProject.TagType);
             Assert.IsNull(tagAddedToProject.McPkgNo);
             Assert.AreEqual(command.Description, tagAddedToProject.Description);
+            Assert.AreEqual(command.Remark, tagAddedToProject.Remark);
+            Assert.AreEqual(command.StorageArea, tagAddedToProject.StorageArea);
             Assert.IsNull(tagAddedToProject.PurchaseOrderNo);
             Assert.AreEqual(TestPlant, tagAddedToProject.Schema);
             Assert.AreEqual(StepId, tagAddedToProject.StepId);

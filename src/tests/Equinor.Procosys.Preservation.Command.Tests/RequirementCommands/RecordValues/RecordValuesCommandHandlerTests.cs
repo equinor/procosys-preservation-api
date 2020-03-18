@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
 
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
-            var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
+            var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
             {
                 _requirement
             });

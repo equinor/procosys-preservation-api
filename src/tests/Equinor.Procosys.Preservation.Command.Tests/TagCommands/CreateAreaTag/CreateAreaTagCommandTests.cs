@@ -22,13 +22,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 2,
                 new List<Requirement>{new Requirement(11, 12)},
                 "DescriptionA",
-                "RemarkA");
+                "RemarkA",
+                "SA_A");
 
             Assert.AreEqual("ProjectNameA", dut.ProjectName);
             Assert.AreEqual("DisciplineA", dut.DisciplineCode);
             Assert.AreEqual("AreaA", dut.AreaCode);
             Assert.AreEqual("DescriptionA", dut.Description);
             Assert.AreEqual("RemarkA", dut.Remark);
+            Assert.AreEqual("SA_A", dut.StorageArea);
             Assert.AreEqual(2, dut.StepId);
             Assert.AreEqual(1, dut.Requirements.Count());
             var requirement = dut.Requirements.First();
@@ -48,6 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 0,
                 null,
                 null,
+                null,
                 null);
 
             Assert.AreEqual("#PRE-I", dut.GetTagNo());
@@ -63,6 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null,
                 0,
+                null,
                 null,
                 null,
                 null);
@@ -82,6 +86,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 0,
                 null,
                 null,
+                null,
                 null);
 
             Assert.AreEqual("#PRE-I-XX", dut.GetTagNo());
@@ -97,6 +102,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 "XX",
                 0,
+                null,
                 null,
                 null,
                 null);
@@ -116,6 +122,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 0,
                 null,
                 null,
+                null,
                 null);
 
             Assert.AreEqual("#PRE-I-A300", dut.GetTagNo());
@@ -131,6 +138,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 "A300",
                 null,
                 0,
+                null,
                 null,
                 null,
                 null);
@@ -150,6 +158,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 0,
                 null,
                 null,
+                null,
                 null);
 
             Assert.AreEqual("#PRE-I-A300-XX", dut.GetTagNo());
@@ -165,6 +174,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 "A300",
                 "XX",
                 0,
+                null,
                 null,
                 null,
                 null);
@@ -183,12 +193,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 2,
                 null,
                 null,
+                null,
                 null);
 
             Assert.IsNotNull(dut.Requirements);
             Assert.AreEqual(0, dut.Requirements.Count());
             Assert.IsNull(dut.Description);
             Assert.IsNull(dut.Remark);
+            Assert.IsNull(dut.StorageArea);
         }
     }
 }

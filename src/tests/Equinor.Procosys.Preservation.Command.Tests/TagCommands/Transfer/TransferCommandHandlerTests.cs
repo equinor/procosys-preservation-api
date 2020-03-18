@@ -58,14 +58,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
 
             var reqMock1 = new Mock<Requirement>();
             reqMock1.SetupGet(r => r.Schema).Returns(TestPlant);
-            _tag1Mock = new Mock<Tag>(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", step1OnJourney1Mock.Object,
+            _tag1Mock = new Mock<Tag>(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", step1OnJourney1Mock.Object,
                 new List<Requirement> {reqMock1.Object});
             _tag1Mock.SetupGet(t => t.Id).Returns(TagId1);
             _tag1Mock.SetupGet(t => t.Schema).Returns(TestPlant);
 
             var reqMock2 = new Mock<Requirement>();
             reqMock2.SetupGet(r => r.Schema).Returns(TestPlant);
-            _tag2Mock = new Mock<Tag>(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", step1OnJourney2Mock.Object,
+            _tag2Mock = new Mock<Tag>(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", step1OnJourney2Mock.Object,
                 new List<Requirement> {reqMock2.Object});
             _tag2Mock.SetupGet(t => t.Id).Returns(TagId2);
             _tag2Mock.SetupGet(t => t.Schema).Returns(TestPlant);
