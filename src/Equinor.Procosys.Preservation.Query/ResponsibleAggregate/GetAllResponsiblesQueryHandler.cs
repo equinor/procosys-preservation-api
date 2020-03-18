@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
 {
     public class GetAllResponsiblesQueryHandler : IRequestHandler<GetAllResponsiblesQuery, Result<IEnumerable<ResponsibleDto>>>
     {
-        private readonly IResponsibleRepository _responsibleRepository;
+        private readonly IResponsibleRepository _responsibleRepository; //todo rewrite to use IReadOnlyContext
 
         public GetAllResponsiblesQueryHandler(IResponsibleRepository responsibleRepository) => _responsibleRepository = responsibleRepository;
 
