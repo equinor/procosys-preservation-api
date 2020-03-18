@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.TagFunctionAggregate;
+using Equinor.Procosys.Preservation.Query.GetTagFunction;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.TagFunctionAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunction
 {
     [TestClass]
     public class GetTagFunctionQueryQueryHandlerTests : ReadOnlyTestsBase

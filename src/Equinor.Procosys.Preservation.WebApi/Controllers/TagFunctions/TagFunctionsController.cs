@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Query.TagFunctionAggregate;
+﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Query.GetTagFunction;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;

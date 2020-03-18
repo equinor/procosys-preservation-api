@@ -7,7 +7,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.TagFunctionAggregate
+namespace Equinor.Procosys.Preservation.Query.GetTagFunction
 {
     public class GetTagFunctionQueryHandler : IRequestHandler<GetTagFunctionQuery, Result<TagFunctionDto>>
     {

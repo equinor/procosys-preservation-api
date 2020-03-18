@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Query.TagFunctionAggregate;
+using Equinor.Procosys.Preservation.Query.GetTagFunction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.TagFunctionAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunction
 {
     [TestClass]
     public class TagFunctionDtoTests
