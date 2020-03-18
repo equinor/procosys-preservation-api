@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibleCodes;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
@@ -17,16 +17,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public FilterValuesController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet("RequirementTypes")]
-        public async Task<ActionResult<List<RequirementTypeDto>>> GetRequirementType([FromQuery] string projectName)
+        public async Task<ActionResult<List<RequirementTypeDto>>> GetRequirementTypes([FromQuery] string projectName)
         {
             var result = await _mediator.Send(new GetUniqueTagRequirementTypesQuery(projectName));
             return this.FromResult(result);
         }
 
         [HttpGet("Responsibles")]
-        public async Task<ActionResult<List<ResponsibleDto>>> GetJourneys([FromQuery] string projectName)
+        public async Task<ActionResult<List<ResponsibleDto>>> GetResponsibles([FromQuery] string projectName)
         {
-            var result = await _mediator.Send(new GetUniqueTagResponsibleCodesQuery(projectName));
+            var result = await _mediator.Send(new GetUniqueTagResponsiblesQuery(projectName));
             return this.FromResult(result);
         }
 

@@ -10,15 +10,15 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibleCodes
+namespace Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles
 {
-    public class GetUniqueTagResponsibleCodesQueryHandler : IRequestHandler<GetUniqueTagResponsibleCodesQuery, Result<List<ResponsibleDto>>>
+    public class GetUniqueTagResponsiblesQueryHandler : IRequestHandler<GetUniqueTagResponsiblesQuery, Result<List<ResponsibleDto>>>
     {
         private readonly IReadOnlyContext _context;
 
-        public GetUniqueTagResponsibleCodesQueryHandler(IReadOnlyContext context) => _context = context;
+        public GetUniqueTagResponsiblesQueryHandler(IReadOnlyContext context) => _context = context;
 
-        public async Task<Result<List<ResponsibleDto>>> Handle(GetUniqueTagResponsibleCodesQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<ResponsibleDto>>> Handle(GetUniqueTagResponsiblesQuery request, CancellationToken cancellationToken)
         {
             var responsibleCodes = await
                 (from responsible in _context.QuerySet<Responsible>()

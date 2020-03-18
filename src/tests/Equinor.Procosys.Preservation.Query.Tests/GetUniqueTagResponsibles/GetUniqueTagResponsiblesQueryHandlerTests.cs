@@ -1,19 +1,19 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibleCodes;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibleCodes
+namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
 {
     [TestClass]
-    public class GetUniqueTagResponsibleCodesQueryHandlerTests : ReadOnlyTestsBase
+    public class GetUniqueTagResponsiblesQueryHandlerTests : ReadOnlyTestsBase
     {
         private TestDataSet _testDataSet;
-        private GetUniqueTagResponsibleCodesQuery _queryForProject1;
+        private GetUniqueTagResponsiblesQuery _queryForProject1;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibleCodes
             {
                 _testDataSet = AddTestDataSet(context);
 
-                _queryForProject1 = new GetUniqueTagResponsibleCodesQuery(_testDataSet.Project1.Name);
+                _queryForProject1 = new GetUniqueTagResponsiblesQuery(_testDataSet.Project1.Name);
             }
         }
 
@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibleCodes
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetUniqueTagResponsibleCodesQueryHandler(context);
+                var dut = new GetUniqueTagResponsiblesQueryHandler(context);
                 var result = await dut.Handle(_queryForProject1, default);
 
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -42,17 +42,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibleCodes
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetUniqueTagResponsibleCodesQueryHandler(context);
+                var dut = new GetUniqueTagResponsiblesQueryHandler(context);
                 
                 var result = await dut.Handle(_queryForProject1, default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.Responsible1.Code));
 
-                result = await dut.Handle(new GetUniqueTagResponsibleCodesQuery(_testDataSet.Project2.Name), default);
+                result = await dut.Handle(new GetUniqueTagResponsiblesQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.Responsible1.Code));
 
-                result = await dut.Handle(new GetUniqueTagResponsibleCodesQuery("Unknown"), default);
+                result = await dut.Handle(new GetUniqueTagResponsiblesQuery("Unknown"), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibleCodes
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetUniqueTagResponsibleCodesQueryHandler(context);
+                var dut = new GetUniqueTagResponsiblesQueryHandler(context);
 
                 var result = await dut.Handle(_queryForProject1, default);
                 Assert.AreEqual(2, result.Data.Count);

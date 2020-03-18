@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibleCodes
+﻿namespace Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles
 {
     public class ResponsibleDto
     {
