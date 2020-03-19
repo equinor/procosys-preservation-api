@@ -10,24 +10,26 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
 {
-    public class SearchTagsByTagNoQueryHandler : IRequestHandler<SearchTagsByTagNoQuery, Result<List<ProcosysTagDto>>>
+    public class SearchTagsByTagFunctionsQueryHandler : IRequestHandler<SearchTagsByTagFunctionsQuery, Result<List<ProcosysTagDto>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly ITagApiService _tagApiService;
         private readonly IPlantProvider _plantProvider;
 
-        public SearchTagsByTagNoQueryHandler(IProjectRepository projectRepository, ITagApiService tagApiService, IPlantProvider plantProvider)
+        public SearchTagsByTagFunctionsQueryHandler(IProjectRepository projectRepository, ITagApiService tagApiService, IPlantProvider plantProvider)
         {
             _projectRepository = projectRepository;
             _tagApiService = tagApiService;
             _plantProvider = plantProvider;
         }
 
-        public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagNoQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagFunctionsQuery request, CancellationToken cancellationToken)
         {
             var apiTags = await _tagApiService
-                .GetTagsByTagNo(_plantProvider.Plant, request.ProjectName, request.StartsWithTagNo)
+                .GetTagsByTagFunctions(_plantProvider.Plant, request.ProjectName, request.TagFunctionCodeRegisterCodePairs)
                 ?? new List<ProcosysTagOverview>();
+            
+            //todo Henning Do you agree that we must refactor this to be a thin query using IReadOnlyContext? Same goes for SearchTagsByTagNoQueryHandler
             var presTags = await _projectRepository.GetAllTagsInProjectAsync(request.ProjectName)
                 ?? new List<Tag>();
 
