@@ -109,7 +109,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
 
-            var url = $"{_baseAddress}Tag/Search" +
+            var url = $"{_baseAddress}TagsByTagFunction" +
                       $"?plantId={plant}" +
                       $"&projectName={projectName}" +
                       $"&api-version={_apiVersion}";
