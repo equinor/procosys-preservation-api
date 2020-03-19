@@ -101,26 +101,39 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             } while (true);
         }
 
-        public async Task<IList<ProcosysTagOverview>> GetTagsByTagFunctions(string plant, string projectName,
-            IEnumerable<string> tagFunctionCodeRegisterCodePairs)
+        public async Task<IList<ProcosysTagOverview>> GetTagsByTagFunctions(string plant, string projectName, IList<string> tagFunctionCodeRegisterCodePairs)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
 
-            var url = $"{_baseAddress}TagsByTagFunction" +
-                      $"?plantId={plant}" +
-                      $"&projectName={projectName}" +
-                      $"&api-version={_apiVersion}";
-
-            foreach (var tagFunctionCodeRegisterCodePair in tagFunctionCodeRegisterCodePairs)
+            var items = new List<ProcosysTagOverview>();
+            var currentPage = 0;
+            do
             {
-                url += $"&tagFunctionCodeRegisterCodePairs={tagFunctionCodeRegisterCodePair}";
-            }
+                var url = $"{_baseAddress}Tag/Search/ByTagFunctions" +
+                          $"?plantId={plant}" +
+                          $"&projectName={projectName}" +
+                          $"&currentPage={currentPage++}" +
+                          $"&itemsPerPage={_tagSearchPageSize}" +
+                          $"&api-version={_apiVersion}";
 
-            var tagSearchResult = await _mainApiClient.QueryAndDeserialize<List<ProcosysTagOverview>>(url);
-            return tagSearchResult;
+                foreach (var tagFunctionCodeRegisterCodePair in tagFunctionCodeRegisterCodePairs)
+                {
+                    url += $"&tagFunctionCodeRegisterCodePairs={tagFunctionCodeRegisterCodePair}";
+                }
+
+                var tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
+                if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
+                {
+                    items.AddRange(tagSearchResult.Items);
+                }
+                else
+                {
+                    return items;
+                }
+            } while (true);
         }
     }
 }
