@@ -10,20 +10,20 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
 {
-    public class SearchTagsQueryHandler : IRequestHandler<SearchTagsQuery, Result<List<ProcosysTagDto>>>
+    public class SearchTagsByTagNoQueryHandler : IRequestHandler<SearchTagsByTagNoQuery, Result<List<ProcosysTagDto>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly ITagApiService _tagApiService;
         private readonly IPlantProvider _plantProvider;
 
-        public SearchTagsQueryHandler(IProjectRepository projectRepository, ITagApiService tagApiService, IPlantProvider plantProvider)
+        public SearchTagsByTagNoQueryHandler(IProjectRepository projectRepository, ITagApiService tagApiService, IPlantProvider plantProvider)
         {
             _projectRepository = projectRepository;
             _tagApiService = tagApiService;
             _plantProvider = plantProvider;
         }
 
-        public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagNoQuery request, CancellationToken cancellationToken)
         {
             var apiTags = await _tagApiService
                 .GetTags(_plantProvider.Plant, request.ProjectName, request.StartsWithTagNo)

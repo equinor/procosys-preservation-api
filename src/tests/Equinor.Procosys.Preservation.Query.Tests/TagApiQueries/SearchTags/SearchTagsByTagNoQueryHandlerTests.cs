@@ -12,7 +12,7 @@ using ServiceResult;
 namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 {
     [TestClass]
-    public class SearchTagsQueryHandlerTests
+    public class SearchTagsByTagNoQueryHandlerTests
     {
         private const string TestPlant = "PCS$TESTPLANT";
         private const string TestProject = "TestProject";
@@ -21,8 +21,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         private Mock<IPlantProvider> _plantProviderMock;
         private IList<ProcosysTagOverview> _apiTags;
         private List<Tag> _repositoryTags;
-        private SearchTagsQueryHandler _dut;
-        private SearchTagsQuery _query;
+        private SearchTagsByTagNoQueryHandler _dut;
+        private SearchTagsByTagNoQuery _query;
 
         [TestInitialize]
         public void Setup()
@@ -82,9 +82,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetAllTagsInProjectAsync(TestProject))
                 .Returns(Task.FromResult(_repositoryTags));
 
-            _dut = new SearchTagsQueryHandler(_projectRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+            _dut = new SearchTagsByTagNoQueryHandler(_projectRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
 
-            _query = new SearchTagsQuery(TestProject, "TagNo");
+            _query = new SearchTagsByTagNoQuery(TestProject, "TagNo");
         }
 
         [TestMethod]

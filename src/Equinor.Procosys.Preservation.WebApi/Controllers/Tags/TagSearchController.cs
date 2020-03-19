@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public TagSearchController(IMediator mediator) => _mediator = mediator;
 
         /// <summary>
-        /// Gets tags from ProCoSys and encriches them with preservation data
+        /// Gets tags from ProCoSys by TagNos, and enriches them with preservation data
         /// </summary>
         /// <param name="projectName"></param>
         /// <param name="startsWithTagNo"></param>
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpGet]
         public async Task<ActionResult<List<ProcosysTagDto>>> SearchTags([FromQuery] string projectName, [FromQuery] string startsWithTagNo)
         {
-            var result = await _mediator.Send(new SearchTagsQuery(projectName, startsWithTagNo));
+            var result = await _mediator.Send(new SearchTagsByTagNoQuery(projectName, startsWithTagNo));
             return this.FromResult(result);
         }
     }
