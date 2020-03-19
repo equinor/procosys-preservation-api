@@ -37,11 +37,19 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
                     apiTag => apiTag.TagNo,
                     presTag => presTag.TagNo,
                     (x, y) =>
-                        new { ApiTag = x, PresTag = y })
+                        new {ApiTag = x, PresTag = y})
                 .SelectMany(x =>
-                    x.PresTag.DefaultIfEmpty(),
+                        x.PresTag.DefaultIfEmpty(),
                     (x, y) =>
-                        new ProcosysTagDto(x.ApiTag.TagNo, x.ApiTag.Description, x.ApiTag.PurchaseOrderNo, x.ApiTag.CommPkgNo, x.ApiTag.McPkgNo, y != null))
+                        new ProcosysTagDto(
+                            x.ApiTag.TagNo,
+                            x.ApiTag.Description,
+                            x.ApiTag.PurchaseOrderNo,
+                            x.ApiTag.CommPkgNo,
+                            x.ApiTag.McPkgNo,
+                            x.ApiTag.TagFunctionCode,
+                            x.ApiTag.RegisterCode,
+                            y != null))
                 .ToList();
 
             return new SuccessResult<List<ProcosysTagDto>>(combinedTags);

@@ -10,6 +10,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         public string Description { get; set; }
         public string McPkgNo { get; set; }
         public string PurchaseOrderNo { get; set; }
+        public string RegisterCode { get; set; }
+        public string TagFunctionCode { get; set; }
         public string TagNo { get; set; }
     }
 }

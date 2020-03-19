@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -43,7 +44,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     Id = 1,
                     McPkgNo = "McPkgNo1",
                     PurchaseOrderNo = "PoNo1",
-                    TagNo = "TagNo1"
+                    TagNo = "TagNo1",
+                    TagFunctionCode = "TFC1",
+                    RegisterCode = "RC1"
                 },
                 new ProcosysTagOverview
                 {
@@ -52,7 +55,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     Id = 2,
                     McPkgNo = "McPkgNo2",
                     PurchaseOrderNo = "PoNo2",
-                    TagNo = "TagNo2"
+                    TagNo = "TagNo2",
+                    TagFunctionCode = "TFC2",
+                    RegisterCode = "RC2"
                 },
                 new ProcosysTagOverview
                 {
@@ -61,7 +66,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     Id = 3,
                     McPkgNo = "McPkgNo3",
                     PurchaseOrderNo = "PoNo3",
-                    TagNo = "TagNo3"
+                    TagNo = "TagNo3",
+                    TagFunctionCode = "TFC3",
+                    RegisterCode = "RC3"
                 }
             };
             _tagApiServiceMock
@@ -96,11 +103,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsCorrectNumberOfItems()
+        public async Task Handle_ReturnsCorrectItems()
         {
             var result = await _dut.Handle(_query, default);
 
             Assert.AreEqual(3, result.Data.Count);
+            var item1 = result.Data.ElementAt(0);
+            var item2 = result.Data.ElementAt(1);
+            var item3 = result.Data.ElementAt(2);
+            AssertTagData(_apiTags.Single(t => t.TagNo == item1.TagNo), item1);
+            AssertTagData(_apiTags.Single(t => t.TagNo == item2.TagNo), item2);
+            AssertTagData(_apiTags.Single(t => t.TagNo == item3.TagNo), item3);
         }
 
         [TestMethod]
@@ -141,6 +154,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 
             Assert.AreEqual(ResultType.Ok, result.ResultType);
             Assert.AreEqual(3, result.Data.Count);
+        }
+
+        private void AssertTagData(ProcosysTagOverview tagOverview, ProcosysTagDto tagDto)
+        {
+            Assert.AreEqual(tagOverview.TagNo, tagDto.TagNo);
+            Assert.AreEqual(tagOverview.RegisterCode, tagDto.RegisterCode);
+            Assert.AreEqual(tagOverview.TagFunctionCode, tagDto.TagFunctionCode);
+            Assert.AreEqual(tagOverview.CommPkgNo, tagDto.CommPkgNo);
+            Assert.AreEqual(tagOverview.Description, tagDto.Description);
+            Assert.AreEqual(tagOverview.McPkgNo, tagDto.McPkgNo);
+            Assert.AreEqual(tagOverview.PurchaseOrderNo, tagDto.PurchaseOrderNumber);
         }
     }
 }
