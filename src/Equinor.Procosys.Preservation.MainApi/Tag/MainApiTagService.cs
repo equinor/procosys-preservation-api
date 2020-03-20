@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             return tagDetails;
         }
 
-        public async Task<IList<ProcosysTagOverview>> GetTagsByTagNo(string plant, string projectName, string startsWithTagNo)
+        public async Task<IList<ProcosysTagOverview>> SearchTagsByTagNo(string plant, string projectName, string startsWithTagNo)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             } while (true);
         }
 
-        public async Task<IList<ProcosysTagOverview>> GetTagsByTagFunction(string plant, string projectName, string tagFunctionCode, string registerCode)
+        public async Task<IList<ProcosysTagOverview>> SearchTagsByTagFunction(string plant, string projectName, string tagFunctionCode, string registerCode)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {

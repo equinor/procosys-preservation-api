@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
         public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagFunctionQuery request, CancellationToken cancellationToken)
         {
             var apiTags = await _tagApiService
-                .GetTagsByTagFunction(_plantProvider.Plant, request.ProjectName, request.TagFunctionCode, request.RegisterCode)
+                .SearchTagsByTagFunction(_plantProvider.Plant, request.ProjectName, request.TagFunctionCode, request.RegisterCode)
                 ?? new List<ProcosysTagOverview>();
             
             //todo Henning Do you agree that we must refactor this to be a thin query using IReadOnlyContext? Same goes for SearchTagsByTagNoQueryHandler
