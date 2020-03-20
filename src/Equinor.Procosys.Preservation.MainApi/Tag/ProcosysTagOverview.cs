@@ -13,5 +13,5 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         public string RegisterCode { get; set; }
         public string TagFunctionCode { get; set; }
         public string TagNo { get; set; }
-    }
+        public string MccrResponsibleCodes { get; set; } }
 }

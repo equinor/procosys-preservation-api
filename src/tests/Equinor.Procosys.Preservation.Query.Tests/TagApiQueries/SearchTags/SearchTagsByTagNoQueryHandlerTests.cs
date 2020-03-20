@@ -46,7 +46,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     PurchaseOrderNo = "PoNo1",
                     TagNo = "TagNo1",
                     TagFunctionCode = "TFC1",
-                    RegisterCode = "RC1"
+                    RegisterCode = "RC1",
+                    MccrResponsibleCodes = "R1"
                 },
                 new ProcosysTagOverview
                 {
@@ -57,7 +58,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     PurchaseOrderNo = "PoNo2",
                     TagNo = "TagNo2",
                     TagFunctionCode = "TFC2",
-                    RegisterCode = "RC2"
+                    RegisterCode = "RC2",
+                    MccrResponsibleCodes = "R2"
                 },
                 new ProcosysTagOverview
                 {
@@ -68,7 +70,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     PurchaseOrderNo = "PoNo3",
                     TagNo = "TagNo3",
                     TagFunctionCode = "TFC3",
-                    RegisterCode = "RC3"
+                    RegisterCode = "RC3",
+                    MccrResponsibleCodes = "R3"
                 }
             };
             _tagApiServiceMock
@@ -165,6 +168,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             Assert.AreEqual(tagOverview.Description, tagDto.Description);
             Assert.AreEqual(tagOverview.McPkgNo, tagDto.McPkgNo);
             Assert.AreEqual(tagOverview.PurchaseOrderNo, tagDto.PurchaseOrderNumber);
+            Assert.AreEqual(tagOverview.MccrResponsibleCodes, tagDto.MccrResponsibleCodes);
         }
     }
 }

@@ -35,12 +35,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         /// Gets tags from ProCoSys by TagFunction/Register codes, and enriches them with preservation data
         /// </summary>
         /// <param name="projectName"></param>
-        /// <param name="tagFunctionCodeRegisterCodePairs">Pair of TagFunctionCode and RegisterCode. Sample M|MAIN_EQUIPMENT</param>
+        /// <param name="tagFunctionCode"></param>
+        /// <param name="registerCode"></param>
         /// <returns>All ProCoSys tags that match the search parameters</returns>
         [HttpGet("ByTagFunctions")]
-        public async Task<ActionResult<List<ProcosysTagDto>>> SearchTagsByTagFunctions([FromQuery] string projectName, [FromQuery] List<string> tagFunctionCodeRegisterCodePairs)
+        public async Task<ActionResult<List<ProcosysTagDto>>> SearchTagsByTagFunctions([FromQuery] string projectName, [FromQuery] string tagFunctionCode, [FromQuery] string registerCode)
         {
-            var result = await _mediator.Send(new SearchTagsByTagFunctionsQuery(projectName, tagFunctionCodeRegisterCodePairs));
+            var result = await _mediator.Send(new SearchTagsByTagFunctionQuery(projectName, tagFunctionCode, registerCode));
             return this.FromResult(result);
         }
     }

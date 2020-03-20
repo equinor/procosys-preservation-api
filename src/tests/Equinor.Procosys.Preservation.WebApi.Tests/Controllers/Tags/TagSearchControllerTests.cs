@@ -18,8 +18,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         private TagSearchController _dut;
         private readonly List<ProcosysTagDto> _listWithTwoItems = new List<ProcosysTagDto>
         {
-            new ProcosysTagDto("TagNo1", "Desc1", "PO1", "CommPkg1", "McPkg1", "TagFuncCode1", "RegCode1", true),
-            new ProcosysTagDto("TagNo2", "Desc2", "PO2", "CommPkg2", "McPkg2", "TagFuncCode1", "RegCode1", false)
+            new ProcosysTagDto("TagNo1", "Desc1", "PO1", "CommPkg1", "McPkg1", "TagFuncCode1", "RegCode1", "R1", true),
+            new ProcosysTagDto("TagNo2", "Desc2", "PO2", "CommPkg2", "McPkg2", "TagFuncCode2", "RegCode2", "R2", false)
         };
 
         [TestInitialize]

@@ -14,7 +14,7 @@ using ServiceResult;
 namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 {
     [TestClass]
-    public class SearchTagsByTagFunctionsQueryHandlerTests
+    public class SearchTagsByTagFunctionQueryHandlerTests
     {
         private const string TestPlant = "PCS$TESTPLANT";
         private const string TestProject = "TestProject";
@@ -23,11 +23,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         private Mock<IPlantProvider> _plantProviderMock;
         private IList<ProcosysTagOverview> _apiTags;
         private List<Tag> _repositoryTags;
-        private SearchTagsByTagFunctionsQueryHandler _dut;
-        private SearchTagsByTagFunctionsQuery _query;
+        private SearchTagsByTagFunctionQueryHandler _dut;
+        private SearchTagsByTagFunctionQuery _query;
         private string _tagFunctionCode = "TFC1";
         private string _registerCode = "RC1";
-        private string _tfCodeRegCodePair;
 
         [TestInitialize]
         public void Setup()
@@ -50,7 +49,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     PurchaseOrderNo = "PoNo1",
                     TagNo = "TagNo1",
                     TagFunctionCode = _tagFunctionCode,
-                    RegisterCode = _registerCode
+                    RegisterCode = _registerCode,
+                    MccrResponsibleCodes = "R1"
                 },
                 new ProcosysTagOverview
                 {
@@ -61,7 +61,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     PurchaseOrderNo = "PoNo2",
                     TagNo = "TagNo2",
                     TagFunctionCode = _tagFunctionCode,
-                    RegisterCode = _registerCode
+                    RegisterCode = _registerCode,
+                    MccrResponsibleCodes = "R2"
                 },
                 new ProcosysTagOverview
                 {
@@ -72,13 +73,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     PurchaseOrderNo = "PoNo3",
                     TagNo = "TagNo3",
                     TagFunctionCode = _tagFunctionCode,
-                    RegisterCode = _registerCode
+                    RegisterCode = _registerCode,
+                    MccrResponsibleCodes = "R3"
                 }
             };
 
-            _tfCodeRegCodePair = $"{_tagFunctionCode}|{_registerCode}";
             _tagApiServiceMock
-                .Setup(x => x.GetTagsByTagFunctions(TestPlant, TestProject, new List<string> {_tfCodeRegCodePair}))
+                .Setup(x => x.GetTagsByTagFunction(TestPlant, TestProject, _tagFunctionCode, _registerCode))
                 .Returns(Task.FromResult(_apiTags));
 
             var stepMock = new Mock<Step>();
@@ -95,9 +96,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 .Setup(x => x.GetAllTagsInProjectAsync(TestProject))
                 .Returns(Task.FromResult(_repositoryTags));
 
-            _dut = new SearchTagsByTagFunctionsQueryHandler(_projectRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
+            _dut = new SearchTagsByTagFunctionQueryHandler(_projectRepositoryMock.Object, _tagApiServiceMock.Object, _plantProviderMock.Object);
 
-            _query = new SearchTagsByTagFunctionsQuery(TestProject, new List<string> {_tfCodeRegCodePair});
+            _query = new SearchTagsByTagFunctionQuery(TestProject, _tagFunctionCode, _registerCode);
         }
 
         [TestMethod]
@@ -136,7 +137,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         public async Task Handle_ReturnsEmptyList_WhenTagApiReturnsNull()
         {
             _tagApiServiceMock
-                .Setup(x => x.GetTagsByTagFunctions(TestPlant, TestProject, new List<string> {_tfCodeRegCodePair}))
+                .Setup(x => x.GetTagsByTagFunction(TestPlant, TestProject, _tagFunctionCode, _registerCode))
                 .Returns(Task.FromResult<IList<ProcosysTagOverview>>(null));
 
             var result = await _dut.Handle(_query, default);
@@ -149,7 +150,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         public async Task Handle_ReturnsApiTags_WhenProjectRepositoryReturnsNull()
         {
             _tagApiServiceMock
-                .Setup(x => x.GetTagsByTagFunctions(TestPlant, TestProject, new List<string> {_tfCodeRegCodePair}))
+                .Setup(x => x.GetTagsByTagFunction(TestPlant, TestProject, _tagFunctionCode, _registerCode))
                 .Returns(Task.FromResult(_apiTags));
 
             _projectRepositoryMock
@@ -171,6 +172,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             Assert.AreEqual(tagOverview.Description, tagDto.Description);
             Assert.AreEqual(tagOverview.McPkgNo, tagDto.McPkgNo);
             Assert.AreEqual(tagOverview.PurchaseOrderNo, tagDto.PurchaseOrderNumber);
+            Assert.AreEqual(tagOverview.MccrResponsibleCodes, tagDto.MccrResponsibleCodes);
         }
     }
 }

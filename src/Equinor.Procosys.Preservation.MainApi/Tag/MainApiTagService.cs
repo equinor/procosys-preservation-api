@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             _tagSearchPageSize = options.CurrentValue.TagSearchPageSize;
             if (_tagSearchPageSize < 100)
             {
-                _logger.LogWarning($"Tag search page size is set to a low value. This may impact the overall performance!");
+                _logger.LogWarning("Tag search page size is set to a low value. This may impact the overall performance!");
             }
         }
 
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             } while (true);
         }
 
-        public async Task<IList<ProcosysTagOverview>> GetTagsByTagFunctions(string plant, string projectName, IList<string> tagFunctionCodeRegisterCodePairs)
+        public async Task<IList<ProcosysTagOverview>> GetTagsByTagFunction(string plant, string projectName, string tagFunctionCode, string registerCode)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
@@ -112,17 +112,14 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             var currentPage = 0;
             do
             {
-                var url = $"{_baseAddress}Tag/Search/ByTagFunctions" +
+                var url = $"{_baseAddress}Tag/Search/ByTagFunction" +
                           $"?plantId={plant}" +
                           $"&projectName={projectName}" +
+                          $"&tagFunctionCode={tagFunctionCode}" +
+                          $"&registerCode={registerCode}" +
                           $"&currentPage={currentPage++}" +
                           $"&itemsPerPage={_tagSearchPageSize}" +
                           $"&api-version={_apiVersion}";
-
-                foreach (var tagFunctionCodeRegisterCodePair in tagFunctionCodeRegisterCodePairs)
-                {
-                    url += $"&tagFunctionCodeRegisterCodePairs={tagFunctionCodeRegisterCodePair}";
-                }
 
                 var tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())

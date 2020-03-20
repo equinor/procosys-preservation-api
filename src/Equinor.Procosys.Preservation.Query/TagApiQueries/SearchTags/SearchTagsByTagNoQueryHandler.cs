@@ -49,6 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
                             x.ApiTag.McPkgNo,
                             x.ApiTag.TagFunctionCode,
                             x.ApiTag.RegisterCode,
+                            x.ApiTag.MccrResponsibleCodes,
                             y != null))
                 .ToList();
 

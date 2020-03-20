@@ -6,16 +6,16 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 {
     [TestClass]
-    public class SearchTagsByTagFunctionsQueryTests
+    public class SearchTagsByTagFunctionQueryTests
     {
         [TestMethod]
         public void Constructor_SetsProperties()
         {
-            var dut = new SearchTagsByTagFunctionsQuery("ProjectName", new List<string>{"A|B"});
+            var dut = new SearchTagsByTagFunctionQuery("ProjectName", "A", "B");
 
             Assert.AreEqual("ProjectName", dut.ProjectName);
-            Assert.AreEqual(1, dut.TagFunctionCodeRegisterCodePairs.Count());
-            Assert.AreEqual("A|B", dut.TagFunctionCodeRegisterCodePairs.Single());
+            Assert.AreEqual("A", dut.TagFunctionCode);
+            Assert.AreEqual("B", dut.RegisterCode);
         }
     }
 }

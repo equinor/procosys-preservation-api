@@ -10,23 +10,23 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
 {
-    public class SearchTagsByTagFunctionsQueryHandler : IRequestHandler<SearchTagsByTagFunctionsQuery, Result<List<ProcosysTagDto>>>
+    public class SearchTagsByTagFunctionQueryHandler : IRequestHandler<SearchTagsByTagFunctionQuery, Result<List<ProcosysTagDto>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly ITagApiService _tagApiService;
         private readonly IPlantProvider _plantProvider;
 
-        public SearchTagsByTagFunctionsQueryHandler(IProjectRepository projectRepository, ITagApiService tagApiService, IPlantProvider plantProvider)
+        public SearchTagsByTagFunctionQueryHandler(IProjectRepository projectRepository, ITagApiService tagApiService, IPlantProvider plantProvider)
         {
             _projectRepository = projectRepository;
             _tagApiService = tagApiService;
             _plantProvider = plantProvider;
         }
 
-        public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagFunctionsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagFunctionQuery request, CancellationToken cancellationToken)
         {
             var apiTags = await _tagApiService
-                .GetTagsByTagFunctions(_plantProvider.Plant, request.ProjectName, request.TagFunctionCodeRegisterCodePairs.ToList())
+                .GetTagsByTagFunction(_plantProvider.Plant, request.ProjectName, request.TagFunctionCode, request.RegisterCode)
                 ?? new List<ProcosysTagOverview>();
             
             //todo Henning Do you agree that we must refactor this to be a thin query using IReadOnlyContext? Same goes for SearchTagsByTagNoQueryHandler
@@ -51,6 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
                             x.ApiTag.McPkgNo,
                             x.ApiTag.TagFunctionCode,
                             x.ApiTag.RegisterCode,
+                            x.ApiTag.MccrResponsibleCodes,
                             y != null))
                 .ToList();
 

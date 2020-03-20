@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public void Constructor_SetsProperties()
         {
-            var dut = new ProcosysTagDto("TagNo", "Desc", "PoNo", "CommPkgNo", "McPkgNo", "TFC", "RC", true);
+            var dut = new ProcosysTagDto("TagNo", "Desc", "PoNo", "CommPkgNo", "McPkgNo", "TFC", "RC", "R1,R2", true);
 
             Assert.AreEqual("TagNo", dut.TagNo);
             Assert.AreEqual("Desc", dut.Description);
@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             Assert.AreEqual("McPkgNo", dut.McPkgNo);
             Assert.AreEqual("TFC", dut.TagFunctionCode);
             Assert.AreEqual("RC", dut.RegisterCode);
+            Assert.AreEqual("R1,R2", dut.MccrResponsibleCodes);
             Assert.IsTrue(dut.IsPreserved);
         }
     }
