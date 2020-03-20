@@ -6,19 +6,20 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
 {
     public class SearchTagsByTagFunctionQueryHandler : IRequestHandler<SearchTagsByTagFunctionQuery, Result<List<ProcosysTagDto>>>
     {
-        private readonly IProjectRepository _projectRepository;
+        private readonly IReadOnlyContext _context;
         private readonly ITagApiService _tagApiService;
         private readonly IPlantProvider _plantProvider;
 
-        public SearchTagsByTagFunctionQueryHandler(IProjectRepository projectRepository, ITagApiService tagApiService, IPlantProvider plantProvider)
+        public SearchTagsByTagFunctionQueryHandler(IReadOnlyContext context, ITagApiService tagApiService, IPlantProvider plantProvider)
         {
-            _projectRepository = projectRepository;
+            _context = context;
             _tagApiService = tagApiService;
             _plantProvider = plantProvider;
         }
@@ -28,20 +29,20 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
             var apiTags = await _tagApiService
                 .SearchTagsByTagFunction(_plantProvider.Plant, request.ProjectName, request.TagFunctionCode, request.RegisterCode)
                 ?? new List<ProcosysTagOverview>();
-            
-            //todo Henning Do you agree that we must refactor this to be a thin query using IReadOnlyContext? Same goes for SearchTagsByTagNoQueryHandler
-            var presTags = await _projectRepository.GetAllTagsInProjectAsync(request.ProjectName)
-                ?? new List<Tag>();
+
+            var presTagNos = await (from tag in _context.QuerySet<Tag>()
+                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                where p.Name == request.ProjectName
+                select tag.TagNo).ToListAsync(cancellationToken);
 
             // Join all tags from API with preservation tags on TagNo. If a tag is not in preservation scope, use default value (null).
             var combinedTags = apiTags
-                .GroupJoin(presTags,
+                .GroupJoin(presTagNos,
                     apiTag => apiTag.TagNo,
-                    presTag => presTag.TagNo,
+                    presTagNo => presTagNo,
                     (x, y) =>
-                        new {ApiTag = x, PresTag = y})
-                .SelectMany(x =>
-                        x.PresTag.DefaultIfEmpty(),
+                        new {ApiTag = x, PresTagNo = y})
+                .SelectMany(x => x.PresTagNo.DefaultIfEmpty(),
                     (x, y) =>
                         new ProcosysTagDto(
                             x.ApiTag.TagNo,
