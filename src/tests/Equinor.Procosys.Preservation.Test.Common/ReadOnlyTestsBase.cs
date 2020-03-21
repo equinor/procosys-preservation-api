@@ -192,7 +192,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
             testDataSet.Journey1With2Steps =
                 AddJourneyWithStep(context, _journeyTitle1, "Step1", testDataSet.Mode1, testDataSet.Responsible1);
-            testDataSet.Journey2With1Steps =
+            testDataSet.Journey2With1Step =
                 AddJourneyWithStep(context, _journeyTitle2, "Step1", testDataSet.Mode1, testDataSet.Responsible1);
 
             var step2OnJourney1 = new Step(TestPlant, "Step2", testDataSet.Mode2, testDataSet.Responsible2);
@@ -238,7 +238,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     "Remark",
                     "SA",
                     $"{testDataSet.TagFunctionPrefix}-{i}",
-                    testDataSet.Journey2With1Steps.Steps.ElementAt(0),
+                    testDataSet.Journey2With1Step.Steps.ElementAt(0),
                     new List<Requirement>
                     {
                         new Requirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType2.RequirementDefinitions.ElementAt(0))

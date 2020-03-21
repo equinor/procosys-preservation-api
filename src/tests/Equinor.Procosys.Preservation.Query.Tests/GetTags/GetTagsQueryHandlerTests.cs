@@ -721,7 +721,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var filter = new Filter {JourneyIds = new List<int>{_testDataSet.Journey2With1Steps.Id}};
+                var filter = new Filter {JourneyIds = new List<int>{_testDataSet.Journey2With1Step.Id}};
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
