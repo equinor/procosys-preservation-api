@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Microsoft.EntityFrameworkCore;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {

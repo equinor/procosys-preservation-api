@@ -1,26 +1,40 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate
+namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {
-    public class Mode : SchemaEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class TagFunctionRequirement : SchemaEntityBase, ICreationAuditable, IModificationAuditable
     {
-        public const int TitleMinLength = 3;
-        public const int TitleLengthMax = 255;
-
-        protected Mode()
+        protected TagFunctionRequirement()
             : base(null)
         {
         }
 
-        public Mode(string schema, string title)
-            : base(schema) => Title = title;
+        public TagFunctionRequirement(string schema, int intervalWeeks, RequirementDefinition requirementDefinition)
+            : base(schema)
+        {
+            if (requirementDefinition == null)
+            {
+                throw new ArgumentNullException(nameof(requirementDefinition));
+            }
+            
+            if (requirementDefinition.Schema != schema)
+            {
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {schema}");
+            }
 
-        public string Title { get; private set; }
+            IntervalWeeks = intervalWeeks;
+            RequirementDefinitionId = requirementDefinition.Id;
+        }
+
+        public int IntervalWeeks { get; private set; }
         public bool IsVoided { get; private set; }
+        public int RequirementDefinitionId { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
+
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 

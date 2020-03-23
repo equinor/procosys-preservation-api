@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private readonly List<Action> _actions = new List<Action>();
 
         public const int TagNoLengthMax = 255;
+        public const int TagFunctionCodeLengthMax = 255;
         public const int AreaCodeLengthMax = 255;
         public const int DisciplineCodeLengthMax = 255;
         public const int DescriptionLengthMax = 255;
@@ -219,12 +220,20 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void SetCreated(Person createdBy)
         {
             CreatedAtUtc = TimeService.UtcNow;
+            if (createdBy == null)
+            {
+                throw new ArgumentNullException(nameof(createdBy));
+            }
             CreatedById = createdBy.Id;
         }
 
         public void SetModified(Person modifiedBy)
         {
             ModifiedAtUtc = TimeService.UtcNow;
+            if (modifiedBy == null)
+            {
+                throw new ArgumentNullException(nameof(modifiedBy));
+            }
             ModifiedById = modifiedBy.Id;
         }
 

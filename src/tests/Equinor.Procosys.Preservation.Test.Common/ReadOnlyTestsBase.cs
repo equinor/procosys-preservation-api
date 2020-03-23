@@ -8,6 +8,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
@@ -274,6 +275,15 @@ namespace Equinor.Procosys.Preservation.Test.Common
             context.SaveChangesAsync().Wait();
 
             return testDataSet;
+        }
+
+        protected TagFunction AddTagFunction(PreservationContext context, string tagFunctionCode, string registerCode)
+        {
+            var tf = new TagFunction(TestPlant, tagFunctionCode, "Description", registerCode);
+            context.TagFunctions.Add(tf);
+            context.SaveChangesAsync().Wait();
+
+            return tf;
         }
     }
 }
