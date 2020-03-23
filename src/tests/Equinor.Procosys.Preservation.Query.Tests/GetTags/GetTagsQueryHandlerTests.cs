@@ -330,6 +330,24 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
 
         [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnStorageArea()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+                var storageAreaStartsWith = $"{_testDataSet.StorageAreaPrefix}-0";
+                var filter = new Filter {StorageAreaStartsWith = storageAreaStartsWith};
+
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
+                AssertCount(result.Data, 2);
+                foreach (var tag in result.Data.Tags)
+                {
+                    Assert.IsTrue(tag.StorageArea.StartsWith(storageAreaStartsWith));
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnCallOff()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

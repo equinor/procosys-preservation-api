@@ -17,5 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
         public string AreaCode { get; set; }
         public TagType TagType { get; set; }
         public bool ReadyToBePreserved { get; set; }
+        public string Remark { get; set; }
+        public string StorageArea { get; set; }
     }
 }

@@ -32,6 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 new List<RequirementDto> {new RequirementDto(0, null, default, default, false)},
                 "Resp",
                 PreservationStatus.Active,
+                "SA",
                 "TagFunctionCode",
                 "TagDesc",
                 "TagNo",

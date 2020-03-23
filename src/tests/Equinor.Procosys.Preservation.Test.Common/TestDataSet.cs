@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         public readonly string CommPkgPrefix = "COMM";
         public readonly string PoPrefix = "PO";
         public readonly string TagFunctionPrefix = "TF";
+        public readonly string StorageAreaPrefix = "SA";
 
         public Project Project1 { get; set; }
         public Project Project2 { get; set; }

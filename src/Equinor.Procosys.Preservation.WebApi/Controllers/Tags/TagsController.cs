@@ -254,6 +254,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 query.Filter.PurchaseOrderNoStartsWith = filter.PurchaseOrderNoStartsWith;
             }
 
+            if (filter.StorageAreaStartsWith != null)
+            {
+                query.Filter.StorageAreaStartsWith = filter.StorageAreaStartsWith;
+            }
+
             if (filter.CallOffStartsWith != null)
             {
                 query.Filter.CallOffStartsWith = filter.CallOffStartsWith;
