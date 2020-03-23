@@ -54,8 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                 {
                     var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
 
-                    tagFunction.AddRequirement(new TagFunctionRequirement(_plantProvider.Plant, requirement.IntervalWeeks,
-                        reqDef));
+                    tagFunction.AddRequirement(new TagFunctionRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
                 }
             }
 
@@ -67,18 +66,20 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
         private void RemoveChangedOrRemovedRequirements(TagFunction existingTagFunction, IList<Requirement> updatedRequirements)
         {
             var tagFunctionRequirements = existingTagFunction.Requirements;
+            var requirementsToBeRemoved = new List<TagFunctionRequirement>();
 
-            for (var i = tagFunctionRequirements.Count-1; i >= 0; i++)
+            foreach (var existingRequirement in tagFunctionRequirements)
             {
-                var existingRequirement = tagFunctionRequirements.ElementAt(i);
                 var updatedRequirement = updatedRequirements.FirstOrDefault(r =>
                     r.RequirementDefinitionId == existingRequirement.RequirementDefinitionId);
 
                 if (updatedRequirement == null || existingRequirement.IntervalWeeks != updatedRequirement.IntervalWeeks)
                 {
-                    existingTagFunction.RemoveRequirement(existingRequirement);
+                    requirementsToBeRemoved.Add(existingRequirement);
                 }
             }
+
+            requirementsToBeRemoved.ForEach(existingTagFunction.RemoveRequirement);
         }
     }
 }
