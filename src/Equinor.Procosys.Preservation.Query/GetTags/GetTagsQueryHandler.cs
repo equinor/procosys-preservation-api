@@ -212,36 +212,44 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     select a.Id).Any()
                 where project.Name == request.ProjectName &&
                       (!request.Filter.DueFilters.Any() || 
-                       (request.Filter.DueFilters.Contains(DueFilterType.OverDue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
-                       (request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) && tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) ||
-                       (request.Filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
+                           (request.Filter.DueFilters.Contains(DueFilterType.OverDue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
+                           (request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) && tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) ||
+                           (request.Filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
                       (!request.Filter.ActionStatus.HasValue || 
-                       (request.Filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
-                       (request.Filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
-                       (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions) ||
-                       (request.Filter.ActionStatus == ActionStatus.None && !anyOpenActions && !anyClosedActions)) &&
-                      (!request.Filter.PreservationStatus.HasValue || tag.Status == request.Filter.PreservationStatus.Value) &&
+                           (request.Filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
+                           (request.Filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
+                           (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions) ||
+                           (request.Filter.ActionStatus == ActionStatus.None && !anyOpenActions && !anyClosedActions)) &&
+                      (!request.Filter.PreservationStatus.HasValue || 
+                            tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
-                       tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&
+                            tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.CommPkgNoStartsWith) ||
-                       tag.CommPkgNo.StartsWith(request.Filter.CommPkgNoStartsWith)) &&
+                            tag.CommPkgNo.StartsWith(request.Filter.CommPkgNoStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.McPkgNoStartsWith) ||
-                       tag.McPkgNo.StartsWith(request.Filter.McPkgNoStartsWith)) &&
+                            tag.McPkgNo.StartsWith(request.Filter.McPkgNoStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.PurchaseOrderNoStartsWith) ||
-                       tag.PurchaseOrderNo.StartsWith(request.Filter.PurchaseOrderNoStartsWith)) &&
+                            tag.PurchaseOrderNo.StartsWith(request.Filter.PurchaseOrderNoStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.StorageAreaStartsWith) ||
-                       tag.StorageArea.StartsWith(request.Filter.StorageAreaStartsWith)) &&
+                            tag.StorageArea.StartsWith(request.Filter.StorageAreaStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.CallOffStartsWith) ||
-                       tag.Calloff.StartsWith(request.Filter.CallOffStartsWith)) &&
-                      (!request.Filter.RequirementTypeIds.Any() || anyReqTypeFiltered) &&
+                            tag.Calloff.StartsWith(request.Filter.CallOffStartsWith)) &&
+                      (!request.Filter.RequirementTypeIds.Any() || 
+                            anyReqTypeFiltered) &&
                       (!request.Filter.TagFunctionCodes.Any() ||
-                       request.Filter.TagFunctionCodes.Contains(tag.TagFunctionCode)) &&
-                      (!request.Filter.AreaCodes.Any() || request.Filter.AreaCodes.Contains(tag.AreaCode)) &&
-                      (!request.Filter.DisciplineCodes.Any() || request.Filter.DisciplineCodes.Contains(tag.DisciplineCode)) &&
-                      (!request.Filter.ResponsibleIds.Any() || request.Filter.ResponsibleIds.Contains(responsible.Id)) &&
-                      (!request.Filter.JourneyIds.Any() || request.Filter.JourneyIds.Contains(journey.Id)) &&
-                      (!request.Filter.ModeIds.Any() || request.Filter.ModeIds.Contains(mode.Id)) &&
-                      (!request.Filter.StepIds.Any() || request.Filter.StepIds.Contains(step.Id))
+                            request.Filter.TagFunctionCodes.Contains(tag.TagFunctionCode)) &&
+                      (!request.Filter.AreaCodes.Any() || 
+                            request.Filter.AreaCodes.Contains(tag.AreaCode)) &&
+                      (!request.Filter.DisciplineCodes.Any() || 
+                            request.Filter.DisciplineCodes.Contains(tag.DisciplineCode)) &&
+                      (!request.Filter.ResponsibleIds.Any() || 
+                            request.Filter.ResponsibleIds.Contains(responsible.Id)) &&
+                      (!request.Filter.JourneyIds.Any() || 
+                            request.Filter.JourneyIds.Contains(journey.Id)) &&
+                      (!request.Filter.ModeIds.Any() || 
+                            request.Filter.ModeIds.Contains(mode.Id)) &&
+                      (!request.Filter.StepIds.Any() || 
+                            request.Filter.StepIds.Contains(step.Id))
                 select new Dto
                 {
                     AreaCode = tag.AreaCode,
