@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.UpdateRequirements
 {
     [TestClass]
-    public class RequirementTests
+    public class UpdateRequirementsCommandTests
     {
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithRequirements()

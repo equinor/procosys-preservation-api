@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using FluentValidation;
@@ -10,6 +12,10 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
         public UpdateRequirementsCommandValidator(IRequirementDefinitionValidator requirementDefinitionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
+            
+            RuleFor(command => command.Requirements)
+                .Must(BeUniqueRequirements)
+                .WithMessage("Requirement definitions must be unique!");
 
             RuleForEach(command => command.Requirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
@@ -24,6 +30,12 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
 
             async Task<bool> NotBeAVoidedRequirementDefinitionAsync(Requirement requirement, CancellationToken token)
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirement.RequirementDefinitionId, token);
+                        
+            bool BeUniqueRequirements(IEnumerable<Requirement> requirements)
+            {
+                var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
+                return reqIds.Distinct().Count() == reqIds.Count;
+            }
         }
     }
 }
