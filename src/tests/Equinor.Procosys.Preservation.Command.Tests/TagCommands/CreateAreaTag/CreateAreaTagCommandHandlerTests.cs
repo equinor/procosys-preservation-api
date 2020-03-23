@@ -10,7 +10,6 @@ using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 {

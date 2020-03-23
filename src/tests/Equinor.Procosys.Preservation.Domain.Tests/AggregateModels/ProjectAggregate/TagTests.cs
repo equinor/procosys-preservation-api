@@ -208,8 +208,22 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region AddRequirement
 
         [TestMethod]
+        public void AddRequirement_ShouldAddRequirement()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_reqNeedInputThreeWeekInterval);
+
+            Assert.AreEqual(_reqNeedInputThreeWeekInterval, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First());
+        }
+
+        [TestMethod]
         public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(null));
+
+        [TestMethod]
+        public void AddRequirement_ShouldThrowException_WhenRequirementWithSameDefinitionExists()
+            => Assert.ThrowsException<ArgumentNullException>(() =>
+                _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_dutWithOneReqNotNeedInputTwoWeekInterval
+                    .Requirements.First()));
 
         #endregion
 

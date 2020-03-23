@@ -10,6 +10,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preserve
 {
@@ -18,7 +19,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
     {
         private const int TagId = 7;
         private const int RequirementId = 71;
-        private const int PreservedById = 81;
         private const int Interval = 2;
 
         private Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private PreserveCommand _command;
         private Tag _tag;
-        private Requirement _requirement;
+        private TagRequirement _requirement;
 
         private PreserveCommandHandler _dut;
         private PreservationPeriod _initialPreservationPeriod;
@@ -40,12 +40,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Schema).Returns(TestPlant);
 
-            var requirementMock = new Mock<Requirement>(TestPlant, Interval, rdMock.Object);
+            var requirementMock = new Mock<TagRequirement>(TestPlant, Interval, rdMock.Object);
             requirementMock.SetupGet(r => r.Id).Returns(RequirementId);
             requirementMock.SetupGet(r => r.Schema).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>
+            _tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<TagRequirement>
             {
                 _requirement
             });
@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tag));
             _personRepoMock = new Mock<IPersonRepository>();
             _personRepoMock
-                .Setup(x => x.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
+                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
 
             _command = new PreserveCommand(TagId, RequirementId);
