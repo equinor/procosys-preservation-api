@@ -40,6 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.IsNull(dut.Filter.McPkgNoStartsWith);
             Assert.IsNull(dut.Filter.PurchaseOrderNoStartsWith);
             Assert.IsNull(dut.Filter.TagNoStartsWith);
+            Assert.IsNull(dut.Filter.StorageAreaStartsWith);
             Assert.IsNotNull(dut.Filter.DueFilters);
             Assert.AreEqual(0, dut.Filter.DueFilters.Count());
             Assert.IsNotNull(dut.Filter.AreaCodes);

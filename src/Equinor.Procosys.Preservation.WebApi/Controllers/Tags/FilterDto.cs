@@ -23,5 +23,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public string McPkgNoStartsWith { get; set; }
         public string CallOffStartsWith { get; set; }
         public string PurchaseOrderNoStartsWith { get; set; }
+        public string StorageAreaStartsWith { get; set; }
     }
 }
