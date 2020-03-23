@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagFunction
             Assert.AreEqual(1, _dut.Requirements.Count);
             Assert.IsTrue(_dut.Requirements.Contains(reqMock.Object));
 
-            _dut.RemoveRequirements(reqMock.Object);
+            _dut.RemoveRequirement(reqMock.Object);
 
             Assert.AreEqual(0, _dut.Requirements.Count);
         }
@@ -75,13 +75,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagFunction
 
             Assert.AreEqual(0, _dut.Requirements.Count);
 
-            _dut.RemoveRequirements(reqMock.Object);
+            _dut.RemoveRequirement(reqMock.Object);
             Assert.AreEqual(0, _dut.Requirements.Count);
         }
         
         [TestMethod]
         public void RemoveRequirement_ShouldThrowException_WhenRequirementNotGiven() =>
-            Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveRequirements(null));
+            Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveRequirement(null));
 
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()

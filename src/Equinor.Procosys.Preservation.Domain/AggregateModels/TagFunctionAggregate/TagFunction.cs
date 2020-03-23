@@ -89,12 +89,20 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
         public void SetCreated(Person createdBy)
         {
             CreatedAtUtc = TimeService.UtcNow;
+            if (createdBy == null)
+            {
+                throw new ArgumentNullException(nameof(createdBy));
+            }
             CreatedById = createdBy.Id;
         }
 
         public void SetModified(Person modifiedBy)
         {
             ModifiedAtUtc = TimeService.UtcNow;
+            if (modifiedBy == null)
+            {
+                throw new ArgumentNullException(nameof(modifiedBy));
+            }
             ModifiedById = modifiedBy.Id;
         }
     }
