@@ -5,12 +5,11 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles
+namespace Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys
 {
     public class GetUniqueTagJourneysQueryHandler : IRequestHandler<GetUniqueTagJourneysQuery, Result<List<JourneyDto>>>
     {
