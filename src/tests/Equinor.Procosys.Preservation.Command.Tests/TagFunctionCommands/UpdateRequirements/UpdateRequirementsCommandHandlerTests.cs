@@ -94,7 +94,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             await _dut.Handle(_commandWithTwoRequirements, default);
 
             // Assert
-            Assert.AreEqual(0, _tfAddedToRepository.Id);
             Assert.AreEqual(TagFunctionCode, _tfAddedToRepository.Code);
             Assert.AreEqual(ProcosysDescription, _tfAddedToRepository.Description);
             Assert.AreEqual(RegisterCode, _tfAddedToRepository.RegisterCode);
@@ -112,7 +111,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             await _dut.Handle(_commandWithoutRequirements, default);
 
             // Assert
-            Assert.AreEqual(0, _tfAddedToRepository.Id);
             Assert.AreEqual(TagFunctionCode, _tfAddedToRepository.Code);
             Assert.AreEqual(RegisterCode, _tfAddedToRepository.RegisterCode);
             Assert.AreEqual(0, _tfAddedToRepository.Requirements.Count);
