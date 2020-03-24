@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,48 +35,59 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
 
         public async Task<Result<Unit>> Handle(UpdateRequirementsCommand request, CancellationToken cancellationToken)
         {
-            var tagFunction = await _tagFunctionRepository.GetByCodeAsync(request.TagFunctionCode, request.RegisterCode);
+            var tagFunction = await _tagFunctionRepository.GetByCodesAsync(request.TagFunctionCode, request.RegisterCode);
+            var requirements = request.Requirements.ToList();
 
             if (tagFunction == null)
             {
-                var procosysTagFunction = await _tagFunctionApiService.GetTagFunctionAsync(_plantProvider.Plant,
-                    request.TagFunctionCode, request.RegisterCode);
-                if (procosysTagFunction == null)
+                tagFunction = await CreateNewTagFunctionAsync(request.TagFunctionCode, request.RegisterCode);
+                if (tagFunction == null)
                 {
                     return new NotFoundResult<Unit>($"TagFunction {request.TagFunctionCode} not found in register {request.RegisterCode}");
                 }
-                tagFunction = new TagFunction(
-                    _plantProvider.Plant,
-                    request.TagFunctionCode,
-                    procosysTagFunction.Description,
-                    request.RegisterCode);
-                _tagFunctionRepository.Add(tagFunction);
             }
             else
             {
-                RemoveChangedOrRemovedRequirements(tagFunction, request.Requirements.ToList());
+                RemoveChangedOrRemovedRequirementsFromTagFunction(tagFunction, requirements);
             }
 
-            var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
-            var reqDefs =
-                await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
-
-            foreach (var requirement in request.Requirements)
-            {
-                if (tagFunction.Requirements.All(r => r.RequirementDefinitionId != requirement.RequirementDefinitionId))
-                {
-                    var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
-
-                    tagFunction.AddRequirement(new TagFunctionRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
-                }
-            }
+            await AddRequirementsToTagFunctionAsync(tagFunction, requirements);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<Unit>(Unit.Value);
         }
 
-        private void RemoveChangedOrRemovedRequirements(TagFunction existingTagFunction, IList<Requirement> updatedRequirements)
+        private async Task<TagFunction> CreateNewTagFunctionAsync(string tagFunctionCode, string registerCode)
+        {
+            var procosysTagFunction = await _tagFunctionApiService.GetTagFunctionAsync(_plantProvider.Plant, tagFunctionCode, registerCode);
+            if (procosysTagFunction == null)
+            {
+                return null;
+            }
+            var tagFunction = new TagFunction(_plantProvider.Plant, tagFunctionCode, procosysTagFunction.Description, registerCode);
+            _tagFunctionRepository.Add(tagFunction);
+            return tagFunction;
+        }
+
+        private async Task AddRequirementsToTagFunctionAsync(TagFunction tagFunction, IList<Requirement> requirements)
+        {
+            var reqDefIds = requirements.Select(r => r.RequirementDefinitionId).ToList();
+            var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
+
+            foreach (var requirement in requirements)
+            {
+                if (tagFunction.Requirements.All(r => r.RequirementDefinitionId != requirement.RequirementDefinitionId))
+                {
+                    var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
+
+                    tagFunction.AddRequirement(new TagFunctionRequirement(_plantProvider.Plant, requirement.IntervalWeeks,
+                        reqDef));
+                }
+            }
+        }
+
+        private void RemoveChangedOrRemovedRequirementsFromTagFunction(TagFunction existingTagFunction, IList<Requirement> updatedRequirements)
         {
             var tagFunctionRequirements = existingTagFunction.Requirements;
             var requirementsToBeRemoved = new List<TagFunctionRequirement>();

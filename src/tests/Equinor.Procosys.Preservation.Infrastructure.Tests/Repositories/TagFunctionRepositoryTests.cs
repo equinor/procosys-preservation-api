@@ -5,7 +5,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MockQueryable.Moq;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
 {
@@ -33,15 +32,22 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             _dut = new TagFunctionRepository(ContextHelper.ContextMock.Object);
         }
 
-
         [TestMethod]
-        public async Task GetTagFunctionByCode_KnownCode_ReturnTagFunction()
+        public async Task GetTagFunctionByCodes_KnownCodes_ReturnTagFunction()
         {
-            var result = await _dut.GetByCodeAsync(TagFunctionCode, RegisterCode);
+            var result = await _dut.GetByCodesAsync(TagFunctionCode, RegisterCode);
 
             Assert.AreEqual(TagFunctionCode, result.Code);
             Assert.AreEqual(TagFunctionDesc, result.Description);
             Assert.AreEqual(RegisterCode, result.RegisterCode);
+        }
+
+        [TestMethod]
+        public async Task GetTagFunctionByCodes_UnKnownCode_ReturnNull()
+        {
+            var result = await _dut.GetByCodesAsync(TagFunctionCode, "X");
+
+            Assert.IsNull(result);
         }
     }
 }
