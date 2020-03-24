@@ -81,8 +81,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                 {
                     var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
 
-                    tagFunction.AddRequirement(new TagFunctionRequirement(_plantProvider.Plant, requirement.IntervalWeeks,
-                        reqDef));
+                    tagFunction.AddRequirement(new TagFunctionRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
                 }
             }
         }
