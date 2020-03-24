@@ -153,6 +153,14 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return field;
         }
 
+        protected Field AddAttachmentField(PreservationContext context, RequirementDefinition rd, string label)
+        {
+            var field = new Field(TestPlant, label, FieldType.Attachment, 0);
+            rd.AddField(field);
+            context.SaveChangesAsync().Wait();
+            return field;
+        }
+
         protected TestDataSet AddTestDataSet(PreservationContext context)
         {
             // Test data set:

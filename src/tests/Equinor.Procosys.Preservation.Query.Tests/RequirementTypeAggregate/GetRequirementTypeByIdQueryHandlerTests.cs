@@ -1,18 +1,17 @@
 ﻿using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 {
     [TestClass]
-    public class GetRequirementTypeByIdQueryHandlerTests
+    public class GetRequirementTypeByIdQueryHandlerTests : ReadOnlyTestsBase
     {
-        private const int RequirementTypeId = 1;
-        private Mock<IRequirementTypeRepository> _repoMock;
         private RequirementType _requirementType;
         private RequirementDefinition _requirementDefWithInfo;
         private RequirementDefinition _requirementDefWithNumber;
@@ -23,74 +22,74 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         private Field _checkboxField;
         private Field _attachmentField;
 
-        private GetRequirementTypeByIdQueryHandler _dut;
-
-        [TestInitialize]
-        public void Setup()
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            var plant = "PCS$TESTPLANT";
-            _repoMock = new Mock<IRequirementTypeRepository>();
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                _requirementType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", 999);
+                _requirementDefWithInfo = _requirementType.RequirementDefinitions.Single();
+                _infoField = AddInfoField(context, _requirementDefWithInfo, "LabelA");
 
-            _infoField = new Field(plant, "LabelA", FieldType.Info, 10);
-            _numberField = new Field(plant, "LabelB", FieldType.Number, 20, "UnitA", true);
-            _checkboxField = new Field(plant, "LabelC", FieldType.CheckBox, 30);
-            _attachmentField = new Field(plant, "LabelD", FieldType.Attachment, 40);
+                _requirementDefWithNumber = new RequirementDefinition(TestPlant, "D2", 2, 1);
+                _requirementType.AddRequirementDefinition(_requirementDefWithNumber);
+                
+                _requirementDefWithCheckbox = new RequirementDefinition(TestPlant, "D3", 2, 1);
+                _requirementType.AddRequirementDefinition(_requirementDefWithCheckbox);
+                
+                _requirementDefWithAttachment = new RequirementDefinition(TestPlant, "D4", 2, 1);
+                _requirementType.AddRequirementDefinition(_requirementDefWithAttachment);
 
-            _requirementDefWithInfo = new RequirementDefinition(plant, "DefWithInfo", 8, 140);
-            _requirementDefWithNumber = new RequirementDefinition(plant, "DefWithNumber", 8, 130);
-            _requirementDefWithCheckbox = new RequirementDefinition(plant, "DefWithCheckbox", 8, 120);
-            _requirementDefWithAttachment = new RequirementDefinition(plant, "DefWithAttachment", 8, 110);
+                context.SaveChangesAsync().Wait();
 
-            _requirementType = new RequirementType(plant, "CodeA", "TitleA", 10);
-
-            _requirementDefWithInfo.AddField(_infoField);
-            _requirementDefWithNumber.AddField(_numberField);
-            _requirementDefWithCheckbox.AddField(_checkboxField);
-            _requirementDefWithAttachment.AddField(_attachmentField);
-            _requirementType.AddRequirementDefinition(_requirementDefWithInfo);
-            _requirementType.AddRequirementDefinition(_requirementDefWithNumber);
-            _requirementType.AddRequirementDefinition(_requirementDefWithCheckbox);
-            _requirementType.AddRequirementDefinition(_requirementDefWithAttachment);
-
-            _repoMock.Setup(r => r.GetByIdAsync(RequirementTypeId)).Returns(Task.FromResult(_requirementType));
-
-            _dut = new GetRequirementTypeByIdQueryHandler(_repoMock.Object);
+                _numberField = AddNumberField(context, _requirementDefWithNumber, "LabelB", "UnitA", true);
+                _checkboxField = AddCheckBoxField(context, _requirementDefWithCheckbox, "LabelC");
+                _attachmentField = AddAttachmentField(context, _requirementDefWithAttachment, "LabelD");
+            }
         }
 
         [TestMethod]
         public async Task HandleGetRequirementTypeByIdQuery_KnownId_ShouldReturnRequirementTypeWithAllPropertiesSet()
         {
-            var result = await _dut.Handle(new GetRequirementTypeByIdQuery(RequirementTypeId), new CancellationToken());
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetRequirementTypeByIdQueryHandler(context);
+                var result = await dut.Handle(new GetRequirementTypeByIdQuery(_requirementType.Id), default);
 
-            var requirementType = result.Data;
+                var requirementType = result.Data;
 
-            Assert.AreEqual(_requirementType.Code, requirementType.Code);
-            Assert.AreEqual(_requirementType.Title, requirementType.Title);
-            Assert.AreEqual(_requirementType.SortKey, requirementType.SortKey);
-            Assert.IsFalse(requirementType.IsVoided);
+                Assert.AreEqual(_requirementType.Code, requirementType.Code);
+                Assert.AreEqual(_requirementType.Title, requirementType.Title);
+                Assert.AreEqual(_requirementType.SortKey, requirementType.SortKey);
+                Assert.IsFalse(requirementType.IsVoided);
 
-            var requirementDefinitions = requirementType.RequirementDefinitions.ToList();
-            Assert.AreEqual(4, requirementDefinitions.Count);
+                var requirementDefinitions = requirementType.RequirementDefinitions.ToList();
+                Assert.AreEqual(4, requirementDefinitions.Count);
 
-            var requirementDefWithInfo = requirementDefinitions.Single(rd => rd.Title == "DefWithInfo");
-            AssertRequirementDefinition(requirementDefWithInfo, _requirementDefWithInfo, _infoField, false);
+                var requirementDefWithInfoDto = requirementDefinitions.Single(rd => rd.Id == _requirementDefWithInfo.Id);
+                AssertRequirementDefinition(requirementDefWithInfoDto, _requirementDefWithInfo, _infoField, false);
 
-            var requirementDefWithNumber = requirementDefinitions.Single(rd => rd.Title == "DefWithNumber");
-            AssertRequirementDefinition(requirementDefWithNumber, _requirementDefWithNumber, _numberField, true);
+                var requirementDefWithNumberDto = requirementDefinitions.Single(rd => rd.Id == _requirementDefWithNumber.Id);
+                AssertRequirementDefinition(requirementDefWithNumberDto, _requirementDefWithNumber, _numberField, true);
 
-            var requirementDefWithCheckbox = requirementDefinitions.Single(rd => rd.Title == "DefWithCheckbox");
-            AssertRequirementDefinition(requirementDefWithCheckbox, _requirementDefWithCheckbox, _checkboxField, true);
+                var requirementDefWithCheckboxDto = requirementDefinitions.Single(rd => rd.Id == _requirementDefWithCheckbox.Id);
+                AssertRequirementDefinition(requirementDefWithCheckboxDto, _requirementDefWithCheckbox, _checkboxField,
+                    true);
 
-            var requirementDefWithAttachment = requirementDefinitions.Single(rd => rd.Title == "DefWithAttachment");
-            AssertRequirementDefinition(requirementDefWithAttachment, _requirementDefWithAttachment, _attachmentField, true);
+                var requirementDefWithAttachment = requirementDefinitions.Single(rd => rd.Id == _requirementDefWithAttachment.Id);
+                AssertRequirementDefinition(requirementDefWithAttachment, _requirementDefWithAttachment, _attachmentField, true);
+            }
         }
 
         [TestMethod]
         public async Task HandleGetRequirementTypeByIdQuery_UnknownId_ShouldReturnNull()
         {
-            var result = await _dut.Handle(new GetRequirementTypeByIdQuery(246), new CancellationToken());
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetRequirementTypeByIdQueryHandler(context);
+                var result = await dut.Handle(new GetRequirementTypeByIdQuery(246), default);
 
-            Assert.IsNull(result.Data);
+                Assert.IsNull(result.Data);
+            }
         }
 
         private void AssertRequirementDefinition(
