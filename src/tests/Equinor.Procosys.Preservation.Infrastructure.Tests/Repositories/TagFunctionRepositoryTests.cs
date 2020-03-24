@@ -35,9 +35,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
 
 
         [TestMethod]
-        public async Task GetRequirementDefinitionById_KnownReqDefId_ReturnReqDef()
+        public async Task GetTagFunctionByCode_KnownCode_ReturnTagFunction()
         {
-            var result = await _dut.GetByNameAsync(TagFunctionCode, RegisterCode);
+            var result = await _dut.GetByCodeAsync(TagFunctionCode, RegisterCode);
 
             Assert.AreEqual(TagFunctionCode, result.Code);
             Assert.AreEqual(TagFunctionDesc, result.Description);

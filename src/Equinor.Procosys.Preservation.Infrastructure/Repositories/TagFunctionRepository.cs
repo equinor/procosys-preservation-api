@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         {
         }
 
-        public Task<TagFunction> GetByNameAsync(string tagFunctionCode, string registerCode)
+        public Task<TagFunction> GetByCodeAsync(string tagFunctionCode, string registerCode)
             => DefaultQuery.SingleOrDefaultAsync(tf => tf.Code == tagFunctionCode && tf.RegisterCode == registerCode);
     }
 }

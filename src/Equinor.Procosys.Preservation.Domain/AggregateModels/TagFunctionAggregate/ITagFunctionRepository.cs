@@ -4,6 +4,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
 {
     public interface ITagFunctionRepository : IRepository<TagFunction>
     {
-        Task<TagFunction> GetByNameAsync(string tagFunctionCode, string registerCode);
+        Task<TagFunction> GetByCodeAsync(string tagFunctionCode, string registerCode);
     }
 }

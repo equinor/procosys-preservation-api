@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
 
         public async Task<Result<Unit>> Handle(UpdateRequirementsCommand request, CancellationToken cancellationToken)
         {
-            var tagFunction = await _tagFunctionRepository.GetByNameAsync(request.TagFunctionCode, request.RegisterCode);
+            var tagFunction = await _tagFunctionRepository.GetByCodeAsync(request.TagFunctionCode, request.RegisterCode);
 
             if (tagFunction == null)
             {
