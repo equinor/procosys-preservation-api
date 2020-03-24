@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys
             var journeys = await
                 (from journey in _context.QuerySet<Journey>()
                     join step in _context.QuerySet<Step>()
-                        on journey.Id equals step.JourneyId
+                        on journey.Id equals EF.Property<int>(step, "JourneyId")
                     join tag in _context.QuerySet<Tag>()
                         on step.Id equals tag.StepId
                     join project in _context.QuerySet<Project>()
