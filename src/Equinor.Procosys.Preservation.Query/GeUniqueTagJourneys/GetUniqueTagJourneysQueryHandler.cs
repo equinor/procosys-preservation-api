@@ -1,0 +1,42 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+using ServiceResult;
+
+namespace Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles
+{
+    public class GetUniqueTagJourneysQueryHandler : IRequestHandler<GetUniqueTagJourneysQuery, Result<List<JourneyDto>>>
+    {
+        private readonly IReadOnlyContext _context;
+
+        public GetUniqueTagJourneysQueryHandler(IReadOnlyContext context) => _context = context;
+
+        public async Task<Result<List<JourneyDto>>> Handle(GetUniqueTagJourneysQuery request,
+            CancellationToken cancellationToken)
+        {
+            var journeys = await
+                (from journey in _context.QuerySet<Journey>()
+                    join step in _context.QuerySet<Step>()
+                        on journey.Id equals step.JourneyId
+                    join tag in _context.QuerySet<Tag>()
+                        on step.Id equals tag.StepId
+                    join project in _context.QuerySet<Project>()
+                        on EF.Property<int>(tag, "ProjectId") equals project.Id
+                    where project.Name == request.ProjectName
+                    select new JourneyDto(
+                        journey.Id,
+                        journey.Title))
+                .Distinct()
+                .ToListAsync(cancellationToken);
+
+            return new SuccessResult<List<JourneyDto>>(journeys);
+        }
+    }
+}
