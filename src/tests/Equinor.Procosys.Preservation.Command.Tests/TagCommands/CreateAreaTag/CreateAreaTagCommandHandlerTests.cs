@@ -10,7 +10,6 @@ using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 {
@@ -128,7 +127,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(0, _projectAddedToRepository.Id);
             Assert.AreEqual(TestProjectName, _projectAddedToRepository.Name);
             Assert.AreEqual("ProjectDescription", _projectAddedToRepository.Description);
         }
@@ -205,7 +203,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.IsNull(tagAddedToProject.Calloff);
             Assert.IsNull(tagAddedToProject.CommPkgNo);
             Assert.AreEqual(command.DisciplineCode, tagAddedToProject.DisciplineCode);
-            Assert.AreEqual(0, tagAddedToProject.Id);
             Assert.AreEqual(command.TagType, tagAddedToProject.TagType);
             Assert.IsNull(tagAddedToProject.McPkgNo);
             Assert.AreEqual(command.Description, tagAddedToProject.Description);

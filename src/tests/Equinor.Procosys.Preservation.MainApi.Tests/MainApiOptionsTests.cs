@@ -1,5 +1,4 @@
-﻿using Equinor.Procosys.Preservation.MainApi.Client;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.MainApi.Tests
 {

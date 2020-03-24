@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         }
 
         [TestMethod]
-        public async Task HandleGetTagFunctionQuery_TagFunctionWithRequirement_ShouldReturnTagFunctionWithRequirement()
+        public async Task HandleGetTagFunctionDetailsQuery_ShouldReturnTagFunctionWithRequirement_WhenTagFunctionHaveRequirement()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         }
 
         [TestMethod]
-        public async Task HandleGetTagFunctionQuery_TagFunctionWithoutRequirement_ShouldReturnTagFunctionWithoutRequirement()
+        public async Task HandleGetTagFunctionDetailsQuery_ShouldReturnTagFunctionWithoutRequirement_WhenTagFunctionHaveNoRequirements()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         }
 
         [TestMethod]
-        public async Task HandleGetTagFunctionQuery_UnknownTagFunction_ShouldReturnNull()
+        public async Task HandleGetTagFunctionDetailsQuery_UnknownTagFunction_ShouldReturnNull()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

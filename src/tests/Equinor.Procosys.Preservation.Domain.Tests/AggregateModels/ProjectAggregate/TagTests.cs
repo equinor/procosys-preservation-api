@@ -63,13 +63,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _journey.AddStep(_step1Mock.Object);
             _journey.AddStep(_step2Mock.Object);
 
-            _reqDef1NotNeedInput = new RequirementDefinition(TestPlant, "", 2, 0);
+            var reqDefId = 1;
+
+            var reqDef1NotNeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 2, 0);
+            reqDef1NotNeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
+            reqDef1NotNeedInputMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            _reqDef1NotNeedInput = reqDef1NotNeedInputMock.Object;
             _reqDef1NotNeedInput.AddField(new Field(TestPlant, "", FieldType.Info, 0));
-            _reqDef2NotNeedInput = new RequirementDefinition(TestPlant, "", 2, 0);
+
+            var reqDef2NotNeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 2, 0);
+            reqDef2NotNeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
+            reqDef2NotNeedInputMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            _reqDef2NotNeedInput = reqDef2NotNeedInputMock.Object;
             _reqDef2NotNeedInput.AddField(new Field(TestPlant, "", FieldType.Info, 0));
-            _reqDef1NeedInput = new RequirementDefinition(TestPlant, "", 1, 0);
+            
+            var reqDef1NeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 1, 0);
+            reqDef1NeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
+            reqDef1NeedInputMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            _reqDef1NeedInput = reqDef1NeedInputMock.Object;
             _reqDef1NeedInput.AddField(new Field(TestPlant, "", FieldType.CheckBox, 0));
-            _reqDef2NeedInput = new RequirementDefinition(TestPlant, "", 1, 0);
+            
+            var reqDef2NeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 1, 0);
+            reqDef2NeedInputMock.SetupGet(r => r.Id).Returns(reqDefId);
+            reqDef2NeedInputMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            _reqDef2NeedInput = reqDef2NeedInputMock.Object;
             _reqDef2NeedInput.AddField(new Field(TestPlant, "", FieldType.CheckBox, 0));
             
             _reqNotNeedInputTwoWeekInterval = new Requirement(TestPlant, TwoWeeksInterval, _reqDef1NotNeedInput);
@@ -208,8 +225,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region AddRequirement
 
         [TestMethod]
+        public void AddRequirement_ShouldAddRequirement()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_reqNeedInputThreeWeekInterval);
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.Count);
+            Assert.AreEqual(_reqNeedInputThreeWeekInterval, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.Last());
+        }
+
+        [TestMethod]
         public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(null));
+
+        [TestMethod]
+        public void AddRequirement_ShouldThrowException_WhenRequirementWithSameDefinitionExists()
+            => Assert.ThrowsException<ArgumentException>(() =>
+                _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_dutWithOneReqNotNeedInputTwoWeekInterval
+                    .Requirements.First()));
 
         #endregion
 
