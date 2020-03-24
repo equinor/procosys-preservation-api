@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _fieldMock = new Mock<Field>();
             _fieldMock.SetupGet(f => f.Id).Returns(FieldId);
-            _fieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _fieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
         }
 
         [TestMethod]
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             
             var dut = new NumberValue(TestPlant, _fieldMock.Object, "N/A");
 
-            Assert.AreEqual(TestPlant, dut.Schema);
+            Assert.AreEqual(TestPlant, dut.Plant);
             Assert.AreEqual(FieldId, dut.FieldId);
             Assert.IsFalse(dut.Value.HasValue);
         }
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new NumberValue(TestPlant, _fieldMock.Object, "141");
 
-            Assert.AreEqual(TestPlant, dut.Schema);
+            Assert.AreEqual(TestPlant, dut.Plant);
             Assert.IsTrue(dut.Value.HasValue);
             Assert.AreEqual(141, dut.Value.Value);
         }
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var numberAsString = number.ToString("F2");
             var dut = new NumberValue(TestPlant, _fieldMock.Object, numberAsString);
 
-            Assert.AreEqual(TestPlant, dut.Schema);
+            Assert.AreEqual(TestPlant, dut.Plant);
             Assert.IsTrue(dut.Value.HasValue);
             Assert.AreEqual(number, dut.Value.Value);
         }

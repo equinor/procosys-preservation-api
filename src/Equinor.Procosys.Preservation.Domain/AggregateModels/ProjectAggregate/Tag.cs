@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Tag : SchemaEntityBase, ICreationAuditable, IModificationAuditable
+    public class Tag : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         private readonly List<Requirement> _requirements = new List<Requirement>();
         private readonly List<Action> _actions = new List<Action>();
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public Tag(
-            string schema,
+            string plant,
             TagType tagType,
             string tagNo,
             string description,
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             string tagFunctionCode,
             Step step, 
             IEnumerable<Requirement> requirements)
-            : base(schema)
+            : base(plant)
         {
             if (step == null)
             {
@@ -57,15 +57,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception("Must have at least one requirement");
             }
                         
-            if (step.Schema != schema)
+            if (step.Plant != plant)
             {
-                throw new ArgumentException($"Can't relate item in {step.Schema} to item in {schema}");
+                throw new ArgumentException($"Can't relate item in {step.Plant} to item in {plant}");
             }
 
-            var requirement = reqList.FirstOrDefault(r => r.Schema != Schema);
+            var requirement = reqList.FirstOrDefault(r => r.Plant != Plant);
             if (requirement != null)
             {
-                throw new ArgumentException($"Can't relate item in {requirement.Schema} to item in {schema}");
+                throw new ArgumentException($"Can't relate item in {requirement.Plant} to item in {plant}");
             }
 
             TagType = tagType;
@@ -129,9 +129,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(requirement));
             }
             
-            if (requirement.Schema != Schema)
+            if (requirement.Plant != Plant)
             {
-                throw new ArgumentException($"Can't relate item in {requirement.Schema} to item in {Schema}");
+                throw new ArgumentException($"Can't relate item in {requirement.Plant} to item in {Plant}");
             }
 
             _requirements.Add(requirement);
@@ -145,9 +145,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(action));
             }
             
-            if (action.Schema != Schema)
+            if (action.Plant != Plant)
             {
-                throw new ArgumentException($"Can't relate item in {action.Schema} to item in {Schema}");
+                throw new ArgumentException($"Can't relate item in {action.Plant} to item in {Plant}");
             }
 
             _actions.Add(action);

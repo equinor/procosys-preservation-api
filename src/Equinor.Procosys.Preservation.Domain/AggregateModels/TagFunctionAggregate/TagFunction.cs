@@ -5,7 +5,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {
-    public class TagFunction : SchemaEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class TagFunction : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         public const int CodeLengthMax = 255;
         public const int DescriptionLengthMax = 255;
@@ -18,8 +18,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
         {
         }
 
-        public TagFunction(string schema, string code, string description, string registerCode)
-            : base(schema)
+        public TagFunction(string plant, string code, string description, string registerCode)
+            : base(plant)
         {
             if (string.IsNullOrEmpty(code))
             {
@@ -57,9 +57,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
                 throw new ArgumentNullException(nameof(requirement));
             }
             
-            if (requirement.Schema != Schema)
+            if (requirement.Plant != Plant)
             {
-                throw new ArgumentException($"Can't relate item in {requirement.Schema} to item in {Schema}");
+                throw new ArgumentException($"Can't relate item in {requirement.Plant} to item in {Plant}");
             }
 
             _requirements.Add(requirement);

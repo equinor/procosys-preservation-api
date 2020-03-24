@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate
 {
-    public class Mode : SchemaEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class Mode : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         public const int TitleMinLength = 3;
         public const int TitleLengthMax = 255;
@@ -14,8 +14,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate
         {
         }
 
-        public Mode(string schema, string title)
-            : base(schema) => Title = title;
+        public Mode(string plant, string title)
+            : base(plant) => Title = title;
 
         public string Title { get; private set; }
         public bool IsVoided { get; private set; }

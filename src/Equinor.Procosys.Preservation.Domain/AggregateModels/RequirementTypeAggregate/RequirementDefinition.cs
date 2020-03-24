@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class RequirementDefinition : SchemaEntityBase, ICreationAuditable, IModificationAuditable
+    public class RequirementDefinition : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         private readonly List<Field> _fields = new List<Field>();
         
@@ -17,8 +17,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public RequirementDefinition(string schema, string title, int defaultIntervalWeeks, int sortKey)
-            : base(schema)
+        public RequirementDefinition(string plant, string title, int defaultIntervalWeeks, int sortKey)
+            : base(plant)
         {
             Title = title;
             DefaultIntervalWeeks = defaultIntervalWeeks;
@@ -44,9 +44,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(field));
             }
             
-            if (field.Schema != Schema)
+            if (field.Plant != Plant)
             {
-                throw new ArgumentException($"Can't relate item in {field.Schema} to item in {Schema}");
+                throw new ArgumentException($"Can't relate item in {field.Plant} to item in {Plant}");
             }
 
             _fields.Add(field);

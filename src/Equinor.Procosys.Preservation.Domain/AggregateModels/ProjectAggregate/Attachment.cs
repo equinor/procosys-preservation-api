@@ -13,8 +13,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public Attachment(string schema, Field field, string blobId)
-            : base(schema, field) => BlobId = blobId;
+        public Attachment(string plant, Field field, string blobId)
+            : base(plant, field) => BlobId = blobId;
 
         public string BlobId { get; private set; }
     }

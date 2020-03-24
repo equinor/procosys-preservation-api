@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class PreservationPeriod : SchemaEntityBase, ICreationAuditable, IModificationAuditable
+    public class PreservationPeriod : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         private readonly List<FieldValue> _fieldValues = new List<FieldValue>();
 
@@ -18,10 +18,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
         
-        public PreservationPeriod(
-            string schema,
-            DateTime dueTimeUtc,
-            PreservationPeriodStatus status) : base(schema)
+        public PreservationPeriod(string plant, DateTime dueTimeUtc, PreservationPeriodStatus status)
+            : base(plant)
         {
 
             if (status != PreservationPeriodStatus.NeedsUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
@@ -55,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             Status = PreservationPeriodStatus.Preserved;
-            PreservationRecord = new PreservationRecord(base.Schema, preservedBy, bulkPreserved);
+            PreservationRecord = new PreservationRecord(base.Plant, preservedBy, bulkPreserved);
         }
 
         public void UpdateStatus(RequirementDefinition requirementDefinition)
@@ -168,9 +166,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"Value {value} is not legal value for a {nameof(Field)} of type {field.FieldType}");
             }
             
-            if (field.Schema != Schema)
+            if (field.Plant != Plant)
             {
-                throw new ArgumentException($"Can't relate item in {field.Schema} to item in {Schema}");
+                throw new ArgumentException($"Can't relate item in {field.Plant} to item in {Plant}");
             }
 
             // save new value ONLY if CheckBox is Checked!
@@ -179,11 +177,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 return;
             }
 
-            AddFieldValue(new CheckBoxChecked(Schema, field));
+            AddFieldValue(new CheckBoxChecked(Plant, field));
         }
 
         private void RecordNumberValueForField(Field field, string value)
-            => AddFieldValue(new NumberValue(Schema, field, value));
+            => AddFieldValue(new NumberValue(Plant, field, value));
         
         private void AddFieldValue(FieldValue fieldValue)
         {

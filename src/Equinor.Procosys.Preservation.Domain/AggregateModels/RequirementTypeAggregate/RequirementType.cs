@@ -5,7 +5,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class RequirementType : SchemaEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class RequirementType : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         private readonly List<RequirementDefinition> _requirementDefinitions = new List<RequirementDefinition>();
 
@@ -17,8 +17,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public RequirementType(string schema, string code, string title, int sortKey)
-            : base(schema)
+        public RequirementType(string plant, string code, string title, int sortKey)
+            : base(plant)
         {
             Code = code;
             Title = title;
@@ -43,9 +43,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
             
-            if (requirementDefinition.Schema != Schema)
+            if (requirementDefinition.Plant != Plant)
             {
-                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {Schema}");
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Plant} to item in {Plant}");
             }
 
             _requirementDefinitions.Add(requirementDefinition);

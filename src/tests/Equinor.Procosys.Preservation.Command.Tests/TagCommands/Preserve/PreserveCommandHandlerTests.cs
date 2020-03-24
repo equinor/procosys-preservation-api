@@ -35,9 +35,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         public void Setup()
         {
             var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             var rdMock = new Mock<RequirementDefinition>();
-            rdMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            rdMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
             _req1WithTwoWeekInterval = new Requirement(TestPlant, TwoWeeksInterval, rdMock.Object);
             _req2WithTwoWeekInterval = new Requirement(TestPlant, TwoWeeksInterval, rdMock.Object);

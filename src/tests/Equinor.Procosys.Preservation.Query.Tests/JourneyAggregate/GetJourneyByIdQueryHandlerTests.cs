@@ -30,11 +30,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         {
             var modeMock = new Mock<Mode>();
             modeMock.SetupGet(m => m.Id).Returns(ModeId);
-            modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
+            modeMock.SetupGet(m => m.Plant).Returns(TestPlant);
 
             var respMock = new Mock<Responsible>();
             respMock.SetupGet(r => r.Id).Returns(RespId);
-            respMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            respMock.SetupGet(r => r.Plant).Returns(TestPlant);
 
             _step = new Step(TestPlant, "S", modeMock.Object, respMock.Object);
 

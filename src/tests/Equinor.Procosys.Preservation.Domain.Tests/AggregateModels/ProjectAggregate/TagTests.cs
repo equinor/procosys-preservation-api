@@ -50,11 +50,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _step1Mock = new Mock<Step>();
             _step1Mock.SetupGet(x => x.Id).Returns(3);
-            _step1Mock.SetupGet(x => x.Schema).Returns(TestPlant);
+            _step1Mock.SetupGet(x => x.Plant).Returns(TestPlant);
             _step1Mock.Object.SortKey = 10;
             _step2Mock = new Mock<Step>();
             _step2Mock.SetupGet(x => x.Id).Returns(4);
-            _step2Mock.SetupGet(x => x.Schema).Returns(TestPlant);
+            _step2Mock.SetupGet(x => x.Plant).Returns(TestPlant);
             _step2Mock.Object.SortKey = 20;
 
             _person = new Mock<Person>().Object;
@@ -135,7 +135,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual(TestPlant, _dutWithOneReqNotNeedInputTwoWeekInterval.Schema);
+            Assert.AreEqual(TestPlant, _dutWithOneReqNotNeedInputTwoWeekInterval.Plant);
             Assert.AreEqual("TagNoA", _dutWithOneReqNotNeedInputTwoWeekInterval.TagNo);
             Assert.AreEqual("DescA", _dutWithOneReqNotNeedInputTwoWeekInterval.Description);
             Assert.AreEqual("AreaCodeA", _dutWithOneReqNotNeedInputTwoWeekInterval.AreaCode);

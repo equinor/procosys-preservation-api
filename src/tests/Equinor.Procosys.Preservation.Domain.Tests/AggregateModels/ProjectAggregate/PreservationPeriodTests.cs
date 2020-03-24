@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
 
-            Assert.AreEqual(TestPlant, dut.Schema);
+            Assert.AreEqual(TestPlant, dut.Plant);
             Assert.AreEqual(_timeProvider.UtcNow, dut.DueTimeUtc);
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.Status);
             Assert.IsNull(dut.PreservationRecord);
@@ -165,7 +165,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
             var fMock = new Mock<Field>(TestPlant, "", FieldType.CheckBox, 0, null, null);
             fMock.SetupGet(f => f.Id).Returns(12);
-            fMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            fMock.SetupGet(f => f.Plant).Returns(TestPlant);
             var field = fMock.Object;
 
             dut.RecordValueForField(field, "true");
@@ -182,7 +182,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
             var fMock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
             fMock.SetupGet(f => f.Id).Returns(12);
-            fMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            fMock.SetupGet(f => f.Plant).Returns(TestPlant);
             var field = fMock.Object;
 
             dut.RecordValueForField(field, "NA");

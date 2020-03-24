@@ -10,9 +10,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var f = new Field("SchemaA", "LabelA", FieldType.Attachment, 10, "UnitA", true);
+            var f = new Field("PlantA", "LabelA", FieldType.Attachment, 10, "UnitA", true);
 
-            Assert.AreEqual("SchemaA", f.Schema);
+            Assert.AreEqual("PlantA", f.Plant);
             Assert.AreEqual("LabelA", f.Label);
             Assert.AreEqual("UnitA", f.Unit);
             Assert.AreEqual(FieldType.Attachment, f.FieldType);
@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void Constructor_ShouldSetDefaultValuesForUnitAndShowPrevious_WhenNotGivenAsArgument()
         {
-            var f = new Field("SchemaA", "LabelA", FieldType.Info, 10);
+            var f = new Field("PlantA", "LabelA", FieldType.Info, 10);
 
             Assert.IsFalse(f.ShowPrevious.HasValue);
             Assert.IsNull(f.Unit);

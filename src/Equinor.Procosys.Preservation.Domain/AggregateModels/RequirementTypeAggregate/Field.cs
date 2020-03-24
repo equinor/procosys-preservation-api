@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class Field : SchemaEntityBase, ICreationAuditable, IModificationAuditable
+    public class Field : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         public const int LabelLengthMax = 255;
         public const int UnitLengthMax = 32;
@@ -13,13 +13,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public Field(string schema,
+        public Field(string plant,
             string label,
             FieldType fieldType,
             int sortKey,
             string unit = null,
             bool? showPrevious = null)
-            : base(schema)
+            : base(plant)
         {
             if (fieldType == FieldType.Number && string.IsNullOrEmpty(unit))
             {

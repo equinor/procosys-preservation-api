@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class PreservationRecord : SchemaEntityBase, ICreationAuditable
+    public class PreservationRecord : PlantEntityBase, ICreationAuditable
     {
         public const int CommentLengthMax = 2048;
 
@@ -13,10 +13,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
         
-        public PreservationRecord(
-            string schema,
-            Person preservedBy,
-            bool bulkPreserved) : base(schema)
+        public PreservationRecord(string plant, Person preservedBy, bool bulkPreserved)
+            : base(plant)
         {
             if (preservedBy == null)
             {

@@ -30,14 +30,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         public void Setup()
         {
             var modeMock = new Mock<Mode>();
-            modeMock.SetupGet(x => x.Schema).Returns(TestPlant);
+            modeMock.SetupGet(x => x.Plant).Returns(TestPlant);
 
             var responsibleMock = new Mock<Responsible>();
-            responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
+            responsibleMock.SetupGet(x => x.Plant).Returns(TestPlant);
 
             var step = new Step(TestPlant, "S", modeMock.Object, responsibleMock.Object);
             var rdMock = new Mock<RequirementDefinition>();
-            rdMock.SetupGet(rd => rd.Schema).Returns(TestPlant);
+            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
             var requirements = new List<Requirement>
             {
                 new Requirement(TestPlant, 1, rdMock.Object),
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagX", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "R", "SA", "TF", step, requirements));
             _testTagMock = new Mock<Tag>();
             _testTagMock.SetupGet(t => t.Id).Returns(TestTagId);
-            _testTagMock.SetupGet(t => t.Schema).Returns(TestPlant);
+            _testTagMock.SetupGet(t => t.Plant).Returns(TestPlant);
             project1.AddTag(_testTagMock.Object);
             
             var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2");

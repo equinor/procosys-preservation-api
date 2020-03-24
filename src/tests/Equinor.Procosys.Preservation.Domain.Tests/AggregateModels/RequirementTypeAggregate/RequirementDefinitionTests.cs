@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual(TestPlant, _dut.Schema);
+            Assert.AreEqual(TestPlant, _dut.Plant);
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual(4, _dut.DefaultIntervalWeeks);
             Assert.AreEqual(10, _dut.SortKey);

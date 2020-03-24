@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual(TestPlant, _dut.Schema);
+            Assert.AreEqual(TestPlant, _dut.Plant);
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.IsFalse(_dut.IsVoided);
             Assert.AreEqual(0, _dut.Steps.Count);
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         public void AddStep_ShouldAddStepToStepsList()
         {
             var step = new Mock<Step>();
-            step.SetupGet(s => s.Schema).Returns(TestPlant);
+            step.SetupGet(s => s.Plant).Returns(TestPlant);
 
             _dut.AddStep(step.Object);
 
@@ -71,19 +71,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             
             var firstStepMock = new Mock<Step>();
             firstStepMock.SetupGet(s => s.Id).Returns(firstStepId);
-            firstStepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            firstStepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             firstStepMock.Object.SortKey = 10;
             var firstStep = firstStepMock.Object;
 
             var secondStepMock = new Mock<Step>();
             secondStepMock.SetupGet(s => s.Id).Returns(secondStepId);
-            secondStepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            secondStepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             secondStepMock.Object.SortKey = 20;
             var secondStep = secondStepMock.Object;
 
             var thirdStepMock = new Mock<Step>();
             thirdStepMock.SetupGet(s => s.Id).Returns(thirdStepId);
-            thirdStepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            thirdStepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             thirdStepMock.Object.SortKey = 30;
             var thirdStep = thirdStepMock.Object;
             
@@ -111,17 +111,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             
             var firstStepMock = new Mock<Step>();
             firstStepMock.SetupGet(s => s.Id).Returns(firstStepId);
-            firstStepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            firstStepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             var firstStep = firstStepMock.Object;
 
             var secondStepMock = new Mock<Step>();
             secondStepMock.SetupGet(s => s.Id).Returns(secondStepId);
-            secondStepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            secondStepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             var secondStep = secondStepMock.Object;
 
             var thirdStepMock = new Mock<Step>();
             thirdStepMock.SetupGet(s => s.Id).Returns(thirdStepId);
-            thirdStepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            thirdStepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             var thirdStep = thirdStepMock.Object;
             
             _dut.AddStep(firstStep);

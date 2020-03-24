@@ -20,15 +20,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(PersonId);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _dut = new Action("SchemaA", "TitleA", "DescA", _utcNow);
+            _dut = new Action("PlantA", "TitleA", "DescA", _utcNow);
         }
 
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithoutDue()
         {
-            _dut = new Action("SchemaA", "TitleA", "DescA", null);
+            _dut = new Action("PlantA", "TitleA", "DescA", null);
 
-            Assert.AreEqual("SchemaA", _dut.Schema);
+            Assert.AreEqual("PlantA", _dut.Plant);
             Assert.IsFalse(_dut.DueTimeUtc.HasValue);
             Assert.IsFalse(_dut.ClosedById.HasValue);
             Assert.IsNull(_dut.ClosedAtUtc);
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithDue()
         {
-            Assert.AreEqual("SchemaA", _dut.Schema);
+            Assert.AreEqual("PlantA", _dut.Plant);
             Assert.AreEqual(_utcNow, _dut.DueTimeUtc);
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual("DescA", _dut.Description);
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenDueIsNotUtc()
             => Assert.ThrowsException<ArgumentException>(() =>
-                new Action("SchemaA", "", "", DateTime.Now)
+                new Action("PlantA", "", "", DateTime.Now)
             );
 
         [TestMethod]

@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
-    public class Journey : SchemaEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class Journey : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         public const int TitleLengthMin = 3;
         public const int TitleLengthMax = 255;
@@ -48,9 +48,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentNullException(nameof(step));
             }
             
-            if (step.Schema != Schema)
+            if (step.Plant != Plant)
             {
-                throw new ArgumentException($"Can't relate item in {step.Schema} to item in {Schema}");
+                throw new ArgumentException($"Can't relate item in {step.Plant} to item in {Plant}");
             }
 
             _steps.Add(step);

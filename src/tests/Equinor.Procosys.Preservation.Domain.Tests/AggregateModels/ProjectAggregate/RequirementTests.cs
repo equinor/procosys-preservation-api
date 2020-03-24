@@ -41,48 +41,48 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _infoFieldMock = new Mock<Field>("", "", FieldType.Info, 0, null, null);
             _infoFieldMock.SetupGet(f => f.Id).Returns(InfoFieldId);
-            _infoFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _infoFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
 
             _checkBoxFieldMock = new Mock<Field>("", "", FieldType.CheckBox, 0, null, null);
             _checkBoxFieldMock.SetupGet(f => f.Id).Returns(CheckBoxFieldId);
-            _checkBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _checkBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
 
             _numberField1Mock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
             _numberField1Mock.SetupGet(f => f.Id).Returns(NumberField1Id);
-            _numberField1Mock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _numberField1Mock.SetupGet(f => f.Plant).Returns(TestPlant);
 
             _numberField2Mock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
             _numberField2Mock.SetupGet(f => f.Id).Returns(NumberField2Id);
-            _numberField2Mock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _numberField2Mock.SetupGet(f => f.Plant).Returns(TestPlant);
 
             _numberField3Mock = new Mock<Field>("", "", FieldType.Number, 0, "mm", true);
             _numberField3Mock.SetupGet(f => f.Id).Returns(NumberField3Id);
-            _numberField3Mock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _numberField3Mock.SetupGet(f => f.Plant).Returns(TestPlant);
             
             _reqDefWithInfoFieldMock = new Mock<RequirementDefinition>();
-            _reqDefWithInfoFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _reqDefWithInfoFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithInfoFieldMock.Object.AddField(_infoFieldMock.Object);
             
             _reqDefWithCheckBoxFieldMock = new Mock<RequirementDefinition>();
-            _reqDefWithCheckBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _reqDefWithCheckBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithCheckBoxFieldMock.Object.AddField(_checkBoxFieldMock.Object);
             
             _reqDefWithOneNumberFieldMock = new Mock<RequirementDefinition>();
-            _reqDefWithOneNumberFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _reqDefWithOneNumberFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithOneNumberFieldMock.Object.AddField(_numberField1Mock.Object);
             
             _reqDefWithTwoNumberFieldsMock = new Mock<RequirementDefinition>();
-            _reqDefWithTwoNumberFieldsMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _reqDefWithTwoNumberFieldsMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithTwoNumberFieldsMock.Object.AddField(_numberField2Mock.Object);
             _reqDefWithTwoNumberFieldsMock.Object.AddField(_numberField3Mock.Object);
             
             _reqDefWithNumberAndCheckBoxFieldMock = new Mock<RequirementDefinition>();
-            _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithNumberAndCheckBoxFieldMock.Object.AddField(_numberField1Mock.Object);
             _reqDefWithNumberAndCheckBoxFieldMock.Object.AddField(_checkBoxFieldMock.Object);
 
             _reqDefWithInfoFieldMock.SetupGet(rd => rd.Id).Returns(1);
-            _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(2);
             _reqDefWithOneNumberFieldMock.SetupGet(rd => rd.Id).Returns(3);
             _reqDefWithTwoNumberFieldsMock.SetupGet(rd => rd.Id).Returns(13);
@@ -102,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
-            Assert.AreEqual(TestPlant, dut.Schema);
+            Assert.AreEqual(TestPlant, dut.Plant);
             Assert.AreEqual(_reqDefWithCheckBoxFieldMock.Object.Id, dut.RequirementDefinitionId);
             Assert.IsFalse(dut.IsVoided);
             Assert.IsFalse(dut.ReadyToBePreserved);

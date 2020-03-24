@@ -5,15 +5,15 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public abstract class FieldValue : SchemaEntityBase, ICreationAuditable
+    public abstract class FieldValue : PlantEntityBase, ICreationAuditable
     {
         protected FieldValue()
             : base(null)
         {
         }
 
-        protected FieldValue(string schema, Field field)
-            : base(schema)
+        protected FieldValue(string plant, Field field)
+            : base(plant)
         {
             if (field == null)
             {

@@ -36,13 +36,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         public void Setup()
         {
             var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             var rdMock = new Mock<RequirementDefinition>();
-            rdMock.SetupGet(rd => rd.Schema).Returns(TestPlant);
+            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             var requirementMock = new Mock<Requirement>(TestPlant, Interval, rdMock.Object);
             requirementMock.SetupGet(r => r.Id).Returns(RequirementId);
-            requirementMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            requirementMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
             _tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>

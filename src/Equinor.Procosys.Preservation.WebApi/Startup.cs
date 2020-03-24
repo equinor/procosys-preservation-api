@@ -122,7 +122,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                     }
                 });
 
-                c.OperationFilter<AddSchemaHeaderParameter>();
+                c.OperationFilter<AddPlantHeaderParameter>();
 
                 c.AddFluentValidationRules();
             });

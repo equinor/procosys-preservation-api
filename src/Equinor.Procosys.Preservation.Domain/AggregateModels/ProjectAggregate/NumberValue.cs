@@ -15,17 +15,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public NumberValue(string schema, Field field, string value)
-            : base(schema, field)
+        public NumberValue(string plant, Field field, string value)
+            : base(plant, field)
         {
             if (!IsValidValue(value, out var number))
             {
                 throw new ArgumentException($"Value {value} is not a legal value for a {nameof(NumberValue)}");
             }
 
-            if (field.Schema != schema)
+            if (field.Plant != plant)
             {
-                throw new ArgumentException($"Can't relate item in {field.Schema} to item in {schema}");
+                throw new ArgumentException($"Can't relate item in {field.Plant} to item in {plant}");
             }
 
             Value = number;
