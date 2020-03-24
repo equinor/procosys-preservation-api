@@ -1,4 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
@@ -20,6 +22,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             RuleForEach(x => x.TagNos)
                 .NotEmpty()
                 .MaximumLength(Tag.TagNoLengthMax);
+            
+            RuleFor(x => x.Requirements)
+                .Must(BeUniqueRequirements)
+                .WithMessage("Requirement definitions must be unique!");
 
             RuleForEach(x => x.Requirements)
                 .Must(RequirementMustHavePositiveInterval)
@@ -29,6 +35,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .MaximumLength(Tag.RemarkLengthMax);
             
             bool RequirementMustHavePositiveInterval(TagRequirementDto dto) => dto.IntervalWeeks > 0;
+                        
+            bool BeUniqueRequirements(IEnumerable<TagRequirementDto> requirements)
+            {
+                var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
+                return reqIds.Distinct().Count() == reqIds.Count;
+            }
         }
     }
 }

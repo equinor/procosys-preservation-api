@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -41,6 +42,10 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             {
                 var procosysTagFunction = await _tagFunctionApiService.GetTagFunctionAsync(_plantProvider.Plant,
                     request.TagFunctionCode, request.RegisterCode);
+                if (procosysTagFunction == null)
+                {
+                    return new NotFoundResult<Unit>($"TagFunction {request.TagFunctionCode} not found in register {request.RegisterCode}");
+                }
                 tagFunction = new TagFunction(
                     _plantProvider.Plant,
                     request.TagFunctionCode,
