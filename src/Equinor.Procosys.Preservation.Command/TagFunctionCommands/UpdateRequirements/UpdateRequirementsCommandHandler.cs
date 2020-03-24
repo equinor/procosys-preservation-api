@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.Procosys.Preservation.MainApi.TagFunction;
 using MediatR;
 using ServiceResult;
 
@@ -16,17 +17,20 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
+        private readonly ITagFunctionApiService _tagFunctionApiService;
 
         public UpdateRequirementsCommandHandler(
             ITagFunctionRepository tagFunctionRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
-            IPlantProvider plantProvider)
+            IPlantProvider plantProvider,
+            ITagFunctionApiService tagFunctionApiService)
         {
             _tagFunctionRepository = tagFunctionRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
+            _tagFunctionApiService = tagFunctionApiService;
         }
 
         public async Task<Result<Unit>> Handle(UpdateRequirementsCommand request, CancellationToken cancellationToken)
@@ -35,8 +39,13 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
 
             if (tagFunction == null)
             {
-                // todo Need to get TagFunction Description from Main
-                tagFunction = new TagFunction(_plantProvider.Plant, request.TagFunctionCode, "ToDo", request.RegisterCode);
+                var procosysTagFunction = await _tagFunctionApiService.GetTagFunctionAsync(_plantProvider.Plant,
+                    request.TagFunctionCode, request.RegisterCode);
+                tagFunction = new TagFunction(
+                    _plantProvider.Plant,
+                    request.TagFunctionCode,
+                    procosysTagFunction.Description,
+                    request.RegisterCode);
                 _tagFunctionRepository.Add(tagFunction);
             }
             else
