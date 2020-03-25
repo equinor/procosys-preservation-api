@@ -20,11 +20,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         {
             _modeMock = new Mock<Mode>();
             _modeMock.SetupGet(x => x.Id).Returns(3);
-            _modeMock.SetupGet(x => x.Schema).Returns(TestPlant);
+            _modeMock.SetupGet(x => x.Plant).Returns(TestPlant);
 
             _responsibleMock = new Mock<Responsible>();
             _responsibleMock.SetupGet(x => x.Id).Returns(4);
-            _responsibleMock.SetupGet(x => x.Schema).Returns(TestPlant);
+            _responsibleMock.SetupGet(x => x.Plant).Returns(TestPlant);
 
             _dut = new Step(TestPlant, "S", _modeMock.Object, _responsibleMock.Object);
         }
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual(TestPlant, _dut.Schema);
+            Assert.AreEqual(TestPlant, _dut.Plant);
             Assert.AreEqual("S", _dut.Title);
             Assert.AreEqual(_modeMock.Object.Id, _dut.ModeId);
             Assert.AreEqual(_responsibleMock.Object.Id, _dut.ResponsibleId);

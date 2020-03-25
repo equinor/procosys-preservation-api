@@ -50,11 +50,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _step1Mock = new Mock<Step>();
             _step1Mock.SetupGet(x => x.Id).Returns(3);
-            _step1Mock.SetupGet(x => x.Schema).Returns(TestPlant);
+            _step1Mock.SetupGet(x => x.Plant).Returns(TestPlant);
             _step1Mock.Object.SortKey = 10;
             _step2Mock = new Mock<Step>();
             _step2Mock.SetupGet(x => x.Id).Returns(4);
-            _step2Mock.SetupGet(x => x.Schema).Returns(TestPlant);
+            _step2Mock.SetupGet(x => x.Plant).Returns(TestPlant);
             _step2Mock.Object.SortKey = 20;
 
             _person = new Mock<Person>().Object;
@@ -67,25 +67,25 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var reqDef1NotNeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 2, 0);
             reqDef1NotNeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
-            reqDef1NotNeedInputMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            reqDef1NotNeedInputMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _reqDef1NotNeedInput = reqDef1NotNeedInputMock.Object;
             _reqDef1NotNeedInput.AddField(new Field(TestPlant, "", FieldType.Info, 0));
 
             var reqDef2NotNeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 2, 0);
             reqDef2NotNeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
-            reqDef2NotNeedInputMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            reqDef2NotNeedInputMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _reqDef2NotNeedInput = reqDef2NotNeedInputMock.Object;
             _reqDef2NotNeedInput.AddField(new Field(TestPlant, "", FieldType.Info, 0));
             
             var reqDef1NeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 1, 0);
             reqDef1NeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
-            reqDef1NeedInputMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            reqDef1NeedInputMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _reqDef1NeedInput = reqDef1NeedInputMock.Object;
             _reqDef1NeedInput.AddField(new Field(TestPlant, "", FieldType.CheckBox, 0));
             
             var reqDef2NeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 1, 0);
             reqDef2NeedInputMock.SetupGet(r => r.Id).Returns(reqDefId);
-            reqDef2NeedInputMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            reqDef2NeedInputMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _reqDef2NeedInput = reqDef2NeedInputMock.Object;
             _reqDef2NeedInput.AddField(new Field(TestPlant, "", FieldType.CheckBox, 0));
             
@@ -152,7 +152,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual(TestPlant, _dutWithOneReqNotNeedInputTwoWeekInterval.Schema);
+            Assert.AreEqual(TestPlant, _dutWithOneReqNotNeedInputTwoWeekInterval.Plant);
             Assert.AreEqual("TagNoA", _dutWithOneReqNotNeedInputTwoWeekInterval.TagNo);
             Assert.AreEqual("DescA", _dutWithOneReqNotNeedInputTwoWeekInterval.Description);
             Assert.AreEqual("AreaCodeA", _dutWithOneReqNotNeedInputTwoWeekInterval.AreaCode);

@@ -47,25 +47,25 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
 
             var requirementDefinitionWith2FieldsMock = new Mock<RequirementDefinition>();
             requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(_reqId);
-            requirementDefinitionWith2FieldsMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            requirementDefinitionWith2FieldsMock.SetupGet(r => r.Plant).Returns(TestPlant);
             
             var checkBoxFieldMock = new Mock<Field>(TestPlant, "", FieldType.CheckBox, 0, null, null);
             checkBoxFieldMock.SetupGet(f => f.Id).Returns(_checkBoxFieldId);
-            checkBoxFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            checkBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(checkBoxFieldMock.Object);
 
             var numberFieldMock = new Mock<Field>(TestPlant, "", FieldType.Number, 0, "mm", false);
             numberFieldMock.SetupGet(f => f.Id).Returns(_numberFieldId);
-            numberFieldMock.SetupGet(f => f.Schema).Returns(TestPlant);
+            numberFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(numberFieldMock.Object);
 
             var requirementMock = new Mock<TagRequirement>(TestPlant, 2, requirementDefinitionWith2FieldsMock.Object);
             requirementMock.SetupGet(r => r.Id).Returns(_reqId);
-            requirementMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            requirementMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
             var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<TagRequirement>
             {
                 _requirement

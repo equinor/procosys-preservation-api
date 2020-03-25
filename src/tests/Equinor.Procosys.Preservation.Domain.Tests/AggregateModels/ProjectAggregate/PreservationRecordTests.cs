@@ -26,9 +26,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new PreservationRecord("SchemaA", _preservedByMock.Object, true);
+            var dut = new PreservationRecord("PlantA", _preservedByMock.Object, true);
 
-            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual("PlantA", dut.Plant);
             Assert.AreEqual(_timeProvider.UtcNow, dut.PreservedAtUtc);
             Assert.AreEqual(_preservedById, dut.PreservedById);
             Assert.IsTrue(dut.BulkPreserved);
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenPreservedByNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
-                new PreservationRecord("SchemaA", null, true)
+                new PreservationRecord("PlantA", null, true)
             );
     }
 }

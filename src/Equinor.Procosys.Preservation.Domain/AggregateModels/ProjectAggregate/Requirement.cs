@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Requirement : SchemaEntityBase, ICreationAuditable, IModificationAuditable
+    public class Requirement : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         public const int InitialPreservationPeriodStatusMax = 64;
 
@@ -21,17 +21,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public Requirement(string schema, int intervalWeeks, RequirementDefinition requirementDefinition)
-            : base(schema)
+        public Requirement(string plant, int intervalWeeks, RequirementDefinition requirementDefinition)
+            : base(plant)
         {
             if (requirementDefinition == null)
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
             
-            if (requirementDefinition.Schema != schema)
+            if (requirementDefinition.Plant != plant)
             {
-                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {schema}");
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Plant} to item in {plant}");
             }
 
             IntervalWeeks = intervalWeeks;
@@ -187,7 +187,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private void PrepareNewPreservation()
         {
             NextDueTimeUtc = TimeService.UtcNow.AddWeeks(IntervalWeeks);
-            var preservationPeriod = new PreservationPeriod(Schema, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
+            var preservationPeriod = new PreservationPeriod(Plant, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
         }
     }

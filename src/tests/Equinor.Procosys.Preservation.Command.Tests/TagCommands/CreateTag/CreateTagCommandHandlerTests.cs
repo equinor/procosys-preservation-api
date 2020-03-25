@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             // Arrange
             _stepMock = new Mock<Step>();
             _stepMock.SetupGet(s => s.Id).Returns(StepId);
-            _stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyRepositoryMock
@@ -61,10 +61,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             var rdMock1 = new Mock<RequirementDefinition>();
             rdMock1.SetupGet(x => x.Id).Returns(ReqDefId1);
-            rdMock1.SetupGet(x => x.Schema).Returns(TestPlant);
+            rdMock1.SetupGet(x => x.Plant).Returns(TestPlant);
             var rdMock2 = new Mock<RequirementDefinition>();
             rdMock2.SetupGet(x => x.Id).Returns(ReqDefId2);
-            rdMock2.SetupGet(x => x.Schema).Returns(TestPlant);
+            rdMock2.SetupGet(x => x.Plant).Returns(TestPlant);
             _rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2}))
                 .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
@@ -220,7 +220,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.AreEqual(command.Remark, tagAddedToProject.Remark);
             Assert.AreEqual(command.StorageArea, tagAddedToProject.StorageArea);
             Assert.AreEqual(mainTagDetails.PurchaseOrderNo, tagAddedToProject.PurchaseOrderNo);
-            Assert.AreEqual(TestPlant, tagAddedToProject.Schema);
+            Assert.AreEqual(TestPlant, tagAddedToProject.Plant);
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.AreEqual(mainTagDetails.TagFunctionCode, tagAddedToProject.TagFunctionCode);
             Assert.AreEqual(mainTagDetails.TagNo, tagAddedToProject.TagNo);

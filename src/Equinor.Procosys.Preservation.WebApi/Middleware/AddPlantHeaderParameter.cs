@@ -5,7 +5,7 @@ using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Equinor.Procosys.Preservation.WebApi.Middleware
 {
-    public class AddSchemaHeaderParameter : IOperationFilter
+    public class AddPlantHeaderParameter : IOperationFilter
     {
         public void Apply(OpenApiOperation operation, OperationFilterContext context)
         {

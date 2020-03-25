@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagFunction
         public void Setup()
         {
             _requirementDefinitionMock = new Mock<RequirementDefinition>();
-            _requirementDefinitionMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            _requirementDefinitionMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirementDefinitionMock.SetupGet(r => r.Id).Returns(5);
             _dut = new TagFunctionRequirement(TestPlant, 4, _requirementDefinitionMock.Object);
         }
@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagFunction
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual(TestPlant, _dut.Schema);
+            Assert.AreEqual(TestPlant, _dut.Plant);
             Assert.AreEqual(4, _dut.IntervalWeeks);
             Assert.AreEqual(5, _dut.RequirementDefinitionId);
         }

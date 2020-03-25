@@ -5,24 +5,24 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {
-    public class TagFunctionRequirement : SchemaEntityBase, ICreationAuditable, IModificationAuditable
+    public class TagFunctionRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         protected TagFunctionRequirement()
             : base(null)
         {
         }
 
-        public TagFunctionRequirement(string schema, int intervalWeeks, RequirementDefinition requirementDefinition)
-            : base(schema)
+        public TagFunctionRequirement(string plant, int intervalWeeks, RequirementDefinition requirementDefinition)
+            : base(plant)
         {
             if (requirementDefinition == null)
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
             }
             
-            if (requirementDefinition.Schema != schema)
+            if (requirementDefinition.Plant != plant)
             {
-                throw new ArgumentException($"Can't relate item in {requirementDefinition.Schema} to item in {schema}");
+                throw new ArgumentException($"Can't relate item in {requirementDefinition.Plant} to item in {plant}");
             }
 
             IntervalWeeks = intervalWeeks;

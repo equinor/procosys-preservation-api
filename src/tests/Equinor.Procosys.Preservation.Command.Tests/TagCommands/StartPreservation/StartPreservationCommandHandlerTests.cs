@@ -38,13 +38,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         public void Setup()
         {
             var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             _rd1Mock = new Mock<RequirementDefinition>();
             _rd1Mock.SetupGet(rd => rd.Id).Returns(_rdId1);
-            _rd1Mock.SetupGet(rd => rd.Schema).Returns(TestPlant);
+            _rd1Mock.SetupGet(rd => rd.Plant).Returns(TestPlant);
             _rd2Mock = new Mock<RequirementDefinition>();
             _rd2Mock.SetupGet(rd => rd.Id).Returns(_rdId2);
-            _rd2Mock.SetupGet(rd => rd.Schema).Returns(TestPlant);
+            _rd2Mock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             _req1OnTag1 = new TagRequirement(TestPlant, _intervalWeeks, _rd1Mock.Object);
             _req2OnTag1 = new TagRequirement(TestPlant, _intervalWeeks, _rd2Mock.Object);

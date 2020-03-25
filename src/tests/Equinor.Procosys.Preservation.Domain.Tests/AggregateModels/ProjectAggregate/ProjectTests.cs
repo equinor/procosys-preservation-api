@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            Assert.AreEqual(TestPlant, _dut.Schema);
+            Assert.AreEqual(TestPlant, _dut.Plant);
             Assert.AreEqual("ProjectNameA", _dut.Name);
             Assert.AreEqual("DescA", _dut.Description);
             Assert.IsFalse(_dut.IsClosed);
@@ -39,9 +39,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void AddTag_ShouldAddTagToTagsList()
         {
             var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Schema).Returns(TestPlant);
+            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             var reqMock = new Mock<Requirement>();
-            reqMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            reqMock.SetupGet(r => r.Plant).Returns(TestPlant);
             var tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<Requirement>{reqMock.Object});
 
             _dut.AddTag(tag);

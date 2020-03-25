@@ -8,13 +8,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new TestableSchemaEntityBase("SchemaA");
+            var dut = new TestableSchemaEntityBase("PlantA");
 
-            Assert.AreEqual("SchemaA", dut.Schema);
+            Assert.AreEqual("PlantA", dut.Plant);
         }
     }
 
-    public class TestableSchemaEntityBase : SchemaEntityBase
+    public class TestableSchemaEntityBase : PlantEntityBase
     {
         public TestableSchemaEntityBase(string schema)
             : base(schema)

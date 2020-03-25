@@ -40,11 +40,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             var rdMock1 = new Mock<RequirementDefinition>();
             rdMock1.SetupGet(x => x.Id).Returns(ReqDefId1);
-            rdMock1.SetupGet(x => x.Schema).Returns(TestPlant);
+            rdMock1.SetupGet(x => x.Plant).Returns(TestPlant);
             _reqDef1 = rdMock1.Object;
             var rdMock2 = new Mock<RequirementDefinition>();
             rdMock2.SetupGet(x => x.Id).Returns(ReqDefId2);
-            rdMock2.SetupGet(x => x.Schema).Returns(TestPlant);
+            rdMock2.SetupGet(x => x.Plant).Returns(TestPlant);
             _reqDef2 = rdMock2.Object;
             
             _rtRepositoryMock

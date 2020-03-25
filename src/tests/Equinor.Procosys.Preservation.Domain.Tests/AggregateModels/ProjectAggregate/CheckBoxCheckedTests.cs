@@ -13,9 +13,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var fieldMock = new Mock<Field>();
             fieldMock.SetupGet(f => f.Id).Returns(54);
-            var f = new CheckBoxChecked("SchemaA", fieldMock.Object);
+            var f = new CheckBoxChecked("PlantA", fieldMock.Object);
 
-            Assert.AreEqual("SchemaA", f.Schema);
+            Assert.AreEqual("PlantA", f.Plant);
             Assert.AreEqual(54, f.FieldId);
         }
     }

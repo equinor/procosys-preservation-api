@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate
 {
-    public class Responsible : SchemaEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class Responsible : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         public const int CodeLengthMax = 255;
         public const int TitleLengthMax = 255;
@@ -14,8 +14,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggreg
         {
         }
 
-        public Responsible(string schema, string code, string title)
-            : base(schema)
+        public Responsible(string plant, string code, string title)
+            : base(plant)
         {
             Code = code;
             Title = title;

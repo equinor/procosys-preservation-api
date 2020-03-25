@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
 
             _modeRepositoryMock = new Mock<IModeRepository>();
             _modeMock = new Mock<Mode>();
-            _modeMock.SetupGet(m => m.Schema).Returns(TestPlant);
+            _modeMock.SetupGet(m => m.Plant).Returns(TestPlant);
             _modeMock.SetupGet(x => x.Id).Returns(ModeId);
             _modeRepositoryMock
                 .Setup(r => r.GetByIdAsync(ModeId))
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleRepositoryMock = new Mock<IResponsibleRepository>();
             _responsibleMock = new Mock<Responsible>();
             _responsibleMock.SetupGet(r => r.Id).Returns(ResponsibleId);
-            _responsibleMock.SetupGet(r => r.Schema).Returns(TestPlant);
+            _responsibleMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _responsibleRepositoryMock
                 .Setup(r => r.GetByIdAsync(ResponsibleId))
                 .Returns(Task.FromResult(_responsibleMock.Object));

@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
             Assert.AreEqual(0, result.Data);
             Assert.AreEqual(0, _journeyAdded.Id);
             Assert.AreEqual(TestJourney, _journeyAdded.Title);
-            Assert.AreEqual(TestPlant, _journeyAdded.Schema);
+            Assert.AreEqual(TestPlant, _journeyAdded.Plant);
         }
 
         [TestMethod]

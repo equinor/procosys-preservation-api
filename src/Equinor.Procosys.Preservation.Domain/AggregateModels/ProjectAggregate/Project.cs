@@ -5,7 +5,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Project : SchemaEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class Project : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         private readonly List<Tag> _tags = new List<Tag>();
         
@@ -17,8 +17,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public Project(string schema, string name, string description)
-            : base(schema)
+        public Project(string plant, string name, string description)
+            : base(plant)
         {
             Name = name;
             Description = description;
@@ -40,9 +40,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(tag));
             }
 
-            if (tag.Schema != Schema)
+            if (tag.Plant != Plant)
             {
-                throw new ArgumentException($"Can't relate item in {tag.Schema} to item in {Schema}");
+                throw new ArgumentException($"Can't relate item in {tag.Plant} to item in {Plant}");
             }
 
             _tags.Add(tag);
