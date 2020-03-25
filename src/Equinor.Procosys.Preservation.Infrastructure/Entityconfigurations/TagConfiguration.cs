@@ -35,8 +35,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.AreaCode)
                 .HasMaxLength(Tag.AreaCodeLengthMax);
 
+            builder.Property(x => x.AreaDescription)
+                .HasMaxLength(Tag.AreaDescriptionLengthMax);
+
             builder.Property(x => x.DisciplineCode)
                 .HasMaxLength(Tag.DisciplineCodeLengthMax);
+
+            builder.Property(x => x.DisciplineDescription)
+                .HasMaxLength(Tag.DisciplineDescriptionLengthMax);
 
             builder
                 .HasMany(x => x.Requirements)
