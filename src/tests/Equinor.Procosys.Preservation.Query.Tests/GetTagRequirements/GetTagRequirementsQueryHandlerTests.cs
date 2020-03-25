@@ -109,15 +109,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     TagType.Standard, 
                     "TagNo",
                     "Description",
-                    "AreaCode",
-                    "Calloff",
-                    "DisciplineCode",
-                    "McPkgNo",
-                    "CommPkgNo",
-                    "PurchaseOrderNo",
-                    "Remark",
-                    "SA",
-                    "TagFunctionCode",
                     journey.Steps.ElementAt(0),
                     new List<Requirement>
                     {

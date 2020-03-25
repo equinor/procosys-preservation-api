@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             requirementMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", "", "", "", "", "", "", "", "", "", stepMock.Object, new List<TagRequirement>
+            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
             {
                 _requirement
             });

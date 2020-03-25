@@ -42,8 +42,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             };
 
             var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1");
-            project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagNo1", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "R", "SA", "TF", step, requirements));
-            project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagX", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "R", "SA", "TF", step, requirements));
+            project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagNo1", "Desc", step, requirements));
+            project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagX", "Desc", step, requirements));
             var testTagMock = new Mock<Tag>();
             testTagMock.SetupGet(t => t.Id).Returns(TestTagId);
             testTagMock.SetupGet(t => t.Plant).Returns(TestPlant);
