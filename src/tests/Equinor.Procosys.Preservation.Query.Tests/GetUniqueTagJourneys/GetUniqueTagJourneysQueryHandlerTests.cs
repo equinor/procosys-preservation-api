@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
                 var result = await dut.Handle(_queryForProject1, default);
                 Assert.AreEqual(2, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Journey1With2Steps.Title));
-                Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Journey2With1Steps.Title));
+                Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Journey2With1Step.Title));
 
                 result = await dut.Handle(new GetUniqueTagJourneysQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
