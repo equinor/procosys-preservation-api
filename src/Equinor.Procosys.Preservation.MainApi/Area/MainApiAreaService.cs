@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Area
 
             var url = $"{_baseAddress}Library/Area" +
                       $"?plantId={plant}" +
-                      $"code={code}" +
+                      $"&code={code}" +
                       $"&api-version={_apiVersion}";
 
             return await _mainApiClient.QueryAndDeserialize<ProcosysArea>(url);
