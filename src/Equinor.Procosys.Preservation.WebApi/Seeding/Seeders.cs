@@ -95,17 +95,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                         TagType.Standard,
                         $"TagNo-{i}",
                         "Description",
-                        "AreaCode",
-                        "CalloffNo",
-                        "DisciplineCode",
-                        "McPkgNo",
-                        "CommPkgNo",
-                        "PoNo",
-                        "Remark",
-                        "SA",
-                        "TagFunctionCode",
                         steps[rand.Next(steps.Count)],
-                        requirements);
+                        requirements)
+                    {
+                        AreaCode = "AreaCode",
+                        Calloff = "CallOffNo",
+                        CommPkgNo = "CommPkgNo",
+                        DisciplineCode = "DisciplineCode",
+                        McPkgNo = "McPkgNo",
+                        PurchaseOrderNo = "PoNo",
+                        Remark = "Remark",
+                        StorageArea = "SA",
+                        TagFunctionCode = "TFC"
+                    };
 
                     project.AddTag(tag);
                 }
