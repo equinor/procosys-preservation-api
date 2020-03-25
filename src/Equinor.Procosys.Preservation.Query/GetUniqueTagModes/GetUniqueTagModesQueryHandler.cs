@@ -23,16 +23,16 @@ namespace Equinor.Procosys.Preservation.Query.GetUniqueTagModes
         {
             var modes = await
                 (from mode in _context.QuerySet<Mode>()
-                 join step in _context.QuerySet<Step>()
-                     on mode.Id equals EF.Property<int>(step, "ModeId")
-                 join tag in _context.QuerySet<Tag>()
-                     on step.Id equals tag.StepId
-                 join project in _context.QuerySet<Project>()
-                     on EF.Property<int>(tag, "ProjectId") equals project.Id
-                 where project.Name == request.ProjectName
-                 select new ModeDto(
-                     mode.Id,
-                     mode.Title))
+                    join step in _context.QuerySet<Step>()
+                        on mode.Id equals EF.Property<int>(step, "ModeId")
+                    join tag in _context.QuerySet<Tag>()
+                        on step.Id equals tag.StepId
+                    join project in _context.QuerySet<Project>()
+                        on EF.Property<int>(tag, "ProjectId") equals project.Id
+                    where project.Name == request.ProjectName
+                    select new ModeDto(
+                        mode.Id,
+                        mode.Title))
                 .Distinct()
                 .ToListAsync(cancellationToken);
 
