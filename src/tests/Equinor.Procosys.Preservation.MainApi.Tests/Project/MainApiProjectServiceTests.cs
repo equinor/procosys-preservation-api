@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
                 .Setup(x => x.IsPlantValidAsync(_plant))
                 .Returns(Task.FromResult(true));
 
-            _result = new ProcosysProject {Id = 1, Name = _name, Description = _description,};
+            _result = new ProcosysProject {Id = 1, Name = _name, Description = _description};
         }
 
         [TestMethod]

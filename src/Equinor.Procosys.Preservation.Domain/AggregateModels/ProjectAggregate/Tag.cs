@@ -133,6 +133,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentException($"Can't relate item in {requirement.Plant} to item in {Plant}");
             }
+            
+            if (_requirements.Any(r => r.RequirementDefinitionId == requirement.RequirementDefinitionId))
+            {
+                throw new ArgumentException($"{nameof(Tag)} {TagNo} already have requirement with definition {requirement.RequirementDefinitionId}");
+            }
 
             _requirements.Add(requirement);
             UpdateNextDueTimeUtc();

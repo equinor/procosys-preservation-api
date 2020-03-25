@@ -52,6 +52,38 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagFunction
             Assert.ThrowsException<ArgumentNullException>(() => _dut.AddRequirement(null));
 
         [TestMethod]
+        public void RemoveRequirement_ShouldRemoveRequirementFromRequirementsList()
+        {
+            var reqMock = new Mock<TagFunctionRequirement>();
+            reqMock.SetupGet(s => s.Plant).Returns(TestPlant);
+
+            _dut.AddRequirement(reqMock.Object);
+
+            Assert.AreEqual(1, _dut.Requirements.Count);
+            Assert.IsTrue(_dut.Requirements.Contains(reqMock.Object));
+
+            _dut.RemoveRequirement(reqMock.Object);
+
+            Assert.AreEqual(0, _dut.Requirements.Count);
+        }
+
+        [TestMethod]
+        public void RemoveRequirement_ShouldDoNothingIdWhenRequirementNotExist()
+        {
+            var reqMock = new Mock<TagFunctionRequirement>();
+            reqMock.SetupGet(s => s.Plant).Returns(TestPlant);
+
+            Assert.AreEqual(0, _dut.Requirements.Count);
+
+            _dut.RemoveRequirement(reqMock.Object);
+            Assert.AreEqual(0, _dut.Requirements.Count);
+        }
+        
+        [TestMethod]
+        public void RemoveRequirement_ShouldThrowException_WhenRequirementNotGiven() =>
+            Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveRequirement(null));
+
+        [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()
         {
             Assert.IsFalse(_dut.IsVoided);

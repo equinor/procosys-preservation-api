@@ -7,7 +7,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MockQueryable.Moq;
 using Moq;
@@ -19,10 +18,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
     {
         private const string ProjectNameWithTags = "ProjectName1";
         private const string ProjectNameWithoutTags = "ProjectName2";
-        private List<Project> _projects;
         private const int TestTagId = 71;
-        private Mock<Tag> _testTagMock;
-        private Mock<DbSet<Project>> _dbSetMock;
 
         private ProjectRepository _dut;
 
@@ -48,21 +44,21 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1");
             project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagNo1", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "R", "SA", "TF", step, requirements));
             project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagX", "Desc", "A", "CO", "Di", "MNo", "CNo", "PO", "R", "SA", "TF", step, requirements));
-            _testTagMock = new Mock<Tag>();
-            _testTagMock.SetupGet(t => t.Id).Returns(TestTagId);
-            _testTagMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            project1.AddTag(_testTagMock.Object);
+            var testTagMock = new Mock<Tag>();
+            testTagMock.SetupGet(t => t.Id).Returns(TestTagId);
+            testTagMock.SetupGet(t => t.Plant).Returns(TestPlant);
+            project1.AddTag(testTagMock.Object);
             
             var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2");
 
-            _projects = new List<Project> {project1, project2};
+            var projects = new List<Project> {project1, project2};
             
-            _dbSetMock = _projects.AsQueryable().BuildMockDbSet();
+            var dbSetMock = projects.AsQueryable().BuildMockDbSet();
 
             ContextHelper
                 .ContextMock
                 .Setup(x => x.Projects)
-                .Returns(_dbSetMock.Object);
+                .Returns(dbSetMock.Object);
 
             _dut = new ProjectRepository(ContextHelper.ContextMock.Object);
         }

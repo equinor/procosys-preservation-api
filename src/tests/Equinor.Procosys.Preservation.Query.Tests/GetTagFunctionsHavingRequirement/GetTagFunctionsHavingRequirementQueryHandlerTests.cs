@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionsHavingRequire
         }
 
         [TestMethod]
-        public async Task HandleGetTagFunctionQuery_NoTagFunction_ShouldReturnEmptyList()
+        public async Task HandleGetTagFunctionQuery_NoTagFunctiona_ShouldReturnEmptyList()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionsHavingRequire
         }
 
         [TestMethod]
-        public async Task HandleGetTagFunctionQuery_KnownTagFunctionWithRequirement_ShouldReturnTagFunctionWithAllPropertiesSet()
+        public async Task HandleGetTagFunctionQuery_KnownTagFunction_ShouldReturnTagFunctionWithAllPropertiesSet()
         {
             TagFunction tf;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

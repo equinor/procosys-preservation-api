@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
@@ -62,7 +63,27 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
                 throw new ArgumentException($"Can't relate item in {requirement.Plant} to item in {Plant}");
             }
 
+            if (_requirements.Any(r => r.RequirementDefinitionId == requirement.RequirementDefinitionId))
+            {
+                throw new ArgumentException($"{nameof(TagFunction)} {Code} in register {RegisterCode} already have requirement with definition {requirement.RequirementDefinitionId}");
+            }
+
             _requirements.Add(requirement);
+        }
+
+        public void RemoveRequirement(TagFunctionRequirement requirement)
+        {
+            if (requirement == null)
+            {
+                throw new ArgumentNullException(nameof(requirement));
+            }
+            
+            if (requirement.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't remove item in {requirement.Plant} from item in {Plant}");
+            }
+
+            _requirements.Remove(requirement);
         }
 
         public void SetCreated(Person createdBy)
