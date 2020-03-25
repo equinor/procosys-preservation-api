@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions
 {
-    public static class SchemaConfigurationExtensions
+    public static class PlantConfigurationExtensions
     {
-        public static void ConfigureSchema<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : PlantEntityBase =>
+        public static void ConfigurePlant<TEntity>(this EntityTypeBuilder<TEntity> builder) where TEntity : PlantEntityBase =>
             builder.Property(x => x.Plant)
                 .HasMaxLength(PlantEntityBase.PlantLengthMax)
                 .IsRequired();

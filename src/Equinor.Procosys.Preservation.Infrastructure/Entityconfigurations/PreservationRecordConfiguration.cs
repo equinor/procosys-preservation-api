@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<PreservationRecord> builder)
         {
-            builder.ConfigureSchema();
+            builder.ConfigurePlant();
             builder.ConfigureCreationAudit();
 
             builder.Property(x => x.PreservedAtUtc)

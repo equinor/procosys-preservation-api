@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 
         public void Configure(EntityTypeBuilder<Requirement> builder)
         {
-            builder.ConfigureSchema();
+            builder.ConfigurePlant();
             builder.ConfigureCreationAudit();
             builder.ConfigureModificationAudit();
 
