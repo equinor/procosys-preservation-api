@@ -30,15 +30,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             TagType tagType,
             string tagNo,
             string description,
-            string areaCode,
-            string calloff,
-            string disciplineCode,
-            string mcPkgNo,
-            string commPkgNo,
-            string purchaseOrderNo,
-            string remark,
-            string storageArea,
-            string tagFunctionCode,
             Step step, 
             IEnumerable<Requirement> requirements)
             : base(plant)
@@ -72,32 +63,23 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
             Description = description;
-            AreaCode = areaCode;
-            Calloff = calloff;
-            DisciplineCode = disciplineCode;
-            McPkgNo = mcPkgNo;
-            CommPkgNo = commPkgNo;
-            PurchaseOrderNo = purchaseOrderNo;
-            Remark = remark;
-            StorageArea = storageArea;
-            TagFunctionCode = tagFunctionCode;
             StepId = step.Id;
             _requirements.AddRange(reqList);
         }
 
         public PreservationStatus Status { get; private set; }
-        public string AreaCode { get; private set; }
-        public string Calloff { get; private set; }
-        public string CommPkgNo { get; private set; }
-        public string DisciplineCode { get; private set; }
+        public string AreaCode { get; set; }
+        public string Calloff { get; set; }
+        public string CommPkgNo { get; set; }
+        public string DisciplineCode { get; set; }
         public TagType TagType { get; private set; }
-        public string McPkgNo { get; private set; }
+        public string McPkgNo { get; set; }
         public string Description { get; private set; }
-        public string PurchaseOrderNo { get; private set; }
-        public string Remark { get; private set; }
-        public string StorageArea { get; private set; }
+        public string PurchaseOrderNo { get; set; }
+        public string Remark { get; set; }
+        public string StorageArea { get; set; }
         public int StepId { get; private set; }
-        public string TagFunctionCode { get; private set; }
+        public string TagFunctionCode { get; set; }
         public string TagNo { get; private set; }
         public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,17 +76,19 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                     TagType.Standard,
                     tagNo,
                     tagDetails.Description,
-                    tagDetails.AreaCode,
-                    tagDetails.CallOffNo,
-                    tagDetails.DisciplineCode,
-                    tagDetails.McPkgNo,
-                    tagDetails.CommPkgNo,
-                    tagDetails.PurchaseOrderNo,
-                    request.Remark,
-                    request.StorageArea,
-                    tagDetails.TagFunctionCode,
                     step,
-                    requirements);
+                    requirements)
+                {
+                    AreaCode = tagDetails.AreaCode,
+                    Calloff = tagDetails.CallOffNo,
+                    CommPkgNo = tagDetails.CommPkgNo,
+                    DisciplineCode = tagDetails.DisciplineCode,
+                    McPkgNo = tagDetails.McPkgNo,
+                    PurchaseOrderNo = tagDetails.PurchaseOrderNo,
+                    Remark = request.Remark,
+                    StorageArea = request.StorageArea,
+                    TagFunctionCode = tagDetails.TagFunctionCode
+                };
             
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);

@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo, string description, Step step, IEnumerable<Requirement> requirements)
         {
-            var tag = new Tag(TestPlant, tagType, tagNo, description, "", "", "", "", "", "", "", "", "", step, requirements);
+            var tag = new Tag(TestPlant, tagType, tagNo, description, step, requirements);
             parentProject.AddTag(tag);
             context.SaveChangesAsync().Wait();
             return tag;
@@ -214,20 +214,25 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     TagType.Standard,
                     $"{testDataSet.StdTagPrefix}-{i}",
                     "Description",
-                    $"{testDataSet.AreaPrefix}-{i}",
-                    $"{testDataSet.CallOffPrefix}-{i}",
-                    $"{testDataSet.DisciplinePrefix}-{i}",
-                    $"{testDataSet.McPkgPrefix}-{i}",
-                    $"{testDataSet.CommPkgPrefix}-{i}",
-                    $"{testDataSet.PoPrefix}-{i}",
-                    "Remark",
-                    $"{testDataSet.StorageAreaPrefix}-{i}",
-                    $"{testDataSet.TagFunctionPrefix}-{i}",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),
                     new List<Requirement>
                     {
-                        new Requirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
-                    });
+                        new Requirement(
+                            TestPlant,
+                            testDataSet.IntervalWeeks,
+                            testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
+                    })
+                {
+                    AreaCode = $"{testDataSet.AreaPrefix}-{i}",
+                    Calloff = $"{testDataSet.CallOffPrefix}-{i}",
+                    DisciplineCode = $"{testDataSet.DisciplinePrefix}-{i}",
+                    McPkgNo = $"{testDataSet.McPkgPrefix}-{i}",
+                    CommPkgNo = $"{testDataSet.CommPkgPrefix}-{i}",
+                    PurchaseOrderNo = $"{testDataSet.PoPrefix}-{i}",
+                    Remark = "Remark",
+                    StorageArea = $"{testDataSet.StorageAreaPrefix}-{i}",
+                    TagFunctionCode = $"{testDataSet.TagFunctionPrefix}-{i}"
+                };
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -238,20 +243,25 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     TagType.SiteArea,
                     $"{testDataSet.SiteTagPrefix}-{i}",
                     "Description",
-                    $"{testDataSet.AreaPrefix}-{i}",
-                    $"{testDataSet.CallOffPrefix}-{i}",
-                    $"{testDataSet.DisciplinePrefix}-{i}",
-                    $"{testDataSet.McPkgPrefix}-{i}",
-                    $"{testDataSet.CommPkgPrefix}-{i}",
-                    $"{testDataSet.PoPrefix}-{i}",
-                    "Remark",
-                    $"{testDataSet.StorageAreaPrefix}-{i}",
-                    $"{testDataSet.TagFunctionPrefix}-{i}",
                     testDataSet.Journey2With1Step.Steps.ElementAt(0),
                     new List<Requirement>
                     {
-                        new Requirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType2.RequirementDefinitions.ElementAt(0))
-                    });
+                        new Requirement(
+                            TestPlant,
+                            testDataSet.IntervalWeeks,
+                            testDataSet.ReqType2.RequirementDefinitions.ElementAt(0))
+                    })
+                {
+                    AreaCode = $"{testDataSet.AreaPrefix}-{i}",
+                    Calloff = $"{testDataSet.CallOffPrefix}-{i}",
+                    DisciplineCode = $"{testDataSet.DisciplinePrefix}-{i}",
+                    McPkgNo = $"{testDataSet.McPkgPrefix}-{i}",
+                    CommPkgNo = $"{testDataSet.CommPkgPrefix}-{i}",
+                    PurchaseOrderNo = $"{testDataSet.PoPrefix}-{i}",
+                    Remark = "Remark",
+                    StorageArea = $"{testDataSet.StorageAreaPrefix}-{i}",
+                    TagFunctionCode = $"{testDataSet.TagFunctionPrefix}-{i}"
+                };
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -262,15 +272,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     TagType.Standard,
                     $"Another-{i}",
                     "Description",
-                    "AreaCode",
-                    "Calloff",
-                    "DisciplineCode",
-                    "McPkgNo",
-                    "CommPkgNo",
-                    "PurchaseOrderNo",
-                    "Remark",
-                    "StorageArea",
-                    "TagFunctionCode",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),
                     new List<Requirement>
                     {
