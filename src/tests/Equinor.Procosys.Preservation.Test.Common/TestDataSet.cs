@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         public Mode Mode2 { get; set; }
         public Responsible Responsible2 { get; set; }
         public Journey Journey1With2Steps { get; set; }
-        public Journey Journey2With1Steps { get; set; }
+        public Journey Journey2With1Step { get; set; }
         public RequirementType ReqType1 { get; set; }
         public RequirementType ReqType2 { get; set; }
         public Person CurrentUser { get; set; }
