@@ -48,43 +48,61 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
         public async Task<Result<int>> Handle(CreateAreaTagCommand request, CancellationToken cancellationToken)
         {
-            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
-
-            var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
-            var reqDefs =
-                await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
-
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
             
             if (project == null)
             {
-                var mainProject = await _projectApiService.GetProject(_plantProvider.Plant, request.ProjectName);
-                if (mainProject == null)
+                project = await CreateProjectAsync(request.ProjectName);
+                if (project == null)
                 {
                     return new NotFoundResult<int>($"Project with name {request.ProjectName} not found");
                 }
-                project = new Project(_plantProvider.Plant, request.ProjectName, mainProject.Description);
-                _projectRepository.Add(project);
             }
 
-            var disciplines = await _disciplineApiService.GetDisciplines(_plantProvider.Plant);
-            var discipline = disciplines.SingleOrDefault(d => d.Code == request.DisciplineCode);
-            if (discipline == null)
+            var areaTagToAdd = await CreateAreaTagAsync(project, request);
+
+            if (!string.IsNullOrEmpty(request.AreaCode) && !await FillAreaDataAsync(areaTagToAdd, request.AreaCode))
+            {
+                return new NotFoundResult<int>($"Area with code {request.AreaCode} not found");
+            }
+
+            if (!await FillDisciplineDataAsync(areaTagToAdd, request.DisciplineCode))
             {
                 return new NotFoundResult<int>($"Discipline with code {request.DisciplineCode} not found");
             }
+            
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            if (!string.IsNullOrEmpty(request.AreaCode))
+            return new SuccessResult<int>(areaTagToAdd.Id);
+        }
+
+        private async Task<bool> FillDisciplineDataAsync(Tag tag, string disciplineCode)
+        {
+            var discipline = await _disciplineApiService.GetDiscipline(_plantProvider.Plant, disciplineCode);
+            if (discipline == null)
             {
-                var areas = await _areaApiService.GetAreas(_plantProvider.Plant);
-
-                var area = areas.SingleOrDefault(a => a.Code == request.AreaCode);
-
-                if (area == null)
-                {
-                    return new NotFoundResult<int>($"Area with code {request.AreaCode} not found");
-                }
+                return false;
             }
+            tag.SetDiscipline(disciplineCode, discipline.Description);
+            return true;
+        }
+
+        private async Task<bool> FillAreaDataAsync(Tag tag, string areaCode)
+        {
+            var area = await _areaApiService.GetArea(_plantProvider.Plant, areaCode);
+            if (area == null)
+            {
+                return false;
+            }
+            tag.SetArea(areaCode, area.Description);
+            return true;
+        }
+
+        private async Task<Tag> CreateAreaTagAsync(Project project, CreateAreaTagCommand request)
+        {
+            var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
+            var reqDefs =
+                await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
             var requirements = new List<TagRequirement>();
             foreach (var requirement in request.Requirements)
@@ -93,7 +111,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
             }
 
-            var tagToAdd = new Tag(
+            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
+            var tag = new Tag(
                 _plantProvider.Plant,
                 request.TagType,
                 request.GetTagNo(),
@@ -104,14 +123,21 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 Remark = request.Remark,
                 StorageArea = request.StorageArea
             };
-            tagToAdd.SetArea(request.AreaCode, "ToDo");
-            tagToAdd.SetDiscipline(request.DisciplineCode, "ToDo");
-            
-            project.AddTag(tagToAdd);
-            
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            project.AddTag(tag);
+            return tag;
+        }
 
-            return new SuccessResult<int>(tagToAdd.Id);
+        private async Task<Project> CreateProjectAsync(string projectName)
+        {
+            var mainProject = await _projectApiService.GetProject(_plantProvider.Plant, projectName);
+            if (mainProject == null)
+            {
+                return null;
+            }
+
+            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description);
+            _projectRepository.Add(project);
+            return project;
         }
     }
 }

@@ -22,6 +22,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         private const int ReqDefId2 = 199;
         private const int Interval1 = 2;
         private const int Interval2 = 3;
+        private const string DisciplineDescription = "DisciplineDescription";
+        private const string AreaDescription = "AreaDescription";
 
         private Mock<Step> _stepMock;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
@@ -67,25 +69,26 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2}))
                 .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
 
-            var disciplineCode = "D";
-            var areaCode = "A";
-
             _projectApiServiceMock = new Mock<IProjectApiService>();
             _projectApiServiceMock.Setup(s => s.GetProject(TestPlant, TestProjectName))
                 .Returns(Task.FromResult(new ProcosysProject {Description = "ProjectDescription"}));
 
+            var disciplineCode = "D";
             _disciplineApiServiceMock = new Mock<IDisciplineApiService>();
-            _disciplineApiServiceMock.Setup(s => s.GetDisciplines(TestPlant))
-                .Returns(Task.FromResult(new List<ProcosysDiscipline>
+            _disciplineApiServiceMock.Setup(s => s.GetDiscipline(TestPlant, disciplineCode))
+                .Returns(Task.FromResult(new ProcosysDiscipline
                 {
-                    new ProcosysDiscipline {Code = disciplineCode, Description = "DisciplineDescription"}
+                    Code = disciplineCode,
+                    Description = DisciplineDescription
                 }));
 
+            var areaCode = "A";
             _areaApiServiceMock = new Mock<IAreaApiService>();
-            _areaApiServiceMock.Setup(s => s.GetAreas(TestPlant))
-                .Returns(Task.FromResult(new List<ProcosysArea>
+            _areaApiServiceMock.Setup(s => s.GetArea(TestPlant, areaCode))
+                .Returns(Task.FromResult(new ProcosysArea
                 {
-                    new ProcosysArea {Code = areaCode, Description = "AreaDescription"}
+                    Code = areaCode,
+                    Description = AreaDescription
                 }));
 
             _command = new CreateAreaTagCommand(
@@ -200,9 +203,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         private void AssertTagProperties(CreateAreaTagCommand command, Tag tagAddedToProject)
         {
             Assert.AreEqual(command.AreaCode, tagAddedToProject.AreaCode);
+            Assert.AreEqual(AreaDescription, tagAddedToProject.AreaDescription);
             Assert.IsNull(tagAddedToProject.Calloff);
             Assert.IsNull(tagAddedToProject.CommPkgNo);
             Assert.AreEqual(command.DisciplineCode, tagAddedToProject.DisciplineCode);
+            Assert.AreEqual(DisciplineDescription, tagAddedToProject.DisciplineDescription);
             Assert.AreEqual(command.TagType, tagAddedToProject.TagType);
             Assert.IsNull(tagAddedToProject.McPkgNo);
             Assert.AreEqual(command.Description, tagAddedToProject.Description);
