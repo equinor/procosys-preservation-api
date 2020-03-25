@@ -87,8 +87,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                     StorageArea = request.StorageArea,
                     TagFunctionCode = tagDetails.TagFunctionCode
                 };
-                tagToAdd.SetArea(tagDetails.AreaCode, "ToDo");
-                tagToAdd.SetDiscipline(tagDetails.DisciplineCode, "ToDo");
+                tagToAdd.SetArea(tagDetails.AreaCode, tagDetails.AreaDescription);
+                tagToAdd.SetDiscipline(tagDetails.DisciplineCode, tagDetails.DisciplineDescription);
 
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
