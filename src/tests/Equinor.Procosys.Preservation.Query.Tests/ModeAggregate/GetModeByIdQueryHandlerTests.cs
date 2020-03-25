@@ -1,48 +1,51 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
+using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
 {
     [TestClass]
-    public class GetModeByIdQueryHandlerTests
+    public class GetModeByIdQueryHandlerTests : ReadOnlyTestsBase
     {
-        private const int ModeId = 72;
-        private Mock<IModeRepository> _modeRepoMock;
+        private Mode _mode;
 
-        private GetModeByIdQueryHandler _dut;
-
-        [TestInitialize]
-        public void Setup()
+        protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            var modeMock = new Mock<Mode>();
-            modeMock.SetupGet(m => m.Id).Returns(ModeId);
-
-            _modeRepoMock = new Mock<IModeRepository>();
-            _modeRepoMock.Setup(r => r.GetByIdAsync(ModeId))
-                .Returns(Task.FromResult(modeMock.Object));
-            
-            _dut = new GetModeByIdQueryHandler(_modeRepoMock.Object);
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                _mode = AddMode(context, "M");
+            }
         }
 
         [TestMethod]
         public async Task HandleGetModeByIdQueryHandler_KnownId_ShouldReturnMode()
         {
-            var result = await _dut.Handle(new GetModeByIdQuery(ModeId), default);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetModeByIdQueryHandler(context);
+                var result = await dut.Handle(new GetModeByIdQuery(_mode.Id), default);
 
-            var mode = result.Data;
+                var mode = result.Data;
             
-            Assert.AreEqual(ModeId, mode.Id);
+                Assert.AreEqual(_mode.Id, mode.Id);
+                Assert.AreEqual(_mode.Title, mode.Title);
+            }
         }
 
         [TestMethod]
         public async Task HandleGetModeByIdQueryHandler_UnknownId_ShouldReturnNull()
         {
-            var result = await _dut.Handle(new GetModeByIdQuery(1235), default);
-
-            Assert.IsNull(result.Data);
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
+            {
+                var dut = new GetModeByIdQueryHandler(context);
+                var result = await dut.Handle(new GetModeByIdQuery(1235), default);
+                Assert.IsNull(result.Data);
+            }
         }
     }
 }

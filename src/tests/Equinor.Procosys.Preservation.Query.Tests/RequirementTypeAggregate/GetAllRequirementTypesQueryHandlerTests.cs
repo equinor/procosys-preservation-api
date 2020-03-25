@@ -12,27 +12,26 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
     [TestClass]
     public class GetAllRequirementTypesQueryHandlerTests : ReadOnlyTestsBase
     {
-        private readonly string _rtType1 = "T1";
-        private readonly string _rdTitle1 = "D1";
         private readonly string _numberLabel = "TestLabel";
         private readonly string _numberUnit = "TestUnit";
-        private int _reqType1Id;
+        private RequirementType _reqType1;
+        private RequirementDefinition _reqDef1;
+        private RequirementDefinition _reqDef2;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqType1 = AddRequirementTypeWith1DefWithoutField(context, _rtType1, _rdTitle1, 999);
-                _reqType1Id = reqType1.Id;
+                _reqType1 = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", 999);
 
-                var rd1 = reqType1.RequirementDefinitions.First();
-                var rd2 = new RequirementDefinition(TestPlant, "D2", 2, 1);
-                rd2.Void();
-                reqType1.AddRequirementDefinition(rd2);
+                _reqDef1 = _reqType1.RequirementDefinitions.First();
+                _reqDef2 = new RequirementDefinition(TestPlant, "D2", 2, 1);
+                _reqDef2.Void();
+                _reqType1.AddRequirementDefinition(_reqDef2);
                 context.SaveChangesAsync().Wait();
 
-                AddNumberField(context, rd1, _numberLabel, _numberUnit, true);
-                var f = AddNumberField(context, rd1, "NUMBER", "mm", true);
+                AddNumberField(context, _reqDef1, _numberLabel, _numberUnit, true);
+                var f = AddNumberField(context, _reqDef1, "NUMBER", "mm", true);
                 f.Void();
                 context.SaveChangesAsync().Wait();
 
@@ -53,16 +52,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 var result = await dut.Handle(new GetAllRequirementTypesQuery(false), default);
 
                 var requirementTypes = result.Data.ToList();
-                var requirementTypeDto = requirementTypes.Single(rt => rt.Id == _reqType1Id);
-                var requirementDefinitions = requirementTypeDto.RequirementDefinitions.ToList();
-                var requirementDefinitionDto = requirementDefinitions.Single();
+                var requirementTypeDto = requirementTypes.Single(rt => rt.Id == _reqType1.Id);
+                var requirementDefinitionDto = requirementTypeDto.RequirementDefinitions.Single();
                 var fields = requirementDefinitionDto.Fields.ToList();
 
-                Assert.AreEqual(_rtType1, requirementTypeDto.Code);
-                Assert.AreEqual($"Title{_rtType1}", requirementTypeDto.Title);
+                Assert.AreEqual(_reqType1.Code, requirementTypeDto.Code);
+                Assert.AreEqual(_reqType1.Title, requirementTypeDto.Title);
                 Assert.IsFalse(requirementTypeDto.IsVoided);
 
-                Assert.AreEqual(_rdTitle1, requirementDefinitionDto.Title);
+                Assert.AreEqual(_reqDef1.Title, requirementDefinitionDto.Title);
                 Assert.IsFalse(requirementDefinitionDto.IsVoided);
 
                 var fieldDto = fields[0];
@@ -84,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 var result = await dut.Handle(new GetAllRequirementTypesQuery(true), default);
 
                 var requirementTypes = result.Data.ToList();
-                var requirementDefinitions = requirementTypes.First(rt => rt.Id == _reqType1Id).RequirementDefinitions.ToList();
+                var requirementDefinitions = requirementTypes.First(rt => rt.Id == _reqType1.Id).RequirementDefinitions.ToList();
                 var fields = requirementDefinitions.First(rd => !rd.IsVoided).Fields.ToList();
 
                 Assert.AreEqual(4, requirementTypes.Count);

@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
         protected Responsible AddResponsible(PreservationContext context, string code)
         {
-            var responsible = new Responsible(TestPlant, code, "Title");
+            var responsible = new Responsible(TestPlant, code, $"{code}-Title");
             context.Responsibles.Add(responsible);
             context.SaveChangesAsync().Wait();
             return responsible;
@@ -148,6 +148,14 @@ namespace Equinor.Procosys.Preservation.Test.Common
         protected Field AddCheckBoxField(PreservationContext context, RequirementDefinition rd, string label)
         {
             var field = new Field(TestPlant, label, FieldType.CheckBox, 0);
+            rd.AddField(field);
+            context.SaveChangesAsync().Wait();
+            return field;
+        }
+
+        protected Field AddAttachmentField(PreservationContext context, RequirementDefinition rd, string label)
+        {
+            var field = new Field(TestPlant, label, FieldType.Attachment, 0);
             rd.AddField(field);
             context.SaveChangesAsync().Wait();
             return field;

@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                                     .Single();
                                 var responsibleDto = responsibles
                                     .Where(r => r.Id == s.ResponsibleId)
-                                    .Select(r => new ResponsibleDto(r.Id, r.Code))
+                                    .Select(r => new ResponsibleDto(r.Id, r.Code, r.Title))
                                     .Single();
                                 return new StepDto(s.Id, s.Title, s.IsVoided, modeDto, responsibleDto);
                             })));
