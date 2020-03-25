@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.GetUniqueTagModes
             var modes = await
                 (from mode in _context.QuerySet<Mode>()
                     join step in _context.QuerySet<Step>()
-                        on mode.Id equals EF.Property<int>(step, "ModeId")
+                        on mode.Id equals step.ModeId
                     join tag in _context.QuerySet<Tag>()
                         on step.Id equals tag.StepId
                     join project in _context.QuerySet<Project>()
