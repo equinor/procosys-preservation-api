@@ -51,8 +51,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
                 result = await dut.Handle(new GetUniqueTagModesQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Mode1.Title));
+            }
+        }
 
-                result = await dut.Handle(new GetUniqueTagModesQuery("Unknown"), default);
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueModes()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
+            {
+                var dut = new GetUniqueTagModesQueryHandler(context);
+
+                var result = await dut.Handle(new GetUniqueTagModesQuery("Unknown"), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }

@@ -52,8 +52,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
                 result = await dut.Handle(new GetUniqueTagJourneysQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Journey1With2Steps.Title));
+            }
+        }
 
-                result = await dut.Handle(new GetUniqueTagJourneysQuery("Unknown"), default);
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueJourneys()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetUniqueTagJourneysQueryHandler(context);
+
+                var result = await dut.Handle(new GetUniqueTagJourneysQuery("Unknown"), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }
