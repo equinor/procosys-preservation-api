@@ -8,7 +8,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Requirement = Equinor.Procosys.Preservation.Command.TagCommands.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
 {
@@ -137,7 +136,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(2, result.Data.Count);
-            Assert.AreEqual(0, _projectAddedToRepository.Id);
             Assert.AreEqual(TestProjectName, _projectAddedToRepository.Name);
             Assert.AreEqual(TestProjectDescription, _projectAddedToRepository.Description);
         }
@@ -216,7 +214,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             Assert.AreEqual(mainTagDetails.CallOffNo, tagAddedToProject.Calloff);
             Assert.AreEqual(mainTagDetails.CommPkgNo, tagAddedToProject.CommPkgNo);
             Assert.AreEqual(mainTagDetails.DisciplineCode, tagAddedToProject.DisciplineCode);
-            Assert.AreEqual(0, tagAddedToProject.Id);
             Assert.AreEqual(TagType.Standard, tagAddedToProject.TagType);
             Assert.AreEqual(mainTagDetails.McPkgNo, tagAddedToProject.McPkgNo);
             Assert.AreEqual(mainTagDetails.Description, tagAddedToProject.Description);

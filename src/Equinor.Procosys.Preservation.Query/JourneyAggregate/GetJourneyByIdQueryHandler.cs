@@ -1,32 +1,29 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 {
     public class GetJourneyByIdQueryHandler : IRequestHandler<GetJourneyByIdQuery, Result<JourneyDto>>
     {
-        private readonly IJourneyRepository _journeyRepository;
-        private readonly IModeRepository _modeRepository;
-        private readonly IResponsibleRepository _responsibleRepository;
+        private readonly IReadOnlyContext _context;
 
-        public GetJourneyByIdQueryHandler(IJourneyRepository journeyRepository, IModeRepository modeRepository, IResponsibleRepository responsibleRepository)
-        {
-            _journeyRepository = journeyRepository;
-            _modeRepository = modeRepository;
-            _responsibleRepository = responsibleRepository;
-        }
+        public GetJourneyByIdQueryHandler(IReadOnlyContext context) => _context = context;
 
         public async Task<Result<JourneyDto>> Handle(GetJourneyByIdQuery request, CancellationToken cancellationToken)
         {
-            var journey = await _journeyRepository.GetByIdAsync(request.Id);
+            var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
+                where j.Id == request.Id
+                select j).SingleOrDefaultAsync(cancellationToken);
             if (journey == null)
             {
                 return new NotFoundResult<JourneyDto>(Strings.EntityNotFound(nameof(Journey), request.Id));
@@ -35,10 +32,14 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
             var modeIds = journey.Steps.Select(x => x.ModeId);
             var responsibleIds = journey.Steps.Select(x => x.ResponsibleId);
 
-            var modes = (await _modeRepository.GetByIdsAsync(modeIds)).Select(x => new ModeDto(x.Id, x.Title));
-            var responsibles =
-                (await _responsibleRepository.GetByIdsAsync(responsibleIds)).Select(r =>
-                    new ResponsibleDto(r.Id, r.Code, r.Title));
+            var modes = await (from m in _context.QuerySet<Mode>()
+                    where modeIds.Contains(m.Id)
+                    select new ModeDto(m.Id, m.Title))
+                .ToListAsync(cancellationToken);
+            var responsibles = await (from r in _context.QuerySet<Responsible>()
+                    where responsibleIds.Contains(r.Id)
+                    select new ResponsibleDto(r.Id, r.Code, r.Title))
+                .ToListAsync(cancellationToken);
 
             var journeyDto = new JourneyDto(
                 journey.Id,
