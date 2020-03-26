@@ -101,8 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         private async Task<Tag> CreateAreaTagAsync(Project project, CreateAreaTagCommand request)
         {
             var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
-            var reqDefs =
-                await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
+            var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
             var requirements = new List<TagRequirement>();
             foreach (var requirement in request.Requirements)

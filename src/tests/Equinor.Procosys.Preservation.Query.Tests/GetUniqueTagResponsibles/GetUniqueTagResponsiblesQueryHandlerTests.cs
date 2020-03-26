@@ -51,8 +51,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
                 result = await dut.Handle(new GetUniqueTagResponsiblesQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.Responsible1.Code));
+            }
+        }
 
-                result = await dut.Handle(new GetUniqueTagResponsiblesQuery("Unknown"), default);
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueResponsibleCodes()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetUniqueTagResponsiblesQueryHandler(context);
+
+                var result = await dut.Handle(new GetUniqueTagResponsiblesQuery("Unknown"), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }

@@ -41,8 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         public async Task<Result<List<int>>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
             var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
-            var reqDefs =
-                await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
+            var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
