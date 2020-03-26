@@ -61,7 +61,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                     _projectRepository.Add(project);
                 }
 
-                var tagToAdd = await CreateTagAsync(project, tagDetails, request, reqDefs);
+                var tagToAdd = await CreateTagAsync(tagDetails, request, reqDefs);
+                project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
             }
             
@@ -70,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());
         }
 
-        private async Task<Tag> CreateTagAsync(Project project,
+        private async Task<Tag> CreateTagAsync(
             ProcosysTagDetails tagDetails,
             CreateTagCommand request, 
             IList<RequirementDefinition> reqDefs)
@@ -101,8 +102,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             };
             tag.SetArea(tagDetails.AreaCode, tagDetails.AreaDescription);
             tag.SetDiscipline(tagDetails.DisciplineCode, tagDetails.DisciplineDescription);
-            
-            project.AddTag(tag);
             
             return tag;
         }
