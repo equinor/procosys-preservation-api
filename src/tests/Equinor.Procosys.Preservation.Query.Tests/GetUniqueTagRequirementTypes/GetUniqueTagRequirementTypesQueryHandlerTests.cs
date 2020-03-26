@@ -52,8 +52,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
                 result = await dut.Handle(new GetUniqueTagRequirementTypesQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.ReqType1.Code));
+            }
+        }
 
-                result = await dut.Handle(new GetUniqueTagRequirementTypesQuery("Unknown"), default);
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueRequirementTypes()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetUniqueTagRequirementTypesQueryHandler(context);
+
+                var result = await dut.Handle(new GetUniqueTagRequirementTypesQuery("Unknown"), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }

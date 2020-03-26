@@ -1,19 +1,19 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagModes;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
+namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
 {
     [TestClass]
-    public class GetUniqueTagJourneysQueryHandlerTests : ReadOnlyTestsBase
+    public class GetUniqueTagModesQueryHandlerTests : ReadOnlyTestsBase
     {
         private TestDataSet _testDataSet;
-        private GetUniqueTagJourneysQuery _queryForProject1;
+        private GetUniqueTagModesQuery _queryForProject1;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
             {
                 _testDataSet = AddTestDataSet(context);
 
-                _queryForProject1 = new GetUniqueTagJourneysQuery(_testDataSet.Project1.Name);
+                _queryForProject1 = new GetUniqueTagModesQuery(_testDataSet.Project1.Name);
             }
         }
 
@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetUniqueTagJourneysQueryHandler(context);
+                var dut = new GetUniqueTagModesQueryHandler(context);
                 var result = await dut.Handle(_queryForProject1, default);
 
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -38,31 +38,31 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectUniqueJourneys()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectUniqueModes()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new GetUniqueTagJourneysQueryHandler(context);
+                var dut = new GetUniqueTagModesQueryHandler(context);
 
                 var result = await dut.Handle(_queryForProject1, default);
-                Assert.AreEqual(2, result.Data.Count);
-                Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Journey1With2Steps.Title));
-                Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Journey2With1Step.Title));
-
-                result = await dut.Handle(new GetUniqueTagJourneysQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
-                Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Journey1With2Steps.Title));
+                Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Mode1.Title));
+
+                result = await dut.Handle(new GetUniqueTagModesQuery(_testDataSet.Project2.Name), default);
+                Assert.AreEqual(1, result.Data.Count);
+                Assert.IsTrue(result.Data.Any(rt => rt.Title == _testDataSet.Mode1.Title));
             }
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueJourneys()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueModes()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
             {
-                var dut = new GetUniqueTagJourneysQueryHandler(context);
+                var dut = new GetUniqueTagModesQueryHandler(context);
 
-                var result = await dut.Handle(new GetUniqueTagJourneysQuery("Unknown"), default);
+                var result = await dut.Handle(new GetUniqueTagModesQuery("Unknown"), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }

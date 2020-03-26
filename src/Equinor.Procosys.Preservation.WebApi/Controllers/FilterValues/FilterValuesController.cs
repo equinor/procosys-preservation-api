@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagModes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
 using MediatR;
@@ -35,6 +36,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<JourneyDto>>> GetJourneys([FromQuery] string projectName)
         {
             var result = await _mediator.Send(new GetUniqueTagJourneysQuery(projectName));
+            return this.FromResult(result);
+        }
+
+        [HttpGet("Modes")]
+        public async Task<ActionResult<List<ModeDto>>> GetModes([FromQuery] string projectName)
+        {
+            var result = await _mediator.Send(new GetUniqueTagModesQuery(projectName));
             return this.FromResult(result);
         }
     }
