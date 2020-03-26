@@ -101,11 +101,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 step,
                 requirements)
             {
-                AreaCode = request.AreaCode,
-                DisciplineCode = request.DisciplineCode,
                 Remark = request.Remark,
                 StorageArea = request.StorageArea
             };
+            tagToAdd.SetArea(request.AreaCode, "ToDo");
+            tagToAdd.SetDiscipline(request.DisciplineCode, "ToDo");
             
             project.AddTag(tagToAdd);
             

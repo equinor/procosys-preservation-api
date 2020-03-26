@@ -15,7 +15,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public const int TagNoLengthMax = 255;
         public const int TagFunctionCodeLengthMax = 255;
         public const int AreaCodeLengthMax = 255;
+        public const int AreaDescriptionLengthMax = 255;
         public const int DisciplineCodeLengthMax = 255;
+        public const int DisciplineDescriptionLengthMax = 255;
         public const int DescriptionLengthMax = 255;
         public const int RemarkLengthMax = 255;
         public const int StorageAreaLengthMax = 255;
@@ -68,10 +70,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public PreservationStatus Status { get; private set; }
-        public string AreaCode { get; set; }
+        public string AreaCode { get; private set; }
+        public string AreaDescription { get; private set; }
         public string Calloff { get; set; }
         public string CommPkgNo { get; set; }
-        public string DisciplineCode { get; set; }
+        public string DisciplineCode { get; private set; }
+        public string DisciplineDescription { get; private set; }
         public TagType TagType { get; private set; }
         public string McPkgNo { get; set; }
         public string Description { get; private set; }
@@ -93,6 +97,18 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
+
+        public void SetArea(string code, string description)
+        {
+            AreaCode = code;
+            AreaDescription = description;
+        }
+
+        public void SetDiscipline(string code, string description)
+        {
+            DisciplineCode = code;
+            DisciplineDescription = description;
+        }
 
         public void SetStep(Step step)
         {

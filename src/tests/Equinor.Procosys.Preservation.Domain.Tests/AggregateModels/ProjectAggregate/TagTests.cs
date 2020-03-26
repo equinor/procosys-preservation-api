@@ -854,5 +854,31 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(null));
 
         #endregion
+
+        #region SetArea
+
+        [TestMethod]
+        public void SetArea_ShouldSetAreaProperties()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.SetArea("AC", "AD");
+
+            Assert.AreEqual("AC", _dutWithOneReqNotNeedInputTwoWeekInterval.AreaCode);
+            Assert.AreEqual("AD", _dutWithOneReqNotNeedInputTwoWeekInterval.AreaDescription);
+        }
+
+        #endregion
+
+        #region SetDiscipline
+
+        [TestMethod]
+        public void SetDiscipline_ShouldSetDisciplineProperties()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.SetDiscipline("DC", "DD");
+
+            Assert.AreEqual("DC", _dutWithOneReqNotNeedInputTwoWeekInterval.DisciplineCode);
+            Assert.AreEqual("DD", _dutWithOneReqNotNeedInputTwoWeekInterval.DisciplineDescription);
+        }
+
+        #endregion
     }
 }

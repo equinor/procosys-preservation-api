@@ -79,17 +79,17 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                     step,
                     requirements)
                 {
-                    AreaCode = tagDetails.AreaCode,
                     Calloff = tagDetails.CallOffNo,
                     CommPkgNo = tagDetails.CommPkgNo,
-                    DisciplineCode = tagDetails.DisciplineCode,
                     McPkgNo = tagDetails.McPkgNo,
                     PurchaseOrderNo = tagDetails.PurchaseOrderNo,
                     Remark = request.Remark,
                     StorageArea = request.StorageArea,
                     TagFunctionCode = tagDetails.TagFunctionCode
                 };
-            
+                tagToAdd.SetArea(tagDetails.AreaCode, "ToDo");
+                tagToAdd.SetDiscipline(tagDetails.DisciplineCode, "ToDo");
+
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
             }

@@ -223,9 +223,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                             testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
                     })
                 {
-                    AreaCode = $"{testDataSet.AreaPrefix}-{i}",
                     Calloff = $"{testDataSet.CallOffPrefix}-{i}",
-                    DisciplineCode = $"{testDataSet.DisciplinePrefix}-{i}",
                     McPkgNo = $"{testDataSet.McPkgPrefix}-{i}",
                     CommPkgNo = $"{testDataSet.CommPkgPrefix}-{i}",
                     PurchaseOrderNo = $"{testDataSet.PoPrefix}-{i}",
@@ -233,6 +231,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     StorageArea = $"{testDataSet.StorageAreaPrefix}-{i}",
                     TagFunctionCode = $"{testDataSet.TagFunctionPrefix}-{i}"
                 };
+                tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
+                tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Desciption");
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -252,9 +252,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                             testDataSet.ReqType2.RequirementDefinitions.ElementAt(0))
                     })
                 {
-                    AreaCode = $"{testDataSet.AreaPrefix}-{i}",
                     Calloff = $"{testDataSet.CallOffPrefix}-{i}",
-                    DisciplineCode = $"{testDataSet.DisciplinePrefix}-{i}",
                     McPkgNo = $"{testDataSet.McPkgPrefix}-{i}",
                     CommPkgNo = $"{testDataSet.CommPkgPrefix}-{i}",
                     PurchaseOrderNo = $"{testDataSet.PoPrefix}-{i}",
@@ -262,6 +260,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     StorageArea = $"{testDataSet.StorageAreaPrefix}-{i}",
                     TagFunctionCode = $"{testDataSet.TagFunctionPrefix}-{i}"
                 };
+                tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
+                tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Desciption");
 
                 testDataSet.Project1.AddTag(tag);
             }

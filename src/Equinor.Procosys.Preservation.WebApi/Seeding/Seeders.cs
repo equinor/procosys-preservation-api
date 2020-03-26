@@ -98,16 +98,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                         steps[rand.Next(steps.Count)],
                         requirements)
                     {
-                        AreaCode = "AreaCode",
                         Calloff = "CallOffNo",
                         CommPkgNo = "CommPkgNo",
-                        DisciplineCode = "DisciplineCode",
                         McPkgNo = "McPkgNo",
                         PurchaseOrderNo = "PoNo",
                         Remark = "Remark",
                         StorageArea = "SA",
                         TagFunctionCode = "TFC"
                     };
+                    tag.SetArea("AreaCode", "AreaDescription");
+                    tag.SetDiscipline("DisciplineCode", "DisciplineDescription");
 
                     project.AddTag(tag);
                 }
