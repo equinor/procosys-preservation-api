@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         }
 
         [HttpGet("Areas")]
-        public async Task<ActionResult<List<AreaCodeDto>>> GetAreas([FromQuery] string projectName)
+        public async Task<ActionResult<List<AreaDto>>> GetAreas([FromQuery] string projectName)
         {
             var result = await _mediator.Send(new GetUniqueTagAreasQuery(projectName));
             return this.FromResult(result);

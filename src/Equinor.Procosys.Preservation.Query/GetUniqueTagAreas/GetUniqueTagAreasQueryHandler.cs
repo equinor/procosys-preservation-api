@@ -10,13 +10,13 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetUniqueTagAreas
 {
-    public class GetUniqueTagAreasQueryHandler : IRequestHandler<GetUniqueTagAreasQuery, Result<List<AreaCodeDto>>>
+    public class GetUniqueTagAreasQueryHandler : IRequestHandler<GetUniqueTagAreasQuery, Result<List<AreaDto>>>
     {
         private readonly IReadOnlyContext _context;
 
         public GetUniqueTagAreasQueryHandler(IReadOnlyContext context) => _context = context;
 
-        public async Task<Result<List<AreaCodeDto>>> Handle(GetUniqueTagAreasQuery request,
+        public async Task<Result<List<AreaDto>>> Handle(GetUniqueTagAreasQuery request,
             CancellationToken cancellationToken)
         {
             var areas = await
@@ -25,13 +25,13 @@ namespace Equinor.Procosys.Preservation.Query.GetUniqueTagAreas
                         on EF.Property<int>(tag, "ProjectId") equals project.Id
                     where project.Name == request.ProjectName
                           && !string.IsNullOrEmpty(tag.AreaCode)
-                    select new AreaCodeDto(
+                    select new AreaDto(
                         tag.AreaCode,
                         tag.AreaDescription))
                 .Distinct()
                 .ToListAsync(cancellationToken);
 
-            return new SuccessResult<List<AreaCodeDto>>(areas);
+            return new SuccessResult<List<AreaDto>>(areas);
         }
     }
 }

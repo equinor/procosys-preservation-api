@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetUniqueTagAreas
 {
-    public class GetUniqueTagAreasQuery : IRequest<Result<List<AreaCodeDto>>>
+    public class GetUniqueTagAreasQuery : IRequest<Result<List<AreaDto>>>
     {
         public GetUniqueTagAreasQuery(string projectName) => ProjectName = projectName;
 
