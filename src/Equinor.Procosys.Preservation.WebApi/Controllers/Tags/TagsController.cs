@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -17,6 +16,7 @@ using Equinor.Procosys.Preservation.Query.GetTags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
+using Requirement = Equinor.Procosys.Preservation.Command.Requirement;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
@@ -151,13 +151,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [HttpPost("{id}/Requirement/{requirementId}/RecordValues")]
         public async Task<IActionResult> RecordCheckBoxChecked([FromRoute] int id, [FromRoute] int requirementId, [FromBody] RequirementValuesDto requirementValuesDto)
         {
-            var fieldValues = requirementValuesDto?
-                .FieldValues
-                .ToDictionary(
-                    keySelector => keySelector.FieldId,
-                    elementSelector => elementSelector.Value);
+            var numberValues = requirementValuesDto?
+                .NumberValues
+                .Select(fv => new NumberFieldValue(fv.FieldId, fv.Value, fv.IsNA)).ToList();
+            var checkBoxValues = requirementValuesDto?
+                .CheckBoxValues
+                .Select(fv => new CheckBoxFieldValue(fv.FieldId, fv.IsChecked)).ToList();
 
-            var result = await _mediator.Send(new RecordValuesCommand(id, requirementId, fieldValues, requirementValuesDto?.Comment));
+            var result = await _mediator.Send(
+                new RecordValuesCommand(
+                    id,
+                    requirementId,
+                    numberValues,
+                    checkBoxValues,
+                    requirementValuesDto?.Comment));
             
             return this.FromResult(result);
         }

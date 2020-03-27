@@ -17,8 +17,5 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             :base(plant, field)
         {
         }
-
-        public static bool IsValidValue(string value, out bool isChecked)
-            => bool.TryParse(value, out isChecked);
     }
 }
