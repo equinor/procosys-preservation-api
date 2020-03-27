@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagAreas;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagFunctions;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagModes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
@@ -51,6 +52,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<AreaCodeDto>>> GetAreas([FromQuery] string projectName)
         {
             var result = await _mediator.Send(new GetUniqueTagAreasQuery(projectName));
+            return this.FromResult(result);
+        }
+
+        [HttpGet("TagFunctions")]
+        public async Task<ActionResult<List<TagFunctionCodeDto>>> GetTagFunctions([FromQuery] string projectName)
+        {
+            var result = await _mediator.Send(new GetUniqueTagFunctionsQuery(projectName));
             return this.FromResult(result);
         }
     }
