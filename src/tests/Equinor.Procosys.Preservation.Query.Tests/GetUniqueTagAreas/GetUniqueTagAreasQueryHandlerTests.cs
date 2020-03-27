@@ -47,6 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagAreas
                 var result = await dut.Handle(_queryForProject1, default);
                 Assert.AreEqual(10, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == "AREA-3"));
+                Assert.IsTrue(result.Data.Any(rt => rt.Description == "AREA-3-Description"));
             }
         }
 
