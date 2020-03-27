@@ -205,7 +205,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         [TestMethod]
         public async Task Handler_ShouldReturnsTagRequirementsWithCheckBoxFieldAndComment_AfterRecordingCheckBoxFieldAndComment()
         {
-            var fieldId = _firstCbFieldId;
+            var cbFieldId = _firstCbFieldId;
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
@@ -216,10 +216,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithTwoCheckBoxesId);
                 var requirement = context.Requirements.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
-                requirement.RecordValues(
-                    new Dictionary<int, string> {{fieldId, "true"}},
-                    "CommentABC",
+                requirement.RecordCheckBoxValues(
+                    new Dictionary<int, bool> {{cbFieldId, true}},
                     requirementDefinition);
+                requirement.SetComment("CommentABC");
                 context.SaveChangesAsync().Wait();
             }
 
@@ -237,7 +237,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 Assert.AreEqual("CommentABC", requirementWithTwoCheckBoxes.Comment);
                 Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
 
-                var field = requirementWithTwoCheckBoxes.Fields.Single(f => f.Id == fieldId);
+                var field = requirementWithTwoCheckBoxes.Fields.Single(f => f.Id == cbFieldId);
                 Assert.IsNotNull(field);
                 Assert.IsNotNull(field.CurrentValue);
                 Assert.IsInstanceOfType(field.CurrentValue, typeof(CheckBoxDto));
@@ -247,10 +247,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         [TestMethod]
         public async Task Handler_ShouldReturnsTagRequirementsWithNumbers_AfterRecordingNumberFields()
         {
-            var fieldWithNaId = _thirdNumberFieldId;
-            var fieldWithDoubleId = _secondNumberFieldId;
+            var numberFieldWithNaId = _thirdNumberFieldId;
+            var numberFieldWithDoubleId = _secondNumberFieldId;
             var number = 1282.91;
-            var numberAsString = number.ToString("F2");
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
@@ -262,13 +261,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
                 var requirement = context.Requirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
                 
-                requirement.RecordValues(
-                    new Dictionary<int, string>
+                requirement.RecordNumberIsNaValues(
+                    new List<int>
                     {
-                        {fieldWithNaId, "NA"},
-                        {fieldWithDoubleId, numberAsString}
+                        numberFieldWithNaId
                     },
-                    "",
+                    requirementDefinition);
+                requirement.RecordNumberValues(
+                    new Dictionary<int, double?>
+                    {
+                        {numberFieldWithDoubleId, number}
+                    },
                     requirementDefinition);
                 context.SaveChangesAsync().Wait();
             }
@@ -286,10 +289,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var requirementWithThreeNumberShowPrev = result.Data.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
                 Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
 
-                var fieldWithNa = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == fieldWithNaId);
+                var fieldWithNa = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == numberFieldWithNaId);
                 AssertNaNumberInCurrentValue(fieldWithNa);
 
-                var fieldWithDouble = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == fieldWithDoubleId);
+                var fieldWithDouble = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == numberFieldWithDoubleId);
                 AssertNumberInCurrentValue(fieldWithDouble, number);
             }
         }
@@ -326,7 +329,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         public async Task Handler_ShouldReturnsPreviousValues_AfterRecordingNumberFieldsAndPreserving()
         {
             var number = 1.91;
-            var numberAsString = number.ToString("F2");
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
@@ -338,14 +340,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
                 var requirement = context.Requirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
                 
-                requirement.RecordValues(
-                    new Dictionary<int, string>
+                requirement.RecordNumberValues(
+                    new Dictionary<int, double?>
                     {
-                        {_firstNumberFieldId, numberAsString},
-                        {_secondNumberFieldId, numberAsString},
-                        {_thirdNumberFieldId, numberAsString}
+                        {_firstNumberFieldId, number},
+                        {_secondNumberFieldId, number},
+                        {_thirdNumberFieldId, number}
                     },
-                    "",
                     requirementDefinition);
                 context.SaveChangesAsync().Wait();
 

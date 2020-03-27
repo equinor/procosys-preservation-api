@@ -434,79 +434,97 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
-        #region RecordValuesForActivePeriod
+        #region SetComment
+        
+        [TestMethod]
+        public void SetComment_ShouldThrowException_WhenPreservationNotStarted()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+
+            Assert.ThrowsException<Exception>(() => dut.SetComment("Abc"));
+        }
+        
+        [TestMethod]
+        public void SetComment_ShouldUpdateCommentOnActivePeriod()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.SetComment("Abc");
+            Assert.AreEqual("Abc", dut.ActivePeriod.Comment);
+
+            dut.SetComment(null);
+            Assert.IsNull(dut.ActivePeriod.Comment);
+        }
+        #endregion
+
+        #region RecordValues
 
         [TestMethod]
-        public void RecordValues_ShouldThrowException_WhenPreservationNotStarted()
+        public void RecordCheckBoxValues_ShouldThrowException_WhenPreservationNotStarted()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordValues(null, null, _reqDefWithCheckBoxFieldMock.Object)
+                dut.RecordCheckBoxValues(new Dictionary<int, bool>{{1, true}}, _reqDefWithCheckBoxFieldMock.Object)
             );
         }
 
         [TestMethod]
-        public void RecordValues_ShouldThrowException_WhenReqDefNotGiven()
+        public void RecordCheckBoxValues_ShouldThrowException_WhenReqDefNotGiven()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
             dut.StartPreservation();
 
             Assert.ThrowsException<ArgumentNullException>(() =>
-                dut.RecordValues(null, null, null)
+                dut.RecordCheckBoxValues(new Dictionary<int, bool>{{1, true}}, null)
             );
         }
 
         [TestMethod]
-        public void RecordValues_ShouldThrowException_WhenRecordingOnWrongDefinition()
+        public void RecordCheckBoxValues_ShouldThrowException_WhenValuesNotGiven()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                dut.RecordCheckBoxValues(null, _reqDefWithCheckBoxFieldMock.Object)
+            );
+        }
+
+        [TestMethod]
+        public void RecordCheckBoxValues_ShouldThrowException_WhenRecordingOnWrongDefinition()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordValues(null, null, _reqDefWithCheckBoxFieldMock.Object)
+                dut.RecordCheckBoxValues(new Dictionary<int, bool>{{1, true}}, _reqDefWithCheckBoxFieldMock.Object)
             );
         }
 
         [TestMethod]
-        public void RecordValues_ShouldThrowException_WhenFieldIsInfo()
+        public void RecordCheckBoxValues_ShouldThrowException_WhenFieldIsInfo()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
             dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() =>
-                dut.RecordValues(
-                    new Dictionary<int, string>{ {InfoFieldId, "x"}},
-                    null,
-                    _reqDefWithInfoFieldMock.Object)
+                dut.RecordCheckBoxValues(new Dictionary<int, bool>{{InfoFieldId, true}}, _reqDefWithInfoFieldMock.Object)
             );
         }
         
         [TestMethod]
-        public void RecordValues_WithComment_ShouldUpdateCommentOnActivePeriod()
+        public void RecordCheckBoxValues_WithCheckBoxChecked_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(null, "Abc", _reqDefWithCheckBoxFieldMock.Object);
-            Assert.AreEqual("Abc", dut.ActivePeriod.Comment);
-
-            dut.RecordValues(null, null, _reqDefWithCheckBoxFieldMock.Object);
-            Assert.IsNull(dut.ActivePeriod.Comment);
-        }
-        
-        [TestMethod]
-        public void RecordValues_WithCheckBoxChecked_ShouldCreateNewCheckBoxChecked_WhenValueIsTrue()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation();
-
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "true"}
+                    {CheckBoxFieldId, true}
                 }, 
-                null,
                 _reqDefWithCheckBoxFieldMock.Object);
 
             // Assert
@@ -518,36 +536,59 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void RecordValues_WithCheckBoxUnchecked_ShouldDoNothing_WhenNoValueExistsInAdvance()
+        public void RecordCheckBoxValues_WithCheckBoxUnchecked_ShouldDoNothing_WhenNoValueExistsInAdvance()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "false"}
+                    {CheckBoxFieldId, false}
                 }, 
-                null,
                 _reqDefWithCheckBoxFieldMock.Object);
 
             // Assert
             Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
         }
 
+        [TestMethod]
+        public void RecordCheckBoxValues_ShouldDeleteExistingCheckBoxValue_WhenCheckBoxIsUnchecked()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
+                {
+                    {CheckBoxFieldId, true}
+                }, 
+                _reqDefWithCheckBoxFieldMock.Object);
+
+            // Assert
+            Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
+
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
+                {
+                    {CheckBoxFieldId, false}
+                }, 
+                _reqDefWithCheckBoxFieldMock.Object);
+
+            Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
+        }
         
         [TestMethod]
-        public void RecordValues_WithNaAsNumber_ShouldCreateNumberValueWithNullValue()
+        public void RecordNumberIsNaValues_WithNaAsNumber_ShouldCreateNumberValueWithNullValue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberIsNaValues(
+                new List<int>
                 {
-                    {NumberField1Id, "n/a"}
+                    NumberField1Id
                 }, 
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -560,18 +601,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_WithNumber_ShouldCreateNumberValueWithCorrectValue()
+        public void RecordNumberValues_WithNumber_ShouldCreateNumberValueWithCorrectValue()
         {
             var number = 1282.91;
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
-                    {NumberField1Id, number.ToString("F2")}
+                    {NumberField1Id, number}
                 }, 
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -586,17 +626,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_WithNoNumber_ShouldDoNothing_WhenNoValueExistsInAdvance()
+        public void RecordNumberValues_WithNoNumber_ShouldDoNothing_WhenNoValueExistsInAdvance()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
                     {NumberField1Id, null}
                 }, 
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -604,86 +643,26 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldDeleteExistingCheckBoxValue_WhenCheckBoxIsUnchecked()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation();
-
-            dut.RecordValues(
-                new Dictionary<int, string>
-                {
-                    {CheckBoxFieldId, "true"}
-                }, 
-                null,
-                _reqDefWithCheckBoxFieldMock.Object);
-
-            // Assert
-            Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
-
-            dut.RecordValues(
-                new Dictionary<int, string>
-                {
-                    {CheckBoxFieldId, "false"}
-                }, 
-                null,
-                _reqDefWithCheckBoxFieldMock.Object);
-
-            Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
-        }
-
-        [TestMethod]
-        public void RecordValues_ShouldDeleteExistingNumberValue_WhenNumberIsNull()
+        public void RecordNumberValues_ShouldDeleteExistingNumberValue_WhenNumberIsNull()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
-                    {NumberField1Id, "na"}
+                    {NumberField1Id, 1}
                 }, 
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
                     {NumberField1Id, null}
                 }, 
-                null,
-                _reqDefWithOneNumberFieldMock.Object);
-
-            // Assert
-            Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
-        }
-
-
-        [TestMethod]
-        public void RecordValues_ShouldDeleteExistingNumberValue_WhenNumberIsBlank()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
-            dut.StartPreservation();
-
-            dut.RecordValues(
-                new Dictionary<int, string>
-                {
-                    {NumberField1Id, "na"}
-                }, 
-                null,
-                _reqDefWithOneNumberFieldMock.Object);
-
-            // Assert
-            Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
-
-            dut.RecordValues(
-                new Dictionary<int, string>
-                {
-                    {NumberField1Id, string.Empty}
-                }, 
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -691,28 +670,26 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_OneByOne()
+        public void RecordCheckBoxValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordCheckBoxValues_OneByOne()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "true"}
+                    {CheckBoxFieldId, true}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
-                    {NumberField1Id, "1"}
+                    {NumberField1Id, 1}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
@@ -720,66 +697,26 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void RecordValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordNaForSingleNumber_TogetherWithCheckBox()
+        public void RecordNumberIsNaValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordNaForSingleNumber_TogetherWithCheckBox()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "true"}
+                    {CheckBoxFieldId, true}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
             Assert.IsFalse(dut.ReadyToBePreserved);
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberIsNaValues(
+                new List<int>
                 {
-                    {NumberField1Id, "na"}
+                    NumberField1Id
                 }, 
-                null,
-                _reqDefWithNumberAndCheckBoxFieldMock.Object);
-
-            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
-            Assert.IsFalse(dut.ReadyToBePreserved);
-        }
-
-        [TestMethod]
-        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation();
-
-            dut.RecordValues(
-                new Dictionary<int, string>
-                {
-                    {CheckBoxFieldId, "true"},
-                    {NumberField1Id, "1"}
-                }, 
-                null,
-                _reqDefWithNumberAndCheckBoxFieldMock.Object);
-
-            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
-            Assert.IsTrue(dut.ReadyToBePreserved);
-        }
-
-        [TestMethod]
-        public void RecordValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_WithNaForSingleNumber()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
-            dut.StartPreservation();
-
-            dut.RecordValues(
-                new Dictionary<int, string>
-                {
-                    {CheckBoxFieldId, "true"},
-                    {NumberField1Id, "na"}
-                }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -787,18 +724,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_WithNaForAllNumbers()
+        public void RecordNumberIsNaValues_ShouldNotMakeRequirementReadyToBePreserved_WithNaForAllNumbers()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithTwoNumberFieldsMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberIsNaValues(
+                new List<int>
                 {
-                    {NumberField2Id, "NA"},
-                    {NumberField3Id, "n/a"}
+                    NumberField2Id,
+                    NumberField3Id
                 }, 
-                null,
                 _reqDefWithTwoNumberFieldsMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -806,18 +742,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_WithNaForSomeNumbers()
+        public void RecordNumberValues_ShouldMakeRequirementReadyToBePreserved_WhenRecordWithNaForSomeNumbers()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithTwoNumberFieldsMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberIsNaValues(
+                new List<int>
                 {
-                    {NumberField2Id, "1"},
-                    {NumberField3Id, "n/a"}
+                    NumberField3Id
                 }, 
-                null,
+                _reqDefWithTwoNumberFieldsMock.Object);
+            
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
+                {
+                    {NumberField2Id, 1}
+                }, 
                 _reqDefWithTwoNumberFieldsMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
@@ -825,29 +766,33 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ToggleReadyToBePreserved_WhenRecordValues_AllRequiredAtOnce_ThenRemoveCheckBox()
+        public void RecordCheckBoxValues_ShouldToggleReadyToBePreserved_WhenRecordCheckBoxValues_AllRequiredAtOnce_ThenRemoveCheckBox()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "true"},
-                    {NumberField1Id, "1"}
+                    {CheckBoxFieldId, true}
                 }, 
-                null,
+                _reqDefWithNumberAndCheckBoxFieldMock.Object);
+
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
+                {
+                    {NumberField1Id, 1}
+                }, 
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "false"}
+                    {CheckBoxFieldId, false}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -855,29 +800,27 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldToggleReadyToBePreserved_WhenRecordingCheckBoxValue()
+        public void RecordCheckBoxValues_ShouldToggleReadyToBePreserved_WhenRecordingCheckBoxValue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "true"}
+                    {CheckBoxFieldId, true}
                 }, 
-                null,
                 _reqDefWithCheckBoxFieldMock.Object);
 
             // Assert
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "false"}
+                    {CheckBoxFieldId, false}
                 }, 
-                null,
                 _reqDefWithCheckBoxFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -885,29 +828,27 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldToggleReadyToBePreserved_WhenRecordingNumberValue()
+        public void RecordNumberValues_ShouldToggleReadyToBePreserved_WhenRecordingNumberValue()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
-                    {NumberField1Id, "1"}
+                    {NumberField1Id, 1}
                 }, 
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
             Assert.IsTrue(dut.ReadyToBePreserved);
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
                     {NumberField1Id, null}
                 }, 
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
@@ -915,17 +856,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordNaForSingleNumber()
+        public void RecordNumberIsNaValues_ShouldNotMakeRequirementReadyToBePreserved_WhenRecordNaForSingleNumber()
         {
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberIsNaValues(
+                new List<int>
                 {
-                    {NumberField1Id, "na"}
+                    NumberField1Id
                 }, 
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             // Assert
@@ -961,12 +901,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "true"}
+                    {CheckBoxFieldId, true}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -982,23 +921,21 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "true"}
+                    {CheckBoxFieldId, true}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
             Assert.IsNotNull(dut.GetCurrentFieldValue(_checkBoxFieldMock.Object));
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordCheckBoxValues(
+                new Dictionary<int, bool>
                 {
-                    {CheckBoxFieldId, "false"}
+                    {CheckBoxFieldId, false}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1011,12 +948,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
-                    {NumberField1Id, "123"}
+                    {NumberField1Id, 123}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1032,23 +968,21 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
-                    {NumberField1Id, "123"}
+                    {NumberField1Id, 123}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
             Assert.IsNotNull(dut.GetCurrentFieldValue(_numberField1Mock.Object));
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
                     {NumberField1Id, null}
                 }, 
-                null,
                 _reqDefWithNumberAndCheckBoxFieldMock.Object);
 
             // Assert
@@ -1074,13 +1008,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithNumberAndCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
-            dut.RecordValues(
-                new Dictionary<int, string>
-                {
-                    {CheckBoxFieldId, "true"}
-                }, 
-                "CommentA",
-                _reqDefWithNumberAndCheckBoxFieldMock.Object);
+            dut.SetComment("CommentA");
 
             // Assert
             Assert.AreEqual("CommentA", dut.GetCurrentComment());
@@ -1113,12 +1041,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             _timeProvider.Elapse(TimeSpan.FromDays(5));
 
-            dut.RecordValues(
-                new Dictionary<int, string>
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
                 {
-                    {NumberField1Id, numberToRecord.ToString("F2")}
+                    {NumberField1Id, numberToRecord}
                 },
-                null,
                 _reqDefWithOneNumberFieldMock.Object);
 
             AssertNumber(numberToRecord, dut.GetCurrentFieldValue(_numberField1Mock.Object));
