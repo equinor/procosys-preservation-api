@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
             var field = await (from f in _context.QuerySet<Field>()
                 where f.Id == fieldId
                 select f).FirstOrDefaultAsync(token);
-            return field.FieldType == FieldType.Number || field.FieldType == FieldType.CheckBox;
+            return field != null && (field.FieldType == FieldType.Number || field.FieldType == FieldType.CheckBox);
         }
     }
 }
