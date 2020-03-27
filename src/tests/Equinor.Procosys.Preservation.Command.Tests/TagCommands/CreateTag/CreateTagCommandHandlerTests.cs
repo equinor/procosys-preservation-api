@@ -72,10 +72,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             _mainTagDetails1 = new ProcosysTagDetails
             {
                 AreaCode = "AreaCode1",
+                AreaDescription = "AreaDescription1",
                 CallOffNo = "CalloffNo1",
                 CommPkgNo = "CommPkgNo1",
                 Description = "Description1",
                 DisciplineCode = "DisciplineCode1",
+                DisciplineDescription = "DisciplineDescription1",
                 McPkgNo = "McPkgNo1",
                 PurchaseOrderNo = "PurchaseOrderNo1",
                 TagFunctionCode = "TagFunctionCode1",
@@ -85,10 +87,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             _mainTagDetails2 = new ProcosysTagDetails
             {
                 AreaCode = "AreaCode2",
+                AreaDescription = "AreaDescription2",
                 CallOffNo = "CalloffNo2",
                 CommPkgNo = "CommPkgNo2",
                 Description = "Description2",
                 DisciplineCode = "DisciplineCode2",
+                DisciplineDescription = "DisciplineDescription1",
                 McPkgNo = "McPkgNo2",
                 PurchaseOrderNo = "PurchaseOrderNo2",
                 TagFunctionCode = "TagFunctionCode2",
@@ -211,9 +215,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         private void AssertTagProperties(CreateTagCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject)
         {
             Assert.AreEqual(mainTagDetails.AreaCode, tagAddedToProject.AreaCode);
+            Assert.AreEqual(mainTagDetails.AreaDescription, tagAddedToProject.AreaDescription);
             Assert.AreEqual(mainTagDetails.CallOffNo, tagAddedToProject.Calloff);
             Assert.AreEqual(mainTagDetails.CommPkgNo, tagAddedToProject.CommPkgNo);
             Assert.AreEqual(mainTagDetails.DisciplineCode, tagAddedToProject.DisciplineCode);
+            Assert.AreEqual(mainTagDetails.DisciplineDescription, tagAddedToProject.DisciplineDescription);
             Assert.AreEqual(TagType.Standard, tagAddedToProject.TagType);
             Assert.AreEqual(mainTagDetails.McPkgNo, tagAddedToProject.McPkgNo);
             Assert.AreEqual(mainTagDetails.Description, tagAddedToProject.Description);
