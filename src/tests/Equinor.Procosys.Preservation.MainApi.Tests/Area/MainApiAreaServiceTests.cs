@@ -19,6 +19,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
         private Mock<IPlantApiService> _plantApiService;
         private List<ProcosysArea> _resultWithNoItems;
         private List<ProcosysArea> _resultWithThreeItems;
+        private MainApiAreaService _dut;
+        private ProcosysArea _procosysArea;
 
         [TestInitialize]
         public void Setup()
@@ -35,14 +37,15 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
 
             _resultWithNoItems = new List<ProcosysArea>();
 
+            _procosysArea = new ProcosysArea
+            {
+                Id = 1,
+                Code = "CodeA",
+                Description = "Description1",
+            };
             _resultWithThreeItems = new List<ProcosysArea>
             {
-                new ProcosysArea
-                {
-                    Id = 1,
-                    Code = "CodeA",
-                    Description = "Description1",
-                },
+                _procosysArea,
                 new ProcosysArea
                 {
                     Id = 2,
@@ -56,6 +59,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
                     Description = "Description3",
                 }
             };
+            _dut = new MainApiAreaService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
         }
 
         [TestMethod]
@@ -65,10 +69,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
             _mainApiClient
                 .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysArea>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeItems));
-            var dut = new MainApiAreaService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
-
             // Act
-            var result = await dut.GetAreas(_plant);
+            var result = await _dut.GetAreas(_plant);
 
             // Assert
             Assert.AreEqual(3, result.Count);
@@ -81,10 +83,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
             _mainApiClient
                 .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysArea>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithNoItems));
-            var dut = new MainApiAreaService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
-
             // Act
-            var result = await dut.GetAreas(_plant);
+            var result = await _dut.GetAreas(_plant);
 
             // Assert
             Assert.AreEqual(0, result.Count);
@@ -92,10 +92,25 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
 
         [TestMethod]
         public async Task GetAreaCodes_ThrowsException_WhenPlantIsInvalid()
-        {
-            var dut = new MainApiAreaService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetAreas("INVALIDPLANT"));
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetAreas("INVALIDPLANT"));
+        [TestMethod]
+        public async Task GetAreaCode_ThrowsException_WhenPlantIsInvalid()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetArea("INVALIDPLANT", "C"));
+
+        [TestMethod]
+        public async Task GetAreaCode_ReturnsAreaCode()
+        {
+            // Arrange
+            _mainApiClient
+                .SetupSequence(x => x.QueryAndDeserialize<ProcosysArea>(It.IsAny<string>()))
+                .Returns(Task.FromResult(_procosysArea));
+            // Act
+            var result = await _dut.GetArea(_plant, _procosysArea.Code);
+
+            // Assert
+            Assert.AreEqual(_procosysArea.Code, result.Code);
+            Assert.AreEqual(_procosysArea.Description, result.Description);
         }
     }
 }

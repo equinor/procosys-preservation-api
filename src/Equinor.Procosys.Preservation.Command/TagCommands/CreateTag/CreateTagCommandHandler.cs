@@ -40,11 +40,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
         public async Task<Result<List<int>>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
         {
-            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
-
             var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
-            var reqDefs =
-                await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
+            var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
@@ -64,32 +61,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
                     _projectRepository.Add(project);
                 }
 
-                var requirements = new List<TagRequirement>();
-                foreach (var requirement in request.Requirements)
-                {
-                    var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
-                    requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
-                }
-
-                var tagToAdd = new Tag(
-                    _plantProvider.Plant,
-                    TagType.Standard,
-                    tagNo,
-                    tagDetails.Description,
-                    step,
-                    requirements)
-                {
-                    Calloff = tagDetails.CallOffNo,
-                    CommPkgNo = tagDetails.CommPkgNo,
-                    McPkgNo = tagDetails.McPkgNo,
-                    PurchaseOrderNo = tagDetails.PurchaseOrderNo,
-                    Remark = request.Remark,
-                    StorageArea = request.StorageArea,
-                    TagFunctionCode = tagDetails.TagFunctionCode
-                };
-                tagToAdd.SetArea(tagDetails.AreaCode, "ToDo");
-                tagToAdd.SetDiscipline(tagDetails.DisciplineCode, "ToDo");
-
+                var tagToAdd = await CreateTagAsync(tagDetails, request, reqDefs);
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
             }
@@ -97,6 +69,41 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());
+        }
+
+        private async Task<Tag> CreateTagAsync(
+            ProcosysTagDetails tagDetails,
+            CreateTagCommand request, 
+            IList<RequirementDefinition> reqDefs)
+        {
+            var requirements = new List<TagRequirement>();
+            foreach (var requirement in request.Requirements)
+            {
+                var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
+                requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
+            }
+
+            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
+            var tag = new Tag(
+                _plantProvider.Plant,
+                TagType.Standard,
+                tagDetails.TagNo,
+                tagDetails.Description,
+                step,
+                requirements)
+            {
+                Calloff = tagDetails.CallOffNo,
+                CommPkgNo = tagDetails.CommPkgNo,
+                McPkgNo = tagDetails.McPkgNo,
+                PurchaseOrderNo = tagDetails.PurchaseOrderNo,
+                Remark = request.Remark,
+                StorageArea = request.StorageArea,
+                TagFunctionCode = tagDetails.TagFunctionCode
+            };
+            tag.SetArea(tagDetails.AreaCode, tagDetails.AreaDescription);
+            tag.SetDiscipline(tagDetails.DisciplineCode, tagDetails.DisciplineDescription);
+            
+            return tag;
         }
     }
 }

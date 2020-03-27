@@ -32,10 +32,25 @@ namespace Equinor.Procosys.Preservation.MainApi.Area
             }
 
             var url = $"{_baseAddress}Library/Areas" +
-                $"?plantId={plant}" +
-                $"&api-version={_apiVersion}";
+                      $"?plantId={plant}" +
+                      $"&api-version={_apiVersion}";
 
             return await _mainApiClient.QueryAndDeserialize<List<ProcosysArea>>(url) ?? new List<ProcosysArea>();
+        }
+
+        public async Task<ProcosysArea> GetArea(string plant, string code)
+        {
+            if (!await _plantApiService.IsPlantValidAsync(plant))
+            {
+                throw new ArgumentException($"Invalid plant: {plant}");
+            }
+
+            var url = $"{_baseAddress}Library/Area" +
+                      $"?plantId={plant}" +
+                      $"&code={code}" +
+                      $"&api-version={_apiVersion}";
+
+            return await _mainApiClient.QueryAndDeserialize<ProcosysArea>(url);
         }
     }
 }
