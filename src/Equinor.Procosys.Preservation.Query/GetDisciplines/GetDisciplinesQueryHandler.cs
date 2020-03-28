@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.GetDisciplines
 
         public async Task<Result<List<DisciplineDto>>> Handle(GetDisciplinesQuery request, CancellationToken cancellationToken)
         {
-            var disciplines = await _disciplineApiService.GetDisciplines(_plantProvider.Plant);
+            var disciplines = await _disciplineApiService.GetDisciplinesAsync(_plantProvider.Plant);
             var disciplineDtos = disciplines
                 .Select(ac => new DisciplineDto(ac.Code, ac.Description))
                 .ToList();

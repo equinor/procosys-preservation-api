@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.GetAreas
 
         public async Task<Result<List<AreaDto>>> Handle(GetAreasQuery request, CancellationToken cancellationToken)
         {
-            var areas = await _areaApiService.GetAreas(_plantProvider.Plant);
+            var areas = await _areaApiService.GetAreasAsync(_plantProvider.Plant);
             var areaCodes = areas
                 .Select(ac => new AreaDto(ac.Code, ac.Description))
                 .ToList();
