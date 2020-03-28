@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
                 .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysArea>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeItems));
             // Act
-            var result = await _dut.GetAreas(_plant);
+            var result = await _dut.GetAreasAsync(_plant);
 
             // Assert
             Assert.AreEqual(3, result.Count);
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
                 .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysArea>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithNoItems));
             // Act
-            var result = await _dut.GetAreas(_plant);
+            var result = await _dut.GetAreasAsync(_plant);
 
             // Assert
             Assert.AreEqual(0, result.Count);
@@ -92,11 +92,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
 
         [TestMethod]
         public async Task GetAreaCodes_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetAreas("INVALIDPLANT"));
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetAreasAsync("INVALIDPLANT"));
 
         [TestMethod]
         public async Task GetAreaCode_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetArea("INVALIDPLANT", "C"));
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetAreaAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
         public async Task GetAreaCode_ReturnsAreaCode()
@@ -106,7 +106,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
                 .SetupSequence(x => x.QueryAndDeserialize<ProcosysArea>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_procosysArea));
             // Act
-            var result = await _dut.GetArea(_plant, _procosysArea.Code);
+            var result = await _dut.GetAreaAsync(_plant, _procosysArea.Code);
 
             // Assert
             Assert.AreEqual(_procosysArea.Code, result.Code);

@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetDisciplines
         public async Task Handle_ReturnsCorrecResultType()
         {
             _areaCodeApiServiceMock
-                .Setup(x => x.GetDisciplines(It.IsAny<string>()))
+                .Setup(x => x.GetDisciplinesAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
             var dut = new GetDisciplinesQueryHandler(_areaCodeApiServiceMock.Object, _plantProviderMock.Object);
 
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetDisciplines
         public async Task Handle_ReturnsCorrectNumberOfElements()
         {
             _areaCodeApiServiceMock
-                .Setup(x => x.GetDisciplines(It.IsAny<string>()))
+                .Setup(x => x.GetDisciplinesAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
             var dut = new GetDisciplinesQueryHandler(_areaCodeApiServiceMock.Object, _plantProviderMock.Object);
 
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetDisciplines
         public async Task Handle_ReturnsCorrectData()
         {
             _areaCodeApiServiceMock
-                .Setup(x => x.GetDisciplines(It.IsAny<string>()))
+                .Setup(x => x.GetDisciplinesAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
             var dut = new GetDisciplinesQueryHandler(_areaCodeApiServiceMock.Object, _plantProviderMock.Object);
 

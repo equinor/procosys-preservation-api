@@ -103,7 +103,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             IList<ProcosysTagDetails> mainTagDetailList = new List<ProcosysTagDetails> {_mainTagDetails1, _mainTagDetails2};
             _tagApiServiceMock = new Mock<ITagApiService>();
             _tagApiServiceMock
-                .Setup(x => x.GetTagDetails(TestPlant, TestProjectName, new List<string>{TestTagNo1, TestTagNo2}))
+                .Setup(x => x.GetTagDetailsAsync(TestPlant, TestProjectName, new List<string>{TestTagNo1, TestTagNo2}))
                 .Returns(Task.FromResult(mainTagDetailList));
 
             _command = new CreateTagCommand(
