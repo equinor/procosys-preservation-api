@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
@@ -14,8 +15,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
     {
         private const string Comment = "Comment";
         private const int TagId = 1;
-        private const int FieldId = 11;
-        private const double Number = 1282.91;
+        private const int NumberFieldId = 11;
+        private const int CheckBoxFieldId = 14;
         private const int ReqId = 21;
 
         private RecordValuesCommandValidator _dut;
@@ -23,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IFieldValidator> _fieldValidatorMock;
         private RecordValuesCommand _recordValuesCommandWithCommentOnly;
-        private RecordValuesCommand _recordValuesCommandWithNormalNumber;
+        private RecordValuesCommand _recordValuesCommand;
 
         [TestInitialize]
         public void Setup_OkState()
@@ -33,8 +34,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
-            _fieldValidatorMock.Setup(v => v.ExistsAsync(FieldId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(FieldId, default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(v => v.ExistsAsync(NumberFieldId, default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(NumberFieldId, default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(v => v.ExistsAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(true));
 
             _recordValuesCommandWithCommentOnly = new RecordValuesCommand(
                 TagId,
@@ -43,11 +46,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
                 null,
                 Comment);
 
-            _recordValuesCommandWithNormalNumber = new RecordValuesCommand(
+            _recordValuesCommand = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
-                new EditableList<NumberFieldValue>{new NumberFieldValue(FieldId, Number, false)}, 
-                null, 
+                new EditableList<NumberFieldValue>{new NumberFieldValue(NumberFieldId, 1282.91, false)}, 
+                new List<CheckBoxFieldValue>{new CheckBoxFieldValue(CheckBoxFieldId, true)}, 
                 Comment);
 
             _dut = new RecordValuesCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _fieldValidatorMock.Object);
@@ -110,11 +113,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyFieldNotExists()
+        public void Validate_ShouldFail_WhenNumberFieldNotExists()
         {
-            _fieldValidatorMock.Setup(r => r.ExistsAsync(FieldId, default)).Returns(Task.FromResult(false));
+            _fieldValidatorMock.Setup(r => r.ExistsAsync(NumberFieldId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
+            var result = _dut.Validate(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -122,11 +125,35 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyFieldNotForRecording()
+        public void Validate_ShouldFail_WhenNumberFieldNotForRecording()
         {
-            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(FieldId, default)).Returns(Task.FromResult(false));
+            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(NumberFieldId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
+            var result = _dut.Validate(_recordValuesCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field values can not be recorded for field type!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenCheckBoxFieldNotExists()
+        {
+            _fieldValidatorMock.Setup(r => r.ExistsAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_recordValuesCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exists!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenCheckBoxFieldNotForRecording()
+        {
+            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -139,7 +166,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
+            var result = _dut.Validate(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
@@ -147,15 +174,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         }
  
         [TestMethod]
-        public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
+        public void Validate_ShouldFailWith3Errors_WhenErrorsInDifferentRules()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(v => v.ExistsAsync(FieldId, default)).Returns(Task.FromResult(false));
+            _fieldValidatorMock.Setup(v => v.ExistsAsync(NumberFieldId, default)).Returns(Task.FromResult(false));
+            _fieldValidatorMock.Setup(v => v.ExistsAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(false));
 
-            var result = _dut.Validate(_recordValuesCommandWithNormalNumber);
+            var result = _dut.Validate(_recordValuesCommand);
             
             Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(2, result.Errors.Count);
+            Assert.AreEqual(3, result.Errors.Count);
         }
     }
 }

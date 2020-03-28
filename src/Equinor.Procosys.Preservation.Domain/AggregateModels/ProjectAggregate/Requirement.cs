@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return lastPreservedPeriod?.GetFieldValue(field.Id);
         }
 
-        public void SetComment(string comment) // todo unit tests
+        public void SetComment(string comment)
         {
             if (!HasActivePeriod)
             {

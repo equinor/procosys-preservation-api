@@ -39,7 +39,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
                     .WithMessage((_, fv) => $"Field is voided! Field={fv.FieldId}");
             });
 
-            // todo unit tests
             When(command => command.CheckBoxValues.Any(), () =>
             {
                 RuleForEach(command => command.CheckBoxValues)
