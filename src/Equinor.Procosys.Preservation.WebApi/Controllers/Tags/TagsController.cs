@@ -9,6 +9,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
@@ -109,6 +110,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     dto.Description,
                     dto.Remark,
                     dto.StorageArea));
+
+            return this.FromResult(result);
+        }
+
+        [HttpGet("CheckAreaTagNo")]
+        public async Task<ActionResult<Query.CheckAreaTagNo.AreaTagDto>> CheckAreaTagNo([FromQuery] AreaTagDto dto)
+        {
+            var result = await _mediator.Send(
+                new CheckAreaTagNoQuery(
+                    dto.ProjectName,
+                    dto.AreaTagType.ConvertToTagType(),
+                    dto.DisciplineCode,
+                    dto.AreaCode,
+                    dto.TagNoSuffix));
 
             return this.FromResult(result);
         }
