@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagAreas;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagDisciplines;
+using Equinor.Procosys.Preservation.Query.GetUniqueTagFunctions;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagModes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
@@ -43,6 +46,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<ModeDto>>> GetModes([FromQuery] string projectName)
         {
             var result = await _mediator.Send(new GetUniqueTagModesQuery(projectName));
+            return this.FromResult(result);
+        }
+
+        [HttpGet("Areas")]
+        public async Task<ActionResult<List<AreaDto>>> GetAreas([FromQuery] string projectName)
+        {
+            var result = await _mediator.Send(new GetUniqueTagAreasQuery(projectName));
+            return this.FromResult(result);
+        }
+
+        [HttpGet("TagFunctions")]
+        public async Task<ActionResult<List<TagFunctionCodeDto>>> GetTagFunctions([FromQuery] string projectName)
+        {
+            var result = await _mediator.Send(new GetUniqueTagFunctionsQuery(projectName));
+            return this.FromResult(result);
+        }
+
+        [HttpGet("Disciplines")]
+        public async Task<ActionResult<List<DisciplineDto>>> GetTagDisciplines([FromQuery] string projectName)
+        {
+            var result = await _mediator.Send(new GetUniqueTagDisciplinesQuery(projectName));
             return this.FromResult(result);
         }
     }
