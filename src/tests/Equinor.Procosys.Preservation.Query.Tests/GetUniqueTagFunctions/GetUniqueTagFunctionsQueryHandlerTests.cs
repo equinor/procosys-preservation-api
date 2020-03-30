@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagFunctions
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
+        public async Task HandleGetUniqueTagFunctionsQuery_ShouldReturnOkResult()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagFunctions
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectUniqueTagFunctions()
+        public async Task HandleGetUniqueTagFunctionsQuery_ShouldReturnCorrectUniqueTagFunctions()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagFunctions
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueTagFunctions()
+        public async Task HandleGetUniqueTagFunctionsQuery_ShouldReturnEmptyListOfUniqueTagFunctions()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))

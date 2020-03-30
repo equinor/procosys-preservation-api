@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagDisciplines
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
+        public async Task HandleGetUniqueTagDisciplinesQuery_ShouldReturnOkResult()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagDisciplines
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectUniqueDisciplines()
+        public async Task HandleGetUniqueTagDisciplinesQuery_ShouldReturnCorrectUniqueDisciplines()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagDisciplines
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueDisciplines()
+        public async Task HandleGetUniqueTagDisciplinesQuery_ShouldReturnEmptyListOfUniqueDisciplines()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))

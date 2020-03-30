@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
+        public async Task HandleGetUniqueTagJourneysQuery_ShouldReturnOkResult()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectUniqueJourneys()
+        public async Task HandleGetUniqueTagJourneysQuery_ShouldReturnCorrectUniqueJourneys()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueJourneys()
+        public async Task HandleGetUniqueTagJourneysQuery_ShouldReturnEmptyListOfUniqueJourneys()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

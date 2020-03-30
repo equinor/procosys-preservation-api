@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagAreas
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
+        public async Task HandleGetUniqueTagAreasQuery_ShouldReturnOkResult()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagAreas
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectUniqueAreas()
+        public async Task HandleGetUniqueTagAreasQuery_ShouldReturnCorrectUniqueAreas()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagAreas
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueAreas()
+        public async Task HandleGetUniqueTagAreasQuery_ShouldReturnEmptyListOfUniqueAreas()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
