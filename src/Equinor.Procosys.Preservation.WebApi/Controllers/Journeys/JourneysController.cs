@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.JourneyAggregate;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
@@ -18,30 +21,51 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         public JourneysController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<List<JourneyDto>>> GetJourneys([FromQuery] bool includeVoided = false)
+        public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            string plant,
+            [FromQuery] bool includeVoided = false)
         {
-            var result = await _mediator.Send(new GetAllJourneysQuery(includeVoided));
+            var result = await _mediator.Send(new GetAllJourneysQuery(plant, includeVoided));
             return this.FromResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<JourneyDto>> GetJourney([FromRoute] int id)
+        public async Task<ActionResult<JourneyDto>> GetJourney(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            string plant,
+            [FromRoute] int id)
         {
-            var result = await _mediator.Send(new GetJourneyByIdQuery(id));
+            var result = await _mediator.Send(new GetJourneyByIdQuery(plant, id));
             return this.FromResult(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> AddJourney([FromBody] CreateJourneyDto dto)
+        public async Task<ActionResult<int>> AddJourney(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            string plant,
+            [FromBody] CreateJourneyDto dto)
         {
-            var result = await _mediator.Send(new CreateJourneyCommand(dto.Title));
+            var result = await _mediator.Send(new CreateJourneyCommand(plant, dto.Title));
             return this.FromResult(result);
         }
 
         [HttpPost("{id}/AddStep")]
-        public async Task<ActionResult> AddStep([FromRoute] int id, [FromBody] CreateStepDto dto)
+        public async Task<ActionResult> AddStep(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] CreateStepDto dto)
         {
-            var result = await _mediator.Send(new CreateStepCommand(id, dto.Title, dto.ModeId, dto.ResponsibleId));
+            var result = await _mediator.Send(new CreateStepCommand(plant, id, dto.Title, dto.ModeId, dto.ResponsibleId));
             return this.FromResult(result);
         }
     }
