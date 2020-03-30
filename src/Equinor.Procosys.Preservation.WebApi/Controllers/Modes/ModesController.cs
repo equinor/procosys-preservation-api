@@ -1,7 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
 using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
@@ -17,30 +20,49 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         public ModesController(IMediator mediator) => _mediator = mediator;
 
         [HttpGet]
-        public async Task<ActionResult<ModeDto>> GetModes()
+        public async Task<ActionResult<ModeDto>> GetModes(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            string plant)
         {
-            var result = await _mediator.Send(new GetAllModesQuery());
+            var result = await _mediator.Send(new GetAllModesQuery(plant));
             return this.FromResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ModeDto>> GetMode([FromRoute] int id)
+        public async Task<ActionResult<ModeDto>> GetMode(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            string plant,
+            [FromRoute] int id)
         {
-            var result = await _mediator.Send(new GetModeByIdQuery(id));
+            var result = await _mediator.Send(new GetModeByIdQuery(plant, id));
             return this.FromResult(result);
         }
 
         [HttpPost]
-        public async Task<ActionResult<int>> AddMode([FromBody] CreateModeDto dto)
+        public async Task<ActionResult<int>> AddMode(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            string plant,
+            [FromBody] CreateModeDto dto)
         {
-            var result = await _mediator.Send(new CreateModeCommand(dto.Title));
+            var result = await _mediator.Send(new CreateModeCommand(plant, dto.Title));
             return this.FromResult(result);
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteMode([FromRoute] int id)
+        public async Task<ActionResult> DeleteMode(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            string plant,
+            [FromRoute] int id)
         {
-            var result = await _mediator.Send(new DeleteModeCommand(id));
+            var result = await _mediator.Send(new DeleteModeCommand(plant, id));
             return this.FromResult(result);
         }
     }
