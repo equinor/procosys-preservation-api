@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Caching
 {
     public class CacheManager : ICacheManager
     {
-        readonly IMemoryCache _cache;
+        private readonly IMemoryCache _cache;
 
         public CacheManager() => _cache = new MemoryCache(new MemoryCacheOptions());
 
