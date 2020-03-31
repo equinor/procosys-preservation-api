@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
-            _command = new PreserveCommand(TagId);
+            _command = new PreserveCommand(TestPlant, TagId);
 
             _tag.StartPreservation();
 

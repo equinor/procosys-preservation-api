@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
             _modeValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(true));
-            _command = new DeleteModeCommand(_id);
+            _command = new DeleteModeCommand("", _id);
 
             _dut = new DeleteModeCommandValidator(_modeValidatorMock.Object);
         }

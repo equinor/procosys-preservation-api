@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         public void Constructor_ShouldSetProperties_WithRequirements()
         {
             var dut = new CreateTagCommand(
+                "",
                 new List<string> {"TagNoA"},
                 "ProjectNameA",
                 2,
@@ -34,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithNullLists()
         {
-            var dut = new CreateTagCommand(null, "", 0, null, null, null);
+            var dut = new CreateTagCommand("", null, "", 0, null, null, null);
 
             Assert.IsNotNull(dut.Requirements);
             Assert.AreEqual(0, dut.Requirements.Count());

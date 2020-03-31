@@ -92,6 +92,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 }));
 
             _command = new CreateAreaTagCommand(
+                "",
                 TestProjectName,
                 TagType.PreArea,
                 disciplineCode,

@@ -38,7 +38,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagFunctionDetailsQueryHandler(context);
-                var result = await dut.Handle(new GetTagFunctionDetailsQuery(_tfWithRequirement.Code, _tfWithRequirement.RegisterCode), default);
+                var result = await dut.Handle(new GetTagFunctionDetailsQuery(
+                    TestPlant,
+                    _tfWithRequirement.Code,
+                    _tfWithRequirement.RegisterCode),
+                    default);
 
                 var tagFunction = result.Data;
 
@@ -58,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagFunctionDetailsQueryHandler(context);
-                var result = await dut.Handle(new GetTagFunctionDetailsQuery(_tfWithoutRequirement.Code, _tfWithoutRequirement.RegisterCode), default);
+                var result = await dut.Handle(new GetTagFunctionDetailsQuery(TestPlant, _tfWithoutRequirement.Code, _tfWithoutRequirement.RegisterCode), default);
 
                 var tagFunction = result.Data;
 
@@ -76,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagFunctionDetailsQueryHandler(context);
-                var result = await dut.Handle(new GetTagFunctionDetailsQuery("XX", _tfWithRequirement.RegisterCode), default);
+                var result = await dut.Handle(new GetTagFunctionDetailsQuery(TestPlant, "XX", _tfWithRequirement.RegisterCode), default);
                 Assert.IsNull(result.Data);
             }
         }

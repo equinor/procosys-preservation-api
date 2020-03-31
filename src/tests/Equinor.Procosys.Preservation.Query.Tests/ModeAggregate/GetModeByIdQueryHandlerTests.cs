@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetModeByIdQueryHandler(context);
-                var result = await dut.Handle(new GetModeByIdQuery(_mode.Id), default);
+                var result = await dut.Handle(new GetModeByIdQuery(TestPlant, _mode.Id), default);
 
                 var mode = result.Data;
             
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
                 _currentUserProvider))
             {
                 var dut = new GetModeByIdQueryHandler(context);
-                var result = await dut.Handle(new GetModeByIdQuery(1235), default);
+                var result = await dut.Handle(new GetModeByIdQuery(TestPlant, 1235), default);
                 Assert.IsNull(result.Data);
             }
         }

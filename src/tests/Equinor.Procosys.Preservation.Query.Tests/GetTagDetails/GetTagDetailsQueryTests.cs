@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         [TestMethod]
         public void Constructor_SetsProperties()
         {
-            var dut = new GetTagDetailsQuery(1337);
+            var dut = new GetTagDetailsQuery("", 1337);
 
             Assert.AreEqual(1337, dut.Id);
         }

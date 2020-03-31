@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 _tagApiServiceMock
                     .Setup(x => x.SearchTagsByTagFunction(TestPlant, _testDataSet.Project1.Name, _tagFunctionCode, _registerCode))
                     .Returns(Task.FromResult(_apiTags));
-                _query = new SearchTagsByTagFunctionQuery(_testDataSet.Project1.Name, _tagFunctionCode, _registerCode);
+                _query = new SearchTagsByTagFunctionQuery(TestPlant, _testDataSet.Project1.Name, _tagFunctionCode, _registerCode);
             }
         }
 
@@ -146,7 +146,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     .Setup(x => x.SearchTagsByTagFunction(TestPlant, "Project XYZ", _tagFunctionCode, _registerCode))
                     .Returns(Task.FromResult(_apiTags));
 
-                var query = new SearchTagsByTagFunctionQuery("Project XYZ", _tagFunctionCode, _registerCode);
+                var query = new SearchTagsByTagFunctionQuery(TestPlant, "Project XYZ", _tagFunctionCode, _registerCode);
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
                 var result = await dut.Handle(query, default);
 

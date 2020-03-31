@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var q = new GetRequirementTypeByIdQuery(1);
+            var q = new GetRequirementTypeByIdQuery("", 1);
             Assert.AreEqual(1, q.Id);
         }
     }

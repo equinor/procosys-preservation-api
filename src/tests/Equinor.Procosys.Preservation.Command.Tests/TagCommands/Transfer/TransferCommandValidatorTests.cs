@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             _tagValidatorMock.Setup(r => r.HaveNextStepAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.TagTypeCanBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.TagTypeCanBeTransferredAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _command = new TransferCommand(_tagIds);
+            _command = new TransferCommand("", _tagIds);
 
             _dut = new TransferCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new TransferCommand(new List<int>());
+            var command = new TransferCommand("", new List<int>());
             
             var result = _dut.Validate(command);
 
@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new TransferCommand(new List<int>{1, 1});
+            var command = new TransferCommand("", new List<int>{1, 1});
             
             var result = _dut.Validate(command);
 

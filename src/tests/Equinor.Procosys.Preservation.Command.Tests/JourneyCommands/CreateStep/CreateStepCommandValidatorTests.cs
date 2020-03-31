@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _stepValidatorMock = new Mock<IStepValidator>();
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
             _responsibleValidatorMock.Setup(r => r.ExistsAsync(_responsibleId, default)).Returns(Task.FromResult(true));
-            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleId);
+            _command = new CreateStepCommand("", _journeyId, _stepTitle, _modeId, _responsibleId);
 
             _dut = new CreateStepCommandValidator(_journeyValidatorMock.Object, _stepValidatorMock.Object, _modeValidatorMock.Object, _responsibleValidatorMock.Object);
         }

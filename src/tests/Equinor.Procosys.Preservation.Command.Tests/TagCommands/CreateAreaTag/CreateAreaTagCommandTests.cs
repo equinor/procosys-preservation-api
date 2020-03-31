@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public void Constructor_ShouldSetProperties_WithRequirements()
         {
             var dut = new CreateAreaTagCommand(
+                "",
                 "ProjectNameA",
                 TagType.PreArea,
                 "DisciplineA",
@@ -42,6 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         {
             var dut = new CreateAreaTagCommand(
                 "",
+                "",
                 TagType.PreArea,
                 "I",
                 null,
@@ -59,6 +61,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public void GetTagNo_ShouldReturnSiteTagNo_WithDisciplineAndSuffix()
         {
             var dut = new CreateAreaTagCommand(
+                "", 
                 "",
                 TagType.SiteArea,
                 "I",
@@ -78,6 +81,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         {
             var dut = new CreateAreaTagCommand(
                 "",
+                "",
                 TagType.PreArea,
                 "I",
                 null,
@@ -95,6 +99,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public void GetTagNo_ShouldReturnSiteTagNo_WithDiscipline()
         {
             var dut = new CreateAreaTagCommand(
+                "",
                 "",
                 TagType.SiteArea,
                 "I",
@@ -114,6 +119,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         {
             var dut = new CreateAreaTagCommand(
                 "",
+                "",
                 TagType.PreArea,
                 "I",
                 "A300",
@@ -131,6 +137,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public void GetTagNo_ShouldReturnSiteTagNo_WithDisciplineAndArea()
         {
             var dut = new CreateAreaTagCommand(
+                "",
                 "",
                 TagType.SiteArea,
                 "I",
@@ -150,6 +157,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         {
             var dut = new CreateAreaTagCommand(
                 "",
+                "",
                 TagType.PreArea,
                 "I",
                 "A300",
@@ -168,6 +176,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         {
             var dut = new CreateAreaTagCommand(
                 "",
+                "",
                 TagType.SiteArea,
                 "I",
                 "A300",
@@ -184,7 +193,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithNullLists()
         {
-            var dut = new CreateAreaTagCommand("ProjectNameA",
+            var dut = new CreateAreaTagCommand(
+                "",
+                "ProjectNameA",
                 TagType.PreArea,
                 "DiscA",
                 "AreaA",

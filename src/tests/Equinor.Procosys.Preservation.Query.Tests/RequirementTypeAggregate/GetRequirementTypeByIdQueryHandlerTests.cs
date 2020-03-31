@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetRequirementTypeByIdQueryHandler(context);
-                var result = await dut.Handle(new GetRequirementTypeByIdQuery(_requirementType.Id), default);
+                var result = await dut.Handle(new GetRequirementTypeByIdQuery(TestPlant, _requirementType.Id), default);
 
                 var requirementType = result.Data;
 
@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetRequirementTypeByIdQueryHandler(context);
-                var result = await dut.Handle(new GetRequirementTypeByIdQuery(246), default);
+                var result = await dut.Handle(new GetRequirementTypeByIdQuery(TestPlant, 246), default);
 
                 Assert.IsNull(result.Data);
             }

@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new CreateJourneyCommand("TitleA");
+            var dut = new CreateJourneyCommand("", "TitleA");
 
             Assert.AreEqual("TitleA", dut.Title);
         }

@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagAreas
         [TestMethod]
         public void Constructor_SetsProperties()
         {
-            var dut = new GetUniqueTagAreasQuery("PX");
+            var dut = new GetUniqueTagAreasQuery("", "PX");
 
             Assert.AreEqual("PX", dut.ProjectName);
         }

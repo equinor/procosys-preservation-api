@@ -27,6 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             var _reqId = 21;
 
             _recordValuesCommandWithCheckedCheckBoxAndNumber = new RecordValuesCommand(
+                "",
                 _tagId, 
                 _reqId, 
                 new Dictionary<int, string>
@@ -37,6 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
                 null);
 
             _recordValuesCommandWithNullAsNumber = new RecordValuesCommand(
+                "",
                 _tagId, 
                 _reqId, 
                 new Dictionary<int, string>

@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagActionsQuery(_tagId);
+                var query = new GetTagActionsQuery(TestPlant, _tagId);
                 var dut = new GetTagActionsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagActionsQuery(0);
+                var query = new GetTagActionsQuery("", 0);
                 var dut = new GetTagActionsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);

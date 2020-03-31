@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllRequirementTypesQueryHandler(context);
-                var result = await dut.Handle(new GetAllRequirementTypesQuery(false), default);
+                var result = await dut.Handle(new GetAllRequirementTypesQuery(TestPlant, false), default);
 
                 var requirementTypes = result.Data.ToList();
                 var requirementTypeDto = requirementTypes.Single(rt => rt.Id == _reqType1.Id);
@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllRequirementTypesQueryHandler(context);
-                var result = await dut.Handle(new GetAllRequirementTypesQuery(true), default);
+                var result = await dut.Handle(new GetAllRequirementTypesQuery(TestPlant, true), default);
 
                 var requirementTypes = result.Data.ToList();
                 var requirementDefinitions = requirementTypes.First(rt => rt.Id == _reqType1.Id).RequirementDefinitions.ToList();
@@ -100,7 +100,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllRequirementTypesQueryHandler(context);
-                var result = await dut.Handle(new GetAllRequirementTypesQuery(true), default);
+                var result = await dut.Handle(new GetAllRequirementTypesQuery(TestPlant, true), default);
 
                 var dtos = result.Data.ToList();
                 Assert.AreEqual(4, dtos.Count);

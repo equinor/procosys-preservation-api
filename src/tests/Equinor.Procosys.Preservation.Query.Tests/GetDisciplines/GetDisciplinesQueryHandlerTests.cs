@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetDisciplines
 
             _plantProviderMock = new Mock<IPlantProvider>();
             _areaCodeApiServiceMock = new Mock<IDisciplineApiService>();
-            _query = new GetDisciplinesQuery();
+            _query = new GetDisciplinesQuery("");
         }
 
         [TestMethod]

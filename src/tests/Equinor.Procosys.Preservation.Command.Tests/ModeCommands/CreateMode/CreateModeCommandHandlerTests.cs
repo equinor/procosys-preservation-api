@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
                     _modeAdded = x;
                 });
 
-            _command = new CreateModeCommand(TestMode);
+            _command = new CreateModeCommand(TestPlant, TestMode);
 
             _dut = new CreateModeCommandHandler(
                 _modeRepositoryMock.Object,

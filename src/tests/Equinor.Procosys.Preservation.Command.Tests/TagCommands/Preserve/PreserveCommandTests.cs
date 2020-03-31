@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new PreserveCommand(17);
+            var dut = new PreserveCommand("", 17);
 
             Assert.AreEqual(17, dut.TagId);
         }

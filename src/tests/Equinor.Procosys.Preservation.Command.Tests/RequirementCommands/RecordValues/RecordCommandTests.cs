@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new RecordValuesCommand(1, 2, null, "Comment");
+            var dut = new RecordValuesCommand("", 1, 2, null, "Comment");
 
             Assert.AreEqual(1, dut.TagId);
             Assert.AreEqual(2, dut.RequirementId);

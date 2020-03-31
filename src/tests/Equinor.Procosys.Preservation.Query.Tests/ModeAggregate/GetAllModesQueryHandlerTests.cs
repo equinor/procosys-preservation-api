@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
             {
                 var dut = new GetAllModesQueryHandler(context);
 
-                var result = await dut.Handle(new GetAllModesQuery(), default);
+                var result = await dut.Handle(new GetAllModesQuery(TestPlant), default);
 
                 var modes = result.Data.ToList();
 

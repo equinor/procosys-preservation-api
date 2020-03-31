@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
             {
                 _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
 
-                var query = new GetTagDetailsQuery(_testTag.Id);
+                var query = new GetTagDetailsQuery(TestPlant, _testTag.Id);
                 var dut = new GetTagDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagDetailsQuery(0);
+                var query = new GetTagDetailsQuery("", 0);
                 var dut = new GetTagDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);

@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetActionDetailsQuery(_tagId, _closedActionId);
+                var query = new GetActionDetailsQuery(TestPlant, _tagId, _closedActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetActionDetailsQuery(_tagId, _openActionId);
+                var query = new GetActionDetailsQuery(TestPlant, _tagId, _openActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetActionDetailsQuery(0, _closedActionId);
+                var query = new GetActionDetailsQuery(TestPlant, 0, _closedActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -102,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetActionDetailsQuery(_tagId, 0);
+                var query = new GetActionDetailsQuery(TestPlant, _tagId, 0);
                 var dut = new GetActionDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);

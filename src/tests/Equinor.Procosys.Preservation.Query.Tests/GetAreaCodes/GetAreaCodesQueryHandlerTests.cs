@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
 
             _plantProviderMock = new Mock<IPlantProvider>();
             _areaApiServiceMock = new Mock<IAreaApiService>();
-            _query = new GetAreasQuery();
+            _query = new GetAreasQuery("");
         }
 
         [TestMethod]

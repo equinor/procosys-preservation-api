@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagAreas
             {
                 _testDataSet = AddTestDataSet(context);
 
-                _queryForProject1 = new GetUniqueTagAreasQuery(_testDataSet.Project1.Name);
+                _queryForProject1 = new GetUniqueTagAreasQuery(TestPlant, _testDataSet.Project1.Name);
             }
         }
 
@@ -62,10 +62,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagAreas
             {
                 var dut = new GetUniqueTagAreasQueryHandler(context);
 
-                var result = await dut.Handle(new GetUniqueTagAreasQuery(_testDataSet.Project2.Name), default);
+                var result = await dut.Handle(new GetUniqueTagAreasQuery(TestPlant, _testDataSet.Project2.Name), default);
                 Assert.AreEqual(0, result.Data.Count);
 
-                result = await dut.Handle(new GetUniqueTagAreasQuery("Unknown"), default);
+                result = await dut.Handle(new GetUniqueTagAreasQuery(TestPlant, "Unknown"), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }

@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 _tagApiServiceMock
                     .Setup(x => x.SearchTagsByTagNo(TestPlant, _testDataSet.Project1.Name, _testDataSet.SiteTagPrefix))
                     .Returns(Task.FromResult(_apiTags));
-                _query = new SearchTagsByTagNoQuery(_testDataSet.Project1.Name, _testDataSet.SiteTagPrefix);
+                _query = new SearchTagsByTagNoQuery(TestPlant, _testDataSet.Project1.Name, _testDataSet.SiteTagPrefix);
             }
         }
 
@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 
                 var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
 
-                var query = new SearchTagsByTagNoQuery("Project XYZ", "TagNo");
+                var query = new SearchTagsByTagNoQuery(TestPlant, "Project XYZ", "TagNo");
                 var result = await dut.Handle(query, default);
 
                 Assert.AreEqual(ResultType.Ok, result.ResultType);

@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
             {
                 _testDataSet = AddTestDataSet(context);
 
-                _queryForProject1 = new GetUniqueTagResponsiblesQuery(_testDataSet.Project1.Name);
+                _queryForProject1 = new GetUniqueTagResponsiblesQuery(TestPlant, _testDataSet.Project1.Name);
             }
         }
 
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.Responsible1.Code));
 
-                result = await dut.Handle(new GetUniqueTagResponsiblesQuery(_testDataSet.Project2.Name), default);
+                result = await dut.Handle(new GetUniqueTagResponsiblesQuery(TestPlant, _testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.Responsible1.Code));
             }
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
             {
                 var dut = new GetUniqueTagResponsiblesQueryHandler(context);
 
-                var result = await dut.Handle(new GetUniqueTagResponsiblesQuery("Unknown"), default);
+                var result = await dut.Handle(new GetUniqueTagResponsiblesQuery(TestPlant, "Unknown"), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }

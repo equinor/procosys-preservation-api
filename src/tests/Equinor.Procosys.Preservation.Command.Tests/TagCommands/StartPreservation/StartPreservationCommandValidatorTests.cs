@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(true));
-            _command = new StartPreservationCommand(_tagIds);
+            _command = new StartPreservationCommand("", _tagIds);
 
             _dut = new StartPreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new StartPreservationCommand(new List<int>());
+            var command = new StartPreservationCommand("", new List<int>());
             
             var result = _dut.Validate(command);
 
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new StartPreservationCommand(new List<int>{1, 1});
+            var command = new StartPreservationCommand("", new List<int>{1, 1});
             
             var result = _dut.Validate(command);
 

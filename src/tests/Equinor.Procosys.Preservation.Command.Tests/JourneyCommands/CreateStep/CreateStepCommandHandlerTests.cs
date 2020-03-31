@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
                 .Setup(r => r.GetByIdAsync(ResponsibleId))
                 .Returns(Task.FromResult(_responsibleMock.Object));
 
-            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleId);
+            _command = new CreateStepCommand(TestPlant, JourneyId, "S", ModeId, ResponsibleId);
 
             _dut = new CreateStepCommandHandler(_journeyRepositoryMock.Object,
                 _modeRepositoryMock.Object,

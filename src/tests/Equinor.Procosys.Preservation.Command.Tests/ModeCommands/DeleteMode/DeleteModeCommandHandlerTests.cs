@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
                 .Setup(x => x.GetByIdAsync(ModeId))
                     .Returns(Task.FromResult(_modeMock.Object));
 
-            _command = new DeleteModeCommand(ModeId);
+            _command = new DeleteModeCommand(TestPlant, ModeId);
 
             _dut = new DeleteModeCommandHandler(
                 _modeRepositoryMock.Object,

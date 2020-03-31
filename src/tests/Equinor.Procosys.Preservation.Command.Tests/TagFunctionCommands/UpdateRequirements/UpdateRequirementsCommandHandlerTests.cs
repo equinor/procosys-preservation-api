@@ -59,13 +59,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                     Description = ProcosysDescription,
                     RegisterCode = RegisterCode
                 }));
-            _commandWithTwoRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode,
+            _commandWithTwoRequirements = new UpdateRequirementsCommand(TestPlant, TagFunctionCode, RegisterCode,
                 new List<Requirement>
                 {
                     new Requirement(ReqDefId1, Interval1),
                     new Requirement(ReqDefId2, Interval2),
                 });
-            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null);
+            _commandWithoutRequirements = new UpdateRequirementsCommand(TestPlant, TagFunctionCode, RegisterCode, null);
             
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock

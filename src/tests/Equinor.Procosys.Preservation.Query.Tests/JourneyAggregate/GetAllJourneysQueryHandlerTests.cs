@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             {
                 var dut = new GetAllJourneysQueryHandler(context);
 
-                var result = await dut.Handle(new GetAllJourneysQuery(false), default);
+                var result = await dut.Handle(new GetAllJourneysQuery(TestPlant, false), default);
 
                 var journeys = result.Data.ToList();
 
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetAllJourneysQueryHandler(context);
-                var result = await dut.Handle(new GetAllJourneysQuery(true), default);
+                var result = await dut.Handle(new GetAllJourneysQuery(TestPlant, true), default);
 
                 var journeys = result.Data.ToList();
                 Assert.AreEqual(1, journeys.Count);

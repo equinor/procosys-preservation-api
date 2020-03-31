@@ -81,7 +81,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
                 .Setup(r => r.GetTagsByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(new List<Tag> {_tag1Mock.Object, _tag2Mock.Object}));
 
-            _command = new TransferCommand(tagIds);
+            _command = new TransferCommand(TestPlant, tagIds);
 
             _dut = new TransferCommandHandler(projectRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
         }

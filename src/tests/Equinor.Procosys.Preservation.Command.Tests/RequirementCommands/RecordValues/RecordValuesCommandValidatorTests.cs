@@ -39,12 +39,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(FieldId, default)).Returns(Task.FromResult(true));
 
             _recordValuesCommandWithCommentOnly = new RecordValuesCommand(
+                "",
                 TagId,
                 ReqId, 
                 null, 
                 Comment);
 
             _recordValuesCommandWithNormalNumber = new RecordValuesCommand(
+                "",
                 TagId, 
                 ReqId, 
                 new Dictionary<int, string> {{FieldId, NumberAsString}},

@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             var tagIds = new List<int> {_tagId1, _tagId2};
             _tagRepoMock = new Mock<IProjectRepository>();
             _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
-            _command = new StartPreservationCommand(tagIds);
+            _command = new StartPreservationCommand(TestPlant, tagIds);
 
             _dut = new StartPreservationCommandHandler(_tagRepoMock.Object, UnitOfWorkMock.Object);
         }

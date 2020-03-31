@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
 
-            _command = new PreserveCommand(TagId, RequirementId);
+            _command = new PreserveCommand(TestPlant, TagId, RequirementId);
 
             _timeProvider.Elapse(TimeSpan.FromDays(-1));
             _tag.StartPreservation();

@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
         {
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_title, default)).Returns(Task.FromResult(false));
-            _command = new CreateModeCommand(_title);
+            _command = new CreateModeCommand("", _title);
 
             _dut = new CreateModeCommandValidator(_modeValidatorMock.Object);
         }

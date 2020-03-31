@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId, default)).Returns(Task.FromResult(true));
-            _command = new PreserveCommand(TagId);
+            _command = new PreserveCommand("", TagId);
 
             _dut = new PreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }

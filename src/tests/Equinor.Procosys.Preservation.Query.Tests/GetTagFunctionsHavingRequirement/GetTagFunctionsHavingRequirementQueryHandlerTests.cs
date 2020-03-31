@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionsHavingRequire
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagFunctionsHavingRequirementQueryHandler(context);
-                var result = await dut.Handle(new GetTagFunctionsHavingRequirementQuery(), default);
+                var result = await dut.Handle(new GetTagFunctionsHavingRequirementQuery(TestPlant), default);
 
                 Assert.AreEqual(0, result.Data.Count());
             }
@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionsHavingRequire
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagFunctionsHavingRequirementQueryHandler(context);
-                var result = await dut.Handle(new GetTagFunctionsHavingRequirementQuery(), default);
+                var result = await dut.Handle(new GetTagFunctionsHavingRequirementQuery(TestPlant), default);
 
                 Assert.AreEqual(0, result.Data.Count());
             }
@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionsHavingRequire
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagFunctionsHavingRequirementQueryHandler(context);
-                var result = await dut.Handle(new GetTagFunctionsHavingRequirementQuery(), default);
+                var result = await dut.Handle(new GetTagFunctionsHavingRequirementQuery(TestPlant), default);
 
                 var tagFunctions = result.Data.ToList();
 

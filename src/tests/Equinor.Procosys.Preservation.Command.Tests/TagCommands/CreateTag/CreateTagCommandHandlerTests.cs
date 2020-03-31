@@ -107,6 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 .Returns(Task.FromResult(mainTagDetailList));
 
             _command = new CreateTagCommand(
+                TestPlant,
                 new List<string>{TestTagNo1, TestTagNo2}, 
                 TestProjectName,
                 _stepMock.Object.Id,

@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagDisciplines
         [TestMethod]
         public void Constructor_SetsProperties()
         {
-            var dut = new GetUniqueTagDisciplinesQuery("PX");
+            var dut = new GetUniqueTagDisciplinesQuery("", "PX");
 
             Assert.AreEqual("PX", dut.ProjectName);
         }

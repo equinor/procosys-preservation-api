@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetJourneyByIdQueryHandler(context);
-                var result = await dut.Handle(new GetJourneyByIdQuery(_testDataSet.Journey2With1Step.Id), default);
+                var result = await dut.Handle(new GetJourneyByIdQuery(TestPlant, _testDataSet.Journey2With1Step.Id), default);
 
                 var journey = result.Data;
 
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetJourneyByIdQueryHandler(context);
-                var result = await dut.Handle(new GetJourneyByIdQuery(1525), default);
+                var result = await dut.Handle(new GetJourneyByIdQuery(TestPlant, 1525), default);
 
                 Assert.IsNull(result.Data);
             }

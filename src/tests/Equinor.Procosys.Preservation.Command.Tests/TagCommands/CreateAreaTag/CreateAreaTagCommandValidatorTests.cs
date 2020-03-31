@@ -41,6 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(true));
 
             _command = new CreateAreaTagCommand(
+                "",
                 _projectName,
                 TagType.PreArea,
                 "D",
@@ -149,6 +150,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public void Validate_ShouldFail_WhenNoRequirementsGiven()
         {
             var command = new CreateAreaTagCommand(
+                "",
                 _projectName,
                 TagType.PreArea,
                 "DisciplineA",
@@ -171,6 +173,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public void Validate_ShouldFail_WhenRequirementsNotUnique()
         {
             var command = new CreateAreaTagCommand(
+                "",
                 _projectName,
                 TagType.PreArea,
                 "DisciplineA",

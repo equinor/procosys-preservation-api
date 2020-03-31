@@ -42,6 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(true));
 
             _command = new CreateTagCommand(
+                "",
                 new List<string>{_tagNo1, _tagNo2}, 
                 _projectName,
                 _stepId,
@@ -146,6 +147,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         public void Validate_ShouldFail_WhenNoRequirementsGiven()
         {
             var command = new CreateTagCommand(
+                "",
                 new List<string>{_tagNo1}, 
                 _projectName,
                 _stepId,
@@ -164,6 +166,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         public void Validate_ShouldFail_WhenNoTagNosGiven()
         {
             var command = new CreateTagCommand(
+                "",
                 new List<string>(), 
                 _projectName,
                 _stepId,
@@ -182,6 +185,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         public void Validate_ShouldFail_WhenNoTagNosNotUnique()
         {
             var command = new CreateTagCommand(
+                "",
                 new List<string>{"X","x"}, 
                 _projectName,
                 _stepId,
@@ -200,6 +204,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         public void Validate_ShouldFail_WhenRequirementsNotUnique()
         {
             var command = new CreateTagCommand(
+                "",
                 new List<string>{_tagNo1}, 
                 _projectName,
                 _stepId,

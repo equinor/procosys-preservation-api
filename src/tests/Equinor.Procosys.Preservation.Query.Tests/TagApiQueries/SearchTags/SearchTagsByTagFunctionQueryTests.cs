@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public void Constructor_SetsProperties()
         {
-            var dut = new SearchTagsByTagFunctionQuery("ProjectName", "A", "B");
+            var dut = new SearchTagsByTagFunctionQuery("", "ProjectName", "A", "B");
 
             Assert.AreEqual("ProjectName", dut.ProjectName);
             Assert.AreEqual("A", dut.TagFunctionCode);
