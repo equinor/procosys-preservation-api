@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MediatR;
 using ServiceResult;
 
@@ -7,6 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
     public class CreateTagCommand : IRequest<Result<List<int>>>
     {
         public CreateTagCommand(
+            string plant,
             IEnumerable<string> tagNos,
             string projectName,
             int stepId,
@@ -14,6 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             string remark,
             string storageArea)
         {
+            Plant = plant ?? throw new ArgumentNullException(nameof(plant));
             TagNos = tagNos ?? new List<string>();
             ProjectName = projectName;
             StepId = stepId;
@@ -22,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             StorageArea = storageArea;
         }
 
+        public string Plant { get; }
         public IEnumerable<string> TagNos { get; }
         public string ProjectName { get; }
         public int StepId { get; }

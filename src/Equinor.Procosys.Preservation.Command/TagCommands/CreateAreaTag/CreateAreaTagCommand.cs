@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
@@ -8,6 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
     public class CreateAreaTagCommand : IRequest<Result<int>>
     {
         public CreateAreaTagCommand(
+            string plant,
             string projectName,
             TagType tagType,
             string disciplineCode,
@@ -19,6 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             string remark,
             string storageArea)
         {
+            Plant = plant ?? throw new ArgumentNullException(nameof(plant));
             ProjectName = projectName;
             TagType = tagType;
             DisciplineCode = disciplineCode;
@@ -31,6 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             StorageArea = storageArea;
         }
 
+        public string Plant { get; }
         public string ProjectName { get; }
         public TagType TagType { get; }
         public string DisciplineCode { get; }
