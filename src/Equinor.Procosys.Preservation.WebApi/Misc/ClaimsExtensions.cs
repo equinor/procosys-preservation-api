@@ -7,11 +7,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public static class ClaimsExtensions
     {
-        private const string Oid = "http://schemas.microsoft.com/identity/claims/objectidentifier";
+        public const string OidType = "http://schemas.microsoft.com/identity/claims/objectidentifier";
 
         public static Guid? TryGetOid(this IEnumerable<Claim> claims)
         {
-            var oidClaim = claims.FirstOrDefault(c => c.Type == Oid);
+            var oidClaim = claims.FirstOrDefault(c => c.Type == OidType);
             if (Guid.TryParse(oidClaim?.Value, out var oid))
             {
                 return oid;
