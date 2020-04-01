@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
         private async Task<bool> SetDisciplineDataSuccessfullyAsync(Tag tag, string disciplineCode)
         {
-            var discipline = await _disciplineApiService.GetDiscipline(_plantProvider.Plant, disciplineCode);
+            var discipline = await _disciplineApiService.GetDisciplineAsync(_plantProvider.Plant, disciplineCode);
             if (discipline == null)
             {
                 return false;
@@ -94,7 +94,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             {
                 return true;
             }
-            var area = await _areaApiService.GetArea(_plantProvider.Plant, areaCode);
+            var area = await _areaApiService.GetAreaAsync(_plantProvider.Plant, areaCode);
             if (area == null)
             {
                 return false;
@@ -131,7 +131,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
         private async Task<Project> CreateProjectAsync(string projectName)
         {
-            var mainProject = await _projectApiService.GetProject(_plantProvider.Plant, projectName);
+            var mainProject = await _projectApiService.GetProjectAsync(_plantProvider.Plant, projectName);
             if (mainProject == null)
             {
                 return null;

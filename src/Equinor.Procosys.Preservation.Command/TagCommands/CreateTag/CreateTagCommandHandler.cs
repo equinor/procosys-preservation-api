@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
             
-            var tagDetailList = await _tagApiService.GetTagDetails(_plantProvider.Plant, request.ProjectName, request.TagNos);
+            var tagDetailList = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, request.ProjectName, request.TagNos);
             
             foreach (var tagNo in request.TagNos)
             {

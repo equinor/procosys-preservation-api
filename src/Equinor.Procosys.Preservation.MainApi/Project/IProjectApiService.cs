@@ -4,6 +4,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Project
 {
     public interface IProjectApiService
     {
-        Task<ProcosysProject> GetProject(string plant, string name);
+        Task<ProcosysProject> GetProjectAsync(string plant, string name);
     }
 }
