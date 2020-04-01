@@ -35,18 +35,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Caching
         }
 
         private static TimeSpan GetExpirationTime(CacheDuration duration, long expiration)
-        {
-            switch (duration)
+            => duration switch
             {
-                case CacheDuration.Hours:
-                    return TimeSpan.FromHours(expiration);
-                case CacheDuration.Minutes:
-                    return TimeSpan.FromMinutes(expiration);
-                case CacheDuration.Seconds:
-                    return TimeSpan.FromSeconds(expiration);
-                default:
-                    throw new NotImplementedException($"Unknown {nameof(CacheDuration)}: {duration}");
-            }
-        }
+                CacheDuration.Hours => TimeSpan.FromHours(expiration),
+                CacheDuration.Minutes => TimeSpan.FromMinutes(expiration),
+                CacheDuration.Seconds => TimeSpan.FromSeconds(expiration),
+                _ => throw new NotImplementedException($"Unknown {nameof(CacheDuration)}: {duration}"),
+            };
     }
 }
