@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Infrastructure.Caching;
@@ -9,38 +10,34 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
 {
     public class PermissionService : IPermissionService
     {
-        private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IPlantProvider _plantProvider;
         private readonly ICacheManager _cacheManager;
         private readonly IPermissionApiService _permissionApiService;
         private readonly IOptionsMonitor<PermissionOptions> _options;
 
         public PermissionService(
-            ICurrentUserProvider currentUserProvider, 
             IPlantProvider plantProvider, 
             ICacheManager cacheManager, 
             IPermissionApiService permissionApiService,
             IOptionsMonitor<PermissionOptions> options)
         {
-            _currentUserProvider = currentUserProvider;
             _plantProvider = plantProvider;
             _cacheManager = cacheManager;
             _permissionApiService = permissionApiService;
             _options = options;
         }
 
-        public async Task<IList<string>> GetPermissionsForCurrentUserAsync()
+        public async Task<IList<string>> GetPermissionsForUserOid(Guid userOid)
         {
             var plant = _plantProvider.Plant;
-            var currentUserOid = _currentUserProvider.GetCurrentUser().ToString();
             return await _cacheManager.GetOrCreate(
-                Key(currentUserOid, plant),
+                Key(userOid, plant),
                 async () => await _permissionApiService.GetPermissionsAsync(plant),
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
         }
 
-        private static string Key(string key, string plantId)
-            => $"PERMISSIONS_{key.ToUpper()}_{plantId}";
+        private static string Key(Guid userOid, string plantId)
+            => $"PERMISSIONS_{userOid.ToString().ToUpper()}_{plantId}";
     }
 }
