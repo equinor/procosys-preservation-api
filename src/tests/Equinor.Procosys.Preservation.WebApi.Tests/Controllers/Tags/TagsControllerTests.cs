@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public async Task CreateTag_ShouldSendCommand()
         {
-            await _dut.CreateTag(_createTagDto);
+            await _dut.CreateTag("", _createTagDto);
             _mediatorMock.Verify(x => x.Send(It.IsAny<CreateTagCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             _createTagDto.StepId = 2;
             _createTagDto.TagNos = new List<string> {"TagNo1", "TagNo2"};
 
-            await _dut.CreateTag(_createTagDto);
+            await _dut.CreateTag("", _createTagDto);
 
             Assert.AreEqual(_createTagDto.ProjectName, createTagCommandCreated.ProjectName);
             Assert.AreEqual(_createTagDto.StepId, createTagCommandCreated.StepId);
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public async Task CreateTag_ShouldReturnsOk_WhenResultIsSuccessful()
         {
-            var result = await _dut.CreateTag(_createTagDto);
+            var result = await _dut.CreateTag("", _createTagDto);
 
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             var okResult = (OkObjectResult)result.Result;
