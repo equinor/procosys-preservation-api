@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
             }
 
             var user = _accessor.HttpContext.User;
-            if (!user.Identity.IsAuthenticated)
+            if (user.Identity.IsAuthenticated)
             {
                 var userDataClaimWithProject = $"{ClaimsTransformation.ProjectPrefix}{projectName}";
                 return user.Claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithProject);
