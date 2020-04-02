@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] bool includeVoided = false)
         {
@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         public async Task<ActionResult<JourneyDto>> GetJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         public async Task<ActionResult<int>> AddJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] CreateJourneyDto dto)
         {
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         public async Task<ActionResult> AddStep(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromBody] CreateStepDto dto)

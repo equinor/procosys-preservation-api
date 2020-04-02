@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<IEnumerable<TagDto>>> GetTags(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] FilterDto filter,
             [FromQuery] SortingDto sorting,
@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<TagDetailsDto>> GetTagDetails(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<RequirementDto>>> GetTagRequirements(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<ActionDto>>> GetTagActions(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<ActionDetailsDto>> GetTagActionDetails(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int actionId)
@@ -105,7 +105,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<int>> CreateTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] CreateTagDto dto)
         {
@@ -127,7 +127,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<int>> CreateAreaTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] CreateAreaTagDto dto)
         {
@@ -155,7 +155,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> StartPreservation(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -167,7 +167,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> StartPreservation(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] List<int> tagIds)
         {
@@ -179,7 +179,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> Preserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -191,7 +191,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> BulkPreserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] List<int> tagIds)
         {
@@ -203,7 +203,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> Transfer(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] List<int> tagIds)
         {
@@ -215,7 +215,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> RecordCheckBoxChecked(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int requirementId,
@@ -236,7 +236,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> Preserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int requirementId)

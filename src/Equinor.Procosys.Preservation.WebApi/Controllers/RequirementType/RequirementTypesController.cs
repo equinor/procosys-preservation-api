@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
         public async Task<ActionResult<IEnumerable<RequirementTypeDto>>> GetRequirementTypes(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] bool includeVoided = false)
         {
@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
         public async Task<ActionResult<RequirementTypeDto>> GetRequirementType(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {

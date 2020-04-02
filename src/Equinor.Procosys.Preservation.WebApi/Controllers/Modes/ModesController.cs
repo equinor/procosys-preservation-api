@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         public async Task<ActionResult<ModeDto>> GetModes(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
         {
             var result = await _mediator.Send(new GetAllModesQuery());
@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         public async Task<ActionResult<ModeDto>> GetMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         public async Task<ActionResult<int>> AddMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] CreateModeDto dto)
         {
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         public async Task<ActionResult> DeleteMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(Constants.Plant.MaxLength, MinimumLength = Constants.Plant.MinLength)]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
