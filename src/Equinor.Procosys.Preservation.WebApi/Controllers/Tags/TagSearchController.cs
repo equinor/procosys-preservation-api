@@ -24,6 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         /// <summary>
         /// Gets tags from ProCoSys by TagNos, and enriches them with preservation data
         /// </summary>
+        /// <param name="plant"></param>
         /// <param name="projectName"></param>
         /// <param name="startsWithTagNo"></param>
         /// <returns>All ProCoSys tags that match the search parameters</returns>
@@ -43,6 +44,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         /// <summary>
         /// Gets tags from ProCoSys by TagFunction/Register codes, and enriches them with preservation data
         /// </summary>
+        /// <param name="plant"></param>
         /// <param name="projectName"></param>
         /// <param name="tagFunctionCode"></param>
         /// <param name="registerCode"></param>

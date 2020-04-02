@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsible
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsibles
 {
     [ApiController]
     [Route("Responsibles")]
