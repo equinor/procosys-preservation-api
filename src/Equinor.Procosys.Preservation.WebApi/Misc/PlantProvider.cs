@@ -6,7 +6,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public class PlantProvider : IPlantProvider
     {
-        public static string PlantHeader = "x-plant";
+        public const string PlantHeader = "x-plant";
 
         private readonly IHttpContextAccessor _accessor;
 

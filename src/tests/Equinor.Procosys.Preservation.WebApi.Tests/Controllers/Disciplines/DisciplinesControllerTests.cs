@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Disciplines
 
             var dut = new DisciplinesController(_mediatorMock.Object);
 
-            var result = await dut.GetDisciplines();
+            var result = await dut.GetDisciplines("");
 
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             var okResult = (OkObjectResult)result.Result;
