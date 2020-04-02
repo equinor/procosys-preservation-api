@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
             _options = options;
         }
 
-        public async Task<IList<string>> GetPermissionsForUserOid(Guid userOid)
+        public async Task<IList<string>> GetPermissionsForUserOidAsync(Guid userOid)
         {
             var plant = _plantProvider.Plant;
             return await _cacheManager.GetOrCreate(
