@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Behaviors
 
             _logger.LogInformation($"----- Checking project access for {typeName}");
 
-            if (!await _projectAccess.ValidateAsync(request))
+            if (!await _projectAccess.ValidateAsync(request as IBaseRequest))
             {
                 _logger.LogWarning($"User do not have access to project - {typeName}");
 

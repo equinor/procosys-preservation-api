@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.ProjectAccess;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using TagAction = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
@@ -21,7 +22,7 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
             _context = context;
         }
 
-        public async Task<bool> ValidateAsync(object request)
+        public async Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest: IBaseRequest
         {
             if (request == null)
             {
