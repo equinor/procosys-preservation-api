@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using Equinor.Procosys.Preservation.Domain;
 using Microsoft.AspNetCore.Http;
 
@@ -7,17 +6,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public class CurrentUserProvider : ICurrentUserProvider
     {
-        private const string Oid = "http://schemas.microsoft.com/identity/claims/objectidentifier";
         private readonly IHttpContextAccessor _accessor;
 
         public CurrentUserProvider(IHttpContextAccessor accessor) => _accessor = accessor;
 
         public Guid GetCurrentUser()
         {
-            var oidClaim = _accessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == Oid);
-            if (Guid.TryParse(oidClaim?.Value, out var oid))
+            var oid = _accessor.HttpContext.User.Claims.TryGetOid();
+            if (oid.HasValue)
             {
-                return oid;
+                return oid.Value;
             }
             throw new Exception("Unable to determine current user");
         }

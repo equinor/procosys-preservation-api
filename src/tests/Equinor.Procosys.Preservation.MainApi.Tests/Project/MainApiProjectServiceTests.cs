@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
             var dut = new MainApiProjectService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
             // Act
-            var result = await dut.GetProject(_plant, _name);
+            var result = await dut.GetProjectAsync(_plant, _name);
 
             // Assert
             Assert.AreEqual(_name, result.Name);
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
         {
             var dut = new MainApiProjectService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetProject("INVALIDPLANT", ""));
+            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetProjectAsync("INVALIDPLANT", ""));
         }
     }
 }

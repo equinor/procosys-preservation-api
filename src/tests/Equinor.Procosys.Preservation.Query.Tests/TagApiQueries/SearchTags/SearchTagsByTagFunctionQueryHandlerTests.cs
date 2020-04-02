@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     }
                 };
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunction(TestPlant, _testDataSet.Project1.Name, _tagFunctionCode, _registerCode))
+                    .Setup(x => x.SearchTagsByTagFunctionAsync(TestPlant, _testDataSet.Project1.Name, _tagFunctionCode, _registerCode))
                     .Returns(Task.FromResult(_apiTags));
                 _query = new SearchTagsByTagFunctionQuery(_testDataSet.Project1.Name, _tagFunctionCode, _registerCode);
             }
@@ -126,7 +126,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunction(TestPlant, _testDataSet.Project1.Name, _tagFunctionCode, _registerCode))
+                    .Setup(x => x.SearchTagsByTagFunctionAsync(TestPlant, _testDataSet.Project1.Name, _tagFunctionCode, _registerCode))
                     .Returns(Task.FromResult<IList<ProcosysTagOverview>>(null));
 
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
@@ -143,7 +143,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagFunction(TestPlant, "Project XYZ", _tagFunctionCode, _registerCode))
+                    .Setup(x => x.SearchTagsByTagFunctionAsync(TestPlant, "Project XYZ", _tagFunctionCode, _registerCode))
                     .Returns(Task.FromResult(_apiTags));
 
                 var query = new SearchTagsByTagFunctionQuery("Project XYZ", _tagFunctionCode, _registerCode);
