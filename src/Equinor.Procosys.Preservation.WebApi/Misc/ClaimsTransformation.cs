@@ -27,11 +27,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 
         private async Task AddUserDataClaimForAllProjects(ClaimsPrincipal principal)
         {
-            // L.O085C.018
             var oid = principal.Claims.TryGetOid();
             if (oid.HasValue)
             {
-                // var projects = await _projectService.GetProjectsForUserOidAsync(oid.Value);
+                // ToDo var projects = await _projectService.GetProjectsForUserOidAsync(oid.Value);
+                // line below is just an easy POC to proof that this will work
                 var projects = new List<string>{"L.O085C.018"};
                 var claimsIdentity = new ClaimsIdentity();
                 projects.ToList().ForEach(project => claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, $"{ProjectPrefix}{project}")));

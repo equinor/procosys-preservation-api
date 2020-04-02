@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.ProjectAccess;
 using Microsoft.EntityFrameworkCore;
+using TagAction = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
 {
@@ -27,17 +28,16 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
                 throw new ArgumentNullException(nameof(request));
             }
 
-            string projectName;
-
             var pathToProject = request.GetType().GetCustomAttribute<PathToProjectAttribute>();
             if (pathToProject != null)
             {
                 var propertyValue = GetPropertyValue(request, pathToProject.PropertyName);
 
+                string projectName;
                 switch (pathToProject.PathToProjectType)
                 {
                     case PathToProjectType.ProjectName:
-                        projectName = propertyValue as string;
+                        projectName = (string)propertyValue;
                         break;
                     case PathToProjectType.TagId:
                         projectName = await GetProjectNameFromTagIdAsync((int)propertyValue);
@@ -63,18 +63,30 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
 
         private async Task<string> GetProjectNameFromRequirementIdAsync(int requirementId)
         {
-            return null;
+            var projectName = await (from p in _context.QuerySet<Project>() 
+                join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
+                join req in _context.QuerySet<Requirement>() on tag.Id equals EF.Property<int>(req, "TagId")
+                where req.Id == requirementId
+                select p.Name).FirstOrDefaultAsync();
+            
+            return projectName;
         }
 
         private async Task<string> GetProjectNameFromActionIdAsync(int actionId)
         {
-            return null;
+            var projectName = await (from p in _context.QuerySet<Project>() 
+                join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
+                join action in _context.QuerySet<TagAction>() on tag.Id equals EF.Property<int>(action, "TagId")
+                where action.Id == actionId
+                select p.Name).FirstOrDefaultAsync();
+            
+            return projectName;
         }
 
         private async Task<string> GetProjectNameFromTagIdAsync(int tagId)
         {
-            var projectName = await (from tag in _context.QuerySet<Tag>()
-                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+            var projectName = await (from p in _context.QuerySet<Project>() 
+                join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
                 where tag.Id == tagId
                 select p.Name).FirstOrDefaultAsync();
             
