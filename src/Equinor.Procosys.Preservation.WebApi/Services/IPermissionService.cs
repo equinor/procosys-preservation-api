@@ -6,6 +6,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
 {
     public interface IPermissionService
     {
-        Task<IList<string>> GetPermissionsForUserOid(Guid userOid);
+        Task<IList<string>> GetPermissionsForUserOidAsync(Guid userOid);
     }
 }
