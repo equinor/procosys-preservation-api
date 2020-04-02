@@ -2,9 +2,9 @@
 {
     public enum PathToProjectType
     {
-        Project,
-        Tag,
-        Action,
-        Requirement
+        ProjectName,
+        TagId,
+        ActionId,
+        RequirementId
     }
 }

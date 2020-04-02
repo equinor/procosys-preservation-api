@@ -1,9 +1,11 @@
 ﻿using System;
+using Equinor.Procosys.Preservation.Domain.ProjectAccess;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTags
 {
+    [PathToProject(PathToProjectType.ProjectName, nameof(ProjectName))]
     public class GetTagsQuery : IRequest<Result<TagsResult>>
     {
         public const SortingDirection DefaultSortingDirection = SortingDirection.Asc;

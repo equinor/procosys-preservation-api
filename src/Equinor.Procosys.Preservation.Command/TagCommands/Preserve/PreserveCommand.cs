@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
 {
-    [PathToProject(PathToProjectType.Tag, nameof(TagId))]
+    [PathToProject(PathToProjectType.TagId, nameof(TagId))]
     public class PreserveCommand : IRequest<Result<Unit>>
     {
         public PreserveCommand(int tagId) => TagId = tagId;

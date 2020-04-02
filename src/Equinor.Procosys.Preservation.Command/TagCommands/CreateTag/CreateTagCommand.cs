@@ -5,7 +5,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
-    [PathToProject(PathToProjectType.Project, nameof(ProjectName))]
+    [PathToProject(PathToProjectType.ProjectName, nameof(ProjectName))]
     public class CreateTagCommand : IRequest<Result<List<int>>>
     {
         public CreateTagCommand(
