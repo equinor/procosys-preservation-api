@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
             }
             catch (UnauthorizedAccessException u)
             {
-                _logger.LogError(u, "Unauthorized");
+                _logger.LogWarning("Unauthorized");
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
                 context.Response.ContentType = "application/text";
                 await context.Response.WriteAsync("Unauthorized!");
