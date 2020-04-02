@@ -17,6 +17,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
                 typeof(IQueryMarker).GetTypeInfo().Assembly
             );
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(CheckProjectAccessBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidatorBehavior<,>));
         }
     }

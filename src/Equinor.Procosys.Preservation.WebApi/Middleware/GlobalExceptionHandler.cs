@@ -27,6 +27,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 // Call the next delegate/middleware in the pipeline
                 await _next(context);
             }
+            catch (UnauthorizedAccessException u)
+            {
+                _logger.LogError(u, "Unauthorized");
+                context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+                context.Response.ContentType = "application/text";
+                await context.Response.WriteAsync("Unauthorized!");
+            }
             catch (FluentValidation.ValidationException ve)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -41,7 +48,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 _logger.LogError(ex, "An exception occured");
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 context.Response.ContentType = "application/text";
-                await context.Response.WriteAsync($"Something went wrong!");
+                await context.Response.WriteAsync("Something went wrong!");
             }
         }
 

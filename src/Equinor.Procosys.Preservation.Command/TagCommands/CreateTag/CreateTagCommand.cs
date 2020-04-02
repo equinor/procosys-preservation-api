@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using Equinor.Procosys.Preservation.Domain.ProjectAccess;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 {
+    [PathToProject(PathToProjectType.Project, nameof(ProjectName))]
     public class CreateTagCommand : IRequest<Result<List<int>>>
     {
         public CreateTagCommand(

@@ -30,6 +30,7 @@ using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.MainApi.TagFunction;
 using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.ProjectAccess;
 using Equinor.Procosys.Preservation.WebApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -61,6 +62,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             // Scoped - Created once per client request (connection)
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+            services.AddScoped<IProjectAccess, ProjectAccess.ProjectAccess>();
             services.AddScoped<IPlantProvider, PlantProvider>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
