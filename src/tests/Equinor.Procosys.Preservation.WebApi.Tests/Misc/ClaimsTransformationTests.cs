@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         }
 
         [TestMethod]
-        public async Task TransformAsync_ShouldAddRoleClaims()
+        public async Task TransformAsync_ShouldAddRoleClaimsForPermissions()
         {
             var result = await _dut.TransformAsync(_cp);
 
