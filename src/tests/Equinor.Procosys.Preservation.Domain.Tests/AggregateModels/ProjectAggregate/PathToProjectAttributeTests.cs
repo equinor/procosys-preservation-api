@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new PathToProjectAttribute(PathToProjectType.ProjectName, "P");
+            var dut = new ProjectAccessCheckAttribute(PathToProjectType.ProjectName, "P");
 
             Assert.AreEqual(PathToProjectType.ProjectName, dut.PathToProjectType);
             Assert.AreEqual("P", dut.PropertyName);

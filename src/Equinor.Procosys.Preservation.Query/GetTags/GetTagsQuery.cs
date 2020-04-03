@@ -5,7 +5,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTags
 {
-    [PathToProject(PathToProjectType.ProjectName, nameof(ProjectName))]
+    [ProjectAccessCheck(PathToProjectType.ProjectName, nameof(ProjectName))]
     public class GetTagsQuery : IRequest<Result<TagsResult>>
     {
         public const SortingDirection DefaultSortingDirection = SortingDirection.Asc;

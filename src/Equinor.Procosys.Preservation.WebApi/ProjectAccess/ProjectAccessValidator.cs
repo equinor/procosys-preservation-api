@@ -17,50 +17,45 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
             _projectHelper = projectHelper;
         }
 
-        public async Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest: IBaseRequest
+        public async Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest : IBaseRequest
         {
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
             }
 
-            var pathToProject = request.GetType().GetCustomAttribute<PathToProjectAttribute>();
-            if (pathToProject != null)
+            // If ProjectAccessCheckAttribute found on request, user need access to Project to allow request execution
+            var projectAccessCheck = request.GetType().GetCustomAttribute<ProjectAccessCheckAttribute>();
+            if (projectAccessCheck == null)
             {
-                var propertyValue = GetPropertyValue(request, pathToProject.PropertyName);
-
-                string projectName;
-                switch (pathToProject.PathToProjectType)
-                {
-                    case PathToProjectType.ProjectName:
-                        projectName = (string)propertyValue;
-                        break;
-                    case PathToProjectType.TagId:
-                        projectName = await _projectHelper.GetProjectNameFromTagIdAsync((int)propertyValue);
-                        break;
-                    case PathToProjectType.ActionId:
-                        projectName = await _projectHelper.GetProjectNameFromActionIdAsync((int)propertyValue);
-                        break;
-                    case PathToProjectType.RequirementId:
-                        projectName = await _projectHelper.GetProjectNameFromRequirementIdAsync((int)propertyValue);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-
-                if (!string.IsNullOrEmpty(projectName))
-                {
-                    return ValidateAccessToProject(projectName);
-                }
+                return true;
             }
 
-            return true;
+            // ProjectAccessAttribute "describes" how to find ProjectName from current request
+            var projectName = projectAccessCheck.PathToProjectType switch
+            {
+                PathToProjectType.ProjectName
+                    => GetPropertyValue<string>(request, projectAccessCheck.PropertyName),
+
+                PathToProjectType.TagId
+                    => await _projectHelper.GetProjectNameFromTagIdAsync(
+                        GetPropertyValue<int>(request, projectAccessCheck.PropertyName)),
+
+                PathToProjectType.ActionId
+                    => await _projectHelper.GetProjectNameFromActionIdAsync(
+                        GetPropertyValue<int>(request, projectAccessCheck.PropertyName)),
+
+                PathToProjectType.RequirementId
+                    => await _projectHelper.GetProjectNameFromRequirementIdAsync(
+                        GetPropertyValue<int>(request, projectAccessCheck.PropertyName)),
+
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            return _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
         }
 
-        private bool ValidateAccessToProject(string projectName)
-            => _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
-
-        private object GetPropertyValue(object request, string propertyName)
+        private T GetPropertyValue<T>(IBaseRequest request, string propertyName)
         {
             var propertyInfo = request.GetType().GetProperty(propertyName);
             if (propertyInfo == null)
@@ -68,7 +63,7 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
                 throw new Exception($"Property {propertyName} do not exist in class of type {nameof(request.GetType)}");
             }
 
-            return propertyInfo.GetValue(request, null);
+            return (T)propertyInfo.GetValue(request, null);
         }
     }
 }

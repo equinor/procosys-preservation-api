@@ -3,9 +3,9 @@
 namespace Equinor.Procosys.Preservation.Domain.ProjectAccess
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class PathToProjectAttribute : Attribute
+    public class ProjectAccessCheckAttribute : Attribute
     {
-        public PathToProjectAttribute(PathToProjectType pathToProjectType, string propertyName)
+        public ProjectAccessCheckAttribute(PathToProjectType pathToProjectType, string propertyName)
         {
             PathToProjectType = pathToProjectType;
             PropertyName = propertyName;
