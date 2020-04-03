@@ -17,11 +17,14 @@ namespace Equinor.Procosys.Preservation.Query.CheckAreaTagNo
 
         public async Task<Result<AreaTagDto>> Handle(CheckAreaTagNoQuery request, CancellationToken cancellationToken)
         {
-            var areaTagDto = new AreaTagDto(request.GetTagNo());
-            areaTagDto.Exists = await (from tag in _context.QuerySet<Tag>()
-                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
-                where tag.TagNo == areaTagDto.TagNo && p.Name == request.ProjectName
-                select p).AnyAsync(cancellationToken);
+            var tagNo = request.GetTagNo();
+            var areaTagDto = new AreaTagDto(tagNo)
+            {
+                Exists = await (from tag in _context.QuerySet<Tag>()
+                    join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                    where tag.TagNo == tagNo && p.Name == request.ProjectName
+                    select p).AnyAsync(cancellationToken)
+            };
             return new SuccessResult<AreaTagDto>(areaTagDto);
         }
     }
