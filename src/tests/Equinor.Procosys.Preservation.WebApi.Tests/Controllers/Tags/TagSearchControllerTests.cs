@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(null) as Result<List<ProcosysTagDto>>));
 
-            await _dut.SearchTagsByTagNo("", "");
+            await _dut.SearchTagsByTagNo("", "", "");
             _mediatorMock.Verify(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
                     query = request as SearchTagsByTagNoQuery;
                 });
 
-            await _dut.SearchTagsByTagNo("ProjectName", "TagNo");
+            await _dut.SearchTagsByTagNo("", "ProjectName", "TagNo");
 
             Assert.AreEqual("ProjectName", query.ProjectName);
             Assert.AreEqual("TagNo", query.StartsWithTagNo);
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(_listWithTwoItems) as Result<List<ProcosysTagDto>>));
 
-            var result = await _dut.SearchTagsByTagNo("ProjectName", "TagNo");
+            var result = await _dut.SearchTagsByTagNo("", "ProjectName", "TagNo");
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(ActionResult<List<ProcosysTagDto>>));
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(_listWithTwoItems) as Result<List<ProcosysTagDto>>));
 
-            var result = await _dut.SearchTagsByTagNo("ProjectName", "TagNo");
+            var result = await _dut.SearchTagsByTagNo("", "ProjectName", "TagNo");
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Result);
@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new NotFoundResult<List<ProcosysTagDto>>(string.Empty) as Result<List<ProcosysTagDto>>));
 
-            var result = await _dut.SearchTagsByTagNo("ProjectName", "TagNo");
+            var result = await _dut.SearchTagsByTagNo("", "ProjectName", "TagNo");
 
             Assert.IsInstanceOfType(result.Result, typeof(NotFoundObjectResult));
         }

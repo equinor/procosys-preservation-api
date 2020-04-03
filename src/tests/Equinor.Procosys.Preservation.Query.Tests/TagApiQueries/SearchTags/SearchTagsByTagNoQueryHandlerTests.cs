@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                     }
                 };
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagNo(TestPlant, _testDataSet.Project1.Name, _testDataSet.SiteTagPrefix))
+                    .Setup(x => x.SearchTagsByTagNoAsync(TestPlant, _testDataSet.Project1.Name, _testDataSet.SiteTagPrefix))
                     .Returns(Task.FromResult(_apiTags));
                 _query = new SearchTagsByTagNoQuery(_testDataSet.Project1.Name, _testDataSet.SiteTagPrefix);
             }
@@ -124,7 +124,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             {
                 var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagNo(TestPlant, _testDataSet.Project1.Name, _testDataSet.SiteTagPrefix))
+                    .Setup(x => x.SearchTagsByTagNoAsync(TestPlant, _testDataSet.Project1.Name, _testDataSet.SiteTagPrefix))
                     .Returns(Task.FromResult<IList<ProcosysTagOverview>>(null));
 
                 var result = await dut.Handle(_query, default);
@@ -140,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tagApiServiceMock
-                    .Setup(x => x.SearchTagsByTagNo(TestPlant, "Project XYZ", "TagNo"))
+                    .Setup(x => x.SearchTagsByTagNoAsync(TestPlant, "Project XYZ", "TagNo"))
                     .Returns(Task.FromResult(_apiTags));
 
                 var dut = new SearchTagsByTagNoQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);

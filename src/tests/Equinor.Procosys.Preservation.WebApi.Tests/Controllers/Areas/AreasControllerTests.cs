@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Areas
 
             var dut = new AreasController(_mediatorMock.Object);
 
-            var result = await dut.GetAreas();
+            var result = await dut.GetAreas("");
 
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             var okResult = (OkObjectResult)result.Result;

@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Project
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysProject> GetProject(string plant, string name)
+        public async Task<ProcosysProject> GetProjectAsync(string plant, string name)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
