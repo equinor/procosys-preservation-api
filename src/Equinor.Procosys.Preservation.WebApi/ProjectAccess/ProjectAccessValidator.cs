@@ -1,25 +1,20 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.ProjectAccess;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using TagAction = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
 {
     public class ProjectAccessValidator : IProjectAccessValidator
     {
         private readonly IProjectAccessChecker _projectAccessChecker;
-        private readonly IReadOnlyContext _context;
+        private readonly IProjectHelper _projectHelper;
 
-        public ProjectAccessValidator(IProjectAccessChecker projectAccessChecker, IReadOnlyContext context)
+        public ProjectAccessValidator(IProjectAccessChecker projectAccessChecker, IProjectHelper projectHelper)
         {
             _projectAccessChecker = projectAccessChecker;
-            _context = context;
+            _projectHelper = projectHelper;
         }
 
         public async Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest: IBaseRequest
@@ -41,13 +36,13 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
                         projectName = (string)propertyValue;
                         break;
                     case PathToProjectType.TagId:
-                        projectName = await GetProjectNameFromTagIdAsync((int)propertyValue);
+                        projectName = await _projectHelper.GetProjectNameFromTagIdAsync((int)propertyValue);
                         break;
                     case PathToProjectType.ActionId:
-                        projectName = await GetProjectNameFromActionIdAsync((int)propertyValue);
+                        projectName = await _projectHelper.GetProjectNameFromActionIdAsync((int)propertyValue);
                         break;
                     case PathToProjectType.RequirementId:
-                        projectName = await GetProjectNameFromRequirementIdAsync((int)propertyValue);
+                        projectName = await _projectHelper.GetProjectNameFromRequirementIdAsync((int)propertyValue);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -60,38 +55,6 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
             }
 
             return true;
-        }
-
-        private async Task<string> GetProjectNameFromRequirementIdAsync(int requirementId)
-        {
-            var projectName = await (from p in _context.QuerySet<Project>() 
-                join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
-                join req in _context.QuerySet<Requirement>() on tag.Id equals EF.Property<int>(req, "TagId")
-                where req.Id == requirementId
-                select p.Name).FirstOrDefaultAsync();
-            
-            return projectName;
-        }
-
-        private async Task<string> GetProjectNameFromActionIdAsync(int actionId)
-        {
-            var projectName = await (from p in _context.QuerySet<Project>() 
-                join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
-                join action in _context.QuerySet<TagAction>() on tag.Id equals EF.Property<int>(action, "TagId")
-                where action.Id == actionId
-                select p.Name).FirstOrDefaultAsync();
-            
-            return projectName;
-        }
-
-        private async Task<string> GetProjectNameFromTagIdAsync(int tagId)
-        {
-            var projectName = await (from p in _context.QuerySet<Project>() 
-                join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
-                where tag.Id == tagId
-                select p.Name).FirstOrDefaultAsync();
-            
-            return projectName;
         }
 
         private bool ValidateAccessToProject(string projectName)
