@@ -3,8 +3,6 @@
     public enum PathToProjectType
     {
         ProjectName,
-        TagId,
-        ActionId,
-        RequirementId
+        TagId
     }
 }

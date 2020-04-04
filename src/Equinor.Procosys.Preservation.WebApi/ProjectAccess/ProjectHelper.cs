@@ -21,27 +21,5 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
             
             return projectName;
         }
-
-        public async Task<string> GetProjectNameFromActionIdAsync(int actionId)
-        {
-            var projectName = await (from p in _context.QuerySet<Project>() 
-                join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
-                join action in _context.QuerySet<Action>() on tag.Id equals EF.Property<int>(action, "TagId")
-                where action.Id == actionId
-                select p.Name).FirstOrDefaultAsync();
-            
-            return projectName;
-        }
-
-        public async Task<string> GetProjectNameFromRequirementIdAsync(int requirementId)
-        {
-            var projectName = await (from p in _context.QuerySet<Project>() 
-                join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
-                join req in _context.QuerySet<Requirement>() on tag.Id equals EF.Property<int>(req, "TagId")
-                where req.Id == requirementId
-                select p.Name).FirstOrDefaultAsync();
-            
-            return projectName;
-        }
     }
 }

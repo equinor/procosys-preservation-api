@@ -41,14 +41,6 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
                     => await _projectHelper.GetProjectNameFromTagIdAsync(
                         GetPropertyValue<int>(request, projectAccessCheck.PropertyName)),
 
-                PathToProjectType.ActionId
-                    => await _projectHelper.GetProjectNameFromActionIdAsync(
-                        GetPropertyValue<int>(request, projectAccessCheck.PropertyName)),
-
-                PathToProjectType.RequirementId
-                    => await _projectHelper.GetProjectNameFromRequirementIdAsync(
-                        GetPropertyValue<int>(request, projectAccessCheck.PropertyName)),
-
                 _ => throw new ArgumentOutOfRangeException()
             };
 
