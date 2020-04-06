@@ -11,6 +11,7 @@ using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
@@ -24,6 +25,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
 
         public FilterValuesController(IMediator mediator) => _mediator = mediator;
 
+        [Authorize(Roles = "PRESERVATION/READ")]
         [HttpGet("RequirementTypes")]
         public async Task<ActionResult<List<RequirementTypeDto>>> GetRequirementTypes(
             [FromHeader( Name = PlantProvider.PlantHeader)]
