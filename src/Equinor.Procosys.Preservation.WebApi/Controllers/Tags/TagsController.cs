@@ -109,7 +109,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-<<<<<<< HEAD
+        [Authorize(Roles = Permissions.PRESERVATION_CREATE)]
         [HttpPost("{id}/Actions")]
         public async Task<ActionResult<CreateActionDto>> CreateTagAction(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -130,10 +130,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-
-=======
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
->>>>>>> 72553-AddAuthorizeAttrToEndPoints
         [HttpPost("Standard")]
         public async Task<ActionResult<int>> CreateTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
