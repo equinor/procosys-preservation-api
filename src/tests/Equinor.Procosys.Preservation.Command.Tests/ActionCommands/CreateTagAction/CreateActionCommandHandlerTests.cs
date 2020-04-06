@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ActionCommands.CreateTagAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -9,7 +9,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateTagAction
+namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateAction
 {
     [TestClass]
     public class CreateActionCommandHandlerTests : CommandHandlerTestsBase
@@ -55,7 +55,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateTagAc
                 PlantProviderMock.Object
                 );
         }
-
 
         [TestMethod]
         public async Task HandlingCreateModeCommand_ShouldAddActionToTag()

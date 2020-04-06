@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateTagAction
+namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction
 {
     public class CreateActionCommand : IRequest<Result<int>>
     {

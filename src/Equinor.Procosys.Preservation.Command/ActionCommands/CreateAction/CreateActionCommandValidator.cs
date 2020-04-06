@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateTagAction
+namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction
 {
     public class CreateActionCommandValidator : AbstractValidator<CreateActionCommand>
     {

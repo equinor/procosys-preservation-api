@@ -1,12 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ActionCommands.CreateTagAction;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateTagAction
+namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction
 {
     public class CreateActionCommandHandler : IRequestHandler<CreateActionCommand, Result<int>>
     {

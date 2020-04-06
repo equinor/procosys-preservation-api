@@ -1,8 +1,8 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Command.ActionCommands.CreateTagAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateTagAction
+namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateAction
 {
     [TestClass]
     public class CreateActionCommandTests
