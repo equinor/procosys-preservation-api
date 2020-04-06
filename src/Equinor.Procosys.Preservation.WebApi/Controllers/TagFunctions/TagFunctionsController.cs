@@ -50,6 +50,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [HttpPut]
         public async Task<ActionResult> UpdateRequirements(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
