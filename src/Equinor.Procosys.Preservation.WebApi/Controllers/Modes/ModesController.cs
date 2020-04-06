@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
@@ -19,6 +20,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
 
         public ModesController(IMediator mediator) => _mediator = mediator;
 
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
         public async Task<ActionResult<ModeDto>> GetModes(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -30,6 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ModeDto>> GetMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -42,6 +45,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
         [HttpPost]
         public async Task<ActionResult<int>> AddMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -54,6 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]

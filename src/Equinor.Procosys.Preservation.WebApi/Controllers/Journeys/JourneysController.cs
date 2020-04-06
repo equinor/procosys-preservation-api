@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         public JourneysController(IMediator mediator) => _mediator = mediator;
 
-        [Authorize(Roles = "LIBRARY_PRESERVATION/READ,PRESERVATION/READ")]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
         public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = "LIBRARY_PRESERVATION/READ,PRESERVATION/READ")]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{id}")]
         public async Task<ActionResult<JourneyDto>> GetJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = "LIBRARY_PRESERVATION/CREATE")]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
         [HttpPost]
         public async Task<ActionResult<int>> AddJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = "LIBRARY_PRESERVATION/CREATE")]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
         [HttpPost("{id}/AddStep")]
         public async Task<ActionResult> AddStep(
             [FromHeader( Name = PlantProvider.PlantHeader)]

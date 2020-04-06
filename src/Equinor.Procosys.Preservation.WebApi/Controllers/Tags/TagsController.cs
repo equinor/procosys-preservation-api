@@ -19,6 +19,7 @@ using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
@@ -37,6 +38,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         public TagsController(IMediator mediator) => _mediator = mediator;
 
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TagDto>>> GetTags(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -53,6 +55,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("{id}")]
         public async Task<ActionResult<TagDetailsDto>> GetTagDetails(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -65,6 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("{id}/Requirements")]
         public async Task<ActionResult<List<RequirementDto>>> GetTagRequirements(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -77,6 +81,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("{id}/Actions")]
         public async Task<ActionResult<List<ActionDto>>> GetTagActions(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -89,6 +94,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("{id}/Actions/{actionId}")]
         public async Task<ActionResult<ActionDetailsDto>> GetTagActionDetails(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -102,6 +108,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("Standard")]
         public async Task<ActionResult<int>> CreateTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -124,6 +131,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("Area")]
         public async Task<ActionResult<int>> CreateAreaTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -152,6 +160,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("CheckAreaTagNo")]
         public async Task<ActionResult<Query.CheckAreaTagNo.AreaTagDto>> CheckAreaTagNo([FromQuery] AreaTagDto dto)
         {
@@ -166,6 +175,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/StartPreservation")]
         public async Task<IActionResult> StartPreservation(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -178,6 +188,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("StartPreservation")]
         public async Task<IActionResult> StartPreservation(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -190,6 +201,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPut("{id}/Preserve")]
         public async Task<IActionResult> Preserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -202,6 +214,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPut("BulkPreserve")]
         public async Task<IActionResult> BulkPreserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -214,6 +227,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("Transfer")]
         public async Task<IActionResult> Transfer(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -226,6 +240,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPost("{id}/Requirement/{requirementId}/RecordValues")]
         public async Task<IActionResult> RecordCheckBoxChecked(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -247,6 +262,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPost("{id}/Requirement/{requirementId}/Preserve")]
         public async Task<IActionResult> Preserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
