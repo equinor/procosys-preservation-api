@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CreateTagAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -101,6 +102,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var result = await _mediator.Send(new GetActionDetailsQuery(id, actionId));
             return this.FromResult(result);
         }
+
+        [HttpPost("{id}/Actions")]
+        public async Task<ActionResult<CreateActionDto>> CreateTagAction(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] CreateActionDto dto)
+        {
+            var actionCommand = new CreateActionCommand(
+                    id,
+                    dto.Title,
+                    dto.Description,
+                    dto.DueTimeUtc);
+
+            var result = await _mediator.Send(actionCommand);
+
+            return this.FromResult(result);
+        }
+
 
         [HttpPost("Standard")]
         public async Task<ActionResult<int>> CreateTag(
