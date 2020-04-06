@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
@@ -17,6 +18,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
 
         public RequirementTypesController(IMediator mediator) => _mediator = mediator;
 
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RequirementTypeDto>>> GetRequirementTypes(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -29,6 +31,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
             return Ok(result);
         }
 
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{id}")]
         public async Task<ActionResult<RequirementTypeDto>> GetRequirementType(
             [FromHeader( Name = PlantProvider.PlantHeader)]
