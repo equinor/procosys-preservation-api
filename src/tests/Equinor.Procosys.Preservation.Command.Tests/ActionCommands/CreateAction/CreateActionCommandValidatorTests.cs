@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -16,10 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
         private Mock<ITagValidator> _tagValidatorMock;
         private CreateActionCommand _command;
 
-        private int _tagId = 2;
-        private string _actionTitle = "ActionTitle";
-        private string _actionDescription = "ActionDescription";
-        private DateTime _dueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+        private readonly int _tagId = 2;
 
         [TestInitialize]
         public void Setup_OkState()
@@ -29,13 +25,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
 
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(false));
 
             _command = new CreateActionCommand(
                 _tagId,
-                _actionTitle,
-                _actionDescription,
-                _dueTimeUtc);
+                "",
+                "",
+                null);
 
             _dut = new CreateActionCommandValidator(
                 _projectValidatorMock.Object,

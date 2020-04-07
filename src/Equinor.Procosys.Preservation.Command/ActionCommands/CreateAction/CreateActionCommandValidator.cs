@@ -18,9 +18,9 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
                 .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
-                .WithMessage((x, id) => $"Tag doesn't exists! Tag={id}")
+                .WithMessage(command => $"Tag doesn't exists! Tag={command.TagId}")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
-                .WithMessage((x, id) => $"Tag is voided! Tag={id}");
+                .WithMessage(command => $"Tag is voided! Tag={command.TagId}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);

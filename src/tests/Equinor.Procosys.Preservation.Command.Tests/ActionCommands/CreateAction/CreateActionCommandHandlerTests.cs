@@ -14,10 +14,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
     [TestClass]
     public class CreateActionCommandHandlerTests : CommandHandlerTestsBase
     {
-        private int _tagId = 2;
-        private string _title = "ActionTitle";
+        private readonly int _tagId = 2;
+        private readonly string _title = "ActionTitle";
         private readonly string _description = "ActionDescription";
-        private DateTime _dueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+        private readonly DateTime _dueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
 
         private TagRequirement _requirement;
         private Tag _tag;
@@ -25,8 +25,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
         private CreateActionCommandHandler _dut;
 
         private Mock<IProjectRepository> _projectRepositoryMock;
-        private int _rdId1 = 17;
-        private int _intervalWeeks = 2;
+        private readonly int _rdId1 = 17;
+        private readonly int _intervalWeeks = 2;
 
         [TestInitialize]
         public void Setup()
@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
         }
 
         [TestMethod]
-        public async Task HandlingCreateModeCommand_ShouldAddActionToTag()
+        public async Task HandlingCreateActionCommand_ShouldAddActionToTag()
         {
             Assert.IsTrue(_tag.Actions.Count == 0);
 
@@ -73,6 +73,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
         {
             await _dut.Handle(_command, default);
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateActionCommand_ShouldThrowException_WhenDueIsNotUtc()
+        {
+            var command = new CreateActionCommand(
+                _tagId,
+                _title,
+                _description,
+                new DateTime(2020, 1, 1, 1, 1, 1));
+
+            await Assert.ThrowsExceptionAsync<ArgumentException>(() =>
+            _dut.Handle(command, default)
+            );
         }
     }
 }
