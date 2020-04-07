@@ -17,7 +17,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private const string ProjectNameNotClosed = "Project name";
         private const string ProjectNameClosed = "Project name (closed)";
         private int _tagInClosedProjectId;
-        private int _tagInNotClosedProjectId;
+        private int _tag1InNotClosedProjectId;
+        private int _tag2InNotClosedProjectId;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -31,9 +32,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
                 var req = new TagRequirement(TestPlant, 2, rd);
                 var t1 = AddTag(context, notClosedProject, TagType.Standard, "T1", "Tag description", step, new List<TagRequirement>{ req });
-                _tagInNotClosedProjectId = t1.Id;
-                var t2 = AddTag(context, closedProject, TagType.Standard, "T2", "Tag description", step, new List<TagRequirement>{ req });
-                _tagInClosedProjectId = t2.Id;
+                _tag1InNotClosedProjectId = t1.Id;
+                var t2 = AddTag(context, notClosedProject, TagType.Standard, "T2", "Tag description", step, new List<TagRequirement>{ req });
+                _tag2InNotClosedProjectId = t2.Id;
+                var t3 = AddTag(context, closedProject, TagType.Standard, "T3", "Tag description", step, new List<TagRequirement>{ req });
+                _tagInClosedProjectId = t3.Id;
             }
         }
 
@@ -98,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ProjectValidator(context);
-                var result = await dut.IsClosedForTagAsync(_tagInNotClosedProjectId, default);
+                var result = await dut.IsClosedForTagAsync(_tag1InNotClosedProjectId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -121,6 +124,50 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new ProjectValidator(context);
                 var result = await dut.IsClosedForTagAsync(0, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AllTagsInSameProjectAsync_TagsInSameProject_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.AllTagsInSameProjectAsync(new List<int>{_tag1InNotClosedProjectId, _tag2InNotClosedProjectId}, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AllTagsInSameProjectAsync_TagsNotInSameProject_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.AllTagsInSameProjectAsync(new List<int>{_tag1InNotClosedProjectId, _tagInClosedProjectId}, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AllTagsInSameProjectAsync_KnownAndUnknownTag_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.AllTagsInSameProjectAsync(new List<int>{_tag1InNotClosedProjectId, 0}, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AllTagsInSameProjectAsync_UnknownTag_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ProjectValidator(context);
+                var result = await dut.AllTagsInSameProjectAsync(new List<int>{0}, default);
                 Assert.IsFalse(result);
             }
         }

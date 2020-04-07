@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -26,6 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         {
             _tagIds = new List<int> {TagId1, TagId2};
             _projectValidatorMock = new Mock<IProjectValidator>();
+            _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(true));
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
@@ -97,15 +99,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenProjectForAnyTagIsClosed()
+        public void Validate_ShouldFail_WhenProjectForFirstTagIsClosed()
         {
-            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(_tagIds.First(), default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenTagsInDifferentProjects()
+        {
+            _projectValidatorMock.Setup(r => r.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tags must be in same project!"));
         }
 
         [TestMethod]
@@ -147,14 +161,26 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         [TestMethod]
         public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
-            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exists!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
+        {
+            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(2, result.Errors.Count);
         }
     }
 }
