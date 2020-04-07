@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Services;
@@ -30,9 +29,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
             var oid = principal.Claims.TryGetOid();
             if (oid.HasValue)
             {
-                // ToDo var projects = await _projectService.GetProjectsForUserOidAsync(oid.Value);
-                // line below is just an easy POC to proof that this will work
-                var projects = new List<string>{"L.O085C.018"};
+                var projects = await _permissionService.GetProjectsForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
                 projects.ToList().ForEach(project => claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, $"{ProjectPrefix}{project}")));
                 principal.AddIdentity(claimsIdentity);

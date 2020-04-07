@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Project
 
             var url = $"{_baseAddress}Projects" +
                       $"?plantId={plant}" +
-                      $"&withCommPkgsOnly=false" +
+                      "&withCommPkgsOnly=false" +
                       $"&api-version={_apiVersion}";
 
             return await _mainApiClient.QueryAndDeserialize<List<ProcosysProject>>(url);
