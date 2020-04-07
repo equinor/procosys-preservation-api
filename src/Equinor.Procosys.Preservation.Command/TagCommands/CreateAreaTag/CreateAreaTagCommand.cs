@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 {
-    public class CreateAreaTagCommand : IRequest<Result<int>>
+    public class CreateAreaTagCommand : IRequest<Result<int>>, IProjectRequest
     {
         public CreateAreaTagCommand(
             string projectName,

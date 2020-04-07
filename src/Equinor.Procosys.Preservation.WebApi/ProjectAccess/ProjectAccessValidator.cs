@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.ProjectAccess;
+using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 
 namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
@@ -24,38 +23,26 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
                 throw new ArgumentNullException(nameof(request));
             }
 
-            // If ProjectAccessCheckAttribute found on request, user need access to Project to allow request execution
-            var projectAccessCheck = request.GetType().GetCustomAttribute<ProjectAccessCheckAttribute>();
-            if (projectAccessCheck == null)
+            if (request is IProjectRequest projectRequest)
             {
-                return true;
+                return HasCurrentUserAccessToProject(projectRequest);
             }
 
-            // ProjectAccessAttribute "describes" how to find ProjectName from current request
-            var projectName = projectAccessCheck.PathToProjectType switch
+            if (request is ITagRequest tagRequest)
             {
-                PathToProjectType.ProjectName
-                    => GetPropertyValue<string>(request, projectAccessCheck.PropertyName),
+                return await HasCurrentUserAccessToProjectAsync(tagRequest);
+            }
 
-                PathToProjectType.TagId
-                    => await _projectHelper.GetProjectNameFromTagIdAsync(
-                        GetPropertyValue<int>(request, projectAccessCheck.PropertyName)),
+            return true;
+        }
 
-                _ => throw new ArgumentOutOfRangeException()
-            };
-
+        private async Task<bool> HasCurrentUserAccessToProjectAsync(ITagRequest tagRequest)
+        {
+            var projectName = await _projectHelper.GetProjectNameFromTagIdAsync(tagRequest.TagId);
             return _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
         }
 
-        private T GetPropertyValue<T>(IBaseRequest request, string propertyName)
-        {
-            var propertyInfo = request.GetType().GetProperty(propertyName);
-            if (propertyInfo == null)
-            {
-                throw new Exception($"Property {propertyName} do not exist in class of type {nameof(request.GetType)}");
-            }
-
-            return (T)propertyInfo.GetValue(request, null);
-        }
+        private bool HasCurrentUserAccessToProject(IProjectRequest projectRequest)
+            => _projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName);
     }
 }
