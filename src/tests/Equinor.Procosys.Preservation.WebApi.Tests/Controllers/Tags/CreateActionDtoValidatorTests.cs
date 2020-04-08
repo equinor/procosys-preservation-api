@@ -1,10 +1,9 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers
+namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
     public class CreateActionDtoValidatorTests
@@ -15,7 +14,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers
             var dut = new CreateActionDtoValidator();
             var validCreateActionDto = new CreateActionDto
             {
-                TagId = 2,
                 Title = "ActionTitle",
                 Description = "ActionDescription",
                 DueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc)
@@ -33,7 +31,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers
 
             var inValidCreateActionDto = new CreateActionDto
             {
-                TagId = 2,
                 Title = new string('x', Action.TitleLengthMax + 1),
                 Description = "ActionDescription",
                 DueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc)
@@ -51,7 +48,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers
 
             var inValidCreateActionDto = new CreateActionDto
             {
-                TagId = 2,
                 Title = "ActionTitle",
                 Description = new string('x', Action.DescriptionLengthMax + 1),
                 DueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc)
