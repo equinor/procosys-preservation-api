@@ -11,73 +11,67 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
     public class ProjectAccessValidatorTests
     {
         private ProjectAccessValidator _dut;
-        private const int TagId = 1;
-        private const string TestProject = "ProjectA";
-        private PreserveCommand _requestWithProjectAccessCheckViaTagId;
-        private GetTagsQuery _requestWithProjectAccessCheckViaProjectName;
-        private Mock<IProjectAccessChecker> _projectAccessCheckerMock;
-        private Mock<IProjectHelper> _projectHelperMock;
+        private const int TagIdWithAccess = 1;
+        private const int TagIdWithoutAccess = 2;
+        private const string TestProjectWithAccess = "TestProjectWithAccess";
+        private const string TestProjectWithoutAccess = "TestProjectWithoutAccess";
 
         [TestInitialize]
         public void Setup()
         {
-            _projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
-            _projectHelperMock = new Mock<IProjectHelper>();
-            _requestWithProjectAccessCheckViaTagId = new PreserveCommand(TagId);
-            _requestWithProjectAccessCheckViaProjectName = new GetTagsQuery(TestProject);
+            var projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
+            var projectHelperMock = new Mock<IProjectHelper>();
 
-            _dut = new ProjectAccessValidator(_projectAccessCheckerMock.Object, _projectHelperMock.Object);
+            _dut = new ProjectAccessValidator(projectAccessCheckerMock.Object, projectHelperMock.Object);
+            projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(TestProjectWithoutAccess)).Returns(false);
+            projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(TestProjectWithAccess)).Returns(true);
+            projectHelperMock.Setup(p => p.GetProjectNameFromTagIdAsync(TagIdWithAccess)).Returns(Task.FromResult(TestProjectWithAccess));
+            projectHelperMock.Setup(p => p.GetProjectNameFromTagIdAsync(TagIdWithoutAccess)).Returns(Task.FromResult(TestProjectWithoutAccess));
         }
 
         [TestMethod]
-        public async Task ValidateAsync_ShouldReturnTrue_WhenAccessToProjectViaProjectName()
+        public async Task ValidateAsync_OnGetTagsQuery_ShouldReturnTrue_WhenAccessToProject()
         {
-            // Arrange
-            _projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(TestProject)).Returns(true);
-
+            var getTagsQuery = new GetTagsQuery(TestProjectWithAccess);
             // act
-            var result = await _dut.ValidateAsync(_requestWithProjectAccessCheckViaProjectName);
+            var result = await _dut.ValidateAsync(getTagsQuery);
 
             // Assert
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public async Task ValidateAsync_ShouldReturnFalse_WhenAccessToProjectViaProjectName()
+        public async Task ValidateAsync_OnGetTagsQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
-            // Arrange
-            _projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(TestProject)).Returns(false);
-            
+            var getTagsQuery = new GetTagsQuery(TestProjectWithoutAccess);
             // act
-            var result = await _dut.ValidateAsync(_requestWithProjectAccessCheckViaTagId);
+            var result = await _dut.ValidateAsync(getTagsQuery);
 
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public async Task ValidateAsync_ShouldReturnTrue_WhenAccessToProjectViaTagId()
+        public async Task ValidateAsync_OnPreserveCommand_ShouldReturnTrue_WhenAccessToProject()
         {
             // Arrange
-            _projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(TestProject)).Returns(true);
-            _projectHelperMock.Setup(p => p.GetProjectNameFromTagIdAsync(TagId)).Returns(Task.FromResult(TestProject));
-
+            var preserveCommand = new PreserveCommand(TagIdWithAccess);
+            
             // act
-            var result = await _dut.ValidateAsync(_requestWithProjectAccessCheckViaTagId);
+            var result = await _dut.ValidateAsync(preserveCommand);
 
             // Assert
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public async Task ValidateAsync_ShouldReturnFalse_WhenAccessToProjectViaTagId()
+        public async Task ValidateAsync_OnPreserveCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            _projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(TestProject)).Returns(false);
-            _projectHelperMock.Setup(p => p.GetProjectNameFromTagIdAsync(TagId)).Returns(Task.FromResult(TestProject));
-
+            var preserveCommand = new PreserveCommand(TagIdWithoutAccess);
+            
             // act
-            var result = await _dut.ValidateAsync(_requestWithProjectAccessCheckViaTagId);
+            var result = await _dut.ValidateAsync(preserveCommand);
 
             // Assert
             Assert.IsFalse(result);
