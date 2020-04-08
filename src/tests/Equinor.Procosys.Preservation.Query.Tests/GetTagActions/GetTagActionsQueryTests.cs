@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         {
             var dut = new GetTagActionsQuery(1337);
 
-            Assert.AreEqual(1337, dut.Id);
+            Assert.AreEqual(1337, dut.TagId);
         }
     }
 }
