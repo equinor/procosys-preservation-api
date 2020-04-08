@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public class ClaimsTransformation : IClaimsTransformation
     {
+        public static string ProjectPrefix = "PCS_PROJECT##";
         private readonly IPermissionService _permissionService;
 
         public ClaimsTransformation(IPermissionService permissionService) => _permissionService = permissionService;
@@ -17,9 +18,22 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
             if (principal.Claims.All(c => c.Type != ClaimTypes.Role))
             {
                 await AddRoleForAllPermissionsAsync(principal);
+                await AddUserDataClaimForAllProjects(principal);
             }
 
             return principal;
+        }
+
+        private async Task AddUserDataClaimForAllProjects(ClaimsPrincipal principal)
+        {
+            var oid = principal.Claims.TryGetOid();
+            if (oid.HasValue)
+            {
+                var projects = await _permissionService.GetProjectsForUserOidAsync(oid.Value);
+                var claimsIdentity = new ClaimsIdentity();
+                projects.ToList().ForEach(project => claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, $"{ProjectPrefix}{project}")));
+                principal.AddIdentity(claimsIdentity);
+            }
         }
 
         private async Task AddRoleForAllPermissionsAsync(ClaimsPrincipal principal)

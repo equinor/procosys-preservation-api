@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -35,6 +36,16 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
                 select p).FirstOrDefaultAsync(cancellationToken);
 
             return project != null && project.IsClosed;
+        }
+
+        public async Task<bool> AllTagsInSameProjectAsync(IEnumerable<int> tagIds, CancellationToken cancellationToken)
+        {
+            var projectIds = await (from tag in _context.QuerySet<Tag>()
+                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                where tagIds.Contains(tag.Id)
+                select p.Id).ToListAsync(cancellationToken);
+
+            return projectIds != null && projectIds.Distinct().Count() == 1 && projectIds.Count == tagIds.Distinct().Count();
         }
     }
 }

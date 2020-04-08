@@ -24,12 +24,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.PreservationRecord)
                         .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.FieldValues)
-                 where t.Id == request.Id
+                 where t.Id == request.TagId
                  select t).FirstOrDefaultAsync(cancellationToken);
 
             if (tag == null)
             {
-                return new NotFoundResult<List<RequirementDto>>($"Entity with ID {request.Id} not found");
+                return new NotFoundResult<List<RequirementDto>>($"Entity with ID {request.TagId} not found");
             }
 
             var requirementDefinitionIds = tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();

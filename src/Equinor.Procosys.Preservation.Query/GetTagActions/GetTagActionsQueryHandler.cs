@@ -22,12 +22,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActions
             var tag = await
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Actions)
-                    where t.Id == request.Id
+                    where t.Id == request.TagId
                     select t).FirstOrDefaultAsync(cancellationToken);
             
             if (tag == null)
             {
-                return new NotFoundResult<List<ActionDto>>($"Entity with ID {request.Id} not found");
+                return new NotFoundResult<List<ActionDto>>($"Entity with ID {request.TagId} not found");
             }
 
             var actions = tag

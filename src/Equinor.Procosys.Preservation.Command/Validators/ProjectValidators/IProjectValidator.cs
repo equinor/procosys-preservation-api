@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
@@ -10,5 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
         Task<bool> IsExistingAndClosedAsync(string projectName, CancellationToken token);
         
         Task<bool> IsClosedForTagAsync(int tagId, CancellationToken token);
+
+        Task<bool> AllTagsInSameProjectAsync(IEnumerable<int> tagIds, CancellationToken token);
     }
 }
