@@ -21,8 +21,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             SetDueTime(dueTimeUtc);
         }
 
-        public string Title { get; private set; }
-        public string Description { get; private set; }
+        public string Title { get; set; }
+        public string Description { get; set; }
         public DateTime? DueTimeUtc { get; private set; }
         public DateTime? ClosedAtUtc { get; private set; }
         public int? ClosedById { get; private set; }
