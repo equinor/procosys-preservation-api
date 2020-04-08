@@ -23,6 +23,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
             var permissionServiceMock = new Mock<IPermissionService>();
             permissionServiceMock.Setup(p => p.GetPermissionsForUserOidAsync(Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {"A", "B"}));
+            permissionServiceMock.Setup(p => p.GetProjectsForUserOidAsync(Oid))
+                .Returns(Task.FromResult<IList<string>>(new List<string> {"P1", "P2"}));
 
             _cp = new ClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
@@ -45,7 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         {
             var result = await _dut.TransformAsync(_cp);
 
-            Assert.AreEqual(1, result.Claims.Count(c => c.Type == ClaimTypes.UserData && c.Value.StartsWith(ClaimsTransformation.ProjectPrefix)));
+            Assert.AreEqual(2, result.Claims.Count(c => c.Type == ClaimTypes.UserData && c.Value.StartsWith(ClaimsTransformation.ProjectPrefix)));
         }
     }
 }
