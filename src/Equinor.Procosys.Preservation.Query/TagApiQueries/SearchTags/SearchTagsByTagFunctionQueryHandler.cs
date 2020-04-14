@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,8 +27,18 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
 
         public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagFunctionQuery request, CancellationToken cancellationToken)
         {
+            var tagFunctionCodeRegisterCodePairs = await (from tagFunction in _context.QuerySet<TagFunction>().Include(tf => tf.Requirements)
+                    where tagFunction.Requirements.Any()
+                    select $"{tagFunction.Code}|{tagFunction.RegisterCode}")
+                .ToListAsync(cancellationToken);
+            
+            if (!tagFunctionCodeRegisterCodePairs.Any())
+            {
+                return new NotFoundResult<List<ProcosysTagDto>>("No TagFunctions with preservation requirements found");
+            }
+
             var apiTags = await _tagApiService
-                .SearchTagsByTagFunctionAsync(_plantProvider.Plant, request.ProjectName, request.TagFunctionCode, request.RegisterCode)
+                .SearchTagsByTagFunctionsAsync(_plantProvider.Plant, request.ProjectName, tagFunctionCodeRegisterCodePairs)
                 ?? new List<ProcosysTagOverview>();
 
             var presTagNos = await (from tag in _context.QuerySet<Tag>()
@@ -58,5 +69,6 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
 
             return new SuccessResult<List<ProcosysTagDto>>(combinedTags);
         }
+
     }
 }

@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public TagSearchController(IMediator mediator) => _mediator = mediator;
 
         /// <summary>
-        /// Gets tags from ProCoSys by TagNos, and enriches them with preservation data
+        /// Gets tags from ProCoSys by TagNos. DTO enriched with preservation info
         /// </summary>
         /// <param name="plant"></param>
         /// <param name="projectName"></param>
@@ -44,12 +44,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         /// <summary>
-        /// Gets tags from ProCoSys by TagFunction/Register codes, and enriches them with preservation data
+        /// Gets tags from ProCoSys where Tag belong to a TagFunction which have any preservation requirement. DTO enriched with preservation info
         /// </summary>
         /// <param name="plant"></param>
         /// <param name="projectName"></param>
-        /// <param name="tagFunctionCode"></param>
-        /// <param name="registerCode"></param>
         /// <returns>All ProCoSys tags that match the search parameters</returns>
         [Authorize(Roles = Permissions.TAG_READ)]
         [HttpGet("ByTagFunctions")]
@@ -58,11 +56,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromQuery] string projectName,
-            [FromQuery] string tagFunctionCode,
-            [FromQuery] string registerCode)
+            [FromQuery] string projectName)
         {
-            var result = await _mediator.Send(new SearchTagsByTagFunctionQuery(projectName, tagFunctionCode, registerCode));
+            var result = await _mediator.Send(new SearchTagsByTagFunctionQuery(projectName));
             return this.FromResult(result);
         }
     }

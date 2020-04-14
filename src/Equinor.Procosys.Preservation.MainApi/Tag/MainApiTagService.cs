@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             } while (true);
         }
 
-        public async Task<IList<ProcosysTagOverview>> SearchTagsByTagFunctionAsync(string plant, string projectName, string tagFunctionCode, string registerCode)
+        public async Task<IList<ProcosysTagOverview>> SearchTagsByTagFunctionsAsync(string plant, string projectName, IList<string> tagFunctionCodeRegisterCodePairs)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
@@ -115,11 +115,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                 var url = $"{_baseAddress}Tag/Search/ByTagFunction" +
                           $"?plantId={plant}" +
                           $"&projectName={projectName}" +
-                          $"&tagFunctionCode={tagFunctionCode}" +
-                          $"&registerCode={registerCode}" +
                           $"&currentPage={currentPage++}" +
                           $"&itemsPerPage={_tagSearchPageSize}" +
                           $"&api-version={_apiVersion}";
+                foreach (var tagFunctionCodeRegisterCodePair in tagFunctionCodeRegisterCodePairs)
+                {
+                    url += $"&tagFunctionCodeRegisterCodePairs={tagFunctionCodeRegisterCodePair}";
+                }
 
                 var tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
