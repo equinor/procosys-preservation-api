@@ -7,7 +7,12 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
 {
     public class UpdateActionCommand : IRequest<Result<Unit>>, ITagRequest
     {
-        public UpdateActionCommand(int tagId, int actionId, string title, string description, DateTime? dueTimeUtc)
+        public UpdateActionCommand(
+            int tagId,
+            int actionId,
+            string title,
+            string description,
+            DateTime? dueTimeUtc)
         {
             TagId = tagId;
             ActionId = actionId;

@@ -29,9 +29,9 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
             action.Title = request.Title;
             action.Description = request.Description;
             action.SetDueTime(request.DueTimeUtc);
-           
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            
+
             return new SuccessResult<Unit>(Unit.Value);
         }
     }
