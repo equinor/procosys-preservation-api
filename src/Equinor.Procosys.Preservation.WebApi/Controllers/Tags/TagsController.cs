@@ -131,7 +131,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-       // [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPut("{id}/Actions/{actionId}")]
         public async Task<ActionResult<UpdateActionDto>> UpdateAction(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -142,7 +142,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int actionId,
             [FromBody] UpdateActionDto dto)
         {
-           
                 var actionCommand = new UpdateActionCommand(
                                   id,
                                   actionId,
