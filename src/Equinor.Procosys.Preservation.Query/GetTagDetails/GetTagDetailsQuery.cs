@@ -1,12 +1,13 @@
-﻿using MediatR;
+﻿using Equinor.Procosys.Preservation.Domain;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagDetails
 {
-    public class GetTagDetailsQuery : IRequest<Result<TagDetailsDto>>
+    public class GetTagDetailsQuery : IRequest<Result<TagDetailsDto>>, ITagRequest
     {
-        public GetTagDetailsQuery(int id) => Id = id;
+        public GetTagDetailsQuery(int tagId) => TagId = tagId;
 
-        public int Id { get; }
+        public int TagId { get; }
     }
 }

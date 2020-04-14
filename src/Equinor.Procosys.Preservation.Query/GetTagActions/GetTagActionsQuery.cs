@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
+using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagActions
 {
-    public class GetTagActionsQuery : IRequest<Result<List<ActionDto>>>
+    public class GetTagActionsQuery : IRequest<Result<List<ActionDto>>>, ITagRequest
     {
-        public GetTagActionsQuery(int id) => Id = id;
+        public GetTagActionsQuery(int tagId) => TagId = tagId;
 
-        public int Id { get; }
+        public int TagId { get; }
     }
 }
