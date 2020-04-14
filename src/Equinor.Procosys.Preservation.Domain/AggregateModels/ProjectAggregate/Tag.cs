@@ -171,6 +171,21 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
         }
 
+        public void StopPreservation()
+        {
+            if (!IsReadyToBeStopped())
+            {
+                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not be stopped. Status = {Status}");
+            }
+            foreach (var requirement in Requirements.Where(r => !r.IsVoided))
+            {
+                requirement.StopPreservation();
+            }
+
+            Status = PreservationStatus.Completed;
+            NextDueTimeUtc = null;
+        }
+
         public bool IsReadyToBePreserved()
             => Status == PreservationStatus.Active && 
                FirstUpcomingRequirement() != null;
@@ -242,6 +257,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool IsReadyToBeStarted()
             => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
+
+        public bool IsReadyToBeStopped() => Status == PreservationStatus.Active;
 
         private void Preserve(Person preservedBy, bool bulkPreserved)
         {
