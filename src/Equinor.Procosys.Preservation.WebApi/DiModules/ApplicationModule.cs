@@ -18,16 +18,21 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Infrastructure.Caching;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Equinor.Procosys.Preservation.MainApi;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
+using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.MainApi.TagFunction;
 using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.ProjectAccess;
+using Equinor.Procosys.Preservation.WebApi.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
 
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
             services.Configure<TagOptions>(configuration.GetSection("ApiOptions"));
+            services.Configure<PermissionOptions>(configuration.GetSection("PermissionOptions"));
 
             services.AddDbContext<PreservationContext>(options =>
             {
@@ -55,7 +61,12 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
 
 
             // Scoped - Created once per client request (connection)
+            services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+            services.AddScoped<IProjectAccessValidator, ProjectAccessValidator>();
+            services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
+            services.AddScoped<IProjectHelper, ProjectHelper>();
             services.AddScoped<IPlantProvider, PlantProvider>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
@@ -77,6 +88,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IAreaApiService, MainApiAreaService>();
             services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
             services.AddScoped<ITagFunctionApiService, MainApiTagFunctionService>();
+            services.AddScoped<IPermissionApiService, MainApiPermissionService>();
             
             services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
             services.AddScoped<ITagValidator, TagValidator>();
@@ -88,6 +100,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IFieldValidator, FieldValidator>();
 
             // Singleton - Created the first time they are requested
+            services.AddSingleton<ICacheManager, CacheManager>();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Client;
@@ -19,6 +20,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
         private ProcosysProject _result;
         private string _name = "NameA";
         private string _description = "Description1";
+        private MainApiProjectService _dut;
 
         [TestInitialize]
         public void Setup()
@@ -34,19 +36,19 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
                 .Returns(Task.FromResult(true));
 
             _result = new ProcosysProject {Id = 1, Name = _name, Description = _description};
+            _dut = new MainApiProjectService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
         }
 
         [TestMethod]
-        public async Task GetProjectCodes_ReturnsThreeProjectCodes()
+        public async Task GetProject_ReturnsProject()
         {
             // Arrange
             _mainApiClient
                 .SetupSequence(x => x.QueryAndDeserialize<ProcosysProject>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_result));
-            var dut = new MainApiProjectService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
 
             // Act
-            var result = await dut.GetProject(_plant, _name);
+            var result = await _dut.GetProjectAsync(_plant, _name);
 
             // Assert
             Assert.AreEqual(_name, result.Name);
@@ -54,11 +56,27 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
         }
 
         [TestMethod]
-        public async Task GetProjectCodes_ThrowsException_WhenPlantIsInvalid()
+        public async Task GetProjects_ReturnsProjects()
         {
-            var dut = new MainApiProjectService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
+            // Arrange
+            _mainApiClient
+                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysProject>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<ProcosysProject>{_result}));
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetProject("INVALIDPLANT", ""));
+            // Act
+            var result = await _dut.GetProjectsAsync(_plant);
+
+            // Assert
+            Assert.AreEqual(1, result.Count);
+            Assert.AreEqual(_description, result[0].Description);
         }
+
+        [TestMethod]
+        public async Task GetProject_ThrowsException_WhenPlantIsInvalid()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetProjectAsync("INVALIDPLANT", ""));
+
+        [TestMethod]
+        public async Task GetProjects_ThrowsException_WhenPlantIsInvalid()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetProjectsAsync("INVALIDPLANT"));
     }
 }

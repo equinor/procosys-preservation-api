@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 {
-    public class CreateAreaTagCommand : IRequest<Result<int>>
+    public class CreateAreaTagCommand : AbstractAreaTag, IRequest<Result<int>>, IProjectRequest
     {
         public CreateAreaTagCommand(
             string projectName,
@@ -32,30 +33,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         }
 
         public string ProjectName { get; }
-        public TagType TagType { get; }
-        public string DisciplineCode { get; }
-        public string AreaCode { get; }
-        public string TagNoSuffix { get; }
+        public override TagType TagType { get; }
+        public override string DisciplineCode { get; }
+        public override string AreaCode { get; }
+        public override string TagNoSuffix { get; }
         public int StepId { get; }
         public IEnumerable<Requirement> Requirements { get; }
         public string Description { get; }
         public string Remark { get; }
         public string StorageArea { get; }
-
-        public string GetTagNo()
-        {
-            var tagNo = $"{TagType.GetTagNoPrefix()}-{DisciplineCode}";
-            if (!string.IsNullOrEmpty(AreaCode))
-            {
-                tagNo += $"-{AreaCode}";
-            }
-
-            if (!string.IsNullOrEmpty(TagNoSuffix))
-            {
-                tagNo += $"-{TagNoSuffix}";
-            }
-
-            return tagNo;
-        }
     }
 }

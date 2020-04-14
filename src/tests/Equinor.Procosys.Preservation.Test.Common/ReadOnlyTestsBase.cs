@@ -232,7 +232,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     TagFunctionCode = $"{testDataSet.TagFunctionPrefix}-{i}"
                 };
                 tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
-                tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Desciption");
+                tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Description");
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -261,7 +261,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     TagFunctionCode = $"{testDataSet.TagFunctionPrefix}-{i}"
                 };
                 tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
-                tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Desciption");
+                tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Description");
 
                 testDataSet.Project1.AddTag(tag);
             }

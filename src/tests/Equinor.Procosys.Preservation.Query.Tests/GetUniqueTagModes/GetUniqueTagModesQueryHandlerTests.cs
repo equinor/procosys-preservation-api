@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
+        public async Task HandleGetUniqueTagModesQuery_ShouldReturnOkResult()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectUniqueModes()
+        public async Task HandleGetUniqueTagModesQuery_ShouldReturnCorrectUniqueModes()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyListOfUniqueModes()
+        public async Task HandleGetUniqueTagModesQuery_ShouldReturnEmptyListOfUniqueModes()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))

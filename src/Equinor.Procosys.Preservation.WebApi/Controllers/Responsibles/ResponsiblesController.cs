@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsible
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsibles
 {
     [ApiController]
     [Route("Responsibles")]
@@ -15,8 +19,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsible
 
         public ResponsiblesController(IMediator mediator) => _mediator = mediator;
 
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ResponsibleDto>>> GetAllResponsibles()
+        public async Task<ActionResult<IEnumerable<ResponsibleDto>>> GetAllResponsibles(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant)
         {
             var result = await _mediator.Send(new GetAllResponsiblesQuery());
             return this.FromResult(result);

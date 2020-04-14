@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
         public async Task Handle_ShouldReturnCorrectResultType()
         {
             _areaApiServiceMock
-                .Setup(x => x.GetAreas(It.IsAny<string>()))
+                .Setup(x => x.GetAreasAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
             var dut = new GetAreasQueryHandler(_areaApiServiceMock.Object, _plantProviderMock.Object);
 
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
         public async Task Handle_ShouldReturnCorrectNumberOfElements()
         {
             _areaApiServiceMock
-                .Setup(x => x.GetAreas(It.IsAny<string>()))
+                .Setup(x => x.GetAreasAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
             var dut = new GetAreasQueryHandler(_areaApiServiceMock.Object, _plantProviderMock.Object);
 
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAreaCodes
         public async Task Handle_ShouldReturnCorrectData()
         {
             _areaApiServiceMock
-                .Setup(x => x.GetAreas(It.IsAny<string>()))
+                .Setup(x => x.GetAreasAsync(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithThreeElements));
             var dut = new GetAreasQueryHandler(_areaApiServiceMock.Object, _plantProviderMock.Object);
 

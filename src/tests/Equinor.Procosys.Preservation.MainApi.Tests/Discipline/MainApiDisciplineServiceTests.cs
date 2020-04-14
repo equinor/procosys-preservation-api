@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
                 .Returns(Task.FromResult(_resultWithThreeItems));
 
             // Act
-            var result = await _dut.GetDisciplines(_plant);
+            var result = await _dut.GetDisciplinesAsync(_plant);
 
             // Assert
             Assert.AreEqual(3, result.Count);
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
                 .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysDiscipline>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_resultWithNoItems));
             // Act
-            var result = await _dut.GetDisciplines(_plant);
+            var result = await _dut.GetDisciplinesAsync(_plant);
 
             // Assert
             Assert.AreEqual(0, result.Count);
@@ -93,11 +93,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
 
         [TestMethod]
         public async Task GetDisciplines_ShouldThrowException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetDisciplines("INVALIDPLANT"));
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetDisciplinesAsync("INVALIDPLANT"));
 
         [TestMethod]
         public async Task GetDiscipline_ShouldThrowException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetDiscipline("INVALIDPLANT", "C"));
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetDisciplineAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
         public async Task GetDiscipline_ShouldReturnDiscipline()
@@ -108,7 +108,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
                 .Returns(Task.FromResult(_procosysDiscipline));
 
             // Act
-            var result = await _dut.GetDiscipline(_plant, _procosysDiscipline.Code);
+            var result = await _dut.GetDisciplineAsync(_plant, _procosysDiscipline.Code);
 
             // Assert
             Assert.AreEqual(_procosysDiscipline.Code, result.Code);
