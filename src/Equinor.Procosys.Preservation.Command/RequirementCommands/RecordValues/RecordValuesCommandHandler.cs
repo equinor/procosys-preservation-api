@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             requirement.SetComment(request.Comment);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return new SuccessResult<Unit>(Unit.Value);
+             return new SuccessResult<Unit>(Unit.Value);
         }
 
         private static void RecordNumberValues(List<NumberFieldValue> values, Domain.AggregateModels.ProjectAggregate.Requirement requirement,

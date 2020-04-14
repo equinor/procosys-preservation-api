@@ -275,10 +275,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromBody] RequirementValuesDto requirementValuesDto)
         {
             var numberValues = requirementValuesDto?
-                .NumberValues
+                .NumberValues?
                 .Select(fv => new NumberFieldValue(fv.FieldId, fv.Value, fv.IsNA)).ToList();
             var checkBoxValues = requirementValuesDto?
-                .CheckBoxValues
+                .CheckBoxValues?
                 .Select(fv => new CheckBoxFieldValue(fv.FieldId, fv.IsChecked)).ToList();
 
             var result = await _mediator.Send(
