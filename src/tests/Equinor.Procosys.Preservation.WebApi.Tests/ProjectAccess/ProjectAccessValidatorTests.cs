@@ -450,7 +450,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
         [TestMethod]
         public async Task ValidateAsync_OnSearchTagsByTagFunctionQuery_ShouldReturnTrue_WhenAccessToProject()
         {
-            var query = new SearchTagsByTagFunctionQuery(ProjectWithAccess, null, null);
+            var query = new SearchTagsByTagFunctionQuery(ProjectWithAccess);
             // act
             var result = await _dut.ValidateAsync(query);
 
@@ -461,7 +461,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
         [TestMethod]
         public async Task ValidateAsync_OnSearchTagsByTagFunctionQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
-            var query = new SearchTagsByTagFunctionQuery(ProjectWithoutAccess, null, null);
+            var query = new SearchTagsByTagFunctionQuery(ProjectWithoutAccess);
             // act
             var result = await _dut.ValidateAsync(query);
 
