@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
@@ -179,10 +181,62 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
             Assert.IsFalse(result);
         }
 
+        [TestMethod]
+        public async Task ValidateAsync_OnCreateActionCommand_ShouldReturnTrue_WhenAccessToProject()
+        {
+            // Arrange
+            var command = new CreateActionCommand(TagIdWithAccess, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnCreateActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new CreateActionCommand(TagIdWithoutAccess, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateActionCommand_ShouldReturnTrue_WhenAccessToProject()
+        {
+            // Arrange
+            var command = new UpdateActionCommand(TagIdWithAccess, 0, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new UpdateActionCommand(TagIdWithoutAccess, 0, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
         #endregion
 
         #region queries
-        
+
         [TestMethod]
         public async Task ValidateAsync_OnGetTagsQuery_ShouldReturnTrue_WhenAccessToProject()
         {
