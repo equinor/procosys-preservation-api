@@ -130,31 +130,31 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void RecordValueForField_ShouldAddFieldValueToFieldValuesList_ForCheckBoxField()
+        public void RecordCheckBoxValueForField_ShouldAddFieldValueToFieldValuesList_ForCheckBoxField()
         {
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
 
-            dut.RecordValueForField(_checkBoxField, "true");
+            dut.RecordCheckBoxValueForField(_checkBoxField, true);
 
             Assert.AreEqual(1, dut.FieldValues.Count);
         }
 
         [TestMethod]
-        public void RecordValueForField_ShouldThrowException_ForInfoField()
+        public void RecordCheckBoxValueForField_ShouldThrowException_ForInfoField()
         {
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
 
-            Assert.ThrowsException<Exception>(() => dut.RecordValueForField(_infoField, "abc"));
+            Assert.ThrowsException<Exception>(() => dut.RecordCheckBoxValueForField(_infoField, true));
             Assert.AreEqual(0, dut.FieldValues.Count);
         }
 
         [TestMethod]
-        public void RecordValueForField_ShouldThrowException_AfterPreserved()
+        public void RecordCheckBoxValueForField_ShouldThrowException_AfterPreserved()
         {
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
             dut.Preserve(_preservedByMock.Object, true);
 
-            Assert.ThrowsException<Exception>(() => dut.RecordValueForField(_checkBoxField, "true"));
+            Assert.ThrowsException<Exception>(() => dut.RecordCheckBoxValueForField(_checkBoxField, true));
             Assert.AreEqual(0, dut.FieldValues.Count);
         }
 
@@ -168,7 +168,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             fMock.SetupGet(f => f.Plant).Returns(TestPlant);
             var field = fMock.Object;
 
-            dut.RecordValueForField(field, "true");
+            dut.RecordCheckBoxValueForField(field, true);
 
             var fieldValue = dut.GetFieldValue(12);
 
@@ -185,7 +185,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             fMock.SetupGet(f => f.Plant).Returns(TestPlant);
             var field = fMock.Object;
 
-            dut.RecordValueForField(field, "NA");
+            dut.RecordNumberValueForField(field, 1);
 
             var fieldValue = dut.GetFieldValue(12);
 

@@ -106,36 +106,47 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             Comment = comment;
         }
 
-        public void RecordValueForField(Field field, string value)
+        public void RecordCheckBoxValueForField(Field field, bool value)
         {
-            if (Status != PreservationPeriodStatus.ReadyToBePreserved && Status != PreservationPeriodStatus.NeedsUserInput)
+            if (field.FieldType != FieldType.CheckBox)
             {
-                throw new Exception($"{Status} is an illegal status for {nameof(PreservationPeriod)} when recording field value");
+                throw new Exception($"Can't record a {nameof(FieldType.CheckBox)} value for a {field.FieldType} field");
             }
+            ValidateAndPrepareForNewRecording(field);
 
-            RemoveAnyOldFieldValue(field.Id);
-
-            if (string.IsNullOrEmpty(value))
+            // save new value ONLY if CheckBox is Checked!
+            if (value)
             {
-                return;
-            }
-
-            switch (field.FieldType)
-            {
-                case FieldType.Number:
-                    RecordNumberValueForField(field, value);
-                    break;
-                case FieldType.CheckBox:
-                    RecordCheckBoxValueForField(field, value);
-                    break;
-                case FieldType.Attachment:
-                    // todo
-                    break;
-                default:
-                    throw new Exception($"Can't record value for {field.FieldType}");
+                AddFieldValue(new CheckBoxChecked(Plant, field));
             }
         }
-        
+
+        public void RecordNumberValueForField(Field field, double? value)
+        {
+            if (field.FieldType != FieldType.Number)
+            {
+                throw new Exception($"Can't record a {nameof(FieldType.Number)} value for a {field.FieldType} field");
+            }
+            ValidateAndPrepareForNewRecording(field);
+
+            // save new value ONLY if there is a value!
+            if (value.HasValue)
+            {
+                AddFieldValue(new NumberValue(Plant, field, value.Value));
+            }
+        }
+
+        public void RecordNumberIsNaValueForField(Field field)
+        {
+            if (field.FieldType != FieldType.Number)
+            {
+                throw new Exception($"Can't record a NA {nameof(FieldType.Number)} value for a {field.FieldType} field");
+            }
+            ValidateAndPrepareForNewRecording(field);
+            
+            AddFieldValue(new NumberValue(Plant, field, null));
+        }
+
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
 
@@ -159,30 +170,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             ModifiedById = modifiedBy.Id;
         }
 
-        private void RecordCheckBoxValueForField(Field field, string value)
-        {
-            if (!CheckBoxChecked.IsValidValue(value, out var isChecked))
-            {
-                throw new ArgumentException($"Value {value} is not legal value for a {nameof(Field)} of type {field.FieldType}");
-            }
-            
-            if (field.Plant != Plant)
-            {
-                throw new ArgumentException($"Can't relate item in {field.Plant} to item in {Plant}");
-            }
-
-            // save new value ONLY if CheckBox is Checked!
-            if (!isChecked)
-            {
-                return;
-            }
-
-            AddFieldValue(new CheckBoxChecked(Plant, field));
-        }
-
-        private void RecordNumberValueForField(Field field, string value)
-            => AddFieldValue(new NumberValue(Plant, field, value));
-        
         private void AddFieldValue(FieldValue fieldValue)
         {
             if (fieldValue == null)
@@ -200,6 +187,23 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 _fieldValues.Remove(fieldValue);
             }
+        }
+
+        private void ValidateAndPrepareForNewRecording(Field field)
+        {
+            if (field.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't record value in {field.Plant} for item in {Plant}");
+            }
+
+            if (Status != PreservationPeriodStatus.ReadyToBePreserved &&
+                Status != PreservationPeriodStatus.NeedsUserInput)
+            {
+                throw new Exception(
+                    $"{Status} is an illegal status for {nameof(PreservationPeriod)} when recording field value");
+            }
+
+            RemoveAnyOldFieldValue(field.Id);
         }
     }
 }

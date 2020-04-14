@@ -29,20 +29,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             _recordValuesCommandWithCheckedCheckBoxAndNumber = new RecordValuesCommand(
                 _tagId, 
                 _reqId, 
-                new Dictionary<int, string>
-                {
-                    {_checkBoxFieldId, "true"},
-                    {_numberFieldId, "21"}
-                }, 
+                new List<NumberFieldValue>{ new NumberFieldValue(_numberFieldId, 21, false)}, 
+                new List<CheckBoxFieldValue>{new CheckBoxFieldValue(_checkBoxFieldId, true)}, 
                 null);
 
             _recordValuesCommandWithNullAsNumber = new RecordValuesCommand(
                 _tagId, 
                 _reqId, 
-                new Dictionary<int, string>
-                {
-                    {_numberFieldId, null}
-                }, 
+                new List<NumberFieldValue>{new NumberFieldValue(_numberFieldId, null, false)}, 
+                null, 
                 null);
 
             var requirementDefinitionWith2FieldsMock = new Mock<RequirementDefinition>();
