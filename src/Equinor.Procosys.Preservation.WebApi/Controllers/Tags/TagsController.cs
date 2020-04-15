@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
+using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
@@ -148,6 +149,25 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     dto.ProjectName,
                     dto.StepId,
                     requirements,
+                    dto.Remark,
+                    dto.StorageArea));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
+        [HttpPost("AutoScope")]
+        public async Task<ActionResult<int>> AutoScopeTags(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromBody] AutoScopeTagsDto dto)
+        {
+            var result = await _mediator.Send(
+                new AutoScopeTagsCommand(
+                    dto.TagNos,
+                    dto.ProjectName,
+                    dto.StepId,
                     dto.Remark,
                     dto.StorageArea));
             return this.FromResult(result);
