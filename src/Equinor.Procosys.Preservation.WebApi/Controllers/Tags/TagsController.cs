@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -111,7 +112,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_CREATE)]
         [HttpPost("{id}/Actions")]
-        public async Task<ActionResult<CreateActionDto>> CreateAction(
+        public async Task<ActionResult<int>> CreateAction(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -128,6 +129,29 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var result = await _mediator.Send(actionCommand);
 
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [HttpPut("{id}/Actions/{actionId}")]
+        public async Task<IActionResult> UpdateAction(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId,
+            [FromBody] UpdateActionDto dto)
+        {
+                var actionCommand = new UpdateActionCommand(
+                                  id,
+                                  actionId,
+                                  dto.Title,
+                                  dto.Description,
+                                  dto.DueTimeUtc);
+
+                var result = await _mediator.Send(actionCommand);
+
+                return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]

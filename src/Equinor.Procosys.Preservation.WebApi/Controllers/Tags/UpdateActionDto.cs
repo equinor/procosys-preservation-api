@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class CreateActionDto
+    public class UpdateActionDto
     {
         public string Title { get; set; }
         public string Description { get; set; }

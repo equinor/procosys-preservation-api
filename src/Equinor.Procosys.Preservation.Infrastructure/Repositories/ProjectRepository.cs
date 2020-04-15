@@ -10,10 +10,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     {
         public ProjectRepository(PreservationContext context)
             : base(context.Projects, 
-                context.Projects.Include(p => p.Tags)
-                    .ThenInclude(t => t.Requirements)
-                    .ThenInclude(r => r.PreservationPeriods)
-                    .ThenInclude(pp => pp.FieldValues))
+                context.Projects
+                    .Include(p => p.Tags)
+                        .ThenInclude(t => t.Requirements)
+                        .ThenInclude(r => r.PreservationPeriods)
+                        .ThenInclude(pp => pp.FieldValues)
+                    .Include(p => p.Tags)
+                        .ThenInclude(t => t.Actions))
         {
         }
 
