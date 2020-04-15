@@ -6,20 +6,20 @@ using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggre
 namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
-    public class CreateActionDtoValidatorTests
+    public class UpdateActionDtoValidatorTests
     {
         [TestMethod]
         public void Validate_OK()
         {
-            var dut = new CreateActionDtoValidator();
-            var validCreateActionDto = new CreateActionDto
+            var dut = new UpdateActionDtoValidator();
+            var validUpdateActionDto = new UpdateActionDto
             {
-                Title = "ActionTitle",
-                Description = "ActionDescription",
+                Title = "UpdatedActionTitle",
+                Description = "UpdatedActionDescription",
                 DueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc)
             };
 
-            var result = dut.Validate(validCreateActionDto);
+            var result = dut.Validate(validUpdateActionDto);
 
             Assert.IsTrue(result.IsValid);
         }
@@ -27,16 +27,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public void Fail_WhenTitleIsTooLong()
         {
-            var dut = new CreateActionDtoValidator();
+            var dut = new UpdateActionDtoValidator();
 
-            var inValidCreateActionDto = new CreateActionDto
+            var inValidUpdateActionDto = new UpdateActionDto
             {
                 Title = new string('x', Action.TitleLengthMax + 1),
-                Description = "ActionDescription",
+                Description = "UpdatedActionDescription",
                 DueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc)
             };
 
-            var result = dut.Validate(inValidCreateActionDto);
+            var result = dut.Validate(inValidUpdateActionDto);
 
             Assert.IsFalse(result.IsValid);
         }
@@ -44,16 +44,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public void Fail_WhenDescriptionIsTooLong()
         {
-            var dut = new CreateActionDtoValidator();
+            var dut = new UpdateActionDtoValidator();
 
-            var inValidCreateActionDto = new CreateActionDto
+            var inValidUpdateActionDto = new UpdateActionDto
             {
-                Title = "ActionTitle",
+                Title = "NewActionTitle",
                 Description = new string('x', Action.DescriptionLengthMax + 1),
                 DueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc)
             };
 
-            var result = dut.Validate(inValidCreateActionDto);
+            var result = dut.Validate(inValidUpdateActionDto);
 
             Assert.IsFalse(result.IsValid);
         }

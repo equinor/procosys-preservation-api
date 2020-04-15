@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -9,10 +9,10 @@ using Equinor.Procosys.Preservation.MainApi.Tag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
 {
     [TestClass]
-    public class CreateTagCommandHandlerTests : CommandHandlerTestsBase
+    public class CreateTagsCommandHandlerTests : CommandHandlerTestsBase
     {
         private const string TestTagNo1 = "TagNo1";
         private const string TestTagNo2 = "TagNo2";
@@ -34,8 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         private ProcosysTagDetails _mainTagDetails1;
         private ProcosysTagDetails _mainTagDetails2;
         
-        private CreateTagCommand _command;
-        private CreateTagCommandHandler _dut;
+        private CreateTagsCommand _command;
+        private CreateTagsCommandHandler _dut;
 
         [TestInitialize]
         public void Setup()
@@ -106,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 .Setup(x => x.GetTagDetailsAsync(TestPlant, TestProjectName, new List<string>{TestTagNo1, TestTagNo2}))
                 .Returns(Task.FromResult(mainTagDetailList));
 
-            _command = new CreateTagCommand(
+            _command = new CreateTagsCommand(
                 new List<string>{TestTagNo1, TestTagNo2}, 
                 TestProjectName,
                 _stepMock.Object.Id,
@@ -118,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
                 "Remark",
                 "SA");
             
-            _dut = new CreateTagCommandHandler(
+            _dut = new CreateTagsCommandHandler(
                 _projectRepositoryMock.Object,
                 _journeyRepositoryMock.Object,
                 _rtRepositoryMock.Object,
@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
-        public async Task HandlingCreateTagCommand_ShouldAddProjectToRepository_WhenProjectNotExists()
+        public async Task HandlingCreateTagsCommand_ShouldAddProjectToRepository_WhenProjectNotExists()
         {
             // Arrange
             _projectRepositoryMock
@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
-        public async Task HandlingCreateTagCommand_ShouldNotAddAnyProjectToRepository_WhenProjectAlreadyExists()
+        public async Task HandlingCreateTagsCommand_ShouldNotAddAnyProjectToRepository_WhenProjectAlreadyExists()
         {
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "");
@@ -161,7 +161,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
-        public async Task HandlingCreateTagCommand_ShouldAdd2TagsToNewProject_WhenProjectNotExists()
+        public async Task HandlingCreateTagsCommand_ShouldAdd2TagsToNewProject_WhenProjectNotExists()
         {
             // Arrange
             _projectRepositoryMock
@@ -181,7 +181,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
-        public async Task HandlingCreateTagCommand_ShouldAdd2TagsToExistingProject_WhenProjectAlreadyExists()
+        public async Task HandlingCreateTagsCommand_ShouldAdd2TagsToExistingProject_WhenProjectAlreadyExists()
         {
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "");
@@ -203,7 +203,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         }
 
         [TestMethod]
-        public async Task HandlingCreateTagCommand_ShouldSave()
+        public async Task HandlingCreateTagsCommand_ShouldSave()
         {
             // Act
             await _dut.Handle(_command, default);
@@ -212,7 +212,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
-        private void AssertTagProperties(CreateTagCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject)
+        private void AssertTagProperties(CreateTagsCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject)
         {
             Assert.AreEqual(mainTagDetails.AreaCode, tagAddedToProject.AreaCode);
             Assert.AreEqual(mainTagDetails.AreaDescription, tagAddedToProject.AreaDescription);

@@ -2,12 +2,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
@@ -24,6 +24,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
+using Requirement = Equinor.Procosys.Preservation.Command.Requirement;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
@@ -112,7 +113,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_CREATE)]
         [HttpPost("{id}/Actions")]
-        public async Task<ActionResult<CreateActionDto>> CreateAction(
+        public async Task<ActionResult<int>> CreateAction(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -129,6 +130,29 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var result = await _mediator.Send(actionCommand);
 
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [HttpPut("{id}/Actions/{actionId}")]
+        public async Task<IActionResult> UpdateAction(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId,
+            [FromBody] UpdateActionDto dto)
+        {
+                var actionCommand = new UpdateActionCommand(
+                                  id,
+                                  actionId,
+                                  dto.Title,
+                                  dto.Description,
+                                  dto.DueTimeUtc);
+
+                var result = await _mediator.Send(actionCommand);
+
+                return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
@@ -150,18 +174,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("Standard")]
-        public async Task<ActionResult<int>> CreateTag(
+        public async Task<ActionResult<int>> CreateTags(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromBody] CreateTagDto dto)
+            [FromBody] CreateTagsDto dto)
         {
             var requirements = dto.Requirements?
                 .Select(r =>
                     new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
             var result = await _mediator.Send(
-                new CreateTagCommand(
+                new CreateTagsCommand(
                     dto.TagNos,
                     dto.ProjectName,
                     dto.StepId,
@@ -282,7 +306,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPost("{id}/Requirement/{requirementId}/RecordValues")]
-        public async Task<IActionResult> RecordCheckBoxChecked(
+        public async Task<IActionResult> RecordValues(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -291,13 +315,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int requirementId,
             [FromBody] RequirementValuesDto requirementValuesDto)
         {
-            var fieldValues = requirementValuesDto?
-                .FieldValues
-                .ToDictionary(
-                    keySelector => keySelector.FieldId,
-                    elementSelector => elementSelector.Value);
+            var numberValues = requirementValuesDto?
+                .NumberValues?
+                .Select(fv => new NumberFieldValue(fv.FieldId, fv.Value, fv.IsNA)).ToList();
+            var checkBoxValues = requirementValuesDto?
+                .CheckBoxValues?
+                .Select(fv => new CheckBoxFieldValue(fv.FieldId, fv.IsChecked)).ToList();
 
-            var result = await _mediator.Send(new RecordValuesCommand(id, requirementId, fieldValues, requirementValuesDto?.Comment));
+            var result = await _mediator.Send(
+                new RecordValuesCommand(
+                    id,
+                    requirementId,
+                    numberValues,
+                    checkBoxValues,
+                    requirementValuesDto?.Comment));
             
             return this.FromResult(result);
         }

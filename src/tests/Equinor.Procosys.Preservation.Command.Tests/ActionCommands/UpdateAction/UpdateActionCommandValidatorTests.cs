@@ -1,46 +1,54 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
+using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateAction
+namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateAction
 {
     [TestClass]
-    public class CreateActionCommandValidatorTests
+    public class UpdateActionCommandValidatorTests
     {
-        private CreateActionCommandValidator _dut;
+        private UpdateActionCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
-        private CreateActionCommand _command;
+        private Mock<IActionValidator> _actionValidatorMock;
+        private UpdateActionCommand _command;
 
         private readonly int _tagId = 2;
+        private readonly int _actionId = 3;
 
         [TestInitialize]
         public void Setup_OkState()
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
-            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(_tagId, default)).Returns(Task.FromResult(false));
 
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            _command = new CreateActionCommand(
+            _actionValidatorMock = new Mock<IActionValidator>();
+            _actionValidatorMock.Setup(r => r.ExistsAsync(_tagId, _actionId, default)).Returns(Task.FromResult(true));
+
+            _command = new UpdateActionCommand(
                 _tagId,
+                _actionId,
                 "",
                 "",
                 null);
 
-            _dut = new CreateActionCommandValidator(
+            _dut = new UpdateActionCommandValidator(
                 _projectValidatorMock.Object,
-                _tagValidatorMock.Object);
+                _tagValidatorMock.Object,
+                _actionValidatorMock.Object
+                );
         }
 
         [TestMethod]
         public void Validate_ShouldBeValid_WhenOkState()
         {
-            var result = _dut.Validate(_command); 
+            var result = _dut.Validate(_command);
 
             Assert.IsTrue(result.IsValid);
         }
@@ -79,6 +87,30 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenActionIsClosed()
+        {
+            _actionValidatorMock.Setup(r => r.IsClosedAsync(_actionId, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Action is closed!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenActionNotExists()
+        {
+            _actionValidatorMock.Setup(r => r.ExistsAsync(_tagId, _actionId, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Action doesn't exist!"));
         }
     }
 }

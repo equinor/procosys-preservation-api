@@ -3,11 +3,11 @@ using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
 {
-    public class CreateTagCommand : IRequest<Result<List<int>>>, IProjectRequest
+    public class CreateTagsCommand : IRequest<Result<List<int>>>, IProjectRequest
     {
-        public CreateTagCommand(
+        public CreateTagsCommand(
             IEnumerable<string> tagNos,
             string projectName,
             int stepId,

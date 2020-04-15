@@ -5,9 +5,9 @@ using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class CreateTagDtoValidator : AbstractValidator<CreateTagDto>
+    public class CreateTagsDtoValidator : AbstractValidator<CreateTagsDto>
     {
-        public CreateTagDtoValidator()
+        public CreateTagsDtoValidator()
         {
             RuleFor(x => x).NotNull();
             

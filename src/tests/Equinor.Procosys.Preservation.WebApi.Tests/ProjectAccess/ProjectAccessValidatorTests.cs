@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -128,10 +130,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnCreateTagCommand_ShouldReturnTrue_WhenAccessToProject()
+        public async Task ValidateAsync_OnCreateTagsCommand_ShouldReturnTrue_WhenAccessToProject()
         {
             // Arrange
-            var command = new CreateTagCommand(null, ProjectWithAccess, 1, null, null, null);
+            var command = new CreateTagsCommand(null, ProjectWithAccess, 1, null, null, null);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -141,10 +143,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnCreateTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        public async Task ValidateAsync_OnCreateTagsCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new CreateTagCommand(null, ProjectWithoutAccess, 1, null, null, null);
+            var command = new CreateTagsCommand(null, ProjectWithoutAccess, 1, null, null, null);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -179,10 +181,62 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
             Assert.IsFalse(result);
         }
 
+        [TestMethod]
+        public async Task ValidateAsync_OnCreateActionCommand_ShouldReturnTrue_WhenAccessToProject()
+        {
+            // Arrange
+            var command = new CreateActionCommand(TagIdWithAccess, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnCreateActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new CreateActionCommand(TagIdWithoutAccess, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateActionCommand_ShouldReturnTrue_WhenAccessToProject()
+        {
+            // Arrange
+            var command = new UpdateActionCommand(TagIdWithAccess, 0, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new UpdateActionCommand(TagIdWithoutAccess, 0, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
         #endregion
 
         #region queries
-        
+
         [TestMethod]
         public async Task ValidateAsync_OnGetTagsQuery_ShouldReturnTrue_WhenAccessToProject()
         {
@@ -450,7 +504,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
         [TestMethod]
         public async Task ValidateAsync_OnSearchTagsByTagFunctionQuery_ShouldReturnTrue_WhenAccessToProject()
         {
-            var query = new SearchTagsByTagFunctionQuery(ProjectWithAccess, null, null);
+            var query = new SearchTagsByTagFunctionQuery(ProjectWithAccess);
             // act
             var result = await _dut.ValidateAsync(query);
 
@@ -461,7 +515,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
         [TestMethod]
         public async Task ValidateAsync_OnSearchTagsByTagFunctionQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
-            var query = new SearchTagsByTagFunctionQuery(ProjectWithoutAccess, null, null);
+            var query = new SearchTagsByTagFunctionQuery(ProjectWithoutAccess);
             // act
             var result = await _dut.ValidateAsync(query);
 

@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class CreateTagDto
+    public class CreateTagsDto
     {
         public IEnumerable<string> TagNos { get; set; }
         public string ProjectName { get; set; }
