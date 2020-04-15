@@ -236,6 +236,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
+        [TestMethod]
+        public async Task HandlingAutoScopeTagsCommand_ShouldReturnNotFound_WhenTagFunctionForTagMissesRequirements()
+        {
+            // Arrange
+            _mainTagDetails1.TagFunctionCode = "X";
+
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(1, result.Errors.Count);
+        }
+
         private void AssertTagProperties(AutoScopeTagsCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject, int regDefId, int interval)
         {
             Assert.AreEqual(mainTagDetails.AreaCode, tagAddedToProject.AreaCode);
