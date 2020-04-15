@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return requirement != null && requirement.ReadyToBePreserved;
         }
 
-        public async Task<bool> TagTypeCanBeTransferredAsync(int tagId, CancellationToken cancellationToken)
+        public async Task<bool> TagFollowsAJourneyAsync(int tagId, CancellationToken cancellationToken)
         {
             var tag = await GetTagNoIncludes(tagId, cancellationToken);
             if (tag == null)

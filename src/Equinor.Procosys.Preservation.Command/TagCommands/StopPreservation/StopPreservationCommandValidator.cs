@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -36,10 +35,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
                     .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tagId, __, token) => PreservationIsActiveAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to stop! Tag={id}")
+                    .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to be able to stop! Tag={id}")
+                    .MustAsync((_, tagId, __, token) => CanBeStoppedAsync(tagId, token))
+                    .WithMessage((_, id) => $"{TagType.Standard} and {TagType.PreArea} tags must be in last step of journey to be able to stop! Tag={id}")
                     .MustAsync((_, tagId, __, token) => HaveExistingRequirementDefinitionsAsync(tagId, token))
                     .WithMessage((_, id) => $"A requirement definition doesn't exists! Tag={id}");
-                // TODO: check if standard, so last step; site area tag, so anytime
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
@@ -63,11 +63,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
             async Task<bool> PreservationIsActiveAsync(int tagId, CancellationToken token)
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
 
-            async Task<bool> HaveAtLeastOneNonVoidedRequirementAsync(int tagId, CancellationToken token)
-                => await tagValidator.HasANonVoidedRequirementAsync(tagId, token);
-            
             async Task<bool> HaveExistingRequirementDefinitionsAsync(int tagId, CancellationToken token)
                 => await tagValidator.AllRequirementDefinitionsExistAsync(tagId, token);
+
+            async Task<bool> CanBeStoppedAsync(int tagId, CancellationToken token)
+            {
+                var TagFollowsAJourney = await tagValidator.TagFollowsAJourneyAsync(tagId, token);
+                return !TagFollowsAJourney || !await tagValidator.HaveNextStepAsync(tagId, token);
+            }
         }
     }
 }

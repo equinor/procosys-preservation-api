@@ -35,8 +35,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.HaveNextStepAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.HaveNextStepAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.TagTypeCanBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.TagTypeCanBeTransferredAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.TagFollowsAJourneyAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.TagFollowsAJourneyAsync(TagId2, default)).Returns(Task.FromResult(true));
             _command = new TransferCommand(_tagIds);
 
             _dut = new TransferCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
@@ -137,7 +137,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Validate_ShouldFail_WhenTagTypeCanNotBeTransferred()
         {
-            _tagValidatorMock.Setup(r => r.TagTypeCanBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.TagFollowsAJourneyAsync(TagId1, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
