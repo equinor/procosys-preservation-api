@@ -24,7 +24,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         public void Setup_OkState()
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
-            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(_tagId, default)).Returns(Task.FromResult(false));
 
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));

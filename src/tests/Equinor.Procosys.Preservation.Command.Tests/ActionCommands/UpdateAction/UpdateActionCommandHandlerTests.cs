@@ -58,9 +58,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
 
             _dut = new UpdateActionCommandHandler(
                 _projectRepositoryMock.Object,
-                UnitOfWorkMock.Object,
-                PlantProviderMock.Object
-                );
+                UnitOfWorkMock.Object
+            );
         }
 
         [TestMethod]

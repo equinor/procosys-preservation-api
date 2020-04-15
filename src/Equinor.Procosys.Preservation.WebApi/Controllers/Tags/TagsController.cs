@@ -112,7 +112,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_CREATE)]
         [HttpPost("{id}/Actions")]
-        public async Task<ActionResult<CreateActionDto>> CreateAction(
+        public async Task<ActionResult<int>> CreateAction(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -133,7 +133,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPut("{id}/Actions/{actionId}")]
-        public async Task<ActionResult<UpdateActionDto>> UpdateAction(
+        public async Task<IActionResult> UpdateAction(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]

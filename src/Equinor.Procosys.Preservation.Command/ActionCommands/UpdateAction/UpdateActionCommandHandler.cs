@@ -12,13 +12,11 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IPlantProvider _plantProvider;
 
-        public UpdateActionCommandHandler(IProjectRepository projectRepository, IUnitOfWork unitOfWork, IPlantProvider plantProvider)
+        public UpdateActionCommandHandler(IProjectRepository projectRepository, IUnitOfWork unitOfWork)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
-            _plantProvider = plantProvider;
         }
 
         public async Task<Result<Unit>> Handle(UpdateActionCommand request, CancellationToken cancellationToken)
