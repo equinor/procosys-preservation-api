@@ -137,7 +137,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromBody] CreateTagDto dto)
+            [FromBody] CreateTagsDto dto)
         {
             var requirements = dto.Requirements?
                 .Select(r =>

@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
     public class TagsControllerTests
     {
         private readonly Mock<IMediator> _mediatorMock = new Mock<IMediator>();
-        private readonly CreateTagDto _createTagDto = new CreateTagDto();
+        private readonly CreateTagsDto _createTagsDto = new CreateTagsDto();
         private TagsController _dut;
 
         [TestInitialize]
@@ -29,14 +29,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         }
 
         [TestMethod]
-        public async Task CreateTag_ShouldSendCommand()
+        public async Task CreateTags_ShouldSendCommand()
         {
-            await _dut.CreateTags("", _createTagDto);
+            await _dut.CreateTags("", _createTagsDto);
             _mediatorMock.Verify(x => x.Send(It.IsAny<CreateTagsCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [TestMethod]
-        public async Task CreateTag_ShouldCreateCorrectCommand()
+        public async Task CreateTags_ShouldCreateCorrectCommand()
         {
             CreateTagsCommand CreateTagsCommandCreated = null;
             _mediatorMock
@@ -47,23 +47,23 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
                     CreateTagsCommandCreated = request as CreateTagsCommand;
                 });
 
-            _createTagDto.ProjectName = "ProjectName";
-            _createTagDto.StepId = 2;
-            _createTagDto.TagNos = new List<string> {"TagNo1", "TagNo2"};
+            _createTagsDto.ProjectName = "ProjectName";
+            _createTagsDto.StepId = 2;
+            _createTagsDto.TagNos = new List<string> {"TagNo1", "TagNo2"};
 
-            await _dut.CreateTags("", _createTagDto);
+            await _dut.CreateTags("", _createTagsDto);
 
-            Assert.AreEqual(_createTagDto.ProjectName, CreateTagsCommandCreated.ProjectName);
-            Assert.AreEqual(_createTagDto.StepId, CreateTagsCommandCreated.StepId);
+            Assert.AreEqual(_createTagsDto.ProjectName, CreateTagsCommandCreated.ProjectName);
+            Assert.AreEqual(_createTagsDto.StepId, CreateTagsCommandCreated.StepId);
             Assert.AreEqual(2, CreateTagsCommandCreated.TagNos.Count());
-            Assert.AreEqual(_createTagDto.TagNos.First(), CreateTagsCommandCreated.TagNos.First());
-            Assert.AreEqual(_createTagDto.TagNos.Last(), CreateTagsCommandCreated.TagNos.Last());
+            Assert.AreEqual(_createTagsDto.TagNos.First(), CreateTagsCommandCreated.TagNos.First());
+            Assert.AreEqual(_createTagsDto.TagNos.Last(), CreateTagsCommandCreated.TagNos.Last());
         }
 
         [TestMethod]
-        public async Task CreateTag_ShouldReturnsOk_WhenResultIsSuccessful()
+        public async Task CreateTags_ShouldReturnsOk_WhenResultIsSuccessful()
         {
-            var result = await _dut.CreateTags("", _createTagDto);
+            var result = await _dut.CreateTags("", _createTagsDto);
 
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
             var okResult = (OkObjectResult)result.Result;
