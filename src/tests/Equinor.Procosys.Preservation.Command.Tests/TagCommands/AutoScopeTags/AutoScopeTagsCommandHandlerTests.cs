@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock
-                .Setup(x => x.GetAllWithRequirementsAsync())
+                .Setup(x => x.GetAllNonVoidedWithRequirementsAsync())
                 .Returns(Task.FromResult(new List<TagFunction>{tf1, tf2, tf3}));
 
             _mainTagDetails1 = new ProcosysTagDetails

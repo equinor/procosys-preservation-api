@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         public Task<TagFunction> GetByCodesAsync(string tagFunctionCode, string registerCode)
             => DefaultQuery.SingleOrDefaultAsync(tf => tf.Code == tagFunctionCode && tf.RegisterCode == registerCode);
 
-        public Task<List<TagFunction>> GetAllWithRequirementsAsync()
-            => DefaultQuery.Where(tf => tf.Requirements.Any()).ToListAsync();
+        public Task<List<TagFunction>> GetAllNonVoidedWithRequirementsAsync()
+            => DefaultQuery.Where(tf => !tf.IsVoided && tf.Requirements.Any(r => !r.IsVoided)).ToListAsync();
     }
 }

@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
             var uniqueTagFunctionCodesRegisterCodes = tagDetailList
                 .Distinct(new ProcosysTagDetailsComparer()).Select(Key);
 
-            var tagFunctionsWithRequirements = await _tagFunctionRepository.GetAllWithRequirementsAsync();
+            var tagFunctionsWithRequirements = await _tagFunctionRepository.GetAllNonVoidedWithRequirementsAsync();
 
             var neededTagFunctionsWithRequirements = tagFunctionsWithRequirements
                 .Where(tf => uniqueTagFunctionCodesRegisterCodes.Contains(Key(tf)))
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
                 
                 if (tagFunctionWithRequirement == null)
                 {
-                    return new NotFoundResult<List<int>>($"TagFunction for {Key(tagDetails)} not found with Requirements defined");
+                    return new NotFoundResult<List<int>>($"TagFunction for {Key(tagDetails)} not found with requirements defined");
                 }
 
                 if (project == null)
