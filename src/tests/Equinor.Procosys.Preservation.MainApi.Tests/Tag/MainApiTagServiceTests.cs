@@ -89,6 +89,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                     McPkgNo = "McPkgNo",
                     PurchaseOrderNo = "PurchaseOrderNo",
                     TagFunctionCode = "TagFunctionCode",
+                    RegisterCode = "RegisterCode",
                     TagNo = "TagNo1"
                 }
             };
@@ -181,6 +182,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             Assert.AreEqual("McPkgNo", tag.McPkgNo);
             Assert.AreEqual("PurchaseOrderNo", tag.PurchaseOrderNo);
             Assert.AreEqual("TagFunctionCode", tag.TagFunctionCode);
+            Assert.AreEqual("RegisterCode", tag.RegisterCode);
             Assert.AreEqual("TagNo1", tag.TagNo);
         }
 
