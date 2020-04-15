@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 
             var result = dut.Validate(inValidUpdateTagDto);
 
-            Assert.IsTrue(result.IsValid);
+            Assert.IsFalse(result.IsValid);
         }
 
 
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 
             var result = dut.Validate(inValidUpdateTagDto);
 
-            Assert.IsTrue(result.IsValid);
+            Assert.IsFalse(result.IsValid);
         }
     }
 }
