@@ -44,19 +44,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
 
         public async Task<Result<List<int>>> Handle(AutoScopeTagsCommand request, CancellationToken cancellationToken)
         {
+            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             var tagDetailList = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, request.ProjectName, request.TagNos);
 
-            var uniqueTagFunctionCodesRegisterCodes = tagDetailList
-                .Distinct(new ProcosysTagDetailsComparer()).Select(Key);
+            var tagFunctionsWithRequirements = await GetNeededTagFunctionsWithRequirementsAsync(tagDetailList);
 
-            var tagFunctionsWithRequirements = await _tagFunctionRepository.GetAllNonVoidedWithRequirementsAsync();
-
-            var neededTagFunctionsWithRequirements = tagFunctionsWithRequirements
-                .Where(tf => uniqueTagFunctionCodesRegisterCodes.Contains(Key(tf)))
-                .ToList();
-
-            var reqDefIds = neededTagFunctionsWithRequirements
+            var reqDefIds = tagFunctionsWithRequirements
                 .SelectMany(r => r.Requirements)
+                .Where(r => !r.IsVoided)
                 .Select(r => r.RequirementDefinitionId)
                 .Distinct()
                 .ToList();
@@ -74,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
                 }
 
                 var tagFunctionWithRequirement =
-                    neededTagFunctionsWithRequirements.SingleOrDefault(tf => Key(tf) == Key(tagDetails));
+                    tagFunctionsWithRequirements.SingleOrDefault(tf => Key(tf) == Key(tagDetails));
                 
                 if (tagFunctionWithRequirement == null)
                 {
@@ -87,7 +82,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
                     _projectRepository.Add(project);
                 }
 
-                var tagToAdd = await CreateTagAsync(tagDetails, request, tagFunctionWithRequirement, reqDefs);
+                var tagToAdd = CreateTag(request, step, tagDetails, tagFunctionWithRequirement, reqDefs);
+
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
             }
@@ -101,20 +97,31 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
         
         private string Key(TagFunction tagFunction) => $"{tagFunction.Code}|{tagFunction.RegisterCode}";
 
-        private async Task<Tag> CreateTagAsync(
-            ProcosysTagDetails tagDetails,
+        private async Task<List<TagFunction>> GetNeededTagFunctionsWithRequirementsAsync(IList<ProcosysTagDetails> tagDetailList)
+        {
+            var uniqueTagFunctionCodesRegisterCodes = tagDetailList.Distinct(new ProcosysTagDetailsComparer()).Select(Key);
+
+            var tagFunctionsWithRequirements = await _tagFunctionRepository.GetAllNonVoidedWithRequirementsAsync();
+
+            return tagFunctionsWithRequirements
+                .Where(tf => uniqueTagFunctionCodesRegisterCodes.Contains(Key(tf)))
+                .ToList();
+        }
+
+        private Tag CreateTag(
             AutoScopeTagsCommand request, 
+            Step step,
+            ProcosysTagDetails tagDetails,
             TagFunction tagFunctionWithRequirements,
             IList<RequirementDefinition> reqDefs)
         {
             var requirements = new List<TagRequirement>();
-            foreach (var requirement in tagFunctionWithRequirements.Requirements)
+            foreach (var requirement in tagFunctionWithRequirements.Requirements.Where(r => !r.IsVoided))
             {
                 var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
             }
 
-            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             var tag = new Tag(
                 _plantProvider.Plant,
                 TagType.Standard,
@@ -131,6 +138,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
                 StorageArea = request.StorageArea,
                 TagFunctionCode = tagDetails.TagFunctionCode
             };
+
             tag.SetArea(tagDetails.AreaCode, tagDetails.AreaDescription);
             tag.SetDiscipline(tagDetails.DisciplineCode, tagDetails.DisciplineDescription);
             

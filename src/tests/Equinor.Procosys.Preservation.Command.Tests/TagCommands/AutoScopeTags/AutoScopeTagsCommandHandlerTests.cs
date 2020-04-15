@@ -21,7 +21,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         private const string TestProjectDescription = "TestProjectXDescription";
         private const int StepId = 11;
         private const int ReqDefId1 = 99;
-        private const int ReqDefId2 = 199;
+        private const int ReqDefId2a = 109;
+        private const int ReqDefId2b = 119;
         private const int ReqDefId3 = 299;
         private const int Interval1 = 2;
         private const int Interval2 = 3;
@@ -70,24 +71,31 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             var rdMock1 = new Mock<RequirementDefinition>();
             rdMock1.SetupGet(x => x.Id).Returns(ReqDefId1);
             rdMock1.SetupGet(x => x.Plant).Returns(TestPlant);
-            var rdMock2 = new Mock<RequirementDefinition>();
-            rdMock2.SetupGet(x => x.Id).Returns(ReqDefId2);
-            rdMock2.SetupGet(x => x.Plant).Returns(TestPlant);
+            var rdMock2a = new Mock<RequirementDefinition>();
+            rdMock2a.SetupGet(x => x.Id).Returns(ReqDefId2a);
+            rdMock2a.SetupGet(x => x.Plant).Returns(TestPlant);
+            var rdMock2b = new Mock<RequirementDefinition>();
+            rdMock2b.SetupGet(x => x.Id).Returns(ReqDefId2b);
+            rdMock2b.SetupGet(x => x.Plant).Returns(TestPlant);
+            
             _rtRepositoryMock
-                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2}))
-                .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
+                .Setup(r => r.GetRequirementDefinitionsByIdsAsync(new List<int> {ReqDefId1, ReqDefId2a}))
+                .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2a.Object}));
 
             var tf1 = new TagFunction(TestPlant, tagFunctionCode1, "TF1", registerCode1);
             tf1.AddRequirement(new TagFunctionRequirement(TestPlant, Interval1, rdMock1.Object));
             var tf2 = new TagFunction(TestPlant, tagFunctionCode2, "TF2", registerCode2);
-            tf2.AddRequirement(new TagFunctionRequirement(TestPlant, Interval2, rdMock2.Object));
+            tf2.AddRequirement(new TagFunctionRequirement(TestPlant, Interval2, rdMock2a.Object));
+            var voidedTFRequirement = new TagFunctionRequirement(TestPlant, Interval2, rdMock2b.Object);
+            voidedTFRequirement.Void();
+            tf2.AddRequirement(voidedTFRequirement);
 
             var rdMock3 = new Mock<RequirementDefinition>();
             rdMock3.SetupGet(x => x.Id).Returns(ReqDefId3);
             rdMock3.SetupGet(x => x.Plant).Returns(TestPlant);
             var tf3 = new TagFunction(TestPlant, "TagFunctionCode3", "TF3", "RegisterCodeCode3");
             tf3.AddRequirement(new TagFunctionRequirement(TestPlant, Interval1, rdMock1.Object));
-            tf3.AddRequirement(new TagFunctionRequirement(TestPlant, Interval2, rdMock2.Object));
+            tf3.AddRequirement(new TagFunctionRequirement(TestPlant, Interval2, rdMock2a.Object));
             tf3.AddRequirement(new TagFunctionRequirement(TestPlant, 3, rdMock3.Object));
             
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
@@ -201,7 +209,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             var tags = _projectAddedToRepository.Tags;
             Assert.AreEqual(2, tags.Count);
             AssertTagProperties(_command, _mainTagDetails1, tags.First(), ReqDefId1, Interval1);
-            AssertTagProperties(_command, _mainTagDetails2, tags.Last(), ReqDefId2, Interval2);
+            AssertTagProperties(_command, _mainTagDetails2, tags.Last(), ReqDefId2a, Interval2);
         }
 
         [TestMethod]
@@ -223,7 +231,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             var tags = project.Tags;
             Assert.AreEqual(2, tags.Count);
             AssertTagProperties(_command, _mainTagDetails1, tags.First(), ReqDefId1, Interval1);
-            AssertTagProperties(_command, _mainTagDetails2, tags.Last(), ReqDefId2, Interval2);
+            AssertTagProperties(_command, _mainTagDetails2, tags.Last(), ReqDefId2a, Interval2);
         }
 
         [TestMethod]

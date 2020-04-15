@@ -40,6 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
 
         public async Task<Result<List<int>>> Handle(CreateTagsCommand request, CancellationToken cancellationToken)
         {
+            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
             var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
@@ -61,7 +62,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                     _projectRepository.Add(project);
                 }
 
-                var tagToAdd = await CreateTagAsync(tagDetails, request, reqDefs);
+                var tagToAdd = CreateTag(request, step, tagDetails, reqDefs);
+
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
             }
@@ -71,9 +73,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());
         }
 
-        private async Task<Tag> CreateTagAsync(
-            ProcosysTagDetails tagDetails,
+        private Tag CreateTag(
             CreateTagsCommand request, 
+            Step step,
+            ProcosysTagDetails tagDetails,
             IList<RequirementDefinition> reqDefs)
         {
             var requirements = new List<TagRequirement>();
@@ -83,7 +86,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
             }
 
-            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             var tag = new Tag(
                 _plantProvider.Plant,
                 TagType.Standard,
@@ -100,6 +102,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 StorageArea = request.StorageArea,
                 TagFunctionCode = tagDetails.TagFunctionCode
             };
+
             tag.SetArea(tagDetails.AreaCode, tagDetails.AreaDescription);
             tag.SetDiscipline(tagDetails.DisciplineCode, tagDetails.DisciplineDescription);
             

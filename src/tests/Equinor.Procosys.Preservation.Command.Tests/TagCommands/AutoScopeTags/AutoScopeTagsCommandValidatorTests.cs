@@ -151,10 +151,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         [TestMethod]
         public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
         {
-            _tagValidatorMock.Setup(r => r.ExistsAsync(_tagNo1, _projectName, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsAsync(_tagNo2, _projectName, default)).Returns(Task.FromResult(true));
             
             var command = new AutoScopeTagsCommand(
-                new List<string>{_tagNo1, _tagNo1}, 
+                new List<string>{_tagNo1, _tagNo1, _tagNo2}, 
                 _projectName,
                 _stepId,
                 null,
