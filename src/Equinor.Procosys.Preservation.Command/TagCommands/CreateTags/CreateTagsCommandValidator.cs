@@ -8,11 +8,11 @@ using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
 {
-    public class CreateTagCommandValidator : AbstractValidator<CreateTagCommand>
+    public class CreateTagsCommandValidator : AbstractValidator<CreateTagsCommand>
     {
-        public CreateTagCommandValidator(
+        public CreateTagsCommandValidator(
             ITagValidator tagValidator,
             IStepValidator stepValidator,
             IProjectValidator projectValidator,

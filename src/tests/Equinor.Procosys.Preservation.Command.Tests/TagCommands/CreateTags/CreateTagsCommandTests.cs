@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
 {
     [TestClass]
-    public class CreateTagCommandTests
+    public class CreateTagsCommandTests
     {
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithRequirements()
         {
-            var dut = new CreateTagCommand(
+            var dut = new CreateTagsCommand(
                 new List<string> {"TagNoA"},
                 "ProjectNameA",
                 2,
@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTag
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithNullLists()
         {
-            var dut = new CreateTagCommand(null, "", 0, null, null, null);
+            var dut = new CreateTagsCommand(null, "", 0, null, null, null);
 
             Assert.IsNotNull(dut.Requirements);
             Assert.AreEqual(0, dut.Requirements.Count());

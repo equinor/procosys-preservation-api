@@ -11,9 +11,9 @@ using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
 {
-    public class CreateTagCommandHandler : IRequestHandler<CreateTagCommand, Result<List<int>>>
+    public class CreateTagsCommandHandler : IRequestHandler<CreateTagsCommand, Result<List<int>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
         private readonly IPlantProvider _plantProvider;
         private readonly ITagApiService _tagApiService;
 
-        public CreateTagCommandHandler(
+        public CreateTagsCommandHandler(
             IProjectRepository projectRepository,
             IJourneyRepository journeyRepository,
             IRequirementTypeRepository requirementTypeRepository,
@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
             _tagApiService = tagApiService;
         }
 
-        public async Task<Result<List<int>>> Handle(CreateTagCommand request, CancellationToken cancellationToken)
+        public async Task<Result<List<int>>> Handle(CreateTagsCommand request, CancellationToken cancellationToken)
         {
             var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
             var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTag
 
         private async Task<Tag> CreateTagAsync(
             ProcosysTagDetails tagDetails,
-            CreateTagCommand request, 
+            CreateTagsCommand request, 
             IList<RequirementDefinition> reqDefs)
         {
             var requirements = new List<TagRequirement>();

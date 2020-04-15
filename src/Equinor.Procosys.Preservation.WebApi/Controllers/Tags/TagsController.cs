@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
@@ -132,7 +132,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("Standard")]
-        public async Task<ActionResult<int>> CreateTag(
+        public async Task<ActionResult<int>> CreateTags(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -143,7 +143,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .Select(r =>
                     new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
             var result = await _mediator.Send(
-                new CreateTagCommand(
+                new CreateTagsCommand(
                     dto.TagNos,
                     dto.ProjectName,
                     dto.StepId,
