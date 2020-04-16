@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         }
 
         public Task<Project> GetByNameAsync(string projectName)
-            => DefaultQuery.FirstOrDefaultAsync(p => p.Name == projectName); //TODO
+            => DefaultQuery.SingleOrDefaultAsync(p => p.Name == projectName);
 
         public Task<List<Tag>> GetAllTagsInProjectAsync(string projectName)
             => DefaultQuery
