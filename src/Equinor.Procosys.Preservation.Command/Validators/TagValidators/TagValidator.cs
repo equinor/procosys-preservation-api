@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
             var journey = await (from j in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Journey>().Include(j => j.Steps)
                 where j.Steps.Any(s => s.Id == tag.StepId)
-                select j).FirstOrDefaultAsync(cancellationToken); //TODO
+                select j).SingleOrDefaultAsync(cancellationToken);
 
             var step = journey?.GetNextStep(tag.StepId);
 
