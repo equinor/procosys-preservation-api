@@ -171,9 +171,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
         }
 
-        public void StopPreservation()
+        public void StopPreservation(Journey journey)
         {
-            if (!IsReadyToBeStopped())
+            if (!IsReadyToBeStopped(journey))
             {
                 throw new Exception($"Preservation on {nameof(Tag)} {Id} can not be stopped. Status = {Status}");
             }
@@ -225,6 +225,18 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return Status == PreservationStatus.Active && TagType != TagType.SiteArea && journey.GetNextStep(StepId) != null;
         }
 
+        public bool IsReadyToBeStopped(Journey journey)
+        {
+            if (journey == null)
+            {
+                throw new ArgumentNullException(nameof(journey));
+            }
+
+            return Status == PreservationStatus.Active && 
+                   (TagType == TagType.SiteArea || TagType == TagType.PoArea || 
+                   (TagType == TagType.Standard || TagType == TagType.PreArea) && journey.GetNextStep(StepId) == null);
+        }
+
         public void Transfer(Journey journey)
         {
             if (!IsReadyToBeTransferred(journey))
@@ -257,8 +269,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool IsReadyToBeStarted()
             => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
-
-        public bool IsReadyToBeStopped() => Status == PreservationStatus.Active;
 
         private void Preserve(Person preservedBy, bool bulkPreserved)
         {

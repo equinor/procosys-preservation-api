@@ -35,8 +35,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _command = new StopPreservationCommand(_tagIds);
 
             _dut = new StopPreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
@@ -123,18 +123,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyTagMissesNonVoidedRequirement()
-        {
-            _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId1, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag do not have any non voided requirement!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenAnyTagMissesARequirementDefinition()
         {
             _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId1, default)).Returns(Task.FromResult(false));
@@ -147,15 +135,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenPreservationIsStartedForAnyTag()
+        public void Validate_ShouldFail_WhenPreservationIsNotActiveForAnyTag()
         {
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.Active, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.Active} to stop!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.Active} to be able to stop!"));
         }
 
         [TestMethod]
@@ -182,5 +170,30 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(2, result.Errors.Count);
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenTagFollowsJourneyAndNotInLastStep()
+        {
+            _tagValidatorMock.Setup(r => r.TagFollowsAJourneyAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.HaveNextStepAsync(TagId1, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"{TagType.Standard} and {TagType.PreArea} tags must be in last step of journey to be able to stop!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldBeValid_WhenTagFollowsJourneyAndIsInLastStep()
+        {
+            _tagValidatorMock.Setup(r => r.TagFollowsAJourneyAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.HaveNextStepAsync(TagId1, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsTrue(result.IsValid);
+        }
+
     }
 }

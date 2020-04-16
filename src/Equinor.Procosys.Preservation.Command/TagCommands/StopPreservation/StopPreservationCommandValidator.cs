@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -68,8 +69,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
 
             async Task<bool> CanBeStoppedAsync(int tagId, CancellationToken token)
             {
-                var TagFollowsAJourney = await tagValidator.TagFollowsAJourneyAsync(tagId, token);
-                return !TagFollowsAJourney || !await tagValidator.HaveNextStepAsync(tagId, token);
+                var tagFollowsAJourney = await tagValidator.TagFollowsAJourneyAsync(tagId, token);
+                return !tagFollowsAJourney || !await tagValidator.HaveNextStepAsync(tagId, token);
             }
         }
     }
