@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
         {
             var project = await (from p in _context.QuerySet<Project>()
                 where p.Name == projectName
-                select p).FirstOrDefaultAsync(cancellationToken);
+                select p).FirstOrDefaultAsync(cancellationToken); //TODO
 
             return project != null && project.IsClosed;
         }
