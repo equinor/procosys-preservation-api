@@ -46,8 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
              return new SuccessResult<Unit>(Unit.Value);
         }
 
-        private static void RecordNumberValues(List<NumberFieldValue> values, Domain.AggregateModels.ProjectAggregate.Requirement requirement,
-            RequirementDefinition requirementDefinition)
+        private static void RecordNumberValues(List<NumberFieldValue> values, TagRequirement requirement, RequirementDefinition requirementDefinition)
         {
             var numberValues =
                 values.Where(nv => !nv.IsNa).ToDictionary(
@@ -56,17 +55,13 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             requirement.RecordNumberValues(numberValues, requirementDefinition);
         }
 
-        private static void RecordNumberIsNaValues(List<NumberFieldValue> values, Domain.AggregateModels.ProjectAggregate.Requirement requirement,
-            RequirementDefinition requirementDefinition)
+        private static void RecordNumberIsNaValues(List<NumberFieldValue> values, TagRequirement requirement, RequirementDefinition requirementDefinition)
         {
             IList<int> fieldIds = values.Where(nv => nv.IsNa).Select(nv => nv.FieldId).ToList();
             requirement.RecordNumberIsNaValues(fieldIds, requirementDefinition);
         }
 
-        private static void RecordCheckBoxValues(
-            List<CheckBoxFieldValue> values,
-            Domain.AggregateModels.ProjectAggregate.Requirement requirement,
-            RequirementDefinition requirementDefinition)
+        private static void RecordCheckBoxValues(List<CheckBoxFieldValue> values, TagRequirement requirement, RequirementDefinition requirementDefinition)
         {
             var checkBoxValues = 
                 values.ToDictionary(keySelector => keySelector.FieldId, elementSelector => elementSelector.IsChecked);

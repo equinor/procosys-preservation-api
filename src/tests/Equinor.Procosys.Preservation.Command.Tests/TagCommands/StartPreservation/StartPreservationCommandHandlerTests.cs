@@ -18,10 +18,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         private StartPreservationCommand _command;
         private Tag _tag1;
         private Tag _tag2;
-        private Requirement _req1OnTag1;
-        private Requirement _req2OnTag1;
-        private Requirement _req1OnTag2;
-        private Requirement _req2OnTag2;
+        private TagRequirement _req1OnTag1;
+        private TagRequirement _req2OnTag1;
+        private TagRequirement _req1OnTag2;
+        private TagRequirement _req2OnTag2;
         private Mock<RequirementDefinition> _rd1Mock;
         private Mock<RequirementDefinition> _rd2Mock;
 
@@ -45,15 +45,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             _rd2Mock.SetupGet(rd => rd.Id).Returns(_rdId2);
             _rd2Mock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            _req1OnTag1 = new Requirement(TestPlant, _intervalWeeks, _rd1Mock.Object);
-            _req2OnTag1 = new Requirement(TestPlant, _intervalWeeks, _rd2Mock.Object);
-            _req1OnTag2 = new Requirement(TestPlant, _intervalWeeks, _rd1Mock.Object);
-            _req2OnTag2 = new Requirement(TestPlant, _intervalWeeks, _rd2Mock.Object);
-            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<Requirement>
+            _req1OnTag1 = new TagRequirement(TestPlant, _intervalWeeks, _rd1Mock.Object);
+            _req2OnTag1 = new TagRequirement(TestPlant, _intervalWeeks, _rd2Mock.Object);
+            _req1OnTag2 = new TagRequirement(TestPlant, _intervalWeeks, _rd1Mock.Object);
+            _req2OnTag2 = new TagRequirement(TestPlant, _intervalWeeks, _rd2Mock.Object);
+            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
             {
                 _req1OnTag1, _req2OnTag1
             });
-            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<Requirement>
+            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
             {
                 _req1OnTag2, _req2OnTag2
             });

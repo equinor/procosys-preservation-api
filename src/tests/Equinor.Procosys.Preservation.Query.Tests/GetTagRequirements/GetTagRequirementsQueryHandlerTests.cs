@@ -99,18 +99,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 context.SaveChangesAsync().Wait();
 
-                var requirementWithoutField = new Requirement(TestPlant, _interval, requirementDefinitionWithoutField);
-                var requirementWithOneInfo = new Requirement(TestPlant, _interval, requirementDefinitionWithOneInfo);
-                var requirementWithTwoCheckBoxes = new Requirement(TestPlant, _interval, requirementDefinitionWithTwoCheckBoxes);
-                var requirementWithOneNumberNoPrev = new Requirement(TestPlant, _interval, requirementDefinitionWithOneNumberNoPrev);
-                var requirementWithThreeNumberShowPrev = new Requirement(TestPlant, _interval, requirementDefinitionWithThreeNumberShowPrev);
+                var requirementWithoutField = new TagRequirement(TestPlant, _interval, requirementDefinitionWithoutField);
+                var requirementWithOneInfo = new TagRequirement(TestPlant, _interval, requirementDefinitionWithOneInfo);
+                var requirementWithTwoCheckBoxes = new TagRequirement(TestPlant, _interval, requirementDefinitionWithTwoCheckBoxes);
+                var requirementWithOneNumberNoPrev = new TagRequirement(TestPlant, _interval, requirementDefinitionWithOneNumberNoPrev);
+                var requirementWithThreeNumberShowPrev = new TagRequirement(TestPlant, _interval, requirementDefinitionWithThreeNumberShowPrev);
                 
                 var tag = new Tag(TestPlant,
                     TagType.Standard, 
                     "TagNo",
                     "Description",
                     journey.Steps.ElementAt(0),
-                    new List<Requirement>
+                    new List<TagRequirement>
                     {
                         requirementWithoutField,
                         requirementWithOneInfo,
