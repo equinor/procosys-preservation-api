@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
             var projectName = await (from p in _context.QuerySet<Project>() 
                 join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
                 where tag.Id == tagId
-                select p.Name).FirstOrDefaultAsync();
+                select p.Name).SingleOrDefaultAsync();
             
             return projectName;
         }

@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
             DefaultQuery.ToListAsync();
 
         public virtual Task<TEntity> GetByIdAsync(int id) =>
-            DefaultQuery.FirstOrDefaultAsync(x => x.Id == id);
+            DefaultQuery.SingleOrDefaultAsync(x => x.Id == id);
 
         public Task<List<TEntity>> GetByIdsAsync(IEnumerable<int> ids) =>
             DefaultQuery.Where(x => ids.Contains(x.Id)).ToListAsync();

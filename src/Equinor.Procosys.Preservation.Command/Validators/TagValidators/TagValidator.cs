@@ -26,13 +26,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsVoidedAsync(int tagId, CancellationToken cancellationToken)
         {
-            var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             return tag != null && tag.IsVoided;
         }
 
         public async Task<bool> VerifyPreservationStatusAsync(int tagId, PreservationStatus status, CancellationToken cancellationToken)
         {
-            var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             return tag != null && tag.Status == status;
         }
 
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> HaveNextStepAsync(int tagId, CancellationToken cancellationToken)
         {
-            var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             if (tag == null)
             {
                 return false;
@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
             var journey = await (from j in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Journey>().Include(j => j.Steps)
                 where j.Steps.Any(s => s.Id == tag.StepId)
-                select j).FirstOrDefaultAsync(cancellationToken);
+                select j).SingleOrDefaultAsync(cancellationToken);
 
             var step = journey?.GetNextStep(tag.StepId);
 
@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> TagTypeCanBeTransferredAsync(int tagId, CancellationToken cancellationToken)
         {
-            var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             if (tag == null)
             {
                 return false;
@@ -124,11 +124,11 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag.TagType == TagType.PreArea || tag.TagType == TagType.Standard;
         }
 
-        private async Task<Tag> GetTagNoIncludes(int tagId, CancellationToken cancellationToken)
+        private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken cancellationToken)
         {
             var tag = await (from t in _context.QuerySet<Tag>()
                 where t.Id == tagId
-                select t).FirstOrDefaultAsync(cancellationToken);
+                select t).SingleOrDefaultAsync(cancellationToken);
             return tag;
         }
 
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
                 where t.Id == tagId
-                select t).FirstOrDefaultAsync(cancellationToken);
+                select t).SingleOrDefaultAsync(cancellationToken);
             return tag;
         }
 
@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
                     .ThenInclude(r => r.PreservationPeriods)
                 where t.Id == tagId
-                select t).FirstOrDefaultAsync(cancellationToken);
+                select t).SingleOrDefaultAsync(cancellationToken);
             return tag;
         }
     }
