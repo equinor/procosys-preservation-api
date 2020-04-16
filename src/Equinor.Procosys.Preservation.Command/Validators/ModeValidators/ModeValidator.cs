@@ -31,12 +31,9 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ModeValidators
             return mode != null && mode.IsVoided;
         }
 
-        public async Task<bool> IsUsedInStepAsync(int modeId, CancellationToken token)
-        {
-            var count = await (from s in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Step>()
+        public async Task<bool> IsUsedInStepAsync(int modeId, CancellationToken token) =>
+            await (from s in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Step>()
                 where s.ModeId == modeId
-                select s).CountAsync(token);
-            return count > 0;
-        }
+                select s).AnyAsync(token);
     }
 }
