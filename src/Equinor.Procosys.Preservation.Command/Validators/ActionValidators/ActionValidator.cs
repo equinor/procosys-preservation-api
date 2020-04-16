@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ActionValidators
         {
             var action = await (from a in _context.QuerySet<Action>()
                           where a.Id == actionId
-                          select a).FirstOrDefaultAsync(token);
+                          select a).SingleOrDefaultAsync(token);
             return action?.ClosedAtUtc != null;
         }
     }

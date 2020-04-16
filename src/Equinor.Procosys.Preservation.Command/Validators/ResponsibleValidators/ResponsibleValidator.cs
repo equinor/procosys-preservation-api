@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators
         {
             var responsible = await (from r in _context.QuerySet<Responsible>()
                 where r.Id == responsibleId
-                select r).FirstOrDefaultAsync(token);
+                select r).SingleOrDefaultAsync(token);
             return responsible != null && responsible.IsVoided;
         }
     }

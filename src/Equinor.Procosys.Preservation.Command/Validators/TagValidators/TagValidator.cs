@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         {
             var tag = await (from t in _context.QuerySet<Tag>()
                 where t.Id == tagId
-                select t).FirstOrDefaultAsync(cancellationToken);
+                select t).SingleOrDefaultAsync(cancellationToken);
             return tag;
         }
 
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
                 where t.Id == tagId
-                select t).FirstOrDefaultAsync(cancellationToken);
+                select t).SingleOrDefaultAsync(cancellationToken);
             return tag;
         }
 
@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
                     .ThenInclude(r => r.PreservationPeriods)
                 where t.Id == tagId
-                select t).FirstOrDefaultAsync(cancellationToken);
+                select t).SingleOrDefaultAsync(cancellationToken);
             return tag;
         }
     }

@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ModeValidators
         {
             var mode = await (from m in _context.QuerySet<Mode>()
                 where m.Id == modeId
-                select m).FirstOrDefaultAsync(token);
+                select m).SingleOrDefaultAsync(token);
             return mode != null && mode.IsVoided;
         }
 

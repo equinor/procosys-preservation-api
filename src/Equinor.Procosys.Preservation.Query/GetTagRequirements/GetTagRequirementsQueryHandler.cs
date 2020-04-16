@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                         .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.PreservationRecord)
                         .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.FieldValues)
                  where t.Id == request.TagId
-                 select t).FirstOrDefaultAsync(cancellationToken);
+                 select t).SingleOrDefaultAsync(cancellationToken);
 
             if (tag == null)
             {

@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         TagNo = tag.TagNo,
                                         TagType = tag.TagType,
                                         ReadyToBePreserved = tag.IsReadyToBePreserved()
-                                    }).FirstOrDefaultAsync(cancellationToken);
+                                    }).SingleOrDefaultAsync(cancellationToken);
 
             if (tagDetails == null)
             {
