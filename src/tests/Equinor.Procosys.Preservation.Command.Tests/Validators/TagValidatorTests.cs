@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var req = context.Requirements.Single(r => r.Id == _reqNotStartedPreservationId);
+                var req = context.TagRequirements.Single(r => r.Id == _reqNotStartedPreservationId);
                 req.Void();
                 context.SaveChangesAsync().Wait();
             }

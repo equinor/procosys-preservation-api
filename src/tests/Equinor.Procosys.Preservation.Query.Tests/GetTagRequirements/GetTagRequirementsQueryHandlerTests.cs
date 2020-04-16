@@ -215,7 +215,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithTwoCheckBoxesId);
-                var requirement = context.Requirements.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
+                var requirement = context.TagRequirements.Single(r => r.Id == _requirementWithTwoCheckBoxesId);
                 requirement.RecordCheckBoxValues(
                     new Dictionary<int, bool> {{cbFieldId, true}},
                     requirementDefinition);
@@ -259,7 +259,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
-                var requirement = context.Requirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
+                var requirement = context.TagRequirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
                 
                 requirement.RecordNumberIsNaValues(
                     new List<int>
@@ -338,7 +338,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
                     .Single(rd => rd.Id == _requirementDefinitionWithThreeNumberShowPrevId);
-                var requirement = context.Requirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
+                var requirement = context.TagRequirements.Single(r => r.Id == _requirementWithThreeNumberShowPrevId);
                 
                 requirement.RecordNumberValues(
                     new Dictionary<int, double?>
