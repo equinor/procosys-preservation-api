@@ -26,13 +26,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsVoidedAsync(int tagId, CancellationToken cancellationToken)
         {
-            var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             return tag != null && tag.IsVoided;
         }
 
         public async Task<bool> VerifyPreservationStatusAsync(int tagId, PreservationStatus status, CancellationToken cancellationToken)
         {
-            var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             return tag != null && tag.Status == status;
         }
 
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> HaveNextStepAsync(int tagId, CancellationToken cancellationToken)
         {
-            var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             if (tag == null)
             {
                 return false;
@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> TagTypeCanBeTransferredAsync(int tagId, CancellationToken cancellationToken)
         {
-            var tag = await GetTagNoIncludes(tagId, cancellationToken);
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             if (tag == null)
             {
                 return false;
@@ -124,7 +124,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag.TagType == TagType.PreArea || tag.TagType == TagType.Standard;
         }
 
-        private async Task<Tag> GetTagNoIncludes(int tagId, CancellationToken cancellationToken)
+        private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken cancellationToken)
         {
             var tag = await (from t in _context.QuerySet<Tag>()
                 where t.Id == tagId
