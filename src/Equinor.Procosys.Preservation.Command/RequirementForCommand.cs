@@ -1,8 +1,8 @@
 ﻿namespace Equinor.Procosys.Preservation.Command
 {
-    public class Requirement
+    public class RequirementForCommand
     {
-        public Requirement(int requirementDefinitionId, int intervalWeeks)
+        public RequirementForCommand(int requirementDefinitionId, int intervalWeeks)
         {
             RequirementDefinitionId = requirementDefinitionId;
             IntervalWeeks = intervalWeeks;

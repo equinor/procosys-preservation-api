@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 new List<string> {"TagNoA"},
                 "ProjectNameA",
                 2,
-                new List<Requirement>{new Requirement(11, 12)},
+                new List<RequirementForCommand>{new RequirementForCommand(11, 12)},
                 "RemarkA",
                 "SA_A");
 

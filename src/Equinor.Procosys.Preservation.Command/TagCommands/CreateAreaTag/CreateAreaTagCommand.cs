@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             string areaCode,
             string tagNoSuffix,
             int stepId,
-            IEnumerable<Requirement> requirements, 
+            IEnumerable<RequirementForCommand> requirements, 
             string description,
             string remark,
             string storageArea)
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             AreaCode = areaCode;
             TagNoSuffix = tagNoSuffix;
             StepId = stepId;
-            Requirements = requirements ?? new List<Requirement>();
+            Requirements = requirements ?? new List<RequirementForCommand>();
             Description = description;
             Remark = remark;
             StorageArea = storageArea;
@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         public override string AreaCode { get; }
         public override string TagNoSuffix { get; }
         public int StepId { get; }
-        public IEnumerable<Requirement> Requirements { get; }
+        public IEnumerable<RequirementForCommand> Requirements { get; }
         public string Description { get; }
         public string Remark { get; }
         public string StorageArea { get; }

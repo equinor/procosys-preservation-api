@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             return tagFunction;
         }
 
-        private async Task AddRequirementsToTagFunctionAsync(TagFunction tagFunction, IList<Requirement> requirements)
+        private async Task AddRequirementsToTagFunctionAsync(TagFunction tagFunction, IList<RequirementForCommand> requirements)
         {
             var reqDefIds = requirements.Select(r => r.RequirementDefinitionId).ToList();
             var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             }
         }
 
-        private void RemoveChangedOrRemovedRequirementsFromTagFunction(TagFunction existingTagFunction, IList<Requirement> updatedRequirements)
+        private void RemoveChangedOrRemovedRequirementsFromTagFunction(TagFunction existingTagFunction, IList<RequirementForCommand> updatedRequirements)
         {
             var tagFunctionRequirements = existingTagFunction.Requirements;
             var requirementsToBeRemoved = new List<TagFunctionRequirement>();

@@ -8,7 +8,6 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
@@ -36,16 +35,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 journey.AddStep(new Step(TestPlant, "S2", AddMode(context, "M2"), AddResponsible(context, "R2")));
 
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D").RequirementDefinitions.First();
-                var reqStartedPreservation = new TagRequirement(TestPlant, IntervalWeeks, rd);
-                var reqNotStartedPreservation = new TagRequirement(TestPlant, IntervalWeeks, rd);
-                var reqSiteArea = new TagRequirement(TestPlant, IntervalWeeks, rd);
+                var reqStartedPreservation = new Requirement(TestPlant, IntervalWeeks, rd);
+                var reqNotStartedPreservation = new Requirement(TestPlant, IntervalWeeks, rd);
+                var reqSiteArea = new Requirement(TestPlant, IntervalWeeks, rd);
 
-                var tagNotStartedPreservation = AddTag(context, project, TagType.Standard, TagNo1, "Tag description", journey.Steps.First(), new List<TagRequirement> {reqNotStartedPreservation});
+                var tagNotStartedPreservation = AddTag(context, project, TagType.Standard, TagNo1, "Tag description", journey.Steps.First(), new List<Requirement> {reqNotStartedPreservation});
 
-                var tagStartedPreservation = AddTag(context, project, TagType.Standard, TagNo2, "", journey.Steps.Last(), new List<TagRequirement>{reqStartedPreservation});
+                var tagStartedPreservation = AddTag(context, project, TagType.Standard, TagNo2, "", journey.Steps.Last(), new List<Requirement>{reqStartedPreservation});
                 tagStartedPreservation.StartPreservation();
 
-                var siteAreaTag = AddTag(context, project, TagType.SiteArea, "#SITE-E-A1", "Tag description", journey.Steps.First(), new List<TagRequirement> {reqSiteArea});
+                var siteAreaTag = AddTag(context, project, TagType.SiteArea, "#SITE-E-A1", "Tag description", journey.Steps.First(), new List<Requirement> {reqSiteArea});
 
                 _tagNotStartedPreservationId = _tagInFirstStepId = tagNotStartedPreservation.Id;
                 _tagStartedPreservationId = tagStartedPreservation.Id;

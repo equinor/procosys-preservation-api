@@ -45,10 +45,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 new List<string>{_tagNo1, _tagNo2}, 
                 _projectName,
                 _stepId,
-                new List<Requirement>
+                new List<RequirementForCommand>
                 {
-                    new Requirement(_rd1Id, 1),
-                    new Requirement(_rd2Id, 1)
+                    new RequirementForCommand(_rd1Id, 1),
+                    new RequirementForCommand(_rd2Id, 1)
                 },
                 null,
                 null);
@@ -149,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 new List<string>{_tagNo1}, 
                 _projectName,
                 _stepId,
-                new List<Requirement>(),
+                new List<RequirementForCommand>(),
                 null,
                 null);
             
@@ -167,7 +167,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 new List<string>(), 
                 _projectName,
                 _stepId,
-                new List<Requirement>{new Requirement(_rd1Id, 1)},
+                new List<RequirementForCommand>{new RequirementForCommand(_rd1Id, 1)},
                 null,
                 null);
             
@@ -185,7 +185,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 new List<string>{"X","x"}, 
                 _projectName,
                 _stepId,
-                new List<Requirement>{new Requirement(_rd1Id, 1)},
+                new List<RequirementForCommand>{new RequirementForCommand(_rd1Id, 1)},
                 null,
                 null);
             
@@ -203,10 +203,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 new List<string>{_tagNo1}, 
                 _projectName,
                 _stepId,
-                new List<Requirement>
+                new List<RequirementForCommand>
                 {
-                    new Requirement(_rd1Id, 1),
-                    new Requirement(_rd1Id, 1)
+                    new RequirementForCommand(_rd1Id, 1),
+                    new RequirementForCommand(_rd1Id, 1)
                 },
                 null,
                 null);

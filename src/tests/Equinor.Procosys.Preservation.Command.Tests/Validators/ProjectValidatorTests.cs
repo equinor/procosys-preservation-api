@@ -7,7 +7,6 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
@@ -30,12 +29,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D").RequirementDefinitions.First();
 
-                var req = new TagRequirement(TestPlant, 2, rd);
-                var t1 = AddTag(context, notClosedProject, TagType.Standard, "T1", "Tag description", step, new List<TagRequirement>{ req });
+                var req = new Requirement(TestPlant, 2, rd);
+                var t1 = AddTag(context, notClosedProject, TagType.Standard, "T1", "Tag description", step, new List<Requirement>{ req });
                 _tag1InNotClosedProjectId = t1.Id;
-                var t2 = AddTag(context, notClosedProject, TagType.Standard, "T2", "Tag description", step, new List<TagRequirement>{ req });
+                var t2 = AddTag(context, notClosedProject, TagType.Standard, "T2", "Tag description", step, new List<Requirement>{ req });
                 _tag2InNotClosedProjectId = t2.Id;
-                var t3 = AddTag(context, closedProject, TagType.Standard, "T3", "Tag description", step, new List<TagRequirement>{ req });
+                var t3 = AddTag(context, closedProject, TagType.Standard, "T3", "Tag description", step, new List<Requirement>{ req });
                 _tagInClosedProjectId = t3.Id;
             }
         }

@@ -24,10 +24,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(true));
 
             _command = new UpdateRequirementsCommand("", "",
-                new List<Requirement>
+                new List<RequirementForCommand>
                 {
-                    new Requirement(_rd1Id, 1),
-                    new Requirement(_rd2Id, 1)
+                    new RequirementForCommand(_rd1Id, 1),
+                    new RequirementForCommand(_rd2Id, 1)
                 });
 
             _dut = new UpdateRequirementsCommandValidator(_rdValidatorMock.Object);
@@ -71,10 +71,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         public void Validate_ShouldFail_WhenRequirementsNotUnique()
         {
             var command = new UpdateRequirementsCommand("", "",
-                new List<Requirement>
+                new List<RequirementForCommand>
                 {
-                    new Requirement(_rd1Id, 1),
-                    new Requirement(_rd1Id, 1)
+                    new RequirementForCommand(_rd1Id, 1),
+                    new RequirementForCommand(_rd1Id, 1)
                 });
             
             var result = _dut.Validate(command);

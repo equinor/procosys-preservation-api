@@ -23,7 +23,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
-using Requirement = Equinor.Procosys.Preservation.Command.Requirement;
+using RequirementForCommand = Equinor.Procosys.Preservation.Command.RequirementForCommand;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
@@ -142,7 +142,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var requirements = dto.Requirements?
                 .Select(r =>
-                    new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
+                    new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             var result = await _mediator.Send(
                 new CreateTagsCommand(
                     dto.TagNos,
@@ -184,7 +184,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var requirements = dto.Requirements?
                 .Select(r =>
-                    new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
+                    new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             
             var result = await _mediator.Send(
                 new CreateAreaTagCommand(

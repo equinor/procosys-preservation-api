@@ -6,7 +6,6 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using ServiceResult;
@@ -79,11 +78,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             ProcosysTagDetails tagDetails,
             IList<RequirementDefinition> reqDefs)
         {
-            var requirements = new List<TagRequirement>();
+            var requirements = new List<Requirement>();
             foreach (var requirement in request.Requirements)
             {
                 var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
-                requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
+                requirements.Add(new Requirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
             }
 
             var tag = new Tag(

@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 return lowerTagNos.Distinct().Count() == lowerTagNos.Count;
             }
                         
-            bool BeUniqueRequirements(IEnumerable<Requirement> requirements)
+            bool BeUniqueRequirements(IEnumerable<RequirementForCommand> requirements)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return reqIds.Distinct().Count() == reqIds.Count;
@@ -76,10 +76,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             async Task<bool> NotBeAVoidedStepAsync(int stepId, CancellationToken token)
                 => !await stepValidator.IsVoidedAsync(stepId, token);
 
-            async Task<bool> BeAnExistingRequirementDefinitionAsync(Requirement requirement, CancellationToken token)
+            async Task<bool> BeAnExistingRequirementDefinitionAsync(RequirementForCommand requirement, CancellationToken token)
                 => await requirementDefinitionValidator.ExistsAsync(requirement.RequirementDefinitionId, token);
 
-            async Task<bool> NotBeAVoidedRequirementDefinitionAsync(Requirement requirement, CancellationToken token)
+            async Task<bool> NotBeAVoidedRequirementDefinitionAsync(RequirementForCommand requirement, CancellationToken token)
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirement.RequirementDefinitionId, token);
         }
     }

@@ -110,10 +110,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 new List<string>{TestTagNo1, TestTagNo2}, 
                 TestProjectName,
                 _stepMock.Object.Id,
-                new List<Requirement>
+                new List<RequirementForCommand>
                 {
-                    new Requirement(ReqDefId1, Interval1),
-                    new Requirement(ReqDefId2, Interval2),
+                    new RequirementForCommand(ReqDefId1, Interval1),
+                    new RequirementForCommand(ReqDefId2, Interval2),
                 },
                 "Remark",
                 "SA");

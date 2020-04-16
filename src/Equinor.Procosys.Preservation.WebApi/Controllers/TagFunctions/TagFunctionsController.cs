@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         {
             var requirements = dto.Requirements?
                 .Select(r =>
-                    new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
+                    new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             var result = await _mediator.Send(
                 new UpdateRequirementsCommand(
                     dto.TagFunctionCode,
