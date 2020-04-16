@@ -34,6 +34,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             RuleFor(x => x.Remark)
                 .MaximumLength(Tag.RemarkLengthMax);
             
+            RuleFor(x => x.StorageArea)
+                .MaximumLength(Tag.StorageAreaLengthMax);
+
             bool RequirementMustHavePositiveInterval(TagRequirementDto dto) => dto.IntervalWeeks > 0;
                         
             bool BeUniqueRequirements(IEnumerable<TagRequirementDto> requirements)

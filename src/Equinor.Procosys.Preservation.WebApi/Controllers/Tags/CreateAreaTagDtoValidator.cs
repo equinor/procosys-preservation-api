@@ -43,6 +43,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             RuleFor(x => x.Remark)
                 .MaximumLength(Tag.RemarkLengthMax);
 
+            RuleFor(x => x.StorageArea)
+                .MaximumLength(Tag.StorageAreaLengthMax);
+
             bool NotContainWhiteSpace(string suffix)
             {
                 if (string.IsNullOrEmpty(suffix))
