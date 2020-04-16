@@ -6,14 +6,13 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.RecordValues
 {
     [TestClass]
     public class RecordValuesCommandHandlerTests : CommandHandlerTestsBase
     {
-        private TagRequirement _requirement;
+        private Requirement _requirement;
         private RecordValuesCommand _recordValuesCommandWithCheckedCheckBoxAndNumber;
         private RecordValuesCommand _recordValuesCommandWithNullAsNumber;
         private RecordValuesCommandHandler _dut;
@@ -54,14 +53,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             numberFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             requirementDefinitionWith2FieldsMock.Object.AddField(numberFieldMock.Object);
 
-            var requirementMock = new Mock<TagRequirement>(TestPlant, 2, requirementDefinitionWith2FieldsMock.Object);
+            var requirementMock = new Mock<Requirement>(TestPlant, 2, requirementDefinitionWith2FieldsMock.Object);
             requirementMock.SetupGet(r => r.Id).Returns(_reqId);
             requirementMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
-            var tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            var tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<Requirement>
             {
                 _requirement
             });

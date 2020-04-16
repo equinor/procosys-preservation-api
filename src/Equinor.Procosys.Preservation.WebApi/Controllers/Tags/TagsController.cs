@@ -2,9 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
+using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
@@ -23,7 +25,6 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
-using Requirement = Equinor.Procosys.Preservation.Command.Requirement;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
@@ -165,13 +166,32 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var requirements = dto.Requirements?
                 .Select(r =>
-                    new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
+                    new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             var result = await _mediator.Send(
                 new CreateTagsCommand(
                     dto.TagNos,
                     dto.ProjectName,
                     dto.StepId,
                     requirements,
+                    dto.Remark,
+                    dto.StorageArea));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
+        [HttpPost("AutoScope")]
+        public async Task<ActionResult<int>> AutoScopeTags(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromBody] AutoScopeTagsDto dto)
+        {
+            var result = await _mediator.Send(
+                new AutoScopeTagsCommand(
+                    dto.TagNos,
+                    dto.ProjectName,
+                    dto.StepId,
                     dto.Remark,
                     dto.StorageArea));
             return this.FromResult(result);
@@ -188,7 +208,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var requirements = dto.Requirements?
                 .Select(r =>
-                    new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
+                    new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             
             var result = await _mediator.Send(
                 new CreateAreaTagCommand(

@@ -6,24 +6,27 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
+namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
 {
-    public class CreateTagsCommandHandler : IRequestHandler<CreateTagsCommand, Result<List<int>>>
+    public class AutoScopeTagsCommandHandler : IRequestHandler<AutoScopeTagsCommand, Result<List<int>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
+        private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
         private readonly ITagApiService _tagApiService;
 
-        public CreateTagsCommandHandler(
+        public AutoScopeTagsCommandHandler(
             IProjectRepository projectRepository,
-            IJourneyRepository journeyRepository,
+            IJourneyRepository journeyRepository, 
+            ITagFunctionRepository tagFunctionRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
@@ -31,22 +34,30 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
         {
             _projectRepository = projectRepository;
             _journeyRepository = journeyRepository;
+            _tagFunctionRepository = tagFunctionRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
             _tagApiService = tagApiService;
         }
 
-        public async Task<Result<List<int>>> Handle(CreateTagsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<List<int>>> Handle(AutoScopeTagsCommand request, CancellationToken cancellationToken)
         {
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
-            var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
+            var tagDetailList = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, request.ProjectName, request.TagNos);
+
+            var tagFunctionsWithRequirements = await GetNeededTagFunctionsWithRequirementsAsync(tagDetailList);
+
+            var reqDefIds = tagFunctionsWithRequirements
+                .SelectMany(r => r.Requirements)
+                .Where(r => !r.IsVoided)
+                .Select(r => r.RequirementDefinitionId)
+                .Distinct()
+                .ToList();
             var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
             var addedTags = new List<Tag>();
             var project = await _projectRepository.GetByNameAsync(request.ProjectName);
-            
-            var tagDetailList = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, request.ProjectName, request.TagNos);
             
             foreach (var tagNo in request.TagNos)
             {
@@ -55,13 +66,22 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 {
                     return new NotFoundResult<List<int>>($"Details for Tag {tagNo} not found in project {request.ProjectName}");
                 }
+
+                var tagFunctionWithRequirement =
+                    tagFunctionsWithRequirements.SingleOrDefault(tf => Key(tf) == Key(tagDetails));
+                
+                if (tagFunctionWithRequirement == null)
+                {
+                    return new NotFoundResult<List<int>>($"TagFunction for {Key(tagDetails)} not found with requirements defined");
+                }
+
                 if (project == null)
                 {
                     project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
                     _projectRepository.Add(project);
                 }
 
-                var tagToAdd = CreateTag(request, step, tagDetails, reqDefs);
+                var tagToAdd = CreateTag(request, step, tagDetails, tagFunctionWithRequirement, reqDefs);
 
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
@@ -72,14 +92,30 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());
         }
 
+        private string Key(ProcosysTagDetails details) => $"{details.TagFunctionCode}|{details.RegisterCode}";
+        
+        private string Key(TagFunction tagFunction) => $"{tagFunction.Code}|{tagFunction.RegisterCode}";
+
+        private async Task<List<TagFunction>> GetNeededTagFunctionsWithRequirementsAsync(IList<ProcosysTagDetails> tagDetailList)
+        {
+            var uniqueTagFunctionCodesRegisterCodes = tagDetailList.Distinct(new ProcosysTagDetailsComparer()).Select(Key);
+
+            var tagFunctionsWithRequirements = await _tagFunctionRepository.GetAllNonVoidedWithRequirementsAsync();
+
+            return tagFunctionsWithRequirements
+                .Where(tf => uniqueTagFunctionCodesRegisterCodes.Contains(Key(tf)))
+                .ToList();
+        }
+
         private Tag CreateTag(
-            CreateTagsCommand request, 
+            AutoScopeTagsCommand request, 
             Step step,
             ProcosysTagDetails tagDetails,
+            TagFunction tagFunctionWithRequirements,
             IList<RequirementDefinition> reqDefs)
         {
             var requirements = new List<Requirement>();
-            foreach (var requirement in request.Requirements)
+            foreach (var requirement in tagFunctionWithRequirements.Requirements.Where(r => !r.IsVoided))
             {
                 var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
                 requirements.Add(new Requirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));

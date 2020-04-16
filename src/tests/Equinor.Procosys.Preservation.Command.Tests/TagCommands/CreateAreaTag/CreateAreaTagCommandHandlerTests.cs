@@ -98,10 +98,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 areaCode,
                 null,
                 StepId,
-                new List<Requirement>
+                new List<RequirementForCommand>
                 {
-                    new Requirement(ReqDefId1, Interval1),
-                    new Requirement(ReqDefId2, Interval2),
+                    new RequirementForCommand(ReqDefId1, Interval1),
+                    new RequirementForCommand(ReqDefId2, Interval2),
                 },
                 null,
                 "Remark",
