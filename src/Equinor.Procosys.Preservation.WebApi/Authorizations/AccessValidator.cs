@@ -10,12 +10,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
     public class AccessValidator : IAccessValidator
     {
         private readonly IProjectAccessChecker _projectAccessChecker;
+        private readonly IContentRestrictionsChecker _contentRestrictionsChecker;
         private readonly IProjectHelper _projectHelper;
 
-        public AccessValidator(IProjectAccessChecker projectAccessChecker, IProjectHelper projectHelper)
+        public AccessValidator(
+            IProjectAccessChecker projectAccessChecker,
+            IProjectHelper projectHelper,
+            IContentRestrictionsChecker contentRestrictionsChecker)
         {
             _projectAccessChecker = projectAccessChecker;
             _projectHelper = projectHelper;
+            _contentRestrictionsChecker = contentRestrictionsChecker;
         }
 
         public async Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest : IBaseRequest
@@ -38,15 +43,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             if (request is ITagQueryRequest tagQueryRequest)
             {
                 return await HasCurrentUserAccessToProjectAsync(tagQueryRequest) && 
-                    !await HasCurrentUserContentRestrictionsAsync(tagQueryRequest);
+                    await HasCurrentUserAccessToContentAsync(tagQueryRequest);
             }
 
             return true;
         }
 
-        private async Task<bool> HasCurrentUserContentRestrictionsAsync(ITagQueryRequest tagQueryRequest)
+        private async Task<bool> HasCurrentUserAccessToContentAsync(ITagQueryRequest tagQueryRequest)
         {
-            return false;
+            if (_contentRestrictionsChecker.HasCurrentUserAnyRestrictions())
+            {
+                var responsibleCode = "todo"; // Todo
+                return _contentRestrictionsChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
+            }
+
+            return true;
         }
 
         private async Task<bool> HasCurrentUserAccessToProjectAsync(ITagCommandRequest tagCommandRequest)

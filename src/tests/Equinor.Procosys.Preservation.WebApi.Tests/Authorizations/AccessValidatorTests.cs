@@ -40,9 +40,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public void Setup()
         {
             var projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
+            var contentRestrictionsCheckerMock = new Mock<IContentRestrictionsChecker>();
             var projectHelperMock = new Mock<IProjectHelper>();
 
-            _dut = new AccessValidator(projectAccessCheckerMock.Object, projectHelperMock.Object);
+            _dut = new AccessValidator(
+                projectAccessCheckerMock.Object,
+                projectHelperMock.Object,
+                contentRestrictionsCheckerMock.Object);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithoutAccess)).Returns(false);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithAccess)).Returns(true);
             projectHelperMock.Setup(p => p.GetProjectNameFromTagIdAsync(TagIdWithAccess)).Returns(Task.FromResult(ProjectWithAccess));
