@@ -31,7 +31,7 @@ using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.MainApi.TagFunction;
 using Equinor.Procosys.Preservation.WebApi.Misc;
-using Equinor.Procosys.Preservation.WebApi.ProjectAccess;
+using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IPermissionService, PermissionService>();
             services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
-            services.AddScoped<IProjectAccessValidator, ProjectAccessValidator>();
+            services.AddScoped<IAccessValidator, AccessValidator>();
             services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
             services.AddScoped<IProjectHelper, ProjectHelper>();
             services.AddScoped<IPlantProvider, PlantProvider>();

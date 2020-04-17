@@ -2,16 +2,17 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Query;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
+namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
-    public class ProjectAccessValidator : IProjectAccessValidator
+    public class AccessValidator : IAccessValidator
     {
         private readonly IProjectAccessChecker _projectAccessChecker;
         private readonly IProjectHelper _projectHelper;
 
-        public ProjectAccessValidator(IProjectAccessChecker projectAccessChecker, IProjectHelper projectHelper)
+        public AccessValidator(IProjectAccessChecker projectAccessChecker, IProjectHelper projectHelper)
         {
             _projectAccessChecker = projectAccessChecker;
             _projectHelper = projectHelper;
@@ -29,16 +30,30 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
                 return HasCurrentUserAccessToProject(projectRequest);
             }
 
-            if (request is ITagCommandRequest tagRequest)
+            if (request is ITagCommandRequest tagCommandRequest)
             {
-                return await HasCurrentUserAccessToProjectAsync(tagRequest);
+                return await HasCurrentUserAccessToProjectAsync(tagCommandRequest);
+            }
+
+            if (request is ITagQueryRequest tagQueryRequest)
+            {
+                return await HasCurrentUserAccessToProjectAsync(tagQueryRequest) && 
+                    !await HasCurrentUserContentRestrictionsAsync(tagQueryRequest);
             }
 
             return true;
         }
 
-        private async Task<bool> HasCurrentUserAccessToProjectAsync(ITagCommandRequest tagRequest)
-            => await HasCurrentUserAccessToProjectAsync(tagRequest.TagId);
+        private async Task<bool> HasCurrentUserContentRestrictionsAsync(ITagQueryRequest tagQueryRequest)
+        {
+            return false;
+        }
+
+        private async Task<bool> HasCurrentUserAccessToProjectAsync(ITagCommandRequest tagCommandRequest)
+            => await HasCurrentUserAccessToProjectAsync(tagCommandRequest.TagId);
+
+        private async Task<bool> HasCurrentUserAccessToProjectAsync(ITagQueryRequest tagQueryRequest)
+            => await HasCurrentUserAccessToProjectAsync(tagQueryRequest.TagId);
 
         private async Task<bool> HasCurrentUserAccessToProjectAsync(int tagId)
         {

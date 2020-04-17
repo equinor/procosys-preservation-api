@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
+namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public interface IProjectHelper
     {

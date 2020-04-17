@@ -21,16 +21,16 @@ using Equinor.Procosys.Preservation.Query.GetUniqueTagModes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
-using Equinor.Procosys.Preservation.WebApi.ProjectAccess;
+using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
+namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
 {
     [TestClass]
-    public class ProjectAccessValidatorTests
+    public class AccessValidatorTests
     {
-        private ProjectAccessValidator _dut;
+        private AccessValidator _dut;
         private const int TagIdWithAccess = 1;
         private const int TagIdWithoutAccess = 2;
         private const string ProjectWithAccess = "TestProjectWithAccess";
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
             var projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
             var projectHelperMock = new Mock<IProjectHelper>();
 
-            _dut = new ProjectAccessValidator(projectAccessCheckerMock.Object, projectHelperMock.Object);
+            _dut = new AccessValidator(projectAccessCheckerMock.Object, projectHelperMock.Object);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithoutAccess)).Returns(false);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithAccess)).Returns(true);
             projectHelperMock.Setup(p => p.GetProjectNameFromTagIdAsync(TagIdWithAccess)).Returns(Task.FromResult(ProjectWithAccess));

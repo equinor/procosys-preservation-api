@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
+namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
-    public interface IProjectAccessValidator
+    public interface IAccessValidator
     {
         Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest: IBaseRequest;
     }

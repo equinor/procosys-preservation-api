@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
+namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public class ProjectHelper : IProjectHelper
     {

@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
 
-namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
+namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public class ProjectAccessChecker : IProjectAccessChecker
     {
