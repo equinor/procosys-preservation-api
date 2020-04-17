@@ -10,7 +10,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
     public class FieldDtoTests
     {
         static double _number = 1282.91;
-        readonly string _numberAsString = _number.ToString("F2");
 
         [TestMethod]
         public void Constructor_ShouldSetProperties_ForNumberWithoutCurrent()
@@ -36,8 +35,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             var dut = new FieldDto(
                 field, 
-                new NumberValue("", field, _numberAsString), 
-                new NumberValue("", field, _numberAsString));
+                new NumberValue("", field, _number), 
+                new NumberValue("", field, _number));
 
             Assert.IsFalse(dut.ShowPrevious);
             Assert.IsNotNull(dut.CurrentValue);
@@ -52,8 +51,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             var dut = new FieldDto(
                 field, 
-                new NumberValue("", field, _numberAsString), 
-                new NumberValue("", field, _numberAsString));
+                new NumberValue("", field, _number), 
+                new NumberValue("", field, _number));
 
             Assert.IsTrue(dut.ShowPrevious);
             Assert.IsNotNull(dut.CurrentValue);

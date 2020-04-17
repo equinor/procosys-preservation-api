@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         {
             var reqDef = await (from rd in _context.QuerySet<RequirementDefinition>()
                 where rd.Id == requirementDefinitionId
-                select rd).FirstOrDefaultAsync(token);
+                select rd).SingleOrDefaultAsync(token);
             return reqDef != null && reqDef.IsVoided;
         }
     }

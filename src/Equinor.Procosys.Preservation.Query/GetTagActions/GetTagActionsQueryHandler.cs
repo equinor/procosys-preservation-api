@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActions
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Actions)
                     where t.Id == request.TagId
-                    select t).FirstOrDefaultAsync(cancellationToken);
+                    select t).SingleOrDefaultAsync(cancellationToken);
             
             if (tag == null)
             {

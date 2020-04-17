@@ -9,7 +9,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Project;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 using MediatR;
 using ServiceResult;
 
@@ -108,11 +107,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
             var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
-            var requirements = new List<TagRequirement>();
+            var requirements = new List<Requirement>();
             foreach (var requirement in request.Requirements)
             {
                 var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
-                requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
+                requirements.Add(new Requirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
             }
 
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);

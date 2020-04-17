@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.GetTagFunctionDetails;
-using Equinor.Procosys.Preservation.Query.GetTagFunctionsHavingRequirement;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,18 +20,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         private readonly IMediator _mediator;
 
         public TagFunctionsController(IMediator mediator) => _mediator = mediator;
-
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
-        [HttpGet("HavingRequirement")]
-        public async Task<ActionResult<IEnumerable<TagFunctionDto>>> GetTagFunctionsHavingRequirement(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
-            [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
-            string plant)
-        {
-            var result = await _mediator.Send(new GetTagFunctionsHavingRequirementQuery());
-            return this.FromResult(result);
-        }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{code}")]
@@ -60,7 +46,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         {
             var requirements = dto.Requirements?
                 .Select(r =>
-                    new Requirement(r.RequirementDefinitionId, r.IntervalWeeks));
+                    new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             var result = await _mediator.Send(
                 new UpdateRequirementsCommand(
                     dto.TagFunctionCode,

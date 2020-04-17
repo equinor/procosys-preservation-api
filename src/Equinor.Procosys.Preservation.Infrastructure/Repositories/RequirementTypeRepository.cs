@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         public Task<RequirementDefinition> GetRequirementDefinitionByIdAsync(int requirementDefinitionId)
             => DefaultQuery
                 .SelectMany(rt => rt.RequirementDefinitions)
-                .FirstOrDefaultAsync(rd => rd.Id == requirementDefinitionId);
+                .SingleOrDefaultAsync(rd => rd.Id == requirementDefinitionId);
 
         public Task<List<RequirementDefinition>> GetRequirementDefinitionsByIdsAsync(IList<int> requirementDefinitionIds)
             => DefaultQuery

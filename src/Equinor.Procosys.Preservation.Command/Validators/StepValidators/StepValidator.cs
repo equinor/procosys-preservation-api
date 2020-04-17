@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
         {
             var step = await (from s in _context.QuerySet<Step>()
                 where s.Id == stepId
-                select s).FirstOrDefaultAsync(token);
+                select s).SingleOrDefaultAsync(token);
             return step != null && step.IsVoided;
         }
     }

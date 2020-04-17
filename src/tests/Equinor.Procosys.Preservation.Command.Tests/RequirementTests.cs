@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new Requirement(6, 8);
+            var dut = new RequirementForCommand(6, 8);
 
             Assert.AreEqual(6, dut.RequirementDefinitionId);
             Assert.AreEqual(8, dut.IntervalWeeks);

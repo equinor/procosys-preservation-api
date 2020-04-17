@@ -29,7 +29,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         private int _rdId2 = 18;
         private int _tagId1 = 7;
         private int _tagId2 = 8;
-        private int _tagId3 = 33;
 
         private int _stepId1 = 9;
         private int _stepId2 = 10;
@@ -103,16 +102,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
 
             Assert.AreEqual(PreservationStatus.Completed, _tag1.Status);
             Assert.AreEqual(PreservationStatus.Completed, _tag2.Status);
-        }
-
-        [TestMethod]
-        public async Task HandlingStopPreservationCommand_ShouldFailWhenTagNotInLastStep()
-        {
-            var command = new StopPreservationCommand(new List<int>(_tagId3));
-            var result = await _dut.Handle(command, default);
-
-            Assert.AreEqual(1, result.Errors.Count);
-            
         }
 
         [TestMethod]

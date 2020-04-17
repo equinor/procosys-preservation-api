@@ -10,7 +10,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preserve
 {
@@ -27,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private PreserveCommand _command;
         private Tag _tag;
-        private TagRequirement _requirement;
+        private Requirement _requirement;
 
         private PreserveCommandHandler _dut;
         private PreservationPeriod _initialPreservationPeriod;
@@ -40,12 +39,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            var requirementMock = new Mock<TagRequirement>(TestPlant, Interval, rdMock.Object);
+            var requirementMock = new Mock<Requirement>(TestPlant, Interval, rdMock.Object);
             requirementMock.SetupGet(r => r.Id).Returns(RequirementId);
             requirementMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirement = requirementMock.Object;
 
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<Requirement>
             {
                 _requirement
             });

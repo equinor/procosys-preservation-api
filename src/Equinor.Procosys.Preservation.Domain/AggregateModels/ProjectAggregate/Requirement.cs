@@ -137,37 +137,76 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return lastPreservedPeriod?.GetFieldValue(field.Id);
         }
 
-        public void RecordValues(Dictionary<int, string> fieldValues, string comment, RequirementDefinition requirementDefinition)
+        public void SetComment(string comment)
         {
-            if (requirementDefinition == null)
-            {
-                throw new ArgumentNullException(nameof(requirementDefinition));
-            }
-
-            if (requirementDefinition.Id != RequirementDefinitionId)
-            {
-                throw new Exception($"{nameof(Requirement)} {Id} belong to RequirementDefinition {RequirementDefinitionId}. Can't record values for RequirementDefinition {requirementDefinition.Id}");
-            }
-
             if (!HasActivePeriod)
             {
-                throw new Exception($"{nameof(Requirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't record values");
+                throw new Exception($"{nameof(Requirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't set comment");
             }
+            ActivePeriod.SetComment(comment);
+        }
+
+        public void RecordNumberValues(Dictionary<int, double?> numberValues, RequirementDefinition requirementDefinition)
+        {
+            if (numberValues == null)
+            {
+                throw new ArgumentNullException(nameof(numberValues));
+            }
+
+            VerifyReadyForRecording(requirementDefinition);
 
             var period = ActivePeriod;
 
-            if (fieldValues != null)
+            foreach (var numberValue in numberValues)
             {
-                foreach (var fieldValue in fieldValues)
-                {
-                    var field = requirementDefinition.Fields.Single(f => f.Id == fieldValue.Key);
+                var field = requirementDefinition.Fields.Single(f => f.Id == numberValue.Key);
 
-                    period.RecordValueForField(field, fieldValue.Value);
-                }
+                period.RecordNumberValueForField(field, numberValue.Value);
             }
 
             period.UpdateStatus(requirementDefinition);
-            period.SetComment(comment);
+        }
+
+        public void RecordNumberIsNaValues(IList<int> fieldIds, RequirementDefinition requirementDefinition)
+        {
+            if (fieldIds == null)
+            {
+                throw new ArgumentNullException(nameof(fieldIds));
+            }
+
+            VerifyReadyForRecording(requirementDefinition);
+
+            var period = ActivePeriod;
+
+            foreach (var fieldId in fieldIds)
+            {
+                var field = requirementDefinition.Fields.Single(f => f.Id == fieldId);
+
+                period.RecordNumberIsNaValueForField(field);
+            }
+
+            period.UpdateStatus(requirementDefinition);
+        }
+
+        public void RecordCheckBoxValues(Dictionary<int, bool> checkBoxValues, RequirementDefinition requirementDefinition)
+        {
+            if (checkBoxValues == null)
+            {
+                throw new ArgumentNullException(nameof(checkBoxValues));
+            }
+
+            VerifyReadyForRecording(requirementDefinition);
+
+            var period = ActivePeriod;
+
+            foreach (var checkBoxValue in checkBoxValues)
+            {
+                var field = requirementDefinition.Fields.Single(f => f.Id == checkBoxValue.Key);
+
+                period.RecordCheckBoxValueForField(field, checkBoxValue.Value);
+            }
+
+            period.UpdateStatus(requirementDefinition);
         }
 
         public void SetCreated(Person createdBy)
@@ -198,6 +237,25 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             NextDueTimeUtc = TimeService.UtcNow.AddWeeks(IntervalWeeks);
             var preservationPeriod = new PreservationPeriod(Plant, NextDueTimeUtc.Value, _initialPreservationPeriodStatus);
             _preservationPeriods.Add(preservationPeriod);
+        }
+
+        private void VerifyReadyForRecording(RequirementDefinition requirementDefinition)
+        {
+            if (requirementDefinition == null)
+            {
+                throw new ArgumentNullException(nameof(requirementDefinition));
+            }
+
+            if (requirementDefinition.Id != RequirementDefinitionId)
+            {
+                throw new Exception(
+                    $"{nameof(Requirement)} {Id} belong to RequirementDefinition {RequirementDefinitionId}. Can't record values for RequirementDefinition {requirementDefinition.Id}");
+            }
+
+            if (!HasActivePeriod)
+            {
+                throw new Exception($"{nameof(Requirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't record values");
+            }
         }
     }
 }

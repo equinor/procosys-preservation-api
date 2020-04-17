@@ -7,7 +7,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateAction
 {
@@ -19,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
         private readonly string _description = "ActionDescription";
         private readonly DateTime _dueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
 
-        private TagRequirement _requirement;
+        private Requirement _requirement;
         private Tag _tag;
         private CreateActionCommand _command;
         private CreateActionCommandHandler _dut;
@@ -40,8 +39,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
             _rdMock.SetupGet(rd => rd.Id).Returns(_rdId1);
             _rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            _requirement = new TagRequirement(TestPlant, _intervalWeeks, _rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> { _requirement });
+            _requirement = new Requirement(TestPlant, _intervalWeeks, _rdMock.Object);
+            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<Requirement> { _requirement });
 
             _projectRepositoryMock
                 .Setup(r => r.GetTagByTagIdAsync(_tagId))

@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
             {
                 RuleForEach(command => command.TagIds)
                     .MustAsync((_, tagId, __, token) => BeAnExistingTagAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag doesn't exists! Tag={id}")
+                    .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
                     .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tagId, __, token) => PreservationIsStartedAsync(tagId, token))
