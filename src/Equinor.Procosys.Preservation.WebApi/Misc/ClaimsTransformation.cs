@@ -9,6 +9,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
     public class ClaimsTransformation : IClaimsTransformation
     {
         public static string ProjectPrefix = "PCS_PROJECT##";
+        public static string ContentRestrictionPrefix = "PCS_CONTENTRESTRICTION##";
         private readonly IPermissionService _permissionService;
 
         public ClaimsTransformation(IPermissionService permissionService) => _permissionService = permissionService;
@@ -19,6 +20,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
             {
                 await AddRoleForAllPermissionsAsync(principal);
                 await AddUserDataClaimForAllProjects(principal);
+                await AddUserDataClaimForAllContentRestrictionsAsync(principal);
             }
 
             return principal;
@@ -44,6 +46,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
                 var permissions = await _permissionService.GetPermissionsForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
                 permissions.ToList().ForEach(perm => claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, perm)));
+                principal.AddIdentity(claimsIdentity);
+            }
+        }
+
+        private async Task AddUserDataClaimForAllContentRestrictionsAsync(ClaimsPrincipal principal)
+        {
+            var oid = principal.Claims.TryGetOid();
+            if (oid.HasValue)
+            {
+                var contentRestrictions = await _permissionService.GetContentRestrictionsForUserOidAsync(oid.Value);
+                var claimsIdentity = new ClaimsIdentity();
+                contentRestrictions.ToList().ForEach(contentRestriction => claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, $"{ContentRestrictionPrefix}{contentRestriction}")));
                 principal.AddIdentity(claimsIdentity);
             }
         }

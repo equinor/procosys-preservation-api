@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 
@@ -28,7 +29,7 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
                 return HasCurrentUserAccessToProject(projectRequest);
             }
 
-            if (request is ITagRequest tagRequest)
+            if (request is ITagCommandRequest tagRequest)
             {
                 return await HasCurrentUserAccessToProjectAsync(tagRequest);
             }
@@ -36,9 +37,12 @@ namespace Equinor.Procosys.Preservation.WebApi.ProjectAccess
             return true;
         }
 
-        private async Task<bool> HasCurrentUserAccessToProjectAsync(ITagRequest tagRequest)
+        private async Task<bool> HasCurrentUserAccessToProjectAsync(ITagCommandRequest tagRequest)
+            => await HasCurrentUserAccessToProjectAsync(tagRequest.TagId);
+
+        private async Task<bool> HasCurrentUserAccessToProjectAsync(int tagId)
         {
-            var projectName = await _projectHelper.GetProjectNameFromTagIdAsync(tagRequest.TagId);
+            var projectName = await _projectHelper.GetProjectNameFromTagIdAsync(tagId);
             return _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
         }
 

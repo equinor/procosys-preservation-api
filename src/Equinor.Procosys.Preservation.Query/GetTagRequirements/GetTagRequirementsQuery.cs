@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
-    public class GetTagRequirementsQuery : IRequest<Result<List<RequirementDto>>>, ITagRequest
+    public class GetTagRequirementsQuery : IRequest<Result<List<RequirementDto>>>, ITagQueryRequest
     {
         public GetTagRequirementsQuery(int tagId) => TagId = tagId;
 
