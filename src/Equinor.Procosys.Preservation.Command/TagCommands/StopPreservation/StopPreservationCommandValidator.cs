@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,9 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
                     .MustAsync((_, tagId, __, token) => PreservationIsActiveAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to be able to stop! Tag={id}")
                     .MustAsync((_, tagId, __, token) => CanBeStoppedAsync(tagId, token))
-                    .WithMessage((_, id) => $"{TagType.Standard} and {TagType.PreArea} tags must be in last step of journey to be able to stop! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => HaveExistingRequirementDefinitionsAsync(tagId, token))
-                    .WithMessage((_, id) => $"A requirement definition doesn't exists! Tag={id}");
+                    .WithMessage((_, id) => $"{TagType.Standard} and {TagType.PreArea} tags must be in last step of journey to be able to stop! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
@@ -63,9 +60,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
 
             async Task<bool> PreservationIsActiveAsync(int tagId, CancellationToken token)
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
-
-            async Task<bool> HaveExistingRequirementDefinitionsAsync(int tagId, CancellationToken token)
-                => await tagValidator.AllRequirementDefinitionsExistAsync(tagId, token);
 
             async Task<bool> CanBeStoppedAsync(int tagId, CancellationToken token)
             {
