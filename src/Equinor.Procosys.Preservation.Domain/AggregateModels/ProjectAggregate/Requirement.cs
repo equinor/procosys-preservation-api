@@ -92,14 +92,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             PrepareNewPreservation();
         }
 
-        public void StopPreservation()
-        {
-            if (!HasActivePeriod)
-            {
-                throw new Exception($"{nameof(Requirement)} {Id} does not have an active {nameof(PreservationPeriod)}. Can't be stopped");
-            }
-            NextDueTimeUtc = null;
-        }
+        public void StopPreservation() => NextDueTimeUtc = null;
 
         public void Preserve(Person preservedBy, bool bulkPreserved)
         {

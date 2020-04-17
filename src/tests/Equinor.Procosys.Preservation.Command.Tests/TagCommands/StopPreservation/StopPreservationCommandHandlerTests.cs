@@ -102,6 +102,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
 
             Assert.AreEqual(PreservationStatus.Completed, _tag1.Status);
             Assert.AreEqual(PreservationStatus.Completed, _tag2.Status);
+            
+            Assert.IsNull(_tag1.NextDueTimeUtc);
+            Assert.IsNull(_tag2.NextDueTimeUtc);
         }
 
         [TestMethod]

@@ -39,7 +39,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D").RequirementDefinitions.First();
                 var reqStartedPreservation = new Requirement(TestPlant, IntervalWeeks, rd);
                 var reqNotStartedPreservation = new Requirement(TestPlant, IntervalWeeks, rd);
-                var reqSiteArea = new Requirement(TestPlant, IntervalWeeks, rd);
 
                 var tagNotStartedPreservation = AddTag(context, project, TagType.Standard, TagNo1, "Tag description", journey.Steps.First(), new List<Requirement> {reqNotStartedPreservation});
 
