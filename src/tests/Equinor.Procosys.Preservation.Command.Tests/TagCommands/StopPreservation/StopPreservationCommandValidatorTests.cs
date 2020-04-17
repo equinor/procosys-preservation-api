@@ -33,8 +33,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _command = new StopPreservationCommand(_tagIds);
@@ -120,18 +118,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tags must be in same project!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenAnyTagMissesARequirementDefinition()
-        {
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId1, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("A requirement definition doesn't exists!"));
         }
 
         [TestMethod]
