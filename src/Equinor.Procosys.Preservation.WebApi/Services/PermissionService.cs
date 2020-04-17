@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
         {
             var plant = _plantProvider.Plant;
             return await _cacheManager.GetOrCreate(
-                PermssionsCacheKey(userOid, plant),
+                PermissionsCacheKey(userOid, plant),
                 async () => await _permissionApiService.GetPermissionsAsync(plant),
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
@@ -49,9 +49,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
                 ProjectsCacheKey(userOid, plant),
                 async () =>
                 {
-                    var procosysProjects = await _projectApiService.GetProjectsAsync(plant);
-                    return procosysProjects?.Select(p => p.Name).ToList();
+                    var projects = await _projectApiService.GetProjectsAsync(plant);
+                    return projects?.Select(p => p.Name).ToList();
                 },
+                CacheDuration.Minutes,
+                _options.CurrentValue.PermissionCacheMinutes);
+        }
+
+        public async Task<IList<string>> GetContentRestrictionsForUserOidAsync(Guid userOid)
+        {
+            var plant = _plantProvider.Plant;
+            return await _cacheManager.GetOrCreate(
+                ContentRestrictionsCacheKey(userOid, plant),
+                async () => await _permissionApiService.GetContentRestrictionsAsync(plant),
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
         }
@@ -59,7 +69,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
         private string ProjectsCacheKey(Guid userOid, string plant)
             => $"PROJECTS_{userOid.ToString().ToUpper()}_{plant}";
 
-        private static string PermssionsCacheKey(Guid userOid, string plant)
+        private static string PermissionsCacheKey(Guid userOid, string plant)
             => $"PERMISSIONS_{userOid.ToString().ToUpper()}_{plant}";
+
+        private static string ContentRestrictionsCacheKey(Guid userOid, string plant)
+            => $"CONTENTRESTRICTIONS_{userOid.ToString().ToUpper()}_{plant}";
     }
 }

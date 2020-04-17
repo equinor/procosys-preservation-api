@@ -8,5 +8,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
     {
         Task<IList<string>> GetPermissionsForUserOidAsync(Guid userOid);
         Task<IList<string>> GetProjectsForUserOidAsync(Guid userOid);
+        Task<IList<string>> GetContentRestrictionsForUserOidAsync(Guid userOid);
     }
 }
