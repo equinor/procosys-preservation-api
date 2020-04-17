@@ -171,76 +171,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsTrue(dut.ReadyToBePreserved);
         }
 
-        #endregion
-
-        #region IsReadyAndDueToBePreserved
-        
-        [TestMethod]
-        public void IsReadyAndDueToBePreserved_ShouldBeFalse_BeforePeriod()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation();
-            Assert.IsTrue(dut.ReadyToBePreserved);
-
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
-            Assert.AreEqual(2, dut.GetNextDueInWeeks());
-        }
-
-        [TestMethod]
-        public void IsReadyAndDueToBePreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation();
-            Assert.IsTrue(dut.ReadyToBePreserved);
-
-            _timeProvider.ElapseWeeks(TwoWeeksInterval);
-            Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
-            Assert.AreEqual(0, dut.GetNextDueInWeeks());
-        }
-
-        [TestMethod]
-        public void IsReadyAndDueToBePreserved_ShouldBeFalse_InPeriod_WhenNeedInput()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation();
-            Assert.IsFalse(dut.ReadyToBePreserved);
-
-            _timeProvider.ElapseWeeks(TwoWeeksInterval);
-
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
-            Assert.AreEqual(0, dut.GetNextDueInWeeks());
-        }
-
-        [TestMethod]
-        public void IsReadyAndDueToBePreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-            dut.StartPreservation();
-            Assert.IsTrue(dut.ReadyToBePreserved);
-
-            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
-
-            Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
-            Assert.AreEqual(-2, dut.GetNextDueInWeeks());
-        }
-
-        [TestMethod]
-        public void IsReadyAndDueToBePreserved_ShouldBeFalse_OnOverdue_WhenNeedInput()
-        {
-            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            dut.StartPreservation();
-            Assert.IsFalse(dut.ReadyToBePreserved);
-
-            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
-
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
-            Assert.AreEqual(-2, dut.GetNextDueInWeeks());
-        }
-
-        #endregion
-
-        #region StartPreservation
-
         [TestMethod]
         public void StartPreservation_ShouldNotSetReadyToBeBulkPreserved_EvenWhenFieldNotNeedInput()
         {
@@ -304,7 +234,93 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.PreservationPeriods.First().Status);
         }
-        
+
+        #endregion
+
+        #region StopPreservation
+
+        [TestMethod]
+        public void StopPreservation_ShouldSetNextDueDateToNull()
+        {
+            // Arrange
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+
+            dut.StartPreservation();
+            Assert.IsNotNull(dut.NextDueTimeUtc);
+
+            // Act
+            dut.StopPreservation();
+
+            // Assert
+            Assert.IsNull(dut.NextDueTimeUtc);
+        }
+
+        #endregion
+
+        #region IsReadyAndDueToBePreserved
+
+        [TestMethod]
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_BeforePeriod()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+            Assert.IsTrue(dut.ReadyToBePreserved);
+
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(2, dut.GetNextDueInWeeks());
+        }
+
+        [TestMethod]
+        public void IsReadyAndDueToBePreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+            Assert.IsTrue(dut.ReadyToBePreserved);
+
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(0, dut.GetNextDueInWeeks());
+        }
+
+        [TestMethod]
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_InPeriod_WhenNeedInput()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+            Assert.IsFalse(dut.ReadyToBePreserved);
+
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(0, dut.GetNextDueInWeeks());
+        }
+
+        [TestMethod]
+        public void IsReadyAndDueToBePreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+            Assert.IsTrue(dut.ReadyToBePreserved);
+
+            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
+
+            Assert.IsTrue(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(-2, dut.GetNextDueInWeeks());
+        }
+
+        [TestMethod]
+        public void IsReadyAndDueToBePreserved_ShouldBeFalse_OnOverdue_WhenNeedInput()
+        {
+            var dut = new Requirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+            Assert.IsFalse(dut.ReadyToBePreserved);
+
+            _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
+
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
+            Assert.AreEqual(-2, dut.GetNextDueInWeeks());
+        }
+
         #endregion
 
         #region Preserve

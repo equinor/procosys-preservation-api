@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
@@ -179,10 +180,36 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.ProjectAccess
             Assert.IsFalse(result);
         }
 
+        [TestMethod]
+        public async Task ValidateAsync_OnStopPreservationCommand_ShouldReturnTrue_WhenAccessToProject()
+        {
+            // Arrange
+            var command = new StopPreservationCommand(new List<int> { TagIdWithAccess });
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnStopPreservationCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new StopPreservationCommand(new List<int> { TagIdWithoutAccess });
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
         #endregion
 
         #region queries
-        
+
         [TestMethod]
         public async Task ValidateAsync_OnGetTagsQuery_ShouldReturnTrue_WhenAccessToProject()
         {

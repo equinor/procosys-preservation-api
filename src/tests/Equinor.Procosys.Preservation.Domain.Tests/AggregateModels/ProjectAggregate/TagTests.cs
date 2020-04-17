@@ -778,6 +778,42 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region StopPreservation
+
+        [TestMethod]
+        public void StopPreservation_ShouldSetStatusToCompleted_WhenInLastStepAndIsStandard()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step2Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            dut.StopPreservation(_journey);
+
+            Assert.AreEqual(PreservationStatus.Completed, dut.Status);
+        }
+
+        [TestMethod]
+        public void StopPreservation_ShouldThrowException_WhenJourneyIsNull()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.ThrowsException<ArgumentNullException>(() => dut.StopPreservation(null));
+        }
+
+        [TestMethod]
+        public void StopPreservation_ShouldSetStatusToCompleted_WhenNotInLastStepAndIsArea()
+        {
+            var dut = new Tag(TestPlant, TagType.SiteArea, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            dut.StopPreservation(_journey);
+
+            Assert.AreEqual(PreservationStatus.Completed, dut.Status);
+        }
+
+
+        #endregion
+
         #region IsReadyToBeTransferred
 
         [TestMethod]
@@ -822,7 +858,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeStopped_ShouldBeFalse_BeforePreservationStarted()
         {
-            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step2Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
 
             Assert.IsFalse(dut.IsReadyToBeStopped(_journey));
         }
@@ -830,7 +866,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeStopped_ShouldBeTrue_AfterPreservationStarted()
         {
-            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step2Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsTrue(dut.IsReadyToBeStopped(_journey));
@@ -839,7 +875,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBeStopped_ShouldBeFalse_WhenCurrentStepIsLastStepInJourney()
         {
-            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step2Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsFalse(dut.IsReadyToBeStopped(_journey));
