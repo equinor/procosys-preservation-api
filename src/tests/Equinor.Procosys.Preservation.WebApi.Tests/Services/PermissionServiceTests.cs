@@ -21,6 +21,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
         private Mock<IPermissionApiService> _permissionApiServiceMock;
         private Mock<IProjectApiService> _projectApiServiceMock;
         private readonly string TestPlant = "TestPlant";
+        private readonly string Permission1 = "A";
+        private readonly string Permission2 = "B";
+        private readonly string Project1 = "P1";
+        private readonly string Project2 = "P2";
+        private readonly string Restriction1 = "R1";
+        private readonly string Restriction2 = "R2";
 
         [TestInitialize]
         public void Setup()
@@ -30,13 +36,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
 
             _permissionApiServiceMock = new Mock<IPermissionApiService>();
             _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(TestPlant))
-                .Returns(Task.FromResult<IList<string>>(new List<string> {"A", "B"}));
+                .Returns(Task.FromResult<IList<string>>(new List<string> {Permission1, Permission2}));
+            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(TestPlant))
+                .Returns(Task.FromResult<IList<string>>(new List<string> {Restriction1, Restriction2}));
 
             _projectApiServiceMock = new Mock<IProjectApiService>();
             _projectApiServiceMock.Setup(p => p.GetProjectsAsync(TestPlant))
                 .Returns(Task.FromResult<IList<ProcosysProject>>(new List<ProcosysProject>
                 {
-                    new ProcosysProject {Name = "P1"}, new ProcosysProject {Name = "P2"}
+                    new ProcosysProject {Name = Project1}, new ProcosysProject {Name = Project2}
                 }));
 
             var optionsMock = new Mock<IOptionsMonitor<PermissionOptions>>();
@@ -96,18 +104,49 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
             _projectApiServiceMock.Verify(p => p.GetProjectsAsync(TestPlant), Times.Once);
         }
 
-        private static void AssertPermissions(IList<string> result)
+        [TestMethod]
+        public async Task GetContentRestrictionsForUserOid_ShouldReturnPermissionsFromPermissionApiServiceFirstTime()
         {
-            Assert.AreEqual(2, result.Count);
-            Assert.AreEqual("A", result.First());
-            Assert.AreEqual("B", result.Last());
+            // Act
+            var result = await _dut.GetContentRestrictionsForUserOidAsync(Oid);
+
+            // Assert
+            AssertRestrictions(result);
+            _permissionApiServiceMock.Verify(p => p.GetContentRestrictionsAsync(TestPlant), Times.Once);
         }
 
-        private static void AssertProjects(IList<string> result)
+        [TestMethod]
+        public async Task GetContentRestrictionsForUserOid_ShouldReturnPermissionsFromCacheSecondTime()
+        {
+            await _dut.GetContentRestrictionsForUserOidAsync(Oid);
+            // Act
+            var result = await _dut.GetContentRestrictionsForUserOidAsync(Oid);
+
+            // Assert
+            AssertRestrictions(result);
+            // since GetContentRestrictionsForUserOidAsync has been called twice, but GetContentRestrictionsAsync has been called once, the second Get uses cache
+            _permissionApiServiceMock.Verify(p => p.GetContentRestrictionsAsync(TestPlant), Times.Once);
+        }
+
+        private void AssertPermissions(IList<string> result)
         {
             Assert.AreEqual(2, result.Count);
-            Assert.AreEqual("P1", result.First());
-            Assert.AreEqual("P2", result.Last());
+            Assert.AreEqual(Permission1, result.First());
+            Assert.AreEqual(Permission2, result.Last());
+        }
+
+        private void AssertProjects(IList<string> result)
+        {
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(Project1, result.First());
+            Assert.AreEqual(Project2, result.Last());
+        }
+
+        private void AssertRestrictions(IList<string> result)
+        {
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(Restriction1, result.First());
+            Assert.AreEqual(Restriction2, result.Last());
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Permission;
@@ -36,7 +35,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetPermissions_ReturnsThreePermissions()
+        public async Task GetPermissions_ReturnsThreePermissions_OnValidaPlant()
         {
             // Arrange
             _mainApiClient
@@ -50,7 +49,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetPermissions_ReturnsNoPermissions()
+        public async Task GetPermissions_ReturnsNoPermissions_OnValidPlant()
         {
             // Arrange
             _mainApiClient
@@ -64,7 +63,51 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetPermissions_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetPermissionsAsync("INVALIDPLANT"));
+        public async Task GetPermissions_ReturnsNoPermissions_OnNonValidPlant()
+        {
+            // Act
+            var result = await _dut.GetPermissionsAsync("INVALIDPLANT");
+
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetContentRestrictions_ReturnsThreePermissions_OnValidaPlant()
+        {
+            // Arrange
+            _mainApiClient
+                .SetupSequence(x => x.QueryAndDeserialize<List<string>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<string>{ "A", "B", "C" }));
+            // Act
+            var result = await _dut.GetContentRestrictionsAsync(_plant);
+
+            // Assert
+            Assert.AreEqual(3, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetContentRestrictions_ReturnsNoPermissions_OnValidPlant()
+        {
+            // Arrange
+            _mainApiClient
+                .SetupSequence(x => x.QueryAndDeserialize<List<string>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<string>()));
+            // Act
+            var result = await _dut.GetContentRestrictionsAsync(_plant);
+
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetContentRestrictions_ReturnsNoPermissions_OnNonValidPlant()
+        {
+            // Act
+            var result = await _dut.GetContentRestrictionsAsync("INVALIDPLANT");
+
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
     }
 }
