@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Linq;
-using System.Security.Claims;
-using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations
@@ -20,13 +17,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             }
 
             var user = _accessor.HttpContext.User;
-            if (user.Identity.IsAuthenticated)
-            {
-                var userDataClaimWithProject = $"{ClaimsTransformation.ProjectPrefix}{projectName}";
-                return user.Claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithProject);
-            }
-
-            return true;
+            
+            return !user.Identity.IsAuthenticated || user.Claims.HasProjectClaim(projectName);
         }
     }
 }

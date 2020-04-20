@@ -1,5 +1,6 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Misc

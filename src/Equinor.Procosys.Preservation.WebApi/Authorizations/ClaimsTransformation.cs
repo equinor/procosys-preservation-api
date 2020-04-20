@@ -4,12 +4,14 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Services;
 using Microsoft.AspNetCore.Authentication;
 
-namespace Equinor.Procosys.Preservation.WebApi.Misc
+namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public class ClaimsTransformation : IClaimsTransformation
     {
         public static string ProjectPrefix = "PCS_PROJECT##";
         public static string ContentRestrictionPrefix = "PCS_CONTENTRESTRICTION##";
+        public static string NoRestrictions = "%";
+
         private readonly IPermissionService _permissionService;
 
         public ClaimsTransformation(IPermissionService permissionService) => _permissionService = permissionService;
