@@ -8,7 +8,7 @@ using Equinor.Procosys.Preservation.WebApi.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
+namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
 {
     [TestClass]
     public class ClaimsTransformationTests

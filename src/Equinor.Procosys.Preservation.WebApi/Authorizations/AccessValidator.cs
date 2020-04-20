@@ -38,23 +38,23 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
             if (request is ITagCommandRequest tagCommandRequest)
             {
-                return await HasCurrentUserAccessToProjectAsync(tagCommandRequest);
+                return await HasCurrentUserAccessToProjectAsync(tagCommandRequest) && 
+                       await HasCurrentUserAccessToContentAsync(tagCommandRequest);
             }
 
             if (request is ITagQueryRequest tagQueryRequest)
             {
-                return await HasCurrentUserAccessToProjectAsync(tagQueryRequest) && 
-                    await HasCurrentUserAccessToContentAsync(tagQueryRequest);
+                return await HasCurrentUserAccessToProjectAsync(tagQueryRequest);
             }
 
             return true;
         }
 
-        private async Task<bool> HasCurrentUserAccessToContentAsync(ITagQueryRequest tagQueryRequest)
+        private async Task<bool> HasCurrentUserAccessToContentAsync(ITagCommandRequest tagCommandRequest)
         {
             if (_contentRestrictionsChecker.HasCurrentUserAnyRestrictions())
             {
-                var responsibleCode = await _tagHelper.GetResponsibleCodeAsync(tagQueryRequest.TagId);
+                var responsibleCode = await _tagHelper.GetResponsibleCodeAsync(tagCommandRequest.TagId);
                 return _contentRestrictionsChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
             }
 
