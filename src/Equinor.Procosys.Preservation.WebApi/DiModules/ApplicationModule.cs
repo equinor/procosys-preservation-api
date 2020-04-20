@@ -67,7 +67,8 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
             services.AddScoped<IAccessValidator, AccessValidator>();
             services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
-            services.AddScoped<IProjectHelper, ProjectHelper>();
+            services.AddScoped<IContentRestrictionsChecker, ContentRestrictionsChecker>();
+            services.AddScoped<ITagHelper, TagHelper>();
             services.AddScoped<IPlantProvider, PlantProvider>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());

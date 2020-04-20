@@ -25,6 +25,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
                 .Returns(Task.FromResult<IList<string>>(new List<string> {"A", "B"}));
             permissionServiceMock.Setup(p => p.GetProjectsForUserOidAsync(Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {"P1", "P2"}));
+            permissionServiceMock.Setup(p => p.GetContentRestrictionsForUserOidAsync(Oid))
+                .Returns(Task.FromResult<IList<string>>(new List<string> {"R1", "R2"}));
 
             _cp = new ClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
@@ -48,6 +50,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
             var result = await _dut.TransformAsync(_cp);
 
             Assert.AreEqual(2, result.Claims.Count(c => c.Type == ClaimTypes.UserData && c.Value.StartsWith(ClaimsTransformation.ProjectPrefix)));
+        }
+
+        [TestMethod]
+        public async Task TransformAsync_ShouldAddUserDataClaimsForContentRestriction()
+        {
+            var result = await _dut.TransformAsync(_cp);
+
+            Assert.AreEqual(2, result.Claims.Count(c => c.Type == ClaimTypes.UserData && c.Value.StartsWith(ClaimsTransformation.ContentRestrictionPrefix)));
         }
     }
 }

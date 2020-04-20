@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             {
                 var projects = await _permissionService.GetProjectsForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
-                projects.ToList().ForEach(project =>
+                projects?.ToList().ForEach(project =>
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, GetProjectClaimValue(project))));
                 principal.AddIdentity(claimsIdentity);
             }
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             {
                 var permissions = await _permissionService.GetPermissionsForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
-                permissions.ToList().ForEach(perm => claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, perm)));
+                permissions?.ToList().ForEach(perm => claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, perm)));
                 principal.AddIdentity(claimsIdentity);
             }
         }
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             {
                 var contentRestrictions = await _permissionService.GetContentRestrictionsForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
-                contentRestrictions.ToList().ForEach(contentRestriction =>
+                contentRestrictions?.ToList().ForEach(contentRestriction =>
                     claimsIdentity.AddClaim(
                         new Claim(ClaimTypes.UserData,
                             GetContentRestrictionClaimValue(contentRestriction))));

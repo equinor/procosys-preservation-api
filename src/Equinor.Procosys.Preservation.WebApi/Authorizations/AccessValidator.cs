@@ -11,16 +11,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
     {
         private readonly IProjectAccessChecker _projectAccessChecker;
         private readonly IContentRestrictionsChecker _contentRestrictionsChecker;
-        private readonly IProjectHelper _projectHelper;
+        private readonly ITagHelper _tagHelper;
 
         public AccessValidator(
             IProjectAccessChecker projectAccessChecker,
-            IProjectHelper projectHelper,
-            IContentRestrictionsChecker contentRestrictionsChecker)
+            IContentRestrictionsChecker contentRestrictionsChecker,
+            ITagHelper tagHelper)
         {
             _projectAccessChecker = projectAccessChecker;
-            _projectHelper = projectHelper;
             _contentRestrictionsChecker = contentRestrictionsChecker;
+            _tagHelper = tagHelper;
         }
 
         public async Task<bool> ValidateAsync<TRequest>(TRequest request) where TRequest : IBaseRequest
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
         {
             if (_contentRestrictionsChecker.HasCurrentUserAnyRestrictions())
             {
-                var responsibleCode = "todo"; // Todo
+                var responsibleCode = await _tagHelper.GetResponsibleCode(tagQueryRequest.TagId);
                 return _contentRestrictionsChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
             }
 
@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
         private async Task<bool> HasCurrentUserAccessToProjectAsync(int tagId)
         {
-            var projectName = await _projectHelper.GetProjectNameFromTagIdAsync(tagId);
+            var projectName = await _tagHelper.GetProjectName(tagId);
             return _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
         }
 

@@ -42,16 +42,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             var projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
             var contentRestrictionsCheckerMock = new Mock<IContentRestrictionsChecker>();
-            var projectHelperMock = new Mock<IProjectHelper>();
+            var tagHelperMock = new Mock<ITagHelper>();
 
             _dut = new AccessValidator(
                 projectAccessCheckerMock.Object,
-                projectHelperMock.Object,
-                contentRestrictionsCheckerMock.Object);
+                contentRestrictionsCheckerMock.Object,
+                tagHelperMock.Object);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithoutAccess)).Returns(false);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithAccess)).Returns(true);
-            projectHelperMock.Setup(p => p.GetProjectNameFromTagIdAsync(TagIdWithAccess)).Returns(Task.FromResult(ProjectWithAccess));
-            projectHelperMock.Setup(p => p.GetProjectNameFromTagIdAsync(TagIdWithoutAccess)).Returns(Task.FromResult(ProjectWithoutAccess));
+            tagHelperMock.Setup(p => p.GetProjectName(TagIdWithAccess)).Returns(Task.FromResult(ProjectWithAccess));
+            tagHelperMock.Setup(p => p.GetProjectName(TagIdWithoutAccess)).Returns(Task.FromResult(ProjectWithoutAccess));
+
+            // todo tests for content restrictions
         }
 
         #region commands
