@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
         {
             RuleFor(command => command)
                 .MustAsync((command, token) => HaveUniqueJourneyTitleAsync(command.Title, token))
-                .WithMessage(command => $"Another journey with this title already exists! Journey={command.Title}");
+                .WithMessage(command => $"A journey with this title already exists! Journey={command.Title}");
 
             async Task<bool> HaveUniqueJourneyTitleAsync(string journeyTitle, CancellationToken token) =>
                 !await journeyValidator.ExistsAsync(journeyTitle, token);
