@@ -89,15 +89,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             ModifiedById = modifiedBy.Id;
         }
 
-        public void UpdateJourney(Journey journey, string newTitle)
+        public void UpdateJourney(Journey journey, string title)
         {
 
-            if (string.IsNullOrEmpty(newTitle))
+            if (string.IsNullOrEmpty(title))
             {
-                throw new ArgumentNullException(nameof(newTitle));
+                throw new ArgumentNullException(nameof(title));
             }
 
-            Title = newTitle;
+            Title = title;
         }
     }
 }
