@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Infrastructure.Caching;
 using Equinor.Procosys.Preservation.MainApi.Permission;
+using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.WebApi.Services;
 using Microsoft.Extensions.Options;
@@ -18,9 +19,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
     {
         private PermissionService _dut;
         private readonly Guid Oid = new Guid("{3BFB54C7-91E2-422E-833F-951AD07FE37F}");
+        private Mock<IPlantApiService> _plantApiServiceMock;
         private Mock<IPermissionApiService> _permissionApiServiceMock;
         private Mock<IProjectApiService> _projectApiServiceMock;
         private readonly string TestPlant = "TestPlant";
+        private readonly string Plant1 = "X";
+        private readonly string Plant2 = "Y";
         private readonly string Permission1 = "A";
         private readonly string Permission2 = "B";
         private readonly string Project1 = "P1";
@@ -33,6 +37,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
         {
             var plantProviderMock = new Mock<IPlantProvider>();
             plantProviderMock.SetupGet(p => p.Plant).Returns(TestPlant);
+
+            _plantApiServiceMock = new Mock<IPlantApiService>();
+            _plantApiServiceMock.Setup(p => p.GetPlantsAsync())
+                .Returns(Task.FromResult(new List<ProcosysPlant>
+                {
+                    new ProcosysPlant {Id = Plant1}, new ProcosysPlant {Id = Plant2}
+                }));
 
             _permissionApiServiceMock = new Mock<IPermissionApiService>();
             _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(TestPlant))
@@ -53,7 +64,37 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
                 .Returns(new PermissionOptions());
 
 
-            _dut = new PermissionService(plantProviderMock.Object, new CacheManager(), _projectApiServiceMock.Object, _permissionApiServiceMock.Object, optionsMock.Object);
+            _dut = new PermissionService(
+                plantProviderMock.Object, 
+                new CacheManager(),
+                _plantApiServiceMock.Object,
+                _projectApiServiceMock.Object,
+                _permissionApiServiceMock.Object,
+                optionsMock.Object);
+        }
+
+        [TestMethod]
+        public async Task GetPlantsForUserOid_ShouldReturnPlantsFromPlantApiServiceFirstTime()
+        {
+            // Act
+            var result = await _dut.GetPlantsForUserOidAsync(Oid);
+
+            // Assert
+            AssertPlants(result);
+            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetPlantsForUserOid_ShouldReturnPlantsFromCacheSecondTime()
+        {
+            await _dut.GetPlantsForUserOidAsync(Oid);
+            // Act
+            var result = await _dut.GetPlantsForUserOidAsync(Oid);
+
+            // Assert
+            AssertPlants(result);
+            // since GetPlantsForUserOidAsync has been called twice, but GetPlantsAsync has been called once, the second Get uses cache
+            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
         }
 
         [TestMethod]
@@ -126,6 +167,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
             AssertRestrictions(result);
             // since GetContentRestrictionsForUserOidAsync has been called twice, but GetContentRestrictionsAsync has been called once, the second Get uses cache
             _permissionApiServiceMock.Verify(p => p.GetContentRestrictionsAsync(TestPlant), Times.Once);
+        }
+
+        
+        private void AssertPlants(IList<string> result)
+        {
+            Assert.AreEqual(2, result.Count);
+            Assert.AreEqual(Plant1, result.First());
+            Assert.AreEqual(Plant2, result.Last());
         }
 
         private void AssertPermissions(IList<string> result)

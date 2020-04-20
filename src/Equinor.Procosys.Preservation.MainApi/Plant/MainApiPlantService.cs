@@ -22,11 +22,15 @@ namespace Equinor.Procosys.Preservation.MainApi.Plant
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public Task<List<ProcosysPlant>> GetPlants() => _mainApiClient.QueryAndDeserialize<List<ProcosysPlant>>($"{_baseAddress}Plants?api-version={_apiVersion}");
+        public async Task<List<ProcosysPlant>> GetPlantsAsync()
+        {
+            var url = $"{_baseAddress}Plants?api-version={_apiVersion}";
+            return await _mainApiClient.QueryAndDeserialize<List<ProcosysPlant>>(url);
+        }
 
         public async Task<bool> IsPlantValidAsync(string plant)
         {
-            var plants = await GetPlants();
+            var plants = await GetPlantsAsync();
             return plants.Any(p => p.Id == plant);
         }
     }
