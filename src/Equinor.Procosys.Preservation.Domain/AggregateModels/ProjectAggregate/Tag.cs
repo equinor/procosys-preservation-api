@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Tag : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
-        private readonly List<Requirement> _requirements = new List<Requirement>();
+        private readonly List<TagRequirement> _requirements = new List<TagRequirement>();
         private readonly List<Action> _actions = new List<Action>();
 
         public const int TagNoLengthMax = 255;
@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             string tagNo,
             string description,
             Step step, 
-            IEnumerable<Requirement> requirements)
+            IEnumerable<TagRequirement> requirements)
             : base(plant)
         {
             if (step == null)
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int StepId { get; private set; }
         public string TagFunctionCode { get; set; }
         public string TagNo { get; private set; }
-        public IReadOnlyCollection<Requirement> Requirements => _requirements.AsReadOnly();
+        public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public bool IsVoided { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set;  }
@@ -120,7 +120,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             StepId = step.Id;
         }
 
-        public void AddRequirement(Requirement requirement)
+        public void AddRequirement(TagRequirement requirement)
         {
             if (requirement == null)
             {
@@ -203,14 +203,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void BulkPreserve(Person preservedBy)
             => Preserve(preservedBy, true);
 
-        public IEnumerable<Requirement> GetUpComingRequirements()
+        public IEnumerable<TagRequirement> GetUpComingRequirements()
         {
             var GetUpComingRequirements = OrderedRequirements()
                 .Where(r => r.IsReadyAndDueToBePreserved());
             return GetUpComingRequirements;
         }
 
-        public IOrderedEnumerable<Requirement> OrderedRequirements()
+        public IOrderedEnumerable<TagRequirement> OrderedRequirements()
             => Requirements
                 .Where(r => !r.IsVoided)
                 .OrderBy(r => r.NextDueTimeUtc);
@@ -285,7 +285,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
         }
 
-        private Requirement FirstUpcomingRequirement()
+        private TagRequirement FirstUpcomingRequirement()
             => GetUpComingRequirements().FirstOrDefault();
 
         private void UpdateNextDueTimeUtc()

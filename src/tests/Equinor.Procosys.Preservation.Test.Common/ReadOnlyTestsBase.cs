@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return project;
         }
 
-        protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo, string description, Step step, IEnumerable<Requirement> requirements)
+        protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo, string description, Step step, IEnumerable<TagRequirement> requirements)
         {
             var tag = new Tag(TestPlant, tagType, tagNo, description, step, requirements);
             parentProject.AddTag(tag);
@@ -215,9 +215,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     $"{testDataSet.StdTagPrefix}-{i}",
                     "Description",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),
-                    new List<Requirement>
+                    new List<TagRequirement>
                     {
-                        new Requirement(
+                        new TagRequirement(
                             TestPlant,
                             testDataSet.IntervalWeeks,
                             testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
@@ -244,9 +244,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     $"{testDataSet.SiteTagPrefix}-{i}",
                     "Description",
                     testDataSet.Journey2With1Step.Steps.ElementAt(0),
-                    new List<Requirement>
+                    new List<TagRequirement>
                     {
-                        new Requirement(
+                        new TagRequirement(
                             TestPlant,
                             testDataSet.IntervalWeeks,
                             testDataSet.ReqType2.RequirementDefinitions.ElementAt(0))
@@ -273,9 +273,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     $"Another-{i}",
                     "Description",
                     testDataSet.Journey1With2Steps.Steps.ElementAt(0),
-                    new List<Requirement>
+                    new List<TagRequirement>
                     {
-                        new Requirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
+                        new TagRequirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
                     });
                 
                 testDataSet.Project2.AddTag(tag);

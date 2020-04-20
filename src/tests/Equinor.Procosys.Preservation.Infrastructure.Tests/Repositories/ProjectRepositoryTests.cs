@@ -34,11 +34,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             var step = new Step(TestPlant, "S", modeMock.Object, responsibleMock.Object);
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
-            var requirements = new List<Requirement>
+            var requirements = new List<TagRequirement>
             {
-                new Requirement(TestPlant, 1, rdMock.Object),
-                new Requirement(TestPlant, 2, rdMock.Object),
-                new Requirement(TestPlant, 4, rdMock.Object)
+                new TagRequirement(TestPlant, 1, rdMock.Object),
+                new TagRequirement(TestPlant, 2, rdMock.Object),
+                new TagRequirement(TestPlant, 4, rdMock.Object)
             };
 
             var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1");
