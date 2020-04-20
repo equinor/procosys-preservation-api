@@ -10,6 +10,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
         public void Configure(EntityTypeBuilder<Person> builder)
         {
             builder.ConfigureModificationAudit();
+            builder.ConfigureConcurrencyToken();
 
             builder.Property(x => x.Oid)
                 .IsRequired();
