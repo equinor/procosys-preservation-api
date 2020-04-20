@@ -19,8 +19,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .SingleOrDefaultAsync(s => s.Id == stepId);
 
         public Task<List<Journey>> GetJourneysByStepIdsAsync(IEnumerable<int> stepIds)
-        => DefaultQuery
-            .Where(journey => journey.Steps.Any(s => stepIds.Contains(s.Id)))
-            .ToListAsync();
+            => DefaultQuery
+                .Where(journey => journey.Steps.Any(s => stepIds.Contains(s.Id)))
+                .ToListAsync();
+
+        public Task<Journey> GetJourneyByJourneyIdAsync(int journeyId)
+            => DefaultQuery
+                .SingleOrDefaultAsync(j => j.Id == journeyId);
     }
 }
