@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Procosys.Preservation.WebApi.Authorizations
+namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public class TagHelper : ITagHelper
     {
@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
         public TagHelper(IReadOnlyContext context) => _context = context;
 
-        public async Task<string> GetProjectName(int tagId)
+        public async Task<string> GetProjectNameAsync(int tagId)
         {
             var projectName = await (from p in _context.QuerySet<Project>() 
                 join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             return projectName;
         }
 
-        public async Task<string> GetResponsibleCode(int tagId)
+        public async Task<string> GetResponsibleCodeAsync(int tagId)
         {
             var responsibleCode = await (from tag in _context.QuerySet<Tag>()
                 join step in _context.QuerySet<Step>() on tag.StepId equals step.Id

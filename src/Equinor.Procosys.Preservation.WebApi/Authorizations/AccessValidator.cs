@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations
@@ -53,7 +54,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
         {
             if (_contentRestrictionsChecker.HasCurrentUserAnyRestrictions())
             {
-                var responsibleCode = await _tagHelper.GetResponsibleCode(tagQueryRequest.TagId);
+                var responsibleCode = await _tagHelper.GetResponsibleCodeAsync(tagQueryRequest.TagId);
                 return _contentRestrictionsChecker.HasCurrentUserExplicitAccessToContent(responsibleCode);
             }
 
@@ -68,7 +69,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
         private async Task<bool> HasCurrentUserAccessToProjectAsync(int tagId)
         {
-            var projectName = await _tagHelper.GetProjectName(tagId);
+            var projectName = await _tagHelper.GetProjectNameAsync(tagId);
             return _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
         }
 

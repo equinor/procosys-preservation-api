@@ -23,6 +23,7 @@ using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -50,8 +51,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
                 tagHelperMock.Object);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithoutAccess)).Returns(false);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithAccess)).Returns(true);
-            tagHelperMock.Setup(p => p.GetProjectName(TagIdWithAccess)).Returns(Task.FromResult(ProjectWithAccess));
-            tagHelperMock.Setup(p => p.GetProjectName(TagIdWithoutAccess)).Returns(Task.FromResult(ProjectWithoutAccess));
+            tagHelperMock.Setup(p => p.GetProjectNameAsync(TagIdWithAccess)).Returns(Task.FromResult(ProjectWithAccess));
+            tagHelperMock.Setup(p => p.GetProjectNameAsync(TagIdWithoutAccess)).Returns(Task.FromResult(ProjectWithoutAccess));
 
             // todo tests for content restrictions
         }

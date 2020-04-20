@@ -175,6 +175,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             //      - 10 last tags is area, all in first step in journey 2, all has requirement of type 2
             //  - 10 tags on project 2 (P2), all tags same as 10 first in P1
             //  - requirement period for all 30 tags is 2 weeks
+            //  - all steps in all journeys has responsible 1
             var _projectName1 = "P1";
             var _projectName2 = "P2";
             var _journeyTitle1 = "J1";
