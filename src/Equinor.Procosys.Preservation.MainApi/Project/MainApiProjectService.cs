@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Project
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))
             {
-                throw new ArgumentException($"Invalid plant: {plant}");
+                return new List<ProcosysProject>();
             }
 
             var url = $"{_baseAddress}Projects" +
