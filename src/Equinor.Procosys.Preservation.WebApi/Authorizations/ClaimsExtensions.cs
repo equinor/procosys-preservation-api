@@ -20,6 +20,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             return null;
         }
 
+        public static bool HasPlantClaim(this IEnumerable<Claim> claims, string plantName)
+        {
+            var userDataClaimWithPlant = ClaimsTransformation.GetPlantClaimValue(plantName);
+            return claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithPlant);
+        }
+
         public static bool HasProjectClaim(this IEnumerable<Claim> claims, string projectName)
         {
             var userDataClaimWithProject = ClaimsTransformation.GetProjectClaimValue(projectName);

@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public class ClaimsTransformation : IClaimsTransformation
     {
+        public static string PlantPrefix = "PCS_PLANT##";
         public static string ProjectPrefix = "PCS_PROJECT##";
         public static string ContentRestrictionPrefix = "PCS_CONTENTRESTRICTION##";
         public static string NoRestrictions = "%";
@@ -21,11 +22,25 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             if (principal.Claims.All(c => c.Type != ClaimTypes.Role))
             {
                 await AddRoleForAllPermissionsAsync(principal);
+                await AddUserDataClaimForAllPlants(principal);
                 await AddUserDataClaimForAllProjects(principal);
                 await AddUserDataClaimForAllContentRestrictionsAsync(principal);
             }
 
             return principal;
+        }
+
+        private async Task AddUserDataClaimForAllPlants(ClaimsPrincipal principal)
+        {
+            var oid = principal.Claims.TryGetOid();
+            if (oid.HasValue)
+            {
+                var plants = await _permissionService.GetPlantsForUserOidAsync(oid.Value);
+                var claimsIdentity = new ClaimsIdentity();
+                plants?.ToList().ForEach(project =>
+                    claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, GetPlantClaimValue(project))));
+                principal.AddIdentity(claimsIdentity);
+            }
         }
 
         private async Task AddUserDataClaimForAllProjects(ClaimsPrincipal principal)
@@ -69,6 +84,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             }
         }
 
+        public static string GetPlantClaimValue(string plant) => $"{PlantPrefix}{plant}";
+        
         public static string GetProjectClaimValue(string project) => $"{ProjectPrefix}{project}";
 
         public static string GetContentRestrictionClaimValue(string contentRestriction) => $"{ContentRestrictionPrefix}{contentRestriction}";
