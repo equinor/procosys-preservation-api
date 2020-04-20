@@ -171,10 +171,92 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsTrue(dut.ReadyToBePreserved);
         }
 
+        [TestMethod]
+        public void StartPreservation_ShouldNotSetReadyToBeBulkPreserved_EvenWhenFieldNotNeedInput()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+
+            _timeProvider.Elapse(TimeSpan.FromDays(2));
+            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldThrowException_WhenPreservationAlreadyActive()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+
+            dut.StartPreservation();
+
+            Assert.ThrowsException<Exception>(() => dut.StartPreservation()
+            );
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithCorrectDueDate()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+
+            var expectedNextDueTimeUtc = _utcNow.AddWeeks(TwoWeeksInterval);
+            Assert.AreEqual(1, dut.PreservationPeriods.Count);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.First().DueTimeUtc);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithoutPreservationRecord()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+
+            dut.StartPreservation();
+
+            Assert.IsNull(dut.PreservationPeriods.First().PreservationRecord);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusNeedsUserInput_WhenReqDefNeedsUserInput()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+
+            dut.StartPreservation();
+
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.PreservationPeriods.First().Status);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusReadyToBePreserved_WhenReqDefNotNeedsUserInput()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+
+            dut.StartPreservation();
+
+            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.PreservationPeriods.First().Status);
+        }
+
+        #endregion
+
+        #region StopPreservation
+
+        [TestMethod]
+        public void StopPreservation_ShouldSetNextDueDateToNull()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+
+            dut.StartPreservation();
+            Assert.IsNotNull(dut.NextDueTimeUtc);
+
+            // Act
+            dut.StopPreservation();
+
+            // Assert
+            Assert.IsNull(dut.NextDueTimeUtc);
+        }
+
         #endregion
 
         #region IsReadyAndDueToBePreserved
-        
+
         [TestMethod]
         public void IsReadyAndDueToBePreserved_ShouldBeFalse_BeforePeriod()
         {
@@ -237,74 +319,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(-2, dut.GetNextDueInWeeks());
         }
 
-        #endregion
-
-        #region StartPreservation
-
-        [TestMethod]
-        public void StartPreservation_ShouldNotSetReadyToBeBulkPreserved_EvenWhenFieldNotNeedInput()
-        {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-
-            dut.StartPreservation();
-
-            _timeProvider.Elapse(TimeSpan.FromDays(2));
-            Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
-        }
-
-        [TestMethod]
-        public void StartPreservation_ShouldThrowException_WhenPreservationAlreadyActive()
-        {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-
-            dut.StartPreservation();
-
-            Assert.ThrowsException<Exception>(() => dut.StartPreservation()
-            );
-        }
-
-        [TestMethod]
-        public void StartPreservation_ShouldAddNewPreservationPeriodWithCorrectDueDate()
-        {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-
-            dut.StartPreservation();
-
-            var expectedNextDueTimeUtc = _utcNow.AddWeeks(TwoWeeksInterval);
-            Assert.AreEqual(1, dut.PreservationPeriods.Count);
-            Assert.AreEqual(expectedNextDueTimeUtc, dut.PreservationPeriods.First().DueTimeUtc);
-        }
-
-        [TestMethod]
-        public void StartPreservation_ShouldAddNewPreservationPeriodWithoutPreservationRecord()
-        {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-
-            dut.StartPreservation();
-
-            Assert.IsNull(dut.PreservationPeriods.First().PreservationRecord);
-        }
-
-        [TestMethod]
-        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusNeedsUserInput_WhenReqDefNeedsUserInput()
-        {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-
-            dut.StartPreservation();
-
-            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.PreservationPeriods.First().Status);
-        }
-
-        [TestMethod]
-        public void StartPreservation_ShouldAddNewPreservationPeriodWithStatusReadyToBePreserved_WhenReqDefNotNeedsUserInput()
-        {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
-
-            dut.StartPreservation();
-
-            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.PreservationPeriods.First().Status);
-        }
-        
         #endregion
 
         #region Preserve

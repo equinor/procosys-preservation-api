@@ -92,6 +92,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             PrepareNewPreservation();
         }
 
+        public void StopPreservation() => NextDueTimeUtc = null;
+
         public void Preserve(Person preservedBy, bool bulkPreserved)
         {
             if (!ReadyToBePreserved)

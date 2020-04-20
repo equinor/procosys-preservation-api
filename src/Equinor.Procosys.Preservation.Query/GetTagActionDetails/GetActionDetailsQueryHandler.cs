@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
                      Action = a,
                      CreatedBy = createdUser,
                      ClosedBy = closedUser
-                 }).FirstOrDefaultAsync(cancellationToken);
+                 }).SingleOrDefaultAsync(cancellationToken);
 
             if (dto == null)
             {

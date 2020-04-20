@@ -13,6 +13,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         }
 
         public Task<Person> GetByOidAsync(Guid oid)
-            => DefaultQuery.FirstOrDefaultAsync(p => p.Oid == oid);
+            => DefaultQuery.SingleOrDefaultAsync(p => p.Oid == oid);
     }
 }

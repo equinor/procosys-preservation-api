@@ -171,6 +171,21 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
         }
 
+        public void StopPreservation(Journey journey)
+        {
+            if (!IsReadyToBeStopped(journey))
+            {
+                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not be stopped. Status = {Status}");
+            }
+            foreach (var requirement in Requirements.Where(r => !r.IsVoided))
+            {
+                requirement.StopPreservation();
+            }
+
+            Status = PreservationStatus.Completed;
+            NextDueTimeUtc = null;
+        }
+
         public bool IsReadyToBePreserved()
             => Status == PreservationStatus.Active && 
                FirstUpcomingRequirement() != null;
@@ -208,6 +223,18 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             return Status == PreservationStatus.Active && TagType != TagType.SiteArea && journey.GetNextStep(StepId) != null;
+        }
+
+        public bool IsReadyToBeStopped(Journey journey)
+        {
+            if (journey == null)
+            {
+                throw new ArgumentNullException(nameof(journey));
+            }
+
+            return Status == PreservationStatus.Active && 
+                   (TagType == TagType.SiteArea || TagType == TagType.PoArea || 
+                   (TagType == TagType.Standard || TagType == TagType.PreArea) && journey.GetNextStep(StepId) == null);
         }
 
         public void Transfer(Journey journey)

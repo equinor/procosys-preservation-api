@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
         {
             var project = await (from p in _context.QuerySet<Project>()
                 where p.Name == projectName
-                select p).FirstOrDefaultAsync(cancellationToken);
+                select p).SingleOrDefaultAsync(cancellationToken);
 
             return project != null && project.IsClosed;
         }
@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ProjectValidators
             var project = await (from tag in _context.QuerySet<Tag>()
                 join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
                 where tag.Id == tagId
-                select p).FirstOrDefaultAsync(cancellationToken);
+                select p).SingleOrDefaultAsync(cancellationToken);
 
             return project != null && project.IsClosed;
         }

@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         }
 
         public Task<Project> GetByNameAsync(string projectName)
-            => DefaultQuery.FirstOrDefaultAsync(p => p.Name == projectName);
+            => DefaultQuery.SingleOrDefaultAsync(p => p.Name == projectName);
 
         public Task<List<Tag>> GetAllTagsInProjectAsync(string projectName)
             => DefaultQuery
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         public Task<Tag> GetTagByTagIdAsync(int tagId)
             => DefaultQuery
                 .SelectMany(project => project.Tags)
-                .FirstOrDefaultAsync(tag => tag.Id == tagId);
+                .SingleOrDefaultAsync(tag => tag.Id == tagId);
 
         public Task<List<Tag>> GetTagsByTagIdsAsync(IEnumerable<int> tagIds)
             => DefaultQuery
