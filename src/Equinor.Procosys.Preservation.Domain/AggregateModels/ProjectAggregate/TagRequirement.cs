@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Requirement : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class TagRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         public const int InitialPreservationPeriodStatusMax = 64;
 
@@ -16,12 +16,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private PreservationPeriodStatus _initialPreservationPeriodStatus;
         private readonly List<PreservationPeriod> _preservationPeriods = new List<PreservationPeriod>();
 
-        protected Requirement()
+        protected TagRequirement()
             : base(null)
         {
         }
 
-        public Requirement(string plant, int intervalWeeks, RequirementDefinition requirementDefinition)
+        public TagRequirement(string plant, int intervalWeeks, RequirementDefinition requirementDefinition)
             : base(plant)
         {
             if (requirementDefinition == null)
@@ -87,16 +87,18 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             if (HasActivePeriod)
             {
-                throw new Exception($"{nameof(Requirement)} {Id} already have an active {nameof(PreservationPeriod)}. Can't start");
+                throw new Exception($"{nameof(TagRequirement)} {Id} already have an active {nameof(PreservationPeriod)}. Can't start");
             }
             PrepareNewPreservation();
         }
+
+        public void StopPreservation() => NextDueTimeUtc = null;
 
         public void Preserve(Person preservedBy, bool bulkPreserved)
         {
             if (!ReadyToBePreserved)
             {
-                throw new Exception($"{nameof(Requirement)} {Id} is not ready to be preserved");
+                throw new Exception($"{nameof(TagRequirement)} {Id} is not ready to be preserved");
             }
 
             PeriodReadyToBePreserved.Preserve(preservedBy, bulkPreserved);
@@ -132,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             if (!HasActivePeriod)
             {
-                throw new Exception($"{nameof(Requirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't set comment");
+                throw new Exception($"{nameof(TagRequirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't set comment");
             }
             ActivePeriod.SetComment(comment);
         }
@@ -240,12 +242,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             if (requirementDefinition.Id != RequirementDefinitionId)
             {
                 throw new Exception(
-                    $"{nameof(Requirement)} {Id} belong to RequirementDefinition {RequirementDefinitionId}. Can't record values for RequirementDefinition {requirementDefinition.Id}");
+                    $"{nameof(TagRequirement)} {Id} belong to RequirementDefinition {RequirementDefinitionId}. Can't record values for RequirementDefinition {requirementDefinition.Id}");
             }
 
             if (!HasActivePeriod)
             {
-                throw new Exception($"{nameof(Requirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't record values");
+                throw new Exception($"{nameof(TagRequirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't record values");
             }
         }
     }

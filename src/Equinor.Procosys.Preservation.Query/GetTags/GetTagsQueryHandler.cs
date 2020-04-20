@@ -196,7 +196,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                 join journey in _context.QuerySet<Journey>() on EF.Property<int>(step, "JourneyId") equals journey.Id
                 join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
                 join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
-                let anyReqTypeFiltered = (from req in _context.QuerySet<Requirement>()
+                let anyReqTypeFiltered = (from req in _context.QuerySet<TagRequirement>()
                     join reqDef in _context.QuerySet<RequirementDefinition>() on req.RequirementDefinitionId equals reqDef.Id
                     join reqType in _context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals reqType.Id
                     where EF.Property<int>(req, "TagId") == tag.Id && request.Filter.RequirementTypeIds.Contains(reqType.Id)

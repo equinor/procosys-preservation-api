@@ -40,9 +40,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
-            var reqMock = new Mock<Requirement>();
+            var reqMock = new Mock<TagRequirement>();
             reqMock.SetupGet(r => r.Plant).Returns(TestPlant);
-            var tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<Requirement>{reqMock.Object});
+            var tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>{reqMock.Object});
 
             _dut.AddTag(tag);
 

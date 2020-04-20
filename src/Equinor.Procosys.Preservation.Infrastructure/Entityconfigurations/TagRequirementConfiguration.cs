@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class RequirementConfiguration : IEntityTypeConfiguration<Requirement>
+    internal class TagRequirementConfiguration : IEntityTypeConfiguration<TagRequirement>
     {
         private readonly string InitialPreservationPeriodStatusPropertyName = "_initialPreservationPeriodStatus";
 
-        public void Configure(EntityTypeBuilder<Requirement> builder)
+        public void Configure(EntityTypeBuilder<TagRequirement> builder)
         {
             builder.ConfigurePlant();
             builder.ConfigureCreationAudit();
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired();
 
             builder.Property(InitialPreservationPeriodStatusPropertyName)
-                .HasMaxLength(Requirement.InitialPreservationPeriodStatusMax)
+                .HasMaxLength(TagRequirement.InitialPreservationPeriodStatusMax)
                 .HasConversion<string>()
                 .HasDefaultValue(PreservationPeriodStatus.NeedsUserInput)
                 .IsRequired();

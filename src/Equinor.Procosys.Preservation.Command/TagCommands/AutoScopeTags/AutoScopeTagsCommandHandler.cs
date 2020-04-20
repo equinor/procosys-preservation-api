@@ -114,11 +114,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
             TagFunction tagFunctionWithRequirements,
             IList<RequirementDefinition> reqDefs)
         {
-            var requirements = new List<Requirement>();
+            var requirements = new List<TagRequirement>();
             foreach (var requirement in tagFunctionWithRequirements.Requirements.Where(r => !r.IsVoided))
             {
                 var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
-                requirements.Add(new Requirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
+                requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
             }
 
             var tag = new Tag(

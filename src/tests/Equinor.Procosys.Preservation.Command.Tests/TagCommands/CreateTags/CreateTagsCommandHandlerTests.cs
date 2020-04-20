@@ -235,7 +235,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
             AssertReqProperties(tagAddedToProject.Requirements.Last(), ReqDefId2, Interval2);
         }
 
-        private void AssertReqProperties(Domain.AggregateModels.ProjectAggregate.Requirement req, int reqDefId, int interval)
+        private void AssertReqProperties(TagRequirement req, int reqDefId, int interval)
         {
             Assert.AreEqual(reqDefId, req.RequirementDefinitionId);
             Assert.AreEqual(interval, req.IntervalWeeks);
