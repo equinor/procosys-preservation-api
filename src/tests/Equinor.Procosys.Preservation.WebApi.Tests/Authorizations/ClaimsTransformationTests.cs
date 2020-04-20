@@ -30,11 +30,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             var permissionServiceMock = new Mock<IPermissionService>();
 
-            permissionServiceMock.Setup(p => p.GetPlantsForUserOidAsync(Oid))
+            permissionServiceMock.Setup(p => p.GetPlantIdsForUserOidAsync(Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Plant1, Plant2}));
             permissionServiceMock.Setup(p => p.GetPermissionsForUserOidAsync(Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Permission1, Permission2}));
-            permissionServiceMock.Setup(p => p.GetProjectsForUserOidAsync(Oid))
+            permissionServiceMock.Setup(p => p.GetProjectNamesForUserOidAsync(Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Project1, Project2}));
             permissionServiceMock.Setup(p => p.GetContentRestrictionsForUserOidAsync(Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Restriction1, Restriction2}));

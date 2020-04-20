@@ -35,10 +35,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             var oid = principal.Claims.TryGetOid();
             if (oid.HasValue)
             {
-                var plants = await _permissionService.GetPlantsForUserOidAsync(oid.Value);
+                var plantIds = await _permissionService.GetPlantIdsForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
-                plants?.ToList().ForEach(project =>
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, GetPlantClaimValue(project))));
+                plantIds?.ToList().ForEach(
+                    plantId => claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, GetPlantClaimValue(plantId))));
                 principal.AddIdentity(claimsIdentity);
             }
         }
@@ -48,10 +48,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             var oid = principal.Claims.TryGetOid();
             if (oid.HasValue)
             {
-                var projects = await _permissionService.GetProjectsForUserOidAsync(oid.Value);
+                var projectNames = await _permissionService.GetProjectNamesForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
-                projects?.ToList().ForEach(project =>
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, GetProjectClaimValue(project))));
+                projectNames?.ToList().ForEach(
+                    projectName => claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, GetProjectClaimValue(projectName))));
                 principal.AddIdentity(claimsIdentity);
             }
         }
@@ -63,7 +63,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             {
                 var permissions = await _permissionService.GetPermissionsForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
-                permissions?.ToList().ForEach(perm => claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, perm)));
+                permissions?.ToList().ForEach(
+                    permission => claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, permission)));
                 principal.AddIdentity(claimsIdentity);
             }
         }
@@ -75,18 +76,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             {
                 var contentRestrictions = await _permissionService.GetContentRestrictionsForUserOidAsync(oid.Value);
                 var claimsIdentity = new ClaimsIdentity();
-                contentRestrictions?.ToList().ForEach(contentRestriction =>
-                    claimsIdentity.AddClaim(
-                        new Claim(ClaimTypes.UserData,
-                            GetContentRestrictionClaimValue(contentRestriction))));
+                contentRestrictions?.ToList().ForEach(
+                    contentRestriction => claimsIdentity.AddClaim(
+                        new Claim(ClaimTypes.UserData, GetContentRestrictionClaimValue(contentRestriction))));
                 
                 principal.AddIdentity(claimsIdentity);
             }
         }
 
-        public static string GetPlantClaimValue(string plant) => $"{PlantPrefix}{plant}";
+        public static string GetPlantClaimValue(string plantId) => $"{PlantPrefix}{plantId}";
         
-        public static string GetProjectClaimValue(string project) => $"{ProjectPrefix}{project}";
+        public static string GetProjectClaimValue(string projectName) => $"{ProjectPrefix}{projectName}";
 
         public static string GetContentRestrictionClaimValue(string contentRestriction) => $"{ContentRestrictionPrefix}{contentRestriction}";
     }

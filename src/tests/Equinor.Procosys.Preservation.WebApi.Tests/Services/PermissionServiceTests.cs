@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
         public async Task GetPlantsForUserOid_ShouldReturnPlantsFromPlantApiServiceFirstTime()
         {
             // Act
-            var result = await _dut.GetPlantsForUserOidAsync(Oid);
+            var result = await _dut.GetPlantIdsForUserOidAsync(Oid);
 
             // Assert
             AssertPlants(result);
@@ -87,9 +87,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
         [TestMethod]
         public async Task GetPlantsForUserOid_ShouldReturnPlantsFromCacheSecondTime()
         {
-            await _dut.GetPlantsForUserOidAsync(Oid);
+            await _dut.GetPlantIdsForUserOidAsync(Oid);
             // Act
-            var result = await _dut.GetPlantsForUserOidAsync(Oid);
+            var result = await _dut.GetPlantIdsForUserOidAsync(Oid);
 
             // Assert
             AssertPlants(result);
@@ -125,7 +125,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
         public async Task GetProjectsForUserOid_ShouldReturnProjectsFromPermissionApiServiceFirstTime()
         {
             // Act
-            var result = await _dut.GetProjectsForUserOidAsync(Oid);
+            var result = await _dut.GetProjectNamesForUserOidAsync(Oid);
 
             // Assert
             AssertProjects(result);
@@ -135,9 +135,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Services
         [TestMethod]
         public async Task GetProjectsForUserOid_ShouldReturnProjectsFromCacheSecondTime()
         {
-            await _dut.GetProjectsForUserOidAsync(Oid);
+            await _dut.GetProjectNamesForUserOidAsync(Oid);
             // Act
-            var result = await _dut.GetProjectsForUserOidAsync(Oid);
+            var result = await _dut.GetProjectNamesForUserOidAsync(Oid);
 
             // Assert
             AssertProjects(result);

@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
             _options = options;
         }
 
-        public async Task<IList<string>> GetPlantsForUserOidAsync(Guid userOid)
+        public async Task<IList<string>> GetPlantIdsForUserOidAsync(Guid userOid)
             => await _cacheManager.GetOrCreate(
                 PlantsCacheKey(userOid),
                 async () =>
@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Services
                 _options.CurrentValue.PermissionCacheMinutes);
         }
 
-        public async Task<IList<string>> GetProjectsForUserOidAsync(Guid userOid)
+        public async Task<IList<string>> GetProjectNamesForUserOidAsync(Guid userOid)
         {
             var plant = _plantProvider.Plant;
             return await _cacheManager.GetOrCreate(
