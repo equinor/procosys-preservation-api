@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -50,9 +51,26 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             Assert.AreEqual(0, dut.DomainEvents.Count);
         }
 
-        public class TestableEntityBase : EntityBase
+        [TestMethod]
+        public void GetRowVersion()
         {
-            // The base class is abstract, therefor a sub class is needed to test it.
+            var dut = new TestableEntityBase();
+            dut.SetProtectedRowVersion(123);
+            dut.GetRowVersion().Equals(123);
+        }
+
+        [TestMethod]
+        public void SetRowVersion()
+        {
+            var dut = new TestableEntityBase();
+            dut.SetProtectedRowVersion(123);
+            dut.SetRowVersion(123);
+            dut.GetRowVersion().Equals(123);
+        }
+
+        public class TestableEntityBase : EntityBase // The base class is abstract, therefor a sub class is needed to test it.
+        {
+            public void SetProtectedRowVersion(ulong rowVersion) => base.RowVersion = BitConverter.GetBytes(rowVersion);
         }
     }
 }
