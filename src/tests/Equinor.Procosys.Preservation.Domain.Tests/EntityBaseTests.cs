@@ -9,6 +9,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
     [TestClass]
     public class EntityBaseTests
     {
+        private const ulong OldRowVersion = 123;
+        private const ulong NewRowVersion = 456;
+
         [TestMethod]
         public void ReturningEmptyDomainEventsListTest()
         {
@@ -52,25 +55,67 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         }
 
         [TestMethod]
-        public void GetRowVersion()
+        public void GetRowVersion_ShouldReturnLastSetRowVersion()
         {
             var dut = new TestableEntityBase();
             dut.SetProtectedRowVersion(123);
             dut.GetRowVersion().Equals(123);
+        }    
+        
+        [TestMethod]
+        public void SetRowVersion_ShouldSucceed()
+        {
+            var dut = new TestableEntityBase();
+            dut.SetProtectedRowVersion(OldRowVersion);
+
+            dut.SetRowVersion(NewRowVersion);
         }
 
         [TestMethod]
-        public void SetRowVersion()
+        public void SetRowVersion_ByReplacingByteArrayContent_ShouldSucceed()
         {
-            var dut = new TestableEntityBase();
-            dut.SetProtectedRowVersion(123);
-            dut.SetRowVersion(123);
-            dut.GetRowVersion().Equals(123);
+            unsafe
+            {
+                var dut = new TestableEntityBase();
+
+                dut.SetProtectedRowVersion(OldRowVersion);
+                var originalByteArrayPointer = dut.GetRowVersionPointer();
+
+                dut.SetRowVersion(NewRowVersion);
+                var newByteArrayPointer = dut.GetRowVersionPointer();
+
+                Assert.IsTrue(originalByteArrayPointer == newByteArrayPointer, "Reference equals should be true as we replace the array content, not the entire byte array");
+            }
+        }
+
+        [TestMethod]
+        public void SetRowVersion_ByReplacingByteArray_ShouldFail()
+        {
+            unsafe
+            {
+                var dut = new TestableEntityBase();
+
+                dut.SetProtectedRowVersion(OldRowVersion);
+                var originalByteArray = dut.GetRowVersionPointer();
+
+                dut.SetProtectedRowVersion(NewRowVersion);
+                var newByteArray = dut.GetRowVersionPointer();
+
+                Assert.IsFalse(originalByteArray == newByteArray, "Reference equals should be false as we replace the byte array");
+            }
         }
 
         public class TestableEntityBase : EntityBase // The base class is abstract, therefor a sub class is needed to test it.
         {
             public void SetProtectedRowVersion(ulong rowVersion) => base.RowVersion = BitConverter.GetBytes(rowVersion);
+
+            public unsafe byte* GetRowVersionPointer()
+            { 
+                fixed (byte* first = &RowVersion[7])
+                {
+                    return first;
+                }
+            }
         }
     }
 }
