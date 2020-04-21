@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Options;
@@ -26,12 +25,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Plant
         {
             var url = $"{_baseAddress}Plants?api-version={_apiVersion}";
             return await _mainApiClient.QueryAndDeserialize<List<ProcosysPlant>>(url);
-        }
-
-        public async Task<bool> IsPlantValidAsync(string plant)
-        {
-            var plants = await GetPlantsAsync();
-            return plants.Any(p => p.Id == plant);
         }
     }
 }

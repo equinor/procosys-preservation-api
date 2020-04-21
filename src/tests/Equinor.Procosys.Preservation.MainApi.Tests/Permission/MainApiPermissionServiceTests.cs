@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetPermissions_ReturnsNoPermissions_OnNonValidPlant()
+        public async Task GetPermissions_ReturnsNoPermissions_OnInValidPlant()
         {
             // Act
             var result = await _dut.GetPermissionsAsync("INVALIDPLANT");
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetContentRestrictions_ReturnsNoPermissions_OnNonValidPlant()
+        public async Task GetContentRestrictions_ReturnsNoPermissions_OnInValidPlant()
         {
             // Act
             var result = await _dut.GetContentRestrictionsAsync("INVALIDPLANT");

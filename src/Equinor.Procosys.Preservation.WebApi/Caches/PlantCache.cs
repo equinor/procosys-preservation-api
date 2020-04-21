@@ -12,15 +12,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
     public class PlantCache : IPlantCache
     {
         private readonly ICacheManager _cacheManager;
+        private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IPlantApiService _plantApiService;
         private readonly IOptionsMonitor<CacheOptions> _options;
 
         public PlantCache(
             ICacheManager cacheManager, 
+            ICurrentUserProvider currentUserProvider, 
             IPlantApiService plantApiService, 
             IOptionsMonitor<CacheOptions> options)
         {
             _cacheManager = cacheManager;
+            _currentUserProvider = currentUserProvider;
             _plantApiService = plantApiService;
             _options = options;
         }
@@ -40,6 +43,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
         {
             var plantIds = await GetPlantIdsForUserOidAsync(userOid);
             return plantIds.Contains(plantId);
+        }
+
+        // todo unit test
+        public async Task<bool> IsValidPlantForCurrentUserAsync(string plantId)
+        {
+            var userOid = _currentUserProvider.TryGetCurrentUserOid();
+            if (!userOid.HasValue)
+            {
+                return false;
+            }
+
+            return await IsValidPlantForUserAsync(plantId, userOid.Value);
         }
 
         private string PlantsCacheKey(Guid userOid)
