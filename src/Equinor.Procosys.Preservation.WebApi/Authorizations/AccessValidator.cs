@@ -11,26 +11,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public class AccessValidator : IAccessValidator
     {
-        private readonly IPlantProvider _plantProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IPlantAccessChecker _plantAccessChecker;
         private readonly IProjectAccessChecker _projectAccessChecker;
         private readonly IContentRestrictionsChecker _contentRestrictionsChecker;
         private readonly ITagHelper _tagHelper;
         private readonly ILogger<AccessValidator> _logger;
 
         public AccessValidator(
-            IPlantProvider plantProvider, 
             ICurrentUserProvider currentUserProvider, 
-            IPlantAccessChecker plantAccessChecker,
             IProjectAccessChecker projectAccessChecker,
             IContentRestrictionsChecker contentRestrictionsChecker,
             ITagHelper tagHelper, 
             ILogger<AccessValidator> logger)
         {
-            _plantProvider = plantProvider;
             _currentUserProvider = currentUserProvider;
-            _plantAccessChecker = plantAccessChecker;
             _projectAccessChecker = projectAccessChecker;
             _contentRestrictionsChecker = contentRestrictionsChecker;
             _tagHelper = tagHelper;
@@ -42,19 +36,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             if (request == null)
             {
                 throw new ArgumentNullException(nameof(request));
-            }
-
-            var plantId = _plantProvider.Plant;
-            if (string.IsNullOrEmpty(plantId))
-            {
-                // if request don't require access to any plant, access is given
-                return true;
-            }
-
-            if (!_plantAccessChecker.HasCurrentUserAccessToPlant(plantId))
-            {
-                _logger.LogWarning($"Current user {_currentUserProvider.TryGetCurrentUserOid()} don't have access to plant {plantId}");
-                return false;
             }
 
             if (request is IProjectRequest projectRequest && ! _projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))

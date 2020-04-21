@@ -5,7 +5,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
 {
     public interface IPermissionApiService
     {
-        Task<IList<string>> GetPermissionsAsync(string plant);
-        Task<IList<string>> GetContentRestrictionsAsync(string plant);
+        Task<IList<string>> GetPermissionsAsync(string plantId);
+        Task<IList<string>> GetProjectsAsync(string plantId);
+        Task<IList<string>> GetContentRestrictionsAsync(string plantId);
     }
 }

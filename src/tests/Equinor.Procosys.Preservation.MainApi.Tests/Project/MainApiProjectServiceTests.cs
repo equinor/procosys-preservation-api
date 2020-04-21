@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -53,36 +51,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
             // Assert
             Assert.AreEqual(_name, result.Name);
             Assert.AreEqual(_description, result.Description);
-        }
-
-        [TestMethod]
-        public async Task GetProjects_ReturnsProjects()
-        {
-            // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysProject>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(new List<ProcosysProject>{_result}));
-
-            // Act
-            var result = await _dut.GetProjectsAsync(_plant);
-
-            // Assert
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(_description, result[0].Description);
-        }
-
-        [TestMethod]
-        public async Task GetProject_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetProjectAsync("INVALIDPLANT", ""));
-
-        [TestMethod]
-        public async Task GetProjects_ReturnsEmptyList_WhenPlantIsInvalid()
-        {            
-            // Act
-            var result = await _dut.GetProjectsAsync("INVALIDPLANT");
-
-            // Assert
-            Assert.AreEqual(0, result.Count);
         }
     }
 }

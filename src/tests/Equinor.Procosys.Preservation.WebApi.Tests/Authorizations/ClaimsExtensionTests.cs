@@ -39,34 +39,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public void HasPlantClaim_ShouldReturnTrue_WhenPlantClaimExists()
-        {
-            // Arrange
-            var plant = "PlantX";
-            var claims = new List<Claim> {new Claim(ClaimTypes.UserData, ClaimsTransformation.GetPlantClaimValue(plant))};
-            
-            // Act
-            var hasPlantClaim = claims.HasPlantClaim(plant);
-
-            // Assert
-            Assert.IsTrue(hasPlantClaim);
-        }
-
-        [TestMethod]
-        public void HasPlantClaim_ShouldReturnFalse_WhenPlantClaimNotExists()
-        {
-            // Arrange
-            var plant = "PlantX";
-            var claims = new List<Claim> {new Claim(ClaimTypes.UserData, ClaimsTransformation.GetPlantClaimValue(plant))};
-            
-            // Act
-            var hasPlantClaim = claims.HasPlantClaim("PlantY");
-
-            // Assert
-            Assert.IsFalse(hasPlantClaim);
-        }
-
-        [TestMethod]
         public void HasProjectClaim_ShouldReturnTrue_WhenProjectClaimExists()
         {
             // Arrange

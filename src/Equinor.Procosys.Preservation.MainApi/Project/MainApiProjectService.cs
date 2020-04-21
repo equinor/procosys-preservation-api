@@ -24,21 +24,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Project
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<IList<ProcosysProject>> GetProjectsAsync(string plant)
-        {
-            if (!await _plantApiService.IsPlantValidAsync(plant))
-            {
-                return new List<ProcosysProject>();
-            }
-
-            var url = $"{_baseAddress}Projects" +
-                      $"?plantId={plant}" +
-                      "&withCommPkgsOnly=false" +
-                      $"&api-version={_apiVersion}";
-
-            return await _mainApiClient.QueryAndDeserialize<List<ProcosysProject>>(url);
-        }
-
         public async Task<ProcosysProject> GetProjectAsync(string plant, string name)
         {
             if (!await _plantApiService.IsPlantValidAsync(plant))

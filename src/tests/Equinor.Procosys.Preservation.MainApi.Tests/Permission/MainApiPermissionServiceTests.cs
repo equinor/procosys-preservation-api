@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Permission;
-using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,7 +14,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
-        private Mock<IPlantApiService> _plantApiService;
         private MainApiPermissionService _dut;
 
         [TestInitialize]
@@ -26,12 +24,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
                 .Setup(x => x.CurrentValue)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
-            _plantApiService = new Mock<IPlantApiService>();
-            _plantApiService
-                .Setup(x => x.IsPlantValidAsync(_plant))
-                .Returns(Task.FromResult(true));
 
-            _dut = new MainApiPermissionService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
+            _dut = new MainApiPermissionService(_mainApiClient.Object, _mainApiOptions.Object);
         }
 
         [TestMethod]
