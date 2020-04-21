@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain
+﻿namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public interface IPlantAccessChecker
     {

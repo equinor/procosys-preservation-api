@@ -21,8 +21,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
         {
             if (principal.Claims.All(c => c.Type != ClaimTypes.Role))
             {
-                await AddRoleForAllPermissionsAsync(principal);
                 await AddUserDataClaimForAllPlants(principal);
+                await AddRoleForAllPermissionsAsync(principal);
                 await AddUserDataClaimForAllProjects(principal);
                 await AddUserDataClaimForAllContentRestrictionsAsync(principal);
             }

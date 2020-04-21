@@ -8,6 +8,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
@@ -24,6 +25,7 @@ using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Misc;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -34,6 +36,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
     {
         private AccessValidator _dut;
         private Mock<IContentRestrictionsChecker> _contentRestrictionsCheckerMock;
+        private Mock<IPlantAccessChecker> _plantAccessCheckerMock;
+        private Mock<IPlantProvider> _plantProviderMock;
+        private const string TestPlant = "PLANT";
         private const int TagIdWithAccessToProject = 1;
         private const int TagIdWithoutAccessToProject = 2;
         private const string ProjectWithAccess = "TestProjectWithAccess";
@@ -43,14 +48,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         [TestInitialize]
         public void Setup()
         {
+            _plantProviderMock = new Mock<IPlantProvider>();
+            _plantProviderMock.SetupGet(p => p.Plant).Returns(TestPlant);
+
+            var currentUserProviderMock = new Mock<ICurrentUserProvider>();
+            _plantAccessCheckerMock = new Mock<IPlantAccessChecker>();
+            _plantAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToPlant(TestPlant)).Returns(true);
+
             var projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
             _contentRestrictionsCheckerMock = new Mock<IContentRestrictionsChecker>();
-            var tagHelperMock = new Mock<ITagHelper>();
-
-            _dut = new AccessValidator(
-                projectAccessCheckerMock.Object,
-                _contentRestrictionsCheckerMock.Object,
-                tagHelperMock.Object);
             
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithoutAccess)).Returns(false);
             projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithAccess)).Returns(true);
@@ -58,9 +64,48 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserAnyRestrictions()).Returns(true);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             
+            var tagHelperMock = new Mock<ITagHelper>();
             tagHelperMock.Setup(p => p.GetProjectNameAsync(TagIdWithAccessToProject)).Returns(Task.FromResult(ProjectWithAccess));
             tagHelperMock.Setup(p => p.GetProjectNameAsync(TagIdWithoutAccessToProject)).Returns(Task.FromResult(ProjectWithoutAccess));
             tagHelperMock.Setup(p => p.GetResponsibleCodeAsync(TagIdWithAccessToProject)).Returns(Task.FromResult(RestrictedToContent));
+
+            var loggerMock = new Mock<ILogger<AccessValidator>>();
+            _dut = new AccessValidator(
+                _plantProviderMock.Object,
+                currentUserProviderMock.Object,
+                _plantAccessCheckerMock.Object,
+                projectAccessCheckerMock.Object,
+                _contentRestrictionsCheckerMock.Object,
+                tagHelperMock.Object,
+                loggerMock.Object);
+        }
+        
+        [TestMethod]
+        public async Task ValidateAsync_ShouldReturnFalse_WhenNoAccessToPlant()
+        {
+            // Arrange
+            _plantAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToPlant(TestPlant)).Returns(false);
+            var command = new PreserveCommand(TagIdWithAccessToProject);
+            
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+        
+        [TestMethod]
+        public async Task ValidateAsync_ShouldReturnTrue_WhenNoRequestForPlant()
+        {
+            // Arrange
+            _plantProviderMock.SetupGet(p => p.Plant).Returns(null);
+            var command = new PreserveCommand(TagIdWithAccessToProject);
+            
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
         }
 
         #region commands

@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         private const int TwoWeeksInterval = 2;
         private const int FourWeeksInterval = 4;
 
-        private Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
+        private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;

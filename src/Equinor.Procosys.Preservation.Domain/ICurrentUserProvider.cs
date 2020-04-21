@@ -4,6 +4,7 @@ namespace Equinor.Procosys.Preservation.Domain
 {
     public interface ICurrentUserProvider
     {
-        Guid GetCurrentUser();
+        Guid GetCurrentUser(); // todo rename to GetCurrentUserOid
+        Guid? TryGetCurrentUserOid();
     }
 }
