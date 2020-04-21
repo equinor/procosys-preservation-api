@@ -76,7 +76,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
             => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetProjectAsync("INVALIDPLANT", ""));
 
         [TestMethod]
-        public async Task GetProjects_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetProjectsAsync("INVALIDPLANT"));
+        public async Task GetProjects_ReturnsEmptyList_WhenPlantIsInvalid()
+        {            
+            // Act
+            var result = await _dut.GetProjectsAsync("INVALIDPLANT");
+
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
     }
 }
