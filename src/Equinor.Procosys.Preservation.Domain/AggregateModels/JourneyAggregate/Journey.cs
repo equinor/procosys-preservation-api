@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         }
 
         public IReadOnlyCollection<Step> Steps => _steps.AsReadOnly();
-        public string Title { get; private set; }
+        public string Title { get; set; }
         public bool IsVoided { get; private set; }
 
         public DateTime CreatedAtUtc { get; private set; }

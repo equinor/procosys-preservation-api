@@ -7,6 +7,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
     {
         Task<bool> ExistsAsync(int journeyId, CancellationToken token);
         Task<bool> ExistsAsync(string journeyTitle, CancellationToken token);
+        Task<bool> ExistsAsync(int journeyId, string journeyTitle, CancellationToken token);
         Task<bool> IsVoidedAsync(int journeyId, CancellationToken token);
     }
 }

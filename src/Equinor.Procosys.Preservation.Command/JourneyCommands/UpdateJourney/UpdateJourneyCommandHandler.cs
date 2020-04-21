@@ -7,27 +7,25 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
 {
-    public class UpdateJourneyCommandHandler : IRequestHandler<UpdateJourneyCommand, Result<int>>
+    public class UpdateJourneyCommandHandler : IRequestHandler<UpdateJourneyCommand, Result<Unit>>
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IPlantProvider _plantProvider;
 
-        public UpdateJourneyCommandHandler(IJourneyRepository journeyRepository, IUnitOfWork unitOfWork, IPlantProvider plantProvider)
+        public UpdateJourneyCommandHandler(IJourneyRepository journeyRepository, IUnitOfWork unitOfWork)
         {
             _journeyRepository = journeyRepository;
             _unitOfWork = unitOfWork;
-            _plantProvider = plantProvider;
         }
 
-        public async Task<Result<int>> Handle(UpdateJourneyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(UpdateJourneyCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetJourneyByJourneyIdAsync(request.JourneyId);
 
-            journey.UpdateJourney(journey, request.Title);
+            journey.Title = request.Title;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<int>(journey.Id);
+            return new SuccessResult<Unit>(Unit.Value);
         }
     }
 }

@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
 {
-    public class UpdateJourneyCommand : IRequest<Result<int>>, IJourneyRequest
+    public class UpdateJourneyCommand : IRequest<Result<Unit>>, IJourneyRequest
     {
         public UpdateJourneyCommand(int journeyId, string title)
         {
