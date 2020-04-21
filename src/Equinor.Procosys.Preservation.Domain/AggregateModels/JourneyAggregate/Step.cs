@@ -82,5 +82,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
             ModifiedById = modifiedBy.Id;
         }
+        public void UpdateStep(Step step, string title)
+        {
+
+            if (string.IsNullOrEmpty(title))
+            {
+                throw new ArgumentNullException(nameof(title));
+            }
+
+            Title = title;
+        }
     }
 }
