@@ -45,7 +45,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
             return plantIds.Contains(plantId);
         }
 
-        // todo unit test
         public async Task<bool> IsValidPlantForCurrentUserAsync(string plantId)
         {
             var userOid = _currentUserProvider.TryGetCurrentUserOid();
