@@ -38,9 +38,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 throw new ArgumentNullException(nameof(request));
             }
 
+            if (!_currentUserProvider.IsCurrentUserAuthenticated())
+            {
+                return false;
+            }
+
+            var userOid = _currentUserProvider.GetCurrentUser();
             if (request is IProjectRequest projectRequest && !_projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
             {
-                _logger.LogWarning($"Current user {_currentUserProvider.TryGetCurrentUserOid()} don't have access to project {projectRequest.ProjectName}");
+                _logger.LogWarning($"Current user {userOid} don't have access to project {projectRequest.ProjectName}");
                 return false;
             }
 
@@ -51,13 +57,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
                 if (!accessToProject)
                 {
-                    _logger.LogWarning($"Current user {_currentUserProvider.TryGetCurrentUserOid()} don't have access to project {projectName}");
+                    _logger.LogWarning($"Current user {userOid} don't have access to project {projectName}");
                 }
 
                 var accessToContent = await HasCurrentUserAccessToContentAsync(tagCommandRequest);
                 if (!accessToContent)
                 {
-                    _logger.LogWarning($"Current user {_currentUserProvider.TryGetCurrentUserOid()} don't have access to content {tagCommandRequest.TagId}");
+                    _logger.LogWarning($"Current user {userOid} don't have access to content {tagCommandRequest.TagId}");
                 }
                 return accessToProject && accessToContent;
             }
@@ -67,7 +73,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 var projectName = await _tagHelper.GetProjectNameAsync(tagQueryRequest.TagId);
                 if (!_projectAccessChecker.HasCurrentUserAccessToProject(projectName))
                 {
-                    _logger.LogWarning($"Current user {_currentUserProvider.TryGetCurrentUserOid()} don't have access to project {projectName}");
+                    _logger.LogWarning($"Current user {userOid} don't have access to project {projectName}");
                     return false;
                 }
             }

@@ -1,39 +1,30 @@
-﻿using System.Linq;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Http;
+﻿using System;
+using System.Linq;
+using Equinor.Procosys.Preservation.Domain;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public class ContentRestrictionsChecker : IContentRestrictionsChecker
     {
-        private readonly IHttpContextAccessor _accessor;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public ContentRestrictionsChecker(IHttpContextAccessor accessor) => _accessor = accessor;
+        public ContentRestrictionsChecker(ICurrentUserProvider currentUserProvider) => _currentUserProvider = currentUserProvider;
 
         public bool HasCurrentUserAnyRestrictions()
         {
-            var authenticatedUser = GetAuthenticatedUser();
-            if (authenticatedUser != null)
-            {
-                var userDataClaimWithContentRestriction = authenticatedUser.Claims.GetContentRestrictionClaims();
-                return userDataClaimWithContentRestriction.Count > 1 && userDataClaimWithContentRestriction.First().Value !=
-                       ClaimsTransformation.NoRestrictions;
-            }
-
-            return false;
+            var userDataClaimWithContentRestriction = _currentUserProvider.CurrentUser.Claims.GetContentRestrictionClaims();
+            return userDataClaimWithContentRestriction.Count > 1 && userDataClaimWithContentRestriction.First().Value !=
+                   ClaimsTransformation.NoRestrictions;
         }
 
         public bool HasCurrentUserExplicitAccessToContent(string responsibleCode)
         {
-            var authenticatedUser = GetAuthenticatedUser();
+            if (string.IsNullOrEmpty(responsibleCode))
+            {
+                throw new ArgumentNullException(nameof(responsibleCode));
+            }
             
-            return authenticatedUser != null && authenticatedUser.Claims.HasContentRestrictionClaim(responsibleCode);
-        }
-
-        private ClaimsPrincipal GetAuthenticatedUser()
-        {
-            var user = _accessor.HttpContext.User;
-            return user.Identity.IsAuthenticated ? user : null;
+            return _currentUserProvider.CurrentUser.Claims.HasContentRestrictionClaim(responsibleCode);
         }
     }
 }

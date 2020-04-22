@@ -1,13 +1,13 @@
 ﻿using System;
-using Microsoft.AspNetCore.Http;
+using Equinor.Procosys.Preservation.Domain;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public class ProjectAccessChecker : IProjectAccessChecker
     {
-        private readonly IHttpContextAccessor _accessor;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public ProjectAccessChecker(IHttpContextAccessor accessor) => _accessor = accessor;
+        public ProjectAccessChecker(ICurrentUserProvider currentUserProvider) => _currentUserProvider = currentUserProvider;
 
         public bool HasCurrentUserAccessToProject(string projectName)
         {
@@ -15,10 +15,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             {
                 throw new ArgumentNullException(nameof(projectName));
             }
-
-            var user = _accessor.HttpContext.User;
             
-            return !user.Identity.IsAuthenticated || user.Claims.HasProjectClaim(projectName);
+            return _currentUserProvider.CurrentUser.Claims.HasProjectClaim(projectName);
         }
     }
 }

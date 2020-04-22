@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -88,6 +89,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
         {
             public Guid GetCurrentUser() => s_seederUser.Oid;
             public Guid? TryGetCurrentUserOid() => s_seederUser.Oid;
+            public bool IsCurrentUserAuthenticated() => false;
+            public ClaimsPrincipal CurrentUser => new ClaimsPrincipal();
         }
     }
 }
