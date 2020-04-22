@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
@@ -38,10 +39,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                 context.Response.ContentType = "application/text";
-                var response = new ValidationErrorResponse(ve.Errors.Count(), ve.Errors.Select(x => new ValidationError(x.PropertyName, x.ErrorMessage, x.AttemptedValue)));
+                var response = new ValidationErrorResponse(ve.Errors.Count(),
+                    ve.Errors.Select(x => new ValidationError(x.PropertyName, x.ErrorMessage, x.AttemptedValue)));
                 var json = JsonSerializer.Serialize(response);
                 _logger.LogInformation(json);
                 await context.Response.WriteAsync(json);
+            }
+            catch (ConcurrencyException)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Conflict;
+                context.Response.ContentType = "application/text";
+                const string message = "Data store operation failed. Data may have been modified or deleted since entities were loaded.";
+                _logger.LogDebug(message);
+                await context.Response.WriteAsync(message);
             }
             catch (Exception ex)
             {
