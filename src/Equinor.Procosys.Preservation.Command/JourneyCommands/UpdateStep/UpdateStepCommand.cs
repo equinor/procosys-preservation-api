@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 {
-    public class UpdateStepCommand : IRequest<Result<int>>, IStepRequest
+    public class UpdateStepCommand : IRequest<Result<Unit>>, IStepRequest
     {
         public UpdateStepCommand(int stepId, string title)
         {
@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             Title = title;
         }
         
-        public int StepId { get; set;}
+        public int StepId { get; set; }
         public string Title { get; set; }
     }
 }

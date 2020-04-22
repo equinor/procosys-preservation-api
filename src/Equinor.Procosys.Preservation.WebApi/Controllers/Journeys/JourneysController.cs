@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromRoute] int id,
             [FromBody] UpdateStepDto dto)
         {
-            var result = await _mediator.Send(new UpdateStepCommand(id, dto.Title));
+            var result = await _mediator.Send(new UpdateStepCommand(stepId:id, dto.Title));
             return this.FromResult(result);
         }
     }
