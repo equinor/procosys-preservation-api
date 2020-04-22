@@ -13,11 +13,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 
         public Guid GetCurrentUser()
         {
-            var guid = TryGetCurrentUserOid();
+            var userOid = TryGetCurrentUserOid();
 
-            if (guid.HasValue)
+            if (userOid.HasValue)
             {
-                return guid.Value;
+                return userOid.Value;
             }
             throw new Exception("Unable to determine current user");
         }

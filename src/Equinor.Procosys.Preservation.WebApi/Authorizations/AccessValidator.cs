@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (request is IProjectRequest projectRequest && ! _projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
+            if (request is IProjectRequest projectRequest && !_projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
             {
                 _logger.LogWarning($"Current user {_currentUserProvider.TryGetCurrentUserOid()} don't have access to project {projectRequest.ProjectName}");
                 return false;
@@ -48,12 +48,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             {
                 var projectName = await _tagHelper.GetProjectNameAsync(tagCommandRequest.TagId);
                 var accessToProject = _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
-                var accessToContent = await HasCurrentUserAccessToContentAsync(tagCommandRequest);
 
                 if (!accessToProject)
                 {
                     _logger.LogWarning($"Current user {_currentUserProvider.TryGetCurrentUserOid()} don't have access to project {projectName}");
                 }
+
+                var accessToContent = await HasCurrentUserAccessToContentAsync(tagCommandRequest);
                 if (!accessToContent)
                 {
                     _logger.LogWarning($"Current user {_currentUserProvider.TryGetCurrentUserOid()} don't have access to content {tagCommandRequest.TagId}");

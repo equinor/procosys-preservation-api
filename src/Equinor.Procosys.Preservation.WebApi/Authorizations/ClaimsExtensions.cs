@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
         public static Guid? TryGetOid(this IEnumerable<Claim> claims)
         {
-            var oidClaim = claims.FirstOrDefault(c => c.Type == OidType);
+            var oidClaim = claims.SingleOrDefault(c => c.Type == OidType);
             if (Guid.TryParse(oidClaim?.Value, out var oid))
             {
                 return oid;
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             return claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithContentRestriction);
         }
 
-        public static List<Claim> ContentRestrictionClaims(this IEnumerable<Claim> claims)
+        public static List<Claim> GetContentRestrictionClaims(this IEnumerable<Claim> claims)
             => claims.Where(c =>
                     c.Type == ClaimTypes.UserData &&
                     c.Value.StartsWith(ClaimsTransformation.ContentRestrictionPrefix))

@@ -51,15 +51,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
             if (principal.Claims.All(c => c.Type != ClaimTypes.Role))
             {
-                await AddRoleForAllPermissionsAsync(principal, plantId, userOid.Value);
-                await AddUserDataClaimForAllProjects(principal, plantId, userOid.Value);
-                await AddUserDataClaimForAllContentRestrictionsAsync(principal, plantId, userOid.Value);
+                await AddRoleForAllPermissionsToPrincipalAsync(principal, plantId, userOid.Value);
+                await AddUserDataClaimForAllProjectsToPrincipalAsync(principal, plantId, userOid.Value);
+                await AddUserDataClaimForAllContentRestrictionsToPrincipalAsync(principal, plantId, userOid.Value);
             }
 
             return principal;
         }
 
-        private async Task AddUserDataClaimForAllProjects(ClaimsPrincipal principal, string plantId, Guid userOid)
+        private async Task AddUserDataClaimForAllProjectsToPrincipalAsync(ClaimsPrincipal principal, string plantId, Guid userOid)
         {
             var projectNames = await _permissionCache.GetProjectNamesForUserOidAsync(plantId, userOid);
             var claimsIdentity = new ClaimsIdentity();
@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             principal.AddIdentity(claimsIdentity);
         }
 
-        private async Task AddRoleForAllPermissionsAsync(ClaimsPrincipal principal, string plantId, Guid userOid)
+        private async Task AddRoleForAllPermissionsToPrincipalAsync(ClaimsPrincipal principal, string plantId, Guid userOid)
         {
             var permissions = await _permissionCache.GetPermissionsForUserAsync(plantId, userOid);
             var claimsIdentity = new ClaimsIdentity();
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             principal.AddIdentity(claimsIdentity);
         }
 
-        private async Task AddUserDataClaimForAllContentRestrictionsAsync(ClaimsPrincipal principal, string plantId, Guid userOid)
+        private async Task AddUserDataClaimForAllContentRestrictionsToPrincipalAsync(ClaimsPrincipal principal, string plantId, Guid userOid)
         {
             var contentRestrictions = await _permissionCache.GetContentRestrictionsForUserOidAsync(plantId, userOid);
             var claimsIdentity = new ClaimsIdentity();

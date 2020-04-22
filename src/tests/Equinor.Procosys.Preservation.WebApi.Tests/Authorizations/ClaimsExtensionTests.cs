@@ -105,7 +105,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             };
             
             // Act
-            var contentRestrictionClaims = claims.ContentRestrictionClaims();
+            var contentRestrictionClaims = claims.GetContentRestrictionClaims();
 
             // Assert
             Assert.AreEqual(1, contentRestrictionClaims.Count);

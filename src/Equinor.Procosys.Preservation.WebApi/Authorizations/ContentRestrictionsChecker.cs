@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             var authenticatedUser = GetAuthenticatedUser();
             if (authenticatedUser != null)
             {
-                var userDataClaimWithContentRestriction = authenticatedUser.Claims.ContentRestrictionClaims();
+                var userDataClaimWithContentRestriction = authenticatedUser.Claims.GetContentRestrictionClaims();
                 return userDataClaimWithContentRestriction.Count > 1 && userDataClaimWithContentRestriction.First().Value !=
                        ClaimsTransformation.NoRestrictions;
             }
