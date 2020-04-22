@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             var result = await _mediator.Send(new CreateStepCommand(id, dto.Title, dto.ModeId, dto.ResponsibleId));
             return this.FromResult(result);
         }
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}/UpdateStep")]
         public async Task<ActionResult> UpdateStep(
             [FromHeader( Name = PlantProvider.PlantHeader)]
