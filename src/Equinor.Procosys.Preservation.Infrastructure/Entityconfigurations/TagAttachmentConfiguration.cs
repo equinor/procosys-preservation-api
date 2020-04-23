@@ -1,13 +1,13 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.AttachmentAggregate;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
-    internal class AttachmentConfiguration : IEntityTypeConfiguration<Attachment>
+    internal class TagAttachmentConfiguration : IEntityTypeConfiguration<TagAttachment>
     {
-        public void Configure(EntityTypeBuilder<Attachment> builder)
+        public void Configure(EntityTypeBuilder<TagAttachment> builder)
         {
             builder.ConfigurePlant();
             builder.ConfigureCreationAudit();
@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureConcurrencyToken();
 
             builder.Property(x => x.Title)
-                .HasMaxLength(Attachment.TitleLengthMax)
+                .HasMaxLength(AttachmentBase.TitleLengthMax)
                 .IsRequired();
         }
     }

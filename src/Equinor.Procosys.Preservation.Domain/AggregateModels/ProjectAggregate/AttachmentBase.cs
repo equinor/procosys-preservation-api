@@ -2,18 +2,18 @@
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.AttachmentAggregate
+namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Attachment : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public abstract class AttachmentBase : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         public const int TitleLengthMax = 255;
 
-        protected Attachment()
+        protected AttachmentBase()
             : base(null)
         {
         }
 
-        public Attachment(string plant, string title, Guid blobStorageId)
+        protected AttachmentBase(string plant, string title, Guid blobStorageId)
             : base(plant)
         {
             Title = title;

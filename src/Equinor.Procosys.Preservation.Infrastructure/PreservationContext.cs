@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public virtual DbSet<Action> Actions { get; set; }
         public virtual DbSet<TagFunction> TagFunctions { get; set; }
         public virtual DbSet<TagFunctionRequirement> TagFunctionRequirements { get; set; }
-        public virtual DbSet<Attachment> Attachments { get; set; }
+        public virtual DbSet<TagAttachment> TagAttachments { get; set; }
 
         private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
         {
