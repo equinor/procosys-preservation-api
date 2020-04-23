@@ -12,6 +12,5 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
         }
         public int JourneyId { get; set;}
         public string Title { get; set; }
-
     }
 }
