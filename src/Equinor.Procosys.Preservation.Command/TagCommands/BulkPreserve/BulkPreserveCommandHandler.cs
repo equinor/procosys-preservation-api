@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
         public async Task<Result<Unit>> Handle(BulkPreserveCommand request, CancellationToken cancellationToken)
         {
             var tags = await _projectRepository.GetTagsByTagIdsAsync(request.TagIds);
-            var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUser());
+            var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
 
             foreach (var tag in tags)
             {

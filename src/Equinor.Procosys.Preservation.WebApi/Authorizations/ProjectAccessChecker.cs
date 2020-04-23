@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             }
             
             var userDataClaimWithProject = ClaimsTransformation.GetProjectClaimValue(projectName);
-            return _currentUserProvider.CurrentUser().Claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithProject);
+            return _currentUserProvider.GetCurrentUser().Claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithProject);
         }
     }
 }

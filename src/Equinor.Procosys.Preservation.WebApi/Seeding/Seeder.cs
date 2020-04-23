@@ -87,10 +87,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
 
         private class SeederUserProvider : ICurrentUserProvider
         {
-            public Guid GetCurrentUser() => s_seederUser.Oid;
+            public Guid GetCurrentUserOid() => s_seederUser.Oid;
             public Guid? TryGetCurrentUserOid() => s_seederUser.Oid;
             public bool IsCurrentUserAuthenticated() => false;
-            public ClaimsPrincipal CurrentUser() => new ClaimsPrincipal();
+            public ClaimsPrincipal GetCurrentUser() => new ClaimsPrincipal();
         }
     }
 }

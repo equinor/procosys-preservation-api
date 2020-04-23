@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _plantProvider = _plantProviderMock.Object;
 
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(x => x.GetCurrentUser()).Returns(_currentUserOid);
+            currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(_currentUserOid);
             _currentUserProvider = currentUserProviderMock.Object;
 
             var eventDispatcher = new Mock<IEventDispatcher>();

@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 return false;
             }
 
-            var userOid = _currentUserProvider.GetCurrentUser();
+            var userOid = _currentUserProvider.GetCurrentUserOid();
             if (request is IProjectRequest projectRequest && !_projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
             {
                 _logger.LogWarning($"Current user {userOid} don't have access to project {projectRequest.ProjectName}");

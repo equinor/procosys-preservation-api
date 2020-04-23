@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _claimsIdentity = new ClaimsIdentity();
             principal.AddIdentity(_claimsIdentity);
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(u => u.CurrentUser()).Returns(principal);
+            currentUserProviderMock.Setup(u => u.GetCurrentUser()).Returns(principal);
             
             _dut = new ContentRestrictionsChecker(currentUserProviderMock.Object);
         }

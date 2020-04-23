@@ -111,7 +111,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
             if (addedEntries.Any() || modifiedEntries.Any())
             {
-                var currentUserOid = _currentUserProvider.GetCurrentUser();
+                var currentUserOid = _currentUserProvider.GetCurrentUserOid();
                 var currentUser = await Persons.SingleOrDefaultAsync(p => p.Oid == currentUserOid);
 
                 foreach (var entry in addedEntries)

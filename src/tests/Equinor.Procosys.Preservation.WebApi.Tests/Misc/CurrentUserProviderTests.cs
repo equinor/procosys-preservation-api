@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         [TestMethod]
         public void GetCurrentUserOid_ReturnsOid_WhenOidExists()
         {
-            var oid = _dut.GetCurrentUser();
+            var oid = _dut.GetCurrentUserOid();
 
             Assert.AreEqual(_okOid, oid);
         }
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
                 .Setup(x => x.HttpContext.User.Claims)
                 .Returns(new List<Claim> { new Claim(OidKey, illegalOid) });
 
-            Assert.ThrowsException<Exception>(() => _dut.GetCurrentUser());
+            Assert.ThrowsException<Exception>(() => _dut.GetCurrentUserOid());
         }
 
         [TestMethod]
