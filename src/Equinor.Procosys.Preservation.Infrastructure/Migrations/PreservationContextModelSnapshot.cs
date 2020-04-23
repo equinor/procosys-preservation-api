@@ -1061,7 +1061,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<string>("BlobId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasDiscriminator().HasValue("Attachment");
+                    b.HasDiscriminator().HasValue("AttachmentValue");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.CheckBoxChecked", b =>
