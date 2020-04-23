@@ -10,7 +10,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         public void Constructor_ShouldSetProperties()
         {
             var dut = new UpdateJourneyCommand(1, "TitleA");
-
             Assert.AreEqual(1, dut.JourneyId);
             Assert.AreEqual("TitleA", dut.Title);
         }

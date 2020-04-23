@@ -20,8 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         public void Setup_OkState()
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_id,_title, default)).Returns(Task.FromResult(false));
-            _command = new UpdateJourneyCommand(_id,_title);
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_id, _title, default)).Returns(Task.FromResult(false));
+            _command = new UpdateJourneyCommand(_id, _title);
 
             _dut = new UpdateJourneyCommandValidator(_journeyValidatorMock.Object);
         }
@@ -35,10 +35,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         }
 
         [TestMethod]
+        public void Validate_ShouldFail_WhenJourneyNotExists()
+        {
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey doesn't exists!"));
+        }
+
+        [TestMethod]
         public void Validate_ShouldFail_WhenAnotherJourneyWithSameTitleAlreadyExists()
         {
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_id,_title, default)).Returns(Task.FromResult(true));
-            
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_id, _title, default)).Returns(Task.FromResult(true));
+
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
