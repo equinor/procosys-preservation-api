@@ -7,13 +7,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
     // I.e:
     //      If table row exists -> end user has uploaded an attachment for particular field and saved
     //      If end user delete that attachment for particular field, and save, table row will be deleted
-    public class Attachment : FieldValue
+    public class AttachmentValue : FieldValue
     {
-        protected Attachment()
+        protected AttachmentValue()
         {
         }
 
-        public Attachment(string plant, Field field, string blobId)
+        public AttachmentValue(string plant, Field field, string blobId)
             : base(plant, field) => BlobId = blobId;
 
         public string BlobId { get; private set; }

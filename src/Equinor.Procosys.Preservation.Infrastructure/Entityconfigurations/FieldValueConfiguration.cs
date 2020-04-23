@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasDiscriminator<string>("FieldType")
                 .HasValue<CheckBoxChecked>("CheckBoxChecked")
-                .HasValue<Attachment>("Attachment")
+                .HasValue<AttachmentValue>("Attachment")
                 .HasValue<NumberValue>("NumberValue");
         }
     }
