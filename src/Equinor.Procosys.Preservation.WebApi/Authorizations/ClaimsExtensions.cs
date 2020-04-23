@@ -19,23 +19,5 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
             return null;
         }
-
-        public static bool HasProjectClaim(this IEnumerable<Claim> claims, string projectName)
-        {
-            var userDataClaimWithProject = ClaimsTransformation.GetProjectClaimValue(projectName);
-            return claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithProject);
-        }
-
-        public static bool HasContentRestrictionClaim(this IEnumerable<Claim> claims, string responsibleCode)
-        {
-            var userDataClaimWithContentRestriction = ClaimsTransformation.GetContentRestrictionClaimValue(responsibleCode);
-            return claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithContentRestriction);
-        }
-
-        public static List<Claim> GetContentRestrictionClaims(this IEnumerable<Claim> claims)
-            => claims.Where(c =>
-                    c.Type == ClaimTypes.UserData &&
-                    c.Value.StartsWith(ClaimsTransformation.ContentRestrictionPrefix))
-                .ToList();
     }
 }

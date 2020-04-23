@@ -2,7 +2,7 @@
 {
     public interface IContentRestrictionsChecker
     {
-        bool HasCurrentUserAnyRestrictions();
+        bool HasCurrentUserExplicitNoRestrictions();
         bool HasCurrentUserExplicitAccessToContent(string responsibleCode);
     }
 }

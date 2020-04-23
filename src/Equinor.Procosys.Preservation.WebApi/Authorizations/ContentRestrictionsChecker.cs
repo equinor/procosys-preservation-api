@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Equinor.Procosys.Preservation.Domain;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations
@@ -10,11 +12,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
         public ContentRestrictionsChecker(ICurrentUserProvider currentUserProvider) => _currentUserProvider = currentUserProvider;
 
-        public bool HasCurrentUserAnyRestrictions()
+        public bool HasCurrentUserExplicitNoRestrictions()
         {
-            var userDataClaimWithContentRestriction = _currentUserProvider.CurrentUser.Claims.GetContentRestrictionClaims();
-            return userDataClaimWithContentRestriction.Count > 1 &&
-                   userDataClaimWithContentRestriction.First().Value != ClaimsTransformation.NoRestrictions;
+            var claimWithContentRestriction = GetContentRestrictionClaims(_currentUserProvider.CurrentUser().Claims);
+
+            // the rule for saying that a user do not have any restriction, is that user has one and only one restriction with value %
+            return claimWithContentRestriction.Count == 1 && HasContentRestrictionClaim(claimWithContentRestriction, ClaimsTransformation.NoRestrictions);
         }
 
         public bool HasCurrentUserExplicitAccessToContent(string responsibleCode)
@@ -24,7 +27,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 throw new ArgumentNullException(nameof(responsibleCode));
             }
             
-            return _currentUserProvider.CurrentUser.Claims.HasContentRestrictionClaim(responsibleCode);
+            var claimWithContentRestriction = GetContentRestrictionClaims(_currentUserProvider.CurrentUser().Claims);
+            return HasContentRestrictionClaim(claimWithContentRestriction, responsibleCode);
         }
+
+        private bool HasContentRestrictionClaim(IEnumerable<Claim> claims, string responsibleCode)
+        {
+            var contentRestrictionClaimValue = ClaimsTransformation.GetContentRestrictionClaimValue(responsibleCode);
+            return claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == contentRestrictionClaimValue);
+        }
+
+        private List<Claim> GetContentRestrictionClaims(IEnumerable<Claim> claims)
+            => claims.Where(c =>
+                    c.Type == ClaimTypes.UserData &&
+                    c.Value.StartsWith(ClaimsTransformation.ContentRestrictionPrefix))
+                .ToList();
     }
 }

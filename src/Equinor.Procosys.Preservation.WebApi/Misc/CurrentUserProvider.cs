@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 
         public CurrentUserProvider(IHttpContextAccessor accessor) => _accessor = accessor;
 
-        public ClaimsPrincipal CurrentUser => _accessor.HttpContext.User;
+        public ClaimsPrincipal CurrentUser() => _accessor.HttpContext.User;
 
         public Guid GetCurrentUser() // will be renamed to GetCurrentUserOid
         {
@@ -25,8 +25,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
             throw new Exception("Unable to determine current user");
         }
 
-        public Guid? TryGetCurrentUserOid() => CurrentUser.Claims.TryGetOid();
+        public Guid? TryGetCurrentUserOid() => CurrentUser().Claims.TryGetOid();
 
-        public bool IsCurrentUserAuthenticated() => CurrentUser.Identity.IsAuthenticated;
+        public bool IsCurrentUserAuthenticated() => CurrentUser().Identity.IsAuthenticated;
     }
 }

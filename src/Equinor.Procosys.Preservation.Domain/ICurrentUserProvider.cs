@@ -8,6 +8,6 @@ namespace Equinor.Procosys.Preservation.Domain
         Guid GetCurrentUser(); // todo rename to GetCurrentUserOid
         Guid? TryGetCurrentUserOid();
         bool IsCurrentUserAuthenticated();
-        ClaimsPrincipal CurrentUser { get; }
+        ClaimsPrincipal CurrentUser(); // todo rename to GetCurrentUser
     }
 }

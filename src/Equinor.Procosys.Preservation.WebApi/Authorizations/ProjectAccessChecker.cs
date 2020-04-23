@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Security.Claims;
 using Equinor.Procosys.Preservation.Domain;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations
@@ -16,7 +18,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 throw new ArgumentNullException(nameof(projectName));
             }
             
-            return _currentUserProvider.CurrentUser.Claims.HasProjectClaim(projectName);
+            var userDataClaimWithProject = ClaimsTransformation.GetProjectClaimValue(projectName);
+            return _currentUserProvider.CurrentUser().Claims.Any(c => c.Type == ClaimTypes.UserData && c.Value == userDataClaimWithProject);
         }
     }
 }
