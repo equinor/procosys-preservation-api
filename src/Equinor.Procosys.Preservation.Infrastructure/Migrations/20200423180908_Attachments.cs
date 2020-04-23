@@ -32,14 +32,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         name: "FK_Attachment_Actions_ActionId",
                         column: x => x.ActionId,
                         principalTable: "Actions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Attachment_Tags_TagId",
                         column: x => x.TagId,
                         principalTable: "Tags",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Attachment_Persons_CreatedById",
                         column: x => x.CreatedById,
