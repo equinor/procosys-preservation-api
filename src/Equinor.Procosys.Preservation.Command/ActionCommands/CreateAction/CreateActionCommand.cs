@@ -1,11 +1,10 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction
 {
-    public class CreateActionCommand : IRequest<Result<int>>, ITagRequest
+    public class CreateActionCommand : IRequest<Result<int>>, ITagCommandRequest
     {
         public CreateActionCommand(int tagId, string title, string description, DateTime? dueTimeUtc)
         {

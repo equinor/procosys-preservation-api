@@ -1,10 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using MediatR;
+﻿using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
 {
-    public class GetActionDetailsQuery : IRequest<Result<ActionDetailsDto>>, ITagRequest
+    public class GetActionDetailsQuery : IRequest<Result<ActionDetailsDto>>, ITagQueryRequest
     {
         public GetActionDetailsQuery(int tagId, int actionId)
         {

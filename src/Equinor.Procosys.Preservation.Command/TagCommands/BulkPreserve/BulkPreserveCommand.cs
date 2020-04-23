@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
 {
-    public class BulkPreserveCommand : IRequest<Result<Unit>>, ITagRequest
+    public class BulkPreserveCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public BulkPreserveCommand(IEnumerable<int> tagIds) => TagIds = tagIds ?? new List<int>();
 

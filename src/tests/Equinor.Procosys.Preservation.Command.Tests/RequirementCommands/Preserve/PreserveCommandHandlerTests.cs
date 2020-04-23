@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             });
             _currentUserProvider = new Mock<ICurrentUserProvider>();
             _currentUserProvider
-                .Setup(x => x.GetCurrentUser())
+                .Setup(x => x.GetCurrentUserOid())
                 .Returns(_currentUserOid);
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tag));

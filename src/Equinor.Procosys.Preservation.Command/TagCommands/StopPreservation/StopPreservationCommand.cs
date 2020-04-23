@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
 {
-    public class StopPreservationCommand : IRequest<Result<Unit>>, ITagRequest
+    public class StopPreservationCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public StopPreservationCommand(IEnumerable<int> tagIds)
             => TagIds = tagIds ?? new List<int>();

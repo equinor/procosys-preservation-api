@@ -14,18 +14,18 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
         private readonly IBearerTokenApiClient _mainApiClient;
-        private readonly IPlantApiService _plantApiService;
+        private readonly IPlantCache _plantCache;
         private readonly ILogger<MainApiTagService> _logger;
         private readonly int _tagSearchPageSize;
 
         public MainApiTagService(
             IBearerTokenApiClient mainApiClient,
-            IPlantApiService plantApiService,
+            IPlantCache plantCache,
             IOptionsMonitor<MainApiOptions> options,
             ILogger<MainApiTagService> logger)
         {
             _mainApiClient = mainApiClient;
-            _plantApiService = plantApiService;
+            _plantCache = plantCache;
             _logger = logger;
             _apiVersion = options.CurrentValue.ApiVersion;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                 throw new ArgumentNullException(nameof(tagNos));
 
             }
-            if (!await _plantApiService.IsPlantValidAsync(plant))
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
             {
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
         public async Task<IList<ProcosysTagOverview>> SearchTagsByTagNoAsync(string plant, string projectName, string startsWithTagNo)
         {
-            if (!await _plantApiService.IsPlantValidAsync(plant))
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
             {
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
@@ -103,7 +103,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
         public async Task<IList<ProcosysTagOverview>> SearchTagsByTagFunctionsAsync(string plant, string projectName, IList<string> tagFunctionCodeRegisterCodePairs)
         {
-            if (!await _plantApiService.IsPlantValidAsync(plant))
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
             {
                 throw new ArgumentException($"Invalid plant: {plant}");
             }

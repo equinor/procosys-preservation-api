@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -16,7 +14,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
-        private Mock<IPlantApiService> _plantApiService;
+        private Mock<IPlantCache> _plantCache;
         private ProcosysProject _result;
         private string _name = "NameA";
         private string _description = "Description1";
@@ -30,13 +28,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
                 .Setup(x => x.CurrentValue)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
-            _plantApiService = new Mock<IPlantApiService>();
-            _plantApiService
-                .Setup(x => x.IsPlantValidAsync(_plant))
+            _plantCache = new Mock<IPlantCache>();
+            _plantCache
+                .Setup(x => x.IsValidPlantForCurrentUserAsync(_plant))
                 .Returns(Task.FromResult(true));
 
             _result = new ProcosysProject {Id = 1, Name = _name, Description = _description};
-            _dut = new MainApiProjectService(_mainApiClient.Object, _plantApiService.Object, _mainApiOptions.Object);
+            _dut = new MainApiProjectService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
         }
 
         [TestMethod]
@@ -54,29 +52,5 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
             Assert.AreEqual(_name, result.Name);
             Assert.AreEqual(_description, result.Description);
         }
-
-        [TestMethod]
-        public async Task GetProjects_ReturnsProjects()
-        {
-            // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysProject>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(new List<ProcosysProject>{_result}));
-
-            // Act
-            var result = await _dut.GetProjectsAsync(_plant);
-
-            // Assert
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(_description, result[0].Description);
-        }
-
-        [TestMethod]
-        public async Task GetProject_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetProjectAsync("INVALIDPLANT", ""));
-
-        [TestMethod]
-        public async Task GetProjects_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetProjectsAsync("INVALIDPLANT"));
     }
 }
