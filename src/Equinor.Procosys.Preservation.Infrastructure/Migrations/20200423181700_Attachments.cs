@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Attachment",
+                name: "Attachments",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -27,44 +27,44 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Attachment", x => x.Id);
+                    table.PrimaryKey("PK_Attachments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Attachment_Actions_ActionId",
+                        name: "FK_Attachments_Actions_ActionId",
                         column: x => x.ActionId,
                         principalTable: "Actions",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Attachment_Tags_TagId",
+                        name: "FK_Attachments_Tags_TagId",
                         column: x => x.TagId,
                         principalTable: "Tags",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Attachment_Persons_CreatedById",
+                        name: "FK_Attachments_Persons_CreatedById",
                         column: x => x.CreatedById,
                         principalTable: "Persons",
                         principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Attachment_ActionId",
-                table: "Attachment",
+                name: "IX_Attachments_ActionId",
+                table: "Attachments",
                 column: "ActionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Attachment_TagId",
-                table: "Attachment",
+                name: "IX_Attachments_TagId",
+                table: "Attachments",
                 column: "TagId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Attachment_CreatedById",
-                table: "Attachment",
+                name: "IX_Attachments_CreatedById",
+                table: "Attachments",
                 column: "CreatedById");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Attachment");
+                name: "Attachments");
         }
     }
 }

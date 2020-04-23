@@ -1049,7 +1049,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Attachment");
+                    b.ToTable("Attachments");
 
                     b.HasDiscriminator<string>("AttachmentType").HasValue("Attachment");
                 });

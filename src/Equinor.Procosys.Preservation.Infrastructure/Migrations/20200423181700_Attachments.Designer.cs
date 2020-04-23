@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    [Migration("20200423180908_Attachments")]
+    [Migration("20200423181700_Attachments")]
     partial class Attachments
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1051,7 +1051,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.ToTable("Attachment");
+                    b.ToTable("Attachments");
 
                     b.HasDiscriminator<string>("AttachmentType").HasValue("Attachment");
                 });
