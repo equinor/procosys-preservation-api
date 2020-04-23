@@ -2,13 +2,13 @@
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class TagAttachment : AttachmentBase
+    public class ActionAttachment : AttachmentBase
     {
-        protected TagAttachment() : base()
+        protected ActionAttachment() : base()
         {
         }
 
-        public TagAttachment(string plant, string title, Guid blobStorageId)
+        public ActionAttachment(string plant, string title, Guid blobStorageId)
             : base(plant, title, blobStorageId)
         {
         }
