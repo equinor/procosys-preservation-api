@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -13,26 +12,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     public class JourneyValidatorTests : ReadOnlyTestsBase
     {
         private const string JourneyTitle = "Journey";
-        private const string JourneyTitle1 = "Journey1";
         private const string JourneyTitle2 = "Journey2";
 
         private int _journeyId;
-        private int _journeyId1;
         private int _journeyId2;
-
-        //private Journey _journey1;
-        //private Journey _journey2;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _journeyId = AddJourneyWithStep(context, JourneyTitle, "S", AddMode(context, "M"), AddResponsible(context, "R")).Id;
-
-                _journeyId1 = AddJourneyWithStep(context, JourneyTitle1, "S", AddMode(context, "M1"), AddResponsible(context, "R1")).Id;
-                //_journeyId1 = _journey1.Id;
                 _journeyId2 = AddJourneyWithStep(context, JourneyTitle2, "S", AddMode(context, "M2"), AddResponsible(context, "R2")).Id;
-                //_journeyId2 = _journey2.Id;
             }
         }
 
@@ -86,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsAsync(_journeyId, JourneyTitle1, default);
+                var result = await dut.ExistsAsync(_journeyId, JourneyTitle2, default);
                 Assert.IsTrue(result);
             }
         }

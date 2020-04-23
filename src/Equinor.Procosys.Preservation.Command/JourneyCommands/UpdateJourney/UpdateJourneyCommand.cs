@@ -1,5 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using MediatR;
+﻿using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
