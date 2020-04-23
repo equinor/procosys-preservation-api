@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
 
             async Task<bool> TagTypeCanBeTransferredAsync(int tagId, CancellationToken token)
-                => await tagValidator.TagTypeCanBeTransferredAsync(tagId, token);
+                => await tagValidator.TagFollowsAJourneyAsync(tagId, token);
             
             async Task<bool> HaveNextStepAsync(int tagId, CancellationToken token)
                 => await tagValidator.HaveNextStepAsync(tagId, token);

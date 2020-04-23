@@ -8,7 +8,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
-using TagRequirement = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Requirement;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateAction
 {

@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public virtual DbSet<RequirementType> RequirementTypes { get; set; }
         public virtual DbSet<RequirementDefinition> RequirementDefinitions { get; set; }
         public virtual DbSet<Field> Fields { get; set; }
-        public virtual DbSet<Requirement> Requirements { get; set; }
+        public virtual DbSet<TagRequirement> TagRequirements { get; set; }
         public virtual DbSet<Person> Persons { get; set; }
         public virtual DbSet<PreservationRecord> PreservationRecords { get; set; }
         public virtual DbSet<PreservationPeriod> PreservationPeriods { get; set; }
