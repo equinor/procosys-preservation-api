@@ -2,18 +2,18 @@
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
+namespace Equinor.Procosys.Preservation.Domain
 {
-    public abstract class AttachmentBase : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public abstract class AttachmentEntityBase : PlantEntityBase, ICreationAuditable
     {
         public const int TitleLengthMax = 255;
 
-        protected AttachmentBase()
+        protected AttachmentEntityBase()
             : base(null)
         {
         }
 
-        protected AttachmentBase(string plant, string title, Guid blobStorageId)
+        protected AttachmentEntityBase(string plant, string title, Guid blobStorageId)
             : base(plant)
         {
             Title = title;
@@ -24,8 +24,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public Guid BlobStorageId { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
-        public DateTime? ModifiedAtUtc { get; private set; }
-        public int? ModifiedById { get; private set; }
 
         public void SetCreated(Person createdBy)
         {
@@ -35,16 +33,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(createdBy));
             }
             CreatedById = createdBy.Id;
-        }
-
-        public void SetModified(Person modifiedBy)
-        {
-            ModifiedAtUtc = TimeService.UtcNow;
-            if (modifiedBy == null)
-            {
-                throw new ArgumentNullException(nameof(modifiedBy));
-            }
-            ModifiedById = modifiedBy.Id;
         }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class TagAttachment : AttachmentBase
+    public class TagAttachment : AttachmentEntityBase
     {
         protected TagAttachment() : base()
         {
