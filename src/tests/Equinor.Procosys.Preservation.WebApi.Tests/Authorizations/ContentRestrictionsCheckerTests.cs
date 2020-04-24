@@ -103,5 +103,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Assert
             Assert.IsFalse(result);
         }
+
+        [TestMethod]
+        public void HasCurrentUserExplicitAccessToContent_ShouldReturnFalse_WhenRestrictionToCheckNotGiven()
+        {
+            _claimsIdentity.AddClaim(_normalContentRestrictionClaim);
+
+            // Act
+            var result1 = _dut.HasCurrentUserExplicitAccessToContent(null);
+            var result2 = _dut.HasCurrentUserExplicitAccessToContent("");
+
+            // Assert
+            Assert.IsFalse(result1);
+            Assert.IsFalse(result2);
+        }
     }
 }
