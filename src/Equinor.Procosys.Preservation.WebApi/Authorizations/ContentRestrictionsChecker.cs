@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
         {
             if (string.IsNullOrEmpty(responsibleCode))
             {
-                throw new ArgumentNullException(nameof(responsibleCode));
+                return false;
             }
             
             var claimWithContentRestriction = GetContentRestrictionClaims(_currentUserProvider.GetCurrentUser().Claims);

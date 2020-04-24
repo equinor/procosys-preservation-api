@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
         {
             if (string.IsNullOrEmpty(projectName))
             {
-                throw new ArgumentNullException(nameof(projectName));
+                return false;
             }
             
             var userDataClaimWithProject = ClaimsTransformation.GetProjectClaimValue(projectName);
