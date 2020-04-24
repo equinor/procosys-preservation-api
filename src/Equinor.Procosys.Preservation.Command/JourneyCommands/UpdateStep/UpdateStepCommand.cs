@@ -11,7 +11,6 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             StepId = stepId;
             Title = title;
         }
-        
         public int StepId { get; set; }
         public string Title { get; set; }
     }

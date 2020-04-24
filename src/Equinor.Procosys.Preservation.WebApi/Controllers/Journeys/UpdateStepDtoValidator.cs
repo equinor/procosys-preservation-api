@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         public UpdateStepDtoValidator()
             => RuleFor(x => x.Title)
                 .NotNull()
-                .MinimumLength(Journey.TitleLengthMin)
-                .MaximumLength(Journey.TitleLengthMax);
+                .MinimumLength(Step.TitleLengthMin)
+                .MaximumLength(Step.TitleLengthMax);
     }
 }

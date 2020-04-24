@@ -20,8 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 
         public async Task<Result<Unit>> Handle(UpdateStepCommand request, CancellationToken cancellationToken)
         {
-            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
-            
+            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId); 
+
             step.Title = request.Title;
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -13,16 +13,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         private Mock<IStepValidator> _stepValidatorMock;
         private UpdateStepCommand _command;
 
-        private int _id = 1;
+        private int _stepId = 1;
         private string _title = "Title";
 
         [TestInitialize]
         public void Setup_OkState()
         {
             _stepValidatorMock = new Mock<IStepValidator>();
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(false));
-
-            _command = new UpdateStepCommand(stepId:_id, _title);
+            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
+            _command = new UpdateStepCommand(stepId:_stepId, _title);
 
             _dut = new UpdateStepCommandValidator(_stepValidatorMock.Object);
         }
@@ -38,25 +37,28 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenStepNotExists()
         {
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
+            // Arrange
+            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(false));
 
+            // Act
             var result = _dut.Validate(_command);
 
+            // Arrange
             Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exists!"));
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnotherStepWithSameTitleAlreadyExists()
+        public void Validate_ShouldFail_WhenSameTitleInJourneyExists()
         {
-            _stepValidatorMock.Setup(r => r.ExistsInJourneyAsync(_id, _title, default)).Returns(Task.FromResult(true));
+            // Arrange
+            _stepValidatorMock.Setup(s => s.ExistsInJourneyAsync(_stepId, _title, default))
+                .Returns(Task.FromResult(true));
 
+            // Act
             var result = _dut.Validate(_command);
 
+            // Arrange
             Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Another step with title already exists in journey!"));
         }
     }
 }

@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 }
             }
 
-            SetupNewDatabase(_dbContextOptions);
+            //SetupNewDatabase(_dbContextOptions);
         }
 
         protected abstract void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions);

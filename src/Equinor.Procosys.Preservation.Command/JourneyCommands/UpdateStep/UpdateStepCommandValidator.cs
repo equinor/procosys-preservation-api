@@ -10,16 +10,18 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
         public UpdateStepCommandValidator(
             IStepValidator stepValidator)
         {
+            CascadeMode = CascadeMode.StopOnFirstFailure;
+
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step doesn't exists! Step={command.StepId}")
                 .MustAsync((command, token) => HaveUniqueStepTitleInJourneyAsync(command.StepId, command.Title, token))
-                .WithMessage(command => $"Another step with title already exists in journey! Step={command.Title}");
-            
+                .WithMessage(command => $"Another step with title already exists in a journey! Step={command.Title}");
+
             async Task<bool> BeAnExistingStepAsync(int stepId, CancellationToken token)
-                => !await stepValidator.ExistsAsync(stepId, token);
-            async Task<bool> HaveUniqueStepTitleInJourneyAsync(int stepId, string stepTitle, CancellationToken token)
-                => !await stepValidator.ExistsInJourneyAsync(stepId, stepTitle, token);
+                => await stepValidator.ExistsAsync(stepId, token);
+            async Task<bool> HaveUniqueStepTitleInJourneyAsync(int stepId, string stepTitle, CancellationToken token) =>
+                !await stepValidator.ExistsInJourneyAsync(stepId, stepTitle, token);
         }
     }
 }

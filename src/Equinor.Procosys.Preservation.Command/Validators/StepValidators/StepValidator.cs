@@ -23,7 +23,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 join j in _context.QuerySet<Journey>() on EF.Property<int>(s, "JourneyId") equals j.Id
                 where s.Title == stepTitle && j.Id == journeyId
                 select s).AnyAsync(token); 
-        
+
+        public async Task<bool> ExistsWithSameTitleInJourneyAsync(int journeyId, string stepTitle, CancellationToken token)
+            => await (from s in _context.QuerySet<Step>()
+                join j in _context.QuerySet<Journey>() on EF.Property<int>(s, "JourneyId") equals journeyId
+                where s.Title == stepTitle
+                select s).AnyAsync(token);
+
         public async Task<bool> ExistsInJourneyAsync(int stepId, string stepTitle, CancellationToken token)
             => await (from s in _context.QuerySet<Step>()
                 join j in _context.QuerySet<Journey>() on EF.Property<int>(s, "JourneyId") equals j.Id

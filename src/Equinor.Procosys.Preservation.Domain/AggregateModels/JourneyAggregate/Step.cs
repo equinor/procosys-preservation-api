@@ -62,12 +62,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         } // sortKey will be set correct in later PBI when impl UI for Add, MoveUp and MoveDown of Steps in Journey
 
         public bool IsVoided { get; private set; }
-
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
