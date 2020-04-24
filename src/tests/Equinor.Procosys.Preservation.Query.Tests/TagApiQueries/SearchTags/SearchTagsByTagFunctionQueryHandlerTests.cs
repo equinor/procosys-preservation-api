@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
@@ -101,9 +100,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tf = context.TagFunctions.Include(tf => tf.Requirements).Single();
-                var tagFunctionRequirement = tf.Requirements.Single();
-                tf.RemoveRequirement(tagFunctionRequirement);
+                var tagFunction = context.TagFunctions.Include(tf => tf.Requirements).Single();
+                var tagFunctionRequirement = tagFunction.Requirements.Single();
+                tagFunction.RemoveRequirement(tagFunctionRequirement);
                 context.SaveChangesAsync().Wait();
             }
 
