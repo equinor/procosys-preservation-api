@@ -1,5 +1,5 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Equinor.Procosys.Preservation.Test.Common.ExtentionMethods;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         public void GetRowVersion_ShouldReturnLastSetRowVersion()
         {
             var dut = new TestableEntityBase();
-            dut.SetProtectedRowVersion(123);
+            dut.SetProtectedRowVersionForTesting(123);
             dut.GetRowVersion().Equals(123);
         }    
         
@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         public void SetRowVersion_ShouldSucceed()
         {
             var dut = new TestableEntityBase();
-            dut.SetProtectedRowVersion(OldRowVersion);
+            dut.SetProtectedRowVersionForTesting(OldRowVersion);
 
             dut.SetRowVersion(NewRowVersion);
         }
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             {
                 var dut = new TestableEntityBase();
 
-                dut.SetProtectedRowVersion(OldRowVersion);
+                dut.SetProtectedRowVersionForTesting(OldRowVersion);
                 var originalByteArrayPointer = dut.GetRowVersionPointer();
 
                 dut.SetRowVersion(NewRowVersion);
@@ -95,27 +95,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             {
                 var dut = new TestableEntityBase();
 
-                dut.SetProtectedRowVersion(OldRowVersion);
+                dut.SetProtectedRowVersionForTesting(OldRowVersion);
                 var originalByteArray = dut.GetRowVersionPointer();
 
-                dut.SetProtectedRowVersion(NewRowVersion);
+                dut.SetProtectedRowVersionForTesting(NewRowVersion);
                 var newByteArray = dut.GetRowVersionPointer();
 
                 Assert.IsFalse(originalByteArray == newByteArray, "Reference equals should be false as we replace the byte array");
             }
         }
 
-        public class TestableEntityBase : EntityBase // The base class is abstract, therefor a sub class is needed to test it.
+        public class TestableEntityBase : EntityBase
         {
-            public void SetProtectedRowVersion(ulong rowVersion) => base.RowVersion = BitConverter.GetBytes(rowVersion);
-
-            public unsafe byte* GetRowVersionPointer()
-            { 
-                fixed (byte* first = &RowVersion[7])
-                {
-                    return first;
-                }
-            }
+            // The base class is abstract, therefor a sub class is needed to test it.
         }
     }
 }

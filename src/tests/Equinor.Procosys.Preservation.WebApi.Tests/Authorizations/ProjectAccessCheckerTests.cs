@@ -44,5 +44,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Assert
             Assert.IsTrue(result);
         }
+
+        [TestMethod]
+        public void HasCurrentUserAccessToProject_ShouldReturnFalse_WhenProjectToCheckNotGiven()
+        {
+            // Act
+            var result1 = _dut.HasCurrentUserAccessToProject(null);
+            var result2 = _dut.HasCurrentUserAccessToProject("");
+
+            // Assert
+            Assert.IsFalse(result1);
+            Assert.IsFalse(result2);
+        }
     }
 }
