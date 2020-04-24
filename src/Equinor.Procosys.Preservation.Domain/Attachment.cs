@@ -7,21 +7,24 @@ namespace Equinor.Procosys.Preservation.Domain
     public abstract class Attachment : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
         public const int TitleLengthMax = 255;
+        public const int FileNameLengthMax = 255;
 
         protected Attachment()
             : base(null)
         {
         }
 
-        protected Attachment(string plant, string title, Guid blobStorageId)
+        protected Attachment(string plant, Guid blobStorageId, string title, string fileName)
             : base(plant)
         {
-            Title = title;
             BlobStorageId = blobStorageId;
+            Title = title;
+            FileName = fileName;
         }
 
-        public string Title { get; private set; }
         public Guid BlobStorageId { get; private set; }
+        public string Title { get; private set; }
+        public string FileName { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }

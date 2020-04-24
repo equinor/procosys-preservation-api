@@ -18,6 +18,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasMaxLength(Attachment.TitleLengthMax)
                 .IsRequired();
 
+            builder.Property(x => x.FileName)
+                .HasMaxLength(Attachment.FileNameLengthMax)
+                .IsRequired();
+
             builder
                 .HasDiscriminator<string>("AttachmentType")
                 .HasValue<TagAttachment>("TagAttachment")
