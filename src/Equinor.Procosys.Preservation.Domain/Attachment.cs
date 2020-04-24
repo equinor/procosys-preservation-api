@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Domain
         }
 
         public Guid BlobStorageId { get; private set; }
-        public string Title { get; private set; }
+        public string Title { get; set; }
         public string FileName { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }

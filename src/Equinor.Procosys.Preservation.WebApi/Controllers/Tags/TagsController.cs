@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
+using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -406,6 +407,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id)
         {
             var result = await _mediator.Send(new GetTagAttachmentsQuery(id));
+            return this.FromResult(result);
+        }
+        
+        [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
+        [HttpPost("{id}/Attachments")]
+        public async Task<ActionResult<int>> UploadTagAttachment(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] UploadAttachmentDto dto)
+        {
+            var actionCommand = new UploadTagAttachmentCommand(
+                id,
+                dto.Title,
+                dto.FileName,
+                dto.OverwriteIfExists);
+
+            var result = await _mediator.Send(actionCommand);
+
             return this.FromResult(result);
         }
 
