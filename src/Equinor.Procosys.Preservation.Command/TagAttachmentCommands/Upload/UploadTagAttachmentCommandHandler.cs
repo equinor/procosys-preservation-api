@@ -26,8 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
 
-            var attachment = tag.Attachments.SingleOrDefault(a =>
-                string.Compare(a.FileName, request.FileName, StringComparison.InvariantCultureIgnoreCase) == 0);
+            var attachment = tag.GetAttachmentByFileName(request.FileName);
 
             if (!request.OverwriteIfExists && attachment != null)
             {

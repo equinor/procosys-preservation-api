@@ -124,6 +124,17 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag.TagType == TagType.PreArea || tag.TagType == TagType.Standard;
         }
 
+        public async Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken cancellationToken)
+        {
+            var tag = await GetTagWithAttachments(tagId, cancellationToken);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return tag.GetAttachmentByFileName(fileName) != null;
+        }
+
         private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken cancellationToken)
         {
             var tag = await (from t in _context.QuerySet<Tag>()
@@ -144,6 +155,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         {
             var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Requirements)
                     .ThenInclude(r => r.PreservationPeriods)
+                where t.Id == tagId
+                select t).SingleOrDefaultAsync(cancellationToken);
+            return tag;
+        }
+
+        private async Task<Tag> GetTagWithAttachments(int tagId, CancellationToken cancellationToken)
+        {
+            var tag = await (from t in _context.QuerySet<Tag>().Include(t => t.Attachments)
                 where t.Id == tagId
                 select t).SingleOrDefaultAsync(cancellationToken);
             return tag;

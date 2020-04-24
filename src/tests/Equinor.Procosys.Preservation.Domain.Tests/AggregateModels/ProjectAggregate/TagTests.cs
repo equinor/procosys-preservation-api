@@ -972,5 +972,34 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(null));
 
         #endregion
+        
+        #region GetAttachmentByFileName
+
+        [TestMethod]
+        public void GetAttachmentByFileName_ShouldGetAttachmentWhenExists()
+        {
+            // Arrange
+            var fileName = "FileA";
+            var attachment = new TagAttachment(TestPlant, Guid.Empty, null, fileName);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(attachment);
+
+            // Act
+            var result = _dutWithOneReqNotNeedInputTwoWeekInterval.GetAttachmentByFileName(fileName);
+
+            // Arrange
+            Assert.AreEqual(attachment, result);
+        }
+
+        [TestMethod]
+        public void GetAttachmentByFileName_ShouldReturnNullWhenNotFound()
+        {
+            // Act
+            var result = _dutWithOneReqNotNeedInputTwoWeekInterval.GetAttachmentByFileName("FileA");
+
+            // Arrange
+            Assert.IsNull(result);
+        }
+
+        #endregion
     }
 }
