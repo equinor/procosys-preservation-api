@@ -19,6 +19,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
+using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
@@ -392,6 +393,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(new RequirementPreserveCommand(id, requirementId));
             
+            return this.FromResult(result);
+        }
+        
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Attachments")]
+        public async Task<ActionResult<List<TagAttachmentDto>>> GetTagAttachments(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id)
+        {
+            var result = await _mediator.Send(new GetTagAttachmentsQuery(id));
             return this.FromResult(result);
         }
 
