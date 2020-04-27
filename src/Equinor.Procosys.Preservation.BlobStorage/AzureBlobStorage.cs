@@ -143,12 +143,10 @@ namespace Equinor.Procosys.Preservation.BlobStorage
             return sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(_accountName, _accountKey)).ToString();
         }
 
-        private static string GetContainerName(string path) => path.Split('/').First();
+        private static string GetContainerName(string path) =>
+            path.Split('/').First();
 
-        private static string GetPathWithoutContainer(string path)
-        {
-            var container = path.Split('/').First();
-            return path.Remove(0, container.Length + 1);
-        }
+        private static string GetPathWithoutContainer(string path) =>
+            path.Remove(0, GetContainerName(path).Length + 1);
     }
 }
