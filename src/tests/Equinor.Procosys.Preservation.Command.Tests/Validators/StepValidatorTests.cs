@@ -13,8 +13,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     public class StepValidatorTests : ReadOnlyTestsBase
     {
         private Journey _journey1;
-        private Step _stepInJourney1;
         private Journey _journey2;
+        private Step _stepInJourney1;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -22,15 +22,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var mode = AddMode(context, "M");
                 var responsible = AddResponsible(context, "R");
-
                 _journey1 = AddJourneyWithStep(context, "J1", "Step1", mode, responsible);
                 _journey1.AddStep(new Step(TestPlant, "Step3", AddMode(context, "M2"), AddResponsible(context, "R2")));
                 _stepInJourney1 = _journey1.Steps.Single();
-
-                // bytte til navn Step1=lov
-                // bytte til navn Step2=lov (fordi i annet journey)
-                // bytte til navn Step3=ulovlig
-
                 _journey2 = AddJourneyWithStep(context, "J2", "Step2", mode, responsible);
 
                 context.SaveChangesAsync().Wait();

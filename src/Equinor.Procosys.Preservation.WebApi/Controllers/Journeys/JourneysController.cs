@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.JourneyAggregate;
@@ -74,6 +75,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             var result = await _mediator.Send(new CreateStepCommand(id, dto.Title, dto.ModeId, dto.ResponsibleId));
             return this.FromResult(result);
         }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [HttpPut("{id}/UpdateJourney")]
+        public async Task<IActionResult> UpdateJourney(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] UpdateJourneyDto dto)
+        {
+            var result = await _mediator.Send(new UpdateJourneyCommand(journeyId:id, dto.Title));
+            return this.FromResult(result);
+        }
+
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}/UpdateStep")]
         public async Task<ActionResult> UpdateStep(
