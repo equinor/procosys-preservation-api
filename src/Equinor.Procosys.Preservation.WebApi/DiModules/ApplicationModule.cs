@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.EventHandlers;
+﻿using Equinor.Procosys.Preservation.Blob;
+using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
@@ -49,6 +50,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
             services.Configure<TagOptions>(configuration.GetSection("ApiOptions"));
             services.Configure<PermissionOptions>(configuration.GetSection("PermissionOptions"));
+            services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
 
             services.AddDbContext<PreservationContext>(options =>
             {
@@ -90,6 +92,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
             services.AddScoped<ITagFunctionApiService, MainApiTagFunctionService>();
             services.AddScoped<IPermissionApiService, MainApiPermissionService>();
+            services.AddScoped<IBlobStorage, AzureBlobService>();
             
             services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
             services.AddScoped<ITagValidator, TagValidator>();
