@@ -1,4 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Blob;
+﻿using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;

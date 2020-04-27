@@ -10,7 +10,7 @@ using Azure.Storage.Blobs.Models;
 using Azure.Storage.Sas;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.Blob
+namespace Equinor.Procosys.Preservation.BlobStorage
 {
     public class AzureBlobService : IBlobStorage
     {

@@ -31,7 +31,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Blob\Equinor.Procosys.Preservation.Blob.csproj" />
+    <ProjectReference Include="..\Equinor.Procosys.Preservation.BlobStorage\Equinor.Procosys.Preservation.BlobStorage.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Command\Equinor.Procosys.Preservation.Command.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Infrastructure\Equinor.Procosys.Preservation.Infrastructure.csproj" />
