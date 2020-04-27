@@ -56,6 +56,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
             return await IsValidPlantForUserAsync(plantId, userOid.Value);
         }
 
+        public void Clear(Guid userOid) => _cacheManager.Remove(PlantsCacheKey(userOid));
+
         private string PlantsCacheKey(Guid userOid)
             => $"PLANTS_{userOid.ToString().ToUpper()}";
     }

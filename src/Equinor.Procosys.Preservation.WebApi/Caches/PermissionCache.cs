@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
 
-        public void ClearAllPermissionCaches(string plantId, Guid userOid)
+        public void ClearAll(string plantId, Guid userOid)
         {
             _cacheManager.Remove(ProjectsCacheKey(plantId, userOid));
             _cacheManager.Remove(PermissionsCacheKey(plantId, userOid));

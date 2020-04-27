@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 
         public ClaimsPrincipal GetCurrentUser() => _accessor.HttpContext.User;
 
-        public Guid GetCurrentUserOid() // will be renamed to GetCurrentUserOid
+        public Guid GetCurrentUserOid()
         {
             var userOid = TryGetCurrentUserOid();
 

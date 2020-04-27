@@ -129,7 +129,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
             => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetContentRestrictionsForUserOidAsync(TestPlant, Guid.Empty));
 
         [TestMethod]
-        public void ClearAllPermissionCaches_ShouldClearCaches()
+        public void ClearAll_ShouldClearAllPermissionCaches()
         {
             // Arrange
             var cacheManagerMock = new Mock<ICacheManager>();
@@ -138,7 +138,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
                 _permissionApiServiceMock.Object,
                 new Mock<IOptionsMonitor<CacheOptions>>().Object);
             // Act
-            dut.ClearAllPermissionCaches(TestPlant, Oid);
+            dut.ClearAll(TestPlant, Oid);
 
             // Assert
             cacheManagerMock.Verify(c => c.Remove(It.IsAny<string>()), Times.Exactly(3));
