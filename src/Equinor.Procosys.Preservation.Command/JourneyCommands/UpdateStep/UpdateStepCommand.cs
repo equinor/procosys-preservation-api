@@ -1,10 +1,9 @@
-﻿﻿using Equinor.Procosys.Preservation.Domain;
-using MediatR;
+﻿using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 {
-    public class UpdateStepCommand : IRequest<Result<Unit>>, IStepRequest
+    public class UpdateStepCommand : IRequest<Result<Unit>>
     {
         public UpdateStepCommand(int stepId, string title)
         {
