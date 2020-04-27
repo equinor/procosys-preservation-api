@@ -9,5 +9,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
         Task<IList<string>> GetPermissionsForUserAsync(string plantId, Guid userOid);
         Task<IList<string>> GetProjectNamesForUserOidAsync(string plantId, Guid userOid);
         Task<IList<string>> GetContentRestrictionsForUserOidAsync(string plantId, Guid userOid);
+        void ClearAllPermissionCaches(string plantId, Guid userOid);
     }
 }

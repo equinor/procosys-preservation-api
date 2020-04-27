@@ -11,10 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Heartbeat
     {
         private readonly ILogger<HeartbeatController> _logger;
 
-        public HeartbeatController(ILogger<HeartbeatController> logger)
-        {
-            _logger = logger;
-        }
+        public HeartbeatController(ILogger<HeartbeatController> logger) => _logger = logger;
 
         [AllowAnonymous]
         [HttpGet("IsAlive")]
