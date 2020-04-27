@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             async Task<bool> BeAnExistingStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.ExistsAsync(stepId, token);
             async Task<bool> HaveUniqueStepTitleInJourneyAsync(int stepId, string stepTitle, CancellationToken token) =>
-                !await stepValidator.ExistsInJourneyAsync(stepId, stepTitle, token);
+                !await stepValidator.ExistsInExistingJourneyAsync(stepId, stepTitle, token);
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         public void Validate_ShouldFail_WhenSameTitleInJourneyExists()
         {
             // Arrange
-            _stepValidatorMock.Setup(s => s.ExistsInJourneyAsync(_stepId, _title, default))
+            _stepValidatorMock.Setup(s => s.ExistsInExistingJourneyAsync(_stepId, _title, default))
                 .Returns(Task.FromResult(true));
 
             // Act
