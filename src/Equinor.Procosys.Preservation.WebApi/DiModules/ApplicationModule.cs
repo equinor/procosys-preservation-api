@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<ITagFunctionApiService, MainApiTagFunctionService>();
             services.AddScoped<IPermissionApiService, MainApiPermissionService>();
             services.AddScoped<IBlobStorage, AzureBlobService>();
-            
+
             services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
             services.AddScoped<ITagValidator, TagValidator>();
             services.AddScoped<IProjectValidator, ProjectValidator>();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,29 +33,35 @@ namespace Equinor.Procosys.Preservation.BlobStorage
             _endpoint = "blob." + Regex.Match(_connectionString, @"EndpointSuffix=(.+?)(;|\z)", RegexOptions.Singleline).Groups[1].Value;
         }
 
-        public async Task<bool> DownloadAsync(string containerName, string blobName, Stream destination, CancellationToken cancellationToken = default)
+        public async Task<bool> DownloadAsync(string path, Stream destination, CancellationToken cancellationToken = default)
         {
-            var client = new BlobClient(_connectionString, containerName, blobName);
+            var container = GetContainerName(path);
+            var blobPath = GetPathWithoutContainer(path);
+            var client = new BlobClient(_connectionString, container, blobPath);
             var res = await client.DownloadToAsync(destination, cancellationToken);
             return res.Status > 199 && res.Status < 300;
         }
 
-        public async Task UploadAsync(string containerName, string blobName, Stream content, bool overWrite = false, CancellationToken cancellationToken = default)
+        public async Task UploadAsync(string path, Stream content, bool overWrite = false, CancellationToken cancellationToken = default)
         {
-            var client = new BlobClient(_connectionString, containerName, blobName);
+            var container = GetContainerName(path);
+            var blobPath = GetPathWithoutContainer(path);
+            var client = new BlobClient(_connectionString, container, blobPath);
             await client.UploadAsync(content, overWrite, cancellationToken);
         }
 
-        public async Task<bool> DeleteAsync(string containerName, string blobName, CancellationToken cancellationToken = default)
+        public async Task<bool> DeleteAsync(string path, CancellationToken cancellationToken = default)
         {
-            var client = new BlobClient(_connectionString, containerName, blobName);
+            var container = GetContainerName(path);
+            var blobPath = GetPathWithoutContainer(path);
+            var client = new BlobClient(_connectionString, container, blobPath);
             var res = await client.DeleteIfExistsAsync(DeleteSnapshotsOption.IncludeSnapshots, null, cancellationToken);
             return res.Value;
         }
 
-        public async Task<List<string>> ListAsync(string containerName, CancellationToken cancellationToken = default)
+        public async Task<List<string>> ListAsync(string path, CancellationToken cancellationToken = default)
         {
-            var client = new BlobContainerClient(_connectionString, containerName);
+            var client = new BlobContainerClient(_connectionString, path);
             var blobNames = new List<string>();
             await foreach (var blob in client.GetBlobsAsync(BlobTraits.None, BlobStates.None, null, cancellationToken))
             {
@@ -63,47 +70,54 @@ namespace Equinor.Procosys.Preservation.BlobStorage
             return blobNames;
         }
 
-        public Uri GetDownloadSasUri(string containerName, string blobName, DateTimeOffset startsOn, DateTimeOffset expiresOn)
+        public Uri GetDownloadSasUri(string path, DateTimeOffset startsOn, DateTimeOffset expiresOn)
         {
-            var sasToken = GetSasToken(containerName, blobName, ResourceTypes.BLOB, BlobAccountSasPermissions.Read, startsOn, expiresOn);
+            var container = GetContainerName(path);
+            var blobPath = GetPathWithoutContainer(path);
+            var sasToken = GetSasToken(container, blobPath, ResourceTypes.BLOB, BlobAccountSasPermissions.Read, startsOn, expiresOn);
             var fullUri = new UriBuilder()
             {
                 Scheme = "https",
                 Host = string.Format($"{_accountName}.{_endpoint}"),
-                Path = string.Format($"{containerName}/{blobName}"),
+                Path = string.Format($"{Directory.GetParent(path).Name}/{path}"),
                 Query = sasToken
             };
             return fullUri.Uri;
         }
 
-        public Uri GetUploadSasUri(string containerName, string blobName, DateTimeOffset startsOn, DateTimeOffset expiresOn)
+        public Uri GetUploadSasUri(string path, DateTimeOffset startsOn, DateTimeOffset expiresOn)
         {
-            var sasToken = GetSasToken(containerName, blobName, ResourceTypes.BLOB, BlobAccountSasPermissions.Create | BlobAccountSasPermissions.Write, startsOn, expiresOn);
+            var container = GetContainerName(path);
+            var blobPath = GetPathWithoutContainer(path);
+            var sasToken = GetSasToken(container, blobPath, ResourceTypes.BLOB, BlobAccountSasPermissions.Create | BlobAccountSasPermissions.Write, startsOn, expiresOn);
             var fullUri = new UriBuilder()
             {
                 Scheme = "https",
                 Host = string.Format($"{_accountName}.{_endpoint}"),
-                Path = string.Format($"{containerName}/{blobName}"),
+                Path = string.Format($"{Directory.GetParent(path).Name}/{path}"),
                 Query = sasToken
             };
             return fullUri.Uri;
         }
 
-        public Uri GetDeleteSasUri(string containerName, string blobName, DateTimeOffset startsOn, DateTimeOffset expiresOn)
+        public Uri GetDeleteSasUri(string path, DateTimeOffset startsOn, DateTimeOffset expiresOn)
         {
-            var sasToken = GetSasToken(containerName, blobName, ResourceTypes.BLOB, BlobAccountSasPermissions.Delete, startsOn, expiresOn);
+            var container = GetContainerName(path);
+            var blobPath = GetPathWithoutContainer(path);
+            var sasToken = GetSasToken(container, blobPath, ResourceTypes.BLOB, BlobAccountSasPermissions.Delete, startsOn, expiresOn);
             var fullUri = new UriBuilder()
             {
                 Scheme = "https",
                 Host = string.Format($"{_accountName}.{_endpoint}"),
-                Path = string.Format($"{containerName}/{blobName}"),
+                Path = string.Format($"{Directory.GetParent(path).Name}/{path}"),
                 Query = sasToken
             };
             return fullUri.Uri;
         }
 
-        public Uri GetListSasUri(string containerName, DateTimeOffset startsOn, DateTimeOffset expiresOn)
+        public Uri GetListSasUri(string path, DateTimeOffset startsOn, DateTimeOffset expiresOn)
         {
+            var containerName = GetContainerName(path);
             var sasToken = GetSasToken(containerName, string.Empty, ResourceTypes.CONTAINER, BlobAccountSasPermissions.List, startsOn, expiresOn);
             var fullUri = new UriBuilder()
             {
@@ -127,6 +141,14 @@ namespace Equinor.Procosys.Preservation.BlobStorage
             };
             sasBuilder.SetPermissions(permissions);
             return sasBuilder.ToSasQueryParameters(new StorageSharedKeyCredential(_accountName, _accountKey)).ToString();
+        }
+
+        private static string GetContainerName(string path) => path.Split('/').First();
+
+        private static string GetPathWithoutContainer(string path)
+        {
+            var container = path.Split('/').First();
+            return path.Remove(0, container.Length + 1);
         }
     }
 }

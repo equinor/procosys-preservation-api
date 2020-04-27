@@ -8,14 +8,14 @@ namespace Equinor.Procosys.Preservation.BlobStorage
 {
     public interface IBlobStorage
     {
-        Task<bool> DownloadAsync(string containerName, string blobName, Stream destination, CancellationToken cancellationToken = default);
-        Task UploadAsync(string containerName, string blobName, Stream content, bool overWrite = false, CancellationToken cancellationToken = default);
-        Task<bool> DeleteAsync(string containerName, string blobName, CancellationToken cancellationToken = default);
-        Task<List<string>> ListAsync(string containerName, CancellationToken cancellationToken = default);
+        Task<bool> DownloadAsync(string path, Stream destination, CancellationToken cancellationToken = default);
+        Task UploadAsync(string path, Stream content, bool overWrite = false, CancellationToken cancellationToken = default);
+        Task<bool> DeleteAsync(string path, CancellationToken cancellationToken = default);
+        Task<List<string>> ListAsync(string path, CancellationToken cancellationToken = default);
 
-        Uri GetDownloadSasUri(string containerName, string blobName, DateTimeOffset startsOn, DateTimeOffset expiresOn);
-        Uri GetUploadSasUri(string containerName, string blobName, DateTimeOffset startsOn, DateTimeOffset expiresOn);
-        Uri GetDeleteSasUri(string containerName, string blobName, DateTimeOffset startsOn, DateTimeOffset expiresOn);
-        Uri GetListSasUri(string containerName, DateTimeOffset startsOn, DateTimeOffset expiresOn);
+        Uri GetDownloadSasUri(string path, DateTimeOffset startsOn, DateTimeOffset expiresOn);
+        Uri GetUploadSasUri(string path, DateTimeOffset startsOn, DateTimeOffset expiresOn);
+        Uri GetDeleteSasUri(string path, DateTimeOffset startsOn, DateTimeOffset expiresOn);
+        Uri GetListSasUri(string path, DateTimeOffset startsOn, DateTimeOffset expiresOn);
     }
 }
