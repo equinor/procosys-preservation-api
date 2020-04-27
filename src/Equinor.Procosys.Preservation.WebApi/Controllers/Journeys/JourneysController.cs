@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.JourneyAggregate;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -75,7 +76,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}/UpdateJourney")]
         public async Task<IActionResult> UpdateJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -86,6 +87,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromBody] UpdateJourneyDto dto)
         {
             var result = await _mediator.Send(new UpdateJourneyCommand(journeyId:id, dto.Title));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [HttpPut("{id}/UpdateStep")]
+        public async Task<ActionResult> UpdateStep(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] UpdateStepDto dto)
+        {
+            var result = await _mediator.Send(new UpdateStepCommand(stepId:id, dto.Title));
             return this.FromResult(result);
         }
     }

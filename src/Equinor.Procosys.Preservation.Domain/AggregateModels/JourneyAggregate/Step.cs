@@ -10,6 +10,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
     {
         public const int TitleLengthMin = 1;
         public const int TitleLengthMax = 64;
+
         protected Step()
             : base(null)
         {
@@ -49,17 +50,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             ResponsibleId = responsible.Id;
         }
 
-        public string Title { get; private set; }
+        public string Title { get; set; }
         public int ModeId { get; private set; }
         public int ResponsibleId { get; private set; }
+
         public int SortKey { get; set; }  // sortKey will be set correct in later PBI when impl UI for Add, MoveUp and MoveDown of Steps in Journey
         public bool IsVoided { get; private set; }
-
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
@@ -70,6 +70,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             {
                 throw new ArgumentNullException(nameof(createdBy));
             }
+
             CreatedById = createdBy.Id;
         }
 
@@ -80,6 +81,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             {
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
+
             ModifiedById = modifiedBy.Id;
         }
     }
