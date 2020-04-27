@@ -11,6 +11,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Test.Common.ExtentionMethods;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -36,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _plantProvider = _plantProviderMock.Object;
 
             var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(x => x.GetCurrentUser()).Returns(_currentUserOid);
+            currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(_currentUserOid);
             _currentUserProvider = currentUserProviderMock.Object;
 
             var eventDispatcher = new Mock<IEventDispatcher>();
@@ -175,6 +176,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             //      - 10 last tags is area, all in first step in journey 2, all has requirement of type 2
             //  - 10 tags on project 2 (P2), all tags same as 10 first in P1
             //  - requirement period for all 30 tags is 2 weeks
+            //  - all steps in all journeys has responsible 1
             var _projectName1 = "P1";
             var _projectName2 = "P2";
             var _journeyTitle1 = "J1";
@@ -233,6 +235,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 };
                 tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
                 tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Description");
+                tag.SetProtectedRowVersionForTesting(123);
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -262,6 +265,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 };
                 tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
                 tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Description");
+                tag.SetProtectedRowVersionForTesting(123);
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -277,7 +281,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     {
                         new TagRequirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
                     });
-                
+
+                tag.SetProtectedRowVersionForTesting(123);
                 testDataSet.Project2.AddTag(tag);
             }
             

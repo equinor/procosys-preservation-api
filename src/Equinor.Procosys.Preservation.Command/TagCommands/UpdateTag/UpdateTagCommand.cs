@@ -1,10 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using MediatR;
+﻿using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
 {
-    public class UpdateTagCommand : IRequest<Result<Unit>>, ITagRequest
+    public class UpdateTagCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public UpdateTagCommand(
             int tagId,

@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigurePlant();
             builder.ConfigureCreationAudit();
             builder.ConfigureModificationAudit();
+            builder.ConfigureConcurrencyToken();
 
             builder.HasOne<RequirementDefinition>();
         }

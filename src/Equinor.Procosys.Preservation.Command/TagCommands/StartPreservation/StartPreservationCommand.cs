@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
 {
-    public class StartPreservationCommand : IRequest<Result<Unit>>, ITagRequest
+    public class StartPreservationCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public StartPreservationCommand(IEnumerable<int> tagIds)
             => TagIds = tagIds ?? new List<int>();

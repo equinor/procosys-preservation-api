@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.MainApi.Project;
 using Microsoft.Extensions.Options;
 
 namespace Equinor.Procosys.Preservation.MainApi.Permission
@@ -12,27 +13,39 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
         private readonly IBearerTokenApiClient _mainApiClient;
-        private readonly IPlantApiService _plantApiService;
 
         public MainApiPermissionService(IBearerTokenApiClient mainApiClient,
-            IPlantApiService plantApiService,
             IOptionsMonitor<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
-            _plantApiService = plantApiService;
             _apiVersion = options.CurrentValue.ApiVersion;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
-
-        public async Task<IList<string>> GetPermissionsAsync(string plant)
+        
+        public async Task<IList<string>> GetProjectsAsync(string plantId)
         {
-            if (!await _plantApiService.IsPlantValidAsync(plant))
-            {
-                throw new ArgumentException($"Invalid plant: {plant}");
-            }
+            var url = $"{_baseAddress}Projects" +
+                      $"?plantId={plantId}" +
+                      "&withCommPkgsOnly=false" +
+                      $"&api-version={_apiVersion}";
 
+            var projects = await _mainApiClient.QueryAndDeserialize<List<ProcosysProject>>(url);
+            return projects != null ? projects.Select(p => p.Name).ToList() : new List<string>();
+        }
+
+        public async Task<IList<string>> GetPermissionsAsync(string plantId)
+        {
             var url = $"{_baseAddress}Permissions" +
-                      $"?plantId={plant}" +
+                      $"?plantId={plantId}" +
+                      $"&api-version={_apiVersion}";
+
+            return await _mainApiClient.QueryAndDeserialize<List<string>>(url) ?? new List<string>();
+        }
+
+        public async Task<IList<string>> GetContentRestrictionsAsync(string plantId)
+        {
+            var url = $"{_baseAddress}ContentRestrictions" +
+                      $"?plantId={plantId}" +
                       $"&api-version={_apiVersion}";
 
             return await _mainApiClient.QueryAndDeserialize<List<string>>(url) ?? new List<string>();

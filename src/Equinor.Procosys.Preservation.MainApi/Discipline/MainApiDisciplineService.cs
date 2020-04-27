@@ -13,21 +13,21 @@ namespace Equinor.Procosys.Preservation.MainApi.Discipline
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
         private readonly IBearerTokenApiClient _mainApiClient;
-        private readonly IPlantApiService _plantApiService;
+        private readonly IPlantCache _plantCache;
 
         public MainApiDisciplineService(IBearerTokenApiClient mainApiClient,
-            IPlantApiService plantApiService,
+            IPlantCache plantCache,
             IOptionsMonitor<MainApiOptions> options)
         {
             _mainApiClient = mainApiClient;
-            _plantApiService = plantApiService;
+            _plantCache = plantCache;
             _apiVersion = options.CurrentValue.ApiVersion;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
         public async Task<List<ProcosysDiscipline>> GetDisciplinesAsync(string plant)
         {
-            if (!await _plantApiService.IsPlantValidAsync(plant))
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
             {
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Discipline
 
         public async Task<ProcosysDiscipline> GetDisciplineAsync(string plant, string code)
         {
-            if (!await _plantApiService.IsPlantValidAsync(plant))
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
             {
                 throw new ArgumentException($"Invalid plant: {plant}");
             }

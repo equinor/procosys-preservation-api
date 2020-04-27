@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
     public class ActionDetailsDto
     {
         public ActionDetailsDto(
-            int id, 
+            int id,
             PersonDto createdBy,
             DateTime createdAt,
             string title,
@@ -13,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
             DateTime? dueTimeUtc,
             bool isClosed,
             PersonDto closedBy,
-            DateTime? closedAtUtc)
+            DateTime? closedAtUtc,
+            ulong rowVersion)
         {
             Id = id;
             CreatedBy = createdBy;
@@ -24,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
             IsClosed = isClosed;
             ClosedBy = closedBy;
             ClosedAtUtc = closedAtUtc;
+            RowVersion = rowVersion;
         }
 
 
@@ -36,5 +38,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
         public bool IsClosed { get; }
         public PersonDto ClosedBy { get; }
         public DateTime? ClosedAtUtc { get; }
+        public ulong RowVersion { get; }
     }
 }

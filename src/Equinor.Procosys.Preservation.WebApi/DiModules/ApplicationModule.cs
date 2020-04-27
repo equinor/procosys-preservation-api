@@ -32,8 +32,8 @@ using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.MainApi.TagFunction;
 using Equinor.Procosys.Preservation.WebApi.Misc;
-using Equinor.Procosys.Preservation.WebApi.ProjectAccess;
-using Equinor.Procosys.Preservation.WebApi.Services;
+using Equinor.Procosys.Preservation.WebApi.Authorizations;
+using Equinor.Procosys.Preservation.WebApi.Caches;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
 
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
             services.Configure<TagOptions>(configuration.GetSection("ApiOptions"));
-            services.Configure<PermissionOptions>(configuration.GetSection("PermissionOptions"));
+            services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
 
             services.AddDbContext<PreservationContext>(options =>
@@ -64,12 +64,14 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
 
 
             // Scoped - Created once per client request (connection)
-            services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IPlantCache, PlantCache>();
+            services.AddScoped<IPermissionCache, PermissionCache>();
             services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
             services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
-            services.AddScoped<IProjectAccessValidator, ProjectAccessValidator>();
+            services.AddScoped<IAccessValidator, AccessValidator>();
             services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
-            services.AddScoped<IProjectHelper, ProjectHelper>();
+            services.AddScoped<IContentRestrictionsChecker, ContentRestrictionsChecker>();
+            services.AddScoped<ITagHelper, TagHelper>();
             services.AddScoped<IPlantProvider, PlantProvider>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());

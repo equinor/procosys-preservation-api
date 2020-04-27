@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.CheckAreaTagNo
 {
-    public class CheckAreaTagNoQuery : AbstractAreaTag, IRequest<Result<AreaTagDto>>
+    public class CheckAreaTagNoQuery : AbstractAreaTag, IRequest<Result<AreaTagDto>>, IProjectRequest
     {
         public CheckAreaTagNoQuery(string projectName, TagType tagType, string disciplineCode, string areaCode, string tagNoSuffix)
         {

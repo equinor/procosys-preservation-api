@@ -9,12 +9,14 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
     {
         public CreateJourneyCommandValidator(IJourneyValidator journeyValidator)
         {
+            CascadeMode = CascadeMode.StopOnFirstFailure;
+
             RuleFor(command => command)
                 .MustAsync((command, token) => HaveUniqueJourneyTitleAsync(command.Title, token))
                 .WithMessage(command => $"Journey with title already exists! Journey={command.Title}");
 
             async Task<bool> HaveUniqueJourneyTitleAsync(string journeyTitle, CancellationToken token)
-                => !await journeyValidator.ExistsAsync(journeyTitle, token);
+                => !await journeyValidator.ExistsWithSameTitleAsync(journeyTitle, token);
         }
     }
 }
