@@ -46,6 +46,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
@@ -95,6 +100,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<int>("ResponsibleId")
                         .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("SortKey")
                         .HasColumnType("int");
@@ -146,6 +156,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
@@ -185,6 +200,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<Guid>("Oid")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("Id");
 
@@ -230,6 +250,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("TagId")
                         .HasColumnType("int");
@@ -280,6 +305,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("PreservationPeriodId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
@@ -326,6 +356,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<int?>("PreservationRecordId")
                         .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -378,6 +413,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("PreservedById")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
@@ -423,6 +463,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.HasKey("Id");
 
@@ -502,6 +547,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<string>("Remark")
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -584,6 +634,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("RequirementDefinitionId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
@@ -650,6 +705,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("RequirementDefinitionId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<bool?>("ShowPrevious")
                         .HasColumnType("bit");
 
@@ -706,6 +766,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("RequirementTypeId")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<int>("SortKey")
                         .HasColumnType("int");
 
@@ -757,6 +822,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.Property<int>("SortKey")
                         .HasColumnType("int");
 
@@ -805,6 +875,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -861,6 +936,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
@@ -902,6 +982,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<int>("RequirementDefinitionId")
                         .HasColumnType("int");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
 
                     b.Property<int>("TagFunctionId")
                         .HasColumnType("int");

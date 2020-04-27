@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
         {
             builder.ConfigurePlant();
             builder.ConfigureCreationAudit();
+            builder.ConfigureConcurrencyToken();
 
             builder.Property(x => x.PreservedAtUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);

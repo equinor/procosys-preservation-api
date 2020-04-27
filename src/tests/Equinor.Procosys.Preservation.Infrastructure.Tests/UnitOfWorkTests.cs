@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             dut.SaveChanges();
 
             _currentUserProviderMock
-                .Setup(x => x.GetCurrentUser())
+                .Setup(x => x.GetCurrentUserOid())
                 .Returns(_currentUserOid);
 
             var newMode = new Mode(Plant, "TestMode");
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             dut.SaveChanges();
 
             _currentUserProviderMock
-                .Setup(x => x.GetCurrentUser())
+                .Setup(x => x.GetCurrentUserOid())
                 .Returns(_currentUserOid);
 
             var newMode = new Mode(Plant, "TestMode");

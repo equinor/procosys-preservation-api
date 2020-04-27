@@ -14,6 +14,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigurePlant();
             builder.ConfigureCreationAudit();
             builder.ConfigureModificationAudit();
+            builder.ConfigureConcurrencyToken();
 
             builder.Property(x => x.Comment)
                 .HasMaxLength(PreservationPeriod.CommentLengthMax);

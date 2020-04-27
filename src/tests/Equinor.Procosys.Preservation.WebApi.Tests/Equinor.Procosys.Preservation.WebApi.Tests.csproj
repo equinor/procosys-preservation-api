@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" />
+    <ProjectReference Include="..\Equinor.Procosys.Preservation.Test.Common\Equinor.Procosys.Preservation.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>

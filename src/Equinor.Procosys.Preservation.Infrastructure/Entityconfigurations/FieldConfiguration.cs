@@ -15,6 +15,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigurePlant();
             builder.ConfigureCreationAudit();
             builder.ConfigureModificationAudit();
+            builder.ConfigureConcurrencyToken();
 
             builder.Property(f => f.Label)
                 .HasMaxLength(Field.LabelLengthMax)

@@ -12,8 +12,12 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
     [TestClass]
     public class MainApiPlantServiceTests
     {
-        [TestMethod]
-        public async Task GetPlants_ReturnsCorrectNumberOfPlants_TestAsync()
+        private MainApiPlantService _dut;
+        private readonly string _plantId = "PCS$AASTA_HANSTEEN";
+        private readonly string _plantTitle = "AastaHansteen";
+
+        [TestInitialize]
+        public void Setup()
         {
             // Arrange
             var mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
@@ -25,44 +29,35 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
                 .Setup(x => x.QueryAndDeserialize<List<ProcosysPlant>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<ProcosysPlant>
                 {
-                    new ProcosysPlant { Id = "PCS$AASTA_HANSTEEN", Title = "AastaHansteen" },
+                    new ProcosysPlant { Id = _plantId, Title = _plantTitle },
                     new ProcosysPlant { Id = "PCS$ASGARD", Title = "Åsgard" },
                     new ProcosysPlant { Id = "PCS$ASGARD_A", Title = "ÅsgardA" },
                     new ProcosysPlant { Id = "PCS$ASGARD_B", Title = "ÅsgardB" },
                 }));
-            var dut = new MainApiPlantService(mainApiClient.Object, mainApiOptions.Object);
 
+            _dut = new MainApiPlantService(mainApiClient.Object, mainApiOptions.Object);
+        }
+
+        [TestMethod]
+        public async Task GetPlants_ShouldReturnsCorrectNumberOfPlants()
+        {
             // Act
-            var result = await dut.GetPlants();
+            var result = await _dut.GetPlantsAsync();
 
             // Assert
             Assert.AreEqual(4, result.Count());
         }
 
         [TestMethod]
-        public async Task GetPlants_SetsCorrectProperties_TestAsync()
+        public async Task GetPlants_ShouldSetsCorrectProperties()
         {
-            // Arrange
-            var mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
-            mainApiOptions
-                .Setup(x => x.CurrentValue)
-                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
-            var mainApiClient = new Mock<IBearerTokenApiClient>();
-            mainApiClient
-                .Setup(x => x.QueryAndDeserialize<List<ProcosysPlant>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(new List<ProcosysPlant>
-                {
-                    new ProcosysPlant { Id = "PCS$AASTA_HANSTEEN", Title = "AastaHansteen" }
-                }));
-            var dut = new MainApiPlantService(mainApiClient.Object, mainApiOptions.Object);
-
             // Act
-            var result = await dut.GetPlants();
+            var result = await _dut.GetPlantsAsync();
 
             // Assert
             var plant = result.First();
-            Assert.AreEqual("PCS$AASTA_HANSTEEN", plant.Id);
-            Assert.AreEqual("AastaHansteen", plant.Title);
+            Assert.AreEqual(_plantId, plant.Id);
+            Assert.AreEqual(_plantTitle, plant.Title);
         }
     }
 }

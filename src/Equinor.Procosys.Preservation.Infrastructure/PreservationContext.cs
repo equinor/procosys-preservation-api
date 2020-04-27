@@ -12,6 +12,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.Procosys.Preservation.Domain.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure
@@ -86,7 +87,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         {
             await DispatchEventsAsync(cancellationToken);
             await SetAuditDataAsync();
-            return await base.SaveChangesAsync(cancellationToken);
+            try
+            {
+                return await base.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateConcurrencyException concurrencyException)
+            {
+                throw new ConcurrencyException("Data store operation failed. Data may have been modified or deleted since entities were loaded.", concurrencyException);
+            }
         }
 
         private async Task DispatchEventsAsync(CancellationToken cancellationToken = default)
@@ -111,7 +119,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
             if (addedEntries.Any() || modifiedEntries.Any())
             {
-                var currentUserOid = _currentUserProvider.GetCurrentUser();
+                var currentUserOid = _currentUserProvider.GetCurrentUserOid();
                 var currentUser = await Persons.SingleOrDefaultAsync(p => p.Oid == currentUserOid);
 
                 foreach (var entry in addedEntries)

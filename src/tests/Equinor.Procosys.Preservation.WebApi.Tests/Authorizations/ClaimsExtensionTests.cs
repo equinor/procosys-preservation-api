@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
+namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
 {
     [TestClass]
     public class ClaimsExtensionTests
@@ -14,8 +13,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         {
             // Arrange
             var oid = "50e2322b-1990-42f4-86ac-179c7c075574";
-            var claim = new Claim(ClaimsExtensions.OidType, oid);
-            var claims = new List<Claim> {claim};
+            var claims = new List<Claim> {new Claim(ClaimsExtensions.OidType, oid)};
             
             // Act
             var guid = claims.TryGetOid();
@@ -30,8 +28,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         {
             // Arrange
             var oid = "50e2322b-1990-42f4-86ac-179c7c075574";
-            var claim = new Claim(ClaimTypes.UserData, oid);
-            var claims = new List<Claim> {claim};
+            var claims = new List<Claim> {new Claim(ClaimTypes.UserData, oid)};
             
             // Act
             var guid = claims.TryGetOid();
