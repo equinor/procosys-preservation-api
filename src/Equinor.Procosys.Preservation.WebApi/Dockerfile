@@ -11,6 +11,7 @@ COPY Equinor.Procosys.Preservation.Infrastructure/*.csproj ./Equinor.Procosys.Pr
 COPY tests/Equinor.Procosys.Preservation.Infrastructure.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Infrastructure.Tests/
 COPY Equinor.Procosys.Preservation.MainApi/*.csproj ./Equinor.Procosys.Preservation.MainApi/
 COPY tests/Equinor.Procosys.Preservation.MainApi.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.MainApi.Tests/
+COPY Equinor.Procosys.Preservation.BlobStorage/*.csproj ./Equinor.Procosys.Preservation.BlobStorage/
 COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservation.Query/
 COPY tests/Equinor.Procosys.Preservation.Query.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Query.Tests/
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
