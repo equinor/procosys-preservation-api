@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
@@ -16,17 +15,17 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         Task<bool> VerifyPreservationStatusAsync(int tagId, PreservationStatus status, CancellationToken token);
         
         Task<bool> HasANonVoidedRequirementAsync(int tagId, CancellationToken token);
-        
-        Task<bool> AllRequirementDefinitionsExistAsync(int tagId, CancellationToken token);
 
         Task<bool> ReadyToBePreservedAsync(int tagId, CancellationToken token);
         
         Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token);
         
-        Task<bool> HaveNextStepAsync(int tagId, CancellationToken token);
-        
         Task<bool> RequirementIsReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken token);
         
-        Task<bool> TagFollowsAJourneyAsync(int tagId, CancellationToken token);
+        Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken token);
+        
+        Task<bool> IsReadyToBeStoppedAsync(int tagId, CancellationToken token);
+            
+        Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token);
     }
 }

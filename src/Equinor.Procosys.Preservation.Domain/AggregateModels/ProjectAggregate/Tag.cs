@@ -239,7 +239,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(journey));
             }
 
-            return Status == PreservationStatus.Active && TagType != TagType.SiteArea && journey.GetNextStep(StepId) != null;
+            return Status == PreservationStatus.Active && TagFollowsAJourney && journey.GetNextStep(StepId) != null;
         }
 
         public bool IsReadyToBeStopped(Journey journey)
@@ -250,8 +250,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             return Status == PreservationStatus.Active && 
-                   (TagType == TagType.SiteArea || TagType == TagType.PoArea || 
-                   (TagType == TagType.Standard || TagType == TagType.PreArea) && journey.GetNextStep(StepId) == null);
+                   (!TagFollowsAJourney || TagFollowsAJourney && journey.GetNextStep(StepId) == null);
         }
 
         public void Transfer(Journey journey)
@@ -307,5 +306,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void UpdateNextDueTimeUtc()
             => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
+
+        private bool TagFollowsAJourney => TagType == TagType.Standard || TagType == TagType.PreArea;
     }
 }
