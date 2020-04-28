@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string TagNo { get; private set; }
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
         public DateTime? NextDueTimeUtc { get; private set;  }
 
         public DateTime CreatedAtUtc { get; private set; }
