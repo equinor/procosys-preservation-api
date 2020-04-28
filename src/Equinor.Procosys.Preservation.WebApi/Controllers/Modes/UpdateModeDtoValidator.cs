@@ -3,13 +3,12 @@ using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
 {
-    public class CreateModeDtoValidator : AbstractValidator<CreateModeDto>
+    public class UpdateModeDtoValidator : AbstractValidator<UpdateModeDto>
     {
-        public CreateModeDtoValidator()
-        {
-            RuleFor(x => x.Title)
+        public UpdateModeDtoValidator()
+            => RuleFor(x => x.Title)
+                .NotNull()
                 .MinimumLength(Mode.TitleLengthMin)
                 .MaximumLength(Mode.TitleLengthMax);
-        }
     }
 }

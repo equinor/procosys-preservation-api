@@ -57,5 +57,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Another journey with this title already exists!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenJourneyIsVoided()
+        {
+            _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey is voided!"));
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
                 .WithMessage(command => $"Mode with title already exists! Mode={command.Title}");
 
             async Task<bool> HaveUniqueTitleAsync(string title, CancellationToken token) =>
-                !await modeValidator.ExistsAsync(title, token);
+                !await modeValidator.ExistsWithSameTitleAsync(title, token);
         }
     }
 }
