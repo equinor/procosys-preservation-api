@@ -42,6 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag != null && tag.Requirements.Any(r => !r.IsVoided);
         }
 
+        // todo remove after codereview .. diff get crazy when removing it
         public async Task<bool> AllRequirementDefinitionsExistAsync(int tagId, CancellationToken cancellationToken)
         {
             var tag = await GetTagWithRequirements(tagId, cancellationToken);
@@ -52,10 +53,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
             var reqDefIds = tag.Requirements.Select(r => r.RequirementDefinitionId).Distinct().ToList();
             var reqDefCount = await (from rd in _context.QuerySet<Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition>()
-                    where reqDefIds.Contains(rd.Id)
-                        select rd)
+                                     where reqDefIds.Contains(rd.Id)
+                                     select rd)
                 .CountAsync(cancellationToken);
-            
+
             return reqDefCount == reqDefIds.Count;
         }
 
@@ -83,6 +84,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return requirement != null && requirement.HasActivePeriod;
         }
 
+        // todo remove after codereview .. diff get crazy when removing it
         public async Task<bool> HaveNextStepAsync(int tagId, CancellationToken cancellationToken)
         {
             var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
@@ -92,8 +94,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             }
 
             var journey = await (from j in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Journey>().Include(j => j.Steps)
-                where j.Steps.Any(s => s.Id == tag.StepId)
-                select j).SingleOrDefaultAsync(cancellationToken);
+                                 where j.Steps.Any(s => s.Id == tag.StepId)
+                                 select j).SingleOrDefaultAsync(cancellationToken);
 
             var step = journey?.GetNextStep(tag.StepId);
 
@@ -113,6 +115,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return requirement != null && requirement.ReadyToBePreserved;
         }
 
+        // todo remove after codereview .. diff get crazy when removing it
         public async Task<bool> TagFollowsAJourneyAsync(int tagId, CancellationToken cancellationToken)
         {
             var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
@@ -122,6 +125,47 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             }
 
             return tag.TagType == TagType.PreArea || tag.TagType == TagType.Standard;
+        }
+
+        public async Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken cancellationToken)
+        {
+            var tag = await GetTagWithRequirements(tagId, cancellationToken);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return tag.IsReadyToBeStarted();
+        }
+
+        public async Task<bool> IsReadyToBeStoppedAsync(int tagId, CancellationToken cancellationToken)
+        {
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
+            if (tag == null)
+            {
+                return false;
+            }
+                        
+            var journey = await (from j in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Journey>().Include(j => j.Steps)
+                where j.Steps.Any(s => s.Id == tag.StepId)
+                select j).SingleOrDefaultAsync(cancellationToken);
+
+            return tag.IsReadyToBeStopped(journey);
+        }
+
+        public async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken cancellationToken)
+        {
+            var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
+            if (tag == null)
+            {
+                return false;
+            }
+                        
+            var journey = await (from j in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Journey>().Include(j => j.Steps)
+                where j.Steps.Any(s => s.Id == tag.StepId)
+                select j).SingleOrDefaultAsync(cancellationToken);
+
+            return tag.IsReadyToBeTransferred(journey);
         }
 
         private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken cancellationToken)
