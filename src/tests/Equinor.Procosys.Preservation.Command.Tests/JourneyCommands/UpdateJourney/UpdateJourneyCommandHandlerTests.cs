@@ -38,6 +38,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         [TestMethod]
         public async Task HandlingUpdateJourneyCommand_ShouldUpdateJourney()
         {
+            // Arrange
+            Assert.AreEqual(_oldTitle, _journeyMock.Object.Title);
+
             // Act
             var result = await _dut.Handle(_command, default);
 
