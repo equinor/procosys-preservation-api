@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             var dut = new TestableEntityBase();
             dut.SetProtectedRowVersionForTesting(OldRowVersion);
 
-            dut.RowVersion = NewRowVersion;
+            dut.SetRowVersion(NewRowVersion);
         }
         
         public class TestableEntityBase : EntityBase

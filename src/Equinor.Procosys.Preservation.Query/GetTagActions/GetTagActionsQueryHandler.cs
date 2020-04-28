@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -37,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActions
                     action.Title,
                     action.DueTimeUtc,
                     action.IsClosed,
-                    action.RowVersion)).ToList();
+                    (ulong)BitConverter.ToInt64(action.RowVersion))).ToList();
             return new SuccessResult<List<ActionDto>>(actions);
         }
     }

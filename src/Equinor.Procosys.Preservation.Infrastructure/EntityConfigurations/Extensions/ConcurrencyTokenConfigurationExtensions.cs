@@ -10,11 +10,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Exte
             where TEntity : EntityBase
         {
             builder
-                .Property("rowVersion")
+                .Property("RowVersion")
                 .IsRowVersion()
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            builder.Ignore(tEntity => tEntity.RowVersion);
         }
     }
 }

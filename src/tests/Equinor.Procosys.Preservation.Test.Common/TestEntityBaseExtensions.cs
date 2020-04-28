@@ -13,7 +13,5 @@ namespace Equinor.Procosys.Preservation.Test.Common.ExtentionMethods
             var rowVersionBytes = BitConverter.GetBytes(rowVersion);
             property.SetValue(entityBase, rowVersionBytes);
         }
-            property.SetValue(entityBase, UInt64.Parse("123"));
-        }
     }
 }

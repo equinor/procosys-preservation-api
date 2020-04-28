@@ -164,7 +164,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     dto.Description,
                     dto.TagNo,
                     dto.TagType,
-                    dto.RowVersion);
+                    (ulong)BitConverter.ToInt64(dto.RowVersion));
             });
             var result = new TagsResult(maxAvailable, tags);
             return result;
@@ -392,7 +392,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             public string TagFunctionCode { get; set; }
             public string TagNo { get; set; }
             public TagType TagType { get; set; }
-            public ulong RowVersion { get; set; }
+            public byte[] RowVersion { get; set; }
             public Journey JourneyWithSteps { get; set; }
             public Step NextStep { get; set; }
 

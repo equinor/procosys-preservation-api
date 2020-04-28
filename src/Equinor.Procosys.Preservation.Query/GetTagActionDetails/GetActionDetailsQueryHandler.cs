@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -7,6 +8,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
+using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
 {
@@ -56,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
                 dto.Action.IsClosed,
                 closedBy,
                 dto.Action.ClosedAtUtc,
-                dto.Action.RowVersion);
+                (ulong)BitConverter.ToInt64(dto.Action.RowVersion));
             
             return new SuccessResult<ActionDetailsDto>(action);
         }

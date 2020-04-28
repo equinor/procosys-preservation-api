@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -44,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         TagNo = tag.TagNo,
                                         TagType = tag.TagType,
                                         ReadyToBePreserved = tag.IsReadyToBePreserved(),
-                                        RowVersion = tag.RowVersion
+                                        RowVersion = (ulong)BitConverter.ToInt64(tag.RowVersion)
                                     }).SingleOrDefaultAsync(cancellationToken);
 
             if (tagDetails == null) 

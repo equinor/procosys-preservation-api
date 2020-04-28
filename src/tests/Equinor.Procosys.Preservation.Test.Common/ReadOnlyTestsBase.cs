@@ -125,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo, string description, Step step, IEnumerable<TagRequirement> requirements)
         {
             var tag = new Tag(TestPlant, tagType, tagNo, description, step, requirements);
-            tag.RowVersion = 123;
+            tag.SetRowVersion(123);
             parentProject.AddTag(tag);
             context.SaveChangesAsync().Wait();
             return tag;
@@ -236,7 +236,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 };
                 tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
                 tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Description");
-                tag.RowVersion = 234;
+                tag.SetRowVersion(234);
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -266,7 +266,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 };
                 tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
                 tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Description");
-                tag.RowVersion = 345;
+                tag.SetRowVersion(345);
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -283,7 +283,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                         new TagRequirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
                     });
 
-                tag.RowVersion = 456;
+                tag.SetRowVersion(456);
                 testDataSet.Project2.AddTag(tag);
             }
             
