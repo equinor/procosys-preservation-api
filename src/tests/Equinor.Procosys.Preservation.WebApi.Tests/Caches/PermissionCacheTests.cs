@@ -41,10 +41,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
                 .Setup(x => x.CurrentValue)
                 .Returns(new CacheOptions());
 
-            _dut = new PermissionCache(
-                new CacheManager(),
-                _permissionApiServiceMock.Object,
-                optionsMock.Object);
+            _dut = new PermissionCache(new CacheManager(), _permissionApiServiceMock.Object, optionsMock.Object);
         }
 
         [TestMethod]
@@ -117,6 +114,34 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
             AssertRestrictions(result);
             // since GetContentRestrictionsForUserOidAsync has been called twice, but GetContentRestrictionsAsync has been called once, the second Get uses cache
             _permissionApiServiceMock.Verify(p => p.GetContentRestrictionsAsync(TestPlant), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetPermissionsForUserOid_ShouldThrowExceptionWhenOidIsEmty()
+            => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetPermissionsForUserAsync(TestPlant, Guid.Empty));
+
+        [TestMethod]
+        public async Task GetProjectNamesForUserOid_ShouldThrowExceptionWhenOidIsEmty()
+            => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetProjectNamesForUserOidAsync(TestPlant, Guid.Empty));
+
+        [TestMethod]
+        public async Task GetContentRestrictionsForUserOid_ShouldThrowExceptionWhenOidIsEmty()
+            => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetContentRestrictionsForUserOidAsync(TestPlant, Guid.Empty));
+
+        [TestMethod]
+        public void ClearAll_ShouldClearAllPermissionCaches()
+        {
+            // Arrange
+            var cacheManagerMock = new Mock<ICacheManager>();
+            var dut = new PermissionCache(
+                cacheManagerMock.Object,
+                _permissionApiServiceMock.Object,
+                new Mock<IOptionsMonitor<CacheOptions>>().Object);
+            // Act
+            dut.ClearAll(TestPlant, Oid);
+
+            // Assert
+            cacheManagerMock.Verify(c => c.Remove(It.IsAny<string>()), Times.Exactly(3));
         }
 
         private void AssertPermissions(IList<string> result)

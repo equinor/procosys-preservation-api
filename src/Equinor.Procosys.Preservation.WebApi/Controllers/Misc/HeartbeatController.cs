@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Heartbeat
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
 {
     [ApiController]
     [Route("Heartbeat")]
@@ -11,10 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Heartbeat
     {
         private readonly ILogger<HeartbeatController> _logger;
 
-        public HeartbeatController(ILogger<HeartbeatController> logger)
-        {
-            _logger = logger;
-        }
+        public HeartbeatController(ILogger<HeartbeatController> logger) => _logger = logger;
 
         [AllowAnonymous]
         [HttpGet("IsAlive")]

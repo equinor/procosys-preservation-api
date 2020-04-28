@@ -25,32 +25,57 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
 
         public async Task<IList<string>> GetPermissionsForUserAsync(string plantId, Guid userOid)
             => await _cacheManager.GetOrCreate(
-                PermissionsCacheKey(userOid, plantId),
+                PermissionsCacheKey(plantId, userOid),
                 async () => await _permissionApiService.GetPermissionsAsync(plantId),
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
 
         public async Task<IList<string>> GetProjectNamesForUserOidAsync(string plantId, Guid userOid)
             => await _cacheManager.GetOrCreate(
-                ProjectsCacheKey(userOid, plantId),
+                ProjectsCacheKey(plantId, userOid),
                 async () => await _permissionApiService.GetProjectsAsync(plantId),
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
 
         public async Task<IList<string>> GetContentRestrictionsForUserOidAsync(string plantId, Guid userOid)
             => await _cacheManager.GetOrCreate(
-                ContentRestrictionsCacheKey(userOid, plantId),
+                ContentRestrictionsCacheKey(plantId, userOid),
                 async () => await _permissionApiService.GetContentRestrictionsAsync(plantId),
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
 
-        private string ProjectsCacheKey(Guid userOid, string plant)
-            => $"PROJECTS_{userOid.ToString().ToUpper()}_{plant}";
+        public void ClearAll(string plantId, Guid userOid)
+        {
+            _cacheManager.Remove(ProjectsCacheKey(plantId, userOid));
+            _cacheManager.Remove(PermissionsCacheKey(plantId, userOid));
+            _cacheManager.Remove(ContentRestrictionsCacheKey(plantId, userOid));
+        }
 
-        private static string PermissionsCacheKey(Guid userOid, string plant)
-            => $"PERMISSIONS_{userOid.ToString().ToUpper()}_{plant}";
+        private string ProjectsCacheKey(string plantId, Guid userOid)
+        {
+            if (userOid == Guid.Empty)
+            {
+                throw new Exception("Illegal userOid for cache");
+            }
+            return $"PROJECTS_{userOid.ToString().ToUpper()}_{plantId}";
+        }
 
-        private static string ContentRestrictionsCacheKey(Guid userOid, string plant)
-            => $"CONTENTRESTRICTIONS_{userOid.ToString().ToUpper()}_{plant}";
+        private static string PermissionsCacheKey(string plantId, Guid userOid)
+        {
+            if (userOid == Guid.Empty)
+            {
+                throw new Exception("Illegal userOid for cache");
+            }
+            return $"PERMISSIONS_{userOid.ToString().ToUpper()}_{plantId}";
+        }
+
+        private static string ContentRestrictionsCacheKey(string plantId, Guid userOid)
+        {
+            if (userOid == Guid.Empty)
+            {
+                throw new Exception("Illegal userOid for cache");
+            }
+            return $"CONTENTRESTRICTIONS_{userOid.ToString().ToUpper()}_{plantId}";
+        }
     }
 }

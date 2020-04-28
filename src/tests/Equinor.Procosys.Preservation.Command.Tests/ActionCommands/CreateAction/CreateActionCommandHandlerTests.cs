@@ -83,9 +83,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
                 _description,
                 new DateTime(2020, 1, 1, 1, 1, 1));
 
-            await Assert.ThrowsExceptionAsync<ArgumentException>(() =>
-            _dut.Handle(command, default)
-            );
+            await Assert.ThrowsExceptionAsync<ArgumentException>(() => _dut.Handle(command, default));
         }
     }
 }

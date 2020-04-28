@@ -76,5 +76,25 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Caching
             // Assert
             Assert.IsNull(result);
         }
+
+        [TestMethod]
+        public void Remove_ShouldRemoveKnownKey()
+        {
+            // Arrange
+            _dut.GetOrCreate("A", () => "B", CacheDuration.Minutes, 2);
+            _dut.Get<string>("A");
+            var result = _dut.Get<string>("A");
+            Assert.AreEqual("B", result);
+            _dut.Remove("A");
+            
+            // Act
+            result = _dut.Get<string>("A");
+            
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void Remove_ShouldDoNothing_WhenRemoveUnknownKey() => _dut.Remove("A");
     }
 }
