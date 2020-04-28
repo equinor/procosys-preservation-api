@@ -32,12 +32,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                     .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
                     .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => PreservationIsStartedAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to transfer! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => TagTypeCanBeTransferredAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tags of this type can not be transferred! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => HaveNextStepAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag doesn't have a next step to transfer to! Tag={id}");
+                    .MustAsync((_, tagId, __, token) => IsReadyToBeTransferredAsyncAsync(tagId, token))
+                    .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
@@ -55,14 +51,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => ! await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> PreservationIsStartedAsync(int tagId, CancellationToken token)
-                => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
-
-            async Task<bool> TagTypeCanBeTransferredAsync(int tagId, CancellationToken token)
-                => await tagValidator.TagFollowsAJourneyAsync(tagId, token);
-            
-            async Task<bool> HaveNextStepAsync(int tagId, CancellationToken token)
-                => await tagValidator.HaveNextStepAsync(tagId, token);
+            async Task<bool> IsReadyToBeTransferredAsyncAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeTransferredAsync(tagId, token);
         }
     }
 }
