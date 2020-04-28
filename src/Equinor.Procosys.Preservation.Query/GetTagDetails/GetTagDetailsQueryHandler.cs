@@ -43,10 +43,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         StorageArea = tag.StorageArea,
                                         TagNo = tag.TagNo,
                                         TagType = tag.TagType,
-                                        ReadyToBePreserved = tag.IsReadyToBePreserved()
+                                        ReadyToBePreserved = tag.IsReadyToBePreserved(),
+                                        RowVersion = tag.RowVersion
                                     }).SingleOrDefaultAsync(cancellationToken);
 
-            if (tagDetails == null)
+            if (tagDetails == null) 
             {
                 return new NotFoundResult<TagDetailsDto>($"Entity with ID {request.TagId} not found");
             }

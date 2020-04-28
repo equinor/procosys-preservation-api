@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
                 dto.Action.IsClosed,
                 closedBy,
                 dto.Action.ClosedAtUtc,
-                dto.Action.GetRowVersion());
+                dto.Action.RowVersion);
             
             return new SuccessResult<ActionDetailsDto>(action);
         }

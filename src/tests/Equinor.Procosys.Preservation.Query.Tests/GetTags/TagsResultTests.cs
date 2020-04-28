@@ -36,7 +36,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 "TagFunctionCode",
                 "TagDesc",
                 "TagNo",
-                TagType.Standard);
+                TagType.Standard,
+                1234567890);
             var dut = new TagsResult(10, new List<TagDto>{ tagDto });
             Assert.AreEqual(10, dut.MaxAvailable);
             Assert.IsNotNull(dut.Tags);

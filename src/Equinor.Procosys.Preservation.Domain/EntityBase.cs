@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using MediatR;
 
 namespace Equinor.Procosys.Preservation.Domain
@@ -15,16 +16,22 @@ namespace Equinor.Procosys.Preservation.Domain
 
         public virtual int Id { get; protected set; }
 
-        public byte[] RowVersion { get; protected set; }
-
-        public ulong GetRowVersion() => (ulong) BitConverter.ToInt64(RowVersion);
-        public void SetRowVersion(ulong version)
+        public readonly byte[] rowVersion = new byte[8];
+        
+        public ulong RowVersion
         {
-            var newRowVersion = BitConverter.GetBytes(version);
-
-            for (var index = 0; index < newRowVersion.Length; index++)
+            get
             {
-                RowVersion[index] = newRowVersion[index];
+                return (ulong)BitConverter.ToInt64(rowVersion);
+            }
+
+            set
+            { 
+                var newRowVersion = BitConverter.GetBytes(value);
+                for (var index = 0; index < newRowVersion.Length; index++)
+                {
+                    rowVersion[index] = newRowVersion[index];
+                }
             }
         }
 

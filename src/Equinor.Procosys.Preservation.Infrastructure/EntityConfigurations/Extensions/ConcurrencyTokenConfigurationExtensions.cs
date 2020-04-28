@@ -1,4 +1,5 @@
 ﻿using Equinor.Procosys.Preservation.Domain;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions
@@ -6,9 +7,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Exte
     public static class ConcurrencyTokenConfigurationExtensions
     {
         public static void ConfigureConcurrencyToken<TEntity>(this EntityTypeBuilder<TEntity> builder)
-            where TEntity : EntityBase =>
+            where TEntity : EntityBase
+        {
             builder
-                .Property(x => x.RowVersion)
-                .IsRowVersion();
+                .Property("rowVersion")
+                .IsRowVersion()
+                .UsePropertyAccessMode(PropertyAccessMode.Field);
+
+            builder.Ignore(tEntity => tEntity.RowVersion);
+        }
     }
 }
