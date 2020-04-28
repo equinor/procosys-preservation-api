@@ -6,7 +6,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate
 {
     public class Mode : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
-        public const int TitleMinLength = 3;
+        public const int TitleLengthMin = 3;
         public const int TitleLengthMax = 255;
 
         protected Mode()
@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate
         public Mode(string plant, string title)
             : base(plant) => Title = title;
 
-        public string Title { get; private set; }
+        public string Title { get; set; }
         public bool IsVoided { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }

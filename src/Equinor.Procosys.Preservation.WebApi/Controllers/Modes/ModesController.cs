@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
 using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
+using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -68,6 +69,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             [FromRoute] int id)
         {
             var result = await _mediator.Send(new DeleteModeCommand(id));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [HttpPut("{id}/UpdateMode")]
+        public async Task<ActionResult> UpdateMode(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] UpdateModeDto dto)
+        {
+            var result = await _mediator.Send(new UpdateModeCommand(id, dto.Title));
             return this.FromResult(result);
         }
     }
