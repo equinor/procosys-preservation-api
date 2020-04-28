@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.ExistsAsync(ModeTitle, default);
+                var result = await dut.ExistsWithSameTitleAsync(ModeTitle, default);
                 Assert.IsTrue(result);
             }
         }
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.ExistsAsync("XXX", default);
+                var result = await dut.ExistsWithSameTitleAsync("XXX", default);
                 Assert.IsFalse(result);
             }
         }

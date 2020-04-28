@@ -18,9 +18,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ModeValidators
                 where m.Id == modeId
                 select m).AnyAsync(token);
 
-        public async Task<bool> ExistsAsync(string title, CancellationToken token) =>
+        public async Task<bool> ExistsWithSameTitleAsync(string title, CancellationToken token) =>
             await (from m in _context.QuerySet<Mode>()
                 where m.Title == title
+                select m).AnyAsync(token);
+
+        public async Task<bool> ExistsAnotherModeWithSameTitleAsync(int modeId, string title, CancellationToken token) =>
+            await (from m in _context.QuerySet<Mode>()
+                where m.Title == title && m.Id != modeId
                 select m).AnyAsync(token);
 
         public async Task<bool> IsVoidedAsync(int modeId, CancellationToken token)
