@@ -955,5 +955,22 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+        
+        #region AddAttachment
+
+        [TestMethod]
+        public void AddAttachment_ShouldAddAttachment()
+        {
+            var attachment = new TagAttachment(TestPlant, Guid.Empty, null, null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(attachment);
+
+            Assert.AreEqual(attachment, _dutWithOneReqNotNeedInputTwoWeekInterval.Attachments.First());
+        }
+
+        [TestMethod]
+        public void AddAttachment_ShouldThrowException_WhenAttachmentNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(null));
+
+        #endregion
     }
 }

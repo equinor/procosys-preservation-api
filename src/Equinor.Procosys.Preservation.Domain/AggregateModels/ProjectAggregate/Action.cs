@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
@@ -8,6 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
     {
         public const int TitleLengthMax = 128;
         public const int DescriptionLengthMax = 4096;
+        private readonly List<ActionAttachment> _attachments = new List<ActionAttachment>();
 
         protected Action() : base(null)
         {
@@ -27,10 +29,27 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime? ClosedAtUtc { get; private set; }
         public int? ClosedById { get; private set; }
         public bool IsClosed => ClosedAtUtc.HasValue;
+        public IReadOnlyCollection<ActionAttachment> Attachments => _attachments.AsReadOnly();
+
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+        
+        public void AddAttachment(ActionAttachment attachment)
+        {
+            if (attachment == null)
+            {
+                throw new ArgumentNullException(nameof(attachment));
+            }
+            
+            if (attachment.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't relate item in {attachment.Plant} to item in {Plant}");
+            }
+
+            _attachments.Add(attachment);
+        }
 
         public void SetDueTime(DateTime? dueTimeUtc)
         {

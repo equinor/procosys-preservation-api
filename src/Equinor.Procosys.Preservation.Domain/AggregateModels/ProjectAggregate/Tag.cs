@@ -11,6 +11,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
     {
         private readonly List<TagRequirement> _requirements = new List<TagRequirement>();
         private readonly List<Action> _actions = new List<Action>();
+        private readonly List<TagAttachment> _attachments = new List<TagAttachment>();
 
         public const int TagNoLengthMax = 255;
         public const int TagFunctionCodeLengthMax = 255;
@@ -87,6 +88,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string TagNo { get; private set; }
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
+        public IReadOnlyCollection<TagAttachment> Attachments => _attachments.AsReadOnly();
         public bool IsVoided { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set;  }
 
@@ -154,6 +156,21 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _actions.Add(action);
+        }
+
+        public void AddAttachment(TagAttachment attachment)
+        {
+            if (attachment == null)
+            {
+                throw new ArgumentNullException(nameof(attachment));
+            }
+            
+            if (attachment.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't relate item in {attachment.Plant} to item in {Plant}");
+            }
+
+            _attachments.Add(attachment);
         }
 
         public void StartPreservation()

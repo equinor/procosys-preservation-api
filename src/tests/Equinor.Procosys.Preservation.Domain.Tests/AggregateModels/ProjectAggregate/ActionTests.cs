@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -93,5 +95,18 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(_utcNow, _dut.ClosedAtUtc);
             Assert.IsTrue(_dut.IsClosed);
         }
+        
+        [TestMethod]
+        public void AddAttachment_ShouldAddAttachment()
+        {
+            var attachment = new ActionAttachment("PlantA", Guid.Empty, null, null);
+            _dut.AddAttachment(attachment);
+
+            Assert.AreEqual(attachment, _dut.Attachments.First());
+        }
+
+        [TestMethod]
+        public void AddAttachment_ShouldThrowException_WhenAttachmentNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dut.AddAttachment(null));
     }
 }

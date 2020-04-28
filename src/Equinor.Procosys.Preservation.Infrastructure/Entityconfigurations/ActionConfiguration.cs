@@ -33,6 +33,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             
             builder.Property(x => x.ClosedAtUtc)
                 .HasConversion(PreservationContext.NullableDateTimeKindConverter);
+
+            builder
+                .HasMany(x => x.Attachments)
+                .WithOne()
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
