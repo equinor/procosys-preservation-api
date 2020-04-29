@@ -34,10 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
                     .WithMessage((_, id) => $"Tag doesn't exists! Tag={id}")
                     .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => PreservationIsActiveAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to be able to stop! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => CanBeStoppedAsync(tagId, token))
-                    .WithMessage((_, id) => $"{TagType.Standard} and {TagType.PreArea} tags must be in last step of journey to be able to stop! Tag={id}");
+                    .MustAsync((_, tagId, __, token) => IsReadyToBeStoppedAsync(tagId, token))
+                    .WithMessage((_, id) => $"Preservation on tag can not be stopped! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
@@ -58,14 +56,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> PreservationIsActiveAsync(int tagId, CancellationToken token)
-                => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
-
-            async Task<bool> CanBeStoppedAsync(int tagId, CancellationToken token)
-            {
-                var tagFollowsAJourney = await tagValidator.TagFollowsAJourneyAsync(tagId, token);
-                return !tagFollowsAJourney || !await tagValidator.HaveNextStepAsync(tagId, token);
-            }
+            async Task<bool> IsReadyToBeStoppedAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeStoppedAsync(tagId, token);
         }
     }
 }

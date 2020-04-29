@@ -149,6 +149,23 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
             _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
         }
 
+        [TestMethod]
+        public async Task Clear_ShouldForceGettingPlantsFromApiServiceAgain()
+        {
+            // Arrange
+            var result = await _dut.IsValidPlantForUserAsync(Plant2, _currentUserOid);
+            Assert.IsTrue(result);
+            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+
+            // Act
+            _dut.Clear(_currentUserOid);
+
+            // Assert
+            result = await _dut.IsValidPlantForUserAsync(Plant2, _currentUserOid);
+            Assert.IsTrue(result);
+            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Exactly(2));
+        }
+
         private void AssertPlants(IList<string> result)
         {
             Assert.AreEqual(2, result.Count);

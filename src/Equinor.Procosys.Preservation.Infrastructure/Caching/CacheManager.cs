@@ -11,6 +11,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Caching
 
         public T Get<T>(string key) where T : class => _cache.Get(key) as T;
 
+        public void Remove(string key) => _cache.Remove(key);
+
         public T GetOrCreate<T>(string key, Func<T> fetch, CacheDuration duration, long expiration) where T : class
         {
             var instance = Get<T>(key);
