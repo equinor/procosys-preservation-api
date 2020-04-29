@@ -454,7 +454,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPut("{id}/UnvoidTag")]
-        public async Task<IActionResult> VoidTag(
+        public async Task<IActionResult> UnvoidTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
