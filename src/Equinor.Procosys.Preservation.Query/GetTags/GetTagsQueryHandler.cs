@@ -135,11 +135,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                 var isReadyToBeStarted = tagWithRequirements.IsReadyToBeStarted();
                 var isReadyToBeTransferred = tagWithRequirements.IsReadyToBeTransferred(dto.JourneyWithSteps);
 
-                var nextMode = isReadyToBeTransferred && dto.NextStep != null 
+                var nextMode = tagWithRequirements.FollowsAJourney && dto.NextStep != null 
                     ? nextModes.Single(m => m.Id == dto.NextStep.ModeId)
                     : null;
                 
-                var nextResponsible = isReadyToBeTransferred && dto.NextStep != null
+                var nextResponsible = tagWithRequirements.FollowsAJourney && dto.NextStep != null
                     ? nextResponsibles.Single(m => m.Id == dto.NextStep.ResponsibleId)
                     : null;
 
