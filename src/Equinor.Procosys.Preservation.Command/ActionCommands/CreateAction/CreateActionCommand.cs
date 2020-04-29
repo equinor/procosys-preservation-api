@@ -13,9 +13,9 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction
             Description = description;
             DueTimeUtc = dueTimeUtc;
         }
-        public int TagId { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTime? DueTimeUtc { get; set; }
+        public int TagId { get; }
+        public string Title { get; }
+        public string Description { get; }
+        public DateTime? DueTimeUtc { get; }
     }
 }

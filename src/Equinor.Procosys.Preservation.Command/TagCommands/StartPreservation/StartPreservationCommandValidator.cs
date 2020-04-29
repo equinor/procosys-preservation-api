@@ -34,12 +34,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
                     .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
                     .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => PreservationIsNotStartedAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag must have status {PreservationStatus.NotStarted} to start! Tag={id}")
+                    .MustAsync((_, tagId, __, token) => IsReadyToBeStartedAsync(tagId, token))
+                    .WithMessage((_, id) => $"Preservation on tag can not be started! Tag={id}")
                     .MustAsync((_, tagId, __, token) => HaveAtLeastOneNonVoidedRequirementAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag do not have any non voided requirement! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => HaveExistingRequirementDefinitionsAsync(tagId, token))
-                    .WithMessage((_, id) => $"A requirement definition doesn't exists! Tag={id}");
+                    .WithMessage((_, id) => $"Tag do not have any non voided requirement! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
@@ -60,14 +58,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> PreservationIsNotStartedAsync(int tagId, CancellationToken token)
-                => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.NotStarted, token);
+            async Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeStartedAsync(tagId, token);
 
             async Task<bool> HaveAtLeastOneNonVoidedRequirementAsync(int tagId, CancellationToken token)
                 => await tagValidator.HasANonVoidedRequirementAsync(tagId, token);
-            
-            async Task<bool> HaveExistingRequirementDefinitionsAsync(int tagId, CancellationToken token)
-                => await tagValidator.AllRequirementDefinitionsExistAsync(tagId, token);
         }
     }
 }

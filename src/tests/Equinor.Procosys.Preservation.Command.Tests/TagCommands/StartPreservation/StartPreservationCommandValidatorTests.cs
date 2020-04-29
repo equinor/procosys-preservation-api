@@ -31,12 +31,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeStartedAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeStartedAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(true));
             _command = new StartPreservationCommand(_tagIds);
 
             _dut = new StartPreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
@@ -135,27 +133,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyTagMissesARequirementDefinition()
+        public void Validate_ShouldFail_WhenNotReadyToBeStarted()
         {
-            _tagValidatorMock.Setup(r => r.AllRequirementDefinitionsExistAsync(TagId1, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeStartedAsync(TagId1, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("A requirement definition doesn't exists!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenPreservationIsStartedForAnyTag()
-        {
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.NotStarted, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.NotStarted} to start!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Preservation on tag can not be started!"));
         }
 
         [TestMethod]

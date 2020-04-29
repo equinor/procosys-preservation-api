@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
+using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -16,10 +17,12 @@ using Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
+using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
@@ -398,6 +401,54 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(new RequirementPreserveCommand(id, requirementId));
             
+            return this.FromResult(result);
+        }
+        
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Attachments")]
+        public async Task<ActionResult<List<TagAttachmentDto>>> GetTagAttachments(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id)
+        {
+            var result = await _mediator.Send(new GetTagAttachmentsQuery(id));
+            return this.FromResult(result);
+        }
+        
+        [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
+        [HttpPost("{id}/Attachments")]
+        public async Task<ActionResult<int>> UploadTagAttachment(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] UploadAttachmentDto dto)
+        {
+            var actionCommand = new UploadTagAttachmentCommand(
+                id,
+                dto.Title,
+                dto.FileName,
+                dto.OverwriteIfExists);
+
+            var result = await _mediator.Send(actionCommand);
+
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [HttpPut("{id}/VoidTag")]
+        public async Task<IActionResult> VoidTag(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id)
+        {
+            var result = await _mediator.Send(new VoidTagCommand(id));
+
             return this.FromResult(result);
         }
 

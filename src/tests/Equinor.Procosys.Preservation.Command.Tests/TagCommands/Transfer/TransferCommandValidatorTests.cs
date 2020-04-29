@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -29,14 +28,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.HaveNextStepAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.HaveNextStepAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.TagFollowsAJourneyAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.TagFollowsAJourneyAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId2, default)).Returns(Task.FromResult(true));
             _command = new TransferCommand(_tagIds);
 
             _dut = new TransferCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
@@ -111,39 +104,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenPreservationIsNotActiveForAnyTag()
+        public void Validate_ShouldFail_WhenNotReadyToBeTransferred()
         {
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId1, PreservationStatus.Active, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.Active} to transfer!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenTagHasNoNextStep()
-        {
-            _tagValidatorMock.Setup(r => r.HaveNextStepAsync(TagId1, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't have a next step to transfer to!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenTagTypeCanNotBeTransferred()
-        {
-            _tagValidatorMock.Setup(r => r.TagFollowsAJourneyAsync(TagId1, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tags of this type can not be transferred!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag can not be transferred!"));
         }
 
         [TestMethod]
