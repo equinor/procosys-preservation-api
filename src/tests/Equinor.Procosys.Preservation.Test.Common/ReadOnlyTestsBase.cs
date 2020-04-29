@@ -11,7 +11,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Test.Common.ExtentionMethods;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -125,7 +124,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
         protected Tag AddTag(PreservationContext context, Project parentProject, TagType tagType, string tagNo, string description, Step step, IEnumerable<TagRequirement> requirements)
         {
             var tag = new Tag(TestPlant, tagType, tagNo, description, step, requirements);
-            tag.SetRowVersion(123);
             parentProject.AddTag(tag);
             context.SaveChangesAsync().Wait();
             return tag;
@@ -236,7 +234,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 };
                 tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
                 tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Description");
-                tag.SetRowVersion(234);
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -266,7 +263,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 };
                 tag.SetArea($"{testDataSet.AreaPrefix}-{i}", $"{testDataSet.AreaPrefix}-{i}-Description");
                 tag.SetDiscipline($"{testDataSet.DisciplinePrefix}-{i}", $"{testDataSet.DisciplinePrefix}-{i}-Description");
-                tag.SetRowVersion(345);
 
                 testDataSet.Project1.AddTag(tag);
             }
@@ -283,7 +279,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
                         new TagRequirement(TestPlant, testDataSet.IntervalWeeks, testDataSet.ReqType1.RequirementDefinitions.ElementAt(0))
                     });
 
-                tag.SetRowVersion(456);
                 testDataSet.Project2.AddTag(tag);
             }
             

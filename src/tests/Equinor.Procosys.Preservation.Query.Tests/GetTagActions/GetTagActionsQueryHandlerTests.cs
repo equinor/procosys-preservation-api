@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
 using Equinor.Procosys.Preservation.Test.Common;
-using Equinor.Procosys.Preservation.Test.Common.ExtentionMethods;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
@@ -32,10 +31,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
                 var tag = _testDataSet.Project1.Tags.First();
 
                 _openAction = new Action(TestPlant, "Open", "Desc1", _utcNow);
-                _openAction.SetProtectedRowVersionForTesting(123);
                 tag.AddAction(_openAction);
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _utcNow);
-                _closedAction.SetProtectedRowVersionForTesting(456);
                 _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
 

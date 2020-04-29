@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Castle.DynamicProxy.Generators;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -10,7 +9,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Test.Common;
-using Equinor.Procosys.Preservation.Test.Common.ExtentionMethods;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -102,15 +100,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 context.SaveChangesAsync().Wait();
 
                 var requirementWithoutField = new TagRequirement(TestPlant, _interval, requirementDefinitionWithoutField);
-                requirementWithoutField.SetProtectedRowVersionForTesting(123);
                 var requirementWithOneInfo = new TagRequirement(TestPlant, _interval, requirementDefinitionWithOneInfo);
-                requirementWithOneInfo.SetProtectedRowVersionForTesting(234);
                 var requirementWithTwoCheckBoxes = new TagRequirement(TestPlant, _interval, requirementDefinitionWithTwoCheckBoxes);
-                requirementWithTwoCheckBoxes.SetProtectedRowVersionForTesting(345);
                 var requirementWithOneNumberNoPrev = new TagRequirement(TestPlant, _interval, requirementDefinitionWithOneNumberNoPrev);
-                requirementWithOneNumberNoPrev.SetProtectedRowVersionForTesting(456);
                 var requirementWithThreeNumberShowPrev = new TagRequirement(TestPlant, _interval, requirementDefinitionWithThreeNumberShowPrev);
-                requirementWithThreeNumberShowPrev.SetProtectedRowVersionForTesting(567);
 
                 var tag = new Tag(TestPlant,
                     TagType.Standard, 

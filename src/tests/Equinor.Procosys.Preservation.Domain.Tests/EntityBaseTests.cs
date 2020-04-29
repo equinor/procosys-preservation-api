@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using Equinor.Procosys.Preservation.Test.Common.ExtentionMethods;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -9,8 +8,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
     [TestClass]
     public class EntityBaseTests
     {
-        private const ulong OldRowVersion = 123;
-        private const ulong NewRowVersion = 456;
+        private const ulong RowVersion = 123;
 
         [TestMethod]
         public void ReturningEmptyDomainEventsListTest()
@@ -55,22 +53,20 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         }
 
         [TestMethod]
-        public void GetRowVersion_ShouldReturnLastSetRowVersion()
-        {
-            var dut = new TestableEntityBase();
-            dut.SetProtectedRowVersionForTesting(123);
-            dut.RowVersion.Equals(123);
-        }    
-        
-        [TestMethod]
         public void SetRowVersion_ShouldSucceed()
         {
             var dut = new TestableEntityBase();
-            dut.SetProtectedRowVersionForTesting(OldRowVersion);
-
-            dut.SetRowVersion(NewRowVersion);
+            dut.SetRowVersion(RowVersion);
         }
-        
+
+        [TestMethod]
+        public void GetRowVersion_ShouldReturnLastSetRowVersion()
+        {
+            var dut = new TestableEntityBase();
+            dut.SetRowVersion(RowVersion);
+            dut.RowVersion.Equals(RowVersion);
+        }    
+       
         public class TestableEntityBase : EntityBase
         {
             // The base class is abstract, therefor a sub class is needed to test it.
