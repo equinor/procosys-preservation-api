@@ -4,7 +4,14 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
 {
     public class TagFunctionDetailsDto
     {
-        public TagFunctionDetailsDto(int id, string code, string description, string registerCode, bool isVoided, IEnumerable<RequirementDto> requirements)
+        public TagFunctionDetailsDto(
+            int id,
+            string code,
+            string description,
+            string registerCode,
+            bool isVoided,
+            IEnumerable<RequirementDto> requirements,
+            ulong rowVersion)
         {
             Id = id;
             Code = code;
@@ -12,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
             RegisterCode = registerCode;
             IsVoided = isVoided;
             Requirements = requirements;
+            RowVersion = rowVersion;
         }
 
         public int Id { get; }
@@ -20,5 +28,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
         public string RegisterCode { get; }
         public bool IsVoided { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
+        public ulong RowVersion { get; }
     }
 }

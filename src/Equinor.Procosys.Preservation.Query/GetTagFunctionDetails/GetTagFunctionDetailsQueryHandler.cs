@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -26,7 +27,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
                         tagFunction.Description,
                         tagFunction.RegisterCode,
                         tagFunction.IsVoided,
-                        tagFunction.Requirements.Select(s => new RequirementDto(s.Id, s.RequirementDefinitionId))))
+                        tagFunction.Requirements.Select(s => new RequirementDto(s.Id, s.RequirementDefinitionId)),
+                        (ulong)BitConverter.ToInt64(tagFunction.RowVersion)))
                 .SingleOrDefaultAsync(cancellationToken);
             
             if (tagFunctionDto == null)
