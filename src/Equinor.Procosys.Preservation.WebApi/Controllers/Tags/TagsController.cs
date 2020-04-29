@@ -159,7 +159,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPut("{id}/UpdateTag")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -408,10 +408,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromRoute] int id,
-            [FromBody] VoidTagDto dto)
+            [FromRoute] int id)
         {
-            var result = await _mediator.Send(new VoidTagCommand(id, dto.IsVoided));
+            var result = await _mediator.Send(new VoidTagCommand(id));
 
             return this.FromResult(result);
         }
