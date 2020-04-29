@@ -539,7 +539,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.AttachmentWithFilenameExistsAsync(_preAreaTagId, "A", default);
+                var result = await dut.AttachmentWithFilenameExistsAsync(_preAreaTagNotStartedInFirstStepId, "A", default);
                 Assert.IsFalse(result);
             }
         }
@@ -550,7 +550,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             var fileName = "A.txt";
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tag = context.Tags.Single(t => t.Id == _tagNotStartedPreservationId);
+                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
                 tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, null, fileName));
                 context.SaveChangesAsync().Wait();
             }
@@ -558,7 +558,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.AttachmentWithFilenameExistsAsync(_tagNotStartedPreservationId, fileName, default);
+                var result = await dut.AttachmentWithFilenameExistsAsync(_standardTagNotStartedInFirstStepId, fileName, default);
                 Assert.IsTrue(result);
             }
         }
