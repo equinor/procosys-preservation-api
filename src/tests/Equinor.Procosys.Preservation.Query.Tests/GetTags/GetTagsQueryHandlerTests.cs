@@ -859,7 +859,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
         
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnNextStepInfo_WhenCanNotBeTransferred()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnNextModeOrResponsible_WhenTagCantBeTransferred()
         {
             int tagId;
             var tagTitle = "D43CDE9C5568";
