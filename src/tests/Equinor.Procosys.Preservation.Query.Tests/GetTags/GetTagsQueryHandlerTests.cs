@@ -857,6 +857,44 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 Assert.IsFalse(result.Data.Tags.Any(t => t.IsNew));
             }
         }
+        
+        [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnNextStepInfo_WhenCanNotBeTransferred()
+        {
+            int tagId;
+            var tagTitle = "D43CDE9C5568";
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var project = context.Projects.Single(p => p.Name == _testDataSet.Project1.Name);
+                var step = context.Steps.Single(s => s.Id == _testDataSet.Journey1With2Steps.Steps.ElementAt(0).Id);
+                var reqDef = context.RequirementDefinitions.Single(rd =>
+                    rd.Id == _testDataSet.ReqType1.RequirementDefinitions.ElementAt(0).Id);
+
+                var tag = new Tag(TestPlant, TagType.SiteArea, tagTitle, "Description", step,
+                    new List<TagRequirement>
+                    {
+                        new TagRequirement(TestPlant, _testDataSet.IntervalWeeks, reqDef)
+                    });
+                tag.StartPreservation();
+                project.AddTag(tag);
+
+                context.SaveChangesAsync().Wait();
+                tagId = tag.Id;
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var filter = new Filter {TagNoStartsWith = tagTitle};
+
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: filter), default);
+
+                var tagDto = result.Data.Tags.Single(t => t.Id == tagId);
+
+                Assert.IsNull(tagDto.NextMode);
+                Assert.IsNull(tagDto.NextResponsibleCode);
+            }
+        }
 
         private void TransferTags(IEnumerable<int> tagIds)
         {
