@@ -286,6 +286,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public bool IsReadyToBeStarted()
             => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
 
+        public TagAttachment GetAttachmentByFileName(string fileName) => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
+
         private void Preserve(Person preservedBy, bool bulkPreserved)
         {
             if (!IsReadyToBePreserved())

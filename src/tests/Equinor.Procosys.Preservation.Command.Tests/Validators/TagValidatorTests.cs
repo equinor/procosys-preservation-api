@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -518,6 +519,47 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var dut = new TagValidator(context);
                 var result = await dut.IsReadyToBeStartedAsync(0, default);
                 Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AttachmentWithFilenameExistsAsync_UnknownTag_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context);
+                var result = await dut.AttachmentWithFilenameExistsAsync(0, "A", default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AttachmentWithFilenameExistsAsync_UnknownFilename_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context);
+                var result = await dut.AttachmentWithFilenameExistsAsync(_preAreaTagNotStartedInFirstStepId, "A", default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AttachmentWithFilenameExistsAsync_KnownFilename_ReturnsTrue()
+        {
+            var fileName = "A.txt";
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
+                tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, null, fileName));
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context);
+                var result = await dut.AttachmentWithFilenameExistsAsync(_standardTagNotStartedInFirstStepId, fileName, default);
+                Assert.IsTrue(result);
             }
         }
     }

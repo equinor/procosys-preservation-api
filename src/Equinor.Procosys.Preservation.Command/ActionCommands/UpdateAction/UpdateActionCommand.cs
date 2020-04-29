@@ -19,10 +19,10 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
             Description = description;
             DueTimeUtc = dueTimeUtc;
         }
-        public int TagId { get; set; }
-        public int ActionId { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public DateTime? DueTimeUtc { get; set; }
+        public int TagId { get; }
+        public int ActionId { get; }
+        public string Title { get; }
+        public string Description { get; }
+        public DateTime? DueTimeUtc { get; }
     }
 }

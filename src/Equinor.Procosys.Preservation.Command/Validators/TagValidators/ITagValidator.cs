@@ -22,6 +22,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         
         Task<bool> RequirementIsReadyToBePreservedAsync(int tagId, int requirementId, CancellationToken token);
         
+        Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken token);
+
         Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken token);
         
         Task<bool> IsReadyToBeStoppedAsync(int tagId, CancellationToken token);
