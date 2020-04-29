@@ -4,7 +4,7 @@
     {
         NeedsUserInput,
         ReadyToBePreserved,
-        Preserved,
-        Stopped
+        Preserved
+        //Stopped
     }
 }
