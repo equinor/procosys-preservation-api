@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         RowVersion = (ulong)BitConverter.ToInt64(tag.RowVersion)
                                     }).SingleOrDefaultAsync(cancellationToken);
 
-            if (tagDetails == null) 
+            if (tagDetails == null)
             {
                 return new NotFoundResult<TagDetailsDto>($"Entity with ID {request.TagId} not found");
             }
