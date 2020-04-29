@@ -347,78 +347,78 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
  
         [TestMethod]
-        public async Task IsReadyToBeStoppedAsync_StandardTagNotStarted_ReturnsFalse()
+        public async Task IsReadyToBeCompletedAsync_StandardTagNotStarted_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.IsReadyToBeStoppedAsync(_standardTagNotStartedInFirstStepId, default);
+                var result = await dut.IsReadyToBeCompletedAsync(_standardTagNotStartedInFirstStepId, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task IsReadyToBeStoppedAsync_StandardTagInLastStep_ReturnsTrue()
+        public async Task IsReadyToBeCompletedAsync_StandardTagInLastStep_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.IsReadyToBeStoppedAsync(_standardTagStartedAndInLastStepId, default);
+                var result = await dut.IsReadyToBeCompletedAsync(_standardTagStartedAndInLastStepId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsReadyToBeStoppedAsync_PreAreaTagNotStarted_ReturnsFalse()
+        public async Task IsReadyToBeCompletedAsync_PreAreaTagNotStarted_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.IsReadyToBeStoppedAsync(_preAreaTagNotStartedInFirstStepId, default);
+                var result = await dut.IsReadyToBeCompletedAsync(_preAreaTagNotStartedInFirstStepId, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task IsReadyToBeStoppedAsync_PreAreaTagInFirstStep_ReturnsFalse()
+        public async Task IsReadyToBeCompletedAsync_PreAreaTagInFirstStep_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.IsReadyToBeStoppedAsync(_preAreaTagStartedInFirstStepId, default);
+                var result = await dut.IsReadyToBeCompletedAsync(_preAreaTagStartedInFirstStepId, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task IsReadyToBeStoppedAsync_SiteAreaTagInAnyStep_ReturnsTrue()
+        public async Task IsReadyToBeCompletedAsync_SiteAreaTagInAnyStep_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.IsReadyToBeStoppedAsync(_siteAreaTagStartedId, default);
+                var result = await dut.IsReadyToBeCompletedAsync(_siteAreaTagStartedId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsReadyToBeStoppedAsync_PoAreaTagInAnyStep_ReturnsTrue()
+        public async Task IsReadyToBeCompletedAsync_PoAreaTagInAnyStep_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.IsReadyToBeStoppedAsync(_poAreaTagStartedId, default);
+                var result = await dut.IsReadyToBeCompletedAsync(_poAreaTagStartedId, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsReadyToBeStoppedAsync_UnknownTag_ReturnsFalse()
+        public async Task IsReadyToBeCompletedAsync_UnknownTag_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context);
-                var result = await dut.IsReadyToBeStoppedAsync(0, default);
+                var result = await dut.IsReadyToBeCompletedAsync(0, default);
                 Assert.IsFalse(result);
             }
         }
