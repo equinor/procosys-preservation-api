@@ -123,12 +123,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         public async Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken cancellationToken)
         {
             var tag = await GetTagWithAttachments(tagId, cancellationToken);
-            if (tag == null)
-            {
-                return false;
-            }
 
-            return tag.GetAttachmentByFileName(fileName) != null;
+            return tag?.GetAttachmentByFileName(fileName) != null;
         }
 
         private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken cancellationToken)

@@ -991,6 +991,21 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void GetAttachmentByFileName_ShouldGetAttachmentWhenExists_RegardlessOfCasing()
+        {
+            // Arrange
+            var fileName = "FileA";
+            var attachment = new TagAttachment(TestPlant, Guid.Empty, null, fileName);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(attachment);
+
+            // Act
+            var result = _dutWithOneReqNotNeedInputTwoWeekInterval.GetAttachmentByFileName(fileName.ToUpper());
+
+            // Arrange
+            Assert.AreEqual(attachment, result);
+        }
+
+        [TestMethod]
         public void GetAttachmentByFileName_ShouldReturnNullWhenNotFound()
         {
             // Act
