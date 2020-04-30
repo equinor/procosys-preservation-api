@@ -164,7 +164,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     dto.Description,
                     dto.TagNo,
                     dto.TagType,
-                    (ulong)BitConverter.ToInt64(dto.RowVersion));
+                    dto.RowVersion.ToULong());
             });
             var result = new TagsResult(maxAvailable, tags);
             return result;

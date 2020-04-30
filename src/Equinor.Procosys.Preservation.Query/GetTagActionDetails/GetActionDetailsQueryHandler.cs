@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
             }
 
             var action = new ActionDetailsDto(
-                dto.Action.Id, 
+                dto.Action.Id,
                 createdBy,
                 dto.Action.CreatedAtUtc,
                 dto.Action.Title,
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
                 dto.Action.IsClosed,
                 closedBy,
                 dto.Action.ClosedAtUtc,
-                (ulong)BitConverter.ToInt64(dto.Action.RowVersion));
+                dto.Action.RowVersion.ToULong());
             
             return new SuccessResult<ActionDetailsDto>(action);
         }
