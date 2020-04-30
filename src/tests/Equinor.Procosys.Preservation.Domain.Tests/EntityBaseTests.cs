@@ -63,11 +63,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         public void GetRowVersion_ShouldReturnLastSetRowVersion()
         {
             var dut = new TestableEntityBase();
+            Assert.IsNotNull(dut.RowVersion);
             dut.SetRowVersion(RowVersion);
-            dut.RowVersion.Equals(RowVersion);
+            Assert.AreEqual(dut.RowVersion, RowVersion);
         }    
        
-        public class TestableEntityBase : EntityBase
+        private class TestableEntityBase : EntityBase
         {
             // The base class is abstract, therefor a sub class is needed to test it.
         }

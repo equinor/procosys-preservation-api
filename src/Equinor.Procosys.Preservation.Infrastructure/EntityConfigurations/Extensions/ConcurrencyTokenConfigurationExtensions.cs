@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Exte
         public static void ConfigureConcurrencyToken<TEntity>(this EntityTypeBuilder<TEntity> builder)
             where TEntity : EntityBase =>
             builder
-                .Property("RowVersion")
+                .Property(nameof(EntityBase.RowVersion))
                 .IsRowVersion()
                 .UsePropertyAccessMode(PropertyAccessMode.Field);
     }
