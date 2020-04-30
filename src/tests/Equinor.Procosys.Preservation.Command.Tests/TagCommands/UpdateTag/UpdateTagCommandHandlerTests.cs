@@ -35,11 +35,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
-            var _rdMock = new Mock<RequirementDefinition>();
-            _rdMock.SetupGet(rd => rd.Id).Returns(_rdId1);
-            _rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
+            var rdMock = new Mock<RequirementDefinition>();
+            rdMock.SetupGet(rd => rd.Id).Returns(_rdId1);
+            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
-            _requirement = new TagRequirement(TestPlant, _intervalWeeks, _rdMock.Object);
+            _requirement = new TagRequirement(TestPlant, _intervalWeeks, rdMock.Object);
             _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> {_requirement})
             {
                 StorageArea = _oldStorageArea,
