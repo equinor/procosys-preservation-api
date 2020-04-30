@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -77,7 +78,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                         requirement.NextDueTimeUtc,
                         requirement.ReadyToBePreserved,
                         fields,
-                        requirement.GetCurrentComment());
+                        requirement.GetCurrentComment(),
+                        requirement.RowVersion.ToULong());
                 }).ToList();
             
             return new SuccessResult<List<RequirementDto>>(requirements);

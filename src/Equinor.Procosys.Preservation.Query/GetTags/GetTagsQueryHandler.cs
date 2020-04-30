@@ -163,7 +163,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     dto.TagFunctionCode,
                     dto.Description,
                     dto.TagNo,
-                    dto.TagType);
+                    dto.TagType,
+                    dto.RowVersion.ToULong());
             });
             var result = new TagsResult(maxAvailable, tags);
             return result;
@@ -273,7 +274,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     TagFunctionCode = tag.TagFunctionCode,
                     TagId = tag.Id,
                     TagNo = tag.TagNo,
-                    TagType = tag.TagType
+                    TagType = tag.TagType,
+                    RowVersion = tag.RowVersion
                 };
             return queryable;
         }
@@ -390,7 +392,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             public string TagFunctionCode { get; set; }
             public string TagNo { get; set; }
             public TagType TagType { get; set; }
-            
+            public byte[] RowVersion { get; set; }
             public Journey JourneyWithSteps { get; set; }
             public Step NextStep { get; set; }
 
