@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                 .ToListAsync(cancellationToken);
             var responsibles = await (from r in _context.QuerySet<Responsible>()
                     where responsibleIds.Contains(r.Id)
-                    select new ResponsibleDto(r.Id, r.Code, r.Title, (ulong)BitConverter.ToInt64(r.RowVersion)))
+                    select new ResponsibleDto(r.Id, r.Code, r.Title, r.RowVersion.ToULong()))
                 .ToListAsync(cancellationToken);
 
             var journeyDto = new JourneyDto(
@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                         responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId)
                     )
                 ),
-                (ulong)BitConverter.ToInt64(journey.RowVersion));
+                journey.RowVersion.ToULong());
             return new SuccessResult<JourneyDto>(journeyDto);
         }
     }

@@ -54,11 +54,11 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                                 var responsibleDto = responsibles
                                     .Where(r => r.Id == s.ResponsibleId)
                                     .Select(r => new ResponsibleDto(r.Id, r.Code, r.Title,
-                                        (ulong)BitConverter.ToInt64(r.RowVersion)))
+                                        r.RowVersion.ToULong()))
                                     .Single();
                                 return new StepDto(s.Id, s.Title, s.IsVoided, modeDto, responsibleDto);
                             }),
-                        (ulong)BitConverter.ToInt64(j.RowVersion)));
+                        j.RowVersion.ToULong()));
 
             return new SuccessResult<IEnumerable<JourneyDto>>(journeyDtos);
         }

@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
                     responsible.Id,
                     responsible.Code,
                     responsible.Title,
-                    (ulong)BitConverter.ToInt64(responsible.RowVersion))));
+                    responsible.RowVersion.ToULong())));
         }
     }
 }
