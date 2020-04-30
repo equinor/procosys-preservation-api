@@ -239,7 +239,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(journey));
             }
 
-            return Status == PreservationStatus.Active && TagFollowsAJourney && journey.GetNextStep(StepId) != null;
+            return Status == PreservationStatus.Active && FollowsAJourney && journey.GetNextStep(StepId) != null;
         }
 
         public bool IsReadyToBeCompleted(Journey journey)
@@ -250,7 +250,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             return Status == PreservationStatus.Active && 
-                   (!TagFollowsAJourney || TagFollowsAJourney && journey.GetNextStep(StepId) == null);
+                   (!FollowsAJourney || FollowsAJourney && journey.GetNextStep(StepId) == null);
         }
 
         public void Transfer(Journey journey)
@@ -288,6 +288,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public TagAttachment GetAttachmentByFileName(string fileName) => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
 
+        public bool FollowsAJourney => TagType == TagType.Standard || TagType == TagType.PreArea;
+
         private void Preserve(Person preservedBy, bool bulkPreserved)
         {
             if (!IsReadyToBePreserved())
@@ -308,7 +310,5 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void UpdateNextDueTimeUtc()
             => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
-
-        private bool TagFollowsAJourney => TagType == TagType.Standard || TagType == TagType.PreArea;
     }
 }

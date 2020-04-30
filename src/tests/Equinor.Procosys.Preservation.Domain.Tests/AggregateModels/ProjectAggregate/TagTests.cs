@@ -1016,5 +1016,49 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+        
+        #region FollowsAJourney
+
+        [TestMethod]
+        public void FollowsAJourney_ShouldGetBeTrueForStandardTag()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+
+            // Act and Arrange
+            Assert.IsTrue(dut.FollowsAJourney);
+        }
+
+        [TestMethod]
+        public void FollowsAJourney_ShouldGetBeFalseForSiteAreaTag()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.SiteArea, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+
+            // Act and Arrange
+            Assert.IsFalse(dut.FollowsAJourney);
+        }
+
+        [TestMethod]
+        public void FollowsAJourney_ShouldGetBeTrueForPreAreaTag()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.PreArea, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+
+            // Act and Arrange
+            Assert.IsTrue(dut.FollowsAJourney);
+        }
+
+        [TestMethod]
+        public void FollowsAJourney_ShouldGetBeFalseForPoAreaTag()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.PoArea, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
+
+            // Act and Arrange
+            Assert.IsFalse(dut.FollowsAJourney);
+        }
+
+        #endregion
     }
 }
