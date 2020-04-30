@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -38,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                 .ToListAsync(cancellationToken);
             var responsibles = await (from r in _context.QuerySet<Responsible>()
                     where responsibleIds.Contains(r.Id)
-                    select new ResponsibleDto(r.Id, r.Code, r.Title))
+                    select new ResponsibleDto(r.Id, r.Code, r.Title, (ulong)BitConverter.ToInt64(r.RowVersion)))
                 .ToListAsync(cancellationToken);
 
             var journeyDto = new JourneyDto(
@@ -53,8 +54,8 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                         modes.FirstOrDefault(x => x.Id == step.ModeId),
                         responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId)
                     )
-                )
-            );
+                ),
+                (ulong)BitConverter.ToInt64(journey.RowVersion));
             return new SuccessResult<JourneyDto>(journeyDto);
         }
     }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,10 +21,11 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 
         public GetAllJourneysQueryHandler(IReadOnlyContext context) => _context = context;
 
-        public async Task<Result<IEnumerable<JourneyDto>>> Handle(GetAllJourneysQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<JourneyDto>>> Handle(GetAllJourneysQuery request,
+            CancellationToken cancellationToken)
         {
             var journeys = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
-                    select j).ToListAsync(cancellationToken);
+                select j).ToListAsync(cancellationToken);
 
             var modeIds = journeys.SelectMany(j => j.Steps).Select(x => x.ModeId).Distinct();
             var responsibleIds = journeys.SelectMany(j => j.Steps).Select(x => x.ResponsibleId).Distinct();
@@ -51,11 +53,13 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                                     .Single();
                                 var responsibleDto = responsibles
                                     .Where(r => r.Id == s.ResponsibleId)
-                                    .Select(r => new ResponsibleDto(r.Id, r.Code, r.Title))
+                                    .Select(r => new ResponsibleDto(r.Id, r.Code, r.Title,
+                                        (ulong)BitConverter.ToInt64(r.RowVersion)))
                                     .Single();
                                 return new StepDto(s.Id, s.Title, s.IsVoided, modeDto, responsibleDto);
-                            })));
-            
+                            }),
+                        (ulong)BitConverter.ToInt64(j.RowVersion)));
+
             return new SuccessResult<IEnumerable<JourneyDto>>(journeyDtos);
         }
     }

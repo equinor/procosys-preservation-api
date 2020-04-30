@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
                 "S",
                 true,
                 new ModeDto(3, "M"),
-                new ResponsibleDto(4, "RC", "RT"));
+                new ResponsibleDto(4, "RC", "RT", 1234));
             var dut = new JourneyDto(
                 1,
                 "J",
@@ -25,7 +25,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
                 new List<StepDto>
                 {
                     stepDto
-                });
+                },
+                12345);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("J", dut.Title);
