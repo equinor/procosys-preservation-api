@@ -15,23 +15,21 @@ namespace Equinor.Procosys.Preservation.Domain
 
         public virtual int Id { get; protected set; }
 
-        public byte[] RowVersion { get; protected set; }
-
-        public ulong GetRowVersion() => (ulong) BitConverter.ToInt64(RowVersion);
-        public void SetRowVersion(ulong version)
-        {
-            var newRowVersion = BitConverter.GetBytes(version);
-
-            for (var index = 0; index < newRowVersion.Length; index++)
-            {
-                RowVersion[index] = newRowVersion[index];
-            }
-        }
+        public readonly byte[] RowVersion = new byte[8];
 
         public void AddDomainEvent(INotification eventItem)
         {
             _domainEvents ??= new List<INotification>();
             _domainEvents.Add(eventItem);
+        }
+
+        public void SetRowVersion(ulong value)
+        {
+            var newRowVersion = BitConverter.GetBytes(value);
+            for (var index = 0; index < newRowVersion.Length; index++)
+            {
+                RowVersion[index] = newRowVersion[index];
+            }
         }
 
         public void RemoveDomainEvent(INotification eventItem) => _domainEvents?.Remove(eventItem);
