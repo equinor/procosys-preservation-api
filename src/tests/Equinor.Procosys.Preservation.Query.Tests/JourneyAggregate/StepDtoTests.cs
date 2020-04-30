@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var modeDto = new ModeDto(3, "M");
+            var modeDto = new ModeDto(3, "M", 12345);
             var responsibleDto = new ResponsibleDto(4, "RC", "RT", 12345);
 
             var dut = new StepDto(2, "S", true, modeDto, responsibleDto);

@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 
             var modes = await (from m in _context.QuerySet<Mode>()
                     where modeIds.Contains(m.Id)
-                    select new ModeDto(m.Id, m.Title))
+                    select new ModeDto(m.Id, m.Title, m.RowVersion.ToULong()))
                 .ToListAsync(cancellationToken);
             var responsibles = await (from r in _context.QuerySet<Responsible>()
                     where responsibleIds.Contains(r.Id)

@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             var stepDto = new StepDto(2,
                 "S",
                 true,
-                new ModeDto(3, "M"),
+                new ModeDto(3, "M", 12345),
                 new ResponsibleDto(4, "RC", "RT", 1234));
             var dut = new JourneyDto(
                 1,

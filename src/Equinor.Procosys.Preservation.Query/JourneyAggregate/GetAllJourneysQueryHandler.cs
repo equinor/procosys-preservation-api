@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                             {
                                 var modeDto = modes
                                     .Where(m => m.Id == s.ModeId)
-                                    .Select(m => new ModeDto(m.Id, m.Title))
+                                    .Select(m => new ModeDto(m.Id, m.Title, m.RowVersion.ToULong()))
                                     .Single();
                                 var responsibleDto = responsibles
                                     .Where(r => r.Id == s.ResponsibleId)
