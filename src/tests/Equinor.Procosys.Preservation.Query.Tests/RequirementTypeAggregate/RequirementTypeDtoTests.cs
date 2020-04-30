@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -15,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, new List<RequirementDefinitionDto>());
+            var dut = new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, new List<RequirementDefinitionDto>(), 12345);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("CodeA", dut.Code);
@@ -28,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenDefinitionsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, null)
+                new RequirementTypeDto(1, "CodeA", "TitleA", true, 10, null, 12345)
             );
 
         [TestMethod]
@@ -40,7 +39,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 new RequirementDefinitionDto(2, "", false, 4, 5, false, _fieldsDtos),
                 new RequirementDefinitionDto(3, "", false, 4, 500, false, _fieldsDtos),
                 new RequirementDefinitionDto(4, "", false, 4, 10, false, _fieldsDtos),
-            });
+            },
+                12345);
 
             var requirementDefinitions = dut.RequirementDefinitions.ToList();
             Assert.AreEqual(4, requirementDefinitions.Count);
@@ -59,7 +59,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 new RequirementDefinitionDto(2, "", false, 4, 5, true, _fieldsDtos),
                 new RequirementDefinitionDto(3, "", false, 4, 500, true, _fieldsDtos),
                 new RequirementDefinitionDto(4, "", false, 4, 10, true, _fieldsDtos),
-            });
+            },
+                12346);
 
             var requirementDefinitions = dut.RequirementDefinitions.ToList();
             Assert.AreEqual(4, requirementDefinitions.Count);
@@ -82,7 +83,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 new RequirementDefinitionDto(6, "", false, 4, 5, false, _fieldsDtos),
                 new RequirementDefinitionDto(7, "", false, 4, 500, false, _fieldsDtos),
                 new RequirementDefinitionDto(8, "", false, 4, 10, false, _fieldsDtos),
-            });
+            },
+                123457);
 
             var requirementDefinitions = dut.RequirementDefinitions.ToList();
             Assert.AreEqual(8, requirementDefinitions.Count);

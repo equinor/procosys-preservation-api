@@ -48,7 +48,8 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                             f.FieldType,
                             f.SortKey,
                             f.Unit,
-                            f.ShowPrevious)))));
+                            f.ShowPrevious)))),
+                reqType.RowVersion.ToULong());
 
             return new SuccessResult<RequirementTypeDto>(dto);
         }

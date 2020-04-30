@@ -6,7 +6,14 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
     public class RequirementTypeDto
     {
-        public RequirementTypeDto(int id, string code, string title, bool isVoided, int sortKey, IEnumerable<RequirementDefinitionDto> requirementDefinitions)
+        public RequirementTypeDto(
+            int id,
+            string code,
+            string title,
+            bool isVoided,
+            int sortKey,
+            IEnumerable<RequirementDefinitionDto> requirementDefinitions,
+            ulong rowVersion)
         {
             if (requirementDefinitions == null)
             {
@@ -17,6 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             Title = title;
             IsVoided = isVoided;
             SortKey = sortKey;
+            RowVersion = rowVersion;
             RequirementDefinitions = requirementDefinitions.OrderBy(rd => rd.NeedsUserInput).ThenBy(rd => rd.SortKey);
         }
 
@@ -25,6 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public string Title { get; }
         public bool IsVoided { get; }
         public int SortKey { get; }
+        public ulong RowVersion { get; }
         public IEnumerable<RequirementDefinitionDto> RequirementDefinitions { get; }
     }
 }
