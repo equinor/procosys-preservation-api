@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +25,8 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
                 responsible => new ResponsibleDto(
                     responsible.Id,
                     responsible.Code,
-                    responsible.Title)));
+                    responsible.Title,
+                    (ulong)BitConverter.ToInt64(responsible.RowVersion))));
         }
     }
 }
