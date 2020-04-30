@@ -13,7 +13,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         {
             var reqDto = new RequirementDto(2, 4);
 
-            var dut = new TagFunctionDetailsDto(1, "TFC", "D", "RC", true, new List<RequirementDto>{reqDto});
+            var dut = new TagFunctionDetailsDto(
+                1,
+                "TFC",
+                "D",
+                "RC",
+                true,
+                new List<RequirementDto>{reqDto},
+                12345);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("TFC", dut.Code);

@@ -25,9 +25,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
                 var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R");
                 _requirementDefinition = rt.RequirementDefinitions.First();
                 _tfWithRequirement.AddRequirement(new TagFunctionRequirement(TestPlant, 4, _requirementDefinition));
+                
 
                 _tfWithoutRequirement = AddTagFunction(context, "TFC1", "RC1");
-                
+                _tfWithRequirement.SetRowVersion(12345);
                 context.SaveChangesAsync().Wait();
             }
         }

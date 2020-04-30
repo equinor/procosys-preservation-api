@@ -2,15 +2,17 @@
 {
     public class ResponsibleDto
     {
-        public ResponsibleDto(int id, string code, string title)
+        public ResponsibleDto(int id, string code, string title, ulong rowVersion)
         {
             Id = id;
             Code = code;
             Title = title;
+            RowVersion = rowVersion;
         }
 
         public int Id { get; }
         public string Code { get; }
         public string Title { get; }
+        public ulong RowVersion { get; }
     }
 }

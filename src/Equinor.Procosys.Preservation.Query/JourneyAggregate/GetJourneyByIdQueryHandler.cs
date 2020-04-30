@@ -34,11 +34,11 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 
             var modes = await (from m in _context.QuerySet<Mode>()
                     where modeIds.Contains(m.Id)
-                    select new ModeDto(m.Id, m.Title))
+                    select new ModeDto(m.Id, m.Title, m.RowVersion.ToULong()))
                 .ToListAsync(cancellationToken);
             var responsibles = await (from r in _context.QuerySet<Responsible>()
                     where responsibleIds.Contains(r.Id)
-                    select new ResponsibleDto(r.Id, r.Code, r.Title))
+                    select new ResponsibleDto(r.Id, r.Code, r.Title, r.RowVersion.ToULong()))
                 .ToListAsync(cancellationToken);
 
             var journeyDto = new JourneyDto(
@@ -53,8 +53,8 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                         modes.FirstOrDefault(x => x.Id == step.ModeId),
                         responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId)
                     )
-                )
-            );
+                ),
+                journey.RowVersion.ToULong());
             return new SuccessResult<JourneyDto>(journeyDto);
         }
     }

@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ResponsibleAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new ResponsibleDto(3, "RC", "RT");
+            var dut = new ResponsibleDto(3, "RC", "RT", 12345);
 
             Assert.AreEqual(3, dut.Id);
             Assert.AreEqual("RC", dut.Code);
