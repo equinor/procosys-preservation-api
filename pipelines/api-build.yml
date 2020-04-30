@@ -70,3 +70,18 @@ stages:
       containerRegistry: '${{ variables.containerRegistry }}'
       repository: ${{ variables.repositoryName }}
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+  - template: /templates/pipelines/kubernetes/library-deploy.yml@templates
+    parameters:
+      deploymentName: 'deploy_library_api'
+      dependsOn: ''
+      serviceConnection: '${{ variables.serviceConnection }}'
+      env: '${{ variables.envName }}'
+      envRg: 'pcs-hosting-rg'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerImage: 'procosys.azurecr.io/library/api:$(Build.BuildId)'
+      clusterName: 'aks-pcs-test'
+      kvClientIdName: '${{ variables.kvClientId }}'
+      kvUriName: '${{ variables.kvUri }}'
+      kvClientSecretName: '${{ variables.kvClientSecret }}'
+      kvName: '${{ variables.kv }}'
+      kvRgName: '${{ variables.kvRg }}'
