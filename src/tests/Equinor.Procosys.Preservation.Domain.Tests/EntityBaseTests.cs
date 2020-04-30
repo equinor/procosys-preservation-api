@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
     [TestClass]
     public class EntityBaseTests
     {
+        private readonly byte[] ConvertedRowVersion = {123, 0, 0, 0, 0, 0, 0, 0};
         private const ulong RowVersion = 123;
 
         [TestMethod]
@@ -65,8 +66,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             var dut = new TestableEntityBase();
             Assert.IsNotNull(dut.RowVersion);
             dut.SetRowVersion(RowVersion);
-            Assert.AreEqual(dut.RowVersion, RowVersion);
-        }    
+            Assert.IsTrue(dut.RowVersion.SequenceEqual(ConvertedRowVersion));
+        }
        
         private class TestableEntityBase : EntityBase
         {
