@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
-            _command = new UpdateJourneyCommand(_id, _title);
+            _command = new UpdateJourneyCommand(_id, _title, 12345);
 
             _dut = new UpdateJourneyCommandValidator(_journeyValidatorMock.Object);
         }
