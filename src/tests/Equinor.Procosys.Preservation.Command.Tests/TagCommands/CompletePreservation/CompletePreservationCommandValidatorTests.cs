@@ -1,22 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservation
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreservation
 {
     [TestClass]
-    public class StopPreservationCommandValidatorTests
+    public class CompletePreservationCommandValidatorTests
     {
-        private StopPreservationCommandValidator _dut;
+        private CompletePreservationCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
-        private StopPreservationCommand _command;
+        private CompletePreservationCommand _command;
 
         private const int TagId1 = 7;
         private const int TagId2 = 8;
@@ -31,11 +31,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.IsReadyToBeStoppedAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.IsReadyToBeStoppedAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _command = new StopPreservationCommand(_tagIds);
+            _tagValidatorMock.Setup(r => r.IsReadyToBeCompletedAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeCompletedAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _command = new CompletePreservationCommand(_tagIds);
 
-            _dut = new StopPreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
+            _dut = new CompletePreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 
         [TestMethod]
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new StopPreservationCommand(new List<int>());
+            var command = new CompletePreservationCommand(new List<int>());
             
             var result = _dut.Validate(command);
 
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new StopPreservationCommand(new List<int>{1, 1});
+            var command = new CompletePreservationCommand(new List<int>{1, 1});
             
             var result = _dut.Validate(command);
 
@@ -119,15 +119,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenNotReadyToBeStopped()
+        public void Validate_ShouldFail_WhenNotReadyToBeCompleted()
         {
-            _tagValidatorMock.Setup(r => r.IsReadyToBeStoppedAsync(TagId1, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeCompletedAsync(TagId1, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Preservation on tag can not be stopped!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Preservation on tag can not be completed!"));
         }
 
         [TestMethod]

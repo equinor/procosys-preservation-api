@@ -3,15 +3,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
 {
-    public class StopPreservationCommandValidator : AbstractValidator<StopPreservationCommand>
+    public class CompletePreservationCommandValidator : AbstractValidator<CompletePreservationCommand>
     {
-        public StopPreservationCommandValidator(
+        public CompletePreservationCommandValidator(
             IProjectValidator projectValidator,
             ITagValidator tagValidator)
         {
@@ -34,8 +33,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
                     .WithMessage((_, id) => $"Tag doesn't exists! Tag={id}")
                     .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => IsReadyToBeStoppedAsync(tagId, token))
-                    .WithMessage((_, id) => $"Preservation on tag can not be stopped! Tag={id}");
+                    .MustAsync((_, tagId, __, token) => IsReadyToBeCompletedAsync(tagId, token))
+                    .WithMessage((_, id) => $"Preservation on tag can not be completed! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)
@@ -56,8 +55,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> IsReadyToBeStoppedAsync(int tagId, CancellationToken token)
-                => await tagValidator.IsReadyToBeStoppedAsync(tagId, token);
+            async Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeCompletedAsync(tagId, token);
         }
     }
 }

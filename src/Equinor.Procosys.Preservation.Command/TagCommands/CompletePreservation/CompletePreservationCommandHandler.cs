@@ -7,22 +7,22 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
 {
-    public class StopPreservationCommandHandler : IRequestHandler<StopPreservationCommand, Result<Unit>>
+    public class CompletePreservationCommandHandler : IRequestHandler<CompletePreservationCommand, Result<Unit>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public StopPreservationCommandHandler(IProjectRepository projectRepository, IJourneyRepository journeyRepository, IUnitOfWork unitOfWork)
+        public CompletePreservationCommandHandler(IProjectRepository projectRepository, IJourneyRepository journeyRepository, IUnitOfWork unitOfWork)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
             _journeyRepository = journeyRepository;
         }
 
-        public async Task<Result<Unit>> Handle(StopPreservationCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(CompletePreservationCommand request, CancellationToken cancellationToken)
         {
             var tags = await _projectRepository.GetTagsByTagIdsAsync(request.TagIds);
 
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
             foreach (var tag in tags)
             {
                 var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
-                tag.StopPreservation(journey);
+                tag.CompletePreservation(journey);
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);

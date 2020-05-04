@@ -188,15 +188,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
         }
 
-        public void StopPreservation(Journey journey)
+        public void CompletePreservation(Journey journey)
         {
-            if (!IsReadyToBeStopped(journey))
+            if (!IsReadyToBeCompleted(journey))
             {
-                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not be stopped. Status = {Status}");
+                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not be completed. Status = {Status}");
             }
             foreach (var requirement in Requirements.Where(r => !r.IsVoided))
             {
-                requirement.StopPreservation();
+                requirement.CompletePreservation();
             }
 
             Status = PreservationStatus.Completed;
@@ -242,7 +242,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return Status == PreservationStatus.Active && FollowsAJourney && journey.GetNextStep(StepId) != null;
         }
 
-        public bool IsReadyToBeStopped(Journey journey)
+        public bool IsReadyToBeCompleted(Journey journey)
         {
             if (journey == null)
             {

@@ -4,11 +4,11 @@ using System.Linq;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation
+namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
 {
-    public class StopPreservationCommand : IRequest<Result<Unit>>, ITagCommandRequest
+    public class CompletePreservationCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
-        public StopPreservationCommand(IEnumerable<int> tagIds)
+        public CompletePreservationCommand(IEnumerable<int> tagIds)
             => TagIds = tagIds ?? new List<int>();
 
         public IEnumerable<int> TagIds { get; }

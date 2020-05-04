@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken token);
         
-        Task<bool> IsReadyToBeStoppedAsync(int tagId, CancellationToken token);
+        Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token);
             
         Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token);
     }

@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
