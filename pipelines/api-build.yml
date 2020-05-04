@@ -38,9 +38,9 @@ stages:
       dependsOn: ''
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
-      dockerfilePath: ${{ variables.dockerfilePath }}
+      dockerfilePath: '${{ variables.dockerfilePath }}'
       buildContext: '$(Build.SourcesDirectory)/src'
-      repository: ${{ variables.repositoryName }}
+      repository: '${{ variables.repositoryName }}'
       dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 # Dev deploy stage
@@ -68,7 +68,7 @@ stages:
       envRg: '${{ variables.envRg }}'
       env: '${{ variables.envName }}'
       containerRegistry: '${{ variables.containerRegistry }}'
-      repository: ${{ variables.repositoryName }}
+      repository: '${{ variables.repositoryName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
@@ -80,8 +80,8 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       dockerImage: 'procosys.azurecr.io/preservation/api:$(Build.BuildId)'
       clusterName: 'aks-pcs-test'
-      kvClientIdName: '${{ variables.kvClientId }}'
-      kvUriName: '${{ variables.kvUri }}'
-      kvClientSecretName: '${{ variables.kvClientSecret }}'
-      kvName: '${{ variables.kv }}'
-      kvRgName: '${{ variables.kvRg }}'
+      kvClientIdName: '${{ variables.kvClientIdName }}'
+      kvUriName: '${{ variables.kvUriName }}'
+      kvClientSecretName: '${{ variables.kvClientSecretName }}'
+      kvName: '${{ variables.kvName }}'
+      kvRgName: '${{ variables.envRgName }}'
