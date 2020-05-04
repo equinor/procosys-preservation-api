@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
-using Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
@@ -434,12 +434,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
         #endregion
 
-        #region StopPreservationCommand
+        #region CompletePreservationCommand
         [TestMethod]
-        public async Task ValidateAsync_OnStopPreservationCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new StopPreservationCommand(new List<int> { TagIdWithAccessToProject });
+            var command = new CompletePreservationCommand(new List<int> { TagIdWithAccessToProject });
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -449,10 +449,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnStopPreservationCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new StopPreservationCommand(new List<int> { TagIdWithoutAccessToProject });
+            var command = new CompletePreservationCommand(new List<int> { TagIdWithoutAccessToProject });
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -462,11 +462,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnStopPreservationCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new StopPreservationCommand(new List<int> { TagIdWithAccessToProject });
+            var command = new CompletePreservationCommand(new List<int> { TagIdWithAccessToProject });
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -476,12 +476,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnStopPreservationCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new StopPreservationCommand(new List<int> { TagIdWithAccessToProject });
+            var command = new CompletePreservationCommand(new List<int> { TagIdWithAccessToProject });
             
             // act
             var result = await _dut.ValidateAsync(command);

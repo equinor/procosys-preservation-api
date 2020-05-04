@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.StopPreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -8,13 +8,13 @@ using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservation
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreservation
 {
     [TestClass]
-    public class StopPreservationCommandHandlerTests : CommandHandlerTestsBase
+    public class CompletePreservationCommandHandlerTests : CommandHandlerTestsBase
     {
         private Mock<IProjectRepository> _tagRepoMock;
-        private StopPreservationCommand _command;
+        private CompletePreservationCommand _command;
         private Tag _tag1;
         private Tag _tag2;
         private TagRequirement _req1OnTag1;
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         private int _stepId1 = 9;
         private int _stepId2 = 10;
 
-        private StopPreservationCommandHandler _dut;
+        private CompletePreservationCommandHandler _dut;
 
         [TestInitialize]
         public void Setup()
@@ -86,13 +86,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
                 .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> { _stepId2 }))
                 .Returns(Task.FromResult(new List<Journey> { journey }));
             
-            _command = new StopPreservationCommand(tagIds);
+            _command = new CompletePreservationCommand(tagIds);
 
-            _dut = new StopPreservationCommandHandler(_tagRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
+            _dut = new CompletePreservationCommandHandler(_tagRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
         }
 
         [TestMethod]
-        public async Task HandlingStopPreservationCommand_ShouldStopPreservationOnAllTags()
+        public async Task HandlingCompletePreservationCommand_ShouldCompletePreservationOnAllTags()
         {
             var result = await _dut.Handle(_command, default);
 
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         }
 
         [TestMethod]
-        public async Task HandlingStopPreservationCommand_ShouldClearNextDueOnAllRequirementsOnAllTags()
+        public async Task HandlingCompletePreservationCommand_ShouldClearNextDueOnAllRequirementsOnAllTags()
         {
             await _dut.Handle(_command, default);
 
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StopPreservati
         }
 
         [TestMethod]
-        public async Task HandlingStopPreservationCommand_ShouldSave()
+        public async Task HandlingCompletePreservationCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
 

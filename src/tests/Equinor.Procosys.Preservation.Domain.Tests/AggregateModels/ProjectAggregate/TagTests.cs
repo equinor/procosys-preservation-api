@@ -778,35 +778,35 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
-        #region StopPreservation
+        #region CompletePreservation
 
         [TestMethod]
-        public void StopPreservation_ShouldSetStatusToCompleted_WhenInLastStepAndIsStandard()
+        public void CompletePreservation_ShouldSetStatusToCompleted_WhenInLastStepAndIsStandard()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _step2Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
-            dut.StopPreservation(_journey);
+            dut.CompletePreservation(_journey);
 
             Assert.AreEqual(PreservationStatus.Completed, dut.Status);
         }
 
         [TestMethod]
-        public void StopPreservation_ShouldThrowException_WhenJourneyIsNull()
+        public void CompletePreservation_ShouldThrowException_WhenJourneyIsNull()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
-            Assert.ThrowsException<ArgumentNullException>(() => dut.StopPreservation(null));
+            Assert.ThrowsException<ArgumentNullException>(() => dut.CompletePreservation(null));
         }
 
         [TestMethod]
-        public void StopPreservation_ShouldSetStatusToCompleted_WhenNotInLastStepAndIsArea()
+        public void CompletePreservation_ShouldSetStatusToCompleted_WhenNotInLastStepAndIsArea()
         {
             var dut = new Tag(TestPlant, TagType.SiteArea, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
-            dut.StopPreservation(_journey);
+            dut.CompletePreservation(_journey);
 
             Assert.AreEqual(PreservationStatus.Completed, dut.Status);
         }
@@ -853,41 +853,41 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
         
-        #region IsReadyToBeStopped
+        #region IsReadyToBeCompleted
 
         [TestMethod]
-        public void IsReadyToBeStopped_ShouldBeFalse_BeforePreservationStarted()
+        public void IsReadyToBeCompleted_ShouldBeFalse_BeforePreservationStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _step2Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
 
-            Assert.IsFalse(dut.IsReadyToBeStopped(_journey));
+            Assert.IsFalse(dut.IsReadyToBeCompleted(_journey));
         }
 
         [TestMethod]
-        public void IsReadyToBeStopped_ShouldBeTrue_AfterPreservationStarted()
+        public void IsReadyToBeCompleted_ShouldBeTrue_AfterPreservationStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _step2Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
-            Assert.IsTrue(dut.IsReadyToBeStopped(_journey));
+            Assert.IsTrue(dut.IsReadyToBeCompleted(_journey));
         }
 
         [TestMethod]
-        public void IsReadyToBeStopped_ShouldBeFalse_WhenCurrentStepIsLastStepInJourney()
+        public void IsReadyToBeCompleted_ShouldBeFalse_WhenCurrentStepIsLastStepInJourney()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
-            Assert.IsFalse(dut.IsReadyToBeStopped(_journey));
+            Assert.IsFalse(dut.IsReadyToBeCompleted(_journey));
         }
 
         [TestMethod]
-        public void IsReadyToBeStopped_ShouldThrowException_WhenJourneyIsNull()
+        public void IsReadyToBeCompleted_ShouldThrowException_WhenJourneyIsNull()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
-            Assert.ThrowsException<ArgumentNullException>(() => dut.IsReadyToBeStopped(null));
+            Assert.ThrowsException<ArgumentNullException>(() => dut.IsReadyToBeCompleted(null));
         }
 
         #endregion

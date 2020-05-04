@@ -90,7 +90,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag.IsReadyToBeStarted();
         }
 
-        public async Task<bool> IsReadyToBeStoppedAsync(int tagId, CancellationToken cancellationToken)
+        public async Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken cancellationToken)
         {
             var tag = await GetTagWithoutIncludes(tagId, cancellationToken);
             if (tag == null)
@@ -102,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 where j.Steps.Any(s => s.Id == tag.StepId)
                 select j).SingleOrDefaultAsync(cancellationToken);
 
-            return tag.IsReadyToBeStopped(journey);
+            return tag.IsReadyToBeCompleted(journey);
         }
 
         public async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken cancellationToken)

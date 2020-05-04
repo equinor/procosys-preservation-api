@@ -235,10 +235,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
-        #region StopPreservation
+        #region CompletePreservation
 
         [TestMethod]
-        public void StopPreservation_ShouldSetNextDueDateToNull()
+        public void CompletePreservation_ShouldSetNextDueDateToNull()
         {
             // Arrange
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
@@ -247,7 +247,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsNotNull(dut.NextDueTimeUtc);
 
             // Act
-            dut.StopPreservation();
+            dut.CompletePreservation();
 
             // Assert
             Assert.IsNull(dut.NextDueTimeUtc);
