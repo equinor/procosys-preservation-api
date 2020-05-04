@@ -15,7 +15,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureModificationAudit();
             builder.ConfigureConcurrencyToken();
 
-            builder.HasOne<RequirementDefinition>();
+            builder.HasOne<RequirementDefinition>()
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
