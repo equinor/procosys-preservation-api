@@ -48,7 +48,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             
             builder.HasOne<Step>().
                 WithMany()
-                //.HasForeignKey(x => x.StepId)
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder
