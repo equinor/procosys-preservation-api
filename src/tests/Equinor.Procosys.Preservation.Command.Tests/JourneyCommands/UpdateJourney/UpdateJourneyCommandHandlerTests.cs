@@ -22,13 +22,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         {
             // Arrange
             var testJourneyId = 1;
+            const ulong rowVersion = 12345;
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyMock = new Mock<Journey>(TestPlant, _oldTitle);
             _journeyMock.SetupGet(j => j.Plant).Returns(TestPlant);
             _journeyMock.SetupGet(j => j.Id).Returns(testJourneyId);
             journeyRepositoryMock.Setup(j => j.GetByIdAsync(testJourneyId))
                 .Returns(Task.FromResult(_journeyMock.Object));
-            _command = new UpdateJourneyCommand(testJourneyId, _newTitle, 123456);
+            _command = new UpdateJourneyCommand(testJourneyId, _newTitle, rowVersion);
 
             _dut = new UpdateJourneyCommandHandler(
                 journeyRepositoryMock.Object,
