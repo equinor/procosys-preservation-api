@@ -20,12 +20,15 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.NextDueTimeUtc)
                 .HasConversion(PreservationContext.NullableDateTimeKindConverter);
 
-            builder.HasOne<RequirementDefinition>();
+            builder.HasOne<RequirementDefinition>()
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder
                 .HasMany(x => x.PreservationPeriods)
                 .WithOne()
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Property(InitialPreservationPeriodStatusPropertyName)
                 .HasMaxLength(TagRequirement.InitialPreservationPeriodStatusMax)

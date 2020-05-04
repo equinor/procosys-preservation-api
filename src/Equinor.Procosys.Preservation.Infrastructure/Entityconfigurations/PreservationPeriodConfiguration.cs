@@ -30,7 +30,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasMany(x => x.FieldValues)
                 .WithOne()
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder.Property(x => x.DueTimeUtc)
                 .HasConversion(PreservationContext.DateTimeKindConverter);
