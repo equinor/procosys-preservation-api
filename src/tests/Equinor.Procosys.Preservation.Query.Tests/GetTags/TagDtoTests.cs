@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             "TagDesc",
             "TagNo",
             TagType.Standard,
-            123456);
+            "AAAAAAAAABA=");
 
         [TestMethod]
         public void Constructor_SetsProperties()

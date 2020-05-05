@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             {
                 Remark = "Remark",
                 StorageArea = "StorageArea",
-                RowVersion = 12345
+                RowVersion = "AAAAAAAAABA="
             };
 
             var result = dut.Validate(validUpdateTagDto);

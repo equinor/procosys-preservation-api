@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
 {
     public class UpdateJourneyCommand : IRequest<Result<Unit>>
     {
-        public UpdateJourneyCommand(int journeyId, string title, ulong rowVersion)
+        public UpdateJourneyCommand(int journeyId, string title, string rowVersion)
         {
             JourneyId = journeyId;
             Title = title;
@@ -13,6 +13,6 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
         }
         public int JourneyId { get; }
         public string Title { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }

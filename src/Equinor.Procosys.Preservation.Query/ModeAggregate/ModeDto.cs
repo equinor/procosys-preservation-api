@@ -2,7 +2,7 @@
 {
     public class ModeDto
     {
-        public ModeDto(int id, string title, ulong rowVersion)
+        public ModeDto(int id, string title, string rowVersion)
         {
             Id = id;
             Title = title;
@@ -11,6 +11,6 @@
 
         public int Id { get; }
         public string Title { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }

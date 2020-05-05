@@ -4,6 +4,6 @@
     {
         public string Remark { get; set; }
         public string StorageArea { get; set; }
-        public ulong RowVersion { get; set; }
+        public string RowVersion { get; set; }
     }
 }

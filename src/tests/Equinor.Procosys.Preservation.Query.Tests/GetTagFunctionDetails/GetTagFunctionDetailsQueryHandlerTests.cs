@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
                 
 
                 _tfWithoutRequirement = AddTagFunction(context, "TFC1", "RC1");
-                _tfWithRequirement.SetRowVersion(12345);
+                _tfWithRequirement.SetRowVersion("AAAAAAAAABA=");
                 context.SaveChangesAsync().Wait();
             }
         }

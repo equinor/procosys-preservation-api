@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                         f.SortKey,
                                         f.Unit,
                                         f.ShowPrevious)))),
-                        rt.RowVersion.ToULong()))
+                        rt.RowVersion.ConvertToString()))
                     .OrderBy(rt => rt.SortKey);
 
             return new SuccessResult<IEnumerable<RequirementTypeDto>>(dtos);

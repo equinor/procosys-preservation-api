@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
                 "RC",
                 true,
                 new List<RequirementDto>{reqDto},
-                12345);
+                "AAAAAAAAABA=");
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("TFC", dut.Code);

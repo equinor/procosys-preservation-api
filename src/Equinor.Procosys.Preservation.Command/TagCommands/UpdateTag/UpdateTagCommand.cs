@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
             int tagId,
             string remark,
             string storageArea,
-            ulong rowVersion)
+            string rowVersion)
         {
             TagId = tagId;
             Remark = remark;
@@ -20,6 +20,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
         public int TagId { get; }
         public string Remark { get; }
         public string StorageArea { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }

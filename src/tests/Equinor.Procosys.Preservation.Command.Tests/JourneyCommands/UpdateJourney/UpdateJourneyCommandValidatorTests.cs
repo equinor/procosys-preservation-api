@@ -19,10 +19,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         [TestInitialize]
         public void Setup_OkState()
         {
-            const ulong rowVersion = 12345;
+            const string RowVersion = "AAAAAAAAABA=";
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
-            _command = new UpdateJourneyCommand(_id, _title, rowVersion);
+            _command = new UpdateJourneyCommand(_id, _title, RowVersion);
 
             _dut = new UpdateJourneyCommandValidator(_journeyValidatorMock.Object);
         }

@@ -8,8 +8,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
     [TestClass]
     public class EntityBaseTests
     {
-        private readonly byte[] ConvertedRowVersion = {123, 0, 0, 0, 0, 0, 0, 0};
-        private const ulong RowVersion = 123;
+        private readonly byte[] ConvertedRowVersion = {0, 0, 0, 0, 0, 0, 0, 16};
+        private const string RowVersion = "AAAAAAAAABA=";
 
         [TestMethod]
         public void ReturningEmptyDomainEventsListTest()

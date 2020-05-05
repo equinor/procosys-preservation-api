@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
 {
     public class UpdateModeCommand : IRequest<Result<Unit>>
     {
-        public UpdateModeCommand(int modeId, string title, ulong rowVersion)
+        public UpdateModeCommand(int modeId, string title, string rowVersion)
         {
             ModeId = modeId;
             Title = title;
@@ -13,6 +13,6 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
         }
         public int ModeId { get; }
         public string Title { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }

@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActions
             string title,
             DateTime? dueTimeUtc,
             bool isClosed,
-            ulong rowVersion)
+            string rowVersion)
         {
             Id = id;
             Title = title;
@@ -22,6 +22,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActions
         public string Title { get; }
         public DateTime? DueTimeUtc { get; }
         public bool IsClosed { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }
