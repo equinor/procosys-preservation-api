@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new UpdateTagCommand(2, "Remark", "StorageArea");
+            var dut = new UpdateTagCommand(2, "Remark", "StorageArea", 12345);
 
             Assert.AreEqual(2, dut.TagId);
             Assert.AreEqual("Remark", dut.Remark);

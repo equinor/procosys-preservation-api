@@ -25,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
 
             tag.StorageArea = request.StorageArea;
             tag.Remark = request.Remark;
+            tag.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

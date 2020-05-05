@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
                 .Setup(r => r.GetTagByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new UpdateTagCommand(_tagId, _newRemark, _newStorageArea);
+            _command = new UpdateTagCommand(_tagId, _newRemark, _newStorageArea, 12345);
 
             _dut = new UpdateTagCommandHandler(
                 _projectRepositoryMock.Object,
