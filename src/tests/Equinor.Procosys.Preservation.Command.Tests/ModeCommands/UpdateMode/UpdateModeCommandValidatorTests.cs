@@ -19,9 +19,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         [TestInitialize]
         public void Setup_OkState()
         {
+            const ulong RowVersion = 12345;
+
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
-            _command = new UpdateModeCommand(_id, _title);
+            _command = new UpdateModeCommand(_id, _title, RowVersion);
 
             _dut = new UpdateModeCommandValidator(_modeValidatorMock.Object);
         }

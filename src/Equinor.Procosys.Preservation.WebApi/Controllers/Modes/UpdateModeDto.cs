@@ -3,5 +3,6 @@
     public class UpdateModeDto
     {
         public string Title { get; set; }
+        public ulong RowVersion { get; set; }
     }
 }

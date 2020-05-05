@@ -22,13 +22,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         {
             // Arrange
             var testModeId = 1;
+            const ulong rowVersion = 12345;
             var modeRepositoryMock = new Mock<IModeRepository>();
             _modeMock = new Mock<Mode>(TestPlant, _oldTitle);
             _modeMock.SetupGet(m => m.Plant).Returns(TestPlant);
             _modeMock.SetupGet(m => m.Id).Returns(testModeId);
             modeRepositoryMock.Setup(m => m.GetByIdAsync(testModeId))
                 .Returns(Task.FromResult(_modeMock.Object));
-            _command = new UpdateModeCommand(testModeId, _newTitle);
+            _command = new UpdateModeCommand(testModeId, _newTitle, rowVersion);
 
             _dut = new UpdateModeCommandHandler(
                 modeRepositoryMock.Object,
