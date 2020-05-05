@@ -5,8 +5,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 {
     public class UpdateJourneyDtoValidator : AbstractValidator<UpdateJourneyDto>
     {
-        public UpdateJourneyDtoValidator() =>
-            RuleFor(x => x.Title)
+        public UpdateJourneyDtoValidator()
+            => RuleFor(x => x.Title)
                 .NotNull()
                 .MinimumLength(Journey.TitleLengthMin)
                 .MaximumLength(Journey.TitleLengthMax);
