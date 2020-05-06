@@ -79,11 +79,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
         public async Task HandlingUpdateTagCommand_ShouldSetRowVersion()
         {
             // Act
+            Assert.AreNotEqual(_command.RowVersion, _tag.RowVersion.ConvertToString());
             await _dut.Handle(_command, default);
 
             // Assert
             var updatedRowVersion = _tag.RowVersion.ConvertToString();
-            Assert.AreEqual(updatedRowVersion, _command.RowVersion);
+            Assert.AreEqual(_command.RowVersion, updatedRowVersion);
         }
     }
 }
