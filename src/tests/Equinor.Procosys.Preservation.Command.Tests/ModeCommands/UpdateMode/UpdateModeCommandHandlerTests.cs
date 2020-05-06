@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(Unit.Value, result.Data);
+            Assert.AreEqual("AAAAAAAAAAA=", result.Data);
             Assert.AreEqual(_modeMock.Object.Title, _newTitle);
         }
 
