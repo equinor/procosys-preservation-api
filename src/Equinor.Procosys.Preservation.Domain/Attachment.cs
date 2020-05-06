@@ -14,11 +14,16 @@ namespace Equinor.Procosys.Preservation.Domain
         {
         }
 
-        protected Attachment(string plant, Guid blobStorageId, string title, string fileName)
+        protected Attachment(string plant, string fileName, Guid blobStorageId, string title)
             : base(plant)
         {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+
             BlobStorageId = blobStorageId;
-            Title = title;
+            Title = title ?? fileName; // set title as filename if not given
             FileName = fileName;
         }
 

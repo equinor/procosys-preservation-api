@@ -2,6 +2,7 @@
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -16,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         private UploadTagAttachmentCommand _commandWithoutOverwrite;
 
         private const int TagId = 2;
-        private const string Filename = "A.txt";
+        private readonly FormFileForTest _file = new FormFileForTest("A.txt");
 
         [TestInitialize]
         public void Setup_OkState()
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
 
-            _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, "", Filename, false);
+            _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, _file, "", false);
 
             _dut = new UploadTagAttachmentCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
@@ -79,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         [TestMethod]
         public void Validate_ShouldFail_WhenFilenameExistsAndNotOverwrite()
         {
-            _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(_commandWithoutOverwrite.TagId, _commandWithoutOverwrite.FileName, default))
+            _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(_commandWithoutOverwrite.TagId, _commandWithoutOverwrite.File.FileName, default))
                 .Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_commandWithoutOverwrite);
@@ -92,8 +93,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         [TestMethod]
         public void Validate_ShouldBeValid_WhenFilenameExistsAndOverwrite()
         {
-            var commandWithOverwrite = new UploadTagAttachmentCommand(TagId, "", Filename, true);
-            _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(commandWithOverwrite.TagId, commandWithOverwrite.FileName, default))
+            var commandWithOverwrite = new UploadTagAttachmentCommand(TagId, _file, "", true);
+            _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(commandWithOverwrite.TagId, commandWithOverwrite.File.FileName, default))
                 .Returns(Task.FromResult(true));
 
             var result = _dut.Validate(commandWithOverwrite);

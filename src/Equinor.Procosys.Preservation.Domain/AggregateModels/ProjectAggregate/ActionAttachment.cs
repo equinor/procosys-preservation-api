@@ -8,8 +8,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        public ActionAttachment(string plant, Guid blobStorageId, string title, string fileName)
-            : base(plant, blobStorageId, title, fileName)
+        public ActionAttachment(string plant, string fileName, Guid blobStorageId, string title)
+            : base(plant, fileName, blobStorageId, title)
         {
         }
     }
