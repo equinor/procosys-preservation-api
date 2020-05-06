@@ -222,8 +222,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                       (!request.Filter.ActionStatus.HasValue || 
                            (request.Filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
                            (request.Filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
-                           (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions) ||
-                           (request.Filter.ActionStatus == ActionStatus.None && !anyOpenActions && !anyClosedActions)) &&
+                           (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions)) &&
                       (!request.Filter.PreservationStatus.HasValue || 
                             tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
@@ -399,7 +398,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             public Journey JourneyWithSteps { get; set; }
             public Step NextStep { get; set; }
 
-            public ActionStatus GetActionStatus()
+            public ActionStatus? GetActionStatus()
             {
                 if (AnyOverDueActions)
                 {
@@ -414,7 +413,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     return ActionStatus.HasClosed;
                 }
 
-                return ActionStatus.None;
+                return null;
             }
         }
 

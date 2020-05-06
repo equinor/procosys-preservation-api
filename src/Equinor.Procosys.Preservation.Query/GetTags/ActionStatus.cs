@@ -2,7 +2,6 @@
 {
     public enum ActionStatus
     {
-        None,
         HasOpen,
         HasClosed,
         HasOverDue
