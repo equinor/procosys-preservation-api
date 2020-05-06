@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
         public BlobPathProvider(IOptionsMonitor<AttachmentOptions> attachmentOptions)
             => _attachmentOptions = attachmentOptions;
 
-        public string CreatePathForAttachment(string folderName, Attachment attachment)
-            => $"{_attachmentOptions.CurrentValue.BlobContainer}/{folderName}/{attachment.BlobStorageId.ToString()}/{attachment.FileName}";
+        public string CreatePathForAttachment<T>(Attachment attachment) where T : class
+            => $"{_attachmentOptions.CurrentValue.BlobContainer}/{typeof(T).Name}/{attachment.BlobStorageId.ToString()}/{attachment.FileName}";
     }
 }
