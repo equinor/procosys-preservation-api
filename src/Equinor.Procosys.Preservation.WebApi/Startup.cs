@@ -7,7 +7,6 @@ using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Query;
 using Equinor.Procosys.Preservation.WebApi.DIModules;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
-using Equinor.Procosys.Preservation.WebApi.Misc;
 using Equinor.Procosys.Preservation.WebApi.Seeding;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
