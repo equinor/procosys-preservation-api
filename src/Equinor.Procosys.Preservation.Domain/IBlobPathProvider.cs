@@ -2,6 +2,6 @@
 {
     public interface IBlobPathProvider
     {
-        string CreatePathForAttachment(string folderName, Attachment attachment);
+        string CreatePathForAttachment<T>(Attachment attachment) where T : class;
     }
 }
