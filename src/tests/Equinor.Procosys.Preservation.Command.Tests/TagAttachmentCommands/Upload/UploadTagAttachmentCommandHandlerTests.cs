@@ -1,9 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Test.Common;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -18,8 +22,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
         private UploadTagAttachmentCommand _commandWithoutOverwrite;
         private UploadTagAttachmentCommandHandler _dut;
+        private Mock<IOptionsMonitor<AttachmentOptions>> _attachmentOptions;
 
         private Mock<IProjectRepository> _projectRepositoryMock;
+        private Mock<IBlobStorage> _blobStorageMock;
         private Mock<Tag> _tagMock;
         private readonly FormFileForTest _file = new FormFileForTest(FileName);
 
@@ -27,6 +33,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         public void Setup()
         {
             _projectRepositoryMock = new Mock<IProjectRepository>();
+            _blobStorageMock = new Mock<IBlobStorage>();
+            _attachmentOptions = new Mock<IOptionsMonitor<AttachmentOptions>>();
+            _attachmentOptions
+                .Setup(x => x.CurrentValue)
+                .Returns(new AttachmentOptions {MaxSizeKb = 1, BlobContainer = "P"});
 
             _tagMock = new Mock<Tag>();
             _tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
@@ -41,7 +52,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             _dut = new UploadTagAttachmentCommandHandler(
                 _projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
-                PlantProviderMock.Object);
+                PlantProviderMock.Object,
+                _blobStorageMock.Object,
+                _attachmentOptions.Object);
         }
 
         [TestMethod]
@@ -102,6 +115,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingUploadTagAttachmentCommand_ShouldStreamToBlobStorage()
+        {
+            // Act
+            await _dut.Handle(_commandWithoutOverwrite, default);
+
+            // Assert
+            _blobStorageMock.Verify(b => b.UploadAsync(It.IsAny<string>(), It.IsAny<Stream>(), _commandWithoutOverwrite.OverwriteIfExists, default), Times.Once);
         }
     }
 }

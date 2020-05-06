@@ -23,17 +23,19 @@ namespace Equinor.Procosys.Preservation.Domain
             }
 
             BlobStorageId = blobStorageId;
-            Title = title ?? fileName; // set title as filename if not given
+            SetTitle(title, fileName);
             FileName = fileName;
         }
 
         public Guid BlobStorageId { get; private set; }
-        public string Title { get; set; }
+        public string Title { get; private set; }
         public string FileName { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+
+        public void SetTitle(string title, string fileName) => Title = title ?? fileName;
 
         public void SetCreated(Person createdBy)
         {
