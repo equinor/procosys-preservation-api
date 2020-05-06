@@ -3,7 +3,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
 {
-    public class UpdateJourneyCommand : IRequest<Result<Unit>>
+    public class UpdateJourneyCommand : IRequest<Result<string>>
     {
         public UpdateJourneyCommand(int journeyId, string title, string rowVersion)
         {
