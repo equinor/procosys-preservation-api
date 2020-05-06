@@ -1,20 +1,21 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
 {
     public class UploadTagAttachmentCommand : IRequest<Result<int>>, ITagCommandRequest
     {
-        public UploadTagAttachmentCommand(int tagId, string title, string fileName, bool overwriteIfExists)
+        public UploadTagAttachmentCommand(int tagId, IFormFile file, string title, bool overwriteIfExists)
         {
             TagId = tagId;
+            File = file;
             Title = title;
-            FileName = fileName;
             OverwriteIfExists = overwriteIfExists;
         }
         public int TagId { get; }
+        public IFormFile File { get; }
         public string Title { get; }
-        public string FileName { get; }
         public bool OverwriteIfExists { get; }
     }
 }

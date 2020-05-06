@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -20,6 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<Tag> _tagMock;
+        private readonly FormFileForTest _file = new FormFileForTest(FileName);
 
         [TestInitialize]
         public void Setup()
@@ -34,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
                 .Setup(r => r.GetTagByTagIdAsync(TagId))
                 .Returns(Task.FromResult(_tagMock.Object));
 
-            _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, Title, FileName, false);
+            _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, _file, Title, false);
 
             _dut = new UploadTagAttachmentCommandHandler(
                 _projectRepositoryMock.Object,
@@ -78,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             await _dut.Handle(_commandWithoutOverwrite, default);
             Assert.IsTrue(_tagMock.Object.Attachments.Count == 1);
             var newTitle = "NewTitle";
-            var commandWithOverwrite = new UploadTagAttachmentCommand(TagId, newTitle, FileName, true);
+            var commandWithOverwrite = new UploadTagAttachmentCommand(TagId, _file, newTitle, true);
 
             // Act
             var result = await _dut.Handle(commandWithOverwrite, default);

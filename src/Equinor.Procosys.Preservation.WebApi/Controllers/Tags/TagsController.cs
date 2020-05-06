@@ -29,6 +29,7 @@ using Equinor.Procosys.Preservation.Query.GetTags;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
@@ -425,12 +426,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromBody] UploadAttachmentDto dto)
+            [FromForm] UploadAttachmentDto dto)
         {
             var actionCommand = new UploadTagAttachmentCommand(
                 id,
+                dto.File,
                 dto.Title,
-                dto.FileName,
                 dto.OverwriteIfExists);
 
             var result = await _mediator.Send(actionCommand);

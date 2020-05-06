@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
-namespace Equinor.Procosys.Preservation.WebApi.Middleware
+namespace Equinor.Procosys.Preservation.WebApi.Swagger
 {
     public static class ApiDescriptionExtension
     {
@@ -14,5 +14,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
 
             return hasAuthAttribute as AuthorizeAttribute[] ?? hasAuthAttribute.ToArray();
         }
+
+        //public static UploadAttribute GetUploadAttribute(this ApiDescription apiDescription)
+        //    => apiDescription.ActionDescriptor.EndpointMetadata.SingleOrDefault(i => i is UploadAttribute) as UploadAttribute;
     }
 }
