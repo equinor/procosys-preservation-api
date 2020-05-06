@@ -29,6 +29,20 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         }
 
         [TestMethod]
+        public void SetTitle_ShouldSetTitleFromFileName_WhenTitleNotGiven()
+        {
+            // Arrange
+            var dut = new TestAttachment(TestPlant, FileName, BlobStorageId, Title);
+            Assert.AreEqual(Title, dut.Title);
+
+            // Act
+            dut.SetTitle(null, FileName);
+
+            // Arrange
+            Assert.AreEqual(FileName, dut.Title);
+        }
+
+        [TestMethod]
         public void Constructor_ShouldThrowException_WhenFileNameNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => new TestAttachment(TestPlant, null, BlobStorageId, "A"));
 
