@@ -14,7 +14,6 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            // todo check that File is given
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
@@ -24,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .MustAsync((command, token) => NotHaveAttachmentWithFilenameAsync(command.TagId, command.File.FileName, token))
                 .WithMessage(command => $"Tag already have an attachment with filename {command.File.FileName}! Please rename file or choose to overwrite")
-                    .When(c => !c.OverwriteIfExists, ApplyConditionTo.CurrentValidator);
+                    .When(c => c.File != null && !c.OverwriteIfExists, ApplyConditionTo.CurrentValidator);
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);

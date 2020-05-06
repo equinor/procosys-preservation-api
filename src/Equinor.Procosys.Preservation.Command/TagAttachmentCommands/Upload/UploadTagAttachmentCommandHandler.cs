@@ -5,7 +5,6 @@ using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
-using Microsoft.Extensions.Options;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
@@ -16,20 +15,20 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
         private readonly IBlobStorage _blobStorage;
-        private readonly IOptionsMonitor<AttachmentOptions> _attachmentOptions;
+        private readonly IBlobPathProvider _blobPathProvider;
 
         public UploadTagAttachmentCommandHandler(
             IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
             IBlobStorage blobStorage,
-            IOptionsMonitor<AttachmentOptions> attachmentOptions)
+            IBlobPathProvider blobPathProvider)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
             _blobStorage = blobStorage;
-            _attachmentOptions = attachmentOptions;
+            _blobPathProvider = blobPathProvider;
         }
 
         public async Task<Result<int>> Handle(UploadTagAttachmentCommand request, CancellationToken cancellationToken)
@@ -57,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
                 attachment.SetTitle(request.Title, request.File.FileName);
             }
 
-            var path = GetPath(nameof(Tag), attachment);
+            var path = _blobPathProvider.CreatePathForAttachment(nameof(Tag), attachment);
 
             await _blobStorage.UploadAsync(path, request.File.OpenReadStream(), request.OverwriteIfExists, cancellationToken);
 
@@ -65,8 +64,5 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
 
             return new SuccessResult<int>(attachment.Id);
         }
-
-        private string GetPath(string folderName, Attachment attachment)
-            => $"{_attachmentOptions.CurrentValue.BlobContainer}/{folderName}/{attachment.BlobStorageId.ToString()}/{attachment.FileName}";
     }
 }

@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using ServiceResult;
 
@@ -9,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
         public UploadTagAttachmentCommand(int tagId, IFormFile file, string title, bool overwriteIfExists)
         {
             TagId = tagId;
-            File = file;
+            File = file ?? throw new ArgumentNullException(nameof(file));
             Title = title;
             OverwriteIfExists = overwriteIfExists;
         }
