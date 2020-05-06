@@ -23,6 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
 
             journey.Title = request.Title;
+            journey.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<Unit>(Unit.Value);

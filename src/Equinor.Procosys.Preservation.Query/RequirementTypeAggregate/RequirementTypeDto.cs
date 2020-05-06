@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             bool isVoided,
             int sortKey,
             IEnumerable<RequirementDefinitionDto> requirementDefinitions,
-            ulong rowVersion)
+            string rowVersion)
         {
             if (requirementDefinitions == null)
             {
@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public string Title { get; }
         public bool IsVoided { get; }
         public int SortKey { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
         public IEnumerable<RequirementDefinitionDto> RequirementDefinitions { get; }
     }
 }

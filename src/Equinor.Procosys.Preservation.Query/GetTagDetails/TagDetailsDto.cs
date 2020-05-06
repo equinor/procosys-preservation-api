@@ -19,6 +19,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
         public bool ReadyToBePreserved { get; set; }
         public string Remark { get; set; }
         public string StorageArea { get; set; }
-        public ulong RowVersion { get; set; }
+        public string RowVersion { get; set; }
     }
 }

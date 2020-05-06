@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
             string registerCode,
             bool isVoided,
             IEnumerable<RequirementDto> requirements,
-            ulong rowVersion)
+            string rowVersion)
         {
             Id = id;
             Code = code;
@@ -28,6 +28,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
         public string RegisterCode { get; }
         public bool IsVoided { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }

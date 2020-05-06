@@ -8,8 +8,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
     [TestClass]
     public class EntityBaseTests
     {
-        private readonly byte[] ConvertedRowVersion = {123, 0, 0, 0, 0, 0, 0, 0};
-        private const ulong RowVersion = 123;
+        private readonly byte[] ConvertedRowVersion = {0, 0, 0, 0, 0, 0, 0, 16};
+        private const string RowVersion = "AAAAAAAAABA=";
 
         [TestMethod]
         public void ReturningEmptyDomainEventsListTest()
@@ -51,13 +51,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             dut.ClearDomainEvents();
 
             Assert.AreEqual(0, dut.DomainEvents.Count);
-        }
-
-        [TestMethod]
-        public void SetRowVersion_ShouldSucceed()
-        {
-            var dut = new TestableEntityBase();
-            dut.SetRowVersion(RowVersion);
         }
 
         [TestMethod]

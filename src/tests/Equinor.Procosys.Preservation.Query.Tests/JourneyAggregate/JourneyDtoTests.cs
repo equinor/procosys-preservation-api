@@ -13,11 +13,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
+            const string RowVersion = "AAAAAAAAABA=";
             var stepDto = new StepDto(2,
                 "S",
                 true,
-                new ModeDto(3, "M", 12345),
-                new ResponsibleDto(4, "RC", "RT", 1234));
+                new ModeDto(3, "M", RowVersion),
+                new ResponsibleDto(4, "RC", "RT", RowVersion));
             var dut = new JourneyDto(
                 1,
                 "J",
@@ -26,14 +27,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
                 {
                     stepDto
                 },
-                12345);
+                RowVersion);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("J", dut.Title);
             Assert.IsTrue(dut.IsVoided);
             Assert.AreEqual(1, dut.Steps.Count());
             Assert.AreEqual(stepDto, dut.Steps.First());
-
         }
     }
 }

@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             string tagDescription,
             string tagNo,
             TagType tagType,
-            ulong rowVersion)
+            string rowVersion)
         {
             Id = id;
             ActionStatus = actionStatus;
@@ -84,6 +84,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         public string TagFunctionCode { get; }
         public string TagNo { get; }
         public TagType TagType { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }

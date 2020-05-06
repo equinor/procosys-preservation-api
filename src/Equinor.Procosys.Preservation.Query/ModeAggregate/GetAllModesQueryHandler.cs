@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
         {
             var modes = await (from m in _context.QuerySet<Mode>()
                 select m).ToListAsync(cancellationToken);
-            return new SuccessResult<IEnumerable<ModeDto>>(modes.Select(mode => new ModeDto(mode.Id, mode.Title, mode.RowVersion.ToULong())));
+            return new SuccessResult<IEnumerable<ModeDto>>(modes.Select(mode => new ModeDto(mode.Id, mode.Title, mode.RowVersion.ConvertToString())));
         }
     }
 }

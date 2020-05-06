@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
                     responsible.Id,
                     responsible.Code,
                     responsible.Title,
-                    responsible.RowVersion.ToULong())));
+                    responsible.RowVersion.ConvertToString())));
         }
     }
 }
