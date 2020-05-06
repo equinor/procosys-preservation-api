@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace Equinor.Procosys.Preservation.WebApi.Swagger
+namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public class AddRoleDocumentation : IOperationFilter
     {

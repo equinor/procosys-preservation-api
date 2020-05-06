@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -19,5 +20,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             Assert.AreEqual("Title", dut.Title);
             Assert.IsTrue(dut.OverwriteIfExists);
         }
+
+        [TestMethod]
+        public void Constructor_ShouldThrowException_WhenFileNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => new UploadTagAttachmentCommand(2, null, "Title", true));
     }
 }
