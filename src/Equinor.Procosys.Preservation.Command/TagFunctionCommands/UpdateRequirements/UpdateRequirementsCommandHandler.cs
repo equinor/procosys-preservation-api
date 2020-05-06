@@ -52,6 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             }
 
             await AddRequirementsToTagFunctionAsync(tagFunction, requirements);
+            tagFunction.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

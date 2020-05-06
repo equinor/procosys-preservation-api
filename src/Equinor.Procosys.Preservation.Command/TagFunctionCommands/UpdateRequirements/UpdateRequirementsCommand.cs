@@ -9,15 +9,18 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
         public UpdateRequirementsCommand(
             string tagFunctionCode,
             string registerCode,
-            IEnumerable<RequirementForCommand> requirements)
+            IEnumerable<RequirementForCommand> requirements,
+            string rowVersion)
         {
             TagFunctionCode = tagFunctionCode;
             RegisterCode = registerCode;
             Requirements = requirements ?? new List<RequirementForCommand>();
+            RowVersion = rowVersion;
         }
 
         public string TagFunctionCode { get; }
         public string RegisterCode { get; }
         public IEnumerable<RequirementForCommand> Requirements { get; }
+        public string RowVersion { get; }
     }
 }
