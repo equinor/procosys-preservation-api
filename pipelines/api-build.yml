@@ -58,33 +58,6 @@ stages:
     aspNetCoreEnvironment: 'Development'
 
   jobs:
-  - template: /templates/pipelines/webapprelease-api.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'publish_container_to_webapp'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      webApp: '${{ variables.apiWebAppName }}'
-      envGroup: '${{ variables.envGroupName }}'
-      envRg: '${{ variables.envRg }}'
-      env: '${{ variables.envName }}'
-      containerRegistry: '${{ variables.containerRegistry }}'
-      repository: '${{ variables.repositoryName }}'
-      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
-
-# k8s deploy stage
-- stage: k8s
-  displayName: 'K8s'
-  dependsOn: 'common'
-  variables:
-    envName: 'dev'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Development'
-
-  jobs:
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
       deploymentName: 'deploy_to_k8s'
