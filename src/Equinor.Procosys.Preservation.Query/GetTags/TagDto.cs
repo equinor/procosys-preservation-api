@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
     {
         public TagDto(
             int id,
-            ActionStatus actionStatus,
+            ActionStatus? actionStatus,
             string areaCode,
             string calloffNo,
             string commPkgNo,
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             RowVersion = rowVersion;
         }
 
-        public ActionStatus ActionStatus { get; }
+        public ActionStatus? ActionStatus { get; }
         public string AreaCode { get; }
         public string CalloffNo { get; }
         public string CommPkgNo { get; }
