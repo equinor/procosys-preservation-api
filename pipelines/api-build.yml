@@ -70,9 +70,25 @@ stages:
       containerRegistry: '${{ variables.containerRegistry }}'
       repository: '${{ variables.repositoryName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+
+# k8s deploy stage
+- stage: k8s
+  displayName: 'K8s'
+  dependsOn: 'common'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  variables:
+    envName: 'dev'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+    aspNetCoreEnvironment: 'Development'
+
+  jobs:
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
-      deploymentName: 'deploy_preservation_api'
+      deploymentName: 'deploy_to_k8s'
       dependsOn: ''
       serviceConnection: '${{ variables.serviceConnection }}'
       env: '${{ variables.envName }}'
