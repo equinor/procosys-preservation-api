@@ -14,6 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
             Assert.AreEqual(2, dut.TagId);
             Assert.AreEqual("Remark", dut.Remark);
             Assert.AreEqual("StorageArea", dut.StorageArea);
+            Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }
 }

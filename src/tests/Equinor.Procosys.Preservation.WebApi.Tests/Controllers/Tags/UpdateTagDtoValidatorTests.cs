@@ -11,12 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         public void Validate_OK()
         {
             var dut = new UpdateTagDtoValidator();
-            var validUpdateTagDto = new UpdateTagDto()
-            {
-                Remark = "Remark",
-                StorageArea = "StorageArea",
-                RowVersion = "AAAAAAAAABA="
-            };
+            var validUpdateTagDto = new UpdateTagDto();
 
             var result = dut.Validate(validUpdateTagDto);
 

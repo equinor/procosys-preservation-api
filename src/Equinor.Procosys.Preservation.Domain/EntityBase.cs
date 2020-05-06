@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Domain
             _domainEvents.Add(eventItem);
         }
 
-        public void SetRowVersion(string value)
+        public virtual void SetRowVersion(string value)
         {
             var newRowVersion = Convert.FromBase64String(value);
             for (var index = 0; index < newRowVersion.Length; index++)

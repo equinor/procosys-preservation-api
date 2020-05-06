@@ -23,6 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             Assert.AreEqual(10, dut.SortKey);
             Assert.IsTrue(dut.IsVoided);
             Assert.AreEqual(0, dut.RequirementDefinitions.Count());
+            Assert.AreEqual(_rowVersion, dut.RowVersion);
         }
 
         [TestMethod]

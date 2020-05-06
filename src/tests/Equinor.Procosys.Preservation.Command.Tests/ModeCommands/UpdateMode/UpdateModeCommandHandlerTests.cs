@@ -22,14 +22,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         {
             // Arrange
             var testModeId = 1;
-            const string rowVersion = "AAAAAAAAABA=";
             var modeRepositoryMock = new Mock<IModeRepository>();
             _modeMock = new Mock<Mode>(TestPlant, _oldTitle);
             _modeMock.SetupGet(m => m.Plant).Returns(TestPlant);
             _modeMock.SetupGet(m => m.Id).Returns(testModeId);
             modeRepositoryMock.Setup(m => m.GetByIdAsync(testModeId))
                 .Returns(Task.FromResult(_modeMock.Object));
-            _command = new UpdateModeCommand(testModeId, _newTitle, rowVersion);
+            _command = new UpdateModeCommand(testModeId, _newTitle, null);
 
             _dut = new UpdateModeCommandHandler(
                 modeRepositoryMock.Object,
@@ -59,6 +58,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateModeCommand_ShouldSetRowVersion()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            _modeMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
         }
     }
 }

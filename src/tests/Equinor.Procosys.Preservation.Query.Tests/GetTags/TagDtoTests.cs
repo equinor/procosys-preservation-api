@@ -67,6 +67,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.AreEqual("TagFunctionCode", _dut.TagFunctionCode);
             Assert.AreEqual("TagNo", _dut.TagNo);
             Assert.AreEqual(TagType.Standard, _dut.TagType);
+            Assert.AreEqual("AAAAAAAAABA=", _dut.RowVersion);
         }
     }
 }

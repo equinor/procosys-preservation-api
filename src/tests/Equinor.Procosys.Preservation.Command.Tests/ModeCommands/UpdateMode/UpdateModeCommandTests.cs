@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
             var dut = new UpdateModeCommand(1, "ModeTitle", "AAAAAAAAABA=");
             Assert.AreEqual(1, dut.ModeId);
             Assert.AreEqual("ModeTitle", dut.Title);
+            Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }
 }

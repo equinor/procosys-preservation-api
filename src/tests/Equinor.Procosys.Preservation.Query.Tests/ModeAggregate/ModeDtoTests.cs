@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
 
             Assert.AreEqual(3, dut.Id);
             Assert.AreEqual("M", dut.Title);
+            Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }
 }

@@ -54,13 +54,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         }
 
         [TestMethod]
-        public void SetRowVersion_ShouldSucceed()
-        {
-            var dut = new TestableEntityBase();
-            dut.SetRowVersion(RowVersion);
-        }
-
-        [TestMethod]
         public void GetRowVersion_ShouldReturnLastSetRowVersion()
         {
             var dut = new TestableEntityBase();

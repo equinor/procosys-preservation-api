@@ -22,14 +22,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
         {
             // Arrange
             var testJourneyId = 1;
-            const string RowVersion = "AAAAAAAAABA=";
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyMock = new Mock<Journey>(TestPlant, _oldTitle);
             _journeyMock.SetupGet(j => j.Plant).Returns(TestPlant);
             _journeyMock.SetupGet(j => j.Id).Returns(testJourneyId);
             journeyRepositoryMock.Setup(j => j.GetByIdAsync(testJourneyId))
                 .Returns(Task.FromResult(_journeyMock.Object));
-            _command = new UpdateJourneyCommand(testJourneyId, _newTitle, RowVersion);
+            _command = new UpdateJourneyCommand(testJourneyId, _newTitle, null);
 
             _dut = new UpdateJourneyCommandHandler(
                 journeyRepositoryMock.Object,
@@ -59,6 +58,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateJourneyCommand_ShouldSetRowVersion()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            _journeyMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
         }
     }
 }

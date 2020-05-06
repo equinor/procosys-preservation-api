@@ -29,6 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
             Assert.IsTrue(dut.IsVoided);
             Assert.AreEqual(1, dut.Requirements.Count());
             Assert.AreEqual(reqDto, dut.Requirements.First());
+            Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }
 }
