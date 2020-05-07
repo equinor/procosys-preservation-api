@@ -29,7 +29,6 @@ using Equinor.Procosys.Preservation.Query.GetTags;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
@@ -417,26 +416,43 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var result = await _mediator.Send(new GetTagAttachmentsQuery(id));
             return this.FromResult(result);
         }
-        
+
         [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
         [HttpPost("{id}/Attachments")]
         public async Task<ActionResult<int>> UploadTagAttachment(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromForm] UploadAttachmentDto dto)
         {
-            var actionCommand = new UploadTagAttachmentCommand(
-                id,
-                dto.File,
-                dto.Title,
-                dto.OverwriteIfExists);
+            //using (var memStream = new MemoryStream())
+            //{
+            //    await dto.File.CopyToAsync(memStream);
 
-            var result = await _mediator.Send(actionCommand);
+            //    var actionCommand = new UploadTagAttachmentCommand(
+            //        id,
+            //        memStream,
+            //        dto.File.FileName,
+            //        dto.Title,
+            //        dto.OverwriteIfExists);
 
-            return this.FromResult(result);
+            //    var result = await _mediator.Send(actionCommand);
+            //    return this.FromResult(result);
+            //}
+            await using (var stream = dto.File.OpenReadStream())
+            {
+                var actionCommand = new UploadTagAttachmentCommand(
+                    id,
+                    stream,
+                    "Preservation_Privileges.xlsx",
+                    dto.Title,
+                    dto.OverwriteIfExists);
+
+                var result = await _mediator.Send(actionCommand);
+                return this.FromResult(result);
+            }
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]

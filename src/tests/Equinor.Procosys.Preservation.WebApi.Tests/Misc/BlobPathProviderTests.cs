@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
     public class BlobPathProviderTests
     {
         [TestMethod]
-        public void Test_Should()
+        public void CreatePathForAttachment_ShouldCreatePath()
         {
             // Arrange
             var attachmentOptions = new Mock<IOptionsMonitor<AttachmentOptions>>();
@@ -25,20 +25,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
             var dut = new BlobPathProvider(attachmentOptions.Object);
 
             // Act
-            var path = dut.CreatePathForAttachment<Abc>(attachment);
+            var path = dut.CreatePathForAttachment(attachment);
 
             // Assert
-            Assert.AreEqual($"{options.BlobContainer}/{nameof(Abc)}/{blobStorageId.ToString()}/{fileName}", path);
+            Assert.AreEqual($"{options.BlobContainer}/{fileName}", path);
         }
-
-        private class Abc
-        { }
 
         private class TestAttachment : Attachment
         {
             public TestAttachment(string plant, string fileName, Guid blobStorageId, string title)
                 : base(plant, fileName, blobStorageId, title)
             { }
+
+            public override string BlobPath => FileName;
         }
     }
 }

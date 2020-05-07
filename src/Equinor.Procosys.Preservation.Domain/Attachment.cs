@@ -35,6 +35,8 @@ namespace Equinor.Procosys.Preservation.Domain
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
+        public abstract string BlobPath { get; }
+
         public void SetTitle(string title, string fileName) => Title = title ?? fileName;
 
         public void SetCreated(Person createdBy)
