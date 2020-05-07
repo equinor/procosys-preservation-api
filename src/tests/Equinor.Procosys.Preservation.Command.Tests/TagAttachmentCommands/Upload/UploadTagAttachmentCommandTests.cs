@@ -12,17 +12,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         public void Constructor_ShouldSetProperties()
         {
             var content = new MemoryStream();
-            var dut = new UploadTagAttachmentCommand(2, content, "FileName", "Title", true);
+            var dut = new UploadTagAttachmentCommand(2, "FileName", true, content);
 
             Assert.AreEqual(2, dut.TagId);
             Assert.AreEqual(content, dut.Content);
             Assert.AreEqual("FileName", dut.FileName);
-            Assert.AreEqual("Title", dut.Title);
             Assert.IsTrue(dut.OverwriteIfExists);
         }
 
         [TestMethod]
-        public void Constructor_ShouldThrowException_WhenFileNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() => new UploadTagAttachmentCommand(2, null, "FileName", "Title", true));
+        public void Constructor_ShouldThrowException_WhenContentNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => new UploadTagAttachmentCommand(2, "FileName", true, null));
     }
 }

@@ -10,22 +10,21 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
     {
         private bool _isDisposed;
 
-        public UploadTagAttachmentCommand(int tagId, Stream content, string fileName, string title, bool overwriteIfExists)
+        public UploadTagAttachmentCommand(int tagId, string fileName, bool overwriteIfExists, Stream content)
         {
             TagId = tagId;
             Content = content ?? throw new ArgumentNullException(nameof(content));
             FileName = fileName;
-            Title = title;
             OverwriteIfExists = overwriteIfExists;
         }
 
         public int TagId { get; }
+        public string FileName { get; }
+        public bool OverwriteIfExists { get; }
+
         // JsonIgnore needed here so GlobalExceptionHandler do not deserialize the stream when reporting validation errors. 
         [JsonIgnore]
         public Stream Content { get; }
-        public string Title { get; }
-        public string FileName { get; }
-        public bool OverwriteIfExists { get; }
 
         public void Dispose(bool disposing)
         {

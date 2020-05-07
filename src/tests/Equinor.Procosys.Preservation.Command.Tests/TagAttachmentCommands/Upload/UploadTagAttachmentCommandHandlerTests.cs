@@ -15,7 +15,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
     public class UploadTagAttachmentCommandHandlerTests : CommandHandlerTestsBase
     {
         private const int TagId = 2;
-        private const string Title = "AttachmentTitle";
         private const string FileName = "AttachmentFileName";
         private const string Path = "AttachmentPath";
 
@@ -44,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             blobPathProviderMock.Setup(b => b.CreatePathForAttachment(It.IsAny<Attachment>()))
                 .Returns(Path);
 
-            _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, new MemoryStream(), FileName, Title, false);
+            _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, FileName, false, new MemoryStream());
 
             _dut = new UploadTagAttachmentCommandHandler(
                 _projectRepositoryMock.Object,
@@ -68,7 +67,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             Assert.AreEqual(0, result.Data);
             Assert.IsTrue(_tagMock.Object.Attachments.Count == 1);
             var attachment = _tagMock.Object.Attachments.Single();
-            Assert.AreEqual(Title, attachment.Title);
             Assert.AreEqual(FileName, attachment.FileName);
         }
 
@@ -89,8 +87,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             // Arrange
             await _dut.Handle(_commandWithoutOverwrite, default);
             Assert.IsTrue(_tagMock.Object.Attachments.Count == 1);
-            var newTitle = "NewTitle";
-            var commandWithOverwrite = new UploadTagAttachmentCommand(TagId, new MemoryStream(), FileName, newTitle, true);
+            var commandWithOverwrite = new UploadTagAttachmentCommand(TagId, FileName, true, new MemoryStream());
 
             // Act
             var result = await _dut.Handle(commandWithOverwrite, default);
@@ -100,7 +97,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             Assert.AreEqual(0, result.Data);
             Assert.IsTrue(_tagMock.Object.Attachments.Count == 1);
             var attachment = _tagMock.Object.Attachments.Single();
-            Assert.AreEqual(newTitle, attachment.Title);
             Assert.AreEqual(FileName, attachment.FileName);
         }
 

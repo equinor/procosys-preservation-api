@@ -432,10 +432,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             var actionCommand = new UploadTagAttachmentCommand(
                 id,
-                stream,
                 dto.File.FileName,
-                dto.Title,
-                dto.OverwriteIfExists);
+                dto.OverwriteIfExists,
+                stream);
 
             var result = await _mediator.Send(actionCommand);
             return this.FromResult(result);
