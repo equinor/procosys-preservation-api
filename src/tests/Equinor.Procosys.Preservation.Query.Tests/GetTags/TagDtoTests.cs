@@ -28,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             true,
             true,
             true,
+            true,
             "PoNo",
             new List<RequirementDto> {new RequirementDto(0, null, default, default, false)},
             "Resp",
@@ -57,6 +58,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.IsTrue(_dut.ReadyToBePreserved);
             Assert.IsTrue(_dut.ReadyToBeStarted);
             Assert.IsTrue(_dut.ReadyToBeTransferred);
+            Assert.IsTrue(_dut.ReadyToBeCompleted);
             Assert.AreEqual("TagDesc", _dut.Description);
             Assert.AreEqual("PoNo", _dut.PurchaseOrderNo);
             Assert.IsNotNull(_dut.Requirements);
