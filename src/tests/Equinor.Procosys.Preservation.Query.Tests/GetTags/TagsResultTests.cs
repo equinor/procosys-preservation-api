@@ -28,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 true,
                 true,
                 true,
+                true,
                 "PoNo",
                 new List<RequirementDto> {new RequirementDto(0, null, default, default, false)},
                 "Resp",
