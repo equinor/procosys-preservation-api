@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements
 {
-    public class UpdateRequirementsCommand : IRequest<Result<Unit>>
+    public class UpdateRequirementsCommand : IRequest<Result<string>>
     {
         public UpdateRequirementsCommand(
             string tagFunctionCode,
