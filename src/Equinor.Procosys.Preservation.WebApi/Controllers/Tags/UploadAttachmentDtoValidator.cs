@@ -13,9 +13,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             RuleFor(x => x)
                 .NotNull();
 
-            RuleFor(x => x.Title)
-                .MaximumLength(Attachment.TitleLengthMax);
-
             RuleFor(x => x.File)
                 .NotNull()
                 .NotEmpty();

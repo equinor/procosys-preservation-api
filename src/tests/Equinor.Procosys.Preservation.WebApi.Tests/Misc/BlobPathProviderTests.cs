@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
                 .Returns(options);
             var fileName = "A.txt";
             var blobStorageId = new Guid("{73D5C19C-A7A5-42BC-93AF-979EF5E1C37F}");
-            var attachment = new TestAttachment("P", fileName, blobStorageId, null);
+            var attachment = new TestAttachment("P", fileName, blobStorageId);
             var dut = new BlobPathProvider(attachmentOptions.Object);
 
             // Act
@@ -33,8 +33,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
 
         private class TestAttachment : Attachment
         {
-            public TestAttachment(string plant, string fileName, Guid blobStorageId, string title)
-                : base(plant, fileName, blobStorageId, title)
+            public TestAttachment(string plant, string fileName, Guid blobStorageId)
+                : base(plant, fileName, blobStorageId)
             { }
 
             public override string BlobPath => FileName;

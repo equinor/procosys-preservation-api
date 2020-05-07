@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddAttachment_ShouldAddAttachment()
         {
-            var attachment = new ActionAttachment("PlantA", "A.txt", Guid.Empty, null);
+            var attachment = new ActionAttachment("PlantA", "A.txt", Guid.Empty);
             _dut.AddAttachment(attachment);
 
             Assert.AreEqual(attachment, _dut.Attachments.First());

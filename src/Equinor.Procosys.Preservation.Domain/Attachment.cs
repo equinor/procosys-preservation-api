@@ -6,7 +6,6 @@ namespace Equinor.Procosys.Preservation.Domain
 {
     public abstract class Attachment : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
-        public const int TitleLengthMax = 255;
         public const int FileNameLengthMax = 255;
 
         protected Attachment()
@@ -14,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Domain
         {
         }
 
-        protected Attachment(string plant, string fileName, Guid blobStorageId, string title)
+        protected Attachment(string plant, string fileName, Guid blobStorageId)
             : base(plant)
         {
             if (string.IsNullOrEmpty(fileName))
@@ -23,12 +22,10 @@ namespace Equinor.Procosys.Preservation.Domain
             }
 
             BlobStorageId = blobStorageId;
-            SetTitle(title, fileName);
             FileName = fileName;
         }
 
         public Guid BlobStorageId { get; private set; }
-        public string Title { get; private set; }
         public string FileName { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
@@ -36,8 +33,6 @@ namespace Equinor.Procosys.Preservation.Domain
         public int? ModifiedById { get; private set; }
 
         public abstract string BlobPath { get; }
-
-        public void SetTitle(string title, string fileName) => Title = title ?? fileName;
 
         public void SetCreated(Person createdBy)
         {

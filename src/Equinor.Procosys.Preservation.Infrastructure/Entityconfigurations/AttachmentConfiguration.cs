@@ -14,10 +14,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureCreationAudit();
             builder.ConfigureConcurrencyToken();
 
-            builder.Property(x => x.Title)
-                .HasMaxLength(Attachment.TitleLengthMax)
-                .IsRequired();
-
             builder.Property(x => x.FileName)
                 .HasMaxLength(Attachment.FileNameLengthMax)
                 .IsRequired();

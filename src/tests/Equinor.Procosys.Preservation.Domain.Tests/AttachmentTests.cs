@@ -7,49 +7,26 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
     public class AttachmentTests
     {
         private readonly string TestPlant = "PlantA";
-        private readonly string Title = "TitleA";
         private readonly string FileName = "FileA";
         private readonly Guid BlobStorageId = new Guid("{6DB281E2-B667-4DCE-B74C-B9A9FBC94964}");
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new TestAttachment(TestPlant, FileName, BlobStorageId, Title);
+            var dut = new TestAttachment(TestPlant, FileName, BlobStorageId);
             Assert.AreEqual(TestPlant, dut.Plant);
             Assert.AreEqual(BlobStorageId, dut.BlobStorageId);
             Assert.AreEqual(FileName, dut.FileName);
-            Assert.AreEqual(Title, dut.Title);
-        }
-
-        [TestMethod]
-        public void Constructor_ShouldSetTitleFromFileName_WhenTitleNotGiven()
-        {
-            var dut = new TestAttachment(TestPlant, FileName, BlobStorageId, null);
-            Assert.AreEqual(FileName, dut.Title);
-        }
-
-        [TestMethod]
-        public void SetTitle_ShouldSetTitleFromFileName_WhenTitleNotGiven()
-        {
-            // Arrange
-            var dut = new TestAttachment(TestPlant, FileName, BlobStorageId, Title);
-            Assert.AreEqual(Title, dut.Title);
-
-            // Act
-            dut.SetTitle(null, FileName);
-
-            // Arrange
-            Assert.AreEqual(FileName, dut.Title);
         }
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenFileNameNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() => new TestAttachment(TestPlant, null, BlobStorageId, "A"));
+            => Assert.ThrowsException<ArgumentNullException>(() => new TestAttachment(TestPlant, null, BlobStorageId));
 
         class TestAttachment : Attachment
         {
-            public TestAttachment(string plant, string fileName, Guid blobStorageId, string title)
-                : base(plant, fileName, blobStorageId, title)
+            public TestAttachment(string plant, string fileName, Guid blobStorageId)
+                : base(plant, fileName, blobStorageId)
             { }
 
             public override string BlobPath => FileName;

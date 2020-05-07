@@ -47,13 +47,8 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
                 attachment = new TagAttachment(
                     _plantProvider.Plant,
                     request.FileName,
-                    Guid.NewGuid(), 
-                    request.Title);
+                    Guid.NewGuid());
                 tag.AddAttachment(attachment);
-            }
-            else
-            {
-                attachment.SetTitle(request.Title, request.FileName);
             }
 
             var path = _blobPathProvider.CreatePathForAttachment(attachment);
