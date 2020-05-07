@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -53,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
                 .Setup(r => r.GetTagByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new UpdateActionCommand(_tagId, _actionId, _newTitle, _newDescription, _newDueTimeUtc);
+            _command = new UpdateActionCommand(_tagId, _actionId, _newTitle, _newDescription, _newDueTimeUtc, "AAAAAAAAABA=");
 
             _dut = new UpdateActionCommandHandler(
                 _projectRepositoryMock.Object,
@@ -90,9 +91,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
                 _actionId,
                 _newTitle,
                 _newDescription,
-                new DateTime(2020, 1, 1, 1, 1, 1));
+                new DateTime(2020, 1, 1, 1, 1, 1), 
+                null);
 
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => _dut.Handle(command, default));
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateActionCommand_ShouldSetRowVersion()
+        {
+            var action = new List<Action>(_tag.Actions)[0];
+
+            Assert.AreNotEqual(_command.RowVersion, action.RowVersion.ConvertToString());
+            await _dut.Handle(_command, default);
+
+            var updatedRowVersion = action.RowVersion.ConvertToString();
+            Assert.AreEqual(_command.RowVersion, updatedRowVersion);
         }
     }
 }

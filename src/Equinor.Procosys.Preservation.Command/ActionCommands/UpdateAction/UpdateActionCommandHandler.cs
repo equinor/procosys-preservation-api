@@ -8,7 +8,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
 {
-    public class UpdateActionCommandHandler : IRequestHandler<UpdateActionCommand, Result<Unit>>
+    public class UpdateActionCommandHandler : IRequestHandler<UpdateActionCommand, Result<string>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(UpdateActionCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdateActionCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
             var action = tag.Actions.Single(a => a.Id == request.ActionId);
@@ -27,10 +27,11 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
             action.Title = request.Title;
             action.Description = request.Description;
             action.SetDueTime(request.DueTimeUtc);
+            action.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(action.RowVersion.ToString());
         }
     }
 }

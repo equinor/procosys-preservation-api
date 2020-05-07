@@ -36,6 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
                 _actionId,
                 "",
                 "",
+                null,
                 null);
 
             _dut = new UpdateActionCommandValidator(
