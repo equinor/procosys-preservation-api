@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using Microsoft.EntityFrameworkCore;
@@ -45,6 +46,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.DisciplineDescription)
                 .HasMaxLength(Tag.DisciplineDescriptionLengthMax);
 
+            builder.HasOne<Step>()
+                .WithMany()
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
+
             builder
                 .HasMany(x => x.Requirements)
                 .WithOne()
@@ -53,7 +59,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasMany(x => x.Actions)
                 .WithOne()
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder
                 .HasMany(x => x.Attachments)

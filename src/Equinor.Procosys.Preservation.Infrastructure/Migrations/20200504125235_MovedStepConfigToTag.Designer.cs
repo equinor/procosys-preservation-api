@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200504125235_MovedStepConfigToTag")]
+    partial class MovedStepConfigToTag
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1139,7 +1141,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate.Mode", null)
                         .WithMany()
                         .HasForeignKey("ModeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
@@ -1150,7 +1152,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", null)
                         .WithMany()
                         .HasForeignKey("ResponsibleId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1197,7 +1199,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Tag", null)
                         .WithMany("Actions")
                         .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1241,7 +1243,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.TagRequirement", null)
                         .WithMany("PreservationPeriods")
                         .HasForeignKey("TagRequirementId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1290,7 +1292,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Project", null)
                         .WithMany("Tags")
                         .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Step", null)
@@ -1316,7 +1318,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", null)
                         .WithMany()
                         .HasForeignKey("RequirementDefinitionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Tag", null)
@@ -1362,7 +1364,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementType", null)
                         .WithMany("RequirementDefinitions")
                         .HasForeignKey("RequirementTypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -1424,7 +1426,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.RequirementDefinition", null)
                         .WithMany()
                         .HasForeignKey("RequirementDefinitionId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate.TagFunction", null)
