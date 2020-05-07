@@ -73,3 +73,34 @@ stages:
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
+
+# Test deploy stage
+- stage: test
+  displayName: 'Test'
+  dependsOn: 'common'
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  variables:
+    envName: 'test'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+    aspNetCoreEnvironment: 'Production'
+
+  jobs:
+  - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
+    parameters:
+      deploymentName: 'deploy_to_k8s'
+      dependsOn: ''
+      serviceConnection: '${{ variables.serviceConnection }}'
+      env: '${{ variables.envName }}'
+      envRg: 'pcs-hosting-rg'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerImage: 'procosys.azurecr.io/preservation/api:$(Build.BuildId)'
+      clusterName: 'aks-pcs-test'
+      kvClientIdName: '${{ variables.kvClientIdName }}'
+      kvUriName: '${{ variables.kvUriName }}'
+      kvClientSecretName: '${{ variables.kvClientSecretName }}'
+      kvName: '${{ variables.kvName }}'
+      kvRgName: '${{ variables.envRgName }}'
