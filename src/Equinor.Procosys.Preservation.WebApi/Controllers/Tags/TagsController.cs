@@ -174,7 +174,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var result = await _mediator.Send(
                 new UpdateTagCommand(id,
                     dto.Remark,
-                    dto.StorageArea));
+                    dto.StorageArea,
+                    dto.RowVersion));
             return this.FromResult(result);
         }
 

@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                         requirement.ReadyToBePreserved,
                         fields,
                         requirement.GetCurrentComment(),
-                        requirement.RowVersion.ToULong());
+                        requirement.RowVersion.ConvertToString());
                 }).ToList();
             
             return new SuccessResult<List<RequirementDto>>(requirements);

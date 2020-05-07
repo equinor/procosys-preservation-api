@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
                 "RC",
                 true,
                 new List<RequirementDto>{reqDto},
-                12345);
+                "AAAAAAAAABA=");
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("TFC", dut.Code);
@@ -29,6 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
             Assert.IsTrue(dut.IsVoided);
             Assert.AreEqual(1, dut.Requirements.Count());
             Assert.AreEqual(reqDto, dut.Requirements.First());
+            Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }
 }

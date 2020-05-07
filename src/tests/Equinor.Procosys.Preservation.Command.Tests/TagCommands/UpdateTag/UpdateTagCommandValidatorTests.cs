@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            _command = new UpdateTagCommand(_tagId, _remark, _storageArea);
+            _command = new UpdateTagCommand(_tagId, _remark, _storageArea, null);
             _dut = new UpdateTagCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 

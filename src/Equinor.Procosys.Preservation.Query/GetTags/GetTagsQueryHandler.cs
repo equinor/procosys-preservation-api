@@ -134,6 +134,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                 var isReadyToBePreserved = tagWithRequirements.IsReadyToBePreserved();
                 var isReadyToBeStarted = tagWithRequirements.IsReadyToBeStarted();
                 var isReadyToBeTransferred = tagWithRequirements.IsReadyToBeTransferred(dto.JourneyWithSteps);
+                var isReadyToBeCompleted = tagWithRequirements.IsReadyToBeCompleted(dto.JourneyWithSteps);
 
                 var nextMode = tagWithRequirements.FollowsAJourney && dto.NextStep != null 
                     ? nextModes.Single(m => m.Id == dto.NextStep.ModeId)
@@ -158,6 +159,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     isReadyToBePreserved,
                     isReadyToBeStarted,
                     isReadyToBeTransferred,
+                    isReadyToBeCompleted,
                     dto.PurchaseOrderNo,
                     requirementDtos,
                     dto.ResponsibleCode,
@@ -167,7 +169,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     dto.Description,
                     dto.TagNo,
                     dto.TagType,
-                    dto.RowVersion.ToULong());
+                    dto.RowVersion.ConvertToString());
             });
             var result = new TagsResult(maxAvailable, tags);
             return result;
@@ -222,8 +224,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                       (!request.Filter.ActionStatus.HasValue || 
                            (request.Filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
                            (request.Filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
-                           (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions) ||
-                           (request.Filter.ActionStatus == ActionStatus.None && !anyOpenActions && !anyClosedActions)) &&
+                           (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions)) &&
                       (!request.Filter.PreservationStatus.HasValue || 
                             tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
@@ -399,7 +400,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             public Journey JourneyWithSteps { get; set; }
             public Step NextStep { get; set; }
 
-            public ActionStatus GetActionStatus()
+            public ActionStatus? GetActionStatus()
             {
                 if (AnyOverDueActions)
                 {
@@ -414,7 +415,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     return ActionStatus.HasClosed;
                 }
 
-                return ActionStatus.None;
+                return null;
             }
         }
 

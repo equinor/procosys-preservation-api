@@ -4,7 +4,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 {
     public class JourneyDto
     {
-        public JourneyDto(int id, string title, bool isVoided, IEnumerable<StepDto> steps, ulong rowVersion)
+        public JourneyDto(int id, string title, bool isVoided, IEnumerable<StepDto> steps, string rowVersion)
         {
             Id = id;
             Title = title;
@@ -17,6 +17,6 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
         public string Title { get; }
         public bool IsVoided { get; }
         public IEnumerable<StepDto> Steps { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }

@@ -23,9 +23,9 @@ namespace Equinor.Procosys.Preservation.Domain
             _domainEvents.Add(eventItem);
         }
 
-        public void SetRowVersion(ulong value)
+        public virtual void SetRowVersion(string value)
         {
-            var newRowVersion = BitConverter.GetBytes(value);
+            var newRowVersion = Convert.FromBase64String(value);
             for (var index = 0; index < newRowVersion.Length; index++)
             {
                 RowVersion[index] = newRowVersion[index];
