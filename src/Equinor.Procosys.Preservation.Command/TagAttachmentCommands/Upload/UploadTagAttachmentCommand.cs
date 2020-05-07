@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
         public string FileName { get; }
         public bool OverwriteIfExists { get; }
 
-        // JsonIgnore needed here so GlobalExceptionHandler do not deserialize the stream when reporting validation errors. 
+        // JsonIgnore needed here so GlobalExceptionHandler do not try to serialize the Stream when reporting validation errors. 
         [JsonIgnore]
         public Stream Content { get; }
 
