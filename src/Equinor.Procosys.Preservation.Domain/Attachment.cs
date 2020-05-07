@@ -22,6 +22,10 @@ namespace Equinor.Procosys.Preservation.Domain
             {
                 throw new ArgumentNullException(nameof(fileName));
             }
+            if (string.IsNullOrEmpty(parentType))
+            {
+                throw new ArgumentNullException(nameof(parentType));
+            }
 
             FileName = fileName;
             BlobPath = Path.Combine(plant.Substring(4), parentType, blobStorageId.ToString()).Replace("\\", "/");;

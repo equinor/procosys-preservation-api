@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new TestAttachment(TestPlant, BlobStorageId, FileName);
+            var dut = new TestAttachment(TestPlant, BlobStorageId, FileName, Parent);
             Assert.AreEqual(TestPlant, dut.Plant);
             Assert.AreEqual($"PlantA/{Parent}/{BlobStorageId.ToString()}", dut.BlobPath);
             Assert.AreEqual(FileName, dut.FileName);
@@ -22,12 +22,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenFileNameNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() => new TestAttachment(TestPlant, BlobStorageId, null));
+            => Assert.ThrowsException<ArgumentNullException>(() => new TestAttachment(TestPlant, BlobStorageId, null, Parent));
+
+        [TestMethod]
+        public void Constructor_ShouldThrowException_WhenParentNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => new TestAttachment(TestPlant, BlobStorageId, FileName, null));
 
         class TestAttachment : Attachment
         {
-            public TestAttachment(string plant, Guid blobStorageId, string fileName)
-                : base(plant, blobStorageId, fileName, Parent)
+            public TestAttachment(string plant, Guid blobStorageId, string fileName, string parent)
+                : base(plant, blobStorageId, fileName, parent)
             { }
         }
     }

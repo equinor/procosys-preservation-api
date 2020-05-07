@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
                 tag.AddAttachment(attachment);
             }
 
-            var path = _blobPathProvider.CreateFullPathForAttachment(attachment);
+            var path = _blobPathProvider.CreateFullBlobPathForAttachment(attachment);
 
             await _blobStorage.UploadAsync(path, request.Content, request.OverwriteIfExists, cancellationToken);
 
