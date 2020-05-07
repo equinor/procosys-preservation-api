@@ -11,7 +11,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
             int actionId,
             string title,
             string description,
-            DateTime? dueTimeUtc, string rowVersion)
+            DateTime? dueTimeUtc,
+            string rowVersion)
         {
             TagId = tagId;
             ActionId = actionId;
