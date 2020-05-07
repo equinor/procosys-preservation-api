@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text.Json.Serialization;
 using MediatR;
 using ServiceResult;
 
@@ -7,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
 {
     public class UploadTagAttachmentCommand : IRequest<Result<int>>, ITagCommandRequest, IDisposable
     {
-        private bool _isDisposed = false;
+        private bool _isDisposed;
 
         public UploadTagAttachmentCommand(int tagId, Stream content, string fileName, string title, bool overwriteIfExists)
         {
@@ -19,6 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
         }
 
         public int TagId { get; }
+        // JsonIgnore needed here so GlobalExceptionHandler do not deserialize the stream when reporting validation errors. 
+        [JsonIgnore]
         public Stream Content { get; }
         public string Title { get; }
         public string FileName { get; }
@@ -28,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
         {
             if (_isDisposed)
             {
-                return;;
+                return;
             }
 
             if (disposing)

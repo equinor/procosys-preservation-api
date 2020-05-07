@@ -428,32 +428,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromForm] UploadAttachmentDto dto)
         {
-            //using (var memStream = new MemoryStream())
-            //{
-            //    await dto.File.CopyToAsync(memStream);
+            await using var stream = dto.File.OpenReadStream();
 
-            //    var actionCommand = new UploadTagAttachmentCommand(
-            //        id,
-            //        memStream,
-            //        dto.File.FileName,
-            //        dto.Title,
-            //        dto.OverwriteIfExists);
+            var actionCommand = new UploadTagAttachmentCommand(
+                id,
+                stream,
+                dto.File.FileName,
+                dto.Title,
+                dto.OverwriteIfExists);
 
-            //    var result = await _mediator.Send(actionCommand);
-            //    return this.FromResult(result);
-            //}
-            await using (var stream = dto.File.OpenReadStream())
-            {
-                var actionCommand = new UploadTagAttachmentCommand(
-                    id,
-                    stream,
-                    "Preservation_Privileges.xlsx",
-                    dto.Title,
-                    dto.OverwriteIfExists);
-
-                var result = await _mediator.Send(actionCommand);
-                return this.FromResult(result);
-            }
+            var result = await _mediator.Send(actionCommand);
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
