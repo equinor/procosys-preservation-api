@@ -12,5 +12,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             : base(plant, fileName, blobStorageId, title)
         {
         }
+
+        public override string BlobPath => $"{Plant.Substring(4)}/Tag/{BlobStorageId.ToString()}/{FileName}";
     }
 }

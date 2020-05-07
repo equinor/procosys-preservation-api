@@ -51,6 +51,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
             public TestAttachment(string plant, string fileName, Guid blobStorageId, string title)
                 : base(plant, fileName, blobStorageId, title)
             { }
+
+            public override string BlobPath => FileName;
         }
     }
 }
