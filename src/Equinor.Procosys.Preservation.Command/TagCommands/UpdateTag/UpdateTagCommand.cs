@@ -3,7 +3,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
 {
-    public class UpdateTagCommand : IRequest<Result<Unit>>, ITagCommandRequest
+    public class UpdateTagCommand : IRequest<Result<string>>, ITagCommandRequest
     {
         public UpdateTagCommand(
             int tagId,

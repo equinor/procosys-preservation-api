@@ -8,7 +8,7 @@ using ServiceResult;
 namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
 {
 
-    public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<Unit>>
+    public class UpdateTagCommandHandler : IRequestHandler<UpdateTagCommand, Result<string>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdateTagCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
 
@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(tag.RowVersion.ConvertToString());
         }
     }
 }
