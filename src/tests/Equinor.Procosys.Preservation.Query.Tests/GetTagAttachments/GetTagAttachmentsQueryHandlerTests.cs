@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagAttachments
 
                 var tag = _testDataSet.Project1.Tags.First();
 
-                _attachment = new TagAttachment(TestPlant, "FileA", new Guid("{C3412890-1EF8-4E34-B96C-5488200A5AF5}"));
+                _attachment = new TagAttachment(TestPlant, new Guid("{C3412890-1EF8-4E34-B96C-5488200A5AF5}"), "FileA");
                 tag.AddAttachment(_attachment);
 
                 context.SaveChangesAsync().Wait();

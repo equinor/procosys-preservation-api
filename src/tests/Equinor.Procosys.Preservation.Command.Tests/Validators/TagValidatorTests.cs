@@ -551,7 +551,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
-                tag.AddAttachment(new TagAttachment(TestPlant, fileName, Guid.Empty));
+                tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, fileName));
                 context.SaveChangesAsync().Wait();
             }
 

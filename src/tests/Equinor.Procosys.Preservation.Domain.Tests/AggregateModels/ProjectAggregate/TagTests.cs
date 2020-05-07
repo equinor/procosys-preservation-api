@@ -961,7 +961,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddAttachment_ShouldAddAttachment()
         {
-            var attachment = new TagAttachment(TestPlant, "A.txt", Guid.Empty);
+            var attachment = new TagAttachment(TestPlant, Guid.Empty, "A.txt");
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(attachment);
 
             Assert.AreEqual(attachment, _dutWithOneReqNotNeedInputTwoWeekInterval.Attachments.First());
@@ -980,7 +980,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             // Arrange
             var fileName = "FileA";
-            var attachment = new TagAttachment(TestPlant, fileName, Guid.Empty);
+            var attachment = new TagAttachment(TestPlant, Guid.Empty, fileName);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(attachment);
 
             // Act
@@ -995,7 +995,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             // Arrange
             var fileName = "FileA";
-            var attachment = new TagAttachment(TestPlant, fileName, Guid.Empty);
+            var attachment = new TagAttachment(TestPlant, Guid.Empty, fileName);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(attachment);
 
             // Act

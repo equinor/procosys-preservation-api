@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Domain
         {
         }
 
-        protected Attachment(string plant, string fileName, Guid blobStorageId, string parentType)
+        protected Attachment(string plant, Guid blobStorageId, string fileName, string parentType)
             : base(plant)
         {
             if (string.IsNullOrEmpty(fileName))
