@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         {
             var dut = new TestAttachment(TestPlant, FileName, BlobStorageId);
             Assert.AreEqual(TestPlant, dut.Plant);
-            Assert.AreEqual($"PlantA/{Parent}/{BlobStorageId.ToString()}/{FileName}", dut.BlobPath);
+            Assert.AreEqual($"PlantA/{Parent}/{BlobStorageId.ToString()}", dut.BlobPath);
             Assert.AreEqual(FileName, dut.FileName);
         }
 

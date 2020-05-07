@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
             var path = dut.CreateFullPathForAttachment(attachment);
 
             // Assert
-            Assert.AreEqual($"{options.BlobContainer}\\{Plant.Substring(4)}\\{Parent}\\{blobStorageId.ToString()}\\{fileName}", path);
+            Assert.AreEqual($"{options.BlobContainer}/{Plant.Substring(4)}/{Parent}/{blobStorageId.ToString()}/{fileName}", path);
         }
 
         private class TestAttachment : Attachment
