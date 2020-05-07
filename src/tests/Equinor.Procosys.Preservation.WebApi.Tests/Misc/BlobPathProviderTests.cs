@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
             var dut = new BlobPathProvider(attachmentOptions.Object);
 
             // Act
-            var path = dut.CreateFullPathForAttachment(attachment);
+            var path = dut.CreateFullBlobPathForAttachment(attachment);
 
             // Assert
             Assert.AreEqual($"{options.BlobContainer}/{Plant.Substring(4)}/{Parent}/{blobStorageId.ToString()}/{fileName}", path);
