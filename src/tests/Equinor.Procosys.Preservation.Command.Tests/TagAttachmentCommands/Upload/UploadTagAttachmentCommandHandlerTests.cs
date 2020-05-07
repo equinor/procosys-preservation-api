@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
                 .Returns(Task.FromResult(_tagMock.Object));
 
             var blobPathProviderMock = new Mock<IBlobPathProvider>();
-            blobPathProviderMock.Setup(b => b.CreatePathForAttachment(It.IsAny<Attachment>()))
+            blobPathProviderMock.Setup(b => b.CreateFullPathForAttachment(It.IsAny<Attachment>()))
                 .Returns(Path);
 
             _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, FileName, false, new MemoryStream());

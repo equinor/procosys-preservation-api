@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
         public BlobPathProvider(IOptionsMonitor<AttachmentOptions> attachmentOptions)
             => _attachmentOptions = attachmentOptions;
 
-        public string CreatePathForAttachment(Attachment attachment)
-            => Path.Combine(_attachmentOptions.CurrentValue.BlobContainer, attachment.BlobPath).Replace("\\", "/");
+        public string CreateFullPathForAttachment(Attachment attachment)
+            => Path.Combine(_attachmentOptions.CurrentValue.BlobContainer, attachment.BlobPath, attachment.FileName); //.Replace("\\", "/");
     }
 }

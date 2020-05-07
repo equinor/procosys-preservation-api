@@ -9,10 +9,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public ActionAttachment(string plant, string fileName, Guid blobStorageId)
-            : base(plant, fileName, blobStorageId)
+            : base(plant, fileName, blobStorageId, "Tag")
         {
         }
-
-        public override string BlobPath => $"{Plant.Substring(4)}/Action/{BlobStorageId.ToString()}/{FileName}";
     }
 }

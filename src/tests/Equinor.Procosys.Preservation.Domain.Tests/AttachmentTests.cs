@@ -6,8 +6,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
     [TestClass]
     public class AttachmentTests
     {
-        private readonly string TestPlant = "PlantA";
+        private readonly string TestPlant = "PCS$PlantA";
         private readonly string FileName = "FileA";
+        private static string Parent = "Test";
         private readonly Guid BlobStorageId = new Guid("{6DB281E2-B667-4DCE-B74C-B9A9FBC94964}");
 
         [TestMethod]
@@ -15,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         {
             var dut = new TestAttachment(TestPlant, FileName, BlobStorageId);
             Assert.AreEqual(TestPlant, dut.Plant);
-            Assert.AreEqual(BlobStorageId, dut.BlobStorageId);
+            Assert.AreEqual($"PlantA/{Parent}/{BlobStorageId.ToString()}/{FileName}", dut.BlobPath);
             Assert.AreEqual(FileName, dut.FileName);
         }
 
@@ -26,10 +27,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         class TestAttachment : Attachment
         {
             public TestAttachment(string plant, string fileName, Guid blobStorageId)
-                : base(plant, fileName, blobStorageId)
+                : base(plant, fileName, blobStorageId, Parent)
             { }
-
-            public override string BlobPath => FileName;
         }
     }
 }
