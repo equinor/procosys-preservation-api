@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -16,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
     public class UpdateActionCommandHandlerTests : CommandHandlerTestsBase
     {
         private readonly int _tagId = 2;
-        private readonly int _actionId = 0;
+        private readonly int _actionId = 12;
         private readonly string _oldTitle = "ActionTitleOld";
         private readonly string _newTitle = "ActionTitleNew";
         private readonly string _oldDescription = "ActionDescriptionOld";
@@ -24,37 +20,31 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         private readonly DateTime _oldDueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
         private readonly DateTime _newDueTimeUtc = new DateTime(2020, 2, 2, 2, 1, 1, DateTimeKind.Utc);
 
-        private TagRequirement _requirement;
-        private Tag _tag;
         private UpdateActionCommand _command;
         private UpdateActionCommandHandler _dut;
 
         private Mock<IProjectRepository> _projectRepositoryMock;
-        private readonly int _rdId1 = 17;
-        private readonly int _intervalWeeks = 2;
+        private Mock<Action> _actionMock;
 
         [TestInitialize]
         public void Setup()
         {
             _projectRepositoryMock = new Mock<IProjectRepository>();
 
-            var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
-
-            var _rdMock = new Mock<RequirementDefinition>();
-            _rdMock.SetupGet(rd => rd.Id).Returns(_rdId1);
-            _rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
-
-            _requirement = new TagRequirement(TestPlant, _intervalWeeks, _rdMock.Object);
-            _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> { _requirement });
-            var action = new Action(TestPlant, _oldTitle, _oldDescription, _oldDueTimeUtc);
-            _tag.AddAction(action);
+            var tagMock = new Mock<Tag>();
+            tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
+            tagMock.SetupGet(t => t.Id).Returns(_tagId);
+            _actionMock = new Mock<Action>(TestPlant, _oldTitle, _oldDescription, _oldDueTimeUtc);
+            _actionMock = new Mock<Action>();
+            _actionMock.SetupGet(t => t.Plant).Returns(TestPlant);
+            _actionMock.SetupGet(t => t.Id).Returns(_actionId);
+            tagMock.Object.AddAction(_actionMock.Object);
 
             _projectRepositoryMock
                 .Setup(r => r.GetTagByTagIdAsync(_tagId))
-                .Returns(Task.FromResult(_tag));
+                .Returns(Task.FromResult(tagMock.Object));
 
-            _command = new UpdateActionCommand(_tagId, _actionId, _newTitle, _newDescription, _newDueTimeUtc, "AAAAAAAAABA=");
+            _command = new UpdateActionCommand(_tagId, _actionId, _newTitle, _newDescription, _newDueTimeUtc, null);
 
             _dut = new UpdateActionCommandHandler(
                 _projectRepositoryMock.Object,
@@ -65,48 +55,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         [TestMethod]
         public async Task HandlingUpdateActionCommand_ShouldUpdateAction()
         {
-            Assert.IsTrue(_tag.Actions.Count == 1);
-
             var result = await _dut.Handle(_command, default);
-            var action = new List<Action>(_tag.Actions)[0];
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.IsTrue(_tag.Actions.Count == 1);
-            Assert.AreEqual(action.Title, _newTitle);
-            Assert.AreEqual(action.Description, _newDescription);
-            Assert.AreEqual(action.DueTimeUtc, _newDueTimeUtc);
-        }
 
-        [TestMethod]
-        public async Task HandlingUpdateActionCommand_ShouldSave()
-        {
-            await _dut.Handle(_command, default);
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task HandlingUpdateActionCommand_ShouldThrowException_WhenDueIsNotUtc()
-        {
-            var command = new UpdateActionCommand(
-                _tagId,
-                _actionId,
-                _newTitle,
-                _newDescription,
-                new DateTime(2020, 1, 1, 1, 1, 1), 
-                null);
-
-            await Assert.ThrowsExceptionAsync<ArgumentException>(() => _dut.Handle(command, default));
+            Assert.AreEqual(_actionMock.Object.Title, _newTitle);
+            Assert.AreEqual(_actionMock.Object.Description, _newDescription);
+            Assert.AreEqual(_actionMock.Object.DueTimeUtc, _newDueTimeUtc);
         }
 
         [TestMethod]
         public async Task HandlingUpdateActionCommand_ShouldSetRowVersion()
         {
-            var action = new List<Action>(_tag.Actions)[0];
-
-            Assert.AreNotEqual(_command.RowVersion, action.RowVersion.ConvertToString());
             await _dut.Handle(_command, default);
 
-            var updatedRowVersion = action.RowVersion.ConvertToString();
-            Assert.AreEqual(_command.RowVersion, updatedRowVersion);
+            _actionMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
         }
     }
 }
