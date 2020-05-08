@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
@@ -23,6 +24,7 @@ using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
+using Equinor.Procosys.Preservation.Query.GetTagAttachmentStream;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
@@ -438,6 +440,30 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             var result = await _mediator.Send(actionCommand);
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Attachments/{attachmentId}")]
+        public async Task<ActionResult> DownloadTagAttachment(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int attachmentId)
+        {
+            await using var stream = new MemoryStream();
+
+            var streamDto = await _mediator.Send(new GetTagAttachmentStreamQuery(id, attachmentId, stream));
+
+            var fileStreamResult = new FileStreamResult(streamDto.Content, streamDto.GetMimeType())
+            {
+                FileDownloadName = streamDto.FileName
+            };
+
+            HttpContext.Response.ContentType = fileStreamResult.ContentType;
+
+            return fileStreamResult;
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
