@@ -17,15 +17,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         public void CreatePathForAttachment_ShouldCreatePath()
         {
             // Arrange
-            var attachmentOptions = new Mock<IOptionsMonitor<AttachmentOptions>>();
-            var options = new AttachmentOptions {MaxSizeKb = 1, BlobContainer = "Preservering"};
-            attachmentOptions
+            var attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
+            var options = new AttachmentOptions {BlobContainer = "Preservering"};
+            attachmentOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
             var fileName = "A.txt";
             var blobStorageId = new Guid("{73D5C19C-A7A5-42BC-93AF-979EF5E1C37F}");
             var attachment = new TestAttachment(Plant, blobStorageId, fileName);
-            var dut = new BlobPathProvider(attachmentOptions.Object);
+            var dut = new BlobPathProvider(attachmentOptionsMock.Object);
 
             // Act
             var path = dut.CreateFullBlobPathForAttachment(attachment);
