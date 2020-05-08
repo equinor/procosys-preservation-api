@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.MainApi.TagFunction;
@@ -64,8 +65,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                 {
                     new RequirementForCommand(ReqDefId1, Interval1),
                     new RequirementForCommand(ReqDefId2, Interval2),
-                });
-            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null);
+                },
+                "AAAAAAAAABA=");
+            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null, "AAAAAAAAABA=");
             
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock
@@ -209,6 +211,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             var req = requirements.SingleOrDefault(r => r.RequirementDefinitionId == reqDefId);
             Assert.IsNotNull(req);
             Assert.AreEqual(interval, req.IntervalWeeks);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateRequirementsCommand_ShouldSetRowVersion()
+        {
+            // Act
+            await _dut.Handle(_commandWithoutRequirements, default);
+
+            // Assert
+            var updatedRowVersion = _tfAddedToRepository.RowVersion.ConvertToString();
+            Assert.AreEqual(updatedRowVersion, _commandWithoutRequirements.RowVersion);
         }
     }
 }

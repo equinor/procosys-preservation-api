@@ -28,7 +28,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                 {
                     new RequirementForCommand(_rd1Id, 1),
                     new RequirementForCommand(_rd2Id, 1)
-                });
+                },
+                null);
 
             _dut = new UpdateRequirementsCommandValidator(_rdValidatorMock.Object);
         }
@@ -75,7 +76,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                 {
                     new RequirementForCommand(_rd1Id, 1),
                     new RequirementForCommand(_rd1Id, 1)
-                });
+                },
+                null);
             
             var result = _dut.Validate(command);
 
