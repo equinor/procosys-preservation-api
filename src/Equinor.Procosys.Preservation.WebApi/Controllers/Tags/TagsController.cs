@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
@@ -23,8 +22,8 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
+using Equinor.Procosys.Preservation.Query.GetTagAttachmentPath;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
-using Equinor.Procosys.Preservation.Query.GetTagAttachmentStream;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
@@ -32,6 +31,7 @@ using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ServiceResult;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
@@ -46,8 +46,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     public class TagsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IAttachmentDownloader _attachmentHelper;
 
-        public TagsController(IMediator mediator) => _mediator = mediator;
+        public TagsController(IMediator mediator, IAttachmentDownloader attachmentHelper)
+        {
+            _mediator = mediator;
+            _attachmentHelper = attachmentHelper;
+        }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet]
@@ -453,14 +458,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromRoute] int attachmentId)
         {
-            await using var stream = new MemoryStream();
+            var result = await _mediator.Send(new GetTagAttachmentPathQuery(id, attachmentId));
 
-            var streamDto = await _mediator.Send(new GetTagAttachmentStreamQuery(id, attachmentId, stream));
-
-            var fileStreamResult = new FileStreamResult(streamDto.Content, streamDto.GetMimeType())
+            if (result.ResultType != ResultType.Ok)
             {
-                FileDownloadName = streamDto.FileName
-            };
+                return this.FromResult(result);
+            }
+
+            var fileStreamResult = await _attachmentHelper.GetStream(result.Data);
 
             HttpContext.Response.ContentType = fileStreamResult.ContentType;
 
