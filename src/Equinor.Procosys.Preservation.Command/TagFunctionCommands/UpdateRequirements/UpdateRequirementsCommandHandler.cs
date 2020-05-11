@@ -11,7 +11,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements
 {
-    public class UpdateRequirementsCommandHandler : IRequestHandler<UpdateRequirementsCommand, Result<Unit>>
+    public class UpdateRequirementsCommandHandler : IRequestHandler<UpdateRequirementsCommand, Result<string>>
     {
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             _tagFunctionApiService = tagFunctionApiService;
         }
 
-        public async Task<Result<Unit>> Handle(UpdateRequirementsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdateRequirementsCommand request, CancellationToken cancellationToken)
         {
             var tagFunction = await _tagFunctionRepository.GetByCodesAsync(request.TagFunctionCode, request.RegisterCode);
             var requirements = request.Requirements.ToList();
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                 tagFunction = await CreateNewTagFunctionAsync(request.TagFunctionCode, request.RegisterCode);
                 if (tagFunction == null)
                 {
-                    return new NotFoundResult<Unit>($"TagFunction {request.TagFunctionCode} not found in register {request.RegisterCode}");
+                    return new NotFoundResult<string>($"TagFunction {request.TagFunctionCode} not found in register {request.RegisterCode}");
                 }
             }
             else
@@ -52,10 +52,11 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             }
 
             await AddRequirementsToTagFunctionAsync(tagFunction, requirements);
+            tagFunction.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(tagFunction.RowVersion.ToString());
         }
 
         private async Task<TagFunction> CreateNewTagFunctionAsync(string tagFunctionCode, string registerCode)

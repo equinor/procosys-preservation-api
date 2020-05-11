@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 table: "TagFunctionRequirements");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_TagRequirements_RequirementDefinitions_RequirementDefinitionId",
+                name: "FK_Requirements_RequirementDefinitions_RequirementDefinitionId",
                 table: "TagRequirements");
 
             migrationBuilder.DropForeignKey(
@@ -178,7 +178,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_TagRequirements_RequirementDefinitions_RequirementDefinitionId",
+                name: "FK_Requirements_RequirementDefinitions_RequirementDefinitionId",
                 table: "TagRequirements",
                 column: "RequirementDefinitionId",
                 principalTable: "RequirementDefinitions",

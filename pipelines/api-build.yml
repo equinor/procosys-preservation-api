@@ -73,6 +73,7 @@ stages:
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
+      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
 
 # Test deploy stage
 - stage: test
@@ -104,3 +105,4 @@ stages:
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
+      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
