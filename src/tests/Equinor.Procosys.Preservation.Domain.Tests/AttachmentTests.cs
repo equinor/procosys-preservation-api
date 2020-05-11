@@ -21,6 +21,20 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         }
 
         [TestMethod]
+        public void GetFullBlobPath_ShouldReturnFullBlobPath()
+        {
+            // Arrange
+            var dut = new TestAttachment(TestPlant, BlobStorageId, FileName, Parent);
+
+            // Act
+            var blobContainer = "bc";
+            var result = dut.GetFullBlobPath(blobContainer);
+
+            // Arrange
+            Assert.AreEqual($"{blobContainer}/PlantA/{Parent}/{BlobStorageId.ToString()}/{FileName}", result);
+        }
+
+        [TestMethod]
         public void Constructor_ShouldThrowException_WhenFileNameNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => new TestAttachment(TestPlant, BlobStorageId, null, Parent));
 

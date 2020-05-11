@@ -6,7 +6,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagAttachment
 {
     public class GetTagAttachmentQuery : IRequest<Result<Uri>>, ITagQueryRequest
     {
-        // todo unit test
         public GetTagAttachmentQuery(int tagId, int attachmentId)
         {
             TagId = tagId;

@@ -18,7 +18,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagAttachment
         private readonly IBlobStorage _blobStorage;
         private readonly IOptionsMonitor<AttachmentOptions> _attachmentOptions;
 
-        // todo unit test
         public GetTagAttachmentQueryHandler(IReadOnlyContext context, IBlobStorage blobStorage, IOptionsMonitor<AttachmentOptions> attachmentOptions)
         {
             _context = context;
@@ -41,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagAttachment
             }
 
             var now = TimeService.UtcNow;
-            var fullBlobPath= attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
+            var fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
             
             var uri = _blobStorage.GetDownloadSasUri(
                 fullBlobPath,
