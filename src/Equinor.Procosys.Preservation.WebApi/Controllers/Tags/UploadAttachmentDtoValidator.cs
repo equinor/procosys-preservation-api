@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             bool BeAValidFile(string fileName)
             {
                 var suffix = Path.GetExtension(fileName?.ToLower());
-                return suffix != null && options.CurrentValue.ValidFileSuffixArray.Contains(suffix) && fileName?.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
+                return suffix != null && options.CurrentValue.ValidFileSuffixes.Contains(suffix) && fileName?.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
             }
         }
     }

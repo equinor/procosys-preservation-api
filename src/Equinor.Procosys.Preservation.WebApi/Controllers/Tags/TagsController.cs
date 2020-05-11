@@ -22,7 +22,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
-using Equinor.Procosys.Preservation.Query.GetTagAttachmentPath;
+using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
@@ -46,13 +46,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     public class TagsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IAttachmentDownloader _attachmentHelper;
 
-        public TagsController(IMediator mediator, IAttachmentDownloader attachmentHelper)
-        {
-            _mediator = mediator;
-            _attachmentHelper = attachmentHelper;
-        }
+        public TagsController(IMediator mediator) => _mediator = mediator;
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet]
@@ -450,26 +445,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("{id}/Attachments/{attachmentId}")]
-        public async Task<ActionResult> DownloadTagAttachment(
+        public async Task<ActionResult> GetTagAttachment(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromRoute] int attachmentId)
+            [FromRoute] int attachmentId,
+            [FromQuery] bool redirect = false)
         {
-            var result = await _mediator.Send(new GetTagAttachmentPathQuery(id, attachmentId));
+            var result = await _mediator.Send(new GetTagAttachmentQuery(id, attachmentId));
 
             if (result.ResultType != ResultType.Ok)
             {
                 return this.FromResult(result);
             }
 
-            var fileStreamResult = await _attachmentHelper.GetStream(result.Data);
+            if (!redirect)
+            {
+                return Ok(result.Data.ToString());
+            }
 
-            HttpContext.Response.ContentType = fileStreamResult.ContentType;
-
-            return fileStreamResult;
+            return Redirect(result.Data.ToString());
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]

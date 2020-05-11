@@ -23,7 +23,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             _options = new AttachmentOptions
             {
                 MaxSizeKb = 2,
-                ValidFileSuffixes = ".gif|.jpg"
+                BlobContainer = "bc",
+                ValidFileSuffixes = new[] {".gif", ".jpg"}
             };
             attachmentOptionsMock
                 .Setup(x => x.CurrentValue)

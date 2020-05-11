@@ -38,6 +38,10 @@ namespace Equinor.Procosys.Preservation.Domain
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
+        // todo unit test
+        public string GetFullBlobPath(string blobContainer)
+            => Path.Combine(blobContainer, BlobPath, FileName).Replace("\\", "/");
+
         public void SetCreated(Person createdBy)
         {
             CreatedAtUtc = TimeService.UtcNow;
