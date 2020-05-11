@@ -33,6 +33,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -162,6 +163,26 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [HttpPut("{id}/Action/{actionId}/Close")]
+        public async Task<IActionResult> CloseAction(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId,
+            [FromBody] CloseActionDto dto)
+        {
+            var actionCommand = new CloseActionCommand(
+                id,
+                actionId,
+                dto.RowVersion);
+
+            var result = await _mediator.Send(actionCommand);
+
+            return this.FromResult(result);
+        }
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTag(
