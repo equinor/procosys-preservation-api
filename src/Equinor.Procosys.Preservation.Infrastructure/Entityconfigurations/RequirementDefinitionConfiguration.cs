@@ -22,6 +22,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasMany(x => x.Fields)
                 .WithOne()
                 .IsRequired();
+
+            builder
+                .HasIndex(x => x.Plant)
+                .HasName("IX_PreservationPeriods_Plant_ASC")
+                .IncludeProperties(x => new {x.IsVoided, x.CreatedAtUtc, x.ModifiedAtUtc, x.SortKey, x.Title});
         }
     }
 }

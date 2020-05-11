@@ -16,6 +16,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureConcurrencyToken();
 
             builder.HasOne<RequirementDefinition>();
+
+            builder
+                .HasIndex(x => x.Plant)
+                .HasName("IX_TagFunctionRequirements_Plant_ASC")
+                .IncludeProperties(x => new {x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc});
         }
     }
 }

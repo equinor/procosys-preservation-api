@@ -45,6 +45,18 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.DisciplineDescription)
                 .HasMaxLength(Tag.DisciplineDescriptionLengthMax);
 
+            builder.Property(x => x.PurchaseOrderNo)
+                .HasMaxLength(Tag.PurchaseOrderNoLengthMax);
+
+            builder.Property(x => x.McPkgNo)
+                .HasMaxLength(Tag.McPkgNoLengthMax);
+
+            builder.Property(x => x.CommPkgNo)
+                .HasMaxLength(Tag.CommPkgNoLengthMax);
+
+            builder.Property(x => x.Calloff)
+                .HasMaxLength(Tag.CalloffLengthMax);
+
             builder
                 .HasMany(x => x.Requirements)
                 .WithOne()
@@ -77,6 +89,138 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.HasCheckConstraint("constraint_tag_check_valid_status", $"{nameof(Tag.Status)} in ({GetValidStatuses()})");
 
             builder.HasCheckConstraint("constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})");
+
+            builder
+                .HasIndex(x => x.Plant)
+                .HasName("IX_Tags_Plant_ASC")
+                .IncludeProperties(x => x.TagNo);
+
+            builder
+                .HasIndex(x => x.TagNo)
+                .HasName("IX_Tags_TagNo_ASC")
+                .IncludeProperties(x => new
+                {
+                    x.AreaCode,
+                    x.Calloff,
+                    x.CommPkgNo,
+                    x.Description,
+                    x.CreatedAtUtc,
+                    x.DisciplineCode,
+                    x.IsVoided,
+                    x.McPkgNo,
+                    x.NextDueTimeUtc,
+                    x.PurchaseOrderNo,
+                    x.Status,
+                    x.StorageArea,
+                    x.TagFunctionCode,
+                    x.TagType
+                }); 
+            
+            builder
+                .HasIndex(x => x.CommPkgNo)
+                .HasName("IX_Tags_CommPkgNo_ASC")
+                .IncludeProperties(x => new
+                {
+                    x.AreaCode,
+                    x.Calloff,
+                    x.Description,
+                    x.CreatedAtUtc,
+                    x.DisciplineCode,
+                    x.IsVoided,
+                    x.McPkgNo,
+                    x.NextDueTimeUtc,
+                    x.PurchaseOrderNo,
+                    x.Status,
+                    x.StorageArea,
+                    x.TagFunctionCode,
+                    x.TagNo,
+                    x.TagType
+                });
+
+            builder
+                .HasIndex(x => x.McPkgNo)
+                .HasName("IX_Tags_McPkgNo_ASC")
+                .IncludeProperties(x => new
+                {
+                    x.AreaCode,
+                    x.Calloff,
+                    x.Description,
+                    x.CommPkgNo,
+                    x.CreatedAtUtc,
+                    x.DisciplineCode,
+                    x.IsVoided,
+                    x.NextDueTimeUtc,
+                    x.PurchaseOrderNo,
+                    x.Status,
+                    x.StorageArea,
+                    x.TagFunctionCode,
+                    x.TagNo,
+                    x.TagType
+                });
+
+            builder
+                .HasIndex(x => x.Calloff)
+                .HasName("IX_Tags_Calloff_ASC")
+                .IncludeProperties(x => new
+                {
+                    x.AreaCode,
+                    x.CommPkgNo,
+                    x.CreatedAtUtc,
+                    x.Description,
+                    x.DisciplineCode,
+                    x.IsVoided,
+                    x.McPkgNo,
+                    x.NextDueTimeUtc,
+                    x.PurchaseOrderNo,
+                    x.Status,
+                    x.StorageArea,
+                    x.TagFunctionCode,
+                    x.TagNo,
+                    x.TagType
+                });
+
+            builder
+                .HasIndex(x => x.PurchaseOrderNo)
+                .HasName("IX_Tags_PurchaseOrderNo_ASC")
+                .IncludeProperties(x => new
+                {
+                    x.AreaCode,
+                    x.Calloff,
+                    x.CommPkgNo,
+                    x.CreatedAtUtc,
+                    x.Description,
+                    x.DisciplineCode,
+                    x.IsVoided,
+                    x.McPkgNo,
+                    x.NextDueTimeUtc,
+                    x.Status,
+                    x.StorageArea,
+                    x.TagFunctionCode,
+                    x.TagNo,
+                    x.TagType
+                });
+
+            builder
+                .HasIndex(x => x.StorageArea)
+                .HasName("IX_Tags_StorageArea_ASC")
+                .IncludeProperties(x => new
+                {
+                    x.AreaCode,
+                    x.Calloff,
+                    x.CommPkgNo,
+                    x.CreatedAtUtc,
+                    x.Description,
+                    x.DisciplineCode,
+                    x.IsVoided,
+                    x.McPkgNo,
+                    x.NextDueTimeUtc,
+                    x.PurchaseOrderNo,
+                    x.Status,
+                    x.TagFunctionCode,
+                    x.TagNo,
+                    x.TagType
+                });
+
         }
 
         private string GetValidStatuses()
