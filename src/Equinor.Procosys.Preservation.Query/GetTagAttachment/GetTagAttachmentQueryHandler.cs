@@ -41,10 +41,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTagAttachment
             }
 
             var now = TimeService.UtcNow;
-            var fullBlobPathForAttachment = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
+            var fullBlobPath= attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
             
             var uri = _blobStorage.GetDownloadSasUri(
-                fullBlobPathForAttachment,
+                fullBlobPath,
                 new DateTimeOffset(now.AddMinutes(_attachmentOptions.CurrentValue.BlobClockSkewMinutes * -1)),
                 new DateTimeOffset(now.AddMinutes(_attachmentOptions.CurrentValue.BlobClockSkewMinutes)));
             return new SuccessResult<Uri>(uri);
