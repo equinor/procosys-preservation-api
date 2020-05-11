@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _stepMock.SetupGet(s => s.Id).Returns(_id);
             journeyRepositoryMock.Setup(s => s.GetStepByStepIdAsync(_stepMock.Object.Id))
                 .Returns(Task.FromResult(_stepMock.Object));
-            _command = new UpdateStepCommand(_id, _newTitle);
+            _command = new UpdateStepCommand(_id, _newTitle, null);
 
             _dut = new UpdateStepCommandHandler(
                 journeyRepositoryMock.Object,
@@ -66,6 +66,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+
+        [TestMethod]
+        public async Task HandlingUpdateJourneyCommand_ShouldSetRowVersion()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            _stepMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
         }
     }
 }

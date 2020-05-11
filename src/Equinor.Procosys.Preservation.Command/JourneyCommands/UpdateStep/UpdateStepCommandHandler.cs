@@ -23,6 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId); 
 
             step.Title = request.Title;
+            step.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<Unit>(Unit.Value);

@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         {
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
-            _command = new UpdateStepCommand(stepId:_stepId, _title);
+            _command = new UpdateStepCommand(stepId:_stepId, _title, null);
 
             _dut = new UpdateStepCommandValidator(_stepValidatorMock.Object);
         }
