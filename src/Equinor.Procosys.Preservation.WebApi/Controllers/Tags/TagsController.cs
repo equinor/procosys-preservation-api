@@ -154,7 +154,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                                   actionId,
                                   dto.Title,
                                   dto.Description,
-                                  dto.DueTimeUtc);
+                                  dto.DueTimeUtc,
+                                  dto.RowVersion);
 
                 var result = await _mediator.Send(actionCommand);
 
