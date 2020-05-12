@@ -14,6 +14,8 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
 using Equinor.Procosys.Preservation.Query.GetTagActions;
+using Equinor.Procosys.Preservation.Query.GetTagAttachment;
+using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
@@ -668,6 +670,50 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnGetTagActionsQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new GetTagActionsQuery(TagIdWithoutAccessToProject);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetTagAttachmentsQuery_ShouldReturnTrue_WhenAccessToProject()
+        {
+            var query = new GetTagAttachmentsQuery(TagIdWithAccessToProject);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetGetTagAttachmentsQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            var query = new GetTagAttachmentsQuery(TagIdWithoutAccessToProject);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetTagAttachmentQuery_ShouldReturnTrue_WhenAccessToProject()
+        {
+            var query = new GetTagAttachmentQuery(TagIdWithAccessToProject, 1);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetGetTagAttachmentQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            var query = new GetTagAttachmentQuery(TagIdWithoutAccessToProject, 1);
             // act
             var result = await _dut.ValidateAsync(query);
 
