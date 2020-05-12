@@ -32,10 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagAttachments
 
             var attachments = tag
                 .Attachments
-                .Select(attachment => new TagAttachmentDto(
-                    attachment.Id,
-                    attachment.Title,
-                    attachment.FileName)).ToList();
+                .Select(attachment => new TagAttachmentDto(attachment.Id, attachment.FileName)).ToList();
             
             return new SuccessResult<List<TagAttachmentDto>>(attachments);
         }

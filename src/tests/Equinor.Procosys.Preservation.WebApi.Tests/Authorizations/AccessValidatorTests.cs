@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
@@ -15,6 +16,8 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
+using Equinor.Procosys.Preservation.Query.GetTagAttachment;
+using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
@@ -435,6 +438,63 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
         #endregion
 
+        #region CloseActionCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new CloseActionCommand(TagIdWithoutAccessToProject, 0, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
         #region CompletePreservationCommand
         [TestMethod]
         public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
@@ -669,6 +729,50 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnGetActionsQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new GetActionsQuery(TagIdWithoutAccessToProject);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetTagAttachmentsQuery_ShouldReturnTrue_WhenAccessToProject()
+        {
+            var query = new GetTagAttachmentsQuery(TagIdWithAccessToProject);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetGetTagAttachmentsQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            var query = new GetTagAttachmentsQuery(TagIdWithoutAccessToProject);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetTagAttachmentQuery_ShouldReturnTrue_WhenAccessToProject()
+        {
+            var query = new GetTagAttachmentQuery(TagIdWithAccessToProject, 1);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetGetTagAttachmentQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            var query = new GetTagAttachmentQuery(TagIdWithoutAccessToProject, 1);
             // act
             var result = await _dut.ValidateAsync(query);
 

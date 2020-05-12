@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
                 var action = new Action(TestPlant, "Open", "Desc1", _utcNow);
                 tag.AddAction(action);
 
-                _attachment = new ActionAttachment(TestPlant, new Guid("{C3412890-1EF8-4E34-B96C-5488200A5AF5}"), "TitleA", "FileA");
+                _attachment = new ActionAttachment(TestPlant, new Guid("{C3412890-1EF8-4E34-B96C-5488200A5AF5}"), "FileA");
                 action.AddAttachment(_attachment);
 
                 context.SaveChangesAsync().Wait();
@@ -60,7 +60,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
 
                 var attachment = attachmentDtos.Single();
                 Assert.AreEqual(_attachment.Id, attachment.Id);
-                Assert.AreEqual(_attachment.Title, attachment.Title);
                 Assert.AreEqual(_attachment.FileName, attachment.FileName);
             }
         }

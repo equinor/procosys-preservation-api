@@ -23,6 +23,7 @@ using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
 using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
+using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
@@ -31,9 +32,11 @@ using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ServiceResult;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -174,6 +177,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int actionId)
         {
             var result = await _mediator.Send(new GetActionAttachmentsQuery(id, actionId));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [HttpPut("{id}/Action/{actionId}/Close")]
+        public async Task<IActionResult> CloseAction(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId,
+            [FromBody] CloseActionDto dto)
+        {
+            var actionCommand = new CloseActionCommand(
+                id,
+                actionId,
+                dto.RowVersion);
+
+            var result = await _mediator.Send(actionCommand);
+
             return this.FromResult(result);
         }
 
@@ -433,26 +457,53 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var result = await _mediator.Send(new GetTagAttachmentsQuery(id));
             return this.FromResult(result);
         }
-        
+
         [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
         [HttpPost("{id}/Attachments")]
         public async Task<ActionResult<int>> UploadTagAttachment(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromBody] UploadAttachmentDto dto)
+            [FromForm] UploadAttachmentDto dto)
         {
+            await using var stream = dto.File.OpenReadStream();
+
             var actionCommand = new UploadTagAttachmentCommand(
                 id,
-                dto.Title,
-                dto.FileName,
-                dto.OverwriteIfExists);
+                dto.File.FileName,
+                dto.OverwriteIfExists,
+                stream);
 
             var result = await _mediator.Send(actionCommand);
-
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Attachments/{attachmentId}")]
+        public async Task<ActionResult> GetTagAttachment(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int attachmentId,
+            [FromQuery] bool redirect = false)
+        {
+            var result = await _mediator.Send(new GetTagAttachmentQuery(id, attachmentId));
+
+            if (result.ResultType != ResultType.Ok)
+            {
+                return this.FromResult(result);
+            }
+
+            if (!redirect)
+            {
+                return Ok(result.Data.ToString());
+            }
+
+            return Redirect(result.Data.ToString());
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]

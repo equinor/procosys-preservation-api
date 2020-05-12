@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
@@ -6,29 +7,39 @@ namespace Equinor.Procosys.Preservation.Domain
 {
     public abstract class Attachment : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
-        public const int TitleLengthMax = 255;
         public const int FileNameLengthMax = 255;
+        public const int PathLengthMax = 1024;
 
         protected Attachment()
             : base(null)
         {
         }
 
-        protected Attachment(string plant, Guid blobStorageId, string title, string fileName)
+        protected Attachment(string plant, Guid blobStorageId, string fileName, string parentType)
             : base(plant)
         {
-            BlobStorageId = blobStorageId;
-            Title = title;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                throw new ArgumentNullException(nameof(fileName));
+            }
+            if (string.IsNullOrEmpty(parentType))
+            {
+                throw new ArgumentNullException(nameof(parentType));
+            }
+
             FileName = fileName;
+            BlobPath = Path.Combine(plant.Substring(4), parentType, blobStorageId.ToString()).Replace("\\", "/");;
         }
 
-        public Guid BlobStorageId { get; private set; }
-        public string Title { get; set; }
         public string FileName { get; private set; }
+        public string BlobPath { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+
+        public string GetFullBlobPath(string blobContainer)
+            => Path.Combine(blobContainer, BlobPath, FileName).Replace("\\", "/");
 
         public void SetCreated(Person createdBy)
         {

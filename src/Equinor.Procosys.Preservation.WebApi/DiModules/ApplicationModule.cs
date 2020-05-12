@@ -51,6 +51,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.Configure<TagOptions>(configuration.GetSection("ApiOptions"));
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
+            services.Configure<AttachmentOptions>(configuration.GetSection("AttachmentOptions"));
 
             services.AddDbContext<PreservationContext>(options =>
             {
