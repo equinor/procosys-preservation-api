@@ -19,9 +19,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
         private Mock<IPlantCache> _plantCache;
-        private ProcosysTagSearchResult _searchResultWithOneItem;
-        private ProcosysTagSearchResult _searchResultWithThreeItems;
+        private ProcosysTagSearchResult _searchPage1WithThreeItems;
+        private ProcosysTagSearchResult _searchPage2WithOneItem;
         private List<ProcosysTagDetails> _tagDetails;
+        private MainApiTagService _dut;
 
         [TestInitialize]
         public void Setup()
@@ -30,14 +31,14 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             _mainApiOptions = new Mock<IOptionsMonitor<MainApiOptions>>();
             _mainApiOptions
                 .Setup(x => x.CurrentValue)
-                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com", TagSearchPageSize = 2 });
+                .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com", TagSearchPageSize = 3 });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
             _plantCache = new Mock<IPlantCache>();
             _plantCache
                 .Setup(x => x.IsValidPlantForCurrentUserAsync("PCS$TESTPLANT"))
                 .Returns(Task.FromResult(true));
 
-            _searchResultWithOneItem = new ProcosysTagSearchResult
+            _searchPage2WithOneItem = new ProcosysTagSearchResult
             {
                 Items = new List<ProcosysTagOverview>
                         {
@@ -48,10 +49,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                                 TagNo = "TagNo1"
                             }
                         },
-                MaxAvailable = 1
+                MaxAvailable = 4
             };
 
-            _searchResultWithThreeItems = new ProcosysTagSearchResult
+            _searchPage1WithThreeItems = new ProcosysTagSearchResult
                 {
                     Items = new List<ProcosysTagOverview>
                         {
@@ -74,7 +75,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                                 TagNo = "TagNo3"
                             },
                         },
-                    MaxAvailable = 1
+                    MaxAvailable = 4
                 };
 
             _tagDetails = new List<ProcosysTagDetails>
@@ -93,59 +94,85 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                     TagNo = "TagNo1"
                 }
             };
-        }
 
-        [TestMethod]
-        public async Task GetTags_GetsAllPagesAndReturnsCorrectNumberOfTags_TestAsync()
-        {
-            // Arrange
             _mainApiClient
                 .SetupSequence(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_searchResultWithThreeItems))
-                .Returns(Task.FromResult(_searchResultWithOneItem))
-                .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
+                .Returns(Task.FromResult(_searchPage1WithThreeItems))
+                .Returns(Task.FromResult(_searchPage2WithOneItem));
 
+            _dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
+        }
+
+        [TestMethod]
+        public async Task SearchTagsByTagNoAsync_GetsAllPagesAndReturnsCorrectNumberOfTags_TestAsync()
+        {
             // Act
-            var result = await dut.SearchTagsByTagNoAsync("PCS$TESTPLANT", "TestProject", "A");
+            var result = await _dut.SearchTagsByTagNoAsync("PCS$TESTPLANT", "TestProject", "A");
 
             // Assert
-            Assert.AreEqual(4, result.Count());
+            Assert.AreEqual(4, result.Count);
         }
 
         [TestMethod]
-        public async Task GetTags_ThrowsException_WhenPlantIsInvalid_TestAsync()
-        {
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
-
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.SearchTagsByTagNoAsync("INVALIDPLANT", "TestProject", "A"));
-        }
+        public async Task SearchTagsByTagNoAsync_ThrowsException_WhenPlantIsInvalid_TestAsync()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.SearchTagsByTagNoAsync("INVALIDPLANT", "TestProject", "A"));
 
         [TestMethod]
-        public async Task GetTags_ReturnsEmptyList_WhenResultIsInvalid_TestAsync()
+        public async Task SearchTagsByTagNoAsync_ReturnsEmptyList_WhenResultIsInvalid_TestAsync()
         {
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
 
-            var result = await dut.SearchTagsByTagNoAsync("PCS$TESTPLANT", "TestProject", "A");
+            var result = await _dut.SearchTagsByTagNoAsync("PCS$TESTPLANT", "TestProject", "A");
 
             Assert.AreEqual(0, result.Count);
         }
 
         [TestMethod]
-        public async Task GetTags_ReturnsCorrectProperties_TestAsync()
+        public async Task SearchTagsByTagNoAsync_ReturnsCorrectProperties_TestAsync()
         {
-            // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_searchResultWithThreeItems))
-                .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
-            var dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
-
             // Act
-            var result = await dut.SearchTagsByTagNoAsync("PCS$TESTPLANT", "TestProject", "TagNo");
+            var result = await _dut.SearchTagsByTagNoAsync("PCS$TESTPLANT", "TestProject", "TagNo");
+
+            // Assert
+            var tag = result.First();
+            Assert.AreEqual("Description1", tag.Description);
+            Assert.AreEqual(111111111, tag.Id);
+            Assert.AreEqual("TagNo1", tag.TagNo);
+        }
+
+        [TestMethod]
+        public async Task SearchTagsByTagFunctionsAsync_GetsAllPagesAndReturnsCorrectNumberOfTags_TestAsync()
+        {
+            // Act
+            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"M"});
+
+            // Assert
+            Assert.AreEqual(4, result.Count);
+        }
+
+        [TestMethod]
+        public async Task SearchTagsByTagFunctionsAsync_ThrowsException_WhenPlantIsInvalid_TestAsync()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.SearchTagsByTagFunctionsAsync("INVALIDPLANT", "TestProject", new List<string>{"M"}));
+
+        [TestMethod]
+        public async Task SearchTagsByTagFunctionsAsync_ReturnsEmptyList_WhenResultIsInvalid_TestAsync()
+        {
+            _mainApiClient
+                .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
+                .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
+
+            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"M"});
+
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task SearchTagsByTagFunctionsAsync_ReturnsCorrectProperties_TestAsync()
+        {
+            // Act
+            var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"M"});
 
             // Assert
             var tag = result.First();
@@ -159,10 +186,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_searchResultWithOneItem))
-                .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
-            _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<List<ProcosysTagDetails>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_tagDetails));
             var dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
@@ -174,16 +197,17 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             Assert.IsNotNull(result);
             Assert.AreEqual(1, result.Count);
             var tag = result.First();
-            Assert.AreEqual("AreaCode", tag.AreaCode);
-            Assert.AreEqual("CallOffNo", tag.CallOffNo);
-            Assert.AreEqual("CommPkgNo", tag.CommPkgNo);
-            Assert.AreEqual("Description1", tag.Description);
-            Assert.AreEqual("DisciplineCode", tag.DisciplineCode);
-            Assert.AreEqual("McPkgNo", tag.McPkgNo);
-            Assert.AreEqual("PurchaseOrderNo", tag.PurchaseOrderNo);
-            Assert.AreEqual("TagFunctionCode", tag.TagFunctionCode);
-            Assert.AreEqual("RegisterCode", tag.RegisterCode);
-            Assert.AreEqual("TagNo1", tag.TagNo);
+            var details = _tagDetails.First();
+            Assert.AreEqual(details.AreaCode, tag.AreaCode);
+            Assert.AreEqual(details.CallOffNo, tag.CallOffNo);
+            Assert.AreEqual(details.CommPkgNo, tag.CommPkgNo);
+            Assert.AreEqual(details.Description, tag.Description);
+            Assert.AreEqual(details.DisciplineCode, tag.DisciplineCode);
+            Assert.AreEqual(details.McPkgNo, tag.McPkgNo);
+            Assert.AreEqual(details.PurchaseOrderNo, tag.PurchaseOrderNo);
+            Assert.AreEqual(details.TagFunctionCode, tag.TagFunctionCode);
+            Assert.AreEqual(details.RegisterCode, tag.RegisterCode);
+            Assert.AreEqual(details.TagNo, tag.TagNo);
         }
 
         [TestMethod]
@@ -198,10 +222,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         public async Task GetTagDetails_ReturnsNull_WhenResultIsNull_TestAsync()
         {
             // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_searchResultWithOneItem))
-                .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
             _mainApiClient
                 .Setup(x => x.QueryAndDeserialize<List<ProcosysTagDetails>>(It.IsAny<string>()))
                 .Returns(Task.FromResult<List<ProcosysTagDetails>>(null));
