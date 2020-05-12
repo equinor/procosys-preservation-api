@@ -654,7 +654,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnGetTagActionsQuery_ShouldReturnTrue_WhenAccessToProject()
+        public async Task ValidateAsync_OnGetActionsQuery_ShouldReturnTrue_WhenAccessToProject()
         {
             var query = new GetActionsQuery(TagIdWithAccessToProject);
             // act
@@ -665,7 +665,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnGetTagActionsQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        public async Task ValidateAsync_OnGetActionsQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new GetActionsQuery(TagIdWithoutAccessToProject);
             // act
