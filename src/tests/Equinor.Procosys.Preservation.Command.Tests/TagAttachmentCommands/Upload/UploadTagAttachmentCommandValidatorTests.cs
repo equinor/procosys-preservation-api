@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -16,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         private UploadTagAttachmentCommand _commandWithoutOverwrite;
 
         private const int TagId = 2;
-        private const string Filename = "A.txt";
+        private const string FileName = "A.txt";
 
         [TestInitialize]
         public void Setup_OkState()
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
 
-            _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, "", Filename, false);
+            _commandWithoutOverwrite = new UploadTagAttachmentCommand(TagId, FileName, false, new MemoryStream());
 
             _dut = new UploadTagAttachmentCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
@@ -86,13 +87,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag already have an attachment with filename"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag already have an attachment with filename {_commandWithoutOverwrite.FileName}"!));
         }
 
         [TestMethod]
         public void Validate_ShouldBeValid_WhenFilenameExistsAndOverwrite()
         {
-            var commandWithOverwrite = new UploadTagAttachmentCommand(TagId, "", Filename, true);
+            var commandWithOverwrite = new UploadTagAttachmentCommand(TagId, FileName, true, new MemoryStream());
             _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(commandWithOverwrite.TagId, commandWithOverwrite.FileName, default))
                 .Returns(Task.FromResult(true));
 

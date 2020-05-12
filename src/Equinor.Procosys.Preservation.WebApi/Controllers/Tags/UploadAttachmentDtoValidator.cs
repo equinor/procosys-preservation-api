@@ -1,22 +1,42 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using System.IO;
+using System.Linq;
+using Equinor.Procosys.Preservation.Domain;
 using FluentValidation;
+using Microsoft.Extensions.Options;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
     public class UploadAttachmentDtoValidator : AbstractValidator<UploadAttachmentDto>
     {
-        public UploadAttachmentDtoValidator()
+        public UploadAttachmentDtoValidator(IOptionsMonitor<AttachmentOptions> options)
         {
+            CascadeMode = CascadeMode.StopOnFirstFailure;
+
             RuleFor(x => x)
                 .NotNull();
 
-            RuleFor(x => x.Title)
-                .NotNull()
+            RuleFor(x => x.File)
+                .NotNull();
+            
+            RuleFor(x => x.File.FileName)
                 .NotEmpty()
-                .MaximumLength(Attachment.TitleLengthMax);
+                .WithMessage("Filename not given!")
+                .MaximumLength(Attachment.FileNameLengthMax)
+                .WithMessage($"Filename to long! Max {Attachment.FileNameLengthMax} characters")
+                .Must(BeAValidFile)
+                .WithMessage(x => $"File {x.File.FileName} is not a valid file for upload!")
+                .When(x => x.File != null);
+            
+            RuleFor(x => x.File.Length/1000)
+                .LessThan(options.CurrentValue.MaxSizeKb)
+                .When(x => x.File != null)
+                .WithMessage($"Maximum file size is {options.CurrentValue.MaxSizeKb}kB!");
 
-            RuleFor(x => x.FileName)
-                .MaximumLength(Attachment.FileNameLengthMax);
+            bool BeAValidFile(string fileName)
+            {
+                var suffix = Path.GetExtension(fileName?.ToLower());
+                return suffix != null && options.CurrentValue.ValidFileSuffixes.Contains(suffix) && fileName?.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
+            }
         }
     }
 }
