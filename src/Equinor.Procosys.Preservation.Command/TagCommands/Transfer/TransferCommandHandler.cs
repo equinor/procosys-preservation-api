@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
             foreach (var tag in tags)
             {
                 var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
-                tag.SetRowVersion(request.Tags.Single(x => x.Id==tag.Id).RowVersion);
+                tag.SetRowVersion(request.Tags.Single(x => x.Id == tag.Id).RowVersion);
                 tag.Transfer(journey);
                 tagsWithUpdatedRowVersion.Add(new IdAndRowVersion(tag.Id, tag.RowVersion.ConvertToString()));
             }

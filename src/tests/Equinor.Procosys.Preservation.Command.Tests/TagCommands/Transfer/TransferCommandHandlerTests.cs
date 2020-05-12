@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -114,6 +115,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingTransferCommand_ShouldSetRowVersion()
+        {
+            // Arrange
+            var updatedRowVersion = _command.Tags.ToList().First().RowVersion;
+
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            _tag1Mock.Verify(t => t.SetRowVersion(updatedRowVersion), Times.Once);
         }
     }
 }
