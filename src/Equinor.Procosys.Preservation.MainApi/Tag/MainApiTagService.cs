@@ -38,6 +38,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             {
                 _logger.LogWarning("Tag search page size is set to a low value. This may impact the overall performance!");
             }
+            if (_tagSearchPageSize <= 0)
+            {
+                throw new Exception($"{nameof(options.CurrentValue.TagSearchPageSize)} can't be zero or negative");
+            }
         }
 
         public async Task<IList<ProcosysTagDetails>> GetTagDetailsAsync(string plant, string projectName, IEnumerable<string> tagNos)
@@ -80,6 +84,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
             var items = new List<ProcosysTagOverview>();
             var currentPage = 0;
+            ProcosysTagSearchResult tagSearchResult;
             do
             {
                 var url = $"{_baseAddress}Tag/Search" +
@@ -89,16 +94,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                     $"&currentPage={currentPage++}" +
                     $"&itemsPerPage={_tagSearchPageSize}" +
                     $"&api-version={_apiVersion}";
-                var tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
+                tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
                 {
                     items.AddRange(tagSearchResult.Items);
                 }
-                else
-                {
-                    return items;
-                }
-            } while (true);
+            } while (tagSearchResult != null && items.Count < tagSearchResult.MaxAvailable);
+            return items;
         }
 
         public async Task<IList<ProcosysTagOverview>> SearchTagsByTagFunctionsAsync(string plant, string projectName, IList<string> tagFunctionCodeRegisterCodePairs)
@@ -110,6 +112,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
             var items = new List<ProcosysTagOverview>();
             var currentPage = 0;
+            ProcosysTagSearchResult tagSearchResult;
             do
             {
                 var url = $"{_baseAddress}Tag/Search/ByTagFunction" +
@@ -123,16 +126,13 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                     url += $"&tagFunctionCodeRegisterCodePairs={tagFunctionCodeRegisterCodePair}";
                 }
 
-                var tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
+                tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
                 {
                     items.AddRange(tagSearchResult.Items);
                 }
-                else
-                {
-                    return items;
-                }
-            } while (true);
+            } while (tagSearchResult != null && items.Count < tagSearchResult.MaxAvailable);
+            return items;
         }
     }
 }
