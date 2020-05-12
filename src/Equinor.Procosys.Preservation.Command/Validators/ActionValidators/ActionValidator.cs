@@ -26,5 +26,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ActionValidators
                           select a).SingleOrDefaultAsync(token);
             return action?.ClosedAtUtc != null;
         }
+
+        public async Task<bool> AttachmentWithFilenameExistsAsync(int actionId, string fileName, CancellationToken token)
+        {
+            var action = await (from a in _context.QuerySet<Action>()
+                where a.Id == actionId
+                select a).SingleOrDefaultAsync(token);
+
+            return action?.GetAttachmentByFileName(fileName) != null;
+        }
     }
 }
