@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(Unit.Value, result.Data);
+            Assert.AreEqual("AAAAAAAAAAA=", result.Data);
             Assert.AreEqual(_newTitle, _stepMock.Object.Title);
         }
 
