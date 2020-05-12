@@ -676,7 +676,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             Assert.IsFalse(result);
         }
 
-
         [TestMethod]
         public async Task ValidateAsync_OnGetActionAttachmentsQuery_ShouldReturnTrue_WhenAccessToProject()
         {
@@ -698,6 +697,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Assert
             Assert.IsFalse(result);
         }
+
         [TestMethod]
         public async Task ValidateAsync_OnGetTagDetailsQuery_ShouldReturnTrue_WhenAccessToProject()
         {
