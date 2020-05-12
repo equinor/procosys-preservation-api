@@ -20,8 +20,8 @@ using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
-using Equinor.Procosys.Preservation.Query.GetTagActionDetails;
-using Equinor.Procosys.Preservation.Query.GetTagActions;
+using Equinor.Procosys.Preservation.Query.GetActionDetails;
+using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromRoute] int id)
         {
-            var result = await _mediator.Send(new GetTagActionsQuery(id));
+            var result = await _mediator.Send(new GetActionsQuery(id));
             return this.FromResult(result);
         }
 
