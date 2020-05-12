@@ -20,6 +20,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
+using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
@@ -160,6 +161,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 var result = await _mediator.Send(actionCommand);
 
                 return this.FromResult(result);
+        }
+                
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Attachments")]
+        public async Task<ActionResult<List<ActionAttachmentDto>>> GetActionAttachments(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId)
+        {
+            var result = await _mediator.Send(new GetActionAttachmentsQuery(id, actionId));
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
