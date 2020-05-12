@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
@@ -428,6 +429,63 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null);
             
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region CloseActionCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new CloseActionCommand(TagIdWithoutAccessToProject, 0, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+
             // act
             var result = await _dut.ValidateAsync(command);
 

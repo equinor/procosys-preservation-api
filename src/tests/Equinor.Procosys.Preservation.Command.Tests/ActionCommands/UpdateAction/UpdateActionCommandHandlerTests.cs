@@ -70,5 +70,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
 
             _actionMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
         }
+
+        public async Task HandlingUpdateActionCommand_ShouldSave()
+        {
+            await _dut.Handle(_command, default);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
     }
 }
