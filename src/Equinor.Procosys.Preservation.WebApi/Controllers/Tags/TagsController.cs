@@ -164,7 +164,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
                 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
-        [HttpGet("{id}/Attachments")]
+        [HttpGet("{id}/Actions/{actionId}/Attachments")]
         public async Task<ActionResult<List<ActionAttachmentDto>>> GetActionAttachments(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
