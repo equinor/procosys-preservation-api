@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new VoidTagCommand(2);
+            var dut = new VoidTagCommand(2, null);
 
             Assert.AreEqual(2, dut.TagId);
         }
