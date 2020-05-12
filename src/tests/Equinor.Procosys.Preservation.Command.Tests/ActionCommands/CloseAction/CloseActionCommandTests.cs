@@ -14,7 +14,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             Assert.AreEqual(2, dut.TagId);
             Assert.AreEqual(1, dut.ActionId);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
-
         }
     }
 }

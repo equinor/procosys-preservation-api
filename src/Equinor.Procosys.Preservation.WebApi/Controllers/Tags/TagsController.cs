@@ -183,6 +183,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             return this.FromResult(result);
         }
+
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTag(

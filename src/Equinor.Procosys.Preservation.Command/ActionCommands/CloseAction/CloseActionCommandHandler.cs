@@ -29,13 +29,14 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
             _currentUserProvider = currentUserProvider;
         }
 
-    public async Task<Result<string>> Handle(CloseActionCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CloseActionCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
             var action = tag.Actions.Single(a => a.Id == request.ActionId);
-            var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
+            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
+            var currentUser = await _personRepository.GetByOidAsync(currentUserOid);
             action.Close(TimeService.UtcNow, currentUser);
-
+            action.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<string>(action.RowVersion.ToString());

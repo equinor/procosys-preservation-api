@@ -15,6 +15,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
     {
         private readonly int _tagId = 2;
         private readonly int _actionId = 12;
+        private readonly int _personId = 16;
+
         private readonly  Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
 
         private CloseActionCommand _command;
@@ -24,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         private Mock<Action> _actionMock;
         private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
+        private Mock<Person> _personMock;
 
         [TestInitialize]
         public void Setup()
@@ -40,17 +43,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             _actionMock.SetupGet(t => t.Id).Returns(_actionId);
             tagMock.Object.AddAction(_actionMock.Object);
 
+            _personMock = new Mock<Person>();
+            _personMock.SetupGet(p => p.Id).Returns(_personId);
+
             _projectRepositoryMock
                 .Setup(r => r.GetTagByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
-            _personRepositoryMock
-                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
-                .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
-
             _currentUserProviderMock
                 .Setup(x => x.GetCurrentUserOid())
                 .Returns(_currentUserOid);
+
+            _personRepositoryMock
+                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
+                .Returns(Task.FromResult(_personMock.Object));
 
             _command = new CloseActionCommand(_tagId, _actionId, null);
 
@@ -68,7 +74,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             var result = await _dut.Handle(_command, default);
             Assert.AreEqual(0, result.Errors.Count);
 
-            Assert.AreEqual(_actionMock.Object.IsClosed, true);
+            Assert.IsTrue(_actionMock.Object.IsClosed);
+        }
+
+        [TestMethod]
+        public async Task HandlingCloseActionCommand_ShouldCloseByPerson()
+        {
+            var result = await _dut.Handle(_command, default);
+            Assert.AreEqual(_personId, _actionMock.Object.ClosedById);
         }
 
         [TestMethod]
@@ -77,6 +90,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             await _dut.Handle(_command, default);
 
             _actionMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
+        }
+
+        public async Task HandlingCloseActionCommand_ShouldSave()
+        {
+            await _dut.Handle(_command, default);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
     }
 }
