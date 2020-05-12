@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using MediatR;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -28,6 +31,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         private int _rdId2 = 18;
         private int _tagId1 = 7;
         private int _tagId2 = 8;
+        private const string _rowVersion1 = "AAAAAAAAABA=";
+        private const string _rowVersion2 = "AAAAAAAABBA=";
 
         private int _stepId1 = 9;
         private int _stepId2 = 10;
@@ -65,12 +70,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
                 _req1OnTag1, _req2OnTag1
             });
             _tag1.StartPreservation();
+            _tag1.SetProtectedIdForTesting(_tagId1);
 
             _tag2 = new Tag(TestPlant, TagType.Standard, "", "", step2Mock.Object, new List<TagRequirement>
             {
                 _req1OnTag2, _req2OnTag2
             });
             _tag2.StartPreservation();
+            _tag2.SetProtectedIdForTesting(_tagId2);
 
             var tags = new List<Tag>
             {
@@ -78,6 +85,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
             };
             
             var tagIds = new List<int> { _tagId1, _tagId2 };
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(_tagId1, _rowVersion1), new IdAndRowVersion(_tagId2, _rowVersion2) };
+
             _tagRepoMock = new Mock<IProjectRepository>();
             _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
 
@@ -86,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
                 .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> { _stepId2 }))
                 .Returns(Task.FromResult(new List<Journey> { journey }));
             
-            _command = new CompletePreservationCommand(tagIds);
+            _command = new CompletePreservationCommand(tagIdsWithRowVersion);
 
             _dut = new CompletePreservationCommandHandler(_tagRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
         }
@@ -97,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
             var result = await _dut.Handle(_command, default);
 
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.IsInstanceOfType(result.Data, typeof(Unit));
+            Assert.IsInstanceOfType(result.Data, typeof(IEnumerable<IdAndRowVersion>));
 
             Assert.AreEqual(PreservationStatus.Completed, _tag1.Status);
             Assert.AreEqual(PreservationStatus.Completed, _tag2.Status);
@@ -126,6 +135,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingCompletePreservationCommand_ShouldSetRowVersion()
+        {
+            // Arrange
+            var rowVersion = _command.Tags.First().RowVersion;
+
+            // Act
+            Assert.AreNotEqual(rowVersion, _tag1.RowVersion.ConvertToString());
+            await _dut.Handle(_command, default);
+
+            // Assert
+            var updatedRowVersion = _tag1.RowVersion.ConvertToString();
+            Assert.AreEqual(rowVersion, updatedRowVersion);
         }
     }
 }
