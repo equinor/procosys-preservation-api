@@ -25,7 +25,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasMany(x => x.Tags)
                 .WithOne()
-                .IsRequired();
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder
                 .HasIndex(p => p.Plant)

@@ -51,7 +51,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
                 new UpdateRequirementsCommand(
                     dto.TagFunctionCode,
                     dto.RegisterCode,
-                    requirements));
+                    requirements,
+                    dto.RowVersion));
             return this.FromResult(result);
         }
     }

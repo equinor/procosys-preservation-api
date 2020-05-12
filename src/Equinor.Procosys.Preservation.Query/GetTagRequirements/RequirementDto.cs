@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             bool readyToBePreserved,
             List<FieldDto> fields,
             string comment,
-            ulong rowVersion)
+            string rowVersion)
         {
             Id = id;
             NextDueTimeUtc = nextDueTimeUtc;
@@ -47,6 +47,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         public bool ReadyToBePreserved { get; }
         public List<FieldDto> Fields { get; }
         public string Comment { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -46,11 +47,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
                 Remark = _oldRemark
             };
 
+            _tag.SetRowVersion("AAAAAAAAAAA=");
             _projectRepositoryMock
                 .Setup(r => r.GetTagByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new UpdateTagCommand(_tagId, _newRemark, _newStorageArea);
+            _command = new UpdateTagCommand(_tagId, _newRemark, _newStorageArea, "AAAAAAAAABA=");
 
             _dut = new UpdateTagCommandHandler(
                 _projectRepositoryMock.Object,
@@ -71,6 +73,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
         {
             await _dut.Handle(_command, default);
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagCommand_ShouldSetRowVersion()
+        {
+            // Act
+            Assert.AreNotEqual(_command.RowVersion, _tag.RowVersion.ConvertToString());
+            await _dut.Handle(_command, default);
+
+            // Assert
+            var updatedRowVersion = _tag.RowVersion.ConvertToString();
+            Assert.AreEqual(_command.RowVersion, updatedRowVersion);
         }
     }
 }

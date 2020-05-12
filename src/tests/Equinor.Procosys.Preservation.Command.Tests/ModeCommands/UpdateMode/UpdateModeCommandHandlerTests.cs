@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
             _modeMock.SetupGet(m => m.Id).Returns(testModeId);
             modeRepositoryMock.Setup(m => m.GetByIdAsync(testModeId))
                 .Returns(Task.FromResult(_modeMock.Object));
-            _command = new UpdateModeCommand(testModeId, _newTitle);
+            _command = new UpdateModeCommand(testModeId, _newTitle, null);
 
             _dut = new UpdateModeCommandHandler(
                 modeRepositoryMock.Object,
@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(Unit.Value, result.Data);
+            Assert.AreEqual("AAAAAAAAAAA=", result.Data);
             Assert.AreEqual(_modeMock.Object.Title, _newTitle);
         }
 
@@ -58,6 +58,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateModeCommand_ShouldSetRowVersion()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            _modeMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
         }
     }
 }

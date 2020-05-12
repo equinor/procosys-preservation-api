@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         {
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
-            _command = new UpdateModeCommand(_id, _title);
+            _command = new UpdateModeCommand(_id, _title, null);
 
             _dut = new UpdateModeCommandValidator(_modeValidatorMock.Object);
         }

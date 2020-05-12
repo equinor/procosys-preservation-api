@@ -3,14 +3,16 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
 {
-    public class UpdateModeCommand : IRequest<Result<Unit>>
+    public class UpdateModeCommand : IRequest<Result<string>>
     {
-        public UpdateModeCommand(int modeId, string title)
+        public UpdateModeCommand(int modeId, string title, string rowVersion)
         {
             ModeId = modeId;
             Title = title;
+            RowVersion = rowVersion;
         }
-        public int ModeId { get; set; }
-        public string Title { get; set; }
+        public int ModeId { get; }
+        public string Title { get; }
+        public string RowVersion { get; }
     }
 }

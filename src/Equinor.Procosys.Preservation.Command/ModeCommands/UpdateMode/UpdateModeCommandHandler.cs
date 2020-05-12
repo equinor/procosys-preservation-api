@@ -7,7 +7,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
 {
-    public class UpdateModeCommandHandler : IRequestHandler<UpdateModeCommand, Result<Unit>>
+    public class UpdateModeCommandHandler : IRequestHandler<UpdateModeCommand, Result<string>>
     {
         private readonly IModeRepository _modeRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -18,14 +18,15 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(UpdateModeCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdateModeCommand request, CancellationToken cancellationToken)
         {
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
 
             mode.Title = request.Title;
+            mode.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(mode.RowVersion.ConvertToString());
         }
     }
 }

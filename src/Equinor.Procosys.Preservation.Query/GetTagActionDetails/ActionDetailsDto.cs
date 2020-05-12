@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
             bool isClosed,
             PersonDto closedBy,
             DateTime? closedAtUtc,
-            ulong rowVersion)
+            string rowVersion)
         {
             Id = id;
             CreatedBy = createdBy;
@@ -38,6 +38,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagActionDetails
         public bool IsClosed { get; }
         public PersonDto ClosedBy { get; }
         public DateTime? ClosedAtUtc { get; }
-        public ulong RowVersion { get; }
+        public string RowVersion { get; }
     }
 }
