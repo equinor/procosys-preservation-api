@@ -22,6 +22,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public const int DescriptionLengthMax = 255;
         public const int RemarkLengthMax = 255;
         public const int StorageAreaLengthMax = 255;
+        public const int PurchaseOrderNoLengthMax = 20;
+        public const int McPkgNoLengthMax = 30;
+        public const int CommPkgNoLengthMax = 30;
+        public const int CalloffLengthMax = 30;
 
         protected Tag()
             : base(null)

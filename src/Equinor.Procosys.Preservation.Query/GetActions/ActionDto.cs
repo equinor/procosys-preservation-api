@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagActions
+namespace Equinor.Procosys.Preservation.Query.GetActions
 {
     public class ActionDto
     {

@@ -27,6 +27,16 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .WithOne()
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
+
+            builder
+                .HasIndex(p => p.Plant)
+                .HasName("IX_Projects_Plant_ASC")
+                .IncludeProperties(p => new {p.Name, p.IsClosed, p.CreatedAtUtc, p.ModifiedAtUtc});
+
+            builder
+               .HasIndex(p => p.Name)
+               .HasName("IX_Projects_Name_ASC")
+               .IncludeProperties(p => new { p.Plant });
         }
     }
 }

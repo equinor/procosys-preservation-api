@@ -9,15 +9,15 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagActions
+namespace Equinor.Procosys.Preservation.Query.GetActions
 {
-    public class GetTagActionsQueryHandler : IRequestHandler<GetTagActionsQuery, Result<List<ActionDto>>>
+    public class GetActionsQueryHandler : IRequestHandler<GetActionsQuery, Result<List<ActionDto>>>
     {
         private readonly IReadOnlyContext _context;
 
-        public GetTagActionsQueryHandler(IReadOnlyContext context) => _context = context;
+        public GetActionsQueryHandler(IReadOnlyContext context) => _context = context;
 
-        public async Task<Result<List<ActionDto>>> Handle(GetTagActionsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<ActionDto>>> Handle(GetActionsQuery request, CancellationToken cancellationToken)
         {
             // Get tag with all actions
             var tag = await
