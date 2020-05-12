@@ -330,9 +330,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromBody] List<int> tagIds)
+            [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
-            var result = await _mediator.Send(new TransferCommand(tagIds));
+            var tags =
+                tagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var result = await _mediator.Send(new TransferCommand(tags));
             return this.FromResult(result);
         }
 
