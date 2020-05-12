@@ -7,7 +7,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag
 {
-    public class UnvoidTagCommandHandler : IRequestHandler<UnvoidTagCommand, Result<Unit>>
+    public class UnvoidTagCommandHandler : IRequestHandler<UnvoidTagCommand, Result<string>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -18,15 +18,16 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(UnvoidTagCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UnvoidTagCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
 
             tag.UnVoid();
+            tag.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(tag.RowVersion.ConvertToString());
         }
     }
 }
