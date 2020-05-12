@@ -492,8 +492,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
         #endregion
 
-
-
         #region CompletePreservationCommand
         [TestMethod]
         public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
