@@ -29,6 +29,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasMany(x => x.Requirements)
                 .WithOne()
                 .IsRequired();
+
+            builder
+                .HasIndex(x => x.Plant)
+                .HasName("IX_TagFunctions_Plant_ASC")
+                .IncludeProperties(x => new { x.Code, x.RegisterCode });
         }
     }
 }
