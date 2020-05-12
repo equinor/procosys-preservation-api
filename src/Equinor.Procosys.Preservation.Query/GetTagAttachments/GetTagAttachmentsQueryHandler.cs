@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagAttachments
 
         public async Task<Result<List<TagAttachmentDto>>> Handle(GetTagAttachmentsQuery request, CancellationToken cancellationToken)
         {
-            // Get tag with all actions
+            // Get tag with all attachments
             var tag = await
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Attachments)

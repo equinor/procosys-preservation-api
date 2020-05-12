@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActionAttachments
 
         public async Task<Result<List<ActionAttachmentDto>>> Handle(GetActionAttachmentsQuery request, CancellationToken cancellationToken)
         {
-            // Get action with all actions
+            // Get action with all attachments
             var action = await
                 (from a in _context.QuerySet<Action>()
                         .Include(t => t.Attachments)
