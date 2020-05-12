@@ -2,17 +2,17 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.GetTagActions;
+using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
+namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
 {
     [TestClass]
-    public class GetTagActionsQueryHandlerTests : ReadOnlyTestsBase
+    public class GetActionsQueryHandlerTests : ReadOnlyTestsBase
     {
         private int _tagId;
         private int _openActionId;
@@ -49,8 +49,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagActionsQuery(_tagId);
-                var dut = new GetTagActionsQueryHandler(context);
+                var query = new GetActionsQuery(_tagId);
+                var dut = new GetActionsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
 
@@ -70,8 +70,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagActions
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagActionsQuery(0);
-                var dut = new GetTagActionsQueryHandler(context);
+                var query = new GetActionsQuery(0);
+                var dut = new GetActionsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
 
