@@ -4,10 +4,10 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
 {
-    public class TransferCommand : IRequest<Result<Unit>>
+    public class TransferCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>
     {
-        public TransferCommand(IEnumerable<int> tagIds) => TagIds = tagIds ?? new List<int>();
+        public TransferCommand(IEnumerable<IdAndRowVersion> tags) => Tags = tags ?? new List<IdAndRowVersion>();
 
-        public IEnumerable<int> TagIds { get; }
+        public IEnumerable<IdAndRowVersion> Tags { get; }
     }
 }

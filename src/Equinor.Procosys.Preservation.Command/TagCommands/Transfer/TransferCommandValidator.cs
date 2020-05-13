@@ -16,28 +16,28 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
                         
-            RuleFor(command => command.TagIds)
+            RuleFor(command => command.Tags)
                 .Must(ids => ids != null && ids.Any())
                 .WithMessage("At least 1 tag must be given!")
                 .Must(BeUniqueTags)
                 .WithMessage("Tags must be unique!");
 
-            When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
+            When(command => command.Tags.Any() && BeUniqueTags(command.Tags), () =>
             {
-                RuleForEach(command => command.TagIds)
-                    .MustAsync((_, tagId, __, token) => NotBeAClosedProjectForTagAsync(tagId, token))
+                RuleForEach(command => command.Tags)
+                    .MustAsync((_, tag, __, token) => NotBeAClosedProjectForTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Project for tag is closed! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => BeAnExistingTagAsync(tagId, token))
+                    .MustAsync((_, tag, __, token) => BeAnExistingTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
+                    .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => IsReadyToBeTransferredAsyncAsync(tagId, token))
+                    .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsyncAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}");
             });
 
-            bool BeUniqueTags(IEnumerable<int> tagIds)
+            bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
             {
-                var ids = tagIds.ToList();
+                var ids = tags.Select(x => x.Id).ToList();
                 return ids.Distinct().Count() == ids.Count;
             }
             

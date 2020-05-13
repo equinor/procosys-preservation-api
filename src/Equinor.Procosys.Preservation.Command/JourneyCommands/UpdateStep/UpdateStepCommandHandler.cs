@@ -7,7 +7,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 {
-    public class UpdateStepCommandHandler : IRequestHandler<UpdateStepCommand, Result<Unit>>
+    public class UpdateStepCommandHandler : IRequestHandler<UpdateStepCommand, Result<string>>
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -18,14 +18,15 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(UpdateStepCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UpdateStepCommand request, CancellationToken cancellationToken)
         {
-            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId); 
+            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
 
             step.Title = request.Title;
+            step.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(step.RowVersion.ConvertToString());
         }
     }
 }

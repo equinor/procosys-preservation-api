@@ -11,10 +11,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new TransferCommand(new List<int>{17});
+            var idAndRowVersion = new IdAndRowVersion(17, "AAAAAAAAABA=");
+            var dut = new TransferCommand(new List<IdAndRowVersion>{idAndRowVersion});
 
-            Assert.AreEqual(1, dut.TagIds.Count());
-            Assert.AreEqual(17, dut.TagIds.First());
+            Assert.AreEqual(1, dut.Tags.Count());
+            Assert.AreEqual(idAndRowVersion, dut.Tags.First());
         }
     }
 }

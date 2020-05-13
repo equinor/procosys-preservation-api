@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreservation
@@ -11,10 +12,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new CompletePreservationCommand(new List<int>{17});
+            var idAndRowVersion = new IdAndRowVersion(17, "AAAAAAAAABA=");
+            var dut = new CompletePreservationCommand(new List<IdAndRowVersion>{idAndRowVersion});
 
-            Assert.AreEqual(1, dut.TagIds.Count());
-            Assert.AreEqual(17, dut.TagIds.First());
+            Assert.AreEqual(1, dut.Tags.Count());
+            Assert.AreEqual(idAndRowVersion, dut.Tags.First());
         }
     }
 }

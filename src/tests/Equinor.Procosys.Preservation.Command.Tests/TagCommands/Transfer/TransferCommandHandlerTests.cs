@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -19,6 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
 
         private const int TagId1 = 7;
         private const int TagId2 = 8;
+        private const string RowVersion1 = "AAAAAAAAABA=";
+        private const string RowVersion2 = "AAAAAAAABBA=";
 
         private TransferCommand _command;
 
@@ -76,11 +79,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             var projectRepoMock = new Mock<IProjectRepository>();
             
             var tagIds = new List<int> {TagId1, TagId2};
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> {new IdAndRowVersion(TagId1, RowVersion1), new IdAndRowVersion(TagId2, RowVersion2)};
             projectRepoMock
                 .Setup(r => r.GetTagsByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(new List<Tag> {_tag1Mock.Object, _tag2Mock.Object}));
 
-            _command = new TransferCommand(tagIds);
+            _command = new TransferCommand(tagIdsWithRowVersion);
 
             _dut = new TransferCommandHandler(projectRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
         }
@@ -111,6 +115,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             await _dut.Handle(_command, default);
 
             UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingTransferCommand_ShouldSetRowVersion()
+        {
+            // Arrange
+            var updatedRowVersion = _command.Tags.First().RowVersion;
+
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            _tag1Mock.Verify(t => t.SetRowVersion(updatedRowVersion), Times.Once);
         }
     }
 }
