@@ -52,7 +52,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             _attachments.Add(attachment);
         }
 
-        public ActionAttachment GetAttachmentByFileName(string fileName) => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
+        public ActionAttachment GetAttachmentByFileName(string fileName)
+            => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
 
         public void SetDueTime(DateTime? dueTimeUtc)
         {

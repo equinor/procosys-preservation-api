@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
 
             if (_requirements.Any(r => r.RequirementDefinitionId == requirement.RequirementDefinitionId))
             {
-                throw new ArgumentException($"{nameof(TagFunction)} {Code} in register {RegisterCode} already has requirement with definition {requirement.RequirementDefinitionId}");
+                throw new ArgumentException($"{nameof(TagFunction)} {Code} in register {RegisterCode} already has a requirement with definition {requirement.RequirementDefinitionId}");
             }
 
             _requirements.Add(requirement);

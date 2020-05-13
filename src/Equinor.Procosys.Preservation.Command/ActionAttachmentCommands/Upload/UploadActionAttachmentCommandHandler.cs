@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload
 
             if (!request.OverwriteIfExists && attachment != null)
             {
-                throw new Exception($"Tag {tag.Id} already has attachment with filename {request.FileName}");
+                throw new Exception($"Tag {tag.Id} already has an attachment with filename {request.FileName}");
             }
 
             if (attachment == null)
