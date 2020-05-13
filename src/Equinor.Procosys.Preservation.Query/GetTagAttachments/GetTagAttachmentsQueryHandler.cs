@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagAttachments
 
         public async Task<Result<List<TagAttachmentDto>>> Handle(GetTagAttachmentsQuery request, CancellationToken cancellationToken)
         {
-            // Get tag with all actions
+            // Get tag with all attachments
             var tag = await
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Attachments)
@@ -27,17 +27,14 @@ namespace Equinor.Procosys.Preservation.Query.GetTagAttachments
             
             if (tag == null)
             {
-                return new NotFoundResult<List<TagAttachmentDto>>($"Entity with ID {request.TagId} not found");
+                return new NotFoundResult<List<TagAttachmentDto>>($"Tag with ID {request.TagId} not found");
             }
 
-            var actions = tag
+            var attachments = tag
                 .Attachments
-                .Select(attachment => new TagAttachmentDto(
-                    attachment.Id,
-                    attachment.Title,
-                    attachment.FileName)).ToList();
+                .Select(attachment => new TagAttachmentDto(attachment.Id, attachment.FileName)).ToList();
             
-            return new SuccessResult<List<TagAttachmentDto>>(actions);
+            return new SuccessResult<List<TagAttachmentDto>>(attachments);
         }
     }
 }

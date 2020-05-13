@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagAttachments
 
                 var tag = _testDataSet.Project1.Tags.First();
 
-                _attachment = new TagAttachment(TestPlant, new Guid("{C3412890-1EF8-4E34-B96C-5488200A5AF5}"), "TitleA", "FileA");
+                _attachment = new TagAttachment(TestPlant, Guid.NewGuid(), "FileA");
                 tag.AddAttachment(_attachment);
 
                 context.SaveChangesAsync().Wait();
@@ -53,7 +53,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagAttachments
 
                 var attachment = attachmentDtos.Single();
                 Assert.AreEqual(_attachment.Id, attachment.Id);
-                Assert.AreEqual(_attachment.Title, attachment.Title);
                 Assert.AreEqual(_attachment.FileName, attachment.FileName);
             }
         }

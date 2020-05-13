@@ -75,11 +75,11 @@ namespace Equinor.Procosys.Preservation.BlobStorage
             var container = GetContainerName(path);
             var blobPath = GetPathWithoutContainer(path);
             var sasToken = GetSasToken(container, blobPath, ResourceTypes.BLOB, BlobAccountSasPermissions.Read, startsOn, expiresOn);
-            var fullUri = new UriBuilder()
+            var fullUri = new UriBuilder
             {
                 Scheme = "https",
                 Host = string.Format($"{_accountName}.{_endpoint}"),
-                Path = string.Format($"{Directory.GetParent(path).Name}/{path}"),
+                Path = path,
                 Query = sasToken
             };
             return fullUri.Uri;
@@ -90,11 +90,11 @@ namespace Equinor.Procosys.Preservation.BlobStorage
             var container = GetContainerName(path);
             var blobPath = GetPathWithoutContainer(path);
             var sasToken = GetSasToken(container, blobPath, ResourceTypes.BLOB, BlobAccountSasPermissions.Create | BlobAccountSasPermissions.Write, startsOn, expiresOn);
-            var fullUri = new UriBuilder()
+            var fullUri = new UriBuilder
             {
                 Scheme = "https",
                 Host = string.Format($"{_accountName}.{_endpoint}"),
-                Path = string.Format($"{Directory.GetParent(path).Name}/{path}"),
+                Path = path,
                 Query = sasToken
             };
             return fullUri.Uri;
@@ -105,11 +105,11 @@ namespace Equinor.Procosys.Preservation.BlobStorage
             var container = GetContainerName(path);
             var blobPath = GetPathWithoutContainer(path);
             var sasToken = GetSasToken(container, blobPath, ResourceTypes.BLOB, BlobAccountSasPermissions.Delete, startsOn, expiresOn);
-            var fullUri = new UriBuilder()
+            var fullUri = new UriBuilder
             {
                 Scheme = "https",
                 Host = string.Format($"{_accountName}.{_endpoint}"),
-                Path = string.Format($"{Directory.GetParent(path).Name}/{path}"),
+                Path = path,
                 Query = sasToken
             };
             return fullUri.Uri;
@@ -119,11 +119,11 @@ namespace Equinor.Procosys.Preservation.BlobStorage
         {
             var containerName = GetContainerName(path);
             var sasToken = GetSasToken(containerName, string.Empty, ResourceTypes.CONTAINER, BlobAccountSasPermissions.List, startsOn, expiresOn);
-            var fullUri = new UriBuilder()
+            var fullUri = new UriBuilder
             {
                 Scheme = "https",
                 Host = string.Format($"{_accountName}.{_endpoint}"),
-                Path = string.Format($"{containerName}"),
+                Path = containerName,
                 Query = $"restype=container&comp=list&{sasToken}"
             };
             return fullUri.Uri;
@@ -131,7 +131,7 @@ namespace Equinor.Procosys.Preservation.BlobStorage
 
         private string GetSasToken(string containerName, string blobName, string resourceType, BlobAccountSasPermissions permissions, DateTimeOffset startsOn, DateTimeOffset expiresOn)
         {
-            var sasBuilder = new BlobSasBuilder()
+            var sasBuilder = new BlobSasBuilder
             {
                 BlobContainerName = containerName,
                 BlobName = blobName,

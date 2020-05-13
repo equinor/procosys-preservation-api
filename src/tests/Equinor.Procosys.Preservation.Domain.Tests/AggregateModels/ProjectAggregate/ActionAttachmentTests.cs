@@ -7,23 +7,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     [TestClass]
     public class ActionAttachmentTests
     {
-        private ActionAttachment _dut;
-        private readonly string TestPlant = "PlantA";
-        private readonly string Title = "TitleA";
-        private readonly string FileName = "FileA";
+        private readonly string TestPlant = "PCS$PlantA";
         private readonly Guid BlobStorageId = new Guid("{6DB281E2-B667-4DCE-B74C-B9A9FBC94964}");
 
-        [TestInitialize]
-        public void Setup()
-            => _dut = new ActionAttachment(TestPlant, BlobStorageId, Title, FileName);
-
         [TestMethod]
-        public void Constructor_ShouldSetProperties()
+        public void Constructor_ShouldSetActionAttachmentSpecificProperties()
         {
-            Assert.AreEqual(TestPlant, _dut.Plant);
-            Assert.AreEqual(BlobStorageId, _dut.BlobStorageId);
-            Assert.AreEqual(FileName, _dut.FileName);
-            Assert.AreEqual(Title, _dut.Title);
+            var dut = new ActionAttachment(TestPlant, BlobStorageId, "FileA");
+            Assert.AreEqual($"PlantA/Action/{BlobStorageId.ToString()}", dut.BlobPath);
+            // Other properties are tested in base class
         }
     }
 }

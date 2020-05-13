@@ -36,6 +36,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasConversion(PreservationContext.DateTimeKindConverter);
 
             builder.HasCheckConstraint("constraint_period_check_valid_status", $"{nameof(Tag.Status)} in ({GetValidStatuses()})");
+
+            builder
+                .HasIndex(x => x.Plant)
+                .HasName("IX_PreservationPeriods_Plant_ASC")
+                .IncludeProperties(x => new {x.Comment, x.CreatedAtUtc, x.DueTimeUtc, x.ModifiedAtUtc, x.Status});
         }
 
         private string GetValidStatuses()

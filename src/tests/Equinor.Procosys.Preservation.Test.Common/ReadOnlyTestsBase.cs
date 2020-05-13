@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 {
     public abstract class ReadOnlyTestsBase
     {
-        protected const string TestPlant = "PlantA";
+        protected const string TestPlant = "PCS$PlantA";
         protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IPlantProvider> _plantProviderMock;

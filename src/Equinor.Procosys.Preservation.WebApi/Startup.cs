@@ -152,6 +152,8 @@ namespace Equinor.Procosys.Preservation.WebApi
 
             app.AddGlobalExceptionHandling();
 
+            app.UseCors(AllowAllOriginsCorsPolicy);
+
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -164,8 +166,6 @@ namespace Equinor.Procosys.Preservation.WebApi
                 c.OAuthScopeSeparator(" ");
                 c.OAuthAdditionalQueryStringParams(new Dictionary<string, string> { { "resource", Configuration["API:Audience"] } });
             });
-
-            app.UseCors(AllowAllOriginsCorsPolicy);
 
             app.UseHttpsRedirection();
 
