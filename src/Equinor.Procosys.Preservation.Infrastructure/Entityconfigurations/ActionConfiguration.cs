@@ -37,8 +37,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder
                 .HasMany(x => x.Attachments)
                 .WithOne()
-                .IsRequired()
-                .OnDelete(DeleteBehavior.NoAction);
+                .IsRequired();
         }
     }
 }
