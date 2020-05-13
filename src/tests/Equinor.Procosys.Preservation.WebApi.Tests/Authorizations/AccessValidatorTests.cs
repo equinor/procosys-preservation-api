@@ -13,6 +13,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
@@ -772,6 +773,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnGetGetTagAttachmentQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new GetTagAttachmentQuery(TagIdWithoutAccessToProject, 1);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetActionAttachmentsQuery_ShouldReturnTrue_WhenAccessToProject()
+        {
+            var query = new GetActionAttachmentsQuery(TagIdWithAccessToProject, 1);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetActionAttachmentsQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            var query = new GetActionAttachmentsQuery(TagIdWithoutAccessToProject, 1);
             // act
             var result = await _dut.ValidateAsync(query);
 
