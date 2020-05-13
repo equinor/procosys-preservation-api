@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.BlobStorage;
@@ -8,9 +9,9 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
+namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload
 {
-    public class UploadTagAttachmentCommandHandler : IRequestHandler<UploadTagAttachmentCommand, Result<int>>
+    public class UploadActionAttachmentCommandHandler : IRequestHandler<UploadActionAttachmentCommand, Result<int>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -18,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
         private readonly IBlobStorage _blobStorage;
         private readonly IOptionsMonitor<AttachmentOptions> _attachmentOptions;
 
-        public UploadTagAttachmentCommandHandler(
+        public UploadActionAttachmentCommandHandler(
             IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
@@ -31,11 +32,12 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
             _attachmentOptions = attachmentOptions;
         }
 
-        public async Task<Result<int>> Handle(UploadTagAttachmentCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(UploadActionAttachmentCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var action = tag.Actions.Single(a => a.Id == request.ActionId);
 
-            var attachment = tag.GetAttachmentByFileName(request.FileName);
+            var attachment = action.GetAttachmentByFileName(request.FileName);
 
             if (!request.OverwriteIfExists && attachment != null)
             {
@@ -44,11 +46,11 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
 
             if (attachment == null)
             {
-                attachment = new TagAttachment(
+                attachment = new ActionAttachment(
                     _plantProvider.Plant,
                     Guid.NewGuid(),
                     request.FileName);
-                tag.AddAttachment(attachment);
+                action.AddAttachment(attachment);
             }
 
             var fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);

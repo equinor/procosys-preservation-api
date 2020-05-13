@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             if (HasActivePeriod)
             {
-                throw new Exception($"{nameof(TagRequirement)} {Id} already have an active {nameof(PreservationPeriod)}. Can't start");
+                throw new Exception($"{nameof(TagRequirement)} {Id} already has an active {nameof(PreservationPeriod)}. Can't start");
             }
             PrepareNewPreservation();
         }

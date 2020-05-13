@@ -11,8 +11,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
     [TestClass]
     public class UpdateActionCommandHandlerTests : CommandHandlerTestsBase
     {
-        private readonly int _tagId = 2;
-        private readonly int _actionId = 12;
+        private const int TagId = 2;
+        private const int ActionId = 12;
         private readonly string _oldTitle = "ActionTitleOld";
         private readonly string _newTitle = "ActionTitleNew";
         private readonly string _oldDescription = "ActionDescriptionOld";
@@ -33,18 +33,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
 
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            tagMock.SetupGet(t => t.Id).Returns(_tagId);
+            tagMock.SetupGet(t => t.Id).Returns(TagId);
             _actionMock = new Mock<Action>(TestPlant, _oldTitle, _oldDescription, _oldDueTimeUtc);
-            _actionMock = new Mock<Action>();
             _actionMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            _actionMock.SetupGet(t => t.Id).Returns(_actionId);
+            _actionMock.SetupGet(t => t.Id).Returns(ActionId);
             tagMock.Object.AddAction(_actionMock.Object);
 
             _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_tagId))
+                .Setup(r => r.GetTagByTagIdAsync(TagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
-            _command = new UpdateActionCommand(_tagId, _actionId, _newTitle, _newDescription, _newDueTimeUtc, null);
+            _command = new UpdateActionCommand(TagId, ActionId, _newTitle, _newDescription, _newDueTimeUtc, null);
 
             _dut = new UpdateActionCommandHandler(
                 _projectRepositoryMock.Object,
@@ -55,12 +54,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         [TestMethod]
         public async Task HandlingUpdateActionCommand_ShouldUpdateAction()
         {
+            Assert.AreEqual(_oldTitle, _actionMock.Object.Title);
+            Assert.AreEqual(_oldDescription, _actionMock.Object.Description);
+            Assert.AreEqual(_oldDueTimeUtc, _actionMock.Object.DueTimeUtc);
+
             var result = await _dut.Handle(_command, default);
             Assert.AreEqual(0, result.Errors.Count);
 
-            Assert.AreEqual(_actionMock.Object.Title, _newTitle);
-            Assert.AreEqual(_actionMock.Object.Description, _newDescription);
-            Assert.AreEqual(_actionMock.Object.DueTimeUtc, _newDueTimeUtc);
+            Assert.AreEqual(_newTitle, _actionMock.Object.Title);
+            Assert.AreEqual(_newDescription, _actionMock.Object.Description);
+            Assert.AreEqual(_newDueTimeUtc, _actionMock.Object.DueTimeUtc);
         }
 
         [TestMethod]
