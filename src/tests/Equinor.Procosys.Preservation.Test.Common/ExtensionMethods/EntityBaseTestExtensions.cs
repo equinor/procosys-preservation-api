@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using Equinor.Procosys.Preservation.Domain;
 
 namespace Equinor.Procosys.Preservation.Test.Common.ExtensionMethods
@@ -9,6 +10,10 @@ namespace Equinor.Procosys.Preservation.Test.Common.ExtensionMethods
         {
             var objType = typeof(EntityBase);
             var property = objType.GetProperty("Id", BindingFlags.Public | BindingFlags.Instance);
+            if (property == null)
+            {
+                throw new ArgumentNullException(nameof(property));
+            }
             property.SetValue(entityBase, id);
         }
     }

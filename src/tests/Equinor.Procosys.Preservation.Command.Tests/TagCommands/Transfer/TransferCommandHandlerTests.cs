@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         public async Task HandlingTransferCommand_ShouldSetRowVersion()
         {
             // Arrange
-            var updatedRowVersion = _command.Tags.ToList().First().RowVersion;
+            var updatedRowVersion = _command.Tags.First().RowVersion;
 
             // Act
             await _dut.Handle(_command, default);

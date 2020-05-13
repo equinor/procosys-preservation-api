@@ -3,7 +3,6 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
