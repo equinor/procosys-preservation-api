@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload
                 .MustAsync((command, token) => NotBeAClosedActionAsync(command.ActionId, token))
                 .WithMessage(command => $"Action is closed! Action={command.ActionId}")
                 .MustAsync((command, token) => NotHaveAttachmentWithFilenameAsync(command.ActionId, command.FileName, token))
-                .WithMessage(command => $"Action already have an attachment with filename {command.FileName}! Please rename file or choose to overwrite")
+                .WithMessage(command => $"Action already has an attachment with filename {command.FileName}! Please rename file or choose to overwrite")
                     .When(c => !c.OverwriteIfExists, ApplyConditionTo.CurrentValidator);
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)

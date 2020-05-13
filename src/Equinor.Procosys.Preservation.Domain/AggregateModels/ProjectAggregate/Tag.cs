@@ -140,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             
             if (_requirements.Any(r => r.RequirementDefinitionId == requirement.RequirementDefinitionId))
             {
-                throw new ArgumentException($"{nameof(Tag)} {TagNo} already have requirement with definition {requirement.RequirementDefinitionId}");
+                throw new ArgumentException($"{nameof(Tag)} {TagNo} already has requirement with definition {requirement.RequirementDefinitionId}");
             }
 
             _requirements.Add(requirement);

@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Action already have an attachment with filename {_commandWithoutOverwrite.FileName}"!));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Action already has an attachment with filename {_commandWithoutOverwrite.FileName}"!));
         }
 
         [TestMethod]
