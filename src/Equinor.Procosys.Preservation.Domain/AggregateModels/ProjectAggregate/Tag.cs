@@ -176,6 +176,22 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             _attachments.Add(attachment);
         }
+        
+        // todo unit test
+        public void RemoveAttachment(TagAttachment attachment)
+        {
+            if (attachment == null)
+            {
+                throw new ArgumentNullException(nameof(attachment));
+            }
+            
+            if (attachment.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't remove item in {attachment.Plant} from item in {Plant}");
+            }
+
+            _attachments.Remove(attachment);
+        }
 
         public void StartPreservation()
         {
