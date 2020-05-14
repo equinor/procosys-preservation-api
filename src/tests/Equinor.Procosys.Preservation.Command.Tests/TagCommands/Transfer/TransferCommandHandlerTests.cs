@@ -20,10 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         private const int Step1OnJourney2Id = 3;
         private const int Step2OnJourney2Id = 4;
 
-        private const int TagId1 = 7;
-        private const int TagId2 = 8;
-        private const string RowVersion1 = "AAAAAAAAABA=";
-        private const string RowVersion2 = "AAAAAAAABBA=";
+        private const string _rowVersion1 = "AAAAAAAAABA=";
+        private const string _rowVersion2 = "AAAAAAAABBA=";
 
         private TransferCommand _command;
 
@@ -63,23 +61,26 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
 
             var reqMock1 = new Mock<TagRequirement>();
             reqMock1.SetupGet(r => r.Plant).Returns(TestPlant);
+            
+            var tagId1 = 7;
+            var tagId2 = 8;
             _tag1 = new Tag(TestPlant, TagType.Standard, "", "", step1OnJourney1Mock.Object,
                 new List<TagRequirement> {reqMock1.Object});
-            _tag1.SetProtectedIdForTesting(TagId1);
+            _tag1.SetProtectedIdForTesting(tagId1);
 
             var reqMock2 = new Mock<TagRequirement>();
             reqMock2.SetupGet(r => r.Plant).Returns(TestPlant);
             _tag2 = new Tag(TestPlant, TagType.Standard, "", "", step1OnJourney2Mock.Object,
                 new List<TagRequirement> {reqMock2.Object});
-            _tag2.SetProtectedIdForTesting(TagId2);
+            _tag2.SetProtectedIdForTesting(tagId2);
 
             _tag1.StartPreservation();
             _tag2.StartPreservation();
 
             var projectRepoMock = new Mock<IProjectRepository>();
             
-            var tagIds = new List<int> {TagId1, TagId2};
-            var tagIdsWithRowVersion = new List<IdAndRowVersion> {new IdAndRowVersion(TagId1, RowVersion1), new IdAndRowVersion(TagId2, RowVersion2)};
+            var tagIds = new List<int> {tagId1, tagId2};
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> {new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2)};
             projectRepoMock
                 .Setup(r => r.GetTagsByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(new List<Tag> {_tag1, _tag2}));
@@ -127,8 +128,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             Assert.AreEqual(0, result.Errors.Count);
             // In real life EF Core will create a new RowVersion when save.
             // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
-            Assert.AreEqual(RowVersion1, result.Data.First().RowVersion);
-            Assert.AreEqual(RowVersion1, _tag1.RowVersion.ConvertToString());
+            Assert.AreEqual(_rowVersion1, result.Data.First().RowVersion);
+            Assert.AreEqual(_rowVersion1, _tag1.RowVersion.ConvertToString());
         }
     }
 }
