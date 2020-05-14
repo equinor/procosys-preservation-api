@@ -13,7 +13,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
     [TestClass]
     public class UpdateStepCommandHandlerTests : CommandHandlerTestsBase
     {
-        private readonly int _id = 1;
         private readonly string _rowVersion = "AAAAAAAAABA=";
 
         private readonly string _oldTitle = "StepTitleOld";
@@ -33,11 +32,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             var responsibleMock = new Mock<Responsible>();
             responsibleMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
+            var stepId = 1;
             _step = new Step(TestPlant, _oldTitle, modeMock.Object, responsibleMock.Object);
-            _step.SetProtectedIdForTesting(_id);
-            journeyRepositoryMock.Setup(s => s.GetStepByStepIdAsync(_step.Id))
+            journeyRepositoryMock.Setup(s => s.GetStepByStepIdAsync(stepId))
                 .Returns(Task.FromResult(_step));
-            _command = new UpdateStepCommand(_id, _newTitle, _rowVersion);
+            _command = new UpdateStepCommand(stepId, _newTitle, _rowVersion);
 
             _dut = new UpdateStepCommandHandler(
                 journeyRepositoryMock.Object,

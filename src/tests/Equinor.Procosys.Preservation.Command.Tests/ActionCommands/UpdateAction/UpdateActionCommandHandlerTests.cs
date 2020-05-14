@@ -13,8 +13,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
     [TestClass]
     public class UpdateActionCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const int TagId = 2;
-        private const int ActionId = 12;
         private readonly string _oldTitle = "ActionTitleOld";
         private readonly string _newTitle = "ActionTitleNew";
         private readonly string _oldDescription = "ActionDescriptionOld";
@@ -34,18 +32,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         {
             _projectRepositoryMock = new Mock<IProjectRepository>();
 
+            var tagId = 2;
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            tagMock.SetupGet(t => t.Id).Returns(TagId);
+            tagMock.SetupGet(t => t.Id).Returns(tagId);
+            var actionId = 12;
             _action = new Action(TestPlant, _oldTitle, _oldDescription, _oldDueTimeUtc);
-            _action.SetProtectedIdForTesting(ActionId);
+            _action.SetProtectedIdForTesting(actionId);
             tagMock.Object.AddAction(_action);
 
             _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(TagId))
+                .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
-            _command = new UpdateActionCommand(TagId, ActionId, _newTitle, _newDescription, _newDueTimeUtc, _rowVersion);
+            _command = new UpdateActionCommand(tagId, actionId, _newTitle, _newDescription, _newDueTimeUtc, _rowVersion);
 
             _dut = new UpdateActionCommandHandler(
                 _projectRepositoryMock.Object,

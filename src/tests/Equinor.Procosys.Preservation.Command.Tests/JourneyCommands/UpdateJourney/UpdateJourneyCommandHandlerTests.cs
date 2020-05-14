@@ -27,7 +27,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             var testJourneyId = 1;
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journey = new Journey(TestPlant, _oldTitle);
-            _journey.SetProtectedIdForTesting(testJourneyId);
             journeyRepositoryMock.Setup(j => j.GetByIdAsync(testJourneyId))
                 .Returns(Task.FromResult(_journey));
             _command = new UpdateJourneyCommand(testJourneyId, _newTitle, _rowVersion);

@@ -2,8 +2,6 @@
 using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
-using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -24,13 +22,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         public void Setup()
         {
             // Arrange
-            var testModeId = 1;
+            var modeId = 1;
             var modeRepositoryMock = new Mock<IModeRepository>();
             _mode = new Mode(TestPlant, _oldTitle);
-            _mode.SetProtectedIdForTesting(testModeId);
-            modeRepositoryMock.Setup(m => m.GetByIdAsync(testModeId))
+            modeRepositoryMock.Setup(m => m.GetByIdAsync(modeId))
                 .Returns(Task.FromResult(_mode));
-            _command = new UpdateModeCommand(testModeId, _newTitle, _rowVersion);
+            _command = new UpdateModeCommand(modeId, _newTitle, _rowVersion);
 
             _dut = new UpdateModeCommandHandler(
                 modeRepositoryMock.Object,
@@ -47,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
             await _dut.Handle(_command, default);
 
             // Assert
-            Assert.AreEqual(_mode.Title, _newTitle);
+            Assert.AreEqual(_newTitle, _mode.Title);
         }
                 
         [TestMethod]

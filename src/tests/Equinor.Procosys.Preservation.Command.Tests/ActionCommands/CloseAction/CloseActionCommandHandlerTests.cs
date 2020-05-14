@@ -14,8 +14,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
     [TestClass]
     public class CloseActionCommandHandlerTests : CommandHandlerTestsBase
     {
-        private readonly int _tagId = 2;
-        private readonly int _actionId = 12;
         private readonly int _personId = 16;
         private readonly string _rowVersion = "AAAAAAAAABA=";
 
@@ -37,18 +35,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
             _personRepositoryMock = new Mock<IPersonRepository>();
 
+            var tagId = 2;
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            tagMock.SetupGet(t => t.Id).Returns(_tagId);
+            tagMock.SetupGet(t => t.Id).Returns(tagId);
             _action = new Action(TestPlant, "T", "D", null);
-            _action.SetProtectedIdForTesting(_actionId);
+            var actionId = 12;
+            _action.SetProtectedIdForTesting(actionId);
             tagMock.Object.AddAction(_action);
 
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(_personId);
 
             _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_tagId))
+                .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
             _currentUserProviderMock
@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(_personMock.Object));
 
-            _command = new CloseActionCommand(_tagId, _actionId, _rowVersion);
+            _command = new CloseActionCommand(tagId, actionId, _rowVersion);
 
             _dut = new CloseActionCommandHandler(
                 _projectRepositoryMock.Object,
