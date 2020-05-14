@@ -1,6 +1,5 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -53,19 +52,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
             
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
-        }
-
-        [TestMethod]
-        public async Task HandlingDeleteModeCommand_ShouldSetAndReturnRowVersion()
-        {
-            // Act
-            var result = await _dut.Handle(_command, default);
-
-            // Assert
-            Assert.AreEqual(0, result.Errors.Count);
-            // In real life EF Core will create a new RowVersion when save.
-            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
-            Assert.AreEqual(_rowVersion, _mode.RowVersion.ConvertToString());
         }
     }
 }
