@@ -23,7 +23,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         public void Setup_OkState()
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
-            _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(false));
 
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
@@ -87,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag already have an attachment with filename {_commandWithoutOverwrite.FileName}"!));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag already has an attachment with filename {_commandWithoutOverwrite.FileName}"!));
         }
 
         [TestMethod]

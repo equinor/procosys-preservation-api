@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<string>(tagFunction.RowVersion.ToString());
+            return new SuccessResult<string>(tagFunction.RowVersion.ConvertToString());
         }
 
         private async Task<TagFunction> CreateNewTagFunctionAsync(string tagFunctionCode, string registerCode)

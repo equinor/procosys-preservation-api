@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
+using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
@@ -20,6 +21,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
+using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
@@ -164,7 +166,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
                 return this.FromResult(result);
         }
-
+         
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPut("{id}/Action/{actionId}/Close")]
         public async Task<IActionResult> CloseAction(
@@ -183,6 +185,45 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             var result = await _mediator.Send(actionCommand);
 
+            return this.FromResult(result);
+        }
+       
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Actions/{actionId}/Attachments")]
+        public async Task<ActionResult<List<ActionAttachmentDto>>> GetActionAttachments(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId)
+        {
+            var result = await _mediator.Send(new GetActionAttachmentsQuery(id, actionId));
+            return this.FromResult(result);
+        }
+
+        
+        [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
+        [HttpPost("{id}/Actions/{actionId}/Attachments")]
+        public async Task<ActionResult<int>> UploadActionAttachment(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId,
+            [FromForm] UploadAttachmentDto dto)
+        {
+            await using var stream = dto.File.OpenReadStream();
+
+            var actionCommand = new UploadActionAttachmentCommand(
+                id,
+                actionId,
+                dto.File.FileName,
+                dto.OverwriteIfExists,
+                stream);
+
+            var result = await _mediator.Send(actionCommand);
             return this.FromResult(result);
         }
 
@@ -354,9 +395,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromBody] List<int> tagIds)
+            [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
-            var result = await _mediator.Send(new TransferCommand(tagIds));
+            var tags = tagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var result = await _mediator.Send(new TransferCommand(tags));
             return this.FromResult(result);
         }
 
@@ -367,9 +409,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromRoute] int id)
+            [FromRoute] int id,
+            [FromRoute] string rowVersion)
         {
-            var result = await _mediator.Send(new CompletePreservationCommand(new List<int> { id }));
+            var result = await _mediator.Send(new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(id, rowVersion) }));
             return this.FromResult(result);
         }
 
@@ -380,9 +423,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromBody] List<int> tagIds)
+            [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
-            var result = await _mediator.Send(new CompletePreservationCommand(tagIds));
+            var tags = tagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var result = await _mediator.Send(new CompletePreservationCommand(tags));
             return this.FromResult(result);
         }
 
@@ -498,9 +542,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromRoute] int id)
+            [FromRoute] int id,
+            [FromRoute] string rowVersion)
         {
-            var result = await _mediator.Send(new VoidTagCommand(id));
+            var result = await _mediator.Send(new VoidTagCommand(id, rowVersion));
 
             return this.FromResult(result);
         }
@@ -512,9 +557,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromRoute] int id)
+            [FromRoute] int id,
+            [FromRoute] string rowVersion)
         {
-            var result = await _mediator.Send(new UnvoidTagCommand(id));
+            var result = await _mediator.Send(new UnvoidTagCommand(id, rowVersion));
 
             return this.FromResult(result);
         }

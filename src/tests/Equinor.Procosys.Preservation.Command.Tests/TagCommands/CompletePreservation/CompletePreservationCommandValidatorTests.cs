@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -20,12 +21,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
 
         private const int TagId1 = 7;
         private const int TagId2 = 8;
+        private const string RowVersion1 = "AAAAAAAAABA=";
+        private const string RowVersion2 = "AAAAAAAABBA=";
+
         private List<int> _tagIds;
+        private List<IdAndRowVersion> _tagsIdsWithRowVersion;
 
         [TestInitialize]
         public void Setup_OkState()
         {
             _tagIds = new List<int> {TagId1, TagId2};
+            _tagsIdsWithRowVersion = new List<IdAndRowVersion>
+            {
+                new IdAndRowVersion(TagId1, RowVersion1),
+                new IdAndRowVersion(TagId2, RowVersion2)
+            };
             _projectValidatorMock = new Mock<IProjectValidator>();
             _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(true));
             _tagValidatorMock = new Mock<ITagValidator>();
@@ -33,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeCompletedAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeCompletedAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _command = new CompletePreservationCommand(_tagIds);
+            _command = new CompletePreservationCommand(_tagsIdsWithRowVersion);
 
             _dut = new CompletePreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
@@ -49,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new CompletePreservationCommand(new List<int>());
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion>());
             
             var result = _dut.Validate(command);
 
@@ -61,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new CompletePreservationCommand(new List<int>{1, 1});
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion>{new IdAndRowVersion(1, null), new IdAndRowVersion(1, null)});
             
             var result = _dut.Validate(command);
 

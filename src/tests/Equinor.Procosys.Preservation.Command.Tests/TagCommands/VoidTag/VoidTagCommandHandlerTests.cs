@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -20,6 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
         public void Setup()
         {
             var tagId = 2;
+            var rowVersion = "AAAAAAAAABA=";
             var projectRepositoryMock = new Mock<IProjectRepository>();
 
             var stepMock = new Mock<Step>();
@@ -36,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
                 .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new VoidTagCommand(tagId);
+            _command = new VoidTagCommand(tagId, rowVersion);
 
             _dut = new VoidTagCommandHandler(
                 projectRepositoryMock.Object,
@@ -61,6 +63,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
         {
             await _dut.Handle(_command, default);
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingVoidTagCommand_ShouldSetRowVersion()
+        {
+            // Act
+            Assert.AreNotEqual(_command.RowVersion, _tag.RowVersion.ConvertToString());
+            await _dut.Handle(_command, default);
+
+            // Assert
+            var updatedRowVersion = _tag.RowVersion.ConvertToString();
+            Assert.AreEqual(_command.RowVersion, updatedRowVersion);
         }
     }
 }

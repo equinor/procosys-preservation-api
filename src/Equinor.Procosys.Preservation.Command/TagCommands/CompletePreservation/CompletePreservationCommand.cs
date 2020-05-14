@@ -1,28 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
 {
-    public class CompletePreservationCommand : IRequest<Result<Unit>>, ITagCommandRequest
+    public class CompletePreservationCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
     {
-        public CompletePreservationCommand(IEnumerable<int> tagIds)
-            => TagIds = tagIds ?? new List<int>();
+        public CompletePreservationCommand(IEnumerable<IdAndRowVersion> tags)
+            => Tags = tags ?? new List<IdAndRowVersion>();
 
-        public IEnumerable<int> TagIds { get; }
+        public IEnumerable<IdAndRowVersion> Tags { get; }
         
         public int TagId
         {
             get
             {
-                if (!TagIds.Any())
+                if (!Tags.Any())
                 {
-                    throw new Exception($"At least 1 {nameof(TagIds)} must be given!");
+                    throw new Exception($"At least 1 {nameof(Tags)} must be given!");
                 }
 
-                return TagIds.First();
+                return Tags.First().Id;
             }
         }
     }

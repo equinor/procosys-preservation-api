@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(true));
-            _command = new UnvoidTagCommand(_tagId);
+            _command = new UnvoidTagCommand(_tagId, null);
             _dut = new UnvoidTagCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 

@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .MustAsync((command, token) => NotHaveAttachmentWithFilenameAsync(command.TagId, command.FileName, token))
-                .WithMessage(command => $"Tag already have an attachment with filename {command.FileName}! Please rename file or choose to overwrite")
+                .WithMessage(command => $"Tag already has an attachment with filename {command.FileName}! Please rename file or choose to overwrite")
                     .When(c => !c.OverwriteIfExists, ApplyConditionTo.CurrentValidator);
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)

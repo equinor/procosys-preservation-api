@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -9,7 +10,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
 {
-    public class TransferCommandHandler : IRequestHandler<TransferCommand, Result<Unit>>
+    public class TransferCommandHandler : IRequestHandler<TransferCommand, Result<IEnumerable<IdAndRowVersion>>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
@@ -25,22 +26,26 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
             _journeyRepository = journeyRepository;
         }
 
-        public async Task<Result<Unit>> Handle(TransferCommand request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<IdAndRowVersion>>> Handle(TransferCommand request, CancellationToken cancellationToken)
         {
-            var tags = await _projectRepository.GetTagsByTagIdsAsync(request.TagIds);
+            var tags = await _projectRepository.GetTagsByTagIdsAsync(request.Tags.Select(x => x.Id));
 
             var stepIds = tags.Select(t => t.StepId).Distinct();
             var journeys = await _journeyRepository.GetJourneysByStepIdsAsync(stepIds);
 
+            var tagsWithUpdatedRowVersion = new List<IdAndRowVersion>();
+
             foreach (var tag in tags)
             {
                 var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
+                tag.SetRowVersion(request.Tags.Single(x => x.Id == tag.Id).RowVersion);
                 tag.Transfer(journey);
+                tagsWithUpdatedRowVersion.Add(new IdAndRowVersion(tag.Id, tag.RowVersion.ConvertToString()));
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<IEnumerable<IdAndRowVersion>>(tagsWithUpdatedRowVersion);
         }
     }
 }

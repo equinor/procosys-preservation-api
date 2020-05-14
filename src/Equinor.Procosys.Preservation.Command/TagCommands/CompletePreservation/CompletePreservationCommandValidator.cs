@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using FluentValidation;
@@ -16,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
                         
-            RuleFor(command => command.TagIds)
+            RuleFor(command => command.Tags)
                 .Must(ids => ids != null && ids.Any())
                 .WithMessage("At least 1 tag must be given!")
                 .Must(BeUniqueTags)
@@ -26,28 +27,28 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
                 .MustAsync(NotBeAClosedProjectForTagAsync)
                 .WithMessage("Project is closed!");
 
-            When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
+            When(command => command.Tags.Any() && BeUniqueTags(command.Tags), () =>
             {
-                RuleForEach(command => command.TagIds)
-                    .MustAsync((_, tagId, __, token) => BeAnExistingTagAsync(tagId, token))
+                RuleForEach(command => command.Tags)
+                    .MustAsync((_, tag, __, token) => BeAnExistingTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag doesn't exists! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
+                    .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => IsReadyToBeCompletedAsync(tagId, token))
+                    .MustAsync((_, tag, __, token) => IsReadyToBeCompletedAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Preservation on tag can not be completed! Tag={id}");
             });
 
-            bool BeUniqueTags(IEnumerable<int> tagIds)
+            bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
             {
-                var ids = tagIds.ToList();
+                var ids = tags.Select(x => x.Id).ToList();
                 return ids.Distinct().Count() == ids.Count;
             }
             
-            async Task<bool> BeInSameProjectAsync(IEnumerable<int> tagIds, CancellationToken token)
-                => await projectValidator.AllTagsInSameProjectAsync(tagIds, token);
+            async Task<bool> BeInSameProjectAsync(IEnumerable<IdAndRowVersion> tags, CancellationToken token)
+                => await projectValidator.AllTagsInSameProjectAsync(tags.Select(x => x.Id), token);
             
-            async Task<bool> NotBeAClosedProjectForTagAsync(IEnumerable<int> tagIds, CancellationToken token)
-                => !await projectValidator.IsClosedForTagAsync(tagIds.First(), token);
+            async Task<bool> NotBeAClosedProjectForTagAsync(IEnumerable<IdAndRowVersion> tags, CancellationToken token)
+                => !await projectValidator.IsClosedForTagAsync(tags.First().Id, token);
 
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);

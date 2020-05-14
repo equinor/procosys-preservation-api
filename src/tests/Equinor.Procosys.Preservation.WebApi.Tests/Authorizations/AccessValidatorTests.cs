@@ -9,10 +9,12 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
@@ -502,7 +504,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new CompletePreservationCommand(new List<int> { TagIdWithAccessToProject });
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -515,7 +517,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new CompletePreservationCommand(new List<int> { TagIdWithoutAccessToProject });
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithoutAccessToProject, null) });
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -529,8 +531,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new CompletePreservationCommand(new List<int> { TagIdWithAccessToProject });
-            
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) });
+
             // act
             var result = await _dut.ValidateAsync(command);
 
@@ -544,8 +546,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new CompletePreservationCommand(new List<int> { TagIdWithAccessToProject });
-            
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) });
+
             // act
             var result = await _dut.ValidateAsync(command);
 
@@ -559,7 +561,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnVoidTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new VoidTagCommand(TagIdWithAccessToProject);
+            var command = new VoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -572,7 +574,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnVoidTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new VoidTagCommand(TagIdWithoutAccessToProject);
+            var command = new VoidTagCommand(TagIdWithoutAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -586,7 +588,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new VoidTagCommand(TagIdWithAccessToProject);
+            var command = new VoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -601,7 +603,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new VoidTagCommand(TagIdWithAccessToProject);
+            var command = new VoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -616,7 +618,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUnvoidTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new UnvoidTagCommand(TagIdWithAccessToProject);
+            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -629,7 +631,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUnvoidTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new UnvoidTagCommand(TagIdWithoutAccessToProject);
+            var command = new UnvoidTagCommand(TagIdWithoutAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -643,7 +645,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new UnvoidTagCommand(TagIdWithAccessToProject);
+            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -658,7 +660,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new UnvoidTagCommand(TagIdWithAccessToProject);
+            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -832,6 +834,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnGetGetTagAttachmentQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new GetTagAttachmentQuery(TagIdWithoutAccessToProject, 1);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetActionAttachmentsQuery_ShouldReturnTrue_WhenAccessToProject()
+        {
+            var query = new GetActionAttachmentsQuery(TagIdWithAccessToProject, 1);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetActionAttachmentsQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            var query = new GetActionAttachmentsQuery(TagIdWithoutAccessToProject, 1);
             // act
             var result = await _dut.ValidateAsync(query);
 

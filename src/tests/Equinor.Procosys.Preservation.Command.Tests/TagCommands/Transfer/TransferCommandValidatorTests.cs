@@ -13,24 +13,30 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
     {
         private const int TagId1 = 7;
         private const int TagId2 = 8;
+        private const string RowVersion1 = "AAAAAAAAABA=";
+        private const string RowVersion2 = "AAAAAAAABBA=";
         private TransferCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
         private TransferCommand _command;
 
-        private List<int> _tagIds;
+        private List<IdAndRowVersion> _tagIdsWithRowVersion;
 
         [TestInitialize]
         public void Setup_OkState()
         {
-            _tagIds = new List<int> {TagId1, TagId2};
+            _tagIdsWithRowVersion = new List<IdAndRowVersion>
+            {
+                new IdAndRowVersion(TagId1, RowVersion1),
+                new IdAndRowVersion(TagId2, RowVersion2)
+            };
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _command = new TransferCommand(_tagIds);
+            _command = new TransferCommand(_tagIdsWithRowVersion);
 
             _dut = new TransferCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
@@ -46,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new TransferCommand(new List<int>());
+            var command = new TransferCommand(new List<IdAndRowVersion>());
             
             var result = _dut.Validate(command);
 
@@ -58,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new TransferCommand(new List<int>{1, 1});
+            var command = new TransferCommand(new List<IdAndRowVersion>{new IdAndRowVersion(1, null), new IdAndRowVersion(1, null)});
             
             var result = _dut.Validate(command);
 
