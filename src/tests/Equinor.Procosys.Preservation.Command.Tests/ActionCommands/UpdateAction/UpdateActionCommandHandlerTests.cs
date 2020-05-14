@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -19,12 +21,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         private readonly string _newDescription = "ActionDescriptionNew";
         private readonly DateTime _oldDueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
         private readonly DateTime _newDueTimeUtc = new DateTime(2020, 2, 2, 2, 1, 1, DateTimeKind.Utc);
+        private readonly string _rowVersion = "AAAAAAAAABA=";
 
         private UpdateActionCommand _command;
         private UpdateActionCommandHandler _dut;
 
         private Mock<IProjectRepository> _projectRepositoryMock;
-        private Mock<Action> _actionMock;
+        private Action _action;
 
         [TestInitialize]
         public void Setup()
@@ -34,16 +37,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
             tagMock.SetupGet(t => t.Id).Returns(TagId);
-            _actionMock = new Mock<Action>(TestPlant, _oldTitle, _oldDescription, _oldDueTimeUtc);
-            _actionMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            _actionMock.SetupGet(t => t.Id).Returns(ActionId);
-            tagMock.Object.AddAction(_actionMock.Object);
+            _action = new Action(TestPlant, _oldTitle, _oldDescription, _oldDueTimeUtc);
+            _action.SetProtectedIdForTesting(ActionId);
+            tagMock.Object.AddAction(_action);
 
             _projectRepositoryMock
                 .Setup(r => r.GetTagByTagIdAsync(TagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
-            _command = new UpdateActionCommand(TagId, ActionId, _newTitle, _newDescription, _newDueTimeUtc, null);
+            _command = new UpdateActionCommand(TagId, ActionId, _newTitle, _newDescription, _newDueTimeUtc, _rowVersion);
 
             _dut = new UpdateActionCommandHandler(
                 _projectRepositoryMock.Object,
@@ -54,26 +56,35 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         [TestMethod]
         public async Task HandlingUpdateActionCommand_ShouldUpdateAction()
         {
-            Assert.AreEqual(_oldTitle, _actionMock.Object.Title);
-            Assert.AreEqual(_oldDescription, _actionMock.Object.Description);
-            Assert.AreEqual(_oldDueTimeUtc, _actionMock.Object.DueTimeUtc);
+            // Arrange
+            Assert.AreEqual(_oldTitle, _action.Title);
+            Assert.AreEqual(_oldDescription, _action.Description);
+            Assert.AreEqual(_oldDueTimeUtc, _action.DueTimeUtc);
 
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Arrange
+            Assert.AreEqual(_newTitle, _action.Title);
+            Assert.AreEqual(_newDescription, _action.Description);
+            Assert.AreEqual(_newDueTimeUtc, _action.DueTimeUtc);
+        }
+                        
+        [TestMethod]
+        public async Task HandlingUpdateActionCommand_ShouldSetAndReturnRowVersion()
+        {
+            // Act
             var result = await _dut.Handle(_command, default);
-            Assert.AreEqual(0, result.Errors.Count);
 
-            Assert.AreEqual(_newTitle, _actionMock.Object.Title);
-            Assert.AreEqual(_newDescription, _actionMock.Object.Description);
-            Assert.AreEqual(_newDueTimeUtc, _actionMock.Object.DueTimeUtc);
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            Assert.AreEqual(_rowVersion, result.Data);
+            Assert.AreEqual(_rowVersion, _action.RowVersion.ConvertToString());
         }
 
         [TestMethod]
-        public async Task HandlingUpdateActionCommand_ShouldSetRowVersion()
-        {
-            await _dut.Handle(_command, default);
-
-            _actionMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
-        }
-
         public async Task HandlingUpdateActionCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);

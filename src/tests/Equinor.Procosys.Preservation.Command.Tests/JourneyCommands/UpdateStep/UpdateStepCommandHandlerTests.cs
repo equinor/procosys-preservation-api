@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
@@ -54,8 +55,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(_rowVersion, result.Data);
             Assert.AreEqual(_newTitle, _step.Title);
+        }
+        
+        [TestMethod]
+        public async Task HandlingUpdateStepCommand_ShouldSetAndReturnRowVersion()
+        {
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            Assert.AreEqual(_rowVersion, result.Data);
+            Assert.AreEqual(_rowVersion, _step.RowVersion.ConvertToString());
         }
 
         [TestMethod]

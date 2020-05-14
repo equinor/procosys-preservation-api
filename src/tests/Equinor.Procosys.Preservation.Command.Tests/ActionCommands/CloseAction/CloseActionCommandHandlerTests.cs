@@ -4,6 +4,7 @@ using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         private readonly int _tagId = 2;
         private readonly int _actionId = 12;
         private readonly int _personId = 16;
+        private readonly string _rowVersion = "AAAAAAAAABA=";
 
         private readonly  Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
 
@@ -23,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         private CloseActionCommandHandler _dut;
 
         private Mock<IProjectRepository> _projectRepositoryMock;
-        private Mock<Action> _actionMock;
+        private Action _action;
         private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
         private Mock<Person> _personMock;
@@ -38,10 +40,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
             tagMock.SetupGet(t => t.Id).Returns(_tagId);
-            _actionMock = new Mock<Action>();
-            _actionMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            _actionMock.SetupGet(t => t.Id).Returns(_actionId);
-            tagMock.Object.AddAction(_actionMock.Object);
+            _action = new Action(TestPlant, "T", "D", null);
+            _action.SetProtectedIdForTesting(_actionId);
+            tagMock.Object.AddAction(_action);
 
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(_personId);
@@ -58,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(_personMock.Object));
 
-            _command = new CloseActionCommand(_tagId, _actionId, null);
+            _command = new CloseActionCommand(_tagId, _actionId, _rowVersion);
 
             _dut = new CloseActionCommandHandler(
                 _projectRepositoryMock.Object,
@@ -71,27 +72,33 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         [TestMethod]
         public async Task HandlingCloseActionCommand_ShouldCloseAction()
         {
-            var result = await _dut.Handle(_command, default);
-            Assert.AreEqual(0, result.Errors.Count);
+            await _dut.Handle(_command, default);
 
-            Assert.IsTrue(_actionMock.Object.IsClosed);
+            Assert.IsTrue(_action.IsClosed);
         }
 
         [TestMethod]
         public async Task HandlingCloseActionCommand_ShouldCloseByPerson()
         {
+            await _dut.Handle(_command, default);
+            Assert.AreEqual(_personId, _action.ClosedById);
+        }
+                
+        [TestMethod]
+        public async Task HandlingCloseActionCommand_ShouldSetAndReturnRowVersion()
+        {
+            // Act
             var result = await _dut.Handle(_command, default);
-            Assert.AreEqual(_personId, _actionMock.Object.ClosedById);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            Assert.AreEqual(_rowVersion, result.Data);
+            Assert.AreEqual(_rowVersion, _action.RowVersion.ConvertToString());
         }
 
         [TestMethod]
-        public async Task HandlingCloseActionCommand_ShouldSetRowVersion()
-        {
-            await _dut.Handle(_command, default);
-
-            _actionMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
-        }
-
         public async Task HandlingCloseActionCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
