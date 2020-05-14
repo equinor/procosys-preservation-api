@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
@@ -684,33 +685,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             Assert.IsTrue(result);
         }
 
-        //[TestMethod]
-        //public async Task ValidateAsync_OnVoidJourneyCommand_ShouldReturnFalse_WhenNoAccessToJourney()
-        //{
-        //    // Arrange
-        //    var command = new VoidJourneyCommand(JourneyIdWithoutAccessToJourney);
-
-        //    // act
-        //    var result = await _dut.ValidateAsync(command);
-
-        //    // Assert
-        //    Assert.IsFalse(result);
-        //}
-
-        //[TestMethod]
-        //public async Task ValidateAsync_OnVoidJourneyCommand_ShouldReturnFalse_WhenNoAccessToContent()
-        //{
-        //    // Arrange
-        //    _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-        //    var command = new VoidJourneyCommand(JourneyIdWithAccessToJourney);
-
-        //    // act
-        //    var result = await _dut.ValidateAsync(command);
-
-        //    // Assert
-        //    Assert.IsFalse(result);
-        //}
-
         [TestMethod]
         public async Task ValidateAsync_OnVoidJourneyCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
@@ -718,6 +692,36 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new VoidJourneyCommand(JourneyIdWithAccessToJourney, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region UnvoidJourneyCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnUnvoidJourneyCommand_ShouldReturnTrue_WhenAccessToBothJourneyAndContent()
+        {
+            // Arrange
+            var command = new UnvoidJourneyCommand(JourneyIdWithAccessToJourney, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUnvoidJourneyCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new UnvoidJourneyCommand(JourneyIdWithAccessToJourney, null);
 
             // act
             var result = await _dut.ValidateAsync(command);

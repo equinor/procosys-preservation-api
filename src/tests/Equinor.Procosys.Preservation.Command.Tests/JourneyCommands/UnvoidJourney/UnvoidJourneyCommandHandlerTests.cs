@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
         private Journey _journey;
         private UnvoidJourneyCommand _command;
         private UnvoidJourneyCommandHandler _dut;
-        private Mock<Journey> _journeyMock;
+        private readonly string _rowVersion = "AAAAAAAAABA=";
 
         [TestInitialize]
         public void Setup()
@@ -21,14 +22,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
 
             _journey = new Journey(TestPlant, "JourneyTitle");
-            _journeyMock = new Mock<Journey>(TestPlant, "JourneyTitle");
-            _journeyMock.SetupGet(j => j.Plant).Returns(TestPlant);
-            _journeyMock.SetupGet(j => j.Id).Returns(journeyId);
             journeyRepositoryMock
                 .Setup(r => r.GetByIdAsync(journeyId))
-                .Returns(Task.FromResult(_journeyMock.Object));
+                .Returns(Task.FromResult(_journey));
 
-            _command = new UnvoidJourneyCommand(journeyId, "AAAAAAAAAAA=");
+            _command = new UnvoidJourneyCommand(journeyId, _rowVersion);
 
             _dut = new UnvoidJourneyCommandHandler(
                 journeyRepositoryMock.Object,
@@ -38,23 +36,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
         [TestMethod]
         public async Task HandlingUnvoidJourneyCommand_ShouldUnvoidJourney()
         {
-            // Arrange
-            Assert.IsFalse(_journey.IsVoided);
-
-            // Act
             var result = await _dut.Handle(_command, default);
 
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual("AAAAAAAAAAA=", result.Data);
             Assert.IsFalse(_journey.IsVoided);
         }
 
         [TestMethod]
-        public async Task HandlingUnvoidJourneyCommand_ShouldSetRowVersion()
+        public async Task HandlingVoidJourneyCommand_ShouldSetAndReturnRowVersion()
         {
-            await _dut.Handle(_command, default);
+            // Act
+            var result = await _dut.Handle(_command, default);
 
-            _journeyMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(_rowVersion, result.Data);
+            Assert.AreEqual(_rowVersion, _journey.RowVersion.ConvertToString());
         }
 
         [TestMethod]
