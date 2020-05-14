@@ -80,7 +80,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             Assert.IsNotNull(_initialPreservationPeriod.PreservationRecord);
         }
 
-
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldSave()
         {

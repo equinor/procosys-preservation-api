@@ -13,13 +13,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
     [TestClass]
     public class UpdateTagCommandHandlerTests : CommandHandlerTestsBase
     {
-        private readonly int _tagId = 2;
         private readonly string _oldRemark = "RemarkOld";
         private readonly string _newRemark = "RemarkNew";
         private readonly string _oldStorageArea = "StorageAreaOld";
         private readonly string _newStorageArea = "StorageAreaNew";
         private readonly int _rdId1 = 17;
         private readonly int _intervalWeeks = 2;
+        private readonly string _rowVersion = "AAAAAAAAABA=";
 
         private TagRequirement _requirement;
         private Tag _tag;
@@ -47,12 +47,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
                 Remark = _oldRemark
             };
 
-            _tag.SetRowVersion("AAAAAAAAAAA=");
+            var tagId = 2;
             _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_tagId))
+                .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new UpdateTagCommand(_tagId, _newRemark, _newStorageArea, "AAAAAAAAABA=");
+            _command = new UpdateTagCommand(tagId, _newRemark, _newStorageArea, _rowVersion);
 
             _dut = new UpdateTagCommandHandler(
                 _projectRepositoryMock.Object,
@@ -62,10 +62,30 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
         [TestMethod]
         public async Task HandlingUpdateTagCommand_ShouldUpdateTag()
         {
+            // Arrange
+            Assert.AreEqual(_oldStorageArea, _tag.StorageArea);
+            Assert.AreEqual(_oldRemark, _tag.Remark);
+
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(_newStorageArea, _tag.StorageArea);
+            Assert.AreEqual(_newRemark, _tag.Remark);
+        }
+                        
+        [TestMethod]
+        public async Task HandlingUpdateModeCommand_ShouldSetAndReturnRowVersion()
+        {
+            // Act
             var result = await _dut.Handle(_command, default);
+
+            // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(_tag.StorageArea, _newStorageArea);
-            Assert.AreEqual(_tag.Remark, _newRemark);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            Assert.AreEqual(_rowVersion, result.Data);
+            Assert.AreEqual(_rowVersion, _tag.RowVersion.ConvertToString());
         }
 
         [TestMethod]
@@ -75,16 +95,5 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
-        [TestMethod]
-        public async Task HandlingUpdateTagCommand_ShouldSetRowVersion()
-        {
-            // Act
-            Assert.AreNotEqual(_command.RowVersion, _tag.RowVersion.ConvertToString());
-            await _dut.Handle(_command, default);
-
-            // Assert
-            var updatedRowVersion = _tag.RowVersion.ConvertToString();
-            Assert.AreEqual(_command.RowVersion, updatedRowVersion);
-        }
     }
 }

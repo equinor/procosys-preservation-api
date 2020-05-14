@@ -33,13 +33,15 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
             var action = tag.Actions.Single(a => a.Id == request.ActionId);
-            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var currentUser = await _personRepository.GetByOidAsync(currentUserOid);
+
+            var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
+            
             action.Close(TimeService.UtcNow, currentUser);
             action.SetRowVersion(request.RowVersion);
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<string>(action.RowVersion.ToString());
+            return new SuccessResult<string>(action.RowVersion.ConvertToString());
         }
     }
 }

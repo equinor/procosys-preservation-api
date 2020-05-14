@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -18,16 +20,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         private const int Step1OnJourney2Id = 3;
         private const int Step2OnJourney2Id = 4;
 
-        private const int TagId1 = 7;
-        private const int TagId2 = 8;
-        private const string RowVersion1 = "AAAAAAAAABA=";
-        private const string RowVersion2 = "AAAAAAAABBA=";
+        private const string _rowVersion1 = "AAAAAAAAABA=";
+        private const string _rowVersion2 = "AAAAAAAABBA=";
 
         private TransferCommand _command;
 
         private TransferCommandHandler _dut;
-        private Mock<Tag> _tag1Mock;
-        private Mock<Tag> _tag2Mock;
+        private Tag _tag1;
+        private Tag _tag2;
 
         [TestInitialize]
         public void Setup()
@@ -61,28 +61,29 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
 
             var reqMock1 = new Mock<TagRequirement>();
             reqMock1.SetupGet(r => r.Plant).Returns(TestPlant);
-            _tag1Mock = new Mock<Tag>(TestPlant, TagType.Standard, "", "", step1OnJourney1Mock.Object,
+            
+            var tagId1 = 7;
+            var tagId2 = 8;
+            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", step1OnJourney1Mock.Object,
                 new List<TagRequirement> {reqMock1.Object});
-            _tag1Mock.SetupGet(t => t.Id).Returns(TagId1);
-            _tag1Mock.SetupGet(t => t.Plant).Returns(TestPlant);
+            _tag1.SetProtectedIdForTesting(tagId1);
 
             var reqMock2 = new Mock<TagRequirement>();
             reqMock2.SetupGet(r => r.Plant).Returns(TestPlant);
-            _tag2Mock = new Mock<Tag>(TestPlant, TagType.Standard, "", "", step1OnJourney2Mock.Object,
+            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", step1OnJourney2Mock.Object,
                 new List<TagRequirement> {reqMock2.Object});
-            _tag2Mock.SetupGet(t => t.Id).Returns(TagId2);
-            _tag2Mock.SetupGet(t => t.Plant).Returns(TestPlant);
+            _tag2.SetProtectedIdForTesting(tagId2);
 
-            _tag1Mock.Object.StartPreservation();
-            _tag2Mock.Object.StartPreservation();
+            _tag1.StartPreservation();
+            _tag2.StartPreservation();
 
             var projectRepoMock = new Mock<IProjectRepository>();
             
-            var tagIds = new List<int> {TagId1, TagId2};
-            var tagIdsWithRowVersion = new List<IdAndRowVersion> {new IdAndRowVersion(TagId1, RowVersion1), new IdAndRowVersion(TagId2, RowVersion2)};
+            var tagIds = new List<int> {tagId1, tagId2};
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> {new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2)};
             projectRepoMock
                 .Setup(r => r.GetTagsByTagIdsAsync(tagIds))
-                .Returns(Task.FromResult(new List<Tag> {_tag1Mock.Object, _tag2Mock.Object}));
+                .Returns(Task.FromResult(new List<Tag> {_tag1, _tag2}));
 
             _command = new TransferCommand(tagIdsWithRowVersion);
 
@@ -94,8 +95,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         {
             await _dut.Handle(_command, default);
 
-            Assert.AreEqual(Step2OnJourney1Id, _tag1Mock.Object.StepId);
-            Assert.AreEqual(Step2OnJourney2Id, _tag2Mock.Object.StepId);
+            Assert.AreEqual(Step2OnJourney1Id, _tag1.StepId);
+            Assert.AreEqual(Step2OnJourney2Id, _tag2.StepId);
         }
 
         [TestMethod]
@@ -118,16 +119,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         }
 
         [TestMethod]
-        public async Task HandlingTransferCommand_ShouldSetRowVersion()
+        public async Task HandlingTransferCommand_ShouldSetAndReturnRowVersion()
         {
-            // Arrange
-            var updatedRowVersion = _command.Tags.First().RowVersion;
-
             // Act
-            await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_command, default);
 
             // Assert
-            _tag1Mock.Verify(t => t.SetRowVersion(updatedRowVersion), Times.Once);
+            Assert.AreEqual(0, result.Errors.Count);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            Assert.AreEqual(_rowVersion1, result.Data.First().RowVersion);
+            Assert.AreEqual(_rowVersion1, _tag1.RowVersion.ConvertToString());
         }
     }
 }

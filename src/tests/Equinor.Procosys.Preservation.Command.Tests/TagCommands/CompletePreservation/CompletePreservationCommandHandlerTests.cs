@@ -27,38 +27,38 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         private Mock<RequirementDefinition> _rd1Mock;
         private Mock<RequirementDefinition> _rd2Mock;
 
-        private int _rdId1 = 17;
-        private int _rdId2 = 18;
-        private int _tagId1 = 7;
-        private int _tagId2 = 8;
         private const string _rowVersion1 = "AAAAAAAAABA=";
         private const string _rowVersion2 = "AAAAAAAABBA=";
-
-        private int _stepId1 = 9;
-        private int _stepId2 = 10;
 
         private CompletePreservationCommandHandler _dut;
 
         [TestInitialize]
         public void Setup()
         {
+            var rdId1 = 17;
+            var rdId2 = 18;
+            var tagId1 = 7;
+            var tagId2 = 8;
+            var stepId1 = 9;
+            var stepId2 = 10;
+
             var step1Mock = new Mock<Step>();
             step1Mock.SetupGet(s => s.Plant).Returns(TestPlant);
-            step1Mock.SetupGet(s => s.Id).Returns(_stepId1);
+            step1Mock.SetupGet(s => s.Id).Returns(stepId1);
             
             var step2Mock = new Mock<Step>();
             step2Mock.SetupGet(s => s.Plant).Returns(TestPlant);
-            step2Mock.SetupGet(s => s.Id).Returns(_stepId2);
+            step2Mock.SetupGet(s => s.Id).Returns(stepId2);
 
-            var journey = new Journey(TestPlant, "Demissie");
+            var journey = new Journey(TestPlant, "D");
             journey.AddStep(step1Mock.Object);
             journey.AddStep(step2Mock.Object);
 
             _rd1Mock = new Mock<RequirementDefinition>();
-            _rd1Mock.SetupGet(rd => rd.Id).Returns(_rdId1);
+            _rd1Mock.SetupGet(rd => rd.Id).Returns(rdId1);
             _rd1Mock.SetupGet(rd => rd.Plant).Returns(TestPlant);
             _rd2Mock = new Mock<RequirementDefinition>();
-            _rd2Mock.SetupGet(rd => rd.Id).Returns(_rdId2);
+            _rd2Mock.SetupGet(rd => rd.Id).Returns(rdId2);
             _rd2Mock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
             _req1OnTag1 = new TagRequirement(TestPlant, 2, _rd1Mock.Object);
@@ -70,29 +70,29 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
                 _req1OnTag1, _req2OnTag1
             });
             _tag1.StartPreservation();
-            _tag1.SetProtectedIdForTesting(_tagId1);
+            _tag1.SetProtectedIdForTesting(tagId1);
 
             _tag2 = new Tag(TestPlant, TagType.Standard, "", "", step2Mock.Object, new List<TagRequirement>
             {
                 _req1OnTag2, _req2OnTag2
             });
             _tag2.StartPreservation();
-            _tag2.SetProtectedIdForTesting(_tagId2);
+            _tag2.SetProtectedIdForTesting(tagId2);
 
             var tags = new List<Tag>
             {
                 _tag1, _tag2
             };
             
-            var tagIds = new List<int> { _tagId1, _tagId2 };
-            var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(_tagId1, _rowVersion1), new IdAndRowVersion(_tagId2, _rowVersion2) };
+            var tagIds = new List<int> { tagId1, tagId2 };
+            var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2) };
 
             _tagRepoMock = new Mock<IProjectRepository>();
             _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
 
             var journeyRepoMock = new Mock<IJourneyRepository>();
             journeyRepoMock
-                .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> { _stepId2 }))
+                .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> { stepId2 }))
                 .Returns(Task.FromResult(new List<Journey> { journey }));
             
             _command = new CompletePreservationCommand(tagIdsWithRowVersion);
@@ -138,18 +138,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         }
 
         [TestMethod]
-        public async Task HandlingCompletePreservationCommand_ShouldSetRowVersion()
+        public async Task HandlingCompletePreservationCommand_ShouldSetAndReturnRowVersion()
         {
-            // Arrange
-            var rowVersion = _command.Tags.First().RowVersion;
-
             // Act
-            Assert.AreNotEqual(rowVersion, _tag1.RowVersion.ConvertToString());
-            await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_command, default);
 
             // Assert
-            var updatedRowVersion = _tag1.RowVersion.ConvertToString();
-            Assert.AreEqual(rowVersion, updatedRowVersion);
+            Assert.AreEqual(0, result.Errors.Count);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            Assert.AreEqual(_rowVersion1, result.Data.First().RowVersion);
+            Assert.AreEqual(_rowVersion1, _tag1.RowVersion.ConvertToString());
         }
     }
 }
