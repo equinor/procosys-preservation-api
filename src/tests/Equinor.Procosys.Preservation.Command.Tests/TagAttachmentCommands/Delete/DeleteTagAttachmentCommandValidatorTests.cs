@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
 
-            _command = new DeleteTagAttachmentCommand(2, 3, "AAAAAAAAABA=");
+            _command = new DeleteTagAttachmentCommand(2, 3, null);
 
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_command.TagId, default)).Returns(Task.FromResult(true));
