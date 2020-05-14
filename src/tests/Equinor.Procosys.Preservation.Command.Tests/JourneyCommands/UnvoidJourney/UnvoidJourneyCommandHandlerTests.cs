@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
         private Journey _journey;
         private UnvoidJourneyCommand _command;
         private UnvoidJourneyCommandHandler _dut;
+        private Mock<Journey> _journeyMock;
 
         [TestInitialize]
         public void Setup()
@@ -19,17 +20,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
             var journeyId = 2;
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
 
-            _journey = new Journey(TestPlant, "Test Journey");
-
+            _journey = new Journey(TestPlant, "JourneyTitle");
+            _journeyMock = new Mock<Journey>(TestPlant, "JourneyTitle");
+            _journeyMock.SetupGet(j => j.Plant).Returns(TestPlant);
+            _journeyMock.SetupGet(j => j.Id).Returns(journeyId);
             journeyRepositoryMock
                 .Setup(r => r.GetByIdAsync(journeyId))
-                .Returns(Task.FromResult(_journey));
+                .Returns(Task.FromResult(_journeyMock.Object));
 
-            _command = new UnvoidJourneyCommand(journeyId);
+            _command = new UnvoidJourneyCommand(journeyId, "AAAAAAAAAAA=");
 
             _dut = new UnvoidJourneyCommandHandler(
                 journeyRepositoryMock.Object,
-                UnitOfWorkMock.Object); 
+                UnitOfWorkMock.Object);
         }
 
         [TestMethod]
@@ -42,7 +45,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
             var result = await _dut.Handle(_command, default);
 
             Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual("AAAAAAAAAAA=", result.Data);
             Assert.IsFalse(_journey.IsVoided);
+        }
+
+        [TestMethod]
+        public async Task HandlingUnvoidJourneyCommand_ShouldSetRowVersion()
+        {
+            await _dut.Handle(_command, default);
+
+            _journeyMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
         }
 
         [TestMethod]

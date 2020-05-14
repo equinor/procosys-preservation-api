@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidJourne
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
 
-            _command = new VoidJourneyCommand(_journeyId);
+            _command = new VoidJourneyCommand(_journeyId, null);
             _dut = new VoidJourneyCommandValidator(_journeyValidatorMock.Object);
         }
 

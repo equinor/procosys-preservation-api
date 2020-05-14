@@ -9,9 +9,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new UnvoidJourneyCommand(2);
+            var dut = new UnvoidJourneyCommand(2, "AAAAAAAAABA=");
 
             Assert.AreEqual(2, dut.JourneyId);
+            Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }
 }

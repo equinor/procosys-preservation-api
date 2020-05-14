@@ -33,6 +33,7 @@ using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney;
 
 namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
 {
@@ -49,6 +50,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         private const string ProjectWithAccess = "TestProjectWithAccess";
         private const string ProjectWithoutAccess = "TestProjectWithoutAccess";
         private const string RestrictedToContent = "ResponsbleA";
+        private const int JourneyIdWithAccessToJourney = 3;
+        private const int JourneyIdWithoutAccessToJourney = 4;
 
         [TestInitialize]
         public void Setup()
@@ -656,6 +659,63 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UnvoidTagCommand(TagIdWithAccessToProject);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+        
+        #region VoidJourneyCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnVoidJourneyCommand_ShouldReturnTrue_WhenAccessToBothJourneyAndContent()
+        {
+            // Arrange
+            var command = new VoidJourneyCommand(JourneyIdWithAccessToJourney, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        //[TestMethod]
+        //public async Task ValidateAsync_OnVoidJourneyCommand_ShouldReturnFalse_WhenNoAccessToJourney()
+        //{
+        //    // Arrange
+        //    var command = new VoidJourneyCommand(JourneyIdWithoutAccessToJourney);
+
+        //    // act
+        //    var result = await _dut.ValidateAsync(command);
+
+        //    // Assert
+        //    Assert.IsFalse(result);
+        //}
+
+        //[TestMethod]
+        //public async Task ValidateAsync_OnVoidJourneyCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        //{
+        //    // Arrange
+        //    _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+        //    var command = new VoidJourneyCommand(JourneyIdWithAccessToJourney);
+
+        //    // act
+        //    var result = await _dut.ValidateAsync(command);
+
+        //    // Assert
+        //    Assert.IsFalse(result);
+        //}
+
+        [TestMethod]
+        public async Task ValidateAsync_OnVoidJourneyCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new VoidJourneyCommand(JourneyIdWithAccessToJourney, null);
 
             // act
             var result = await _dut.ValidateAsync(command);

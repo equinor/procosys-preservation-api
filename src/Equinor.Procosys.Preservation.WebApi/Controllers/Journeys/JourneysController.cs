@@ -113,9 +113,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromRoute] int id)
+            [FromRoute] int id,
+            [FromBody] VoidJourneyDto dto)
         {
-            var result = await _mediator.Send(new VoidJourneyCommand(id));
+            var result = await _mediator.Send(new VoidJourneyCommand(id, dto.RowVersion));
 
             return this.FromResult(result);
         }
@@ -127,9 +128,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromRoute] int id)
+            [FromRoute] int id,
+            [FromBody] UnvoidJourneyDto dto)
         {
-            var result = await _mediator.Send(new UnvoidJourneyCommand(id));
+            var result = await _mediator.Send(new UnvoidJourneyCommand(id, dto.RowVersion));
 
             return this.FromResult(result);
         }

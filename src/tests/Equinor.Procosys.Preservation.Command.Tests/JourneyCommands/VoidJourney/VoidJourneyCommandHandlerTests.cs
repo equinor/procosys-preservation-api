@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidJourne
         private Journey _journey;
         private VoidJourneyCommand _command;
         private VoidJourneyCommandHandler _dut;
+        private Mock<Journey> _journeyMock;
 
         [TestInitialize]
         public void Setup()
@@ -19,13 +20,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidJourne
             var journeyId = 2;
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
 
-            _journey = new Journey(TestPlant, "Test Journey");
-
+            _journey = new Journey(TestPlant, "JourneyTitle");
+            _journeyMock = new Mock<Journey>(TestPlant, "JourneyTitle");
+            _journeyMock.SetupGet(j => j.Plant).Returns(TestPlant);
+            _journeyMock.SetupGet(j => j.Id).Returns(journeyId);
             journeyRepositoryMock
                 .Setup(r => r.GetByIdAsync(journeyId))
-                .Returns(Task.FromResult(_journey));
+                .Returns(Task.FromResult(_journeyMock.Object));
 
-            _command = new VoidJourneyCommand(journeyId);
+            _command = new VoidJourneyCommand(journeyId, "AAAAAAAAAAA=");
 
             _dut = new VoidJourneyCommandHandler(
                 journeyRepositoryMock.Object,
@@ -41,8 +44,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidJourne
             // Act
             var result = await _dut.Handle(_command, default);
 
+            // Assert
             Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual("AAAAAAAAAAA=", result.Data);
             Assert.IsTrue(_journey.IsVoided);
+        }
+
+        [TestMethod]
+        public async Task HandlingVoidJourneyCommand_ShouldSetRowVersion()
+        {
+            await _dut.Handle(_command, default);
+
+            _journeyMock.Verify(u => u.SetRowVersion(_command.RowVersion), Times.Once);
         }
 
         [TestMethod]

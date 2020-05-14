@@ -7,7 +7,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney
 {
-    public class UnvoidJourneyCommandHandler : IRequestHandler<UnvoidJourneyCommand, Result<Unit>>
+    public class UnvoidJourneyCommandHandler : IRequestHandler<UnvoidJourneyCommand, Result<string>>
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -18,15 +18,15 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(UnvoidJourneyCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(UnvoidJourneyCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
 
             journey.UnVoid();
-
+            journey.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(journey.RowVersion.ConvertToString());
         }
     }
 }
