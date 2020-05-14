@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
             async Task<bool> BeAnExistingAttachmentAsync(int attachmentId, CancellationToken token)
-                => await attachmentValidator.AttachmentExistsAsync(attachmentId, token);
+                => await attachmentValidator.ExistsAsync(attachmentId, token);
         }
     }
 }

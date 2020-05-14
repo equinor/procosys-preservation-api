@@ -12,8 +12,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators
 
         public AttachmentValidator(IReadOnlyContext context) => _context = context;
 
-        // unit tests
-        public async Task<bool> AttachmentExistsAsync(int attachmentId, CancellationToken token) =>
+        // todo unit tests
+        public async Task<bool> ExistsAsync(int attachmentId, CancellationToken token) =>
             await (from a in _context.QuerySet<Attachment>()
                 where a.Id == attachmentId
                 select a).AnyAsync(token);

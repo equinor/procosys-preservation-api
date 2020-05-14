@@ -14,19 +14,16 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IPlantProvider _plantProvider;
         private readonly IBlobStorage _blobStorage;
         private readonly IOptionsMonitor<AttachmentOptions> _attachmentOptions;
 
         public DeleteTagAttachmentCommandHandler(
             IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
-            IPlantProvider plantProvider,
             IBlobStorage blobStorage, IOptionsMonitor<AttachmentOptions> attachmentOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
-            _plantProvider = plantProvider;
             _blobStorage = blobStorage;
             _attachmentOptions = attachmentOptions;
         }
