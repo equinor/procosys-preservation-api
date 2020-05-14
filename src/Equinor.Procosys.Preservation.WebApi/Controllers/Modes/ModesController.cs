@@ -67,9 +67,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromRoute] string rowVersion)
+            [FromBody] DeleteModeDto dto)
         {
-            var result = await _mediator.Send(new DeleteModeCommand(id, rowVersion));
+            var result = await _mediator.Send(new DeleteModeCommand(id, dto.RowVersion));
             return this.FromResult(result);
         }
 

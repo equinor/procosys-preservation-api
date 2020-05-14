@@ -2,7 +2,6 @@
 using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
