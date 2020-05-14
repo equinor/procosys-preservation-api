@@ -138,18 +138,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         }
 
         [TestMethod]
-        public async Task HandlingCompletePreservationCommand_ShouldSetRowVersion()
+        public async Task HandlingCompletePreservationCommand_ShouldSetAndReturnRowVersion()
         {
-            // Arrange
-            var rowVersion = _command.Tags.First().RowVersion;
-
             // Act
-            Assert.AreNotEqual(rowVersion, _tag1.RowVersion.ConvertToString());
-            await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_command, default);
 
             // Assert
-            var updatedRowVersion = _tag1.RowVersion.ConvertToString();
-            Assert.AreEqual(rowVersion, updatedRowVersion);
+            Assert.AreEqual(0, result.Errors.Count);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            Assert.AreEqual(_rowVersion1, result.Data.First().RowVersion);
+            Assert.AreEqual(_rowVersion1, _tag1.RowVersion.ConvertToString());
         }
     }
 }
