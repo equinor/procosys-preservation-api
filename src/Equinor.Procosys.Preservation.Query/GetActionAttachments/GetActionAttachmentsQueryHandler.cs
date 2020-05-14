@@ -36,7 +36,8 @@ namespace Equinor.Procosys.Preservation.Query.GetActionAttachments
                 .Attachments
                 .Select(attachment => new ActionAttachmentDto(
                     attachment.Id,
-                    attachment.FileName)).ToList();
+                    attachment.FileName,
+                    attachment.RowVersion.ConvertToString())).ToList();
             
             return new SuccessResult<List<ActionAttachmentDto>>(attachments);
         }
