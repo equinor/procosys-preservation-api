@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
-        [HttpPut("{id}/UpdateMode")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
-        [HttpPut("{id}/VoidMode")]
+        [HttpPut("{id}/Void")]
         public async Task<ActionResult> VoidMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -103,7 +103,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
-        [HttpPut("{id}/UnvoidMode")]
+        [HttpPut("{id}/Unvoid")]
         public async Task<ActionResult> UnvoidMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]

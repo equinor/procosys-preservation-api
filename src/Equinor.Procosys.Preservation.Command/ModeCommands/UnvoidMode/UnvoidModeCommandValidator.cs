@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingModeAsync(command.ModeId, token))
-                .WithMessage(command => $"Mode doesn't exists! Mode={command.ModeId}")
+                .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
                 .MustAsync((command, token) => BeAVoidedModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode is not voided! Mode={command.ModeId}");
 

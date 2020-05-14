@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
                 .MustAsync((command, token) => BeAnExistingActionAsync(command.TagId, command.ActionId, token))
                 .WithMessage(command => $"Action doesn't exist! Action={command.ActionId}")
                 .MustAsync((command, token) => NotBeAClosedActionAsync(command.ActionId, token))
-                .WithMessage(command => $"Action is closed! Action={command.ActionId}");
+                .WithMessage(command => $"Action is already closed! Action={command.ActionId}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);

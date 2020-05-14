@@ -13,9 +13,9 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingModeAsync(command.ModeId, token))
-                .WithMessage(command => $"Mode doesn't exists! Mode={command.ModeId}")
+                .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
-                .WithMessage(command => $"Mode is voided! Mode={command.ModeId}");
+                .WithMessage(command => $"Mode is already voided! Mode={command.ModeId}");
 
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);
