@@ -17,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         private readonly string TagFunctionCode = "TFC";
         private readonly string RegisterCode = "RC";
         private readonly string ProcosysDescription = "ProcosysDescription";
+        private readonly string RowVersion = "AAAAAAAAABA=";
         private RequirementDefinition _reqDef1;
         private RequirementDefinition _reqDef2;
         private const int ReqDefId1 = 99;
@@ -66,8 +67,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                     new RequirementForCommand(ReqDefId1, Interval1),
                     new RequirementForCommand(ReqDefId2, Interval2),
                 },
-                "AAAAAAAAABA=");
-            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null, "AAAAAAAAABA=");
+                RowVersion);
+            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null, RowVersion);
             
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock
@@ -214,14 +215,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         }
 
         [TestMethod]
-        public async Task HandlingUpdateRequirementsCommand_ShouldSetRowVersion()
+        public async Task HandlingUpdateRequirementsCommand_ShouldSetAndReturnRowVersion()
         {
             // Act
-            await _dut.Handle(_commandWithoutRequirements, default);
+            var result = await _dut.Handle(_commandWithoutRequirements, default);
 
             // Assert
-            var updatedRowVersion = _tfAddedToRepository.RowVersion.ConvertToString();
-            Assert.AreEqual(updatedRowVersion, _commandWithoutRequirements.RowVersion);
+            Assert.AreEqual(0, result.Errors.Count);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            Assert.AreEqual(RowVersion, result.Data);
+            Assert.AreEqual(RowVersion, _tfAddedToRepository.RowVersion.ConvertToString());
         }
     }
 }
