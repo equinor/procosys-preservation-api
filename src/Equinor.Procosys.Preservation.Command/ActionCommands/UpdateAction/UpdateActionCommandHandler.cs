@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<string>(action.RowVersion.ToString());
+            return new SuccessResult<string>(action.RowVersion.ConvertToString());
         }
     }
 }

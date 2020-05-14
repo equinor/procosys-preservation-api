@@ -1,8 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
-using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -23,13 +22,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         public void Setup()
         {
             // Arrange
-            var testModeId = 1;
+            var modeId = 1;
             var modeRepositoryMock = new Mock<IModeRepository>();
             _mode = new Mode(TestPlant, _oldTitle);
-            _mode.SetProtectedIdForTesting(testModeId);
-            modeRepositoryMock.Setup(m => m.GetByIdAsync(testModeId))
+            modeRepositoryMock.Setup(m => m.GetByIdAsync(modeId))
                 .Returns(Task.FromResult(_mode));
-            _command = new UpdateModeCommand(testModeId, _newTitle, _rowVersion);
+            _command = new UpdateModeCommand(modeId, _newTitle, _rowVersion);
 
             _dut = new UpdateModeCommandHandler(
                 modeRepositoryMock.Object,
@@ -43,12 +41,24 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
             Assert.AreEqual(_oldTitle, _mode.Title);
 
             // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(_newTitle, _mode.Title);
+        }
+                
+        [TestMethod]
+        public async Task HandlingUpdateModeCommand_ShouldSetAndReturnRowVersion()
+        {
+            // Act
             var result = await _dut.Handle(_command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
             Assert.AreEqual(_rowVersion, result.Data);
-            Assert.AreEqual(_mode.Title, _newTitle);
+            Assert.AreEqual(_rowVersion, _mode.RowVersion.ConvertToString());
         }
 
         [TestMethod]
