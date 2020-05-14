@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
             _actionValidatorMock = new Mock<IActionValidator>();
-            _actionValidatorMock.Setup(r => r.ExistsAsync(_tagId, _actionId, default)).Returns(Task.FromResult(true));
+            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(true));
 
             _command = new UpdateActionCommand(
                 _tagId,
@@ -105,7 +105,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         [TestMethod]
         public void Validate_ShouldFail_WhenActionNotExists()
         {
-            _actionValidatorMock.Setup(r => r.ExistsAsync(_tagId, _actionId, default)).Returns(Task.FromResult(false));
+            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 

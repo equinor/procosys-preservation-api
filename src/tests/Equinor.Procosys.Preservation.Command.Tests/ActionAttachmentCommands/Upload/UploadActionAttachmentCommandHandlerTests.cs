@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -16,21 +17,23 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
     [TestClass]
     public class UploadActionAttachmentCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const int TagId = 2;
-        private const int ActionId = 3;
-        private const string FileName = "AttachmentFileName";
-        private const string BlobContainer = "bc";
+        private readonly int _tagId = 2;
+        private readonly int _actionId = 12;
+        private readonly string _fileName = "AttachmentFileName";
+        private readonly string _blobContainer = "bc";
 
         private UploadActionAttachmentCommand _commandWithoutOverwrite;
         private UploadActionAttachmentCommandHandler _dut;
 
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IBlobStorage> _blobStorageMock;
-        private Mock<Action> _actionMock;
+        private Action _action;
 
         [TestInitialize]
         public void Setup()
         {
+            _commandWithoutOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, false, new MemoryStream());
+
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
 
@@ -38,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             var options = new AttachmentOptions
             {
                 MaxSizeKb = 2,
-                BlobContainer = BlobContainer,
+                BlobContainer = _blobContainer,
                 ValidFileSuffixes = new[] {".gif", ".jpg"}
             };
             attachmentOptionsMock
@@ -47,17 +50,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
 
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            tagMock.SetupGet(t => t.Id).Returns(TagId);
-            _actionMock = new Mock<Action>();
-            _actionMock.SetupGet(t => t.Plant).Returns(TestPlant);
-            _actionMock.SetupGet(t => t.Id).Returns(ActionId);
-            tagMock.Object.AddAction(_actionMock.Object);
+            _action = new Action(TestPlant, "T", "D", null);
+            _action.SetProtectedIdForTesting(_commandWithoutOverwrite.ActionId);
+            tagMock.Object.AddAction(_action);
 
             _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(TagId))
+                .Setup(r => r.GetTagByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
-            _commandWithoutOverwrite = new UploadActionAttachmentCommand(TagId, ActionId, FileName, false, new MemoryStream());
 
             _dut = new UploadActionAttachmentCommandHandler(
                 _projectRepositoryMock.Object,
@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         public async Task HandlingUploadActionAttachmentCommand_ShouldAddAttachmentToTag_WhenNotExist()
         {
             // Arrange
-            Assert.IsTrue(_actionMock.Object.Attachments.Count == 0);
+            Assert.IsTrue(_action.Attachments.Count == 0);
 
             // Act
             var result = await _dut.Handle(_commandWithoutOverwrite, default);
@@ -79,9 +79,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
-            Assert.IsTrue(_actionMock.Object.Attachments.Count == 1);
-            var attachment = _actionMock.Object.Attachments.Single();
-            Assert.AreEqual(FileName, attachment.FileName);
+            Assert.IsTrue(_action.Attachments.Count == 1);
+            var attachment = _action.Attachments.Single();
+            Assert.AreEqual(_fileName, attachment.FileName);
         }
 
         [TestMethod]
@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         {
             // Arrange
             await _dut.Handle(_commandWithoutOverwrite, default);
-            Assert.IsTrue(_actionMock.Object.Attachments.Count == 1);
+            Assert.IsTrue(_action.Attachments.Count == 1);
 
             // Act and Assert
             await Assert.ThrowsExceptionAsync<Exception>(() => _dut.Handle(_commandWithoutOverwrite, default));
@@ -100,8 +100,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         {
             // Arrange
             await _dut.Handle(_commandWithoutOverwrite, default);
-            Assert.IsTrue(_actionMock.Object.Attachments.Count == 1);
-            var commandWithOverwrite = new UploadActionAttachmentCommand(TagId, ActionId, FileName, true, new MemoryStream());
+            Assert.IsTrue(_action.Attachments.Count == 1);
+            var commandWithOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, true, new MemoryStream());
 
             // Act
             var result = await _dut.Handle(commandWithOverwrite, default);
@@ -109,9 +109,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
-            Assert.IsTrue(_actionMock.Object.Attachments.Count == 1);
-            var attachment = _actionMock.Object.Attachments.Single();
-            Assert.AreEqual(FileName, attachment.FileName);
+            Assert.IsTrue(_action.Attachments.Count == 1);
+            var attachment = _action.Attachments.Single();
+            Assert.AreEqual(_fileName, attachment.FileName);
         }
 
         [TestMethod]
@@ -131,8 +131,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             await _dut.Handle(_commandWithoutOverwrite, default);
 
             // Assert
-            var attachment = _actionMock.Object.Attachments.Single();
-            var p = attachment.GetFullBlobPath(BlobContainer);
+            var attachment = _action.Attachments.Single();
+            var p = attachment.GetFullBlobPath(_blobContainer);
             _blobStorageMock.Verify(b 
                 => b.UploadAsync(p, It.IsAny<Stream>(), _commandWithoutOverwrite.OverwriteIfExists, default), Times.Once);
         }

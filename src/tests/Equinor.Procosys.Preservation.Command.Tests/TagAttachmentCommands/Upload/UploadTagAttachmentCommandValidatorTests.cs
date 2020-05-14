@@ -16,12 +16,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         private Mock<ITagValidator> _tagValidatorMock;
         private UploadTagAttachmentCommand _commandWithoutOverwrite;
 
-        private const string FileName = "A.txt";
+        private readonly string _fileName = "A.txt";
 
         [TestInitialize]
         public void Setup_OkState()
         {
-            _commandWithoutOverwrite = new UploadTagAttachmentCommand(2, FileName, false, new MemoryStream());
+            _commandWithoutOverwrite = new UploadTagAttachmentCommand(2, _fileName, false, new MemoryStream());
 
             _projectValidatorMock = new Mock<IProjectValidator>();
 
@@ -91,7 +91,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         [TestMethod]
         public void Validate_ShouldBeValid_WhenFilenameExistsAndOverwrite()
         {
-            var commandWithOverwrite = new UploadTagAttachmentCommand(2, FileName, true, new MemoryStream());
+            var commandWithOverwrite = new UploadTagAttachmentCommand(2, _fileName, true, new MemoryStream());
             _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(commandWithOverwrite.TagId, commandWithOverwrite.FileName, default))
                 .Returns(Task.FromResult(true));
 

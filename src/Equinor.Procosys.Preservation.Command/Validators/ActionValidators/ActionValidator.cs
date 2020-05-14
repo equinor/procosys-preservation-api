@@ -13,10 +13,9 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ActionValidators
 
         public ActionValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(int tagId, int actionId, CancellationToken token) =>
+        public async Task<bool> ExistsAsync(int actionId, CancellationToken token) =>
             await (from a in _context.QuerySet<Action>()
-                join t in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals t.Id
-                where a.Id == actionId && t.Id == tagId
+                where a.Id == actionId
                 select a).AnyAsync(token);
 
         public async Task<bool> IsClosedAsync(int actionId, CancellationToken token)
@@ -24,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ActionValidators
             var action = await (from a in _context.QuerySet<Action>()
                           where a.Id == actionId
                           select a).SingleOrDefaultAsync(token);
-            return action?.ClosedAtUtc != null;
+            return action != null && action.IsClosed;
         }
 
         public async Task<bool> AttachmentWithFilenameExistsAsync(int actionId, string fileName, CancellationToken token)
