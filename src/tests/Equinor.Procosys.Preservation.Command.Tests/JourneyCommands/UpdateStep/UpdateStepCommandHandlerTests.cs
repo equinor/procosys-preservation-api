@@ -32,11 +32,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             var responsibleMock = new Mock<Responsible>();
             responsibleMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
-            var stepId = 1;
+            var journeyId = 1;
+            var stepId = 2;
+            
+            var journey = new Journey(TestPlant, "J");
+            journey.SetProtectedIdForTesting(journeyId);
+
             _step = new Step(TestPlant, _oldTitle, modeMock.Object, responsibleMock.Object);
-            journeyRepositoryMock.Setup(s => s.GetStepByStepIdAsync(stepId))
-                .Returns(Task.FromResult(_step));
-            _command = new UpdateStepCommand(stepId, _newTitle, _rowVersion);
+            _step.SetProtectedIdForTesting(stepId);
+            journey.AddStep(_step);
+
+            journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
+                .Returns(Task.FromResult(journey));
+            _command = new UpdateStepCommand(journeyId, stepId, _newTitle, _rowVersion);
 
             _dut = new UpdateStepCommandHandler(
                 journeyRepositoryMock.Object,
