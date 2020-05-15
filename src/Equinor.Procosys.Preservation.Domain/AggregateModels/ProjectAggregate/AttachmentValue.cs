@@ -17,7 +17,5 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public AttachmentValue(string plant, Field field, FieldValueAttachment attachment)
             : base(plant, field) =>
             FieldValueAttachment = attachment ?? throw new ArgumentNullException(nameof(attachment));
-
-        public FieldValueAttachment FieldValueAttachment { get; private set; }
     }
 }

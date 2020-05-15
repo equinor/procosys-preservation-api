@@ -26,6 +26,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
 
+        public FieldValueAttachment FieldValueAttachment { get; set; }
+
         public void SetCreated(Person createdBy)
         {
             CreatedAtUtc = TimeService.UtcNow;

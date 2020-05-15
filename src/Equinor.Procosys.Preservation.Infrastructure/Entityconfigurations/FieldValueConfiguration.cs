@@ -18,6 +18,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasValue<CheckBoxChecked>("CheckBoxChecked")
                 .HasValue<AttachmentValue>("AttachmentValue")
                 .HasValue<NumberValue>("NumberValue");
+
+            //builder.HasOne(b => b.FieldValueAttachment);
         }
     }
 }
