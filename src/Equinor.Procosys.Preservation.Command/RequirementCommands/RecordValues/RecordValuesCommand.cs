@@ -4,7 +4,8 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
 {
-    public class RecordValuesCommand : IRequest<Result<Unit>>
+    // todo add tests for accessvalidator
+    public class RecordValuesCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public RecordValuesCommand(
             int tagId,
