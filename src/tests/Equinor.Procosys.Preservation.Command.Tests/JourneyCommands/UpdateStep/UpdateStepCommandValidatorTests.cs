@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
+using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -10,20 +11,25 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
     public class UpdateStepCommandValidatorTests
     {
         private UpdateStepCommandValidator _dut;
+        private Mock<IJourneyValidator> _journeyValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
         private UpdateStepCommand _command;
 
+        private int _journeyId = 2;
         private int _stepId = 1;
         private string _title = "Title";
 
         [TestInitialize]
         public void Setup_OkState()
         {
+            _journeyValidatorMock = new Mock<IJourneyValidator>();
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
+
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
-            _command = new UpdateStepCommand(_stepId, _title, null);
+            _command = new UpdateStepCommand(_journeyId, _stepId, _title, null);
 
-            _dut = new UpdateStepCommandValidator(_stepValidatorMock.Object);
+            _dut = new UpdateStepCommandValidator(_journeyValidatorMock.Object, _stepValidatorMock.Object);
         }
 
         [TestMethod]
@@ -32,6 +38,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             var result = _dut.Validate(_command);
 
             Assert.IsTrue(result.IsValid);
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenJourneyNotExists()
+        {
+            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey doesn't exist!"));
         }
 
         [TestMethod]
