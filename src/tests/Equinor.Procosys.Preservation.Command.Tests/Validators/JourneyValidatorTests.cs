@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.ExistsWithSameTitleAsync(JourneyTitle, default);
                 Assert.IsTrue(result);
             }
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.ExistsAsync(_journeyId, default);
                 Assert.IsTrue(result);
             }
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.ExistsWithSameTitleAsync("XXX", default);
                 Assert.IsFalse(result);
             }
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.ExistsAsync(126234, default);
                 Assert.IsFalse(result);
             }
@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyId, JourneyTitle2, default);
                 Assert.IsTrue(result);
             }
@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyId, "XXXXXX", default);
                 Assert.IsFalse(result);
             }
@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyId2, JourneyTitle2, default);
                 Assert.IsFalse(result);
             }
@@ -114,7 +114,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.IsVoidedAsync(_journeyId, default);
                 Assert.IsTrue(result);
             }
@@ -125,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.IsVoidedAsync(_journeyId, default);
                 Assert.IsFalse(result);
             }
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new JourneyValidator(context);
+                var dut = new journeyValidator(context);
                 var result = await dut.IsVoidedAsync(126234, default);
                 Assert.IsFalse(result);
             }

@@ -100,9 +100,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
+            [FromRoute] int stepId,
             [FromBody] UpdateStepDto dto)
         {
-            var result = await _mediator.Send(new UpdateStepCommand(id, dto.Title, dto.Rowversion));
+            var command = new UpdateStepCommand(
+                id,
+                stepId,
+                dto.Title,
+                dto.RowVersion);
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 

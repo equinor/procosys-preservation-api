@@ -3,6 +3,6 @@
     public class UpdateStepDto
     {
         public string Title { get; set; }
-        public string Rowversion { get; set; }
+        public string RowVersion { get; set; }
     }
 }
