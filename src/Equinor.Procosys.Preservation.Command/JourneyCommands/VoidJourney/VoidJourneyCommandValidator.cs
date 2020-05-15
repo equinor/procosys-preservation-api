@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => NotBeAVoidedJourneyAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey is voided! Journey={command.JourneyId}");
+                .WithMessage(command => $"Journey is already voided! Journey={command.JourneyId}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);

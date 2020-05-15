@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
-        [HttpPut("{id}/UpdateJourney")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
-        [HttpPut("{id}/UpdateStep")]
+        [HttpPut("{id}/Steps/{stepId}")]
         public async Task<ActionResult> UpdateStep(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
-        [HttpPut("{id}/VoidJourney")]
+        [HttpPut("{id}/Void")]
         public async Task<IActionResult> VoidJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -122,7 +122,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
-        [HttpPut("{id}/UnvoidJourney")]
+        [HttpPut("{id}/Unvoid")]
         public async Task<IActionResult> UnvoidJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]

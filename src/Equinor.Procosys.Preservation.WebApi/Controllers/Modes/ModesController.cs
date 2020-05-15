@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
-        [HttpPut("{id}/UpdateMode")]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateMode(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]

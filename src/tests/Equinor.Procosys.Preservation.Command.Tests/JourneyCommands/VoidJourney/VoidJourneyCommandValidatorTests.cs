@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidJourne
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey is voided!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey is already voided!"));
         }
     }
 }
