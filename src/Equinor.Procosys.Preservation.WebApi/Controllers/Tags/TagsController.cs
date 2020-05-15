@@ -38,6 +38,7 @@ using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
+using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -132,13 +133,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromBody] CreateActionDto dto)
         {
-            var actionCommand = new CreateActionCommand(
+            var command = new CreateActionCommand(
                     id,
                     dto.Title,
                     dto.Description,
                     dto.DueTimeUtc);
 
-            var result = await _mediator.Send(actionCommand);
+            var result = await _mediator.Send(command);
 
             return this.FromResult(result);
         }
@@ -154,7 +155,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int actionId,
             [FromBody] UpdateActionDto dto)
         {
-                var actionCommand = new UpdateActionCommand(
+                var command = new UpdateActionCommand(
                                   id,
                                   actionId,
                                   dto.Title,
@@ -162,13 +163,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                                   dto.DueTimeUtc,
                                   dto.RowVersion);
 
-                var result = await _mediator.Send(actionCommand);
+                var result = await _mediator.Send(command);
 
                 return this.FromResult(result);
         }
          
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPut("{id}/Action/{actionId}/Close")]
+        [HttpPut("{id}/Actions/{actionId}/Close")]
         public async Task<IActionResult> CloseAction(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -178,12 +179,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int actionId,
             [FromBody] CloseActionDto dto)
         {
-            var actionCommand = new CloseActionCommand(
+            var command = new CloseActionCommand(
                 id,
                 actionId,
                 dto.RowVersion);
 
-            var result = await _mediator.Send(actionCommand);
+            var result = await _mediator.Send(command);
 
             return this.FromResult(result);
         }
@@ -202,7 +203,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        
         [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
         [HttpPost("{id}/Actions/{actionId}/Attachments")]
         public async Task<ActionResult<int>> UploadActionAttachment(
@@ -216,14 +216,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             await using var stream = dto.File.OpenReadStream();
 
-            var actionCommand = new UploadActionAttachmentCommand(
+            var command = new UploadActionAttachmentCommand(
                 id,
                 actionId,
                 dto.File.FileName,
                 dto.OverwriteIfExists,
                 stream);
 
-            var result = await _mediator.Send(actionCommand);
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
@@ -504,6 +504,26 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 dto.File.FileName,
                 dto.OverwriteIfExists,
                 stream);
+
+            var result = await _mediator.Send(actionCommand);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_DETACHFILE)]
+        [HttpDelete("{id}/Attachments/{attachmentId}")]
+        public async Task<ActionResult<int>> DeleteTagAttachment(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int attachmentId,
+            [FromBody] DeleteTagAttachmentDto dto)
+        {
+            var actionCommand = new DeleteTagAttachmentCommand(
+                id,
+                attachmentId,
+                dto.RowVersion);
 
             var result = await _mediator.Send(actionCommand);
             return this.FromResult(result);

@@ -18,9 +18,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         private Mock<IActionValidator> _actionValidatorMock;
         private UploadActionAttachmentCommand _commandWithoutOverwrite;
 
-        private const int TagId = 2;
-        private const int ActionId = 3;
-        private const string FileName = "A.txt";
+        private readonly int _tagId = 2;
+        private readonly int _actionId = 3;
+        private readonly string _fileName = "A.txt";
 
         [TestInitialize]
         public void Setup_OkState()
@@ -28,12 +28,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             _projectValidatorMock = new Mock<IProjectValidator>();
 
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
             _actionValidatorMock = new Mock<IActionValidator>();
-            _actionValidatorMock.Setup(r => r.ExistsAsync(TagId, ActionId, default)).Returns(Task.FromResult(true));
+            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(true));
 
-            _commandWithoutOverwrite = new UploadActionAttachmentCommand(TagId, ActionId, FileName, false, new MemoryStream());
+            _commandWithoutOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, false, new MemoryStream());
 
             _dut = new UploadActionAttachmentCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _actionValidatorMock.Object);
         }
@@ -98,7 +98,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         [TestMethod]
         public void Validate_ShouldBeValid_WhenFilenameExistsAndOverwrite()
         {
-            var commandWithOverwrite = new UploadActionAttachmentCommand(TagId, ActionId, FileName, true, new MemoryStream());
+            var commandWithOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, true, new MemoryStream());
             _tagValidatorMock.Setup(r => r.AttachmentWithFilenameExistsAsync(commandWithOverwrite.TagId, commandWithOverwrite.FileName, default))
                 .Returns(Task.FromResult(true));
 
@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         [TestMethod]
         public void Validate_ShouldFail_WhenActionIsClosed()
         {
-            _actionValidatorMock.Setup(r => r.IsClosedAsync(ActionId, default)).Returns(Task.FromResult(true));
+            _actionValidatorMock.Setup(r => r.IsClosedAsync(_actionId, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_commandWithoutOverwrite);
 
@@ -122,7 +122,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         [TestMethod]
         public void Validate_ShouldFail_WhenActionNotExists()
         {
-            _actionValidatorMock.Setup(r => r.ExistsAsync(TagId, ActionId, default)).Returns(Task.FromResult(false));
+            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_commandWithoutOverwrite);
 

@@ -11,8 +11,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             Title = title;
             RowVersion = rowVersion;
         }
-        public int StepId { get; set; }
-        public string Title { get; set; }
-        public string RowVersion { get; set; }
+        public int StepId { get; }
+        public string Title { get; }
+        public string RowVersion { get; }
     }
 }
