@@ -1,10 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class UploadAttachmentDto
+    public class UploadAttachmentDto : UploadBaseDto
     {
-        public IFormFile File { get; set; }
-        public bool OverwriteIfExists { get; set; }
     }
 }
