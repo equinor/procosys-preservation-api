@@ -22,9 +22,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(attachment));
             }
 
-            FieldAttachmentId = attachment.Id;
+            FieldValueAttachmentId = attachment.Id;
         }
 
-        public int FieldAttachmentId { get; private set; }
+        public int FieldValueAttachmentId { get; private set; }
     }
 }
