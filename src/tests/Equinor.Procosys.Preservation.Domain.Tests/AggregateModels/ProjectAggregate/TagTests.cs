@@ -973,6 +973,27 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
         
+        #region RemoveAttachment
+
+        [TestMethod]
+        public void RemoveAttachment_ShouldRemoveAttachment()
+        {
+            var attachment = new TagAttachment(TestPlant, Guid.Empty, "A.txt");
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAttachment(attachment);
+            Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Attachments.Count);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.RemoveAttachment(attachment);
+
+            Assert.AreEqual(0, _dutWithOneReqNotNeedInputTwoWeekInterval.Attachments.Count);
+        }
+
+        [TestMethod]
+        public void RemoveAttachment_ShouldThrowException_WhenAttachmentNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.RemoveAttachment(null));
+
+        #endregion
+        
         #region GetAttachmentByFileName
 
         [TestMethod]

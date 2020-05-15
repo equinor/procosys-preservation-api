@@ -10,8 +10,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
     public class DeleteModeCommandHandlerTests : CommandHandlerTestsBase
     {
         private const int ModeId = 12;
+        private const string _rowVersion = "AAAAAAAAABA=";
+        private const string _modeTitle = "title";
         private Mock<IModeRepository> _modeRepositoryMock;
-        private Mock<Mode> _modeMock;
+        private Mode _mode;
         private DeleteModeCommand _command;
         private DeleteModeCommandHandler _dut;
 
@@ -20,13 +22,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         {
             // Arrange
             _modeRepositoryMock = new Mock<IModeRepository>();
-            _modeMock = new Mock<Mode>();
-            _modeMock.SetupGet(m => m.Id).Returns(ModeId);
+            _mode = new Mode(TestPlant, _modeTitle);
             _modeRepositoryMock
                 .Setup(x => x.GetByIdAsync(ModeId))
-                    .Returns(Task.FromResult(_modeMock.Object));
-
-            _command = new DeleteModeCommand(ModeId);
+                    .Returns(Task.FromResult(_mode));
+            _command = new DeleteModeCommand(ModeId, _rowVersion);
 
             _dut = new DeleteModeCommandHandler(
                 _modeRepositoryMock.Object,
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
             await _dut.Handle(_command, default);
             
             // Assert
-            _modeRepositoryMock.Verify(r => r.Remove(_modeMock.Object), Times.Once);
+            _modeRepositoryMock.Verify(r => r.Remove(_mode), Times.Once);
         }
 
         [TestMethod]

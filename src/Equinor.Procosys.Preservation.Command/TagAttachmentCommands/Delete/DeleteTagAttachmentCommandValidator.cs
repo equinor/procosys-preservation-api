@@ -1,18 +1,18 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
+using Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
+namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
 {
-    public class CloseActionCommandValidator : AbstractValidator<CloseActionCommand>
+    public class DeleteTagAttachmentCommandValidator : AbstractValidator<DeleteTagAttachmentCommand>
     {
-        public CloseActionCommandValidator(
+        public DeleteTagAttachmentCommandValidator(
             IProjectValidator projectValidator,
             ITagValidator tagValidator,
-            IActionValidator actionValidator)
+            IAttachmentValidator attachmentValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -23,10 +23,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
                 .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
-                .MustAsync((command, token) => BeAnExistingActionAsync(command.ActionId, token))
-                .WithMessage(command => $"Action doesn't exist! Action={command.ActionId}")
-                .MustAsync((command, token) => NotBeAClosedActionAsync(command.ActionId, token))
-                .WithMessage(command => $"Action is already closed! Action={command.ActionId}");
+                .MustAsync((command, token) => BeAnExistingAttachmentAsync(command.AttachmentId, token))
+                .WithMessage(command => $"Attachment doesn't exist! Attachment={command.AttachmentId}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
@@ -34,10 +32,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
                 => await tagValidator.ExistsAsync(tagId, token);
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
-            async Task<bool> BeAnExistingActionAsync(int actionId, CancellationToken token)
-                => await actionValidator.ExistsAsync(actionId, token);
-            async Task<bool> NotBeAClosedActionAsync(int actionId, CancellationToken token)
-                => !await actionValidator.IsClosedAsync(actionId, token);
+            async Task<bool> BeAnExistingAttachmentAsync(int attachmentId, CancellationToken token)
+                => await attachmentValidator.ExistsAsync(attachmentId, token);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
             _actionValidatorMock = new Mock<IActionValidator>();
-            _actionValidatorMock.Setup(r => r.ExistsAsync(_tagId, _actionId, default)).Returns(Task.FromResult(true));
+            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(true));
 
             _command = new CloseActionCommand(_tagId, _actionId, null);
 
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         [TestMethod]
         public void Validate_ShouldFail_WhenActionNotExists()
         {
-            _actionValidatorMock.Setup(r => r.ExistsAsync(_tagId, _actionId, default)).Returns(Task.FromResult(false));
+            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
