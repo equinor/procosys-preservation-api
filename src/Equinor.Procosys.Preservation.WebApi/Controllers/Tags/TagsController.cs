@@ -24,6 +24,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
+using Equinor.Procosys.Preservation.Query.GetActionAttachment;
 using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
