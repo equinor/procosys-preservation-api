@@ -157,10 +157,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             int? oldFieldValueAttachmentId = null;
             // todo check if old exists and return it for tidying in blob storage
-            if (_fieldValues.SingleOrDefault(fv => fv.FieldId == field.Id) is AttachmentValue fieldValue)
-            {
-                oldFieldValueAttachmentId = fieldValue.FieldValueAttachmentId;
-            }
+            //if (_fieldValues.SingleOrDefault(fv => fv.FieldId == field.Id) is AttachmentValue fieldValue)
+            //{
+            //    oldFieldValueAttachmentId = fieldValue.FieldValueAttachmentId;
+            //}
 
             ValidateAndPrepareForNewRecording(field);
             
