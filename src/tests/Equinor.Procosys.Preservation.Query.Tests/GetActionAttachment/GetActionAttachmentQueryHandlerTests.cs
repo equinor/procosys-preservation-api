@@ -14,7 +14,7 @@ using Moq;
 using ServiceResult;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagAttachment
+namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachment
 {
     [TestClass]
     public class GetActionAttachmentQueryHandlerTests : ReadOnlyTestsBase
