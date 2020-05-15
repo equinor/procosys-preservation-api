@@ -3,7 +3,6 @@ using Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
-using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -23,9 +22,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
             // Arrange
             var testModeId = 1;
             var modeRepositoryMock = new Mock<IModeRepository>();
+
+            _mode = new Mode(TestPlant, "ModeTitle");
             _mode.SetProtectedIdForTesting(testModeId);
+
             modeRepositoryMock.Setup(m => m.GetByIdAsync(testModeId))
                 .Returns(Task.FromResult(_mode));
+
             _command = new VoidModeCommand(testModeId, _rowVersion);
 
             _dut = new VoidModeCommandHandler(
