@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
 {
-    public class journeyValidator : IJourneyValidator
+    public class JourneyValidator : IJourneyValidator
     {
         private readonly IReadOnlyContext _context;
 
-        public journeyValidator(IReadOnlyContext context) => _context = context;
+        public JourneyValidator(IReadOnlyContext context) => _context = context;
 
         public async Task<bool> ExistsAsync(int journeyId, CancellationToken token) =>
             await (from j in _context.QuerySet<Journey>()

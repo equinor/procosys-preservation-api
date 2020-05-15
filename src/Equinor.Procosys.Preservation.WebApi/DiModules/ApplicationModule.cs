@@ -102,7 +102,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<ITagValidator, TagValidator>();
             services.AddScoped<IProjectValidator, ProjectValidator>();
             services.AddScoped<IStepValidator, StepValidator>();
-            services.AddScoped<IJourneyValidator, journeyValidator>();
+            services.AddScoped<IJourneyValidator, JourneyValidator>();
             services.AddScoped<IModeValidator, ModeValidator>();
             services.AddScoped<IResponsibleValidator, ResponsibleValidator>();
             services.AddScoped<IFieldValidator, FieldValidator>();
