@@ -201,6 +201,22 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             period.UpdateStatus(requirementDefinition);
         }
+        
+        // todo unit test
+        public int? RecordAttachment(FieldValueAttachment attachment, int fieldId, RequirementDefinition requirementDefinition)
+        {
+            VerifyReadyForRecording(requirementDefinition);
+
+            var period = ActivePeriod;
+
+            var field = requirementDefinition.Fields.Single(f => f.Id == fieldId);
+
+            var oldFieldValueAttachmentId = period.RecordAttachmentValueForField(field, attachment);
+
+            period.UpdateStatus(requirementDefinition);
+
+            return oldFieldValueAttachmentId;
+        }
 
         public void SetCreated(Person createdBy)
         {

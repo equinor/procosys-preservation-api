@@ -146,6 +146,28 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             
             AddFieldValue(new NumberValue(Plant, field, null));
         }
+        
+        // todo unit test
+        public int? RecordAttachmentValueForField(Field field, FieldValueAttachment attachment)
+        {
+            if (field.FieldType != FieldType.Attachment)
+            {
+                throw new Exception($"Can't record a {nameof(FieldType.Attachment)} value for a {field.FieldType} field");
+            }
+
+            int? oldFieldValueAttachmentId = null;
+            // todo check if old exists and return it for tidying in blob storage
+            if (_fieldValues.SingleOrDefault(fv => fv.FieldId == field.Id) is AttachmentValue fieldValue)
+            {
+                oldFieldValueAttachmentId = fieldValue.FieldValueAttachmentId;
+            }
+
+            ValidateAndPrepareForNewRecording(field);
+            
+            AddFieldValue(new AttachmentValue(Plant, field, attachment));
+
+            return oldFieldValueAttachmentId;
+        }
 
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
