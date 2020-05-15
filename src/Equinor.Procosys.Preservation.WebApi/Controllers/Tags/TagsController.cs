@@ -6,8 +6,11 @@ using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.Upload;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
+using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
 using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -37,9 +40,6 @@ using ServiceResult;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
-using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
-using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
-using Equinor.Procosys.Preservation.Query.GetActionAttachment;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -240,7 +240,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromRoute] int id,
             [FromRoute] int actionId,
-            [FromForm] UploadAttachmentDto dto)
+            [FromForm] UploadWithOverwriteAttachmentDto dto)
         {
             await using var stream = dto.File.OpenReadStream();
 
@@ -488,6 +488,31 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [HttpPost("{id}/Requirement/{requirementId}/RecordAttachment/{fieldId}")]
+        public async Task<IActionResult> RecordAttachment(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementId,
+            [FromRoute] int fieldId,
+            [FromForm] UploadAttachmentDto dto)
+        {
+            await using var stream = dto.File.OpenReadStream();
+
+            var actionCommand = new UploadFieldValueAttachmentCommand(
+                id,
+                requirementId,
+                fieldId,
+                dto.File.FileName,
+                stream);
+
+            var result = await _mediator.Send(actionCommand);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPost("{id}/Requirement/{requirementId}/Preserve")]
         public async Task<IActionResult> Preserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -523,7 +548,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromForm] UploadAttachmentDto dto)
+            [FromForm] UploadWithOverwriteAttachmentDto dto)
         {
             await using var stream = dto.File.OpenReadStream();
 
