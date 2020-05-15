@@ -584,7 +584,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
-        [HttpPut("{id}/VoidTag")]
+        [HttpPut("{id}/Void")]
         public async Task<IActionResult> VoidTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -599,7 +599,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
-        [HttpPut("{id}/UnvoidTag")]
+        [HttpPut("{id}/Unvoid")]
         public async Task<IActionResult> UnvoidTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]

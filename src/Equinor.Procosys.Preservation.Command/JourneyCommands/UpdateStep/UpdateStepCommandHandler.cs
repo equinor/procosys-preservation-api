@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -20,10 +21,12 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 
         public async Task<Result<string>> Handle(UpdateStepCommand request, CancellationToken cancellationToken)
         {
-            var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
+            var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
+            var step = journey.Steps.Single(s => s.Id == request.StepId);
 
             step.Title = request.Title;
             step.SetRowVersion(request.RowVersion);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<string>(step.RowVersion.ConvertToString());

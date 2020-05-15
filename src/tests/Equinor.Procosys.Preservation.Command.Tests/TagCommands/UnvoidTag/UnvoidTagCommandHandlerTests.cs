@@ -16,13 +16,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
         private Tag _tag;
         private UnvoidTagCommand _command;
         private UnvoidTagCommandHandler _dut;
+        private readonly string _rowVersion = "AAAAAAAAABA=";
 
         [TestInitialize]
         public void Setup()
         {
             var tagId = 2;
-            var rowVersion = "AAAAAAAAABA=";
-
             var projectRepositoryMock = new Mock<IProjectRepository>();
 
             var stepMock = new Mock<Step>();
@@ -39,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
                 .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new UnvoidTagCommand(tagId, rowVersion);
+            _command = new UnvoidTagCommand(tagId, _rowVersion);
 
             _dut = new UnvoidTagCommandHandler(
                 projectRepositoryMock.Object,
@@ -68,15 +67,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
         }
 
         [TestMethod]
-        public async Task HandlingVoidTagCommand_ShouldSetRowVersion()
+        public async Task HandlingVoidTagCommand_ShouldSetAndReturnRowVersion()
         {
-            // Act
+            // Arrange
             Assert.AreNotEqual(_command.RowVersion, _tag.RowVersion.ConvertToString());
-            await _dut.Handle(_command, default);
+
+            // Act
+            var result = await _dut.Handle(_command, default);
 
             // Assert
-            var updatedRowVersion = _tag.RowVersion.ConvertToString();
-            Assert.AreEqual(_command.RowVersion, updatedRowVersion);
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(_rowVersion, result.Data);
+            Assert.AreEqual(_rowVersion, _tag.RowVersion.ConvertToString());
         }
     }
 }

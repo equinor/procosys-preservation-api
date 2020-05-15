@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using FluentValidation;
 
@@ -8,11 +9,14 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
     public class UpdateStepCommandValidator : AbstractValidator<UpdateStepCommand>
     {
         public UpdateStepCommandValidator(
+            IJourneyValidator journeyValidator,
             IStepValidator stepValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
             RuleFor(command => command)
+                .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
+                .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step doesn't exists! Step={command.StepId}")
                 .MustAsync((command, token) => HaveUniqueStepTitleInJourneyAsync(command.StepId, command.Title, token))
@@ -20,6 +24,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is voided! Step={command.StepId}");
 
+            async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
+                => await journeyValidator.ExistsAsync(journeyId, token);
             async Task<bool> BeAnExistingStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.ExistsAsync(stepId, token);
             async Task<bool> HaveUniqueStepTitleInJourneyAsync(int stepId, string stepTitle, CancellationToken token) =>
