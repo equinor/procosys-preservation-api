@@ -2,8 +2,6 @@
 using Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
-using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -15,8 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
         private Mode _mode;
         private UnvoidModeCommand _command;
         private UnvoidModeCommandHandler _dut;
-        private readonly string _rowVersion = "AAAAAAAAAAA=";
-        private Mock<Mode> _modeMock;
+        private readonly string _rowVersion = "AAAAAAAAABA=";
 
         [TestInitialize]
         public void Setup()
@@ -24,17 +21,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
             // Arrange
             var modeId = 1;
             var modeRepositoryMock = new Mock<IModeRepository>();
-            //_mode.SetProtectedIdForTesting(modeId);
-            //modeRepositoryMock.Setup(m => m.GetByIdAsync(modeId))
-            //    .Returns(Task.FromResult(_mode));
 
             _mode = new Mode(TestPlant, "ModeTitle");
-            _modeMock = new Mock<Mode>(TestPlant, "ModeTitle");
-            _modeMock.SetupGet(j => j.Plant).Returns(TestPlant);
-            _modeMock.SetupGet(j => j.Id).Returns(modeId);
+            _mode.Void();
             modeRepositoryMock
                 .Setup(r => r.GetByIdAsync(modeId))
-                .Returns(Task.FromResult(_modeMock.Object));
+                .Returns(Task.FromResult(_mode));
 
             _command = new UnvoidModeCommand(modeId, _rowVersion);
 
@@ -46,6 +38,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
         [TestMethod]
         public async Task HandlingUnvoidModeCommand_ShouldUnvoidMode()
         {
+            // Arrange
+            Assert.IsTrue(_mode.IsVoided);
+
             // Act
             var result = await _dut.Handle(_command, default);
 

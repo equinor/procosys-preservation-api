@@ -20,16 +20,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
         public void Setup()
         {
             // Arrange
-            var testModeId = 1;
+            var modeId = 1;
             var modeRepositoryMock = new Mock<IModeRepository>();
 
             _mode = new Mode(TestPlant, "ModeTitle");
-            _mode.SetProtectedIdForTesting(testModeId);
+            _mode.SetProtectedIdForTesting(modeId);
 
-            modeRepositoryMock.Setup(m => m.GetByIdAsync(testModeId))
+            modeRepositoryMock.Setup(m => m.GetByIdAsync(modeId))
                 .Returns(Task.FromResult(_mode));
 
-            _command = new VoidModeCommand(testModeId, _rowVersion);
+            _command = new VoidModeCommand(modeId, _rowVersion);
 
             _dut = new VoidModeCommandHandler(
                 modeRepositoryMock.Object,
