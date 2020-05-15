@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
+using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
@@ -252,6 +253,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 stream);
 
             var result = await _mediator.Send(command);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_DETACHFILE)]
+        [HttpDelete("{id}/Actions/{actionId}/Attachments/{attachmentId}")]
+        public async Task<ActionResult<int>> DeleteActionAttachment(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId,
+            [FromRoute] int attachmentId,
+            [FromBody] DeleteActionAttachmentDto dto)
+        {
+            var actionCommand = new DeleteActionAttachmentCommand(
+                id,
+                actionId,
+                attachmentId,
+                dto.RowVersion);
+
+            var result = await _mediator.Send(actionCommand);
             return this.FromResult(result);
         }
 
