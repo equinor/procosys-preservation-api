@@ -39,6 +39,7 @@ using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.Re
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
+using Equinor.Procosys.Preservation.Query.GetActionAttachment;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -201,6 +202,33 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(new GetActionAttachmentsQuery(id, actionId));
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Actions/{actionId}/Attachments/{attachmentId}")]
+        public async Task<ActionResult> GetActionAttachment(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int actionId,
+            [FromRoute] int attachmentId,
+            [FromQuery] bool redirect = false)
+        {
+            var result = await _mediator.Send(new GetActionAttachmentQuery(id, actionId, attachmentId));
+
+            if (result.ResultType != ResultType.Ok)
+            {
+                return this.FromResult(result);
+            }
+
+            if (!redirect)
+            {
+                return Ok(result.Data.ToString());
+            }
+
+            return Redirect(result.Data.ToString());
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
