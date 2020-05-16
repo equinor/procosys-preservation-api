@@ -148,25 +148,35 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
         
         // todo unit test
-        public int? RecordAttachmentValueForField(Field field, FieldValueAttachment attachment)
+        public FieldValueAttachment GetAlreadyRecordedAttachmentValueForField(Field field)
         {
             if (field.FieldType != FieldType.Attachment)
             {
                 throw new Exception($"Can't record a {nameof(FieldType.Attachment)} value for a {field.FieldType} field");
             }
 
-            int? oldFieldValueAttachmentId = null;
-            // todo check if old exists and return it for tidying in blob storage
             if (_fieldValues.SingleOrDefault(fv => fv.FieldId == field.Id) is AttachmentValue fieldValue)
             {
-                oldFieldValueAttachmentId = fieldValue.FieldValueAttachment.Id;
+                return fieldValue.FieldValueAttachment;
             }
 
-            ValidateAndPrepareForNewRecording(field);
-            
-            AddFieldValue(new AttachmentValue(Plant, field, attachment));
+            return null;
+        }
 
-            return oldFieldValueAttachmentId;
+        // todo unit test
+        public void RecordAttachmentValueForField(Field field, FieldValueAttachment attachment)
+        {
+            if (field.FieldType != FieldType.Attachment)
+            {
+                throw new Exception($"Can't record a {nameof(FieldType.Attachment)} value for a {field.FieldType} field");
+            }
+            ValidateAndPrepareForNewRecording(field);
+
+            // save new value ONLY if there is a value!
+            if (attachment != null)
+            {
+                AddFieldValue(new AttachmentValue(Plant, field, attachment));
+            }
         }
 
         public FieldValue GetFieldValue(int fieldId)

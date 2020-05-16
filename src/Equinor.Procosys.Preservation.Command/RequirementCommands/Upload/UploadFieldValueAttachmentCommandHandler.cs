@@ -44,18 +44,25 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Upload
             var requirementDefinition =
                 await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requirement.RequirementDefinitionId);
 
-            var attachment = new FieldValueAttachment(_plantProvider.Plant, Guid.NewGuid(), request.FileName);
+            var attachment = requirement.GetAlreadyRecordedAttachment(request.FieldId, requirementDefinition);
+            
+            string fullBlobPath;
+            if (attachment == null)
+            {
+                attachment = new FieldValueAttachment(_plantProvider.Plant, Guid.NewGuid(), request.FileName);
+            }
+            else
+            {
+                fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
+                await _blobStorage.DeleteAsync(fullBlobPath, cancellationToken);
+                attachment.SetFileName(request.FileName);
+            }
 
-            var fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
+            fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
 
             await _blobStorage.UploadAsync(fullBlobPath, request.Content, true, cancellationToken);
 
-            var oldFieldValueAttachmentId = requirement.RecordAttachment(attachment, request.FieldId, requirementDefinition);
-
-            if (oldFieldValueAttachmentId.HasValue)
-            {
-                // todo tidy
-            }
+            requirement.RecordAttachment(attachment, request.FieldId, requirementDefinition);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

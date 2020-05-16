@@ -202,8 +202,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             period.UpdateStatus(requirementDefinition);
         }
         
+        
         // todo unit test
-        public int? RecordAttachment(FieldValueAttachment attachment, int fieldId, RequirementDefinition requirementDefinition)
+        public FieldValueAttachment GetAlreadyRecordedAttachment(int fieldId, RequirementDefinition requirementDefinition)
         {
             VerifyReadyForRecording(requirementDefinition);
 
@@ -211,11 +212,21 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             var field = requirementDefinition.Fields.Single(f => f.Id == fieldId);
 
-            var oldFieldValueAttachmentId = period.RecordAttachmentValueForField(field, attachment);
+            return period.GetAlreadyRecordedAttachmentValueForField(field);
+        }
+
+        // todo unit test
+        public void RecordAttachment(FieldValueAttachment attachment, int fieldId, RequirementDefinition requirementDefinition)
+        {
+            VerifyReadyForRecording(requirementDefinition);
+
+            var period = ActivePeriod;
+
+            var field = requirementDefinition.Fields.Single(f => f.Id == fieldId);
+
+            period.RecordAttachmentValueForField(field, attachment);
 
             period.UpdateStatus(requirementDefinition);
-
-            return oldFieldValueAttachmentId;
         }
 
         public void SetCreated(Person createdBy)

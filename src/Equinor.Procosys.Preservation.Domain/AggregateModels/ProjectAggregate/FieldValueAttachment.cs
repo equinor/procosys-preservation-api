@@ -12,5 +12,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             : base(plant, blobStorageId, fileName, "FieldValue")
         {
         }
+
+        // todo unit tests
+        public void SetFileName(string fileName) => FileName = fileName;
     }
 }
