@@ -26,7 +26,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Upload
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
-            IBlobStorage blobStorage, IOptionsMonitor<AttachmentOptions> attachmentOptions)
+            IBlobStorage blobStorage,
+            IOptionsMonitor<AttachmentOptions> attachmentOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
