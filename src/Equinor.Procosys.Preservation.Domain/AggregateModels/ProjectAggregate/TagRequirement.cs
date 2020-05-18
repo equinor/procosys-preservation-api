@@ -202,8 +202,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             period.UpdateStatus(requirementDefinition);
         }
         
-        
-        // todo unit test
         public FieldValueAttachment GetAlreadyRecordedAttachment(int fieldId, RequirementDefinition requirementDefinition)
         {
             VerifyReadyForRecording(requirementDefinition);
@@ -215,7 +213,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return period.GetAlreadyRecordedAttachmentValueForField(field);
         }
 
-        // todo unit test
         public void RecordAttachment(FieldValueAttachment attachment, int fieldId, RequirementDefinition requirementDefinition)
         {
             VerifyReadyForRecording(requirementDefinition);

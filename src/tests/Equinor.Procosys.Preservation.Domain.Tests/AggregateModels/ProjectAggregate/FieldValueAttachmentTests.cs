@@ -17,5 +17,18 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual($"PlantA/FieldValue/{BlobStorageId.ToString()}", dut.BlobPath);
             // Other properties are tested in base class
         }
+
+        [TestMethod]
+        public void SetFileName_ShouldSetFileName()
+        {
+            // Assert
+            var dut = new FieldValueAttachment(TestPlant, BlobStorageId, "FileA");
+
+            // Act
+            dut.SetFileName("FileB");
+
+            // Assert
+            Assert.AreEqual("FileB", dut.FileName);
+        }
     }
 }

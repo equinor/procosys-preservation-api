@@ -18,17 +18,20 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private const string TestPlant = "PlantA";
     
         private const int InfoFieldId = 5;
+        private const int AttachmentFieldId = 7;
         private const int CheckBoxFieldId = 11;
         private const int NumberField1Id = 12;
         private const int NumberField2Id = 22;
         private const int NumberField3Id = 32;
         private const int TwoWeeksInterval = 2;
         private Mock<Field> _infoFieldMock;
+        private Mock<Field> _attachmentFieldMock;
         private Mock<Field> _checkBoxFieldMock;
         private Mock<Field> _numberField1Mock;
         private Mock<Field> _numberField2Mock;
         private Mock<Field> _numberField3Mock;
         private Mock<RequirementDefinition> _reqDefWithInfoFieldMock;
+        private Mock<RequirementDefinition> _reqDefWithAttachmentFieldMock;
         private Mock<RequirementDefinition> _reqDefWithCheckBoxFieldMock;
         private Mock<RequirementDefinition> _reqDefWithOneNumberFieldMock;
         private Mock<RequirementDefinition> _reqDefWithTwoNumberFieldsMock;
@@ -42,6 +45,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _infoFieldMock = new Mock<Field>("", "", FieldType.Info, 0, null, null);
             _infoFieldMock.SetupGet(f => f.Id).Returns(InfoFieldId);
             _infoFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
+
+            _attachmentFieldMock = new Mock<Field>("", "", FieldType.Attachment, 0, null, null);
+            _attachmentFieldMock.SetupGet(f => f.Id).Returns(AttachmentFieldId);
+            _attachmentFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
 
             _checkBoxFieldMock = new Mock<Field>("", "", FieldType.CheckBox, 0, null, null);
             _checkBoxFieldMock.SetupGet(f => f.Id).Returns(CheckBoxFieldId);
@@ -63,6 +70,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDefWithInfoFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithInfoFieldMock.Object.AddField(_infoFieldMock.Object);
             
+            _reqDefWithAttachmentFieldMock = new Mock<RequirementDefinition>();
+            _reqDefWithAttachmentFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
+            _reqDefWithAttachmentFieldMock.Object.AddField(_attachmentFieldMock.Object);
+            
             _reqDefWithCheckBoxFieldMock = new Mock<RequirementDefinition>();
             _reqDefWithCheckBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
             _reqDefWithCheckBoxFieldMock.Object.AddField(_checkBoxFieldMock.Object);
@@ -81,12 +92,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDefWithNumberAndCheckBoxFieldMock.Object.AddField(_numberField1Mock.Object);
             _reqDefWithNumberAndCheckBoxFieldMock.Object.AddField(_checkBoxFieldMock.Object);
 
-            _reqDefWithInfoFieldMock.SetupGet(rd => rd.Id).Returns(1);
-            _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
-            _reqDefWithCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(2);
-            _reqDefWithOneNumberFieldMock.SetupGet(rd => rd.Id).Returns(3);
-            _reqDefWithTwoNumberFieldsMock.SetupGet(rd => rd.Id).Returns(13);
-            _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(4);
+            _reqDefWithInfoFieldMock.SetupGet(rd => rd.Id).Returns(10);
+            _reqDefWithAttachmentFieldMock.SetupGet(rd => rd.Id).Returns(20);
+            _reqDefWithCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(30);
+            _reqDefWithOneNumberFieldMock.SetupGet(rd => rd.Id).Returns(40);
+            _reqDefWithTwoNumberFieldsMock.SetupGet(rd => rd.Id).Returns(50);
+            _reqDefWithNumberAndCheckBoxFieldMock.SetupGet(rd => rd.Id).Returns(60);
             
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _timeProvider = new ManualTimeProvider(_utcNow);
@@ -477,7 +488,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordCheckBoxValues_ShouldThrowException_WhenPreservationNotStarted()
         {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
 
             Assert.ThrowsException<Exception>(() =>
                 dut.RecordCheckBoxValues(new Dictionary<int, bool>{{1, true}}, _reqDefWithCheckBoxFieldMock.Object)
@@ -487,7 +498,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordCheckBoxValues_ShouldThrowException_WhenReqDefNotGiven()
         {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
             Assert.ThrowsException<ArgumentNullException>(() =>
@@ -498,7 +509,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RecordCheckBoxValues_ShouldThrowException_WhenValuesNotGiven()
         {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation();
 
             Assert.ThrowsException<ArgumentNullException>(() =>
@@ -1043,11 +1054,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             RecordAndPreseve(dut, 7, null);
 
-             RecordAndPreseve(dut, 14.1, 7);
+            RecordAndPreseve(dut, 14.1, 7);
 
             RecordAndPreseve(dut, 200, 14.1);
         }
-
+        
+        // todo move privates to bottom after codereview
         private void RecordAndPreseve(
             TagRequirement dut,
             double numberToRecord,
@@ -1086,7 +1098,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             }
         }
 
-
         [TestMethod]
         public void GetPreviousFieldValue_ShouldReturnNull_ForUnknownField()
         {
@@ -1098,6 +1109,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region Void / Unvoid
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()
         {
@@ -1109,6 +1121,201 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.UnVoid();
             Assert.IsFalse(dut.IsVoided);
+        }
+        
+        #endregion
+
+        #region RecordAttachment
+
+        [TestMethod]
+        public void RecordAttachment_ShouldThrowException_WhenPreservationNotStarted()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
+
+            // Act and Arrange
+            Assert.ThrowsException<Exception>(() =>
+                dut.RecordAttachment(null, AttachmentFieldId, _reqDefWithAttachmentFieldMock.Object)
+            );
+        }
+
+        [TestMethod]
+        public void RecordAttachment_ShouldThrowException_WhenReqDefNotGiven()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
+            dut.StartPreservation();
+
+            // Act and Arrange
+            Assert.ThrowsException<ArgumentNullException>(() =>
+                dut.RecordAttachment(null, AttachmentFieldId, null)
+            );
+        }
+
+        [TestMethod]
+        public void RecordAttachment_ShouldThrowException_WhenRecordingOnWrongDefinition()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithOneNumberFieldMock.Object);
+            dut.StartPreservation();
+
+            // Act and Arrange
+            Assert.ThrowsException<Exception>(() =>
+                dut.RecordAttachment(null, AttachmentFieldId, _reqDefWithAttachmentFieldMock.Object)
+            );
+        }
+
+        [TestMethod]
+        public void RecordAttachment_ShouldThrowException_WhenFieldIsInfo()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+
+            // Act and Arrange
+            Assert.ThrowsException<Exception>(() =>
+                dut.RecordAttachment(null, InfoFieldId, _reqDefWithInfoFieldMock.Object)
+            );
+        }
+        
+        [TestMethod]
+        public void RecordAttachment_ShouldCreateNewAttachmentValue()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
+            dut.StartPreservation();
+            var attachment = new FieldValueAttachment(TestPlant, Guid.Empty, "F");
+            
+            // Act
+            dut.RecordAttachment(
+                attachment, 
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+
+            // Assert
+            var fieldValues = dut.ActivePeriod.FieldValues;
+            Assert.AreEqual(1, fieldValues.Count);
+            var fv = fieldValues.First();
+            Assert.AreEqual(AttachmentFieldId, fv.FieldId);
+            AssertAttachment(attachment, fv);
+        }
+
+        [TestMethod]
+        public void RecordAttachment_WithoutAttachment_ShouldDoNothing_WhenNoValueExistsInAdvance()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
+            dut.StartPreservation();
+
+            // Act
+            dut.RecordAttachment(null, 
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+
+            // Assert
+            Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
+        }
+
+        [TestMethod]
+        public void RecordAttachment_ShouldDeleteExistingAttachmentValue()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
+            dut.StartPreservation();
+
+            dut.RecordAttachment(
+                new FieldValueAttachment(TestPlant, Guid.Empty, "F"), 
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+            Assert.AreEqual(1, dut.ActivePeriod.FieldValues.Count);
+
+            // Act
+            dut.RecordAttachment(null, 
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+
+            // Assert
+            Assert.AreEqual(0, dut.ActivePeriod.FieldValues.Count);
+        }
+
+        [TestMethod]
+        public void RecordAttachment_ShouldToggleReadyToBePreserved()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
+            dut.StartPreservation();
+            var attachment = new FieldValueAttachment(TestPlant, Guid.Empty, "F");
+
+            // Act
+            dut.RecordAttachment(
+                attachment, 
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+            
+            // Assert
+            Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.ActivePeriod.Status);
+            Assert.IsTrue(dut.ReadyToBePreserved);
+
+            // Act
+            dut.RecordAttachment(null, 
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+
+            // Assert
+            Assert.AreEqual(PreservationPeriodStatus.NeedsUserInput, dut.ActivePeriod.Status);
+            Assert.IsFalse(dut.ReadyToBePreserved);
+        }
+
+        #endregion
+
+        #region GetAlreadyRecordedAttachment
+        
+        [TestMethod]
+        public void GetAlreadyRecordedAttachment_ShouldReturnNull_WhenNoValueExistsInAdvance()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
+            dut.StartPreservation();
+
+            // Act
+            var attachment = dut.GetAlreadyRecordedAttachment(
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+
+            // Assert
+            Assert.IsNull(attachment);
+        }
+
+                
+        [TestMethod]
+        public void GetAlreadyRecordedAttachment_ShouldReturnAttachmentFromAttachmentValue()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithAttachmentFieldMock.Object);
+            dut.StartPreservation();
+            var attachment = new FieldValueAttachment(TestPlant, Guid.Empty, "F");
+            
+            dut.RecordAttachment(
+                attachment, 
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+
+            // Act
+            var recordedAttachment = dut.GetAlreadyRecordedAttachment(
+                AttachmentFieldId,
+                _reqDefWithAttachmentFieldMock.Object);
+
+            // Assert
+            Assert.AreEqual(attachment, recordedAttachment);
+        }
+
+        #endregion
+
+        private void AssertAttachment(FieldValueAttachment expectedValue, FieldValue value)
+        {
+            Assert.IsNotNull(value);
+            Assert.IsInstanceOfType(value, typeof(AttachmentValue));
+            Assert.AreEqual(expectedValue, ((AttachmentValue)value).FieldValueAttachment);
         }
     }
 }

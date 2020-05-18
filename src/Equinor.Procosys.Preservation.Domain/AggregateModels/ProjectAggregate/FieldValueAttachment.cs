@@ -13,7 +13,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
         }
 
-        // todo unit tests
         public void SetFileName(string fileName) => FileName = fileName;
     }
 }

@@ -147,7 +147,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddFieldValue(new NumberValue(Plant, field, null));
         }
         
-        // todo unit test
         public FieldValueAttachment GetAlreadyRecordedAttachmentValueForField(Field field)
         {
             if (field.FieldType != FieldType.Attachment)
@@ -163,7 +162,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return null;
         }
 
-        // todo unit test
         public void RecordAttachmentValueForField(Field field, FieldValueAttachment attachment)
         {
             if (field.FieldType != FieldType.Attachment)
