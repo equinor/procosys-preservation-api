@@ -8,7 +8,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
         Task<bool> ExistsAsync(int fieldId, CancellationToken token);
         Task<bool> IsVoidedAsync(int fieldId, CancellationToken token);
         Task<bool> IsValidForRecordingAsync(int fieldId, CancellationToken token);
-        // todo unit test
         Task<bool> IsValidForAttachmentAsync(int fieldId, CancellationToken token);
     }
 }

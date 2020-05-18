@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     public class FieldValidatorTests : ReadOnlyTestsBase
     {
         private int _infoFieldId;
+        private int _attachmentFieldId;
         private int _checkBoxFieldId;
         private int _numberFieldId;
 
@@ -23,6 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
                 _infoFieldId = AddInfoField(context, rd, "I").Id;
                 _numberFieldId = AddNumberField(context, rd, "N", "mm", true).Id;
+                _attachmentFieldId = AddAttachmentField(context, rd, "A").Id;
                 _checkBoxFieldId = AddCheckBoxField(context, rd, "C").Id;
             }
         }
@@ -111,13 +113,46 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValidForRecordingAsync_ForInfoField_ReturnsTrue()
+        public async Task IsValidForRecordingAsync_ForNumberField_ReturnsTrue()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new FieldValidator(context);
                 var result = await dut.IsValidForRecordingAsync(_numberFieldId, default);
                 Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsValidForAttachmentAsync_ForAttachmentField_ReturnsTrue()
+        { 
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidForAttachmentAsync(_attachmentFieldId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsValidForAttachmentAsync_ForInfoField_ReturnsFalse()
+        { 
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidForAttachmentAsync(_infoFieldId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsValidForAttachmentAsync_ForNumberField_ReturnsFalse()
+        { 
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.IsValidForAttachmentAsync(_numberFieldId, default);
+                Assert.IsFalse(result);
             }
         }
     }
