@@ -17,10 +17,10 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequ
                 .MustAsync((command, token) => NotBeAVoidedRequirementTypeAsync(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type is already voided! RequirementType={command.RequirementTypeId}");
 
-            async Task<bool> BeAnExistingRequirementTypeAsync(int modeId, CancellationToken token)
-                => await requirementTypeValidator.ExistsAsync(modeId, token);
-            async Task<bool> NotBeAVoidedRequirementTypeAsync(int modeId, CancellationToken token)
-                => !await requirementTypeValidator.IsVoidedAsync(modeId, token);
+            async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
+                => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
+            async Task<bool> NotBeAVoidedRequirementTypeAsync(int requirementTypeId, CancellationToken token)
+                => !await requirementTypeValidator.IsVoidedAsync(requirementTypeId, token);
         }
     }
 }
