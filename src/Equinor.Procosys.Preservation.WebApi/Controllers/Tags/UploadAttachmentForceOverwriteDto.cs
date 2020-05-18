@@ -1,6 +1,6 @@
 ﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class UploadAttachmentDto : UploadBaseDto
+    public class UploadAttachmentForceOverwriteDto : UploadBaseDto
     {
     }
 }

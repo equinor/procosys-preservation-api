@@ -1,6 +1,6 @@
 ﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class UploadWithOverwriteAttachmentDto : UploadAttachmentDto
+    public class UploadAttachmentWithOverwriteOptionDto : UploadAttachmentForceOverwriteDto
     {
         public bool OverwriteIfExists { get; set; }
     }

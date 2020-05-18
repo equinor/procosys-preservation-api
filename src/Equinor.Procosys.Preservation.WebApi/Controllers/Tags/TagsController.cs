@@ -241,7 +241,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromRoute] int id,
             [FromRoute] int actionId,
-            [FromForm] UploadWithOverwriteAttachmentDto dto)
+            [FromForm] UploadAttachmentWithOverwriteOptionDto dto)
         {
             await using var stream = dto.File.OpenReadStream();
 
@@ -498,7 +498,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromRoute] int requirementId,
             [FromRoute] int fieldId,
-            [FromForm] UploadAttachmentDto dto)
+            [FromForm] UploadAttachmentForceOverwriteDto dto)
         {
             await using var stream = dto.File.OpenReadStream();
 
@@ -549,7 +549,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromForm] UploadWithOverwriteAttachmentDto dto)
+            [FromForm] UploadAttachmentWithOverwriteOptionDto dto)
         {
             await using var stream = dto.File.OpenReadStream();
 

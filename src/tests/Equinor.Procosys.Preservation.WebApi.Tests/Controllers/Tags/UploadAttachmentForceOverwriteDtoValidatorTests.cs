@@ -11,9 +11,9 @@ using Moq;
 namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
-    public class UploadAttachmentDtoValidatorTests
+    public class UploadAttachmentForceOverwriteDtoValidatorTests
     {
-        private UploadAttachmentDtoValidator _dut;
+        private UploadAttachmentForceOverwriteDtoValidator _dut;
         private AttachmentOptions _options;
 
         [TestInitialize]
@@ -29,13 +29,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             attachmentOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(_options);
-            _dut = new UploadAttachmentDtoValidator(attachmentOptionsMock.Object);
+            _dut = new UploadAttachmentForceOverwriteDtoValidator(attachmentOptionsMock.Object);
         }
 
         [TestMethod]
         public void Validate_OK()
         {
-            var uploadAttachmentDto = new UploadAttachmentDto
+            var uploadAttachmentDto = new UploadAttachmentForceOverwriteDto
             {
                 File = new TestFile("picture.gif", 1000)
             };
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public void Fail_When_FileNotGiven()
         {
-            var uploadAttachmentDto = new UploadAttachmentDto();
+            var uploadAttachmentDto = new UploadAttachmentForceOverwriteDto();
 
             var result = _dut.Validate(uploadAttachmentDto);
 
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public void Fail_WhenFileNameNotExists()
         {
-            var uploadAttachmentDto = new UploadAttachmentDto
+            var uploadAttachmentDto = new UploadAttachmentForceOverwriteDto
             {
                 File = new TestFile(null, 1000)
             };
@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public void Fail_WhenFileNameIsTooLong()
         {
-            var uploadAttachmentDto = new UploadAttachmentDto
+            var uploadAttachmentDto = new UploadAttachmentForceOverwriteDto
             {
                 File = new TestFile(new string('x', Attachment.FileNameLengthMax + 1), 1000)
             };
@@ -90,7 +90,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public void Fail_When_FileToBig()
         {
-            var uploadAttachmentDto = new UploadAttachmentDto
+            var uploadAttachmentDto = new UploadAttachmentForceOverwriteDto
             {
                 File = new TestFile("picture.gif", 2500)
             };
@@ -105,7 +105,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public void Fail_When_IllegalFileType()
         {
-            var uploadAttachmentDto = new UploadAttachmentDto
+            var uploadAttachmentDto = new UploadAttachmentForceOverwriteDto
             {
                 File = new TestFile("picture.exe", 500)
             };
