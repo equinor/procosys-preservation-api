@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
+namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 {
     [ApiController]
     [Route("RequirementTypes")]
@@ -62,7 +65,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}/Unvoid")]
-        public async Task<ActionResult<RequirementTypeDto>> VoidRequirementType(
+        public async Task<ActionResult<RequirementTypeDto>> UnvoidRequirementType(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -71,6 +74,44 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementType
             [FromBody] UnvoidRequirementTypeDto dto)
         {
             var result = await _mediator.Send(new UnvoidRequirementTypeCommand(id, dto.RowVersion));
+            return Ok(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Void")]
+        public async Task<ActionResult<RequirementDefinitionDto>> VoidRequirementDefinition(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementDefinitionId,
+            [FromBody] VoidRequirementDefinitionDto dto)
+        {
+            var command = new VoidRequirementDefinitionCommand(
+                id,
+                requirementDefinitionId,
+                dto.RowVersion);
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Unvoid")]
+        public async Task<ActionResult<RequirementDefinitionDto>> UnvoidRequirementDefinition(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementDefinitionId,
+            [FromBody] UnvoidRequirementDefinitionDto dto)
+        {
+            var command = new UnvoidRequirementDefinitionCommand(
+                id,
+                requirementDefinitionId,
+                dto.RowVersion);
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
     }
