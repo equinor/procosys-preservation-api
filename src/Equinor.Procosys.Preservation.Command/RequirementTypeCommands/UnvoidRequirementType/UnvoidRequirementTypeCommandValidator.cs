@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequir
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementCommands.UnvoidRequirementType
+namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType
 {
     public class UnvoidRequirementTypeCommandValidator : AbstractValidator<UnvoidRequirementTypeCommand>
     {

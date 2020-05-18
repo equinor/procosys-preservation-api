@@ -1,10 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementCommands.VoidRequirementType
+namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType
 {
     public class VoidRequirementTypeCommandValidator : AbstractValidator<VoidRequirementTypeCommand>
     {

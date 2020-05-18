@@ -53,7 +53,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
         [TestMethod]
         public async Task HandlingVoidModeCommand_ShouldSetAndReturnRowVersion()
         {
-            await _dut.Handle(_command, default);
             // Act
             var result = await _dut.Handle(_command, default);
 
