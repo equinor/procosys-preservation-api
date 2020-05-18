@@ -27,12 +27,11 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.DeleteAttach
                 .WithMessage(command =>
                     $"Tag doesn't have this requirement with active period! Tag={command.TagId}. Requirement={command.RequirementId}")
                 .MustAsync((command, token) => BeAFieldForAttachmentAsync(command.FieldId, token))
-                .WithMessage((command) => $"Field values can not be recorded for field type! Field={command.FieldId}")
+                .WithMessage(command => $"Field values can not be recorded for field type! Field={command.FieldId}")
                 .MustAsync((command, token) => BeAnExistingFieldAsync(command.FieldId, token))
-                .WithMessage((command) => $"Field doesn't exists! Field={command.FieldId}")
+                .WithMessage(command => $"Field doesn't exists! Field={command.FieldId}")
                 .MustAsync((command, token) => NotBeAVoidedFieldAsync(command.FieldId, token))
-                .WithMessage((command) => $"Field is voided! Field={command.FieldId}");
-
+                .WithMessage(command => $"Field is voided! Field={command.FieldId}");
                         
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);

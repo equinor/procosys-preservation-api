@@ -3,7 +3,6 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.RequirementCommands.DeleteAttachment
 {
-    // unit test accessvalidator
     public class DeleteFieldValueAttachmentCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public DeleteFieldValueAttachmentCommand(int tagId, int requirementId, int fieldId)

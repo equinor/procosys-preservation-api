@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -19,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
     {
         private readonly string _fileName = "AttachmentFileName";
         private readonly string _blobContainer = "bc";
+        private Mock<RequirementDefinition> _requirementDefinition;
         private TagRequirement _requirement;
         private UploadFieldValueAttachmentCommand _command;
         private UploadFieldValueAttachmentCommandHandler _dut;
@@ -38,16 +40,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
                 _fileName,
                 new MemoryStream());
 
-            var requirementDefinition = new Mock<RequirementDefinition>();
-            requirementDefinition.SetupGet(r => r.Id).Returns(_reqId);
-            requirementDefinition.SetupGet(r => r.Plant).Returns(TestPlant);
+            _requirementDefinition = new Mock<RequirementDefinition>();
+            _requirementDefinition.SetupGet(r => r.Id).Returns(_reqId);
+            _requirementDefinition.SetupGet(r => r.Plant).Returns(TestPlant);
 
             var attachmentFieldMock = new Mock<Field>(TestPlant, "", FieldType.Attachment, 0, "", false);
             attachmentFieldMock.SetupGet(f => f.Id).Returns(_attachmentFieldId);
             attachmentFieldMock.SetupGet(f => f.Plant).Returns(TestPlant);
-            requirementDefinition.Object.AddField(attachmentFieldMock.Object);
+            _requirementDefinition.Object.AddField(attachmentFieldMock.Object);
 
-            var requirementMock = new Mock<TagRequirement>(TestPlant, 2, requirementDefinition.Object);
+            var requirementMock = new Mock<TagRequirement>(TestPlant, 2, _requirementDefinition.Object);
             requirementMock.SetupGet(r => r.Id).Returns(_reqId);
             requirementMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _requirement = requirementMock.Object;
@@ -71,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
             var _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             _rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
-                .Returns(Task.FromResult(requirementDefinition.Object));
+                .Returns(Task.FromResult(_requirementDefinition.Object));
             
             _blobStorageMock = new Mock<IBlobStorage>();
             
@@ -111,7 +113,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         }
 
         [TestMethod]
-        public async Task HandlingUploadTagAttachmentCommand_ShouldCreateAttachmentValueWithAttachment()
+        public async Task HandlingUploadFieldValueAttachmentCommand_ShouldCreateAttachmentValueWithAttachment()
         {
             // Act
             await _dut.Handle(_command, default);
@@ -123,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         }
 
         [TestMethod]
-        public async Task HandlingUploadTagAttachmentCommand_ShouldUploadToBlobStorageWithOverwrite()
+        public async Task HandlingUploadFieldValueAttachmentCommand_ShouldUploadToBlobStorageWithOverwrite()
         {
             // Act
             await _dut.Handle(_command, default);
@@ -135,21 +137,23 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         }
 
         [TestMethod]
-        public async Task HandlingUploadTagAttachmentCommand_ShouldBothDeleteAndUploadToBlobStorage_WhenAttachmentExistsInAdvance()
+        public async Task HandlingUploadFieldValueAttachmentCommand_ShouldBothDeleteAndUploadToBlobStorage_WhenAttachmentExistsInAdvance()
         {
             // Arrange
-            await _dut.Handle(_command, default);
+            _requirement.RecordAttachment(new FieldValueAttachment(TestPlant, Guid.Empty, "F"), _command.FieldId, _requirementDefinition.Object);
+            var attachmentValue = (AttachmentValue)_requirement.ActivePeriod.FieldValues.Single();
+            var p = attachmentValue.FieldValueAttachment.GetFullBlobPath(_blobContainer);
 
             // Act
             await _dut.Handle(_command, default);
 
             // Assert
-            _blobStorageMock.Verify(b => b.DeleteAsync(It.IsAny<string>(), default), Times.Once);
-            _blobStorageMock.Verify(b => b.UploadAsync(It.IsAny<string>(), It.IsAny<Stream>(), true, default), Times.Exactly(2));
+            _blobStorageMock.Verify(b => b.DeleteAsync(p, default), Times.Once);
+            _blobStorageMock.Verify(b => b.UploadAsync(It.IsAny<string>(), It.IsAny<Stream>(), true, default), Times.Once);
         }
 
         [TestMethod]
-        public async Task HandlingUploadTagAttachmentCommand_ShouldNotTryToDeleteFromBlobStorage_WhenAttachmentNotExistsInAdvance()
+        public async Task HandlingUploadFieldValueAttachmentCommand_ShouldNotTryToDeleteFromBlobStorage_WhenAttachmentNotExistsInAdvance()
         {
             // Act
             await _dut.Handle(_command, default);
