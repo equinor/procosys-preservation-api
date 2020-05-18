@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void SetDueTime_ShouldSetDueDateNull()
         {
             Assert.IsNotNull(_dut.DueTimeUtc);
-            
+
             _dut.SetDueTime(null);
 
             Assert.IsNull(_dut.DueTimeUtc);
@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(_utcNow, _dut.ClosedAtUtc);
             Assert.IsTrue(_dut.IsClosed);
         }
-        
+
         [TestMethod]
         public void AddAttachment_ShouldAddAttachment()
         {
@@ -109,7 +109,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddAttachment_ShouldThrowException_WhenAttachmentNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => _dut.AddAttachment(null));
-        
+
         [TestMethod]
         public void GetAttachmentByFileName_ShouldGetAttachmentWhenExists()
         {
@@ -149,5 +149,22 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Arrange
             Assert.IsNull(result);
         }
+
+        [TestMethod]
+        public void RemoveAttachment_ShouldRemoveAttachment()
+        {
+            var attachment = new ActionAttachment(TestPlant, Guid.Empty, "A.txt");
+            _dut.AddAttachment(attachment);
+            Assert.AreEqual(1, _dut.Attachments.Count);
+
+            // Act
+            _dut.RemoveAttachment(attachment);
+
+            Assert.AreEqual(0, _dut.Attachments.Count);
+        }
+
+        [TestMethod]
+        public void RemoveAttachment_ShouldThrowException_WhenAttachmentNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveAttachment(null));
     }
 }
