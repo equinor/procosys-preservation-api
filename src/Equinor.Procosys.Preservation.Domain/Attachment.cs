@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Domain
             BlobPath = Path.Combine(plant.Substring(4), parentType, blobStorageId.ToString()).Replace("\\", "/");;
         }
 
-        public string FileName { get; private set; }
+        public string FileName { get; protected set; }
         public string BlobPath { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }

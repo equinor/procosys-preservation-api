@@ -24,8 +24,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 
             builder
                 .HasDiscriminator<string>("AttachmentType")
+                // uses soft strings below instead of nameof(). This to prevent a rename of class to corrupting existing data
                 .HasValue<TagAttachment>("TagAttachment")
-                .HasValue<ActionAttachment>("ActionAttachment");
+                .HasValue<ActionAttachment>("ActionAttachment")
+                .HasValue<FieldValueAttachment>("FieldValueAttachment");
         }
     }
 }

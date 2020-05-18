@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
 {
-    public class RecordValuesCommand : IRequest<Result<Unit>>
+    public class RecordValuesCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public RecordValuesCommand(
             int tagId,

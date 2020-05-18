@@ -309,6 +309,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("FieldValueAttachmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Plant")
                         .IsRequired()
                         .HasColumnType("nvarchar(255)")
@@ -327,6 +330,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("FieldId");
+
+                    b.HasIndex("FieldValueAttachmentId");
 
                     b.HasIndex("PreservationPeriodId");
 
@@ -1132,9 +1137,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 {
                     b.HasBaseType("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValue");
 
-                    b.Property<string>("BlobId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasDiscriminator().HasValue("AttachmentValue");
                 });
 
@@ -1165,6 +1167,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ActionId");
 
                     b.HasDiscriminator().HasValue("ActionAttachment");
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValueAttachment", b =>
+                {
+                    b.HasBaseType("Equinor.Procosys.Preservation.Domain.Attachment");
+
+                    b.HasDiscriminator().HasValue("FieldValueAttachment");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.TagAttachment", b =>
@@ -1282,6 +1291,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("FieldId")
                         .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.FieldValueAttachment", "FieldValueAttachment")
+                        .WithMany()
+                        .HasForeignKey("FieldValueAttachmentId");
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationPeriod", null)
                         .WithMany("FieldValues")

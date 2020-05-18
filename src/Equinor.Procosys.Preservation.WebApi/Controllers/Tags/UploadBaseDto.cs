@@ -2,9 +2,8 @@
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class UploadAttachmentDto
+    public abstract class UploadBaseDto
     {
         public IFormFile File { get; set; }
-        public bool OverwriteIfExists { get; set; }
     }
 }
