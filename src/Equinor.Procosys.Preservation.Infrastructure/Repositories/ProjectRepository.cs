@@ -15,6 +15,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                         .ThenInclude(t => t.Requirements)
                         .ThenInclude(r => r.PreservationPeriods)
                         .ThenInclude(pp => pp.FieldValues)
+                        .ThenInclude(fv => fv.FieldValueAttachment)
                     .Include(p => p.Tags)
                         .ThenInclude(t => t.Actions)
                         .ThenInclude(a => a.Attachments)

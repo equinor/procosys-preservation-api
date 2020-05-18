@@ -6,9 +6,9 @@ using Microsoft.Extensions.Options;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
-    public class UploadAttachmentDtoValidator : AbstractValidator<UploadAttachmentDto>
+    public class UploadBaseDtoValidator<T> : AbstractValidator<T> where T: UploadBaseDto
     {
-        public UploadAttachmentDtoValidator(IOptionsMonitor<AttachmentOptions> options)
+        public UploadBaseDtoValidator(IOptionsMonitor<AttachmentOptions> options)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 

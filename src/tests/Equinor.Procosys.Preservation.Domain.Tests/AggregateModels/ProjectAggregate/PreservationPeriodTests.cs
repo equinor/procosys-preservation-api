@@ -149,6 +149,22 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void GetAlreadyRecordedAttachmentValueForField_ShouldThrowException_ForInfoField()
+        {
+            var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
+
+            Assert.ThrowsException<Exception>(() => dut.GetAlreadyRecordedAttachmentValueForField(_infoField));
+        }
+
+        [TestMethod]
+        public void RecordAttachmentValueForField_ShouldThrowException_ForInfoField()
+        {
+            var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
+
+            Assert.ThrowsException<Exception>(() => dut.RecordAttachmentValueForField(_infoField, null));
+        }
+
+        [TestMethod]
         public void RecordCheckBoxValueForField_ShouldThrowException_AfterPreserved()
         {
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
@@ -157,7 +173,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.ThrowsException<Exception>(() => dut.RecordCheckBoxValueForField(_checkBoxField, true));
             Assert.AreEqual(0, dut.FieldValues.Count);
         }
-
 
         [TestMethod]
         public void GetFieldValue_ShouldGetACheckBoxCheckedValue_AfterRecordingCheckBoxValue()

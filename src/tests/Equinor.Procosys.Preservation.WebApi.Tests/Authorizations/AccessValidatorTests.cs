@@ -1,8 +1,14 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.DeleteAttachment;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.Upload;
+using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
+using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
@@ -36,6 +42,7 @@ using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
 namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
 {
@@ -659,6 +666,348 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region DeleteTagAttachmentCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteTagAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new DeleteTagAttachmentCommand(TagIdWithoutAccessToProject, 1, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteTagAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region UploadTagAttachmentCommand
+        [TestMethod]
+        public async Task ValidateAsync_UploadTagAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_UploadTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new UploadTagAttachmentCommand(TagIdWithoutAccessToProject, "F", true, new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_UploadTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_UploadTagAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region DeleteFieldValueAttachmentCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteFieldValueAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteFieldValueAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new DeleteFieldValueAttachmentCommand(TagIdWithoutAccessToProject, 1, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteFieldValueAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteFieldValueAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region RequirementPreserveCommand
+        [TestMethod]
+        public async Task ValidateAsync_RequirementPreserveCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_RequirementPreserveCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new RequirementPreserveCommand(TagIdWithoutAccessToProject, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_RequirementPreserveCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_RequirementPreserveCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region RecordValuesCommand
+        [TestMethod]
+        public async Task ValidateAsync_RecordValuesCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_RecordValuesCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new RecordValuesCommand(TagIdWithoutAccessToProject, 1, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_RecordValuesCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_RecordValuesCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region UploadFieldValueAttachmentCommand
+        [TestMethod]
+        public async Task ValidateAsync_UploadFieldValueAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_UploadFieldValueAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new UploadFieldValueAttachmentCommand(TagIdWithoutAccessToProject, 1, 1, "F", new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_UploadFieldValueAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_UploadFieldValueAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream());
 
             // act
             var result = await _dut.ValidateAsync(command);
