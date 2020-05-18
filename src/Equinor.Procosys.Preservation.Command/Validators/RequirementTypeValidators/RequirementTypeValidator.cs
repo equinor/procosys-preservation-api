@@ -20,10 +20,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValida
 
         public async Task<bool> IsVoidedAsync(int requirementTypeId, CancellationToken token)
         {
-            var reqDef = await (from rt in _context.QuerySet<RequirementType>()
+            var reqType = await (from rt in _context.QuerySet<RequirementType>()
                 where rt.Id == requirementTypeId
                 select rt).SingleOrDefaultAsync(token);
-            return reqDef != null && reqDef.IsVoided;
+            return reqType != null && reqType.IsVoided;
         }
     }
 }
