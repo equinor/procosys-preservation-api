@@ -3,7 +3,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
 {
-    public class PreserveCommand : IRequest<Result<Unit>>
+    public class PreserveCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public PreserveCommand(int tagId, int requirementId)
         {

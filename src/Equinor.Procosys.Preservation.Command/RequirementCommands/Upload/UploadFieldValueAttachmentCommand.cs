@@ -4,7 +4,6 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Upload
 {
-    // unit test accessvalidator
     public class UploadFieldValueAttachmentCommand : UploadAttachmentCommand, IRequest<Result<int>>, ITagCommandRequest
     {
         public UploadFieldValueAttachmentCommand(int tagId, int requirementId, int fieldId, string fileName, Stream content)
