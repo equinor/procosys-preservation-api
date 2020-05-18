@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.DeleteAttachment;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.Upload;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
@@ -266,11 +267,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromBody] UpdateTagDto dto)
         {
-            var result = await _mediator.Send(
-                new UpdateTagCommand(id,
-                    dto.Remark,
-                    dto.StorageArea,
-                    dto.RowVersion));
+            var command = new UpdateTagCommand(id,
+                dto.Remark,
+                dto.StorageArea,
+                dto.RowVersion);
+            
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
@@ -286,14 +288,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var requirements = dto.Requirements?
                 .Select(r =>
                     new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
-            var result = await _mediator.Send(
-                new CreateTagsCommand(
-                    dto.TagNos,
-                    dto.ProjectName,
-                    dto.StepId,
-                    requirements,
-                    dto.Remark,
-                    dto.StorageArea));
+            var command = new CreateTagsCommand(
+                dto.TagNos,
+                dto.ProjectName,
+                dto.StepId,
+                requirements,
+                dto.Remark,
+                dto.StorageArea);
+            
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
@@ -328,20 +331,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var requirements = dto.Requirements?
                 .Select(r =>
                     new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
-            
-            var result = await _mediator.Send(
-                new CreateAreaTagCommand(
-                    dto.ProjectName,
-                    dto.AreaTagType.ConvertToTagType(),
-                    dto.DisciplineCode,
-                    dto.AreaCode,
-                    dto.TagNoSuffix,
-                    dto.StepId,
-                    requirements,
-                    dto.Description,
-                    dto.Remark,
-                    dto.StorageArea));
 
+            var command = new CreateAreaTagCommand(
+                dto.ProjectName,
+                dto.AreaTagType.ConvertToTagType(),
+                dto.DisciplineCode,
+                dto.AreaCode,
+                dto.TagNoSuffix,
+                dto.StepId,
+                requirements,
+                dto.Description,
+                dto.Remark,
+                dto.StorageArea);
+
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
@@ -441,7 +444,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromRoute] string rowVersion)
         {
-            var result = await _mediator.Send(new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(id, rowVersion) }));
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(id, rowVersion) });
+
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
@@ -477,14 +482,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .CheckBoxValues?
                 .Select(fv => new CheckBoxFieldValue(fv.FieldId, fv.IsChecked)).ToList();
 
-            var result = await _mediator.Send(
-                new RecordValuesCommand(
-                    id,
-                    requirementId,
-                    numberValues,
-                    checkBoxValues,
-                    requirementValuesDto?.Comment));
-            
+            var command = new RecordValuesCommand(
+                id,
+                requirementId,
+                numberValues,
+                checkBoxValues,
+                requirementValuesDto?.Comment);
+
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
@@ -502,14 +507,34 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             await using var stream = dto.File.OpenReadStream();
 
-            var actionCommand = new UploadFieldValueAttachmentCommand(
+            var command = new UploadFieldValueAttachmentCommand(
                 id,
                 requirementId,
                 fieldId,
                 dto.File.FileName,
                 stream);
 
-            var result = await _mediator.Send(actionCommand);
+            var result = await _mediator.Send(command);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [HttpDelete("{id}/Requirement/{requirementId}/RecordAttachment/{fieldId}")]
+        public async Task<IActionResult> RecordAttachment(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementId,
+            [FromRoute] int fieldId)
+        {
+            var command = new DeleteFieldValueAttachmentCommand(
+                id,
+                requirementId,
+                fieldId);
+
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
@@ -553,13 +578,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             await using var stream = dto.File.OpenReadStream();
 
-            var actionCommand = new UploadTagAttachmentCommand(
+            var command = new UploadTagAttachmentCommand(
                 id,
                 dto.File.FileName,
                 dto.OverwriteIfExists,
                 stream);
 
-            var result = await _mediator.Send(actionCommand);
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
@@ -574,12 +599,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int attachmentId,
             [FromBody] DeleteTagAttachmentDto dto)
         {
-            var actionCommand = new DeleteTagAttachmentCommand(
+            var command = new DeleteTagAttachmentCommand(
                 id,
                 attachmentId,
                 dto.RowVersion);
 
-            var result = await _mediator.Send(actionCommand);
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
 
