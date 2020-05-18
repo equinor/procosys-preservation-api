@@ -17,7 +17,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _reqTypeId = AddRequirementTypeWith1DefWithoutField(context, "R", "D").RequirementDefinitions.First().Id;
+                var requirementType = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D");
+                _reqTypeId = requirementType.Id;
             }
         }
 
