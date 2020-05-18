@@ -52,7 +52,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
         [TestMethod]
         public async Task HandlingUnvoidModeCommand_ShouldSetAndReturnRowVersion()
         {
-            await _dut.Handle(_command, default);
             // Act
             var result = await _dut.Handle(_command, default);
 
