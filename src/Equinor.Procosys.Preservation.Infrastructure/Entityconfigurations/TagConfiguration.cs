@@ -79,6 +79,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .WithOne()
                 .IsRequired();
 
+            builder.Property(f => f.StatusEnum)
+                .HasDefaultValue(PreservationStatus.NotStarted)
+                .IsRequired();
+
             builder.Property(f => f.Status)
                 .HasConversion<string>()
                 .HasDefaultValue(PreservationStatus.NotStarted)
@@ -93,6 +97,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasConversion(PreservationContext.NullableDateTimeKindConverter);
 
             builder.HasCheckConstraint("constraint_tag_check_valid_status", $"{nameof(Tag.Status)} in ({GetValidStatuses()})");
+            builder.HasCheckConstraint("constraint_tag_check_valid_statusenum", $"{nameof(Tag.StatusEnum)} in ({GetValidStatusEnums()})");
 
             builder.HasCheckConstraint("constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})");
 
@@ -229,16 +234,22 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 
         }
 
+        private string GetValidStatusEnums()
+        {
+            var values = Enum.GetValues(typeof(PreservationStatus)).Cast<int>();
+            return string.Join(',', values);
+        }
+
         private string GetValidStatuses()
         {
-            var fieldTypes = Enum.GetNames(typeof(PreservationStatus)).Select(t => $"'{t}'");
-            return string.Join(',', fieldTypes);
+            var names = Enum.GetNames(typeof(PreservationStatus)).Select(t => $"'{t}'");
+            return string.Join(',', names);
         }
 
         private string GetValidTagTypes()
         {
-            var fieldTypes = Enum.GetNames(typeof(TagType)).Select(t => $"'{t}'");
-            return string.Join(',', fieldTypes);
+            var names = Enum.GetNames(typeof(TagType)).Select(t => $"'{t}'");
+            return string.Join(',', names);
         }
     }
 }
