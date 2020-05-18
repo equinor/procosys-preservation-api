@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
+using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -108,6 +109,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IFieldValidator, FieldValidator>();
             services.AddScoped<IActionValidator, ActionValidator>();
             services.AddScoped<IAttachmentValidator, AttachmentValidator>();
+            services.AddScoped<IRequirementTypeValidator, RequirementTypeValidator>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ICacheManager, CacheManager>();
