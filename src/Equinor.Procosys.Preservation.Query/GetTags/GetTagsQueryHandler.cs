@@ -226,7 +226,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                            (request.Filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
                            (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions)) &&
                       (!request.Filter.PreservationStatus.HasValue || 
-                            tag.StatusEnum == request.Filter.PreservationStatus.Value) &&
+                            tag.Status == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
                             tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.CommPkgNoStartsWith) ||
@@ -272,7 +272,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     NextDueTimeUtc = tag.NextDueTimeUtc,
                     PurchaseOrderNo = tag.PurchaseOrderNo,
                     ResponsibleCode = responsible.Code,
-                    Status = tag.StatusEnum.GetDisplayValue(),
+                    Status = tag.Status.GetDisplayValue(),
                     StepId = step.Id,
                     StorageArea = tag.StorageArea,
                     TagFunctionCode = tag.TagFunctionCode,

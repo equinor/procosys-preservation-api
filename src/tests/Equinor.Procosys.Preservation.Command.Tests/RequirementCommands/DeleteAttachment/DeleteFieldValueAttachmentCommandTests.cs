@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Delete
 
             tag.StartPreservation();
 
-            Assert.AreEqual(PreservationStatus.Active, tag.StatusEnum);
+            Assert.AreEqual(PreservationStatus.Active, tag.Status);
             Assert.IsTrue(_requirement.HasActivePeriod);
 
             var _projectRepositoryMock = new Mock<IProjectRepository>();

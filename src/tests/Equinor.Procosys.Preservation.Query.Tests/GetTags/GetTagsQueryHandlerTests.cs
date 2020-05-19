@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 Assert.AreEqual(_testDataSet.Responsible2.Code, tagDto.NextResponsibleCode);
                 Assert.AreEqual(tag.Description, tagDto.Description);
                 Assert.AreEqual(tag.PurchaseOrderNo, tagDto.PurchaseOrderNo);
-                Assert.AreEqual(tag.StatusEnum.GetDisplayValue(), tagDto.Status);
+                Assert.AreEqual(tag.Status.GetDisplayValue(), tagDto.Status);
                 Assert.AreEqual(tag.TagFunctionCode, tagDto.TagFunctionCode);
                 Assert.AreEqual(tag.TagNo, tagDto.TagNo);
                 Assert.AreEqual(_testDataSet.ReqType1.Code, tagDto.Requirements.First().RequirementTypeCode);

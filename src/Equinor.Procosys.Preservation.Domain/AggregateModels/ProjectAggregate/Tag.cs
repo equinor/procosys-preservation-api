@@ -67,14 +67,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             TagType = tagType;
-            StatusEnum = PreservationStatus.NotStarted;
+            Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
             Description = description;
             StepId = step.Id;
             _requirements.AddRange(reqList);
         }
 
-        public PreservationStatus StatusEnum { get; private set; }
+        public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }
         public string Calloff { get; set; }
@@ -196,14 +196,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             if (!IsReadyToBeStarted())
             {
-                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not start. Status = {StatusEnum}");
+                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not start. Status = {Status}");
             }
             foreach (var requirement in Requirements.Where(r => !r.IsVoided))
             {
                 requirement.StartPreservation();
             }
 
-            StatusEnum = PreservationStatus.Active;
+            Status = PreservationStatus.Active;
             UpdateNextDueTimeUtc();
         }
 
@@ -211,19 +211,19 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             if (!IsReadyToBeCompleted(journey))
             {
-                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not be completed. Status = {StatusEnum}");
+                throw new Exception($"Preservation on {nameof(Tag)} {Id} can not be completed. Status = {Status}");
             }
             foreach (var requirement in Requirements.Where(r => !r.IsVoided))
             {
                 requirement.CompletePreservation();
             }
 
-            StatusEnum = PreservationStatus.Completed;
+            Status = PreservationStatus.Completed;
             NextDueTimeUtc = null;
         }
 
         public bool IsReadyToBePreserved()
-            => StatusEnum == PreservationStatus.Active && 
+            => Status == PreservationStatus.Active && 
                FirstUpcomingRequirement() != null;
 
         public void Preserve(Person preservedBy)
@@ -258,7 +258,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(journey));
             }
 
-            return StatusEnum == PreservationStatus.Active && FollowsAJourney && journey.GetNextStep(StepId) != null;
+            return Status == PreservationStatus.Active && FollowsAJourney && journey.GetNextStep(StepId) != null;
         }
 
         public bool IsReadyToBeCompleted(Journey journey)
@@ -268,7 +268,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(journey));
             }
 
-            return StatusEnum == PreservationStatus.Active && 
+            return Status == PreservationStatus.Active && 
                    (!FollowsAJourney || FollowsAJourney && journey.GetNextStep(StepId) == null);
         }
 
@@ -303,7 +303,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public bool IsReadyToBeStarted()
-            => StatusEnum == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
+            => Status == PreservationStatus.NotStarted && Requirements.Any(r => !r.IsVoided);
 
         public TagAttachment GetAttachmentByFileName(string fileName) => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
 

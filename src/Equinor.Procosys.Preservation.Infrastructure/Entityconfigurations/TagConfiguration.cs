@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .WithOne()
                 .IsRequired();
 
-            builder.Property(f => f.StatusEnum)
+            builder.Property(f => f.Status)
                 .HasDefaultValue(PreservationStatus.NotStarted)
                 .IsRequired();
 
@@ -91,7 +91,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.NextDueTimeUtc)
                 .HasConversion(PreservationContext.NullableDateTimeKindConverter);
 
-            builder.HasCheckConstraint("constraint_tag_check_valid_statusenum", $"{nameof(Tag.StatusEnum)} in ({GetValidStatusEnums()})");
+            builder.HasCheckConstraint("constraint_tag_check_valid_statusenum", $"{nameof(Tag.Status)} in ({GetValidStatusEnums()})");
 
             builder.HasCheckConstraint("constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})");
 
@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                     x.McPkgNo,
                     x.NextDueTimeUtc,
                     x.PurchaseOrderNo,
-                    x.StatusEnum,
+                    x.Status,
                     x.StorageArea,
                     x.TagFunctionCode,
                     x.TagType
@@ -135,7 +135,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                     x.McPkgNo,
                     x.NextDueTimeUtc,
                     x.PurchaseOrderNo,
-                    x.StatusEnum,
+                    x.Status,
                     x.StorageArea,
                     x.TagFunctionCode,
                     x.TagNo,
@@ -156,7 +156,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                     x.IsVoided,
                     x.NextDueTimeUtc,
                     x.PurchaseOrderNo,
-                    x.StatusEnum,
+                    x.Status,
                     x.StorageArea,
                     x.TagFunctionCode,
                     x.TagNo,
@@ -177,7 +177,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                     x.McPkgNo,
                     x.NextDueTimeUtc,
                     x.PurchaseOrderNo,
-                    x.StatusEnum,
+                    x.Status,
                     x.StorageArea,
                     x.TagFunctionCode,
                     x.TagNo,
@@ -198,7 +198,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                     x.IsVoided,
                     x.McPkgNo,
                     x.NextDueTimeUtc,
-                    x.StatusEnum,
+                    x.Status,
                     x.StorageArea,
                     x.TagFunctionCode,
                     x.TagNo,
@@ -220,7 +220,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                     x.McPkgNo,
                     x.NextDueTimeUtc,
                     x.PurchaseOrderNo,
-                    x.StatusEnum,
+                    x.Status,
                     x.TagFunctionCode,
                     x.TagNo,
                     x.TagType
