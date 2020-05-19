@@ -2,6 +2,6 @@
 {
     public class VoidRequirementDefinitionDto
     {
-        public  string RowVersion { get; set; }
+        public string RowVersion { get; set; }
     }
 }
