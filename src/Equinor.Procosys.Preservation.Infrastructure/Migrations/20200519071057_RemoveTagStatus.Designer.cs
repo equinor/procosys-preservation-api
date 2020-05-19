@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200519071057_RemoveTagStatus")]
+    partial class RemoveTagStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -586,7 +588,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("rowversion");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("StatusEnum")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
@@ -617,17 +619,17 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("Calloff")
                         .HasName("IX_Tags_Calloff_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "StatusEnum", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("CommPkgNo")
                         .HasName("IX_Tags_CommPkgNo_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "StatusEnum", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("McPkgNo")
                         .HasName("IX_Tags_McPkgNo_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "Description", "CommPkgNo", "CreatedAtUtc", "DisciplineCode", "IsVoided", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "Description", "CommPkgNo", "CreatedAtUtc", "DisciplineCode", "IsVoided", "NextDueTimeUtc", "PurchaseOrderNo", "StatusEnum", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("ModifiedById");
 
@@ -639,21 +641,21 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("PurchaseOrderNo")
                         .HasName("IX_Tags_PurchaseOrderNo_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "Status", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "StatusEnum", "StorageArea", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("StepId");
 
                     b.HasIndex("StorageArea")
                         .HasName("IX_Tags_StorageArea_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "TagFunctionCode", "TagNo", "TagType" });
+                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "CreatedAtUtc", "Description", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "StatusEnum", "TagFunctionCode", "TagNo", "TagType" });
 
                     b.HasIndex("TagNo")
                         .HasName("IX_Tags_TagNo_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagType" });
+                        .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "StatusEnum", "StorageArea", "TagFunctionCode", "TagType" });
 
                     b.ToTable("Tags");
 
-                    b.HasCheckConstraint("constraint_tag_check_valid_statusenum", "Status in (0,1,2)");
+                    b.HasCheckConstraint("constraint_tag_check_valid_statusenum", "StatusEnum in (0,1,2)");
 
                     b.HasCheckConstraint("constraint_tag_check_valid_tag_type", "TagType in ('Standard','PreArea','SiteArea','PoArea')");
                 });

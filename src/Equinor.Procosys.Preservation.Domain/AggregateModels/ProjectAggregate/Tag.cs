@@ -67,15 +67,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             TagType = tagType;
-            Status = StatusEnum = PreservationStatus.NotStarted;
+            Status = PreservationStatus.NotStarted;
             TagNo = tagNo;
             Description = description;
             StepId = step.Id;
             _requirements.AddRange(reqList);
         }
 
-        public PreservationStatus StatusEnum { get; private set; }
-        public PreservationStatus Status { get; private set; } // To be Deleted in future PR
+        public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }
         public string Calloff { get; set; }
@@ -204,7 +203,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 requirement.StartPreservation();
             }
 
-            Status = StatusEnum = PreservationStatus.Active;
+            Status = PreservationStatus.Active;
             UpdateNextDueTimeUtc();
         }
 
@@ -219,7 +218,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 requirement.CompletePreservation();
             }
 
-            Status = StatusEnum = PreservationStatus.Completed;
+            Status = PreservationStatus.Completed;
             NextDueTimeUtc = null;
         }
 
