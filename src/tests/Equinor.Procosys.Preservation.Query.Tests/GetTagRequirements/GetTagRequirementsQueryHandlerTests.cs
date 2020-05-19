@@ -9,7 +9,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Test.Common;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
