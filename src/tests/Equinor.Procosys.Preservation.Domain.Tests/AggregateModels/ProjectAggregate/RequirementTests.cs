@@ -1058,46 +1058,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             RecordAndPreseve(dut, 200, 14.1);
         }
-        
-        // todo move privates to bottom after codereview
-        private void RecordAndPreseve(
-            TagRequirement dut,
-            double numberToRecord,
-            double? expectedPreviousRecorded)
-        {
-            _timeProvider.Elapse(TimeSpan.FromDays(5));
-
-            dut.RecordNumberValues(
-                new Dictionary<int, double?>
-                {
-                    {NumberField1Id, numberToRecord}
-                },
-                _reqDefWithOneNumberFieldMock.Object);
-
-            AssertNumber(numberToRecord, dut.GetCurrentFieldValue(_numberField1Mock.Object));
-            AssertNumber(expectedPreviousRecorded, dut.GetPreviousFieldValue(_numberField1Mock.Object));
-
-            // preserve and get a new period
-            dut.Preserve(new Mock<Person>().Object, false);
-
-            AssertNumber(null, dut.GetCurrentFieldValue(_numberField1Mock.Object));
-            AssertNumber(numberToRecord, dut.GetPreviousFieldValue(_numberField1Mock.Object));
-        }
-
-        private static void AssertNumber(double? expectedValue, FieldValue value)
-        {
-            if (expectedValue.HasValue)
-            {
-                Assert.IsNotNull(value);
-                Assert.IsInstanceOfType(value, typeof(NumberValue));
-                Assert.AreEqual(expectedValue, ((NumberValue)value).Value);
-            }
-            else
-            {
-                Assert.IsNull(value);
-            }
-        }
-
         [TestMethod]
         public void GetPreviousFieldValue_ShouldReturnNull_ForUnknownField()
         {
@@ -1310,6 +1270,44 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+        
+        private void RecordAndPreseve(
+            TagRequirement dut,
+            double numberToRecord,
+            double? expectedPreviousRecorded)
+        {
+            _timeProvider.Elapse(TimeSpan.FromDays(5));
+
+            dut.RecordNumberValues(
+                new Dictionary<int, double?>
+                {
+                    {NumberField1Id, numberToRecord}
+                },
+                _reqDefWithOneNumberFieldMock.Object);
+
+            AssertNumber(numberToRecord, dut.GetCurrentFieldValue(_numberField1Mock.Object));
+            AssertNumber(expectedPreviousRecorded, dut.GetPreviousFieldValue(_numberField1Mock.Object));
+
+            // preserve and get a new period
+            dut.Preserve(new Mock<Person>().Object, false);
+
+            AssertNumber(null, dut.GetCurrentFieldValue(_numberField1Mock.Object));
+            AssertNumber(numberToRecord, dut.GetPreviousFieldValue(_numberField1Mock.Object));
+        }
+
+        private static void AssertNumber(double? expectedValue, FieldValue value)
+        {
+            if (expectedValue.HasValue)
+            {
+                Assert.IsNotNull(value);
+                Assert.IsInstanceOfType(value, typeof(NumberValue));
+                Assert.AreEqual(expectedValue, ((NumberValue)value).Value);
+            }
+            else
+            {
+                Assert.IsNull(value);
+            }
+        }
 
         private void AssertAttachment(FieldValueAttachment expectedValue, FieldValue value)
         {
