@@ -21,10 +21,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
         {
             // Arrange
             var reqTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
-
             var requirementTypeId = 1;
             var requirementDefinitionId = 2;
-
             var requirementType = new RequirementType(TestPlant, "TestCode", "ReqTypeTitle", 99);
             requirementType.SetProtectedIdForTesting(requirementTypeId);
 
@@ -33,12 +31,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
             _requirementDefinition.Void();
 
             requirementType.AddRequirementDefinition(_requirementDefinition);
-
             reqTypeRepositoryMock.Setup(m => m.GetByIdAsync(requirementTypeId))
                 .Returns(Task.FromResult(requirementType));
 
             _command = new UnvoidRequirementDefinitionCommand(requirementTypeId, requirementDefinitionId, _rowVersion);
-
             _dut = new UnvoidRequirementDefinitionCommandHandler(
                 reqTypeRepositoryMock.Object,
                 UnitOfWorkMock.Object);
