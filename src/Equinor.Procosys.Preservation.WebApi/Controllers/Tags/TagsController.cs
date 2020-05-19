@@ -465,9 +465,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromRoute] string rowVersion)
+            [FromBody] CompletePreservationDto dto)
         {
-            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(id, rowVersion) });
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(id, dto.RowVersion) });
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -665,9 +665,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromRoute] string rowVersion)
+            [FromBody] VoidTagDto dto)
         {
-            var result = await _mediator.Send(new VoidTagCommand(id, rowVersion));
+            var result = await _mediator.Send(new VoidTagCommand(id, dto.RowVersion));
 
             return this.FromResult(result);
         }
@@ -680,9 +680,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromRoute] string rowVersion)
+            [FromBody] UnvoidTagDto dto)
         {
-            var result = await _mediator.Send(new UnvoidTagCommand(id, rowVersion));
+            var result = await _mediator.Send(new UnvoidTagCommand(id, dto.RowVersion));
 
             return this.FromResult(result);
         }
