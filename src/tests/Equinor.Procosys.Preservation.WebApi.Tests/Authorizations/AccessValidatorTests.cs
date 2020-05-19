@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete;
+using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
@@ -734,7 +736,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
 
         #region UploadTagAttachmentCommand
         [TestMethod]
-        public async Task ValidateAsync_UploadTagAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        public async Task ValidateAsync_OnUploadTagAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
             var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
@@ -747,7 +749,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_UploadTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        public async Task ValidateAsync_OnUploadTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
             var command = new UploadTagAttachmentCommand(TagIdWithoutAccessToProject, "F", true, new MemoryStream());
@@ -760,7 +762,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_UploadTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        public async Task ValidateAsync_OnUploadTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
@@ -774,7 +776,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_UploadTagAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        public async Task ValidateAsync_OnUploadTagAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
@@ -837,6 +839,120 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region DeleteActionAttachmentCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteActionAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteActionAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new DeleteActionAttachmentCommand(TagIdWithoutAccessToProject, 1, 2, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteActionAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteActionAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region UploadActionAttachmentCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnUploadActionAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUploadActionAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new UploadActionAttachmentCommand(TagIdWithoutAccessToProject, 1, "F", true, new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUploadActionAttachmentCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream());
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUploadActionAttachmentCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream());
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1165,7 +1281,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnGetGetActionAttachmentQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        public async Task ValidateAsync_OnGetActionAttachmentQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new GetActionAttachmentQuery(TagIdWithoutAccessToProject, 2, 1);
             // act
