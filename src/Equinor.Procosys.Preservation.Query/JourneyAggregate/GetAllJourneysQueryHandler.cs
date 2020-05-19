@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                         j.Id,
                         j.Title,
                         j.IsVoided,
-                        j.Steps.Where(s => !s.IsVoided || request.IncludeVoided)
+                        j.OrderedSteps().Where(s => !s.IsVoided || request.IncludeVoided)
                             .Select(s =>
                             {
                                 var modeDto = modes
