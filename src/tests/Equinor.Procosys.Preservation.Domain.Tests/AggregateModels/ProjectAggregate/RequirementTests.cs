@@ -1270,7 +1270,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
-        
+
+        #region privates
+
         private void RecordAndPreseve(
             TagRequirement dut,
             double numberToRecord,
@@ -1315,5 +1317,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.IsInstanceOfType(value, typeof(AttachmentValue));
             Assert.AreEqual(expectedValue, ((AttachmentValue)value).FieldValueAttachment);
         }
+
+        #endregion
     }
 }
