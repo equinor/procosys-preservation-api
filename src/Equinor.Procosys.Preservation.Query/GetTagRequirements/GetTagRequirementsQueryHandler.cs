@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 
             if (tag == null)
             {
-                return new NotFoundResult<List<RequirementDto>>($"Entity with ID {request.TagId} not found");
+                return new NotFoundResult<List<RequirementDto>>($"{nameof(Tag)} with ID {request.TagId} not found");
             }
 
             var requirementDefinitionIds = tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();
