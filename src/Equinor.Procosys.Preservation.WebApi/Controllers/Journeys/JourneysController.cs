@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
@@ -139,6 +140,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         {
             var result = await _mediator.Send(new UnvoidJourneyCommand(id, dto.RowVersion));
 
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [HttpPut("{id}/Steps/SwapSteps")]
+        public async Task<ActionResult> SwapSteps(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] PairedSwapStepsDto pairedSteps)
+        {
+            var command = new SwapStepsCommand(
+                id,
+                pairedSteps.StepADto.Id,
+                pairedSteps.StepADto.RowVersion,
+                pairedSteps.StepBDto.Id,
+                pairedSteps.StepBDto.RowVersion
+                );
+            var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
     }
