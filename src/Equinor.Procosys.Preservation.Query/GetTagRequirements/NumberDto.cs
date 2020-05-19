@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using System;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
@@ -6,6 +7,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
     {
         public NumberDto(NumberValue fieldValue)
         {
+            if (fieldValue == null)
+            {
+                throw new ArgumentNullException(nameof(fieldValue));
+            }
+
             IsNA = !fieldValue.Value.HasValue;
             Value = fieldValue.Value;
         }
