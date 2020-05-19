@@ -154,7 +154,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             
             var req = _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.ElementAt(0);
             Assert.IsNull(req.NextDueTimeUtc);
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.StatusEnum);
         }
         
         [TestMethod]
@@ -233,11 +233,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void StartPreservation_ShouldSetStatusActive()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.StatusEnum);
 
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
 
-            Assert.AreEqual(PreservationStatus.Active, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            Assert.AreEqual(PreservationStatus.Active, _dutWithOneReqNotNeedInputTwoWeekInterval.StatusEnum);
         }
 
         [TestMethod]
@@ -285,7 +285,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBePreserved_ShouldBeFalse_BeforePeriod()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.StatusEnum);
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
 
             Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved());
@@ -294,7 +294,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBePreserved_ShouldBeTrue_InPeriod_WhenNotNeedInput()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.StatusEnum);
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
 
             _timeProvider.ElapseWeeks(TwoWeeksInterval);
@@ -304,7 +304,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void IsReadyToBePreserved_ShouldBeTrue_OnOverdue_WhenNotNeedInput()
         {
-            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.StatusEnum);
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
 
             _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
@@ -315,7 +315,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void IsReadyToBePreserved_ShouldBeFalse_InPeriod_WhenNeedInput()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _step1Mock.Object, _oneReq_NeedInputTwoWeekInterval);
-            Assert.AreEqual(PreservationStatus.NotStarted, dut.Status);
+            Assert.AreEqual(PreservationStatus.NotStarted, dut.StatusEnum);
 
             dut.StartPreservation();
 
@@ -788,7 +788,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.CompletePreservation(_journey);
 
-            Assert.AreEqual(PreservationStatus.Completed, dut.Status);
+            Assert.AreEqual(PreservationStatus.Completed, dut.StatusEnum);
         }
 
         [TestMethod]
@@ -808,7 +808,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             dut.CompletePreservation(_journey);
 
-            Assert.AreEqual(PreservationStatus.Completed, dut.Status);
+            Assert.AreEqual(PreservationStatus.Completed, dut.StatusEnum);
         }
 
 

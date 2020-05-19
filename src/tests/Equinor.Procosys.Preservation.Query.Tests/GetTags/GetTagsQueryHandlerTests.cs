@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 Assert.AreEqual(_testDataSet.Responsible2.Code, tagDto.NextResponsibleCode);
                 Assert.AreEqual(tag.Description, tagDto.Description);
                 Assert.AreEqual(tag.PurchaseOrderNo, tagDto.PurchaseOrderNo);
-                Assert.AreEqual(tag.Status, tagDto.Status);
+                Assert.AreEqual(tag.StatusEnum.GetDisplayValue(), tagDto.Status);
                 Assert.AreEqual(tag.TagFunctionCode, tagDto.TagFunctionCode);
                 Assert.AreEqual(tag.TagNo, tagDto.TagNo);
                 Assert.AreEqual(_testDataSet.ReqType1.Code, tagDto.Requirements.First().RequirementTypeCode);
@@ -128,13 +128,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
-                var tagDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted);
+                var tagDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted.GetDisplayValue());
                 var requirementDto = tagDto.Requirements.First();
 
                 Assert.IsFalse(requirementDto.NextDueTimeUtc.HasValue);
                 Assert.IsFalse(requirementDto.NextDueWeeks.HasValue);
                 Assert.IsNull(requirementDto.NextDueAsYearAndWeek);
-                Assert.AreEqual(PreservationStatus.NotStarted, tagDto.Status);
+                Assert.AreEqual(PreservationStatus.NotStarted.GetDisplayValue(), tagDto.Status);
             }
         }
 
@@ -148,13 +148,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
-                var tagDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active);
+                var tagDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active.GetDisplayValue());
                 var requirementDto = tagDto.Requirements.First();
 
                 Assert.IsTrue(requirementDto.NextDueTimeUtc.HasValue);
                 Assert.AreEqual(_testDataSet.IntervalWeeks, requirementDto.NextDueWeeks);
                 Assert.IsNotNull(requirementDto.NextDueAsYearAndWeek);
-                Assert.AreEqual(PreservationStatus.Active, tagDto.Status);
+                Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), tagDto.Status);
             }
         }
         
@@ -165,7 +165,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
-                var tagNotStartedDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted);
+                var tagNotStartedDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted.GetDisplayValue());
                 Assert.IsFalse(tagNotStartedDto.ReadyToBePreserved);
                 Assert.IsTrue(tagNotStartedDto.ReadyToBeStarted);
                 Assert.IsFalse(tagNotStartedDto.ReadyToBeTransferred);
@@ -182,8 +182,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
-                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
-                var siteTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.SiteArea);
+                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active.GetDisplayValue() && t.TagType == TagType.Standard);
+                var siteTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active.GetDisplayValue() && t.TagType == TagType.SiteArea);
 
                 Assert.IsTrue(stdTagActiveDto.ReadyToBeTransferred);
                 Assert.IsFalse(stdTagActiveDto.ReadyToBeStarted);
@@ -204,7 +204,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
-                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
+                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active.GetDisplayValue() && t.TagType == TagType.Standard);
 
                 Assert.IsFalse(stdTagActiveDto.ReadyToBeTransferred);
             }
@@ -220,7 +220,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
-                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
+                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active.GetDisplayValue() && t.TagType == TagType.Standard);
 
                 Assert.IsFalse(stdTagActiveDto.ReadyToBePreserved);
             }
@@ -237,7 +237,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
                 var result = await dut.Handle(_query, default);
 
-                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active && t.TagType == TagType.Standard);
+                var stdTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active.GetDisplayValue() && t.TagType == TagType.Standard);
 
                 Assert.IsTrue(stdTagActiveDto.ReadyToBePreserved);
             }
@@ -389,7 +389,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 AssertCount(result.Data, 20);
                 foreach (var tag in result.Data.Tags)
                 {
-                    Assert.AreEqual(PreservationStatus.Active, tag.Status);
+                    Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), tag.Status);
                 }
             }
         }

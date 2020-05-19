@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         public async Task<bool> VerifyPreservationStatusAsync(int tagId, PreservationStatus status, CancellationToken token)
         {
             var tag = await GetTagWithoutIncludes(tagId, token);
-            return tag != null && tag.Status == status;
+            return tag != null && tag.StatusEnum == status;
         }
 
         public async Task<bool> HasANonVoidedRequirementAsync(int tagId, CancellationToken token)

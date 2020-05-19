@@ -108,8 +108,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
             Assert.AreEqual(0, result.Errors.Count);
             Assert.IsInstanceOfType(result.Data, typeof(IEnumerable<IdAndRowVersion>));
 
-            Assert.AreEqual(PreservationStatus.Completed, _tag1.Status);
-            Assert.AreEqual(PreservationStatus.Completed, _tag2.Status);
+            Assert.AreEqual(PreservationStatus.Completed, _tag1.StatusEnum);
+            Assert.AreEqual(PreservationStatus.Completed, _tag2.StatusEnum);
             
             Assert.IsNull(_tag1.NextDueTimeUtc);
             Assert.IsNull(_tag2.NextDueTimeUtc);

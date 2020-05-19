@@ -78,8 +78,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservat
             Assert.AreEqual(0, result.Errors.Count);
             Assert.IsInstanceOfType(result.Data, typeof(Unit));
 
-            Assert.AreEqual(PreservationStatus.Active, _tag1.Status);
-            Assert.AreEqual(PreservationStatus.Active, _tag2.Status);
+            Assert.AreEqual(PreservationStatus.Active, _tag1.StatusEnum);
+            Assert.AreEqual(PreservationStatus.Active, _tag2.StatusEnum);
         }
 
         [TestMethod]

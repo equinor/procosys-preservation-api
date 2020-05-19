@@ -226,7 +226,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                            (request.Filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
                            (request.Filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions)) &&
                       (!request.Filter.PreservationStatus.HasValue || 
-                            tag.Status == request.Filter.PreservationStatus.Value) &&
+                            tag.StatusEnum == request.Filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(request.Filter.TagNoStartsWith) ||
                             tag.TagNo.StartsWith(request.Filter.TagNoStartsWith)) &&
                       (string.IsNullOrEmpty(request.Filter.CommPkgNoStartsWith) ||
@@ -272,7 +272,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     NextDueTimeUtc = tag.NextDueTimeUtc,
                     PurchaseOrderNo = tag.PurchaseOrderNo,
                     ResponsibleCode = responsible.Code,
-                    Status = tag.Status,
+                    Status = tag.StatusEnum.GetDisplayValue(),
                     StepId = step.Id,
                     StorageArea = tag.StorageArea,
                     TagFunctionCode = tag.TagFunctionCode,
@@ -389,7 +389,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             public DateTime? NextDueTimeUtc { get; set; }
             public string PurchaseOrderNo { get; set; }
             public string ResponsibleCode { get; set; }
-            public PreservationStatus Status { get; set; }
+            public string Status { get; set; }
             public string StorageArea { get; set; }
             public int StepId { get; set; }
             public int TagId { get; set; }
