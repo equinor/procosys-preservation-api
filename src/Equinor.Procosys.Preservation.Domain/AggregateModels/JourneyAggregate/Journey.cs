@@ -40,6 +40,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
+        
+        public override string ToString() => Title;
 
         public void AddStep(Step step)
         {
@@ -54,11 +56,46 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             _steps.Add(step);
+            step.SortKey = _steps.Count;
+        }
+
+        public void SwapSteps(int stepId1, int stepId2)
+        {
+            if (!IsAdjacent(stepId1, stepId2))
+            {
+                throw new Exception($"{nameof(Step)} {stepId1} and {stepId1} in {nameof(Journey)} {Title} are not adjacent and can't be swapped");
+            }
+
+            var step1 = _steps.Single(s => s.Id == stepId1);
+            var step2 = _steps.Single(s => s.Id == stepId2);
+            var tmp = step1.SortKey;
+            step1.SortKey = step2.SortKey;
+            step2.SortKey = tmp;
+        }
+
+        // Todo Demissie ... this one can be used in validator of swap command
+        public bool IsAdjacent(int stepId1, int stepId2)
+        {
+            var orderedSteps = OrderedSteps().ToList();
+
+            var stepIndex1 = orderedSteps.FindIndex(s => s.Id == stepId1);
+            if (stepIndex1 == -1)
+            {
+                throw new Exception($"{nameof(Step)} {stepId1} not found in {nameof(Journey)} {Title}");
+            }
+
+            var stepIndex2 = orderedSteps.FindIndex(s => s.Id == stepId2);
+            if (stepIndex1 == -1)
+            {
+                throw new Exception($"{nameof(Step)} {stepId2} not found in {nameof(Journey)} {Title}");
+            }
+
+            return Math.Abs(stepIndex1 - stepIndex2) == 1;
         }
 
         public Step GetNextStep(int stepId)
         {
-            var orderedSteps = _steps.OrderBy(r => r.SortKey).Where(r => !r.IsVoided).ToList();
+            var orderedSteps = OrderedSteps().Where(r => !r.IsVoided).ToList();
             var stepIndex = orderedSteps.FindIndex(s => s.Id == stepId);
             if (stepIndex < orderedSteps.Count - 1)
             {
@@ -67,6 +104,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             return null;
         }
+
+        public IOrderedEnumerable<Step> OrderedSteps() => _steps.OrderBy(r => r.SortKey);
 
         public void SetCreated(Person createdBy)
         {
