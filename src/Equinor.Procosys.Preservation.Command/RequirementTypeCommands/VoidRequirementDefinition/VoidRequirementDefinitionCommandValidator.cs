@@ -6,9 +6,9 @@ using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition
 {
-    public class VoidRequirementTypeCommandValidator : AbstractValidator<VoidRequirementDefinitionCommand>
+    public class VoidRequirementDefinitionCommandValidator : AbstractValidator<VoidRequirementDefinitionCommand>
     {
-        public VoidRequirementTypeCommandValidator(
+        public VoidRequirementDefinitionCommandValidator(
             IRequirementTypeValidator requirementTypeValidator,
             IRequirementDefinitionValidator requirementDefinitionValidator
         )
