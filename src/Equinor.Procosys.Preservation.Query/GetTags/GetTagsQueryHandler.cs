@@ -163,7 +163,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     dto.PurchaseOrderNo,
                     requirementDtos,
                     dto.ResponsibleCode,
-                    dto.Status,
+                    dto.Status.GetDisplayValue(),
                     dto.StorageArea,
                     dto.TagFunctionCode,
                     dto.Description,
@@ -300,7 +300,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     switch (sorting.Property)
                     {
                         case SortingProperty.Due:
-                            queryable = queryable.OrderBy(dto => dto.NextDueTimeUtc);
+                            queryable = queryable.OrderBy(dto => dto.Status).ThenBy(dto => dto.NextDueTimeUtc);
                             break;
                         case SortingProperty.Status:
                             queryable = queryable.OrderBy(dto => dto.Status);
@@ -336,7 +336,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     switch (sorting.Property)
                     {
                         case SortingProperty.Due:
-                            queryable = queryable.OrderByDescending(dto => dto.NextDueTimeUtc);
+                            queryable = queryable.OrderBy(dto => dto.Status).ThenByDescending(dto => dto.NextDueTimeUtc);
                             break;
                         case SortingProperty.Status:
                             queryable = queryable.OrderByDescending(dto => dto.Status);

@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
             string responsibleCode,
-            PreservationStatus status,
+            string status,
             string storageArea,
             string tagFunctionCode,
             string tagDescription,
@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         public bool ReadyToBeCompleted { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public string ResponsibleCode { get; }
-        public PreservationStatus Status { get; }
+        public string Status { get; }
         public string StorageArea { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
