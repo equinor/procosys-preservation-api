@@ -32,10 +32,19 @@ stages:
     dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
 
   jobs:
+
+  # Migration Test
+  - template: /templates/pipelines/migration.yml
+    parameters:
+      dependsOn: ''
+      deploymentName: 'copy_test'
+      envGroup: '${{ variables.envGroupName }}'
+      serviceConnection: '${{ variables.nonProdServiceConnection }}'
+
   - template: /templates/pipelines/dockerbuild.yml@templates
     parameters:
       deploymentName: 'docker_build_push'
-      dependsOn: ''
+      dependsOn: 'copy_test'
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       dockerfilePath: '${{ variables.dockerfilePath }}'

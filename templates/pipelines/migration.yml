@@ -1,0 +1,72 @@
+parameters:
+  dependsOn: ''
+  deploymentName: ''
+  serviceConnection: ''
+  envGroup: ''
+
+jobs:
+  - deployment: '${{ parameters.deploymentName }}'
+    dependsOn: '${{ parameters.dependsOn }}'
+    displayName: '${{ parameters.deploymentName }}'
+    environment: '${{ parameters.envGroup }}'
+    pool:
+      vmImage: 'windows-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+              displayName: 'Checkout source code'
+
+            - task: UseDotNet@2
+              displayName: 'Use .Net 3.1.200'
+              inputs:
+                version: '3.1.200'
+
+            - task: DotNetCoreCLI@2
+              displayName: 'Install dotnet-ef'
+              inputs:
+                command: 'custom'
+                custom: 'tool'
+                arguments: 'install --global dotnet-ef'
+
+            - task: DotNetCoreCLI@2
+              displayName: 'Check dotnet-ef version'
+              inputs:
+                command: 'custom'
+                custom: 'ef'
+                arguments: '--version'
+
+            - task: AzureCLI@2
+              displayName: 'Migration Script'
+              inputs:
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                ScriptType: pscore
+                scriptLocation: inlineScript
+                inlineScript: |
+                  # Check dotnet ef version
+                  Write-Host "dotnet ef version is:"
+                  dotnet ef --version
+
+                  # Check content of folders:
+                  Write-Host "Checking $(Build.SourcesDirectory)"
+                  dir $(Build.SourcesDirectory)
+
+                  Write-Host "Checking $(build.artifactstagingdirectory)"
+                  dir $(build.artifactstagingdirectory)
+                  # # Set user secrets for API project                
+                  # cd $(Build.SourcesDirectory)\MyApp.Api
+                  # dotnet user-secrets set "MyApp:SqlServer" "Server=(localdb)\\mssqllocaldb;Database=MyDatabase;Trusted_Connection=True;MultipleActiveResultSets=true;"
+
+                  # # Create migration script for MyDbContext
+                  # dotnet ef migrations script --project "$(Build.SourcesDirectory)\MyApp.Api\MyApp.Api.csprojc" --startup-project
+                  # "$(Build.SourcesDirectory)\MyApp.Api\MyApp.Api.csproj" --output $(build.artifactstagingdirectory)\SQLMigrations\migration.sql --idempotent --verbose --nobuild --configuration $(BuildConfiguration) --context "MyDbContext"
+
+            # - task: SqlAzureDacpacDeployment@1
+            #   inputs:
+            #     azureSubscription: '${{ parameters.serviceConnection }}'
+            #     AuthenticationType: 'connectionString'
+            #     ConnectionString: '$(MyApp--SqlServer)'
+            #     deployType: 'SqlTask'
+            #     SqlFile: '$(System.DefaultWOrkingDirectory)/_Publish SQL migrations/SQLMigrations/migration.sql'
+            #     IpDetectionMethod: 'AutoDetect'
