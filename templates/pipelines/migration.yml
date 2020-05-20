@@ -46,3 +46,9 @@ jobs:
                     --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
                     --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
                     --output $(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql --idempotent
+
+            # Save Pipeline Artifact
+            - task: PublishPipelineArtifact@1
+              inputs:
+                targetPath: '$(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql'
+                artifactName: 'SQLMigration'

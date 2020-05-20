@@ -49,6 +49,12 @@ jobs:
                     Write-Host "Checking Build.ArtifactStagingDirectory:"
                     dir $(Build.ArtifactStagingDirectory)
 
+            # Download Pipeline Artifact
+            - task: DownloadPipelineArtifact@2
+              inputs:
+                artifact: 'SQLMigration'
+                path: $(System.DefaultWorkingDirectory)
+
             # Deploy Script
             - task: SqlAzureDacpacDeployment@1
               inputs:
@@ -56,5 +62,5 @@ jobs:
                 AuthenticationType: 'connectionString'
                 ConnectionString: '$(kvoSecret)'
                 deployType: 'SqlTask'
-                SqlFile: '$(System.DefaultWorkingDirectory)/SQLMigrations/migration.sql'
+                SqlFile: '$(System.DefaultWorkingDirectory)/migration.sql'
                 IpDetectionMethod: 'AutoDetect'
