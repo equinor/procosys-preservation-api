@@ -52,34 +52,34 @@ stages:
   #     repository: '${{ variables.repositoryName }}'
   #     dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
-# Dev deploy stage
-- stage: dev
-  displayName: 'Dev'
-  dependsOn: 'common'
-  # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  variables:
-    envName: 'dev'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Development'
+# # Dev deploy stage
+# - stage: dev
+#   displayName: 'Dev'
+#   dependsOn: 'common'
+#   # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   variables:
+#     envName: 'dev'
+#     envRg: '${{ variables.envRgName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+#     serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+#     containerRegistry: '${{ variables.containerRegistryName }}' 
+#     aspNetCoreEnvironment: 'Development'
 
-  jobs:
-  # Run Migration Script
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'run_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: 'pcs-common-kv'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: "pcssqladmin-${{ variables.envName }}"
-      serverName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
-      databaseName: 'pcs-pres-${{ variables.envName }}-db'
-      
+#   jobs:
+#   # Run Migration Script
+#   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+#     parameters:
+#       dependsOn: ''
+#       deploymentName: 'run_migration_script'
+#       envGroup: '${{ variables.envGroupName }}'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       kvName: '${{ variables.commonKeyVault }}'
+#       kvRgName: 'pcs-common-rg'
+#       kvSecret: "${{ sqlAdminUserName }}-${{ variables.envName }}"
+#       serverName: '${{ variables.sqlServerName }}.database.windows.net'
+#       databaseName: '${{ variables.sqlDatabaseName }}'
+
 #   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
 #     parameters:
 #       deploymentName: 'deploy_to_k8s'
@@ -119,11 +119,11 @@ stages:
       deploymentName: 'run_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: 'pcs-common-kv'
+      kvName: '${{ variables.commonKeyVault }}'
       kvRgName: 'pcs-common-rg'
-      kvSecret: "pcssqladmin-${{ variables.envName }}"
-      serverName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
-      databaseName: 'pcs-pres-${{ variables.envName }}-db'
+      kvSecret: "${{ sqlAdminUserName }}-${{ variables.envName }}"
+      serverName: '${{ variables.sqlServerName }}.database.windows.net'
+      databaseName: '${{ variables.sqlDatabaseName }}'
 
 #   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
 #     parameters:
@@ -161,8 +161,8 @@ stages:
       deploymentName: 'run_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: 'pcs-common-kv'
+      kvName: '${{ variables.commonKeyVault }}'
       kvRgName: 'pcs-common-rg'
-      kvSecret: "pcssqladmin-${{ variables.envName }}"
-      serverName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
-      databaseName: 'pcs-pres-${{ variables.envName }}-db'
+      kvSecret: "${{ sqlAdminUserName }}-${{ variables.envName }}"
+      serverName: '${{ variables.sqlServerName }}.database.windows.net'
+      databaseName: '${{ variables.sqlDatabaseName }}'
