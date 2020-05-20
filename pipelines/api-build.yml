@@ -40,8 +40,8 @@ stages:
       deploymentName: 'copy_test'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.nonProdServiceConnection }}'
-      kvName: '${{ variables.kvName }}'
-      kvRgName: '${{ variables.envRgName }}'
+      # kvName: '${{ variables.kvName }}'
+      # kvRgName: '${{ variables.envRgName }}'
 
   # - template: /templates/pipelines/dockerbuild.yml@templates
   #   parameters:
