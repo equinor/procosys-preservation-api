@@ -18,10 +18,10 @@ jobs:
             - checkout: self
               displayName: 'Checkout source code'
 
-            - task: UseDotNet@2
-              displayName: 'Use .Net 3.1.200'
-              inputs:
-                version: '3.1.200'
+            # - task: UseDotNet@2
+            #   displayName: 'Use .Net 3.1.200'
+            #   inputs:
+            #     version: '3.1.200'
 
             - task: DotNetCoreCLI@2
               displayName: 'Install dotnet-ef'
