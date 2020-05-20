@@ -62,6 +62,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public int? ModifiedById { get; private set; }
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
+        
+        public override string ToString() => $"{Title} ({SortKey})";
 
         public void SetCreated(Person createdBy)
         {
