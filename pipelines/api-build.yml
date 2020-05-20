@@ -108,8 +108,8 @@ stages:
       serviceConnection: '${{ variables.serviceConnection }}'
       kvName: 'pcs-common-kv'
       kvRgName: 'pcs-common-rg'
-      databaseName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
-      serverName: 'pcs-${{ variables.envName }}-sqlserver'
+      serverName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
+      databaseName: 'pcs-pres-${{ variables.envName }}-db'
 
 #   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
 #     parameters:
