@@ -30,13 +30,6 @@ jobs:
                 custom: 'tool'
                 arguments: 'install --global dotnet-ef'
 
-            - task: DotNetCoreCLI@2
-              displayName: 'Check dotnet-ef version'
-              inputs:
-                command: 'custom'
-                custom: 'ef'
-                arguments: '--version'
-
             - task: AzureCLI@2
               displayName: 'Migration Script'
               inputs:
@@ -44,16 +37,24 @@ jobs:
                 ScriptType: pscore
                 scriptLocation: inlineScript
                 inlineScript: |
-                  # Check dotnet ef version
-                  Write-Host "dotnet ef version is:"
-                  dotnet ef --version
-
                   # Check content of folders:
                   Write-Host "Checking $(Build.SourcesDirectory)"
                   dir $(Build.SourcesDirectory)
 
                   Write-Host "Checking $(build.artifactstagingdirectory)"
                   dir $(build.artifactstagingdirectory)
+                  # # Set user secrets for API project                
+                  cd $(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi
+
+                  # # Create migration script for MyDbContext
+                  # dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --startup-project
+                  # "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --output $(build.artifactstagingdirectory)\SQLMigrations\migration.sql --idempotent
+
+                  Write-Host "Checking SQLMigration Folder:"
+                  cd $(build.artifactstagingdirectory)\SQLMigrations\
+                  dir 
+                  cat migration.sql
+
 
             # - task: SqlAzureDacpacDeployment@1
             #   inputs:
