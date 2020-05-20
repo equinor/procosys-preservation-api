@@ -47,8 +47,9 @@ jobs:
                   cd $(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi
 
                   # # Create migration script for MyDbContext
-                  dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --startup-project
-                  "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --output $(build.artifactstagingdirectory)\SQLMigrations\migration.sql --idempotent
+                  dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
+                    --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
+                    --output $(build.artifactstagingdirectory)\SQLMigrations\migration.sql --idempotent --no-build
 
                   Write-Host "Checking SQLMigration Folder:"
                   cd $(build.artifactstagingdirectory)\SQLMigrations\
