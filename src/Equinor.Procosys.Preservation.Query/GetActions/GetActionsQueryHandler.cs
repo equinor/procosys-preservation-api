@@ -33,6 +33,11 @@ namespace Equinor.Procosys.Preservation.Query.GetActions
 
             var actions = tag
                 .Actions
+                .OrderBy(t => t.IsClosed.Equals(true))
+                .ThenByDescending(t => t.DueTimeUtc.HasValue)
+                .ThenBy(t => t.DueTimeUtc)
+                .ThenBy(t => t.ModifiedAtUtc)
+                .ThenBy(t => t.CreatedAtUtc)
                 .Select(action => new ActionDto(
                     action.Id,
                     action.Title,
