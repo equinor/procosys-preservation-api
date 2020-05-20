@@ -41,77 +41,77 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
-  - template: /templates/pipelines/dockerbuild.yml@templates
-    parameters:
-      deploymentName: 'docker_build_push'
-      dependsOn: 'copy_test'
-      env: 'pcs-${{ variables.envName }}'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerfilePath: '${{ variables.dockerfilePath }}'
-      buildContext: '$(Build.SourcesDirectory)/src'
-      repository: '${{ variables.repositoryName }}'
-      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+  # - template: /templates/pipelines/dockerbuild.yml@templates
+  #   parameters:
+  #     deploymentName: 'docker_build_push'
+  #     dependsOn: 'copy_test'
+  #     env: 'pcs-${{ variables.envName }}'
+  #     envGroup: '${{ variables.envGroupName }}'
+  #     dockerfilePath: '${{ variables.dockerfilePath }}'
+  #     buildContext: '$(Build.SourcesDirectory)/src'
+  #     repository: '${{ variables.repositoryName }}'
+  #     dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
-# Dev deploy stage
-- stage: dev
-  displayName: 'Dev'
-  dependsOn: 'common'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  variables:
-    envName: 'dev'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Development'
+# # Dev deploy stage
+# - stage: dev
+#   displayName: 'Dev'
+#   dependsOn: 'common'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   variables:
+#     envName: 'dev'
+#     envRg: '${{ variables.envRgName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+#     serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+#     containerRegistry: '${{ variables.containerRegistryName }}' 
+#     aspNetCoreEnvironment: 'Development'
 
-  jobs:
-  - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/preservation/api:$(Build.BuildId)'
-      clusterName: 'pcs-aks-test'
-      kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
-      kvClientSecretName: '${{ variables.kvClientSecretName }}'
-      kvName: '${{ variables.kvName }}'
-      kvRgName: '${{ variables.envRgName }}'
-      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+#   jobs:
+#   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
+#     parameters:
+#       deploymentName: 'deploy_to_k8s'
+#       dependsOn: ''
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       env: '${{ variables.envName }}'
+#       envRg: 'pcs-hosting-rg'
+#       envGroup: '${{ variables.envGroupName }}'
+#       dockerImage: 'procosys.azurecr.io/preservation/api:$(Build.BuildId)'
+#       clusterName: 'pcs-aks-test'
+#       kvClientIdName: '${{ variables.kvClientIdName }}'
+#       kvUriName: '${{ variables.kvUriName }}'
+#       kvClientSecretName: '${{ variables.kvClientSecretName }}'
+#       kvName: '${{ variables.kvName }}'
+#       kvRgName: '${{ variables.envRgName }}'
+#       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
 
-# Test deploy stage
-- stage: test
-  displayName: 'Test'
-  dependsOn: 'common'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  variables:
-    envName: 'test'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Production'
+# # Test deploy stage
+# - stage: test
+#   displayName: 'Test'
+#   dependsOn: 'common'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   variables:
+#     envName: 'test'
+#     envRg: '${{ variables.envRgName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+#     serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+#     containerRegistry: '${{ variables.containerRegistryName }}' 
+#     aspNetCoreEnvironment: 'Production'
 
-  jobs:
-  - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/preservation/api:$(Build.BuildId)'
-      clusterName: 'pcs-aks-test'
-      kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
-      kvClientSecretName: '${{ variables.kvClientSecretName }}'
-      kvName: '${{ variables.kvName }}'
-      kvRgName: '${{ variables.envRgName }}'
-      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+#   jobs:
+#   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
+#     parameters:
+#       deploymentName: 'deploy_to_k8s'
+#       dependsOn: ''
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       env: '${{ variables.envName }}'
+#       envRg: 'pcs-hosting-rg'
+#       envGroup: '${{ variables.envGroupName }}'
+#       dockerImage: 'procosys.azurecr.io/preservation/api:$(Build.BuildId)'
+#       clusterName: 'pcs-aks-test'
+#       kvClientIdName: '${{ variables.kvClientIdName }}'
+#       kvUriName: '${{ variables.kvUriName }}'
+#       kvClientSecretName: '${{ variables.kvClientSecretName }}'
+#       kvName: '${{ variables.kvName }}'
+#       kvRgName: '${{ variables.envRgName }}'
+#       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'

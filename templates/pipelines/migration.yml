@@ -54,13 +54,6 @@ jobs:
 
                   Write-Host "Checking $(build.artifactstagingdirectory)"
                   dir $(build.artifactstagingdirectory)
-                  # # Set user secrets for API project                
-                  # cd $(Build.SourcesDirectory)\MyApp.Api
-                  # dotnet user-secrets set "MyApp:SqlServer" "Server=(localdb)\\mssqllocaldb;Database=MyDatabase;Trusted_Connection=True;MultipleActiveResultSets=true;"
-
-                  # # Create migration script for MyDbContext
-                  # dotnet ef migrations script --project "$(Build.SourcesDirectory)\MyApp.Api\MyApp.Api.csprojc" --startup-project
-                  # "$(Build.SourcesDirectory)\MyApp.Api\MyApp.Api.csproj" --output $(build.artifactstagingdirectory)\SQLMigrations\migration.sql --idempotent --verbose --nobuild --configuration $(BuildConfiguration) --context "MyDbContext"
 
             # - task: SqlAzureDacpacDeployment@1
             #   inputs:
