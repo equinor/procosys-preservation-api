@@ -34,7 +34,7 @@ stages:
   jobs:
 
   # Create Migration Script
-  - template: /templates/pipelines/migration.yml
+  - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
     parameters:
       dependsOn: ''
       deploymentName: 'create_migration_script'
@@ -100,7 +100,7 @@ stages:
 
   jobs:
   # Run Migration Script
-  - template: /templates/pipelines/sqlmigrate.yml
+  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
     parameters:
       dependsOn: ''
       deploymentName: 'run_migration_script'
