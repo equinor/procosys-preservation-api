@@ -3,8 +3,6 @@ parameters:
   deploymentName: ''
   serviceConnection: ''
   envGroup: ''
-  # kvRgName: ''
-  # kvName: ''
 
 jobs:
   - deployment: '${{ parameters.deploymentName }}'
@@ -20,39 +18,17 @@ jobs:
             - checkout: self
               displayName: 'Checkout source code'
 
-            - task: UseDotNet@2
-              displayName: 'Use .Net 3.1.200'
-              inputs:
-                version: '3.1.200'
-
-            - task: DotNetCoreCLI@2
-              displayName: 'Install dotnet-ef'
-              inputs:
-                command: 'custom'
-                custom: 'tool'
-                arguments: 'install --global dotnet-ef'
-
-            # - task: AzurePowerShell@4
-            #   displayName: 'Get KeyVault Secret'
+            # - task: UseDotNet@2
+            #   displayName: 'Use .Net 3.1.200'
             #   inputs:
-            #     azurePowerShellVersion: LatestVersion
-            #     azureSubscription: '${{ parameters.serviceConnection }}'
-            #     ScriptType: InlineScript
-            #     Inline: |
-            #       # Variables
-            #       $kvName = "${{ parameters.kvName }}"
-            #       $kvSecret = "ConnectionStrings--PreservationContext"
-            #       $rgName = "${{ parameters.kvRgName }}"
-                  
-            #       # Temporarily disable firewall for Key Vault
-            #       Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Allow
-            #       $secretName = (Get-AzKeyVaultSecret -VaultName $kvName -Name $kvSecret).SecretValueText
-                  
-            #       # Create reusable variable for env task with $(kvoSecret)
-            #       Write-Host "##vso[task.setvariable variable=kvoSecret;issecret=true;]$secretName"
-                  
-            #       # Enable firewall for Key Vault
-            #       Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Deny
+            #     version: '3.1.200'
+
+            # - task: DotNetCoreCLI@2
+            #   displayName: 'Install dotnet-ef'
+            #   inputs:
+            #     command: 'custom'
+            #     custom: 'tool'
+            #     arguments: 'install --global dotnet-ef'
 
             - task: AzureCLI@2
               displayName: 'Migration Script'
@@ -61,26 +37,12 @@ jobs:
                 ScriptType: pscore
                 scriptLocation: inlineScript
                 inlineScript: |
-                  # Check content of folders:
-                  Write-Host "Checking Build.SourcesDirectory"
-                  dir $(Build.SourcesDirectory)
-
-                  Write-Host "Checking Build.ArtifactStagingDirectory"
-                  dir $(build.artifactstagingdirectory)
-                  Write-Host "Checking SRC:"
-                  dir
-
                   # Set user secrets for API project
                   cd $(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\
                   dotnet user-secrets set "ConnectionStrings:PreservationContext" "dummydata"
 
                   # Create migration script for MyDbContext
                   dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --output $(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql --idempotent
-
-                  Write-Host "Checking SQLMigration Folder:"
-                  cd $(Build.ArtifactStagingDirectory)\SQLMigrations\
-                  dir 
-                  cat migration.sql
 
             # - task: SqlAzureDacpacDeployment@1
             #   inputs:
