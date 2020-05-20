@@ -49,7 +49,7 @@ jobs:
                   dir
 
                   # # Create migration script for MyDbContext
-                  dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --output $(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql --idempotent --no-build
+                  dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --output $(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql --idempotent
 
                   Write-Host "Checking SQLMigration Folder:"
                   cd $(Build.ArtifactStagingDirectory)\SQLMigrations\
