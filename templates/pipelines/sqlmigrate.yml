@@ -6,6 +6,8 @@ parameters:
   connectionString: ''
   kvName: ''
   kvRgName: ''
+  serverName: ''
+  databaseName: ''
 
 jobs:
   - deployment: '${{ parameters.deploymentName }}'
@@ -30,7 +32,7 @@ jobs:
                 Inline: |
                     # Variables
                     $kvName = "${{ parameters.kvName }}"
-                    $kvSecret = "ConnectionStrings--PreservationContext"
+                    $kvSecret = "pcssqladmin-test"
                     $rgName = "${{ parameters.kvRgName }}"
                         
                     # Temporarily disable firewall for Key Vault
@@ -43,12 +45,6 @@ jobs:
                     # Enable firewall for Key Vault
                     Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Deny
 
-                    Write-Host "Checking System.DefaultWorkingDirectory:"
-                    dir $(System.DefaultWorkingDirectory)
-
-                    Write-Host "Checking Build.ArtifactStagingDirectory:"
-                    dir $(Build.ArtifactStagingDirectory)
-
             # Download Pipeline Artifact
             - task: DownloadPipelineArtifact@2
               inputs:
@@ -59,8 +55,11 @@ jobs:
             - task: SqlAzureDacpacDeployment@1
               inputs:
                 azureSubscription: '${{ parameters.serviceConnection }}'
-                AuthenticationType: 'connectionString'
-                ConnectionString: '$(kvoSecret)'
+                AuthenticationType: 'server'
+                ServerName: '${{ parameters.serverName }}'
+                DatabaseName: '${{ parameters.databaseName }}'
+                SqlUsername: 'pcssqladmin'
+                SqlPassword: '$(kvoSecret)'
                 deployType: 'SqlTask'
                 SqlFile: '$(System.DefaultWorkingDirectory)/migration.sql'
                 IpDetectionMethod: 'AutoDetect'

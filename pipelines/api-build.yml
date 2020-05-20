@@ -105,9 +105,11 @@ stages:
       dependsOn: ''
       deploymentName: 'run_migration_script'
       envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.nonProdServiceConnection }}'
-      kvName: '${{ variables.kvName }}'
-      kvRgName: '${{ variables.envRgName }}'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      kvName: 'pcs-common-kv'
+      kvRgName: 'pcs-common-rg'
+      databaseName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
+      serverName: 'pcs-${{ variables.envName }}-sqlserver'
 
 #   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
 #     parameters:
