@@ -4,7 +4,7 @@ parameters:
   serviceConnection: ''
   envGroup: ''
   kvRgName: ''
-  kvRgName: ''
+  kvName: ''
 
 jobs:
   - deployment: '${{ parameters.deploymentName }}'
