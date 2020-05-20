@@ -18,6 +18,7 @@ variables:
 
  - name: 'repositoryName'
    value: 'preservation/api'
+   system.debug: true
 
 stages:
 # common stage. Docker build, tag and push
