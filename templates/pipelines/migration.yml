@@ -38,23 +38,25 @@ jobs:
                 scriptLocation: inlineScript
                 inlineScript: |
                   # Check content of folders:
-                  Write-Host "Checking $(Build.SourcesDirectory)"
+                  Write-Host "Checking Build.SourcesDirectory"
                   dir $(Build.SourcesDirectory)
 
-                  Write-Host "Checking $(build.artifactstagingdirectory)"
+                  Write-Host "Checking Build.ArtifactStagingDirectory"
                   dir $(build.artifactstagingdirectory)
-                  # # Set user secrets for API project                
-                  cd $(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi
+                  # Set user secrets for API project                
+                  cd $(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\
+                  Write-Host "Checking SRC:"
+                  dir
 
-                  # # Create migration script for MyDbContext
-                  dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
-                    --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
-                    --output $(build.artifactstagingdirectory)\SQLMigrations\migration.sql --idempotent --no-build
+                #   # # Create migration script for MyDbContext
+                #   dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
+                #     --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
+                #     --output $(build.artifactstagingdirectory)\SQLMigrations\migration.sql --idempotent --no-build
 
-                  Write-Host "Checking SQLMigration Folder:"
-                  cd $(build.artifactstagingdirectory)\SQLMigrations\
-                  dir 
-                  cat migration.sql
+                #   Write-Host "Checking SQLMigration Folder:"
+                #   cd $(build.artifactstagingdirectory)\SQLMigrations\
+                #   dir 
+                #   cat migration.sql
 
 
             # - task: SqlAzureDacpacDeployment@1
