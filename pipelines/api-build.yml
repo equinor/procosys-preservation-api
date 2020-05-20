@@ -76,7 +76,7 @@ stages:
 #       serviceConnection: '${{ variables.serviceConnection }}'
 #       kvName: '${{ variables.commonKeyVault }}'
 #       kvRgName: 'pcs-common-rg'
-#       kvSecret: "${{ sqlAdminUserName }}-${{ variables.envName }}"
+#       kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
 #       serverName: '${{ variables.sqlServerName }}.database.windows.net'
 #       databaseName: '${{ variables.sqlDatabaseName }}'
 
@@ -121,7 +121,7 @@ stages:
       serviceConnection: '${{ variables.serviceConnection }}'
       kvName: '${{ variables.commonKeyVault }}'
       kvRgName: 'pcs-common-rg'
-      kvSecret: "${{ sqlAdminUserName }}-${{ variables.envName }}"
+      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
       serverName: '${{ variables.sqlServerName }}.database.windows.net'
       databaseName: '${{ variables.sqlDatabaseName }}'
 
@@ -163,6 +163,6 @@ stages:
       serviceConnection: '${{ variables.serviceConnection }}'
       kvName: '${{ variables.commonKeyVault }}'
       kvRgName: 'pcs-common-rg'
-      kvSecret: "${{ sqlAdminUserName }}-${{ variables.envName }}"
+      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
       serverName: '${{ variables.sqlServerName }}.database.windows.net'
       databaseName: '${{ variables.sqlDatabaseName }}'
