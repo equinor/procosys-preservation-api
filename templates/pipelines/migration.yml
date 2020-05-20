@@ -18,17 +18,17 @@ jobs:
             - checkout: self
               displayName: 'Checkout source code'
 
-            # - task: UseDotNet@2
-            #   displayName: 'Use .Net 3.1.200'
-            #   inputs:
-            #     version: '3.1.200'
+            - task: UseDotNet@2
+              displayName: 'Use .Net 3.1.200'
+              inputs:
+                version: '3.1.200'
 
-            # - task: DotNetCoreCLI@2
-            #   displayName: 'Install dotnet-ef'
-            #   inputs:
-            #     command: 'custom'
-            #     custom: 'tool'
-            #     arguments: 'install --global dotnet-ef'
+            - task: DotNetCoreCLI@2
+              displayName: 'Install dotnet-ef'
+              inputs:
+                command: 'custom'
+                custom: 'tool'
+                arguments: 'install --global dotnet-ef'
 
             - task: AzureCLI@2
               displayName: 'Migration Script'
@@ -42,13 +42,7 @@ jobs:
                   dotnet user-secrets set "ConnectionStrings:PreservationContext" "dummydata"
 
                   # Create migration script for MyDbContext
-                  dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --output $(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql --idempotent
-
-            # - task: SqlAzureDacpacDeployment@1
-            #   inputs:
-            #     azureSubscription: '${{ parameters.serviceConnection }}'
-            #     AuthenticationType: 'connectionString'
-            #     ConnectionString: '$(MyApp--SqlServer)'
-            #     deployType: 'SqlTask'
-            #     SqlFile: '$(System.DefaultWOrkingDirectory)/_Publish SQL migrations/SQLMigrations/migration.sql'
-            #     IpDetectionMethod: 'AutoDetect'
+                  dotnet ef migrations script `
+                    --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
+                    --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" `
+                    --output $(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql --idempotent
