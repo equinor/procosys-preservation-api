@@ -3,6 +3,8 @@ parameters:
   deploymentName: ''
   serviceConnection: ''
   envGroup: ''
+  kvRgName: ''
+  kvRgName: ''
 
 jobs:
   - deployment: '${{ parameters.deploymentName }}'
@@ -30,6 +32,28 @@ jobs:
                 custom: 'tool'
                 arguments: 'install --global dotnet-ef'
 
+            - task: AzurePowerShell@4
+              displayName: 'Get KeyVault Secret'
+              inputs:
+                azurePowerShellVersion: LatestVersion
+                azureSubscription: '${{ parameters.serviceConnection }}'
+                ScriptType: InlineScript
+                Inline: |
+                  # Variables
+                  $kvName = "${{ parameters.kvName }}"
+                  $kvSecret = "ConnectionStrings--PreservationContext"
+                  $rgName = "${{ parameters.kvRgName }}"
+                  
+                  # Temporarily disable firewall for Key Vault
+                  Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Allow
+                  $secretName = (Get-AzKeyVaultSecret -VaultName $kvName -Name $kvSecret).SecretValueText
+                  
+                  # Create reusable variable for env task with $(kvoSecret)
+                  Write-Host "##vso[task.setvariable variable=kvoSecret;issecret=true;]$secretName"
+                  
+                  # Enable firewall for Key Vault
+                  Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Deny
+
             - task: AzureCLI@2
               displayName: 'Migration Script'
               inputs:
@@ -48,8 +72,12 @@ jobs:
                   Write-Host "Checking SRC:"
                   dir
 
-                  # # Create migration script for MyDbContext
-                  dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --output $(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql --idempotent
+                  # Set user secrets for API project
+                  cd $(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\
+                  dotnet user-secrets set "ConnectionStrings:PreservationContext" "$(kvoSecret)"
+
+                  # Create migration script for MyDbContext
+                  dotnet ef migrations script --project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --startup-project "$(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" --output $(Build.ArtifactStagingDirectory)\SQLMigrations\migration.sql --idempotent --no-build --verbose
 
                   Write-Host "Checking SQLMigration Folder:"
                   cd $(Build.ArtifactStagingDirectory)\SQLMigrations\
