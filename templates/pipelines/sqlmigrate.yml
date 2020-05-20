@@ -43,6 +43,12 @@ jobs:
                     # Enable firewall for Key Vault
                     Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Deny
 
+                    Write-Host "Checking System.DefaultWorkingDirectory:"
+                    dir $(System.DefaultWorkingDirectory)/SQLMigrations/
+
+                    Write-Host "Checking Build.ArtifactStagingDirectory:"
+                    dir (Build.ArtifactStagingDirectory)\SQLMigrations\
+
             # Deploy Script
             - task: SqlAzureDacpacDeployment@1
               inputs:
@@ -50,5 +56,5 @@ jobs:
                 AuthenticationType: 'connectionString'
                 ConnectionString: '$(kvoSecret)'
                 deployType: 'SqlTask'
-                SqlFile: '$(System.DefaultWOrkingDirectory)/_Publish SQL migrations/SQLMigrations/migration.sql'
+                SqlFile: '$(System.DefaultWorkingDirectory)/SQLMigrations/migration.sql'
                 IpDetectionMethod: 'AutoDetect'
