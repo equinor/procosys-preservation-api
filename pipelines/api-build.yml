@@ -52,21 +52,34 @@ stages:
   #     repository: '${{ variables.repositoryName }}'
   #     dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
-# # Dev deploy stage
-# - stage: dev
-#   displayName: 'Dev'
-#   dependsOn: 'common'
-#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-#   variables:
-#     envName: 'dev'
-#     envRg: '${{ variables.envRgName }}'
-#     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-#     serviceConnection: '${{ variables.nonProdServiceConnection }}'
-#     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-#     containerRegistry: '${{ variables.containerRegistryName }}' 
-#     aspNetCoreEnvironment: 'Development'
+# Dev deploy stage
+- stage: dev
+  displayName: 'Dev'
+  dependsOn: 'common'
+  # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  variables:
+    envName: 'dev'
+    envRg: '${{ variables.envRgName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    serviceConnection: '${{ variables.nonProdServiceConnection }}'
+    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}' 
+    aspNetCoreEnvironment: 'Development'
 
-#   jobs:
+  jobs:
+  # Run Migration Script
+  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'run_migration_script'
+      envGroup: '${{ variables.envGroupName }}'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      kvName: 'pcs-common-kv'
+      kvRgName: 'pcs-common-rg'
+      kvSecret: "pcssqladmin-${{ variables.envName }}"
+      serverName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
+      databaseName: 'pcs-pres-${{ variables.envName }}-db'
+      
 #   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
 #     parameters:
 #       deploymentName: 'deploy_to_k8s'
@@ -108,6 +121,7 @@ stages:
       serviceConnection: '${{ variables.serviceConnection }}'
       kvName: 'pcs-common-kv'
       kvRgName: 'pcs-common-rg'
+      kvSecret: "pcssqladmin-${{ variables.envName }}"
       serverName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
       databaseName: 'pcs-pres-${{ variables.envName }}-db'
 
@@ -149,5 +163,6 @@ stages:
       serviceConnection: '${{ variables.serviceConnection }}'
       kvName: 'pcs-common-kv'
       kvRgName: 'pcs-common-rg'
+      kvSecret: "pcssqladmin-${{ variables.envName }}"
       serverName: 'pcs-${{ variables.envName }}-sqlserver.database.windows.net'
       databaseName: 'pcs-pres-${{ variables.envName }}-db'
