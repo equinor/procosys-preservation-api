@@ -59,12 +59,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.Preserved)
             );
 
-        //[TestMethod]
-        //public void Constructor_ShouldThrowException_WhenStatusIsStopped()
-        //    => Assert.ThrowsException<ArgumentException>(() =>
-        //        new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.Stopped)
-        //    );
-
         [TestMethod]
         public void SetComment_ShouldSetComment()
         {

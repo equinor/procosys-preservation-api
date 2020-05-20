@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         PurchaseOrderNo = tag.PurchaseOrderNo,
                                         Remark = tag.Remark,
                                         ResponsibleName = responsible.Code,
-                                        Status = tag.Status,
+                                        Status = tag.Status.GetDisplayValue(),
                                         StorageArea = tag.StorageArea,
                                         TagNo = tag.TagNo,
                                         TagType = tag.TagType,
