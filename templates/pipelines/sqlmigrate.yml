@@ -44,10 +44,10 @@ jobs:
                     Update-AzKeyVaultNetworkRuleSet -VaultName $kvName -ResourceGroupName $rgName -DefaultAction Deny
 
                     Write-Host "Checking System.DefaultWorkingDirectory:"
-                    dir $(System.DefaultWorkingDirectory)/SQLMigrations/
+                    dir $(System.DefaultWorkingDirectory)
 
                     Write-Host "Checking Build.ArtifactStagingDirectory:"
-                    dir (Build.ArtifactStagingDirectory)\SQLMigrations\
+                    dir $(Build.ArtifactStagingDirectory)
 
             # Deploy Script
             - task: SqlAzureDacpacDeployment@1
