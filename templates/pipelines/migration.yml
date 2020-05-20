@@ -67,8 +67,6 @@ jobs:
 
                   Write-Host "Checking Build.ArtifactStagingDirectory"
                   dir $(build.artifactstagingdirectory)
-                  # Set user secrets for API project                
-                  cd $(Build.SourcesDirectory)\src\Equinor.Procosys.Preservation.WebApi\
                   Write-Host "Checking SRC:"
                   dir
 
