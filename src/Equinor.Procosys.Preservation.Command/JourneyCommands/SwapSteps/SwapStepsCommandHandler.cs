@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<string>("RowVersionA: " + stepA.RowVersion.ConvertToString() + ", " + "RowVersionB: " + stepB.RowVersion.ConvertToString());
+            return new SuccessResult<string>("RowVersionA:" + stepA.RowVersion.ConvertToString() + ", " + "RowVersionB:" + stepB.RowVersion.ConvertToString());
         }
     }
 }

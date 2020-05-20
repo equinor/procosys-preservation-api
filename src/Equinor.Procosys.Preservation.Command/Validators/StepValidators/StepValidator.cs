@@ -41,7 +41,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 select s).SingleOrDefaultAsync(token);
             return step != null && step.IsVoided;
         }
-        public async Task<bool> AreAdjacentAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
+
+        public async Task<bool> AreAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
         {
             var stepA = await (from s in _context.QuerySet<Step>()
                 where s.Id == stepAId
