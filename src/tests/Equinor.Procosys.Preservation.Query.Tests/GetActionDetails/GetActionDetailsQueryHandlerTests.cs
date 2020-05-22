@@ -61,6 +61,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 var actionDetailDto = result.Data;
 
                 AssertClosedAction(actionDetailDto, _closedAction, _testDataSet.CurrentUser);
+                AssertModifiedAction(_openAction, _testDataSet.CurrentUser);
             }
         }
 
@@ -131,5 +132,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
             Assert.AreEqual(action.ClosedAtUtc, actionDetailsDto.ClosedAtUtc);
             Assert.AreEqual(isClosed, actionDetailsDto.IsClosed);
         }
+
+        private void AssertModifiedAction(Action action, Person modifier)
+        {
+            action.SetModified(modifier);
+
+            Assert.IsNotNull(action.ModifiedById);
+            Assert.AreEqual(modifier.Id, action.ModifiedById);
+            Assert.AreEqual(action.ModifiedAtUtc, action.ModifiedAtUtc);
+
+        }
+
     }
 }

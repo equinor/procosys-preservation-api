@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -26,14 +25,17 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                      join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
                  join createdUser in _context.QuerySet<Person>()
                      on EF.Property<int>(a, "CreatedById") equals createdUser.Id
+                 from modifiedUser in _context.QuerySet<Person>()
+                     .Where(p => p.Id == EF.Property<int>(a, "ModifiedById")).DefaultIfEmpty() //left join
                  from closedUser in _context.QuerySet<Person>()
                      .Where(p => p.Id == EF.Property<int>(a, "ClosedById")).DefaultIfEmpty() // left join
-                 where tag.Id == request.TagId && a.Id == request.ActionId
+                     where tag.Id == request.TagId && a.Id == request.ActionId
                  select new Dto
                  {
                      Action = a,
                      CreatedBy = createdUser,
-                     ClosedBy = closedUser
+                     ClosedBy = closedUser,
+                     ModifiedBy = modifiedUser
                  }).SingleOrDefaultAsync(cancellationToken);
 
             if (dto == null)
@@ -48,6 +50,12 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                 closedBy = new PersonDto(dto.ClosedBy.Id, dto.ClosedBy.FirstName, dto.ClosedBy.LastName);
             }
 
+            PersonDto modifiedBy = null;
+            if (dto.ModifiedBy != null)
+            {
+                modifiedBy = new PersonDto(dto.ModifiedBy.Id, dto.ModifiedBy.FirstName, dto.ModifiedBy.LastName);
+            }
+
             var action = new ActionDetailsDto(
                 dto.Action.Id,
                 createdBy,
@@ -58,7 +66,10 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                 dto.Action.IsClosed,
                 closedBy,
                 dto.Action.ClosedAtUtc,
-                dto.Action.RowVersion.ConvertToString());
+                dto.Action.RowVersion.ConvertToString(),
+                modifiedBy,
+                dto.Action.ModifiedAtUtc
+            );
             
             return new SuccessResult<ActionDetailsDto>(action);
         }
@@ -68,6 +79,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
             public Action Action { get; set; }
             public Person CreatedBy { get; set; }
             public Person ClosedBy { get; set; }
+            public Person ModifiedBy { get; set; }
         }
     }
 }
