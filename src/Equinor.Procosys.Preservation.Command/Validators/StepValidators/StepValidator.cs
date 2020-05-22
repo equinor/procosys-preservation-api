@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -23,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
             => await (from s in _context.QuerySet<Step>()
                 join j in _context.QuerySet<Journey>() on EF.Property<int>(s, "JourneyId") equals j.Id
                 where s.Title == stepTitle && j.Id == journeyId
-                select s).AnyAsync(token); 
+                select s).AnyAsync(token);
 
         public async Task<bool> ExistsInExistingJourneyAsync(int stepId, string stepTitle, CancellationToken token)
         {
@@ -40,28 +39,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 where s.Id == stepId
                 select s).SingleOrDefaultAsync(token);
             return step != null && step.IsVoided;
-        }
-
-        public async Task<bool> AreAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
-        {
-            var stepA = await (from s in _context.QuerySet<Step>()
-                where s.Id == stepAId
-                select s).SingleOrDefaultAsync(token);
-
-            var stepB = await (from s in _context.QuerySet<Step>()
-                where s.Id == stepBId
-                select s).SingleOrDefaultAsync(token);
-
-            var minKey = Math.Min(stepA.SortKey, stepB.SortKey);
-            var maxKey = Math.Max(stepA.SortKey, stepB.SortKey);
-
-            var step = await (from s in _context.QuerySet<Step>()
-                where s.SortKey.CompareTo(minKey) > 0 &&
-                      maxKey.CompareTo(s.SortKey) > 0 &&
-                      EF.Property<int>(s, "JourneyId") == journeyId
-                              select s).SingleOrDefaultAsync(token);
-
-            return step != null;
         }
     }
 }

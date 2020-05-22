@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -14,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
     public class SwapStepsCommandHandlerTests : CommandHandlerTestsBase
     {
         private readonly string _rowVersionA = "AAAAAAAAABA=";
-        private readonly string _rowVersionB = "AAAAAAAAABB=";
+        private readonly string _rowVersionB = "AAAAAAAACBA=";
 
         private readonly string _stepATitle = "StepATitle";
         private readonly string _stepBTitle = "StepBTitle";
@@ -22,8 +24,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         private SwapStepsCommandHandler _dut;
         private Step _stepA;
         private Step _stepB;
-        private int _sortKeyA = 4;
-        private int _sortKeyB = 5;
+        private int _sortKeyA;
+        private int _sortKeyB;
 
         [TestInitialize]
         public void Setup()
@@ -45,20 +47,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
 
             _stepA = new Step(TestPlant, _stepATitle, modeMock.Object, responsibleMock.Object);
             _stepA.SetProtectedIdForTesting(stepAId);
-            _stepA.SortKey = _sortKeyA;
-
+ 
             journey.AddStep(_stepA);
+            _sortKeyA = _stepA.SortKey;
 
             _stepB = new Step(TestPlant, _stepBTitle, modeMock.Object, responsibleMock.Object);
             _stepB.SetProtectedIdForTesting(stepBId);
-            _stepB.SortKey = _sortKeyB;
 
             journey.AddStep(_stepB);
+            _sortKeyB = _stepB.SortKey;
 
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
                 .Returns(Task.FromResult(journey));
 
-            _command = new SwapStepsCommand(journeyId, stepAId, _rowVersionA, stepBId, _rowVersionB);
+            var stepsIdWithRowVersion = new List<StepIdAndRowVersion> { new StepIdAndRowVersion(stepAId, _rowVersionA), new StepIdAndRowVersion(stepBId, _rowVersionB) };
+
+            _command = new SwapStepsCommand(journeyId, stepsIdWithRowVersion);
 
             _dut = new SwapStepsCommandHandler(
                 journeyRepositoryMock.Object,
@@ -88,11 +92,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             var result = await _dut.Handle(_command, default);
 
             // Assert
+            Assert.AreEqual(0, result.Errors.Count);
             // In real life EF Core will create a new RowVersion when save.
             // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
-            Assert.AreEqual("RowVersionA:" + _stepA.RowVersion.ConvertToString() + ", " + "RowVersionB:" + _stepB.RowVersion.ConvertToString(), result.Data);
-            Assert.IsTrue(result.Data.Contains(_stepA.RowVersion.ConvertToString()));
-            Assert.IsTrue(result.Data.Contains(_stepB.RowVersion.ConvertToString()));
+            Assert.AreEqual(_rowVersionA, result.Data.First().RowVersion);
+            Assert.AreEqual(_rowVersionA, _stepA.RowVersion.ConvertToString());
+
+            Assert.AreEqual(_rowVersionB, result.Data.Skip(1).First().RowVersion);
+            Assert.AreEqual(_rowVersionB, _stepB.RowVersion.ConvertToString());
         }
 
         [TestMethod]

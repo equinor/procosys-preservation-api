@@ -1,22 +1,19 @@
-﻿using MediatR;
+﻿using System.Collections.Generic;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
 {
-    public class SwapStepsCommand : IRequest<Result<string>>
+    public class SwapStepsCommand : IRequest<Result<IEnumerable<StepIdAndRowVersion>>>
     {
-        public SwapStepsCommand(int journeyId, int stepAId, string rowVersionA, int stepBId, string rowVersionB)
+        public SwapStepsCommand(int journeyId, IEnumerable<StepIdAndRowVersion> steps)
         {
             JourneyId = journeyId;
-            StepAId = stepAId;
-            RowVersionA = rowVersionA;
-            StepBId = stepBId;
-            RowVersionB = rowVersionB;
+            Steps = steps ?? new List<StepIdAndRowVersion>();
         }
+
         public int JourneyId { get; }
-        public int StepAId { get; }
-        public int StepBId { get; }
-        public string RowVersionA { get; }
-        public string RowVersionB { get; }
+
+        public IEnumerable<StepIdAndRowVersion> Steps { get; }
     }
 }

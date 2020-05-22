@@ -1,9 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -12,9 +11,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
     [TestClass]
     public class SwapStepsCommandValidatorTests
     {
-        private readonly string _stepATitle = "StepATitle";
-        private readonly string _stepBTitle = "StepBTitle";
-
         private SwapStepsCommandValidator _dut;
         private Mock<IJourneyValidator> _journeyValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
@@ -29,12 +25,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.AreAdjacentStepsInAJourneyAsync(_journeyId, _stepAId, _stepBId, default))
+                .Returns(Task.FromResult(true));
 
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepAId, default)).Returns(Task.FromResult(true));
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepBId, default)).Returns(Task.FromResult(true));
 
-            _command = new SwapStepsCommand(_journeyId, _stepAId, null, _stepBId, null);
+            var stepIdAndVersionA = new StepIdAndRowVersion(_stepAId, null);
+            var stepIdAndVersionB = new StepIdAndRowVersion(_stepBId, null);
+            var stepIdAndVersions = new List<StepIdAndRowVersion> {stepIdAndVersionA, stepIdAndVersionB};
+
+            _command = new SwapStepsCommand(_journeyId, stepIdAndVersions);
 
             _dut = new SwapStepsCommandValidator(_journeyValidatorMock.Object, _stepValidatorMock.Object);
         }
@@ -92,7 +94,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         [TestMethod]
         public void Validate_ShouldFail_WhenStepAAndStepBAreNotAdjacent()
         {
-            _stepValidatorMock.Setup(r => r.AreAdjacentStepsInAJourneyAsync(_journeyId, _stepAId, _stepBId, default)).Returns(Task.FromResult(false));
+            _journeyValidatorMock.Setup(r => r.AreAdjacentStepsInAJourneyAsync(_journeyId, _stepAId, _stepBId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 

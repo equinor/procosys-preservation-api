@@ -9,7 +9,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
 {
-    public class SwapStepsCommandHandler : IRequestHandler<SwapStepsCommand, Result<string>>
+    public class SwapStepsCommandHandler : IRequestHandler<SwapStepsCommand, Result<IEnumerable<StepIdAndRowVersion>>>
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -20,23 +20,24 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<string>> Handle(SwapStepsCommand request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<StepIdAndRowVersion>>> Handle(SwapStepsCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
-            var stepA = journey.Steps.Single(s => s.Id == request.StepAId);
-            var stepB = journey.Steps.Single(s => s.Id == request.StepBId);
+            var stepA = journey.Steps.Single(s => s.Id == request.Steps.First().Id);
+            var stepB = journey.Steps.Single(s => s.Id == request.Steps.Skip(1).First().Id);
+            var stepsWithUpdatedRowVersion = new List<StepIdAndRowVersion>();
 
-            // Swapping the SortKeys
-            var tempSortKey = stepA.SortKey;
-            stepA.SortKey = stepB.SortKey;
-            stepB.SortKey = tempSortKey;
+            journey.SwapSteps(stepA.Id, stepB.Id);
 
-            stepA.SetRowVersion(request.RowVersionA);
-            stepB.SetRowVersion(request.RowVersionB);
+            stepA.SetRowVersion(request.Steps.First().RowVersion);
+            stepB.SetRowVersion(request.Steps.Skip(1).First().RowVersion);
+
+            stepsWithUpdatedRowVersion.Add(new StepIdAndRowVersion(stepA.Id, stepA.RowVersion.ConvertToString()));
+            stepsWithUpdatedRowVersion.Add(new StepIdAndRowVersion(stepB.Id, stepB.RowVersion.ConvertToString()));
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<string>("RowVersionA:" + stepA.RowVersion.ConvertToString() + ", " + "RowVersionB:" + stepB.RowVersion.ConvertToString());
+            return new SuccessResult<IEnumerable<StepIdAndRowVersion>>(stepsWithUpdatedRowVersion);
         }
     }
 }
