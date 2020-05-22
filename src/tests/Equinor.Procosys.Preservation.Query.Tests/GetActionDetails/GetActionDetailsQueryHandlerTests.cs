@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _testDataSet = AddTestDataSet(context);
 
                 var tag = _testDataSet.Project1.Tags.First();
-                var attachment = new ActionAttachment(TestPlant, new Guid("{C3412890-1EF8-4E34-B96C-5488200A5AF5}"), "FileA");
+                var attachment = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileA");
                 var attachment2 = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileB");
 
                 _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
