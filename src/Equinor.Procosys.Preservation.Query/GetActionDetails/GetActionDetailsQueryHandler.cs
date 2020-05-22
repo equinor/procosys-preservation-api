@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -21,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
         public async Task<Result<ActionDetailsDto>> Handle(GetActionDetailsQuery request, CancellationToken cancellationToken)
         {
             var dto = await
-                (from a in _context.QuerySet<Action>()
+                (from a in _context.QuerySet<Action>().Include(a => a.Attachments)
                      // also join tag to return null if request.TagId not exists
                      join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
                  join createdUser in _context.QuerySet<Person>()
@@ -33,7 +32,8 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                  {
                      Action = a,
                      CreatedBy = createdUser,
-                     ClosedBy = closedUser
+                     ClosedBy = closedUser,
+                     AttachmentCount = a.Attachments.ToList().Count
                  }).SingleOrDefaultAsync(cancellationToken);
 
             if (dto == null)
@@ -58,7 +58,8 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                 dto.Action.IsClosed,
                 closedBy,
                 dto.Action.ClosedAtUtc,
-                dto.Action.RowVersion.ConvertToString());
+                dto.Action.RowVersion.ConvertToString(),
+                dto.AttachmentCount);
             
             return new SuccessResult<ActionDetailsDto>(action);
         }
@@ -68,6 +69,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
             public Action Action { get; set; }
             public Person CreatedBy { get; set; }
             public Person ClosedBy { get; set; }
+            public int AttachmentCount { get; set; }
         }
     }
 }
