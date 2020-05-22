@@ -34,6 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
                 _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
                 tag.AddAction(_openAction);
+
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
                 _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
@@ -42,6 +43,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _tagId = tag.Id;
                 _openActionId = _openAction.Id;
                 _closedActionId = _closedAction.Id;
+
+                _openAction.SetModified(_testDataSet.CurrentUser);
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -135,13 +139,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
         private void AssertModifiedAction(Action action, Person modifier)
         {
-            action.SetModified(modifier);
-
             Assert.IsNotNull(action.ModifiedById);
             Assert.AreEqual(modifier.Id, action.ModifiedById);
             Assert.AreEqual(action.ModifiedAtUtc, action.ModifiedAtUtc);
 
         }
-
     }
 }
