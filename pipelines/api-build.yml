@@ -33,24 +33,25 @@ stages:
 
   jobs:
 
+  # Docker Build
+  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+    parameters:
+      deploymentName: 'docker_build'
+      dependsOn: ''
+      env: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: '${{ variables.dockerfilePath }}'
+      buildContext: '$(Build.SourcesDirectory)/src'
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+
   # Create Migration Script
   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
     parameters:
-      dependsOn: ''
+      dependsOn: 'docker_build'
       deploymentName: 'create_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.nonProdServiceConnection }}'
-
-  # - template: /templates/pipelines/dockerbuild.yml@templates
-  #   parameters:
-  #     deploymentName: 'docker_build_push'
-  #     dependsOn: 'copy_test'
-  #     env: 'pcs-${{ variables.envName }}'
-  #     envGroup: '${{ variables.envGroupName }}'
-  #     dockerfilePath: '${{ variables.dockerfilePath }}'
-  #     buildContext: '$(Build.SourcesDirectory)/src'
-  #     repository: '${{ variables.repositoryName }}'
-  #     dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 # # Dev deploy stage
 # - stage: dev
@@ -97,33 +98,33 @@ stages:
 #       kvRgName: '${{ variables.envRgName }}'
 #       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
 
-# Test deploy stage
-- stage: test
-  displayName: 'Test'
-  dependsOn: 'common'
-  # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  variables:
-    envName: 'test'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Production'
+# # Test deploy stage
+# - stage: test
+#   displayName: 'Test'
+#   dependsOn: 'common'
+#   # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   variables:
+#     envName: 'test'
+#     envRg: '${{ variables.envRgName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+#     serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+#     containerRegistry: '${{ variables.containerRegistryName }}' 
+#     aspNetCoreEnvironment: 'Production'
 
-  jobs:
-  # Run Migration Script
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'run_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: '${{ variables.commonKeyVault }}'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-      serverName: '${{ variables.sqlServerName }}.database.windows.net'
-      databaseName: '${{ variables.sqlDatabaseName }}'
+#   jobs:
+#   # Run Migration Script
+#   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+#     parameters:
+#       dependsOn: ''
+#       deploymentName: 'run_migration_script'
+#       envGroup: '${{ variables.envGroupName }}'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       kvName: '${{ variables.commonKeyVault }}'
+#       kvRgName: 'pcs-common-rg'
+#       kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+#       serverName: '${{ variables.sqlServerName }}.database.windows.net'
+#       databaseName: '${{ variables.sqlDatabaseName }}'
 
 #   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
 #     parameters:
@@ -142,27 +143,27 @@ stages:
 #       kvRgName: '${{ variables.envRgName }}'
 #       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
 
-# Proddeploy stage
-- stage: prod
-  displayName: 'Prod'
-  dependsOn: 'test'
-  # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  variables:
-    envName: 'prod'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
-    serviceConnection: '${{ variables.prodServiceConnection }}'
+# # Proddeploy stage
+# - stage: prod
+#   displayName: 'Prod'
+#   dependsOn: 'test'
+#   # condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   variables:
+#     envName: 'prod'
+#     envRg: '${{ variables.envRgName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+#     serviceConnection: '${{ variables.prodServiceConnection }}'
 
-  jobs:
-  # Run Migration Script
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'run_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: '${{ variables.commonKeyVault }}'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-      serverName: '${{ variables.sqlServerName }}.database.windows.net'
-      databaseName: '${{ variables.sqlDatabaseName }}'
+#   jobs:
+#   # Run Migration Script
+#   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+#     parameters:
+#       dependsOn: ''
+#       deploymentName: 'run_migration_script'
+#       envGroup: '${{ variables.envGroupName }}'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       kvName: '${{ variables.commonKeyVault }}'
+#       kvRgName: 'pcs-common-rg'
+#       kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+#       serverName: '${{ variables.sqlServerName }}.database.windows.net'
+#       databaseName: '${{ variables.sqlDatabaseName }}'
