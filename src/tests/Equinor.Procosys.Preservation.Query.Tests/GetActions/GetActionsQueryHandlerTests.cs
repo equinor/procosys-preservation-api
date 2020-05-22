@@ -127,12 +127,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
 
                 var result = await dut.Handle(query, default);
 
-                Assert.AreEqual(_openActionWithEarliestDueTime.Title, result.Data[0].Title);
-                Assert.AreEqual(_openActionWithDueTime.Title, result.Data[1].Title);
-                Assert.AreEqual(_openActionWithoutDueTime.Title, result.Data[2].Title);
-                Assert.AreEqual(_closedActionWithEarliestDueTime.Title, result.Data[3].Title);
-                Assert.AreEqual(_closedActionWithDueTime.Title, result.Data[4].Title);
-                Assert.AreEqual(_closedActionWithoutDueTime.Title, result.Data[5].Title);
+                Assert.AreEqual(_openActionWithEarliestDueTime.Id, result.Data[0].Id);
+                Assert.AreEqual(_openActionWithDueTime.Id, result.Data[1].Id);
+                Assert.AreEqual(_openActionWithoutDueTime.Id, result.Data[2].Id);
+                Assert.AreEqual(_closedActionWithEarliestDueTime.Id, result.Data[3].Id);
+                Assert.AreEqual(_closedActionWithDueTime.Id, result.Data[4].Id);
+                Assert.AreEqual(_closedActionWithoutDueTime.Id, result.Data[5].Id);
             }
         }
 
