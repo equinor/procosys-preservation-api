@@ -86,5 +86,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
             ModifiedById = modifiedBy.Id;
         }
+
+        public void SetMode(Mode mode)
+        {
+            if (mode == null)
+            {
+                throw new ArgumentNullException(nameof(mode));
+            }
+
+            ModeId = mode.Id;
+        }
     }
 }
