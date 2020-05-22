@@ -34,11 +34,11 @@ stages:
   jobs:
 
   # Docker Build
-  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
-    condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  - template: /templates/pipelines/dockerbuildpush-preservation.yml@templates
     parameters:
       deploymentName: 'docker_build'
       dependsOn: ''
+      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       dockerfilePath: '${{ variables.dockerfilePath }}'
@@ -47,17 +47,17 @@ stages:
       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
   # Docker Build and Push
-  - template: /templates/pipelines/dockerbuild.yml@templates
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  - template: /templates/pipelines/dockerbuildpush-preservation.yml@templates
     parameters:
       deploymentName: 'docker_build_and_push'
       dependsOn: ''
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       dockerfilePath: '${{ variables.dockerfilePath }}'
       buildContext: '$(Build.SourcesDirectory)/src'
       repository: '${{ variables.repositoryName }}'
-      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
   # Create Migration Script
   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
