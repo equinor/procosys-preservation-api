@@ -34,7 +34,7 @@ stages:
   jobs:
 
   # Docker Build
-  - template: /templates/pipelines/dockerbuildpush-preservation.yml@templates
+  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
     parameters:
       deploymentName: 'docker_build'
       dependsOn: ''
