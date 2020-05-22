@@ -21,8 +21,8 @@ variables:
 
 stages:
 # common stage. Docker build, tag and push
-- stage: common
-  displayName: 'Common'
+- stage: build
+  displayName: 'build'
   variables:
     envName: 'common'
     envRg: '${{ variables.envRgName }}'
@@ -43,7 +43,7 @@ stages:
       dockerfilePath: '${{ variables.dockerfilePath }}'
       buildContext: '$(Build.SourcesDirectory)/src'
       repository: '${{ variables.repositoryName }}'
-      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
   # Create Migration Script
   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
@@ -52,6 +52,33 @@ stages:
       deploymentName: 'create_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.nonProdServiceConnection }}'
+
+# Docker Push Stage
+- stage: dockerpush
+  displayName: 'Docker Push'
+  dependsOn: 'build'
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  variables:
+    envName: 'common'
+    envRg: '${{ variables.envRgName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
+
+  jobs:
+
+  # Docker Push
+  - template: /templates/pipelines/dockerpush-preservation.yml@templates
+    parameters:
+      deploymentName: 'docker_push'
+      dependsOn: ''
+      env: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      dockerfilePath: '${{ variables.dockerfilePath }}'
+      buildContext: '$(Build.SourcesDirectory)/src'
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: $(dockerRegistryServiceConnectionName)
 
 # # Dev deploy stage
 # - stage: dev
