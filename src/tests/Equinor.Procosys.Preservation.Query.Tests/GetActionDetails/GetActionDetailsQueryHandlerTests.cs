@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -31,10 +32,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _testDataSet = AddTestDataSet(context);
 
                 var tag = _testDataSet.Project1.Tags.First();
+                var attachment = new ActionAttachment(TestPlant, new Guid("{C3412890-1EF8-4E34-B96C-5488200A5AF5}"), "FileA");
+                var attachment2 = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileB");
 
                 _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
+                _openAction.AddAttachment(attachment);
                 tag.AddAction(_openAction);
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
+                _closedAction.AddAttachment(attachment2);
                 _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
                 context.SaveChangesAsync().Wait();
@@ -130,6 +135,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
             Assert.AreEqual(action.DueTimeUtc, actionDetailsDto.DueTimeUtc);
             Assert.AreEqual(action.ClosedAtUtc, actionDetailsDto.ClosedAtUtc);
             Assert.AreEqual(isClosed, actionDetailsDto.IsClosed);
+            Assert.AreEqual(action.Attachments.Count, actionDetailsDto.AttachmentCount);
         }
     }
 }
