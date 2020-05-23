@@ -151,15 +151,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromBody] PairedStepIdWithRowVersionDto stepDtos)
+            [FromBody] PairedStepIdWithRowVersionDto pairedStepsDto)
         {
-            var steps = new List<StepIdAndRowVersion>
-            {
-                new StepIdAndRowVersion(stepDtos.StepDtoA.Id, stepDtos.StepDtoA.RowVersion), 
-                new StepIdAndRowVersion(stepDtos.StepDtoB.Id, stepDtos.StepDtoB.RowVersion)
-            };
-
-            var command = new SwapStepsCommand(id, steps);
+            var command = new SwapStepsCommand(
+                id, pairedStepsDto.StepDtoA.Id, 
+                pairedStepsDto.StepDtoA.RowVersion, 
+                pairedStepsDto.StepDtoB.Id,
+                pairedStepsDto.StepDtoB.RowVersion
+                );
             var result = await _mediator.Send(command);
             return this.FromResult(result);
         }

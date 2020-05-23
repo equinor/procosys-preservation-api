@@ -13,13 +13,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         {
             var stepA = new StepIdAndRowVersion ( 2, "AAAAAAAAABA=");
             var stepB = new StepIdAndRowVersion (3, "AAAAAAAACBA=");
-            var dut = new SwapStepsCommand(1, new List<StepIdAndRowVersion>{stepA, stepB});
+            var dut = new SwapStepsCommand(1, stepA.Id, stepA.RowVersion, stepB.Id, stepB.RowVersion);
 
             Assert.AreEqual(1, dut.JourneyId);
-            Assert.AreEqual(2, dut.Steps.First().Id);
-            Assert.AreEqual("AAAAAAAAABA=", dut.Steps.First().RowVersion);
-            Assert.AreEqual(3, dut.Steps.Skip(1).First().Id);
-            Assert.AreEqual("AAAAAAAACBA=", dut.Steps.Skip(1).First().RowVersion);
+            Assert.AreEqual(2, dut.StepAId);
+            Assert.AreEqual("AAAAAAAAABA=", dut.StepARowVersion);
+            Assert.AreEqual(3, dut.StepBId);
+            Assert.AreEqual("AAAAAAAACBA=", dut.StepBRowVersion);
         }
     }
 }

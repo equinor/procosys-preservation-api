@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.Procosys.Preservation.Domain;
@@ -60,9 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
                 .Returns(Task.FromResult(journey));
 
-            var stepsIdWithRowVersion = new List<StepIdAndRowVersion> { new StepIdAndRowVersion(stepAId, _rowVersionA), new StepIdAndRowVersion(stepBId, _rowVersionB) };
-
-            _command = new SwapStepsCommand(journeyId, stepsIdWithRowVersion);
+            _command = new SwapStepsCommand(journeyId, stepAId, _rowVersionA, stepBId, _rowVersionB);
 
             _dut = new SwapStepsCommandHandler(
                 journeyRepositoryMock.Object,

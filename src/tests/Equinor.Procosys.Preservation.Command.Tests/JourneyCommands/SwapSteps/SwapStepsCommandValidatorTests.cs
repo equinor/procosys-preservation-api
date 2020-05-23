@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
@@ -32,11 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepAId, default)).Returns(Task.FromResult(true));
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepBId, default)).Returns(Task.FromResult(true));
 
-            var stepIdAndVersionA = new StepIdAndRowVersion(_stepAId, null);
-            var stepIdAndVersionB = new StepIdAndRowVersion(_stepBId, null);
-            var stepIdAndVersions = new List<StepIdAndRowVersion> {stepIdAndVersionA, stepIdAndVersionB};
-
-            _command = new SwapStepsCommand(_journeyId, stepIdAndVersions);
+            _command = new SwapStepsCommand(_journeyId, _stepAId, null, _stepBId, null);
 
             _dut = new SwapStepsCommandValidator(_journeyValidatorMock.Object, _stepValidatorMock.Object);
         }

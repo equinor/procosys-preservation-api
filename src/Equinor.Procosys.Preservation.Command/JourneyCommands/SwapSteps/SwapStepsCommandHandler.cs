@@ -23,14 +23,14 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
         public async Task<Result<IEnumerable<StepIdAndRowVersion>>> Handle(SwapStepsCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
-            var stepA = journey.Steps.Single(s => s.Id == request.Steps.First().Id);
-            var stepB = journey.Steps.Single(s => s.Id == request.Steps.Skip(1).First().Id);
+            var stepA = journey.Steps.Single(s => s.Id == request.StepAId);
+            var stepB = journey.Steps.Single(s => s.Id == request.StepBId);
             var stepsWithUpdatedRowVersion = new List<StepIdAndRowVersion>();
 
             journey.SwapSteps(stepA.Id, stepB.Id);
 
-            stepA.SetRowVersion(request.Steps.First().RowVersion);
-            stepB.SetRowVersion(request.Steps.Skip(1).First().RowVersion);
+            stepA.SetRowVersion(request.StepARowVersion);
+            stepB.SetRowVersion(request.StepBRowVersion);
 
             stepsWithUpdatedRowVersion.Add(new StepIdAndRowVersion(stepA.Id, stepA.RowVersion.ConvertToString()));
             stepsWithUpdatedRowVersion.Add(new StepIdAndRowVersion(stepB.Id, stepB.RowVersion.ConvertToString()));

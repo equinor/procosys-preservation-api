@@ -6,14 +6,18 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
 {
     public class SwapStepsCommand : IRequest<Result<IEnumerable<StepIdAndRowVersion>>>
     {
-        public SwapStepsCommand(int journeyId, IEnumerable<StepIdAndRowVersion> steps)
+        public SwapStepsCommand(int journeyId, int stepAId, string stepARowVersion, int stepBId, string stepBRowVersion)
         {
             JourneyId = journeyId;
-            Steps = steps ?? new List<StepIdAndRowVersion>();
+            StepAId = stepAId;
+            StepARowVersion = stepARowVersion;
+            StepBId = stepBId;
+            StepBRowVersion = stepBRowVersion;
         }
-
         public int JourneyId { get; }
-
-        public IEnumerable<StepIdAndRowVersion> Steps { get; }
+        public int StepAId { get; }
+        public string StepARowVersion { get; }
+        public int StepBId { get; }
+        public string StepBRowVersion { get; }
     }
 }
