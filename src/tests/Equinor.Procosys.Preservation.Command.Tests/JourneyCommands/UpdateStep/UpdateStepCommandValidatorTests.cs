@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
+using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -13,10 +15,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         private UpdateStepCommandValidator _dut;
         private Mock<IJourneyValidator> _journeyValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
+        private Mock<IModeValidator> _modeValidatorMock;
+        private Mock<IResponsibleValidator> _responsibleValidatorMock;
         private UpdateStepCommand _command;
 
         private int _journeyId = 2;
         private int _stepId = 1;
+        private int _modeId = 3;
+        private int _responsibleId = 4;
         private string _title = "Title";
 
         [TestInitialize]
@@ -27,9 +33,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
-            _command = new UpdateStepCommand(_journeyId, _stepId, _title, null);
 
-            _dut = new UpdateStepCommandValidator(_journeyValidatorMock.Object, _stepValidatorMock.Object);
+            _modeValidatorMock = new Mock<IModeValidator>();
+            _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
+
+            _responsibleValidatorMock = new Mock<IResponsibleValidator>();
+            _responsibleValidatorMock.Setup(r => r.ExistsAsync(_responsibleId, default)).Returns(Task.FromResult(true));
+
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleId, _title, null);
+
+            _dut = new UpdateStepCommandValidator(
+                _journeyValidatorMock.Object,
+                _stepValidatorMock.Object,
+                _modeValidatorMock.Object,
+                _responsibleValidatorMock.Object);
         }
 
         [TestMethod]
@@ -89,6 +106,54 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenModeNotExists()
+        {
+            _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenModeIsVoided()
+        {
+            _modeValidatorMock.Setup(r => r.IsVoidedAsync(_modeId, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenResponsibleNotExists()
+        {
+            _responsibleValidatorMock.Setup(r => r.ExistsAsync(_responsibleId, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Responsible doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenResponsibleIsVoided()
+        {
+            _responsibleValidatorMock.Setup(r => r.IsVoidedAsync(_responsibleId, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Responsible is voided!"));
         }
     }
 }
