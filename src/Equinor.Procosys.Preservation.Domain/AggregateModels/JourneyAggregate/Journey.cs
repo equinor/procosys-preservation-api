@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public void SwapSteps(int stepId1, int stepId2)
         {
-            if (!IsAdjacent(stepId1, stepId2))
+            if (!AreAdjacentSteps(stepId1, stepId2))
             {
                 throw new Exception($"{nameof(Step)} {stepId1} and {stepId1} in {nameof(Journey)} {Title} are not adjacent and can't be swapped");
             }
@@ -73,8 +73,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             step2.SortKey = tmp;
         }
 
-        // Todo Demissie ... this one can be used in validator of swap command
-        public bool IsAdjacent(int stepId1, int stepId2)
+        public bool AreAdjacentSteps(int stepId1, int stepId2)
         {
             var orderedSteps = OrderedSteps().ToList();
 
@@ -85,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             var stepIndex2 = orderedSteps.FindIndex(s => s.Id == stepId2);
-            if (stepIndex1 == -1)
+            if (stepIndex2 == -1)
             {
                 throw new Exception($"{nameof(Step)} {stepId2} not found in {nameof(Journey)} {Title}");
             }
