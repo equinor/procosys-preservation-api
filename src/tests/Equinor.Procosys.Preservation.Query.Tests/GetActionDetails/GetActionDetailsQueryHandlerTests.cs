@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -31,8 +32,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _testDataSet = AddTestDataSet(context);
 
                 var tag = _testDataSet.Project1.Tags.First();
+                var attachment = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileA");
 
                 _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
+                _openAction.AddAttachment(attachment);
                 tag.AddAction(_openAction);
 
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
@@ -163,6 +166,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
             Assert.AreEqual(action.DueTimeUtc, actionDetailsDto.DueTimeUtc);
             Assert.AreEqual(action.ClosedAtUtc, actionDetailsDto.ClosedAtUtc);
             Assert.AreEqual(isClosed, actionDetailsDto.IsClosed);
+            Assert.AreEqual(action.Attachments.Count, actionDetailsDto.AttachmentCount);
         }
 
         private void AssertModifiedAction(ActionDetailsDto actionDetailsDto, Person modifier, DateTime? modifiedAt)
