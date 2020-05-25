@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                  from closedUser in _context.QuerySet<Person>()
                      .Where(p => p.Id == EF.Property<int>(a, "ClosedById")).DefaultIfEmpty() // left join
                      where tag.Id == request.TagId && a.Id == request.ActionId
-                 select new Dto
+                 select new
                  {
                      Action = a,
                      CreatedBy = createdUser,
@@ -72,14 +72,6 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
             );
             
             return new SuccessResult<ActionDetailsDto>(action);
-        }
-
-        private class Dto
-        {
-            public Action Action { get; set; }
-            public Person CreatedBy { get; set; }
-            public Person ClosedBy { get; set; }
-            public Person ModifiedBy { get; set; }
         }
     }
 }
