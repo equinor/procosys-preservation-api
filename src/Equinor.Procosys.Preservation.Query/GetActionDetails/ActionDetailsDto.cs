@@ -15,6 +15,8 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
             PersonDto closedBy,
             DateTime? closedAtUtc,
             int attachmentCount,
+            PersonDto modifiedBy,
+            DateTime? modifiedAt,
             string rowVersion)
         {
             Id = id;
@@ -27,9 +29,10 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
             ClosedBy = closedBy;
             ClosedAtUtc = closedAtUtc;
             AttachmentCount = attachmentCount;
+            ModifiedBy = modifiedBy;
+            ModifiedAtUtc = modifiedAt;
             RowVersion = rowVersion;
         }
-
 
         public int Id { get; }
         public PersonDto CreatedBy { get; }
@@ -41,6 +44,8 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
         public PersonDto ClosedBy { get; }
         public DateTime? ClosedAtUtc { get; }
         public int AttachmentCount { get; }
+        public PersonDto ModifiedBy { get; }
+        public DateTime? ModifiedAtUtc { get; }
         public string RowVersion { get; }
     }
 }

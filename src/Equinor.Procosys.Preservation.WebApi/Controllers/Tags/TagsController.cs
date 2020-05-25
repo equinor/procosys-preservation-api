@@ -489,7 +489,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPost("{id}/Requirement/{requirementId}/RecordValues")]
+        [HttpPost("{id}/Requirements/{requirementId}/RecordValues")]
         public async Task<IActionResult> RecordValues(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -518,7 +518,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPost("{id}/Requirement/{requirementId}/Attachment/{fieldId}")]
+        [HttpPost("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> AddFieldValueAttachment(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -543,7 +543,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpDelete("{id}/Requirement/{requirementId}/Attachment/{fieldId}")]
+        [HttpDelete("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> DeleteFieldValueAttachment(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -563,7 +563,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpGet("{id}/Requirement/{requirementId}/Attachment/{fieldId}")]
+        [HttpGet("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> GetFieldValueAttachment(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -590,7 +590,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPost("{id}/Requirement/{requirementId}/Preserve")]
+        [HttpPost("{id}/Requirements/{requirementId}/Preserve")]
         public async Task<IActionResult> Preserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]

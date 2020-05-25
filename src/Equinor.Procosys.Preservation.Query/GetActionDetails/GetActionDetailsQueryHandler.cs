@@ -25,14 +25,17 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                      join tag in _context.QuerySet<Tag>() on EF.Property<int>(a, "TagId") equals tag.Id
                  join createdUser in _context.QuerySet<Person>()
                      on EF.Property<int>(a, "CreatedById") equals createdUser.Id
+                 from modifiedUser in _context.QuerySet<Person>()
+                     .Where(p => p.Id == EF.Property<int>(a, "ModifiedById")).DefaultIfEmpty() //left join
                  from closedUser in _context.QuerySet<Person>()
                      .Where(p => p.Id == EF.Property<int>(a, "ClosedById")).DefaultIfEmpty() // left join
-                 where tag.Id == request.TagId && a.Id == request.ActionId
-                 select new Dto
+                     where tag.Id == request.TagId && a.Id == request.ActionId
+                 select new
                  {
                      Action = a,
                      CreatedBy = createdUser,
                      ClosedBy = closedUser,
+                     ModifiedBy = modifiedUser,
                      AttachmentCount = a.Attachments.ToList().Count
                  }).SingleOrDefaultAsync(cancellationToken);
 
@@ -48,6 +51,12 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                 closedBy = new PersonDto(dto.ClosedBy.Id, dto.ClosedBy.FirstName, dto.ClosedBy.LastName);
             }
 
+            PersonDto modifiedBy = null;
+            if (dto.ModifiedBy != null)
+            {
+                modifiedBy = new PersonDto(dto.ModifiedBy.Id, dto.ModifiedBy.FirstName, dto.ModifiedBy.LastName);
+            }
+
             var action = new ActionDetailsDto(
                 dto.Action.Id,
                 createdBy,
@@ -59,17 +68,12 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                 closedBy,
                 dto.Action.ClosedAtUtc,
                 dto.AttachmentCount,
-                dto.Action.RowVersion.ConvertToString());
-            
-            return new SuccessResult<ActionDetailsDto>(action);
-        }
+                modifiedBy,
+                dto.Action.ModifiedAtUtc,
+                dto.Action.RowVersion.ConvertToString()
+            );
 
-        private class Dto
-        {
-            public Action Action { get; set; }
-            public Person CreatedBy { get; set; }
-            public Person ClosedBy { get; set; }
-            public int AttachmentCount { get; set; }
+            return new SuccessResult<ActionDetailsDto>(action);
         }
     }
 }
