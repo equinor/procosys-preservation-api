@@ -35,5 +35,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 select j).SingleOrDefaultAsync(token);
             return journey != null && journey.IsVoided;
         }
+
+        public async Task<bool> AreAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
+        {
+            var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
+                where j.Id == journeyId
+                select j).SingleOrDefaultAsync(token);
+
+            return journey.AreAdjacentSteps(stepAId, stepBId);
+        }
     }
 }
