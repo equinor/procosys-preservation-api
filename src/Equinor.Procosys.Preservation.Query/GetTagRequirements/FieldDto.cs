@@ -39,6 +39,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                     return new NumberDto(fieldValue as NumberValue);
                 case FieldType.CheckBox:
                     return new CheckBoxDto();
+                case FieldType.Attachment:
+                    return new AttachmentDto(fieldValue as AttachmentValue);
                 default:
                     return null;
             }

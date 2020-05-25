@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetDisciplines
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsCorrecResultType()
+        public async Task Handle_ReturnsCorrectResultType()
         {
             _areaCodeApiServiceMock
                 .Setup(x => x.GetDisciplinesAsync(It.IsAny<string>()))

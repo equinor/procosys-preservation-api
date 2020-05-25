@@ -34,6 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
                 _openAction = new Action(TestPlant, "Open", "Desc1", _dueUtc);
                 tag.AddAction(_openAction);
+
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
                 _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
@@ -61,6 +62,36 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 var actionDetailDto = result.Data;
 
                 AssertClosedAction(actionDetailDto, _closedAction, _testDataSet.CurrentUser);
+                AssertNotModifiedAction(actionDetailDto);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ReturnsModifiedAction()
+        {
+            DateTime? modifiedTime;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var openAction = context.Actions.Single(a => a.Id == _openActionId);
+                openAction.Title = "Changed title";
+                _timeProvider.Elapse(new TimeSpan(1, 1, 1, 1));
+                context.SaveChangesAsync().Wait();
+                modifiedTime = openAction.ModifiedAtUtc;
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetActionDetailsQuery(_tagId, _openActionId);
+                var dut = new GetActionDetailsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+                
+                var actionDetailDto = result.Data;
+
+                AssertModifiedAction(actionDetailDto, _testDataSet.CurrentUser, modifiedTime);
             }
         }
 
@@ -77,7 +108,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 Assert.IsNotNull(result);
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
                 
-                AssertAction(result.Data, _openAction, false);
+                var actionDetailDto = result.Data;
+                AssertAction(actionDetailDto, _openAction, false);
+                AssertNotModifiedAction(actionDetailDto);
             }
         }
 
@@ -130,6 +163,24 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
             Assert.AreEqual(action.DueTimeUtc, actionDetailsDto.DueTimeUtc);
             Assert.AreEqual(action.ClosedAtUtc, actionDetailsDto.ClosedAtUtc);
             Assert.AreEqual(isClosed, actionDetailsDto.IsClosed);
+        }
+
+        private void AssertModifiedAction(ActionDetailsDto actionDetailsDto, Person modifier, DateTime? modifiedAt)
+        {
+            Assert.IsNotNull(actionDetailsDto.ModifiedBy);
+            Assert.AreEqual(modifier.Id, actionDetailsDto.ModifiedBy.Id);
+            Assert.AreEqual(modifiedAt, actionDetailsDto.ModifiedAtUtc);
+        }
+
+        private void AssertNotModifiedAction(ActionDetailsDto actionDetailsDto)
+        {
+            if (actionDetailsDto == null)
+            {
+                throw new ArgumentNullException(nameof(actionDetailsDto));
+            }
+
+            Assert.IsNull(actionDetailsDto.ModifiedBy);
+            Assert.IsFalse(actionDetailsDto.ModifiedAtUtc.HasValue);
         }
     }
 }
