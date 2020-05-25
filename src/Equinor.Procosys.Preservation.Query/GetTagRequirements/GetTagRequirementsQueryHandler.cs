@@ -23,14 +23,19 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             // Get tag with all requirements and all previous preservation
             var tag = await
                 (from t in _context.QuerySet<Tag>()
-                        .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.PreservationRecord)
-                        .Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).ThenInclude(p => p.FieldValues)
+                        .Include(t => t.Requirements)
+                            .ThenInclude(r => r.PreservationPeriods)
+                            .ThenInclude(p => p.PreservationRecord)
+                        .Include(t => t.Requirements)
+                            .ThenInclude(r => r.PreservationPeriods)
+                            .ThenInclude(p => p.FieldValues)
+                            .ThenInclude(fv => fv.FieldValueAttachment)
                  where t.Id == request.TagId
                  select t).SingleOrDefaultAsync(cancellationToken);
 
             if (tag == null)
             {
-                return new NotFoundResult<List<RequirementDto>>($"Entity with ID {request.TagId} not found");
+                return new NotFoundResult<List<RequirementDto>>($"{nameof(Tag)} with ID {request.TagId} not found");
             }
 
             var requirementDefinitionIds = tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();

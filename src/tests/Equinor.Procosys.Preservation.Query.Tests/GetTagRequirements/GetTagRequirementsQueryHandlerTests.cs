@@ -26,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         const string _requirementType2Title = "Title2";
         const string _requirementDefinitionWithoutFieldTitle = "Without fields";
         const string _requirementDefinitionWithOneInfoTitle = "With 1 info";
+        const string _requirementDefinitionWithOneAttachmentTitle = "With 1 attachment";
         const string _requirementDefinitionWithTwoCheckBoxesTitle = "With 2 checkboxes";
         const string _requirementDefinitionWithThreeNumberShowPrevTitle = "With 3 number with previous";
         const string _requirementDefinitionWithOneNumberNoPrevTitle = "With 1 number no previous";
@@ -34,6 +35,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
         private int _requirementWithoutFieldId;
         private int _requirementWithOneInfoId;
+        private int _requirementWithOneAttachmentId;
         private int _requirementWithTwoCheckBoxesId;
         private int _requirementWithThreeNumberShowPrevId;
         private int _requirementWithOneNumberNoPrevId;
@@ -46,6 +48,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         private int _firstNumberFieldId;
         private int _secondNumberFieldId;
         private int _thirdNumberFieldId;
+        private int _attachmentFieldId;
+        private int _requirementDefinitionWithOneAttachmentId;
         private int _requirementDefinitionWithTwoCheckBoxesId;
         private int _requirementDefinitionWithThreeNumberShowPrevId;
 
@@ -76,6 +80,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 requirementDefinitionWithOneInfo.AddField(infoField);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithOneInfo);
 
+                var requirementDefinitionWithOneAttachment = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneAttachmentTitle, 2, 1);
+                var attachmentField = new Field(TestPlant, "Label for Attachment", FieldType.Attachment, 0);
+                requirementDefinitionWithOneAttachment.AddField(attachmentField);
+                requirementType1.AddRequirementDefinition(requirementDefinitionWithOneAttachment);
+
                 var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(TestPlant, _requirementDefinitionWithTwoCheckBoxesTitle, 2, 1);
                 var cbField1 = new Field(TestPlant, "Label for checkBox - second", FieldType.CheckBox, 10);
                 var cbField2 = new Field(TestPlant, "Label for checkBox - first", FieldType.CheckBox, 2);
@@ -101,6 +110,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var requirementWithoutField = new TagRequirement(TestPlant, _interval, requirementDefinitionWithoutField);
                 var requirementWithOneInfo = new TagRequirement(TestPlant, _interval, requirementDefinitionWithOneInfo);
+                var requirementWithOneAttachment = new TagRequirement(TestPlant, _interval, requirementDefinitionWithOneAttachment);
                 var requirementWithTwoCheckBoxes = new TagRequirement(TestPlant, _interval, requirementDefinitionWithTwoCheckBoxes);
                 var requirementWithOneNumberNoPrev = new TagRequirement(TestPlant, _interval, requirementDefinitionWithOneNumberNoPrev);
                 var requirementWithThreeNumberShowPrev = new TagRequirement(TestPlant, _interval, requirementDefinitionWithThreeNumberShowPrev);
@@ -114,6 +124,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                     {
                         requirementWithoutField,
                         requirementWithOneInfo,
+                        requirementWithOneAttachment,
                         requirementWithTwoCheckBoxes,
                         requirementWithOneNumberNoPrev,
                         requirementWithThreeNumberShowPrev
@@ -123,14 +134,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 _tagId = tag.Id;
 
+                _requirementDefinitionWithOneAttachmentId = requirementDefinitionWithOneAttachment.Id;
                 _requirementDefinitionWithTwoCheckBoxesId = requirementDefinitionWithTwoCheckBoxes.Id;
                 _requirementDefinitionWithThreeNumberShowPrevId = requirementDefinitionWithThreeNumberShowPrev.Id;
 
                 _requirementWithoutFieldId = requirementWithoutField.Id;
                 _requirementWithOneInfoId = requirementWithOneInfo.Id;
+                _requirementWithOneAttachmentId = requirementWithOneAttachment.Id;
                 _requirementWithTwoCheckBoxesId = requirementWithTwoCheckBoxes.Id;
                 _requirementWithThreeNumberShowPrevId = requirementWithThreeNumberShowPrev.Id;
                 _requirementWithOneNumberNoPrevId = requirementWithOneNumberNoPrev.Id;
+
+                _attachmentFieldId = attachmentField.Id;
 
                 _firstCbFieldId = cbField2.Id;
                 _secondCbFieldId = cbField1.Id;
@@ -294,6 +309,47 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
                 var fieldWithDouble = requirementWithThreeNumberShowPrev.Fields.Single(f => f.Id == numberFieldWithDoubleId);
                 AssertNumberInCurrentValue(fieldWithDouble, number);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnsTagRequirementsWithAttachment_AfterRecordingAttachment()
+        {
+            var attachmentField = _attachmentFieldId;
+            var fieldValueAttachment = new FieldValueAttachment(TestPlant, Guid.Empty, "FilA.txt");
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single();
+                tag.StartPreservation();
+                context.SaveChangesAsync().Wait();
+
+                var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
+                    .Single(rd => rd.Id == _requirementDefinitionWithOneAttachmentId);
+                var requirement = context.TagRequirements.Single(r => r.Id == _requirementWithOneAttachmentId);
+
+                requirement.RecordAttachment(
+                    fieldValueAttachment, 
+                    attachmentField,
+                    requirementDefinition);
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagRequirementsQuery(_tagId);
+                var dut = new GetTagRequirementsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                var requirementWithAttachment = result.Data.Single(r => r.Id == _requirementWithOneAttachmentId);
+                Assert.AreEqual(1, requirementWithAttachment.Fields.Count);
+
+                var fieldWithAttachment = requirementWithAttachment.Fields.Single(f => f.Id == attachmentField);
+                AssertAttachmentField(fieldWithAttachment, fieldValueAttachment);
             }
         }
 
@@ -494,6 +550,19 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             Assert.IsFalse(numberValue.IsNA);
             Assert.IsTrue(numberValue.Value.HasValue);
             Assert.AreEqual(expectedValue, numberValue.Value.Value);
+        }
+
+        private void AssertAttachmentField(FieldDto f, FieldValueAttachment expectedValue)
+        {
+            Assert.AreEqual(FieldType.Attachment, f.FieldType);
+            Assert.IsFalse(f.ShowPrevious);
+            Assert.IsNull(f.Unit);
+
+            Assert.IsInstanceOfType(f.CurrentValue, typeof(AttachmentDto));
+            var attachmentDto = f.CurrentValue as AttachmentDto;
+            Assert.IsNotNull(attachmentDto);
+            Assert.AreEqual(expectedValue.Id, attachmentDto.Id);
+            Assert.AreEqual(expectedValue.FileName, attachmentDto.FileName);
         }
     }
 }

@@ -126,19 +126,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void IsAdjacent_ShouldReturnFalse_WhenStepAreNotAdjacent()
+        public void AreAdjacent_ShouldReturnFalse_WhenStepAreNotAdjacent()
         {
-            Assert.IsFalse(_dutWith3Steps.IsAdjacent(_stepAId, _stepCId));
-            Assert.IsFalse(_dutWith3Steps.IsAdjacent(_stepCId, _stepAId));
+            Assert.IsFalse(_dutWith3Steps.AreAdjacentSteps(_stepAId, _stepCId));
         }
 
         [TestMethod]
-        public void IsAdjacent_ShouldReturnTrue_WhenStepAreAdjacent()
+        public void AreAdjacent_ShouldReturnTrue_WhenStepAreAdjacent()
         {
-            Assert.IsTrue(_dutWith3Steps.IsAdjacent(_stepAId, _stepBId));
-            Assert.IsTrue(_dutWith3Steps.IsAdjacent(_stepBId, _stepAId));
-            Assert.IsTrue(_dutWith3Steps.IsAdjacent(_stepCId, _stepBId));
-            Assert.IsTrue(_dutWith3Steps.IsAdjacent(_stepBId, _stepCId));
+            Assert.IsTrue(_dutWith3Steps.AreAdjacentSteps(_stepAId, _stepBId));
+            Assert.IsTrue(_dutWith3Steps.AreAdjacentSteps(_stepBId, _stepCId));
         }
 
         [TestMethod]

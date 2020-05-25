@@ -30,6 +30,7 @@ using Equinor.Procosys.Preservation.Query.GetActionAttachment;
 using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
+using Equinor.Procosys.Preservation.Query.GetFieldValueAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
@@ -517,8 +518,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPost("{id}/Requirement/{requirementId}/RecordAttachment/{fieldId}")]
-        public async Task<IActionResult> RecordAttachment(
+        [HttpPost("{id}/Requirement/{requirementId}/Attachment/{fieldId}")]
+        public async Task<IActionResult> AddFieldValueAttachment(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -542,8 +543,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpDelete("{id}/Requirement/{requirementId}/RecordAttachment/{fieldId}")]
-        public async Task<IActionResult> RecordAttachment(
+        [HttpDelete("{id}/Requirement/{requirementId}/Attachment/{fieldId}")]
+        public async Task<IActionResult> DeleteFieldValueAttachment(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -559,6 +560,33 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [HttpGet("{id}/Requirement/{requirementId}/Attachment/{fieldId}")]
+        public async Task<IActionResult> GetFieldValueAttachment(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementId,
+            [FromRoute] int fieldId,
+            [FromQuery] bool redirect = false)
+        {
+            var result = await _mediator.Send(new GetFieldValueAttachmentQuery(id, requirementId, fieldId));
+
+            if (result.ResultType != ResultType.Ok)
+            {
+                return this.FromResult(result);
+            }
+
+            if (!redirect)
+            {
+                return Ok(result.Data.ToString());
+            }
+
+            return Redirect(result.Data.ToString());
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
