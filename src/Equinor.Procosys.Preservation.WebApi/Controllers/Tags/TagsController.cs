@@ -488,7 +488,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPost("{id}/Requirement/{requirementId}/RecordValues")]
+        [HttpPost("{id}/Requirements/{requirementId}/RecordValues")]
         public async Task<IActionResult> RecordValues(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -517,7 +517,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPost("{id}/Requirement/{requirementId}/RecordAttachment/{fieldId}")]
+        [HttpPost("{id}/Requirements/{requirementId}/RecordAttachment/{fieldId}")]
         public async Task<IActionResult> RecordAttachment(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -542,7 +542,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpDelete("{id}/Requirement/{requirementId}/RecordAttachment/{fieldId}")]
+        [HttpDelete("{id}/Requirements/{requirementId}/RecordAttachment/{fieldId}")]
         public async Task<IActionResult> RecordAttachment(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
@@ -562,7 +562,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
-        [HttpPost("{id}/Requirement/{requirementId}/Preserve")]
+        [HttpPost("{id}/Requirements/{requirementId}/Preserve")]
         public async Task<IActionResult> Preserve(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
