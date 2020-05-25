@@ -58,8 +58,8 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                 dto.Action.IsClosed,
                 closedBy,
                 dto.Action.ClosedAtUtc,
-                dto.Action.RowVersion.ConvertToString(),
-                dto.AttachmentCount);
+                dto.AttachmentCount,
+                dto.Action.RowVersion.ConvertToString());
             
             return new SuccessResult<ActionDetailsDto>(action);
         }
