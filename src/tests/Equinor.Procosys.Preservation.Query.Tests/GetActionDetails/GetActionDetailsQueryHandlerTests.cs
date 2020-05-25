@@ -174,6 +174,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
         private void AssertNotModifiedAction(ActionDetailsDto actionDetailsDto)
         {
+            if (actionDetailsDto == null)
+            {
+                throw new ArgumentNullException(nameof(actionDetailsDto));
+            }
+
             Assert.IsNull(actionDetailsDto.ModifiedBy);
             Assert.IsFalse(actionDetailsDto.ModifiedAtUtc.HasValue);
         }
