@@ -51,6 +51,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 {
                     return new NotFoundResult<string>($"Responsible with code {request.ResponsibleCode} not found");
                 }
+                // must save new Responsible to get id of it
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
             step.SetMode(mode);
             step.SetResponsible(responsible);
