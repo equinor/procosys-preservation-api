@@ -51,7 +51,8 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                         step.Title,
                         step.IsVoided,
                         modes.FirstOrDefault(x => x.Id == step.ModeId),
-                        responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId)
+                        responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId),
+                        step.RowVersion.ConvertToString()
                     )
                 ),
                 journey.RowVersion.ConvertToString());

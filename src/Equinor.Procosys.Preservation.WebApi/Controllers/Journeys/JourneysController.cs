@@ -107,6 +107,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             var command = new UpdateStepCommand(
                 id,
                 stepId,
+                dto.ModeId,
+                dto.ResponsibleCode,
                 dto.Title,
                 dto.RowVersion);
             var result = await _mediator.Send(command);

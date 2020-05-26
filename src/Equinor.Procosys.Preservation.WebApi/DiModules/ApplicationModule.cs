@@ -31,6 +31,7 @@ using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Project;
+using Equinor.Procosys.Preservation.MainApi.Responsible;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Equinor.Procosys.Preservation.MainApi.TagFunction;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -95,6 +96,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IProjectApiService, MainApiProjectService>();
             services.AddScoped<IAreaApiService, MainApiAreaService>();
             services.AddScoped<IDisciplineApiService, MainApiDisciplineService>();
+            services.AddScoped<IResponsibleApiService, MainApiResponsibleService>();
             services.AddScoped<ITagFunctionApiService, MainApiTagFunctionService>();
             services.AddScoped<IPermissionApiService, MainApiPermissionService>();
             services.AddScoped<IBlobStorage, AzureBlobService>();

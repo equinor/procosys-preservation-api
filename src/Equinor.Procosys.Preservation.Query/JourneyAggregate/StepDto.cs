@@ -5,13 +5,14 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 {
     public class StepDto
     {
-        public StepDto(int id, string title, bool isVoided, ModeDto mode, ResponsibleDto responsible)
+        public StepDto(int id, string title, bool isVoided, ModeDto mode, ResponsibleDto responsible, string rowVersion)
         {
             Id = id;
             Title = title;
             IsVoided = isVoided;
             Mode = mode;
             Responsible = responsible;
+            RowVersion = rowVersion;
         }
 
         public int Id { get; }
@@ -19,5 +20,6 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
         public bool IsVoided { get; }
         public ModeDto Mode { get; }
         public ResponsibleDto Responsible { get; }
+        public string RowVersion { get; }
     }
 }
