@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
+using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using FluentValidation;
 
@@ -12,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
         public UpdateStepCommandValidator(
             IJourneyValidator journeyValidator,
             IStepValidator stepValidator,
-            IModeValidator modeValidator)
+            IModeValidator modeValidator,
+            IResponsibleValidator responsibleValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -28,7 +30,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .MustAsync((command, token) => BeAnExistingModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
-                .WithMessage(command => $"Mode is voided! Mode={command.ModeId}");
+                .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
+                .MustAsync((command, token) => NotBeAnExistingAndVoidedResponsibleAsync(command.ResponsibleCode, token))
+                .WithMessage(command => $"Responsible is voided! Responsible={command.ResponsibleCode}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
@@ -42,6 +46,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 => await modeValidator.ExistsAsync(modeId, token);
             async Task<bool> NotBeAVoidedModeAsync(int modeId, CancellationToken token)
                 => !await modeValidator.IsVoidedAsync(modeId, token);
+            async Task<bool> NotBeAnExistingAndVoidedResponsibleAsync(string responsibleCode, CancellationToken token)
+                => !await responsibleValidator.ExistsAndIsVoidedAsync(responsibleCode, token);
         }
     }
 }
