@@ -13,16 +13,12 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators
 
         public ResponsibleValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(int responsibleId, CancellationToken token) =>
-            await (from r in _context.QuerySet<Responsible>()
-                where r.Id == responsibleId
-                select r).AnyAsync(token);
-
-        public async Task<bool> IsVoidedAsync(int responsibleId, CancellationToken token)
+        public async Task<bool> ExistsAndIsVoidedAsync(string responsibleCode, CancellationToken cancellationToken)
         {
             var responsible = await (from r in _context.QuerySet<Responsible>()
-                where r.Id == responsibleId
-                select r).SingleOrDefaultAsync(token);
+                where r.Code == responsibleCode
+                select r).SingleOrDefaultAsync(cancellationToken);
+
             return responsible != null && responsible.IsVoided;
         }
     }

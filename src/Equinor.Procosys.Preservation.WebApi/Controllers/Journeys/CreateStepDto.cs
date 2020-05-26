@@ -4,6 +4,6 @@
     {
         public string Title { get; set; }
         public int ModeId { get; set; }
-        public int ResponsibleId { get; set; }
+        public string ResponsibleCode { get; set; }
     }
 }
