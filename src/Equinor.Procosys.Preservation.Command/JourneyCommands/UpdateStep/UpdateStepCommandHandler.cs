@@ -5,28 +5,20 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Responsible;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 {
     public class UpdateStepCommandHandler : IRequestHandler<UpdateStepCommand, Result<string>>
     {
-        private readonly IReadOnlyContext _context;
-
-        public UpdateStepCommandHandler(IReadOnlyContext context) => _context = context;
-
         private readonly IJourneyRepository _journeyRepository;
         private readonly IModeRepository _modeRepository;
         private readonly IResponsibleRepository _responsibleRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
         private readonly IResponsibleApiService _responsibleApiService;
-
-
 
         public UpdateStepCommandHandler(
             IJourneyRepository journeyRepository, 
@@ -59,6 +51,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 {
                     return new NotFoundResult<string>($"Responsible with code {request.ResponsibleCode} not found");
                 }
+                // must save new Responsible to get id of it
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
             step.SetMode(mode);
             step.SetResponsible(responsible);

@@ -55,7 +55,12 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                                     .Select(r => new ResponsibleDto(r.Id, r.Code, r.Title,
                                         r.RowVersion.ConvertToString()))
                                     .Single();
-                                return new StepDto(s.Id, s.Title, s.IsVoided, modeDto, responsibleDto);
+                                return new StepDto(
+                                    s.Id,
+                                    s.Title,
+                                    s.IsVoided,
+                                    s.RowVersion.ConvertToString(),
+                                    modeDto, responsibleDto);
                             }),
                         j.RowVersion.ConvertToString()));
 
