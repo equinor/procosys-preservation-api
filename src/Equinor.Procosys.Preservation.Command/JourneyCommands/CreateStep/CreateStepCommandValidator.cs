@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 .WithMessage(command => $"Mode doesn't exists! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
-                .MustAsync((command, token) => NotBeAnExistingAndVoidedResposibleAsync(command.ResponsibleCode, token))
+                .MustAsync((command, token) => NotBeAnExistingAndVoidedResponsibleAsync(command.ResponsibleCode, token))
                 .WithMessage(command => $"Responsible is voided! Responsible={command.ResponsibleCode}")
                 .MustAsync((command, token) => HaveUniqueStepTitleAsync(command.JourneyId, command.Title, token))
                 .WithMessage(command => $"Step with title already exists in journey! Step={command.Title}");
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);
 
-            async Task<bool> NotBeAnExistingAndVoidedResposibleAsync(string responsibleCode, CancellationToken token)
+            async Task<bool> NotBeAnExistingAndVoidedResponsibleAsync(string responsibleCode, CancellationToken token)
                 => !await responsibleValidator.ExistsAndIsVoidedAsync(responsibleCode, token);
 
             async Task<bool> NotBeAVoidedJourney(int journeyId, CancellationToken token)
