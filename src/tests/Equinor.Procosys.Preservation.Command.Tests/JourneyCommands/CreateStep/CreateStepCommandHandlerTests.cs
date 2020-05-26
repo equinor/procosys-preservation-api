@@ -4,6 +4,7 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.MainApi.Responsible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -14,6 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
     {
         private const int JourneyId = 1;
         private const int ModeId = 2;
+        private const string ResponsibleCode = "B";
         private const int ResponsibleId = 3;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private Journey _journey;
@@ -21,6 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         private Mock<Responsible> _responsibleMock;
         private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IResponsibleRepository> _responsibleRepositoryMock;
+        private Mock<IResponsibleApiService> _responsibleApiServiceMock;
         private CreateStepCommand _command;
         private CreateStepCommandHandler _dut;
 
@@ -47,16 +50,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleMock.SetupGet(r => r.Id).Returns(ResponsibleId);
             _responsibleMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _responsibleRepositoryMock
-                .Setup(r => r.GetByIdAsync(ResponsibleId))
+                .Setup(r => r.GetByCodeAsync(ResponsibleCode))
                 .Returns(Task.FromResult(_responsibleMock.Object));
 
-            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleId);
+            _responsibleApiServiceMock = new Mock<IResponsibleApiService>();
+
+            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode);
 
             _dut = new CreateStepCommandHandler(_journeyRepositoryMock.Object,
                 _modeRepositoryMock.Object,
                 _responsibleRepositoryMock.Object,
                 UnitOfWorkMock.Object,
-                PlantProviderMock.Object);
+                PlantProviderMock.Object,
+                _responsibleApiServiceMock.Object);
         }
 
         [TestMethod]
