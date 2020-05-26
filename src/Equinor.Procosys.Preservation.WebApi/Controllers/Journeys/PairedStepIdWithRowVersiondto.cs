@@ -2,7 +2,7 @@
 {
     public class PairedStepIdWithRowVersionDto
     {
-        public StepIdWithRowVersionDto StepDtoA { get; set; }
-        public StepIdWithRowVersionDto StepDtoB { get; set; }
+        public StepIdWithRowVersionDto StepA { get; set; }
+        public StepIdWithRowVersionDto StepB { get; set; }
     }
 }
