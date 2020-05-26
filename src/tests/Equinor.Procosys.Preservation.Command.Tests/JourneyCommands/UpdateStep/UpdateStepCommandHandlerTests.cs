@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
     public class UpdateStepCommandHandlerTests : CommandHandlerTestsBase
     {
         private readonly int _modeId = 3;
-        private readonly int _responsibleId = 4; 
+        private readonly string _responsibleCode = "C"; 
         private readonly string _rowVersion = "AAAAAAAAABA=";
 
         private readonly string _oldTitle = "StepTitleOld";
@@ -23,6 +23,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         private Mock<Responsible> _responsibleMock;
         private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IResponsibleRepository> _responsibleRepositoryMock;
+        private Mock<IPlantProvider> _plantProviderMock;
+
 
         private UpdateStepCommand _command;
         private UpdateStepCommandHandler _dut;
@@ -34,6 +36,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             // Arrange
             var journeyId = 1;
             var stepId = 2;
+
+            _plantProviderMock = new Mock<IPlantProvider>();
 
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
 
@@ -51,9 +55,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _responsibleRepositoryMock = new Mock<IResponsibleRepository>();
             _responsibleMock = new Mock<Responsible>();
             _responsibleMock.SetupGet(s => s.Plant).Returns(TestPlant);
-            _responsibleMock.SetupGet(s => s.Id).Returns(_responsibleId);
+            _responsibleMock.SetupGet(s => s.Id).Returns(_responsibleCode);
             _responsibleRepositoryMock
-                .Setup(r => r.GetByIdAsync(_responsibleId))
+                .Setup(r => r.GetByIdAsync(_responsibleCode))
                 .Returns(Task.FromResult(_responsibleMock.Object));
 
             _step = new Step(TestPlant, _oldTitle, _modeMock.Object, _responsibleMock.Object);
@@ -62,13 +66,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
                 .Returns(Task.FromResult(journey));
-            _command = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleId, _newTitle, _rowVersion);
+            _command = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode, _newTitle, _rowVersion);
 
             _dut = new UpdateStepCommandHandler(
                 journeyRepositoryMock.Object,
                 _modeRepositoryMock.Object,
-                _responsibleRepositoryMock.Object,
-                UnitOfWorkMock.Object);
+                UnitOfWorkMock.Object,
+                _plantProviderMock.Object,
+                _responsibleRepositoryMock.Object
+                );
         }
 
         [TestMethod]
@@ -84,7 +90,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(_newTitle, _step.Title);
             Assert.AreEqual(_modeId, _step.ModeId);
-            Assert.AreEqual(_responsibleId, _step.ResponsibleId);
+            Assert.AreEqual(_responsibleCode, _step.ResponsibleId);
         }
         
         [TestMethod]

@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public int ModeId { get; private set; }
         public int ResponsibleId { get; private set; }
 
-        public int SortKey { get; set; }  // sortKey will be set correct in later PBI when impl UI for Add, MoveUp and MoveDown (swap) of Steps in Journey
+        public int SortKey { get; set; }
         public bool IsVoided { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }

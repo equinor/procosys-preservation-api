@@ -1,4 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
@@ -7,5 +9,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         public ResponsibleRepository(PreservationContext context) : base(context.Responsibles)
         {
         }
+
+        public Task<Responsible> GetByCodeAsync(string responsibleCode) 
+            => DefaultQuery.SingleOrDefaultAsync(r => r.Code == responsibleCode);
     }
 }

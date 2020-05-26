@@ -30,11 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .MustAsync((command, token) => BeAnExistingModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
-                .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
-                .MustAsync((command, token) => BeAnExistingResponsibleAsync(command.ResponsibleId, token))
-                .WithMessage(command => $"Responsible doesn't exist! Responsible={command.ResponsibleId}")
-                .MustAsync((command, token) => NotBeAVoidedResponsibleAsync(command.ResponsibleId, token))
-                .WithMessage(command => $"Responsible is voided! Responsible={command.ResponsibleId}");
+                .WithMessage(command => $"Mode is voided! Mode={command.ModeId}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
@@ -48,10 +44,6 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 => await modeValidator.ExistsAsync(modeId, token);
             async Task<bool> NotBeAVoidedModeAsync(int modeId, CancellationToken token)
                 => !await modeValidator.IsVoidedAsync(modeId, token);
-            async Task<bool> BeAnExistingResponsibleAsync(int responsibleId, CancellationToken token)
-                => await responsibleValidator.ExistsAsync(responsibleId, token);
-            async Task<bool> NotBeAVoidedResponsibleAsync(int responsibleId, CancellationToken token)
-                => !await responsibleValidator.IsVoidedAsync(responsibleId, token);
         }
     }
 }
