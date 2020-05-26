@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
-using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using FluentValidation;
 
@@ -13,8 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
         public UpdateStepCommandValidator(
             IJourneyValidator journeyValidator,
             IStepValidator stepValidator,
-            IModeValidator modeValidator,
-            IResponsibleValidator responsibleValidator)
+            IModeValidator modeValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 

@@ -5,21 +5,21 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 {
     public class StepDto
     {
-        public StepDto(int id, string title, bool isVoided, string rowVersion, ModeDto mode, ResponsibleDto responsible)
+        public StepDto(int id, string title, bool isVoided, ModeDto mode, ResponsibleDto responsible, string rowVersion)
         {
             Id = id;
             Title = title;
             IsVoided = isVoided;
-            RowVersion = rowVersion;
             Mode = mode;
             Responsible = responsible;
+            RowVersion = rowVersion;
         }
 
         public int Id { get; }
         public string Title { get; }
         public bool IsVoided { get; }
-        public string RowVersion { get; }
         public ModeDto Mode { get; }
         public ResponsibleDto Responsible { get; }
+        public string RowVersion { get; }
     }
 }

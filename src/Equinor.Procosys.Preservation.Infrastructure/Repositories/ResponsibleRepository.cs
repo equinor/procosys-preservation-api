@@ -9,7 +9,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         public ResponsibleRepository(PreservationContext context) : base(context.Responsibles)
         {
         }
-
+        
+        // Todo-comment here: Add test in ResponsibleRepositoryTests.cs (implement in next PR)
         public Task<Responsible> GetByCodeAsync(string responsibleCode) 
             => DefaultQuery.SingleOrDefaultAsync(r => r.Code == responsibleCode);
     }

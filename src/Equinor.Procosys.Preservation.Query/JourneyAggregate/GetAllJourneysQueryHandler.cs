@@ -59,8 +59,9 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                                     s.Id,
                                     s.Title,
                                     s.IsVoided,
-                                    s.RowVersion.ConvertToString(),
-                                    modeDto, responsibleDto);
+                                    modeDto, 
+                                    responsibleDto,
+                                    s.RowVersion.ConvertToString());
                             }),
                         j.RowVersion.ConvertToString()));
 
