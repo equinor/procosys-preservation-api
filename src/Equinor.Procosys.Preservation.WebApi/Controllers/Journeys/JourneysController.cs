@@ -156,10 +156,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromBody] PairedStepIdWithRowVersionDto pairedStepsDto)
         {
             var command = new SwapStepsCommand(
-                id, pairedStepsDto.StepDtoA.Id, 
-                pairedStepsDto.StepDtoA.RowVersion, 
-                pairedStepsDto.StepDtoB.Id,
-                pairedStepsDto.StepDtoB.RowVersion
+                id, pairedStepsDto.StepA.Id, 
+                pairedStepsDto.StepA.RowVersion, 
+                pairedStepsDto.StepB.Id,
+                pairedStepsDto.StepB.RowVersion
                 );
             var result = await _mediator.Send(command);
             return this.FromResult(result);
