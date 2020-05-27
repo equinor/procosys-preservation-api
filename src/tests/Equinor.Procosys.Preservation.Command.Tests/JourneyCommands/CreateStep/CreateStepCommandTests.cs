@@ -9,12 +9,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new CreateStepCommand(1, "S", 2, 3);
+            var dut = new CreateStepCommand(1, "S", 2, "B");
 
             Assert.AreEqual(1, dut.JourneyId);
             Assert.AreEqual(2, dut.ModeId);
             Assert.AreEqual("S", dut.Title);
-            Assert.AreEqual(3, dut.ResponsibleId);
+            Assert.AreEqual("B", dut.ResponsibleCode);
         }
     }
 }
