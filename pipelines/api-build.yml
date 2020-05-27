@@ -71,7 +71,7 @@ stages:
   # Create Migration Script
   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
     parameters:
-      dependsOn: 'docker_build'
+      dependsOn: ''
       deploymentName: 'create_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.nonProdServiceConnection }}'
