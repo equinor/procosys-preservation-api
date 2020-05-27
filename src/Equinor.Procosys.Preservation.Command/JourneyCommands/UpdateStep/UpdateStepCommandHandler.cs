@@ -54,6 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 // must save new Responsible to get id of it
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
+
             step.SetMode(mode);
             step.SetResponsible(responsible);
             step.Title = request.Title;

@@ -67,5 +67,24 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _dut.UnVoid();
             Assert.IsFalse(_dut.IsVoided);
         }
+
+        [TestMethod]
+        public void SetMode_ShouldSetMode()
+        {
+            var mode = new Mode(_dut.Plant, "ModeTitle");
+            _dut.SetMode(mode);
+
+            Assert.AreEqual(mode.Id, _dut.ModeId);
+        }
+
+        [TestMethod]
+        public void SetResponsible_ShouldSetResponsible()
+        {
+            var responsible = new Responsible(_dut.Plant, "C", "Title");
+            _dut.SetResponsible(responsible);
+
+            Assert.AreEqual(responsible.Id, _dut.ResponsibleId);
+        }
+
     }
 }
