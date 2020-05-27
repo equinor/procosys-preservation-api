@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Caches;
@@ -24,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         }
 
         [Authorize]
-        [HttpGet("Clear")]
+        [HttpPut("Clear")]
         public void Clear(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
@@ -34,6 +36,41 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             _plantCache.Clear(currentUserOid);
             _permissionCache.ClearAll(plant, currentUserOid);
+        }
+
+        [Authorize]
+        [HttpGet("Permissions")]
+        public async Task<IList<string>> GetPermissions(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant)
+        {
+            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
+            var permissions = await _permissionCache.GetPermissionsForUserAsync(plant, currentUserOid);
+            return permissions;
+        }
+
+        [Authorize]
+        [HttpGet("Projects")]
+        public async Task<IList<string>> GetProjects(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant)
+        {
+            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
+            var projects = await _permissionCache.GetProjectNamesForUserOidAsync(plant, currentUserOid);
+            return projects;
+        }
+
+        [Authorize]
+        [HttpGet("Plants")]
+        public async Task<IList<string>> GetPlants()
+        {
+            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
+            var plants = await _plantCache.GetPlantIdsForUserOidAsync(currentUserOid);
+            return plants;
         }
     }
 }
