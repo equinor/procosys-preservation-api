@@ -1,5 +1,3 @@
-name: '${{ variables.versionNumber }}-$(Date:MMdd)'
-
 trigger:
   branches:
     include:
@@ -24,6 +22,8 @@ variables:
  - name: 'versionNumber'
    value: '1.000.0.'
 
+name: '${{ variables.versionNumber }}-$(Date:MMdd)'
+
 stages:
 # common stage. Docker build, tag and push
 - stage: common
@@ -47,7 +47,7 @@ stages:
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       buildCommand: build
-      versionNumber: '${{ variables.versionNumber }}'
+      versionNumber: ${{ variables.versionNumber }}
       dockerfilePath: '${{ variables.dockerfilePath }}'
       buildContext: '$(Build.SourcesDirectory)/src'
       repository: '${{ variables.repositoryName }}'
@@ -62,7 +62,7 @@ stages:
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       buildCommand: buildAndPush
-      versionNumber: '${{ variables.versionNumber }}'
+      versionNumber: ${{ variables.versionNumber }}
       dockerfilePath: '${{ variables.dockerfilePath }}'
       buildContext: '$(Build.SourcesDirectory)/src'
       repository: '${{ variables.repositoryName }}'
