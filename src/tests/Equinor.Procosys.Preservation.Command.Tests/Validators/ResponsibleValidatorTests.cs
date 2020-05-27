@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAndIsVoidedAsync_KnownCode__NotVoided_ReturnsFalse()
+        public async Task ExistsAndIsVoidedAsync_KnownCode_NotVoided_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
