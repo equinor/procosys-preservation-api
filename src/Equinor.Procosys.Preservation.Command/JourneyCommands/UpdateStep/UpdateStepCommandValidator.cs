@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAnExistingAndVoidedResponsibleAsync(command.ResponsibleCode, token))
-                .WithMessage(command => $"Responsible is voided! Responsible={command.ResponsibleCode}");
+                .WithMessage(command => $"Responsible is voided! ResponsibleCode={command.ResponsibleCode}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);

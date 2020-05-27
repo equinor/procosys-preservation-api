@@ -40,5 +40,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             // Assert
             Assert.AreEqual(ResponsibleCode, result.Code);
         }
+
+        [TestMethod]
+        public async Task GetByCode_ReturnsNull_WhenResponsibleNotExists()
+        {
+            var result = await _dut.GetByCodeAsync("XYZ");
+
+            // Assert
+            Assert.IsNull(result);
+        }
     }
 }

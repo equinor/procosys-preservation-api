@@ -2,6 +2,7 @@
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -71,20 +72,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         [TestMethod]
         public void SetMode_ShouldSetMode()
         {
+            var modeId = 1;
             var mode = new Mode(_dut.Plant, "ModeTitle");
+            mode.SetProtectedIdForTesting(modeId);
             _dut.SetMode(mode);
 
-            Assert.AreEqual(mode.Id, _dut.ModeId);
+            Assert.AreEqual(modeId, _dut.ModeId);
         }
 
         [TestMethod]
         public void SetResponsible_ShouldSetResponsible()
         {
+            var responsibleId = 1;
             var responsible = new Responsible(_dut.Plant, "C", "Title");
+            responsible.SetProtectedIdForTesting(responsibleId);
             _dut.SetResponsible(responsible);
 
-            Assert.AreEqual(responsible.Id, _dut.ResponsibleId);
+            Assert.AreEqual(responsibleId, _dut.ResponsibleId);
         }
-
     }
 }
