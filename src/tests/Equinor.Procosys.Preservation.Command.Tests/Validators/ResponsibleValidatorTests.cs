@@ -11,73 +11,56 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class ResponsibleValidatorTests : ReadOnlyTestsBase
     {
-        private int _responsibleId;
-                        
+        private string _responsibleCode;
+
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
             {
-                _responsibleId = AddResponsible(context, "R").Id;
+                _responsibleCode = AddResponsible(context, "R").Code;
             }
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownId_ReturnsTrue()
+        public async Task ExistsAndIsVoidedAsync_KnownCode_Voided_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var dut = new ResponsibleValidator(context);
-                var result = await dut.ExistsAsync(_responsibleId, default);
-                Assert.IsTrue(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task ExistsAsync_UnknownId_ReturnsFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new ResponsibleValidator(context);
-                var result = await dut.ExistsAsync(126234, default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var responsible = context.Responsibles.Single(r => r.Id == _responsibleId);
+                var responsible = context.Responsibles.Single(r => r.Code == _responsibleCode);
                 responsible.Void();
                 context.SaveChangesAsync().Wait();
             }
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
             {
                 var dut = new ResponsibleValidator(context);
-                var result = await dut.IsVoidedAsync(_responsibleId, default);
+                var result = await dut.ExistsAndIsVoidedAsync(_responsibleCode, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
+        public async Task ExistsAndIsVoidedAsync_KnownCode_NotVoided_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
             {
                 var dut = new ResponsibleValidator(context);
-                var result = await dut.IsVoidedAsync(_responsibleId, default);
+                var result = await dut.ExistsAndIsVoidedAsync(_responsibleCode, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
+        public async Task ExistsAndIsVoidedAsync_UnknownCode_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
             {
                 var dut = new ResponsibleValidator(context);
-                var result = await dut.IsVoidedAsync(126234, default);
+                var result = await dut.ExistsAndIsVoidedAsync("A", default);
                 Assert.IsFalse(result);
             }
         }

@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromRoute] int id,
             [FromBody] CreateStepDto dto)
         {
-            var result = await _mediator.Send(new CreateStepCommand(id, dto.Title, dto.ModeId, dto.ResponsibleId));
+            var result = await _mediator.Send(new CreateStepCommand(id, dto.Title, dto.ModeId, dto.ResponsibleCode));
             return this.FromResult(result);
         }
 
