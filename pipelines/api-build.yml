@@ -22,7 +22,7 @@ variables:
  - name: 'versionNumber'
    value: '1.000.0.'
 
-name: '${{ variables.versionNumber }}-$(Date:MMdd)'
+name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMdd)'
 
 stages:
 # common stage. Docker build, tag and push
