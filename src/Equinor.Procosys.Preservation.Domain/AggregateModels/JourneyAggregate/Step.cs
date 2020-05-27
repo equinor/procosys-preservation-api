@@ -87,7 +87,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             ModifiedById = modifiedBy.Id;
         }
 
-        //TODO Add test in StepTests.cs (implement in next PR)
         public void SetMode(Mode mode)
         {
             if (mode == null)
