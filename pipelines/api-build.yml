@@ -104,23 +104,23 @@ stages:
       serverName: '${{ variables.sqlServerName }}.database.windows.net'
       databaseName: '${{ variables.sqlDatabaseName }}'
 
-  # Deploy to AKS
-  - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/preservation/api:$(Build.BuildId)'
-      clusterName: 'pcs-aks-test'
-      kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
-      kvClientSecretName: '${{ variables.kvClientSecretName }}'
-      kvName: '${{ variables.kvName }}'
-      kvRgName: '${{ variables.envRgName }}'
-      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+  # # Deploy to AKS
+  # - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
+  #   parameters:
+  #     deploymentName: 'deploy_to_k8s'
+  #     dependsOn: ''
+  #     serviceConnection: '${{ variables.serviceConnection }}'
+  #     env: '${{ variables.envName }}'
+  #     envRg: 'pcs-hosting-rg'
+  #     envGroup: '${{ variables.envGroupName }}'
+  #     dockerImage: 'procosys.azurecr.io/preservation/api:$(Build.BuildId)'
+  #     clusterName: 'pcs-aks-test'
+  #     kvClientIdName: '${{ variables.kvClientIdName }}'
+  #     kvUriName: '${{ variables.kvUriName }}'
+  #     kvClientSecretName: '${{ variables.kvClientSecretName }}'
+  #     kvName: '${{ variables.kvName }}'
+  #     kvRgName: '${{ variables.envRgName }}'
+  #     aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
 
 # Test deploy stage
 - stage: test
