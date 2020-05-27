@@ -84,7 +84,7 @@ stages:
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
@@ -130,7 +130,7 @@ stages:
   variables:
     envName: 'test'
     envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
@@ -176,7 +176,7 @@ stages:
   variables:
     envName: 'prod'
     envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-${{ variables.envName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     serviceConnection: '${{ variables.prodServiceConnection }}'
 
   jobs:
