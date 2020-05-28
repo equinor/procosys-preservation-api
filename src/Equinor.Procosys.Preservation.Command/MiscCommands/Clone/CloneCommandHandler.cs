@@ -49,6 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             await CloneModes(request.SourcePlant, targetPlant);
             await CloneResponsibles(request.SourcePlant, targetPlant);
             await CloneRequirementTypes(request.SourcePlant, targetPlant);
+            await CloneTagFunctions(request.SourcePlant, targetPlant);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -137,6 +138,32 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
                     targetRD.AddField(targetField);
                 }
             }
+        }
+
+        private async Task CloneTagFunctions(string sourcePlant, string targetPlant)
+        {
+            _plantProvider.SetTemporaryPlant(sourcePlant);
+            var sourceTagFunctions = await _tagFunctionRepository.GetAllAsync();
+            _plantProvider.ReleaseTemporaryPlant();
+
+            var targetTagFunctions = await _tagFunctionRepository.GetAllAsync();
+
+            foreach (var sourceTagFunction in sourceTagFunctions)
+            {
+                var targetTagFunction = targetTagFunctions.SingleOrDefault(t => t.Code == sourceTagFunction.Code && t.RegisterCode == sourceTagFunction.RegisterCode);
+                if (targetTagFunction == null)
+                {
+                    targetTagFunction = new TagFunction(targetPlant, sourceTagFunction.Code, sourceTagFunction.Description, sourceTagFunction.RegisterCode);
+                    _tagFunctionRepository.Add(targetTagFunction);
+                }
+
+                CloneRequirements(sourceTagFunction, targetTagFunction);
+            }
+        }
+
+        private void CloneRequirements(TagFunction sourceTagFunction, TagFunction targetTagFunction)
+        {
+            
         }
     }
 }
