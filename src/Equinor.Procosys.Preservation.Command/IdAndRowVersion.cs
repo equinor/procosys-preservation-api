@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
+﻿namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
 {
     public class IdAndRowVersion
     {
