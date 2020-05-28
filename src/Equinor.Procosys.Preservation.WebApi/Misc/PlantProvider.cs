@@ -9,9 +9,25 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
         public const string PlantHeader = "x-plant";
 
         private readonly IHttpContextAccessor _accessor;
+        private string _temporaryPlant;
 
         public PlantProvider(IHttpContextAccessor accessor) => _accessor = accessor;
 
-        public string Plant => _accessor?.HttpContext?.Request?.Headers[PlantHeader].ToString().ToUpperInvariant() ?? throw new Exception("Could not determine current plant");
+        public string Plant
+        {
+            get
+            {
+                if (_temporaryPlant != null)
+                {
+                    return _temporaryPlant;
+                }
+                return _accessor?.HttpContext?.Request?.Headers[PlantHeader].ToString().ToUpperInvariant() ??
+                       throw new Exception("Could not determine current plant");
+            }
+        }
+
+        public void SetTemporaryPlant(string plant) => _temporaryPlant = plant;
+
+        public void ReleaseTemporaryPlant() => _temporaryPlant = null;
     }
 }
