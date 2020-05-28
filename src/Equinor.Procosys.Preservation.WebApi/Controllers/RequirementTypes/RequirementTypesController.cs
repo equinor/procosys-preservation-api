@@ -6,12 +6,14 @@ using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequir
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes;
+using Equinor.Procosys.Preservation.Query.GetRequirementType;
+using Equinor.Procosys.Preservation.Query.GetRequirementTypes;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RequirementDefinitionDto = Equinor.Procosys.Preservation.Query.GetRequirementType.RequirementDefinitionDto;
+using RequirementTypeDto = Equinor.Procosys.Preservation.Query.GetRequirementType.RequirementTypeDto;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 {

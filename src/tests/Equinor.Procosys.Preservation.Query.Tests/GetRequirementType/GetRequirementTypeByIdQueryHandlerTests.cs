@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Query.GetRequirementType;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetRequirementType
 {
     [TestClass]
     public class GetRequirementTypeByIdQueryHandlerTests : ReadOnlyTestsBase

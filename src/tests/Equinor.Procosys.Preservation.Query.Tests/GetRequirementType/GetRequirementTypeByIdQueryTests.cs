@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
+﻿using Equinor.Procosys.Preservation.Query.GetRequirementType;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetRequirementType
 {
     [TestClass]
     public class GetRequirementTypeByIdQueryTests
