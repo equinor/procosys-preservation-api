@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -22,20 +21,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Area
             _plantCache = plantCache;
             _apiVersion = options.CurrentValue.ApiVersion;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
-        }
-
-        public async Task<List<ProcosysArea>> GetAreasAsync(string plant)
-        {
-            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
-            {
-                throw new ArgumentException($"Invalid plant: {plant}");
-            }
-
-            var url = $"{_baseAddress}Library/Areas" +
-                      $"?plantId={plant}" +
-                      $"&api-version={_apiVersion}";
-
-            return await _mainApiClient.QueryAndDeserialize<List<ProcosysArea>>(url) ?? new List<ProcosysArea>();
         }
 
         public async Task<ProcosysArea> GetAreaAsync(string plant, string code)
