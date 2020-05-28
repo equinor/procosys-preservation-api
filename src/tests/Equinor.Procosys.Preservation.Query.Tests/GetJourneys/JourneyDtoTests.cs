@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Query.GetJourney;
-using Equinor.Procosys.Preservation.Query.ModeAggregate;
+using Equinor.Procosys.Preservation.Query.GetMode;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

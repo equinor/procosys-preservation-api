@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.ModeAggregate
+﻿namespace Equinor.Procosys.Preservation.Query.GetMode
 {
     public class ModeDto
     {

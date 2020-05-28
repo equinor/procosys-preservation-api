@@ -1,4 +1,4 @@
-﻿using Equinor.Procosys.Preservation.Query.ModeAggregate;
+﻿using Equinor.Procosys.Preservation.Query.GetModes;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetJourneys

@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.ModeAggregate;
+using Equinor.Procosys.Preservation.Query.GetMode;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetMode
 {
     [TestClass]
     public class GetModeByIdQueryHandlerTests : ReadOnlyTestsBase

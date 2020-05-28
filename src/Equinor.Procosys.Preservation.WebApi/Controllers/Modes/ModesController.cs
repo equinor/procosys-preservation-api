@@ -6,12 +6,14 @@ using Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode;
 using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
 using Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.ModeAggregate;
+using Equinor.Procosys.Preservation.Query.GetMode;
+using Equinor.Procosys.Preservation.Query.GetModes;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
+using ModeDto = Equinor.Procosys.Preservation.Query.GetMode.ModeDto;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
 {

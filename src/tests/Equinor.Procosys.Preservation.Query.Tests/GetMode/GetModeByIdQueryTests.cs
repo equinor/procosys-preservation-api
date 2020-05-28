@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.ModeAggregate;
+﻿using Equinor.Procosys.Preservation.Query.GetMode;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetMode
 {
     [TestClass]
     public class GetModeByIdQueryTests

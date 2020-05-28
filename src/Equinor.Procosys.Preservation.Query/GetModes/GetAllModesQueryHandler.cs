@@ -8,7 +8,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.ModeAggregate
+namespace Equinor.Procosys.Preservation.Query.GetModes
 {
     public class GetAllModesQueryHandler : IRequestHandler<GetAllModesQuery, Result<IEnumerable<ModeDto>>>
     {
