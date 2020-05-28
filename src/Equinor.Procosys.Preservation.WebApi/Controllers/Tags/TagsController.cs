@@ -685,7 +685,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return Redirect(result.Data.ToString());
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_VOIDUNVOID)]
         [HttpPut("{id}/Void")]
         public async Task<IActionResult> VoidTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -700,7 +700,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_VOIDUNVOID)]
         [HttpPut("{id}/Unvoid")]
         public async Task<IActionResult> UnvoidTag(
             [FromHeader( Name = PlantProvider.PlantHeader)]

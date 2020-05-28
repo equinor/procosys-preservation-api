@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             return Ok(result);
         }
 
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Void")]
         public async Task<ActionResult<RequirementTypeDto>> VoidRequirementType(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             return Ok(result);
         }
 
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Unvoid")]
         public async Task<ActionResult<RequirementTypeDto>> UnvoidRequirementType(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             return Ok(result);
         }
 
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Void")]
         public async Task<ActionResult<RequirementDefinitionDto>> VoidRequirementDefinition(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             return Ok(result);
         }
 
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Unvoid")]
         public async Task<ActionResult<RequirementDefinitionDto>> UnvoidRequirementDefinition(
             [FromHeader( Name = PlantProvider.PlantHeader)]
