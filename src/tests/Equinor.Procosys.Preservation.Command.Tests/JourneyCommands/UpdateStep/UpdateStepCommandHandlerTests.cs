@@ -163,7 +163,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         }
 
         [TestMethod]
-        public async Task HandlingUpdateStepCommand_ShouldAddResponsibleToStep_WhenResponsibleNotExists()
+        public async Task HandlingUpdateStepCommand_ShouldAddResponsibleToRepository_WhenResponsibleNotExists()
         {
             // Arrange 
             _responsibleRepositoryMock
@@ -181,7 +181,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         }
 
         [TestMethod]
-        public async Task HandlingUpdateStepCommand_ShouldNotAddResponsibleToStep_WhenResponsibleAlreadyExists()
+        public async Task HandlingUpdateStepCommand_ShouldNotAddResponsibleToRepository_WhenResponsibleAlreadyExists()
         {
             // Arrange
             Assert.AreEqual(1, _journey.Steps.Count);
@@ -193,6 +193,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             // Assert
             _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Never);
             Assert.AreEqual(_responsibleId2, _journey.Steps.First().ResponsibleId);
+            Assert.IsNull(_addedResponsible);
         }
     }
 }
