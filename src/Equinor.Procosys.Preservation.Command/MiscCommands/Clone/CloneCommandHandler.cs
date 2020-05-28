@@ -4,6 +4,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using MediatR;
 using ServiceResult;
 
@@ -13,12 +16,24 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
     {
         private readonly IPlantProvider _plantProvider;
         private readonly IModeRepository _modeRepository;
+        private readonly IResponsibleRepository _responsibleRepository;
+        private readonly IRequirementTypeRepository _requirementTypeRepository;
+        private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CloneCommandHandler(IPlantProvider plantProvider, IModeRepository modeRepository, IUnitOfWork unitOfWork)
+        public CloneCommandHandler(
+            IPlantProvider plantProvider,
+            IUnitOfWork unitOfWork,
+            IModeRepository modeRepository,
+            IResponsibleRepository responsibleRepository,
+            IRequirementTypeRepository requirementTypeRepository,
+            ITagFunctionRepository tagFunctionRepository)
         {
             _plantProvider = plantProvider;
             _modeRepository = modeRepository;
+            _responsibleRepository = responsibleRepository;
+            _requirementTypeRepository = requirementTypeRepository;
+            _tagFunctionRepository = tagFunctionRepository;
             _unitOfWork = unitOfWork;
         }
 
@@ -32,6 +47,8 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             }
 
             await CloneModes(request.SourcePlant, targetPlant);
+            await CloneResponsibles(request.SourcePlant, targetPlant);
+            await CloneRequirementTypes(request.SourcePlant, targetPlant);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
@@ -52,6 +69,72 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
                 {
                     var targetMode = new Mode(targetPlant, sourceMode.Title);
                     _modeRepository.Add(targetMode);
+                }
+            }
+        }
+
+        private async Task CloneResponsibles(string sourcePlant, string targetPlant)
+        {
+            _plantProvider.SetTemporaryPlant(sourcePlant);
+            var sourceResponsibles = await _responsibleRepository.GetAllAsync();
+            _plantProvider.ReleaseTemporaryPlant();
+
+            var targetResponsibles = await _responsibleRepository.GetAllAsync();
+
+            foreach (var sourceResponsible in sourceResponsibles)
+            {
+                if (targetResponsibles.SingleOrDefault(t => t.Title == sourceResponsible.Title) == null)
+                {
+                    var targetResponsible = new Responsible(targetPlant, sourceResponsible.Code, sourceResponsible.Title);
+                    _responsibleRepository.Add(targetResponsible);
+                }
+            }
+        }
+
+        private async Task CloneRequirementTypes(string sourcePlant, string targetPlant)
+        {
+            _plantProvider.SetTemporaryPlant(sourcePlant);
+            var sourceRTs = await _requirementTypeRepository.GetAllAsync();
+            _plantProvider.ReleaseTemporaryPlant();
+
+            var targetRTs = await _requirementTypeRepository.GetAllAsync();
+
+            foreach (var sourceRT in sourceRTs)
+            {
+                var targetRT = targetRTs.SingleOrDefault(t => t.Title == sourceRT.Title);
+                if (targetRT == null)
+                {
+                    targetRT = new RequirementType(targetPlant, sourceRT.Code, sourceRT.Title, sourceRT.SortKey);
+                    _requirementTypeRepository.Add(targetRT);
+                }
+
+                CloneRequirementDefinitions(sourceRT, targetRT);
+            }
+        }
+
+        private void CloneRequirementDefinitions(RequirementType sourceRT, RequirementType targetRT)
+        {
+            foreach (var sourceRD in sourceRT.RequirementDefinitions)
+            {
+                var targetRD = targetRT.RequirementDefinitions.SingleOrDefault(t => t.Title == sourceRD.Title);
+                if (targetRD == null)
+                {
+                    targetRD = new RequirementDefinition(targetRT.Plant, sourceRD.Title, sourceRD.DefaultIntervalWeeks, sourceRD.SortKey); 
+                    targetRT.AddRequirementDefinition(targetRD);
+                }
+
+                CloneFields(sourceRD, targetRD);
+            }
+        }
+
+        private void CloneFields(RequirementDefinition sourceRD, RequirementDefinition targetRD)
+        {
+            foreach (var sourceField in sourceRD.Fields)
+            {
+                if (targetRD.Fields.SingleOrDefault(t => t.Label == sourceField.Label) == null)
+                {
+                    var targetField = new Field(targetRD.Plant, sourceField.Label, sourceField.FieldType, sourceField.SortKey, sourceField.Unit, sourceField.ShowPrevious);
+                    targetRD.AddField(targetField);
                 }
             }
         }
