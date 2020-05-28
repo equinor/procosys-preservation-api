@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
             string sourcePlant
             )
         {
-            var command = new CloneCommand(sourcePlant);
+            var command = new CloneCommand(sourcePlant, targetPlant);
 
             var result = await _mediator.Send(command);
 

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -24,6 +25,11 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
         public async Task<Result<Unit>> Handle(CloneCommand request, CancellationToken cancellationToken)
         {
             var targetPlant = _plantProvider.Plant;
+
+            if (targetPlant != request.TargetPlant)
+            {
+                throw new Exception($"Target plant '{request.TargetPlant}' in request must match target plant '{targetPlant}' in provider");
+            }
 
             await CloneModes(request.SourcePlant, targetPlant);
 
