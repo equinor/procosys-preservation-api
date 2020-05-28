@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -16,20 +17,26 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
     {
         private readonly int _modeId = 3;
         private readonly int _responsibleId = 4;
+        private readonly int _responsibleId2 = 8;
         private readonly string _responsibleCode = "TestCode";
+        private readonly string _responsibleCode2 = "TestCode2";
         private readonly string _rowVersion = "AAAAAAAAABA=";
-
         private readonly string _oldTitle = "StepTitleOld";
         private readonly string _newTitle = "StepTitleNew";
+
+        private Responsible _responsible;
+        private Responsible _responsible2;
+        private Responsible _addedResponsible;
+        private Journey _journey;
         private Mock<Mode> _modeMock;
-        private Mock<Responsible> _responsibleMock;
+        private Mock<ProcosysResponsible> _pcsResponsibleMock;
         private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IResponsibleRepository> _responsibleRepositoryMock;
         private Mock<IResponsibleApiService> _responsibleApiServiceMock;
-
         private Mock<IPlantProvider> _plantProviderMock;
 
         private UpdateStepCommand _command;
+        private UpdateStepCommand _commandWithResponsible2;
         private UpdateStepCommandHandler _dut;
         private Step _step;
 
@@ -45,8 +52,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
 
-            var journey = new Journey(TestPlant, "J");
-            journey.SetProtectedIdForTesting(journeyId);
+            _journey = new Journey(TestPlant, "J");
+            _journey.SetProtectedIdForTesting(journeyId);
 
             _modeRepositoryMock = new Mock<IModeRepository>();
             _modeMock = new Mock<Mode>();
@@ -56,28 +63,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
                 .Setup(r => r.GetByIdAsync(_modeId))
                 .Returns(Task.FromResult(_modeMock.Object));
 
-            _responsibleRepositoryMock = new Mock<IResponsibleRepository>();
-            _responsibleMock = new Mock<Responsible>();
-            _responsibleMock.SetupGet(s => s.Plant).Returns(TestPlant);
-            _responsibleMock.SetupGet(s => s.Id).Returns(_responsibleId);
+            _responsible = new Responsible(TestPlant, _responsibleCode, _oldTitle);
+            _responsible.SetProtectedIdForTesting(_responsibleId);
+            _responsible2 = new Responsible(TestPlant, _responsibleCode2, _newTitle);
+            _responsible2.SetProtectedIdForTesting(_responsibleId2);
 
+            _responsibleRepositoryMock = new Mock<IResponsibleRepository>();
             _responsibleRepositoryMock
                 .Setup(r => r.GetByCodeAsync(_responsibleCode))
-                .Returns(Task.FromResult(_responsibleMock.Object));
+                .Returns(Task.FromResult(_responsible));
+            _responsibleRepositoryMock
+                .Setup(r => r.GetByCodeAsync(_responsibleCode2))
+                .Returns(Task.FromResult(_responsible2));
+            _responsibleRepositoryMock.Setup(r => r.Add(It.IsAny<Responsible>()))
+                .Callback<Responsible>(c => _addedResponsible = c);
+
+            _pcsResponsibleMock = new Mock<ProcosysResponsible>();
 
             _responsibleApiServiceMock = new Mock<IResponsibleApiService>();
+            _responsibleApiServiceMock.Setup(r => r.GetResponsibleAsync(TestPlant, _responsibleCode))
+                .Returns(Task.FromResult(_pcsResponsibleMock.Object));
 
-            _step = new Step(TestPlant, _oldTitle, _modeMock.Object, _responsibleMock.Object);
+            _step = new Step(TestPlant, _oldTitle, _modeMock.Object, _responsible);
             _step.SetProtectedIdForTesting(stepId);
-            journey.AddStep(_step);
+            _journey.AddStep(_step);
 
             _responsibleApiServiceMock.Setup(s => s.GetResponsibleAsync(TestPlant, _responsibleCode))
                 .Returns(Task.FromResult(new ProcosysResponsible { Description = "ResponsibleTitle" }));
 
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
-                .Returns(Task.FromResult(journey));
+                .Returns(Task.FromResult(_journey));
 
             _command = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode, _newTitle, _rowVersion);
+            _commandWithResponsible2 = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode2, _newTitle, _rowVersion);
 
             _dut = new UpdateStepCommandHandler(
                 journeyRepositoryMock.Object,
@@ -142,6 +160,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateStepCommand_ShouldAddResponsibleToStep_WhenResponsibleNotExists()
+        {
+            // Arrange 
+            _responsibleRepositoryMock
+                .Setup(r => r.GetByCodeAsync(_responsibleCode))
+                .Returns(Task.FromResult((Responsible)null));
+
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Once);
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Exactly(2));
+            Assert.AreEqual(_addedResponsible.Code, _responsibleCode);
+
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateStepCommand_ShouldNotAddResponsibleToStep_WhenResponsibleAlreadyExists()
+        {
+            // Arrange
+            Assert.AreEqual(1, _journey.Steps.Count);
+            Assert.AreEqual(_responsibleId, _journey.Steps.First().ResponsibleId);
+
+            // Act
+            await _dut.Handle(_commandWithResponsible2, default);
+
+            // Assert
+            _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Never);
+            Assert.AreEqual(_responsibleId2, _journey.Steps.First().ResponsibleId);
         }
     }
 }
