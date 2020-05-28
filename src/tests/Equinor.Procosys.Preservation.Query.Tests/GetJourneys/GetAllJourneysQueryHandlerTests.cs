@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.JourneyAggregate;
+using Equinor.Procosys.Preservation.Query.GetJourneys;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

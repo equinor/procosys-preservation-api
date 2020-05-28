@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Query.JourneyAggregate;
+﻿using Equinor.Procosys.Preservation.Query.GetJourney;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetJourney
 {
     [TestClass]
     public class StepDtoTests

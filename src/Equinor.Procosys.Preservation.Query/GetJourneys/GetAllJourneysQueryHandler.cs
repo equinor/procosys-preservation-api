@@ -12,7 +12,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
+namespace Equinor.Procosys.Preservation.Query.GetJourneys
 {
     public class GetAllJourneysQueryHandler : IRequestHandler<GetAllJourneysQuery, Result<IEnumerable<JourneyDto>>>
     {

@@ -1,7 +1,7 @@
 ﻿using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
+namespace Equinor.Procosys.Preservation.Query.GetJourney
 {
     public class StepDto
     {

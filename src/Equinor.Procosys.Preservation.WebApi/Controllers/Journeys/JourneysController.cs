@@ -9,7 +9,8 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.JourneyAggregate;
+using Equinor.Procosys.Preservation.Query.GetJourney;
+using Equinor.Procosys.Preservation.Query.GetJourneys;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -28,7 +29,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
-        public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
+        public async Task<ActionResult<List<Query.GetJourneys.JourneyDto>>> GetJourneys(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -41,7 +42,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<JourneyDto>> GetJourney(
+        public async Task<ActionResult<Query.GetJourney.JourneyDto>> GetJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
