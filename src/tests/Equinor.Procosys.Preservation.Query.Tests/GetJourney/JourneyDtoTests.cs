@@ -2,7 +2,7 @@
 using System.Linq;
 using Equinor.Procosys.Preservation.Query.GetJourney;
 using Equinor.Procosys.Preservation.Query.GetMode;
-using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Query.GetResponsibles;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.GetJourney

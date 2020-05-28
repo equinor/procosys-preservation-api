@@ -1,5 +1,5 @@
 ﻿using Equinor.Procosys.Preservation.Query.GetModes;
-using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Query.GetResponsibles;
 
 namespace Equinor.Procosys.Preservation.Query.GetJourneys
 {

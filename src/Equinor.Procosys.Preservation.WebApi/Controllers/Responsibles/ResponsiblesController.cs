@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Query.GetResponsibles;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

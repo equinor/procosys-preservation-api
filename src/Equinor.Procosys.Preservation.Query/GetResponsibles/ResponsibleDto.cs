@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
+﻿namespace Equinor.Procosys.Preservation.Query.GetResponsibles
 {
     public class ResponsibleDto
     {
