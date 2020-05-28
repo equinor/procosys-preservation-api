@@ -193,7 +193,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             {
                 var sourceRD = sourceRDs.Single(s => s.Id == sourceRequirement.RequirementDefinitionId);
                 var targetRD = targetRDs.Single(t => t.Title == sourceRD.Title);
-                if (targetTagFunction.Requirements.SingleOrDefault(t => t.Id == targetRD.Id) == null)
+                if (targetTagFunction.Requirements.SingleOrDefault(r => r.RequirementDefinitionId == targetRD.Id) == null)
                 {
                     var targetRequirement = new TagFunctionRequirement(targetTagFunction.Plant, sourceRequirement.IntervalWeeks, targetRD);
                     targetTagFunction.AddRequirement(targetRequirement);
