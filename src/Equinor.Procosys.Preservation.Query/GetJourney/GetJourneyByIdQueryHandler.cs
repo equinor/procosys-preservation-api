@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourney
                 journey.Id,
                 journey.Title,
                 journey.IsVoided,
-                journey.Steps.Select(step =>
+                journey.OrderedSteps().Select(step =>
                     new StepDto(
                         step.Id,
                         step.Title,

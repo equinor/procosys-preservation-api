@@ -116,7 +116,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Void")]
         public async Task<IActionResult> VoidJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
@@ -131,7 +131,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Unvoid")]
         public async Task<IActionResult> UnvoidJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
