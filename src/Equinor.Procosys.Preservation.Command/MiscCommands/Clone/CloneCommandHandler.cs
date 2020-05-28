@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,6 +50,8 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             await CloneModes(request.SourcePlant, targetPlant);
             await CloneResponsibles(request.SourcePlant, targetPlant);
             await CloneRequirementTypes(request.SourcePlant, targetPlant);
+            
+            // must be cloned after RequirementTypes
             await CloneTagFunctions(request.SourcePlant, targetPlant);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -120,7 +123,11 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
                 var targetRD = targetRT.RequirementDefinitions.SingleOrDefault(t => t.Title == sourceRD.Title);
                 if (targetRD == null)
                 {
-                    targetRD = new RequirementDefinition(targetRT.Plant, sourceRD.Title, sourceRD.DefaultIntervalWeeks, sourceRD.SortKey); 
+                    targetRD = new RequirementDefinition(
+                        targetRT.Plant,
+                        sourceRD.Title,
+                        sourceRD.DefaultIntervalWeeks,
+                        sourceRD.SortKey); 
                     targetRT.AddRequirementDefinition(targetRD);
                 }
 
@@ -134,7 +141,13 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             {
                 if (targetRD.Fields.SingleOrDefault(t => t.Label == sourceField.Label) == null)
                 {
-                    var targetField = new Field(targetRD.Plant, sourceField.Label, sourceField.FieldType, sourceField.SortKey, sourceField.Unit, sourceField.ShowPrevious);
+                    var targetField = new Field(
+                        targetRD.Plant,
+                        sourceField.Label,
+                        sourceField.FieldType,
+                        sourceField.SortKey,
+                        sourceField.Unit,
+                        sourceField.ShowPrevious);
                     targetRD.AddField(targetField);
                 }
             }
@@ -144,26 +157,48 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
         {
             _plantProvider.SetTemporaryPlant(sourcePlant);
             var sourceTagFunctions = await _tagFunctionRepository.GetAllAsync();
+            var sourceRTs = await _requirementTypeRepository.GetAllAsync();
+            var sourceRDs = sourceRTs.SelectMany(rt => rt.RequirementDefinitions).ToList();
             _plantProvider.ReleaseTemporaryPlant();
 
             var targetTagFunctions = await _tagFunctionRepository.GetAllAsync();
+            var targetRTs = await _requirementTypeRepository.GetAllAsync();
+            var targetRDs = targetRTs.SelectMany(rt => rt.RequirementDefinitions).ToList();
 
             foreach (var sourceTagFunction in sourceTagFunctions)
             {
-                var targetTagFunction = targetTagFunctions.SingleOrDefault(t => t.Code == sourceTagFunction.Code && t.RegisterCode == sourceTagFunction.RegisterCode);
+                var targetTagFunction = targetTagFunctions.SingleOrDefault(
+                    t => t.Code == sourceTagFunction.Code && t.RegisterCode == sourceTagFunction.RegisterCode);
                 if (targetTagFunction == null)
                 {
-                    targetTagFunction = new TagFunction(targetPlant, sourceTagFunction.Code, sourceTagFunction.Description, sourceTagFunction.RegisterCode);
+                    targetTagFunction = new TagFunction(
+                        targetPlant,
+                        sourceTagFunction.Code,
+                        sourceTagFunction.Description,
+                        sourceTagFunction.RegisterCode);
                     _tagFunctionRepository.Add(targetTagFunction);
                 }
 
-                CloneRequirements(sourceTagFunction, targetTagFunction);
+                CloneRequirements(sourceRDs, sourceTagFunction, targetRDs, targetTagFunction);
             }
         }
 
-        private void CloneRequirements(TagFunction sourceTagFunction, TagFunction targetTagFunction)
+        private void CloneRequirements(
+            List<RequirementDefinition> sourceRDs,
+            TagFunction sourceTagFunction,
+            List<RequirementDefinition> targetRDs,
+            TagFunction targetTagFunction)
         {
-            
+            foreach (var sourceRequirement in sourceTagFunction.Requirements)
+            {
+                var sourceRD = sourceRDs.Single(s => s.Id == sourceRequirement.RequirementDefinitionId);
+                var targetRD = targetRDs.Single(t => t.Title == sourceRD.Title);
+                if (targetTagFunction.Requirements.SingleOrDefault(t => t.Id == targetRD.Id) == null)
+                {
+                    var targetRequirement = new TagFunctionRequirement(targetTagFunction.Plant, sourceRequirement.IntervalWeeks, targetRD);
+                    targetTagFunction.AddRequirement(targetRequirement);
+                }
+            }
         }
     }
 }
