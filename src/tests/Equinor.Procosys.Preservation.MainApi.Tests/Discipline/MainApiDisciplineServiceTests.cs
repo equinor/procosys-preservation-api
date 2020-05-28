@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
@@ -17,8 +16,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
         private Mock<IPlantCache> _plantCache;
-        private List<ProcosysDiscipline> _resultWithNoItems;
-        private List<ProcosysDiscipline> _resultWithThreeItems;
         private ProcosysDiscipline _procosysDiscipline;
         private MainApiDisciplineService _dut;
 
@@ -35,65 +32,15 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
                 .Setup(x => x.IsValidPlantForCurrentUserAsync(_plant))
                 .Returns(Task.FromResult(true));
 
-            _resultWithNoItems = new List<ProcosysDiscipline>();
-
             _procosysDiscipline = new ProcosysDiscipline
             {
                 Id = 1,
                 Code = "CodeA",
                 Description = "Description1",
             };
-            _resultWithThreeItems = new List<ProcosysDiscipline>
-            {
-                _procosysDiscipline,
-                new ProcosysDiscipline
-                {
-                    Id = 2,
-                    Code = "CodeB",
-                    Description = "Description2",
-                },
-                new ProcosysDiscipline
-                {
-                    Id = 3,
-                    Code = "CodeC",
-                    Description = "Description3",
-                }
-            };
+           
             _dut = new MainApiDisciplineService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
         }
-
-        [TestMethod]
-        public async Task GetDisciplines_ShouldReturnsThreeDisciplines()
-        {
-            // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysDiscipline>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_resultWithThreeItems));
-
-            // Act
-            var result = await _dut.GetDisciplinesAsync(_plant);
-
-            // Assert
-            Assert.AreEqual(3, result.Count);
-        }
-
-        [TestMethod]
-        public async Task GetDisciplines_ShouldReturnsNoDisciplines()
-        {
-            // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysDiscipline>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_resultWithNoItems));
-            // Act
-            var result = await _dut.GetDisciplinesAsync(_plant);
-
-            // Assert
-            Assert.AreEqual(0, result.Count);
-        }
-
-        [TestMethod]
-        public async Task GetDisciplines_ShouldThrowException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetDisciplinesAsync("INVALIDPLANT"));
 
         [TestMethod]
         public async Task GetDiscipline_ShouldThrowException_WhenPlantIsInvalid()
