@@ -51,9 +51,10 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             await CloneResponsibles(request.SourcePlant, targetPlant);
             await CloneRequirementTypes(request.SourcePlant, targetPlant);
             
-            // must be cloned after cloned RequirementTypes and RequirementDefinitions are saved
+            // Need to save RequirementDefinitions to get let EF Core set ID's on new Items
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            // TagFunctions must be cloned after RequirementTypes and RequirementDefinitions
             await CloneTagFunctions(request.SourcePlant, targetPlant);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

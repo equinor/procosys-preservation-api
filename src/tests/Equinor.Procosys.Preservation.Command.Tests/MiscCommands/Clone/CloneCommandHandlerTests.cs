@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 .Setup(uiw => uiw.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .Callback(() =>
                 {
-                    // Need this to simulate what EF Core do with Entity Ids upon saving new Entities
+                    // Need this to simulate what EF Core do with Ids upon saving new Items
                     _requirementTypeRepository.Save();
                 });
 
