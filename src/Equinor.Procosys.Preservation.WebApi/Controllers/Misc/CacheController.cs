@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Caches;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -17,12 +18,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         private readonly IPlantCache _plantCache;
         private readonly IPermissionCache _permissionCache;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IPermissionApiService _permissionApiService;
 
-        public CacheController(IPlantCache plantCache, IPermissionCache permissionCache, ICurrentUserProvider currentUserProvider)
+        public CacheController(IPlantCache plantCache, IPermissionCache permissionCache, ICurrentUserProvider currentUserProvider, IPermissionApiService permissionApiService)
         {
             _plantCache = plantCache;
             _permissionCache = permissionCache;
             _currentUserProvider = currentUserProvider;
+            _permissionApiService = permissionApiService;
         }
 
         [Authorize]
@@ -39,7 +42,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         }
 
         [Authorize]
-        [HttpGet("Permissions")]
+        [HttpGet("PermissionsFromCache")]
         public async Task<IList<string>> GetPermissions(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
@@ -52,7 +55,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         }
 
         [Authorize]
-        [HttpGet("Projects")]
+        [HttpGet("PermissionsFromMain")]
+        public async Task<IList<string>> GetPermissionsFromMain(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant)
+        {
+            var permissions = await _permissionApiService.GetPermissionsAsync(plant);
+            return permissions;
+        }
+
+        [Authorize]
+        [HttpGet("ProjectsFromCache")]
         public async Task<IList<string>> GetProjects(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
@@ -65,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         }
 
         [Authorize]
-        [HttpGet("Plants")]
+        [HttpGet("PlantsFromCache")]
         public async Task<IList<string>> GetPlants()
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
