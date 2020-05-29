@@ -51,7 +51,9 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             await CloneResponsibles(request.SourcePlant, targetPlant);
             await CloneRequirementTypes(request.SourcePlant, targetPlant);
             
-            // must be cloned after RequirementTypes
+            // must be cloned after cloned RequirementTypes and RequirementDefinitions are saved
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
             await CloneTagFunctions(request.SourcePlant, targetPlant);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

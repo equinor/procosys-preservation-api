@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
 {
@@ -38,6 +40,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 return Task.FromResult(_targetRequirementTypes);
             }
             return Task.FromResult(_sourceRequirementTypes);
+        }
+
+        public void Save()
+        {
+            var requirementDefinitions = _targetRequirementTypes
+                .SelectMany(rt => rt.RequirementDefinitions)
+                .ToList();
+            var nextId = requirementDefinitions.Count;
+            foreach (var rd in requirementDefinitions.Where(rd => rd.Id == 0))
+            {
+                rd.SetProtectedIdForTesting(++nextId);
+            }
         }
 
         public Task<bool> Exists(int id) => throw new NotImplementedException();

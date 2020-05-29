@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.MiscCommands.Clone;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -33,30 +34,31 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         {
             var reqDefId = 0;
             _modeRepository = new ModeRepository(_plantProvider, _sourceModes);
-            _sourceModes.Add(new Mode(TestPlant, "ModeA"));
-            _sourceModes.Add(new Mode(TestPlant, "ModeB"));
+            _sourceModes.Add(new Mode(_sourcePlant, "ModeA"));
+            _sourceModes.Add(new Mode(_sourcePlant, "ModeB"));
 
             _responsibleRepository = new ResponsibleRepository(_plantProvider, _sourceResponsibles);
-            _sourceResponsibles.Add(new Responsible(TestPlant, "ResponsibleCodeA", "ResponsibleTitleA"));
-            _sourceResponsibles.Add(new Responsible(TestPlant, "ResponsibleCodeB", "ResponsibleTitleB"));
+            _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeA", "ResponsibleTitleA"));
+            _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeB", "ResponsibleTitleB"));
             
             _requirementTypeRepository = new RequirementTypeRepository(_plantProvider, _sourceRequirementTypes);
-            var requirementTypeA = new RequirementType(TestPlant, "RequirementTypeCodeA", "RequirementTypeTitleA", 1);
-            var reqDefA1 = new RequirementDefinition(TestPlant, "RequirementDefCodeA1", 1, 2);
+            var requirementTypeA = new RequirementType(_sourcePlant, "RequirementTypeCodeA", "RequirementTypeTitleA", 1);
+            var reqDefA1 = new RequirementDefinition(_sourcePlant, "RequirementDefCodeA1", 1, 2);
             reqDefA1.SetProtectedIdForTesting(++reqDefId);
             requirementTypeA.AddRequirementDefinition(reqDefA1);
-            var reqDefA2 = new RequirementDefinition(TestPlant, "RequirementDefCodeA2", 3, 4);
+            var reqDefA2 = new RequirementDefinition(_sourcePlant, "RequirementDefCodeA2", 3, 4);
             reqDefA2.SetProtectedIdForTesting(++reqDefId);
             requirementTypeA.AddRequirementDefinition(reqDefA2);
-            var numberField = new Field(TestPlant, "LabelA", FieldType.Number, 1, "UnitA", true);
-            reqDefA1.AddField(numberField);
-            var requirementTypeB = new RequirementType(TestPlant, "RequirementTypeCodeB", "RequirementTypeTitleB", 2);
+            reqDefA1.AddField(new Field(_sourcePlant, "LabelA", FieldType.Number, 1, "UnitA", true));
+            var requirementTypeB = new RequirementType(_sourcePlant, "RequirementTypeCodeB", "RequirementTypeTitleB", 2);
             _sourceRequirementTypes.Add(requirementTypeA);
             _sourceRequirementTypes.Add(requirementTypeB);
 
             _tagFunctionRepository = new TagFunctionRepository(_plantProvider, _sourceTagFunctions);
-            var tagFunctionA = new TagFunction(TestPlant, "TagFunctionCodeA", "TagFunctionDescA", "RegisterCodeA");
-            var tagFunctionB = new TagFunction(TestPlant, "TagFunctionCodeB", "TagFunctionDescB", "RegisterCodeB");
+            var tagFunctionA = new TagFunction(_sourcePlant, "TagFunctionCodeA", "TagFunctionDescA", "RegisterCodeA");
+            tagFunctionA.AddRequirement(new TagFunctionRequirement(_sourcePlant, 1, reqDefA1));
+            tagFunctionA.AddRequirement(new TagFunctionRequirement(_sourcePlant, 2, reqDefA2));
+            var tagFunctionB = new TagFunction(_sourcePlant, "TagFunctionCodeB", "TagFunctionDescB", "RegisterCodeB");
             _sourceTagFunctions.Add(tagFunctionA);
             _sourceTagFunctions.Add(tagFunctionB);
 
@@ -68,6 +70,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 _responsibleRepository,
                 _requirementTypeRepository,
                 _tagFunctionRepository);
+
+            UnitOfWorkMock
+                .Setup(uiw => uiw.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .Callback(() =>
+                {
+                    _requirementTypeRepository.Save();
+                });
+
         }
 
         [TestMethod]
@@ -111,13 +121,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         }
 
         [TestMethod]
-        public async Task HandlingCloneCommand_ShouldSave()
+        public async Task HandlingCloneCommand_ShouldSaveTwice()
         {
             // Act
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Exactly(2));
         }
 
         private void AssertClonedModes(List<Mode> sourceModes, List<Mode> result)
@@ -166,6 +176,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         private void AssertClonedRequirements(IReadOnlyCollection<TagFunctionRequirement> sourceRequirements, IReadOnlyCollection<TagFunctionRequirement> result)
         {
             Assert.AreEqual(sourceRequirements.Count, result.Count);
+            for (var i = 0; i < sourceRequirements.Count; i++)
+            {
+                var source = sourceRequirements.ElementAt(i);
+                var clone = result.ElementAt(i);
+                Assert.IsNotNull(clone);
+                Assert.AreEqual(TestPlant, clone.Plant);
+                Assert.AreEqual(source.IntervalWeeks, clone.IntervalWeeks);
+            }
         }
 
         private void AssertClonedRequirementTypes(List<RequirementType> sourceRequirementTypes, List<RequirementType> result)
