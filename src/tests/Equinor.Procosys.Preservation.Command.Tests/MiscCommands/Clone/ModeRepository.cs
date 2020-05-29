@@ -41,11 +41,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         }
 
         public Task<bool> Exists(int id) => throw new NotImplementedException();
-
         public Task<Mode> GetByIdAsync(int id) => throw new NotImplementedException();
-
         public Task<List<Mode>> GetByIdsAsync(IEnumerable<int> id) => throw new NotImplementedException();
-
         public void Remove(Mode entity) => throw new NotImplementedException();
     }
 }

@@ -25,6 +25,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         private readonly List<Responsible> _sourceResponsibles = new List<Responsible>();
         private RequirementTypeRepository _requirementTypeRepository;
         private readonly List<RequirementType> _sourceRequirementTypes = new List<RequirementType>();
+        private TagFunctionRepository _tagFunctionRepository;
+        private readonly List<TagFunction> _sourceTagFunctions = new List<TagFunction>();
 
         [TestInitialize]
         public void Setup()
@@ -48,16 +50,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             requirementTypeA.AddRequirementDefinition(reqDefA2);
             var numberField = new Field(TestPlant, "LabelA", FieldType.Number, 1, "UnitA", true);
             reqDefA1.AddField(numberField);
-
             var requirementTypeB = new RequirementType(TestPlant, "RequirementTypeCodeB", "RequirementTypeTitleB", 2);
-
             _sourceRequirementTypes.Add(requirementTypeA);
             _sourceRequirementTypes.Add(requirementTypeB);
 
-            var tagFunctionRepositoryMock = new Mock<ITagFunctionRepository>();
-            tagFunctionRepositoryMock
-                .Setup(r => r.GetAllAsync())
-                .Returns(Task.FromResult(new List<TagFunction>()));
+            _tagFunctionRepository = new TagFunctionRepository(_plantProvider, _sourceTagFunctions);
+            var tagFunctionA = new TagFunction(TestPlant, "TagFunctionCodeA", "TagFunctionDescA", "RegisterCodeA");
+            var tagFunctionB = new TagFunction(TestPlant, "TagFunctionCodeB", "TagFunctionDescB", "RegisterCodeB");
+            _sourceTagFunctions.Add(tagFunctionA);
+            _sourceTagFunctions.Add(tagFunctionB);
 
             _command = new CloneCommand(_sourcePlant, TestPlant);
             _dut = new CloneCommandHandler(
@@ -66,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 _modeRepository,
                 _responsibleRepository,
                 _requirementTypeRepository,
-                tagFunctionRepositoryMock.Object);
+                _tagFunctionRepository);
         }
 
         [TestMethod]
@@ -97,6 +98,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
 
             // Assert
             AssertClonedRequirementTypes(_sourceRequirementTypes, _requirementTypeRepository.GetAllAsync().Result);
+        }
+
+        [TestMethod]
+        public async Task HandlingCloneCommand_ShouldCloneTagFunctions()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            AssertClonedTagFunctions(_sourceTagFunctions, _tagFunctionRepository.GetAllAsync().Result);
         }
 
         [TestMethod]
@@ -134,6 +145,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 Assert.AreEqual(source.Code, clone.Code);
                 Assert.AreEqual(source.Title, clone.Title);
             }
+        }
+
+        private void AssertClonedTagFunctions(List<TagFunction> sourceTagFunctions, List<TagFunction> result)
+        {
+            Assert.AreEqual(sourceTagFunctions.Count, result.Count);
+            for (var i = 0; i < sourceTagFunctions.Count; i++)
+            {
+                var source = sourceTagFunctions.ElementAt(i);
+                var clone = result.ElementAt(i);
+                Assert.IsNotNull(clone);
+                Assert.AreEqual(TestPlant, clone.Plant);
+                Assert.AreEqual(source.Code, clone.Code);
+                Assert.AreEqual(source.Description, clone.Description);
+                Assert.AreEqual(source.RegisterCode, clone.RegisterCode);
+                AssertClonedRequirements(source.Requirements, clone.Requirements);
+            }
+        }
+
+        private void AssertClonedRequirements(IReadOnlyCollection<TagFunctionRequirement> sourceRequirements, IReadOnlyCollection<TagFunctionRequirement> result)
+        {
+            Assert.AreEqual(sourceRequirements.Count, result.Count);
         }
 
         private void AssertClonedRequirementTypes(List<RequirementType> sourceRequirementTypes, List<RequirementType> result)
