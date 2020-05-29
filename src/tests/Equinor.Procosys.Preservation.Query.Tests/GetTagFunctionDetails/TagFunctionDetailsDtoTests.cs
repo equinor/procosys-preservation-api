@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var reqDto = new RequirementDto(2, 4);
+            var reqDto = new RequirementDto(2, 4, 6);
 
             var dut = new TagFunctionDetailsDto(
                 1,
