@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
                         tagFunction.Description,
                         tagFunction.RegisterCode,
                         tagFunction.IsVoided,
-                        tagFunction.Requirements.Select(s => new RequirementDto(s.Id, s.RequirementDefinitionId)),
+                        tagFunction.Requirements.Select(r => new RequirementDto(r.Id, r.RequirementDefinitionId, r.IntervalWeeks)),
                         tagFunction.RowVersion.ConvertToString()))
                 .SingleOrDefaultAsync(cancellationToken);
             
