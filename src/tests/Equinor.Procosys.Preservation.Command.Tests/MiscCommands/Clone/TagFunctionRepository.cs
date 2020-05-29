@@ -13,7 +13,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         }
 
         public Task<TagFunction> GetByCodesAsync(string tagFunctionCode, string registerCode) => throw new NotImplementedException();
-
         public Task<List<TagFunction>> GetAllNonVoidedWithRequirementsAsync() => throw new NotImplementedException();
     }
 }

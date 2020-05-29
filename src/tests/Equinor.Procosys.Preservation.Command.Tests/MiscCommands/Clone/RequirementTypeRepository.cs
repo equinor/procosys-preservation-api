@@ -27,7 +27,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         }
 
         public Task<RequirementDefinition> GetRequirementDefinitionByIdAsync(int requirementDefinitionId) => throw new NotImplementedException();
-
         public Task<List<RequirementDefinition>> GetRequirementDefinitionsByIdsAsync(IList<int> requirementDefinitionIds) => throw new NotImplementedException();
     }
 }

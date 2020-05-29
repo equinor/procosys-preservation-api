@@ -130,6 +130,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Exactly(2));
         }
+        
+        [TestMethod]
+        public async Task HandlingCloneCommandTwice_ShouldCloneOnce()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+            await _dut.Handle(_command, default);
+
+            // Assert
+            AssertClonedModes(_sourceModes, _modeRepository.GetAllAsync().Result);
+            AssertClonedResponsibles(_sourceResponsibles, _responsibleRepository.GetAllAsync().Result);
+            AssertClonedRequirementTypes(_sourceRequirementTypes, _requirementTypeRepository.GetAllAsync().Result);
+            AssertClonedTagFunctions(_sourceTagFunctions, _tagFunctionRepository.GetAllAsync().Result);
+        }
 
         private void AssertClonedModes(List<Mode> sourceModes, List<Mode> result)
         {

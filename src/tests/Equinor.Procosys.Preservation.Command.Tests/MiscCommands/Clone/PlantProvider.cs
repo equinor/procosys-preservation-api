@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
     public class PlantProvider : IPlantProvider
     {
         private string _temporaryPlant;
-        private string _plant;
+        private readonly string _plant;
 
         public PlantProvider(string plant) => _plant = plant;
 
