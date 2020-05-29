@@ -75,6 +75,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 .Setup(uiw => uiw.SaveChangesAsync(It.IsAny<CancellationToken>()))
                 .Callback(() =>
                 {
+                    // Need this to simulate what EF Core do with Entity Ids upon saving new Entities
                     _requirementTypeRepository.Save();
                 });
 
@@ -183,6 +184,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 Assert.IsNotNull(clone);
                 Assert.AreEqual(TestPlant, clone.Plant);
                 Assert.AreEqual(source.IntervalWeeks, clone.IntervalWeeks);
+
+                var sourceRequirementDefinitions = _sourceRequirementTypes
+                    .SelectMany(rt => rt.RequirementDefinitions)
+                    .Single(rd => rd.Id == source.RequirementDefinitionId);
+                var cloneRequirementDefinitions = _requirementTypeRepository
+                    .GetAllAsync().Result
+                    .SelectMany(rt => rt.RequirementDefinitions)
+                    .Single(rd => rd.Id == clone.RequirementDefinitionId);
+                Assert.AreEqual(sourceRequirementDefinitions.Title, cloneRequirementDefinitions.Title);
             }
         }
 
