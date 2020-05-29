@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -28,6 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         [TestInitialize]
         public void Setup()
         {
+            var reqDefId = 0;
             _modeRepository = new ModeRepository(_plantProvider, _sourceModes);
             _sourceModes.Add(new Mode(TestPlant, "ModeA"));
             _sourceModes.Add(new Mode(TestPlant, "ModeB"));
@@ -37,8 +39,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             _sourceResponsibles.Add(new Responsible(TestPlant, "ResponsibleCodeB", "ResponsibleTitleB"));
             
             _requirementTypeRepository = new RequirementTypeRepository(_plantProvider, _sourceRequirementTypes);
-            _sourceRequirementTypes.Add(new RequirementType(TestPlant, "RequirementTypeCodeA", "RequirementTypeTitleA", 1));
-            _sourceRequirementTypes.Add(new RequirementType(TestPlant, "RequirementTypeCodeB", "RequirementTypeTitleB", 2));
+            var requirementTypeA = new RequirementType(TestPlant, "RequirementTypeCodeA", "RequirementTypeTitleA", 1);
+            var reqDefA1 = new RequirementDefinition(TestPlant, "RequirementDefCodeA1", 1, 2);
+            reqDefA1.SetProtectedIdForTesting(++reqDefId);
+            requirementTypeA.AddRequirementDefinition(reqDefA1);
+            var reqDefA2 = new RequirementDefinition(TestPlant, "RequirementDefCodeA2", 3, 4);
+            reqDefA2.SetProtectedIdForTesting(++reqDefId);
+            requirementTypeA.AddRequirementDefinition(reqDefA2);
+            var numberField = new Field(TestPlant, "LabelA", FieldType.Number, 1, "UnitA", true);
+            reqDefA1.AddField(numberField);
+
+            var requirementTypeB = new RequirementType(TestPlant, "RequirementTypeCodeB", "RequirementTypeTitleB", 2);
+
+            _sourceRequirementTypes.Add(requirementTypeA);
+            _sourceRequirementTypes.Add(requirementTypeB);
 
             var tagFunctionRepositoryMock = new Mock<ITagFunctionRepository>();
             tagFunctionRepositoryMock
@@ -134,6 +148,43 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 Assert.AreEqual(source.Code, clone.Code);
                 Assert.AreEqual(source.Title, clone.Title);
                 Assert.AreEqual(source.SortKey, clone.SortKey);
+                AssertClonedRequirementDefs(source.RequirementDefinitions, clone.RequirementDefinitions);
+            }
+        }
+
+        private void AssertClonedRequirementDefs(
+            IReadOnlyCollection<RequirementDefinition> sourceRequirementDefinitions,
+            IReadOnlyCollection<RequirementDefinition> result)
+        {
+            Assert.AreEqual(sourceRequirementDefinitions.Count, result.Count);
+
+            for (var i = 0; i < sourceRequirementDefinitions.Count; i++)
+            {
+                var source = sourceRequirementDefinitions.ElementAt(i);
+                var clone = result.ElementAt(i);
+                Assert.IsNotNull(clone);
+                Assert.AreEqual(TestPlant, clone.Plant);
+                Assert.AreEqual(source.Title, clone.Title);
+                Assert.AreEqual(source.DefaultIntervalWeeks, clone.DefaultIntervalWeeks);
+                Assert.AreEqual(source.SortKey, clone.SortKey);
+                AssertClonedRequirementFields(source.Fields, clone.Fields);
+            }
+        }
+
+        private void AssertClonedRequirementFields(IReadOnlyCollection<Field> sourceFields, IReadOnlyCollection<Field> result)
+        {
+            Assert.AreEqual(sourceFields.Count, result.Count);
+            for (var i = 0; i < sourceFields.Count; i++)
+            {
+                var source = sourceFields.ElementAt(i);
+                var clone = result.ElementAt(i);
+                Assert.IsNotNull(clone);
+                Assert.AreEqual(TestPlant, clone.Plant);
+                Assert.AreEqual(source.Label, clone.Label);
+                Assert.AreEqual(source.FieldType, clone.FieldType);
+                Assert.AreEqual(source.SortKey, clone.SortKey);
+                Assert.AreEqual(source.Unit, clone.Unit);
+                Assert.AreEqual(source.ShowPrevious, clone.ShowPrevious);
             }
         }
     }
