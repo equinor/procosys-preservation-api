@@ -20,17 +20,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         private readonly PlantProvider _plantProvider = new PlantProvider(TestPlant);
         private ModeRepository _modeRepository;
         private readonly List<Mode> _sourceModes = new List<Mode>();
+        private ResponsibleRepository _responsibleRepository;
+        private readonly List<Responsible> _sourceResponsibles = new List<Responsible>();
 
         [TestInitialize]
         public void Setup()
         {
             _modeRepository = new ModeRepository(_plantProvider, _sourceModes);
             _sourceModes.Add(new Mode(TestPlant, "ModeA"));
+            _sourceModes.Add(new Mode(TestPlant, "ModeB"));
 
-            var responsibleRepositoryMock = new Mock<IResponsibleRepository>();
-            responsibleRepositoryMock
-                .Setup(r => r.GetAllAsync())
-                .Returns(Task.FromResult(new List<Responsible>()));
+            _responsibleRepository = new ResponsibleRepository(_plantProvider, _sourceResponsibles);
+            _sourceResponsibles.Add(new Responsible(TestPlant, "ResponsibleCodeA", "ResponsibleTitleA"));
+            _sourceResponsibles.Add(new Responsible(TestPlant, "ResponsibleCodeB", "ResponsibleTitleB"));
             
             var requirementTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
             requirementTypeRepositoryMock
@@ -47,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 _plantProvider,
                 UnitOfWorkMock.Object,
                 _modeRepository,
-                responsibleRepositoryMock.Object,
+                _responsibleRepository,
                 requirementTypeRepositoryMock.Object,
                 tagFunctionRepositoryMock.Object);
         }
@@ -59,10 +61,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             await _dut.Handle(_command, default);
 
             // Assert
-            var modeAdded = _modeRepository.GetAllAsync().Result.Single();
-            Assert.IsNotNull(modeAdded);
-            Assert.AreEqual(TestPlant, modeAdded.Plant);
-            Assert.AreEqual(_sourceModes.First().Title, modeAdded.Title);
+            AssertClonedModes(_sourceModes, _modeRepository.GetAllAsync().Result);
+        }
+
+        [TestMethod]
+        public async Task HandlingCloneCommand_ShouldCloneResposibles()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            AssertClonedResponsibles(_sourceResponsibles, _responsibleRepository.GetAllAsync().Result);
         }
 
         [TestMethod]
@@ -73,6 +82,33 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        private void AssertClonedModes(List<Mode> sourceModes, List<Mode> result)
+        {
+            Assert.AreEqual(sourceModes.Count, result.Count);
+            for (var i = 0; i < sourceModes.Count; i++)
+            {
+                var source = sourceModes.ElementAt(i);
+                var clone = result.ElementAt(i);
+                Assert.IsNotNull(clone);
+                Assert.AreEqual(TestPlant, clone.Plant);
+                Assert.AreEqual(source.Title, clone.Title);
+            }
+        }
+
+        private void AssertClonedResponsibles(List<Responsible> sourceResponsibles, List<Responsible> result)
+        {
+            Assert.AreEqual(sourceResponsibles.Count, result.Count);
+            for (var i = 0; i < sourceResponsibles.Count; i++)
+            {
+                var source = sourceResponsibles.ElementAt(i);
+                var clone = result.ElementAt(i);
+                Assert.IsNotNull(clone);
+                Assert.AreEqual(TestPlant, clone.Plant);
+                Assert.AreEqual(source.Code, clone.Code);
+                Assert.AreEqual(source.Title, clone.Title);
+            }
         }
     }
 }
