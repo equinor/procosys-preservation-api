@@ -31,14 +31,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             }
         }
 
-        public Task<bool> Exists(int id) => throw new NotImplementedException();
-
-        public Task<Mode> GetByIdAsync(int id) => throw new NotImplementedException();
-
-        public Task<List<Mode>> GetByIdsAsync(IEnumerable<int> id) => throw new NotImplementedException();
-
-        public void Remove(Mode entity) => throw new NotImplementedException();
-
         public Task<List<Mode>> GetAllAsync()
         {
             if (_plantProvider.Plant == _targetPlant)
@@ -47,5 +39,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             }
             return Task.FromResult(_sourceModes);
         }
+
+        public Task<bool> Exists(int id) => throw new NotImplementedException();
+
+        public Task<Mode> GetByIdAsync(int id) => throw new NotImplementedException();
+
+        public Task<List<Mode>> GetByIdsAsync(IEnumerable<int> id) => throw new NotImplementedException();
+
+        public void Remove(Mode entity) => throw new NotImplementedException();
     }
 }
