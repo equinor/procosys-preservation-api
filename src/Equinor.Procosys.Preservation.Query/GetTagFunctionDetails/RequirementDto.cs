@@ -2,15 +2,15 @@
 {
     public class RequirementDto
     {
-        public RequirementDto(int id, int requirementDefinitionId, int interValWeeks)
+        public RequirementDto(int id, int requirementDefinitionId, int intervalWeeks)
         {
             Id = id;
             RequirementDefinitionId = requirementDefinitionId;
-            InterValWeeks = interValWeeks;
+            IntervalWeeks = intervalWeeks;
         }
 
         public int Id { get; }
         public int RequirementDefinitionId { get; }
-        public int InterValWeeks { get; }
+        public int IntervalWeeks { get; }
     }
 }

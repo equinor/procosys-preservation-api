@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
 
             Assert.AreEqual(2, dut.Id);
             Assert.AreEqual(3, dut.RequirementDefinitionId);
-            Assert.AreEqual(4, dut.InterValWeeks);
+            Assert.AreEqual(4, dut.IntervalWeeks);
         }
     }
 }
