@@ -114,6 +114,25 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 Assert.AreEqual(ResultType.NotFound, result.ResultType);
             }
         }
+        
+        [TestMethod]
+        public async Task Handle_ReturnsNotFound_WhenNoTagFunctionWithRequirement_BecauseOfVoidedTagFunction()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tagFunction = context.TagFunctions.Include(tf => tf.Requirements).Single();
+                tagFunction.Void();
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
+                var result = await dut.Handle(_query, default);
+
+                Assert.AreEqual(ResultType.NotFound, result.ResultType);
+            }
+        }
 
         [TestMethod]
         public async Task Handle_ReturnsCorrectItems()
