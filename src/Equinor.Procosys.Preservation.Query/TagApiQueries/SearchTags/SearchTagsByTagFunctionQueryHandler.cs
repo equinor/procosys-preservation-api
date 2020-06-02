@@ -28,7 +28,8 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
         public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagFunctionQuery request, CancellationToken cancellationToken)
         {
             var tagFunctionCodeRegisterCodePairs = await (from tagFunction in _context.QuerySet<TagFunction>().Include(tf => tf.Requirements)
-                    where tagFunction.Requirements.Any()
+                    where
+                        !tagFunction.IsVoided && tagFunction.Requirements.Any()
                     select $"{tagFunction.Code}|{tagFunction.RegisterCode}")
                 .ToListAsync(cancellationToken);
             
