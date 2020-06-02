@@ -19,9 +19,9 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
 
             RuleFor(command => command.TargetPlant)
                 .MustAsync((_, targetPlant, token) => BeAValidPlantAsync(targetPlant.ToUpperInvariant()))
-                .WithMessage(command => $"Source plant is not valid! Plant={command.TargetPlant}")
+                .WithMessage(command => $"Target plant is not valid! Plant={command.TargetPlant}")
                 .Must((_, targetPlant, token) => NotBeABasisPlant(targetPlant.ToUpperInvariant()))
-                .WithMessage(command => $"Basis plant can't be a target plant for clone! Plant={command.TargetPlant}");
+                .WithMessage(command => $"Target plant can not be a basis plant! Plant={command.TargetPlant}");
 
             async Task<bool> BeAValidPlantAsync(string plantId)
                 => await plantCache.IsValidPlantForCurrentUserAsync(plantId);
