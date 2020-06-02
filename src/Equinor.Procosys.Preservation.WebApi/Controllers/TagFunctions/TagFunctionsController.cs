@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
+using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UnvoidTagFunction;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
 using Equinor.Procosys.Preservation.Domain;
@@ -68,6 +69,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
             [FromBody] VoidTagFunctionDto dto)
         {
             var result = await _mediator.Send(new VoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion));
+            return Ok(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [HttpPut("{code}/Unvoid")]
+        public async Task<ActionResult<TagFunctionDetailsDto>> UnvoidTagFunction(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] string code,
+            [FromBody] UnvoidTagFunctionDto dto)
+        {
+            var result = await _mediator.Send(new UnvoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion));
             return Ok(result);
         }
     }
