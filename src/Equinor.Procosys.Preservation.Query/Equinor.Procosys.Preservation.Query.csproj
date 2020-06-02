@@ -17,8 +17,4 @@
     <ProjectReference Include="..\Equinor.Procosys.Preservation.MainApi\Equinor.Procosys.Preservation.MainApi.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="GetRequirement\" />
-  </ItemGroup>
-
 </Project>
