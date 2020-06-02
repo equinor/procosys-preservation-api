@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Client;
@@ -17,8 +16,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
         private Mock<IPlantCache> _plantCache;
-        private List<ProcosysArea> _resultWithNoItems;
-        private List<ProcosysArea> _resultWithThreeItems;
         private MainApiAreaService _dut;
         private ProcosysArea _procosysArea;
 
@@ -35,64 +32,15 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
                 .Setup(x => x.IsValidPlantForCurrentUserAsync(_plant))
                 .Returns(Task.FromResult(true));
 
-            _resultWithNoItems = new List<ProcosysArea>();
-
             _procosysArea = new ProcosysArea
             {
                 Id = 1,
                 Code = "CodeA",
                 Description = "Description1",
             };
-            _resultWithThreeItems = new List<ProcosysArea>
-            {
-                _procosysArea,
-                new ProcosysArea
-                {
-                    Id = 2,
-                    Code = "CodeB",
-                    Description = "Description2",
-                },
-                new ProcosysArea
-                {
-                    Id = 3,
-                    Code = "CodeC",
-                    Description = "Description3",
-                }
-            };
+           
             _dut = new MainApiAreaService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
         }
-
-        [TestMethod]
-        public async Task GetAreaCodes_ReturnsThreeAreaCodes()
-        {
-            // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysArea>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_resultWithThreeItems));
-            // Act
-            var result = await _dut.GetAreasAsync(_plant);
-
-            // Assert
-            Assert.AreEqual(3, result.Count);
-        }
-
-        [TestMethod]
-        public async Task GetAreaCodes_ReturnsNoAreaCodes()
-        {
-            // Arrange
-            _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<ProcosysArea>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_resultWithNoItems));
-            // Act
-            var result = await _dut.GetAreasAsync(_plant);
-
-            // Assert
-            Assert.AreEqual(0, result.Count);
-        }
-
-        [TestMethod]
-        public async Task GetAreaCodes_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetAreasAsync("INVALIDPLANT"));
 
         [TestMethod]
         public async Task GetAreaCode_ThrowsException_WhenPlantIsInvalid()

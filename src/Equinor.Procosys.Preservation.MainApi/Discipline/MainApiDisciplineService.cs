@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -23,21 +22,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Discipline
             _plantCache = plantCache;
             _apiVersion = options.CurrentValue.ApiVersion;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
-        }
-
-        public async Task<List<ProcosysDiscipline>> GetDisciplinesAsync(string plant)
-        {
-            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
-            {
-                throw new ArgumentException($"Invalid plant: {plant}");
-            }
-
-            var url = $"{_baseAddress}Library/Disciplines" +
-                      $"?plantId={plant}" +
-                      "&classifications=PRESERVATION" +
-                      $"&api-version={_apiVersion}";
-
-            return await _mainApiClient.QueryAndDeserialize<List<ProcosysDiscipline>>(url) ?? new List<ProcosysDiscipline>();
         }
 
         public async Task<ProcosysDiscipline> GetDisciplineAsync(string plant, string code)
