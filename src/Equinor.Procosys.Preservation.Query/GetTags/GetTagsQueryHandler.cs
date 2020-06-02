@@ -336,7 +336,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     switch (sorting.Property)
                     {
                         case SortingProperty.Due:
-                            queryable = queryable.OrderBy(dto => dto.Status).ThenByDescending(dto => dto.NextDueTimeUtc);
+                            queryable = queryable.OrderByDescending(dto => dto.Status).ThenByDescending(dto => dto.NextDueTimeUtc);
                             break;
                         case SortingProperty.Status:
                             queryable = queryable.OrderByDescending(dto => dto.Status);
