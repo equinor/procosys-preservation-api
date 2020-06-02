@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
+using Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.GetTagFunctionDetails;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -54,6 +55,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
                     requirements,
                     dto.RowVersion));
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [HttpPut("{code}/Void")]
+        public async Task<ActionResult<TagFunctionDetailsDto>> VoidTagFunction(
+            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] string code,
+            [FromBody] VoidTagFunctionDto dto)
+        {
+            var result = await _mediator.Send(new VoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion));
+            return Ok(result);
         }
     }
 }
