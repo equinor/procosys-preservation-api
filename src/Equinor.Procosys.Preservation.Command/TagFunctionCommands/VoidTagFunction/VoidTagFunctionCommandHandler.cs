@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidTagFunction
+namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunction
 {
     public class VoidTagFunctionCommandHandler : IRequestHandler<VoidTagFunctionCommand, Result<string>>
     {
