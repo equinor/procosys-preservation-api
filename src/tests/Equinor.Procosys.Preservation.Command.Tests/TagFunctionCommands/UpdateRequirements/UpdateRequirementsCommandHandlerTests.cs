@@ -215,8 +215,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         }
 
         [TestMethod]
-        public async Task HandlingUpdateRequirementsCommand_ShouldSetAndReturnRowVersion()
+        public async Task HandlingUpdateRequirementsCommand_ShouldSetAndReturnRowVersion_WhenTagFunctionAlreadyExist()
         {
+            // Arrange
+            var tagFunction = new TagFunction(TestPlant, TagFunctionCode, "", RegisterCode);
+            _tfRepositoryMock
+                .Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode)).Returns(Task.FromResult(tagFunction));
+
             // Act
             var result = await _dut.Handle(_commandWithoutRequirements, default);
 
@@ -225,7 +230,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             // In real life EF Core will create a new RowVersion when save.
             // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
             Assert.AreEqual(RowVersion, result.Data);
-            Assert.AreEqual(RowVersion, _tfAddedToRepository.RowVersion.ConvertToString());
+            Assert.AreEqual(RowVersion, tagFunction.RowVersion.ConvertToString());
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateRequirementsCommand_ShouldNotSetRowVersion_WhenTagFunctionAdded()
+        {
+            // Act
+            var result = await _dut.Handle(_commandWithoutRequirements, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            // In real life EF Core will create a new RowVersion when save.
+            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
+            var defaultRowVersion = "AAAAAAAAAAA=";
+            Assert.AreEqual(defaultRowVersion, result.Data);
+            Assert.AreEqual(defaultRowVersion, _tfAddedToRepository.RowVersion.ConvertToString());
         }
     }
 }
