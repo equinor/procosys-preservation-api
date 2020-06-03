@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate
 
         public string Title { get; set; }
         public bool IsVoided { get; private set; }
-        public bool ForSupplier { get; private set; }
+        public bool ForSupplier { get; set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
