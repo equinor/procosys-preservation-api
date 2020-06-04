@@ -72,27 +72,27 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 context.RequirementTypes.Add(requirementType2);
                 context.SaveChangesAsync().Wait();
 
-                var requirementDefinitionWithoutField = new RequirementDefinition(TestPlant, _requirementDefinitionWithoutFieldTitle, 2, 1);
+                var requirementDefinitionWithoutField = new RequirementDefinition(TestPlant, _requirementDefinitionWithoutFieldTitle, 2, RequirementUsage.ForAll, 1);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithoutField);
 
-                var requirementDefinitionWithOneInfo = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneInfoTitle, 2, 1);
+                var requirementDefinitionWithOneInfo = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneInfoTitle, 2, RequirementUsage.ForAll, 1);
                 var infoField = new Field(TestPlant, "Label for Info", FieldType.Info, 0);
                 requirementDefinitionWithOneInfo.AddField(infoField);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithOneInfo);
 
-                var requirementDefinitionWithOneAttachment = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneAttachmentTitle, 2, 1);
+                var requirementDefinitionWithOneAttachment = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneAttachmentTitle, 2, RequirementUsage.ForAll, 1);
                 var attachmentField = new Field(TestPlant, "Label for Attachment", FieldType.Attachment, 0);
                 requirementDefinitionWithOneAttachment.AddField(attachmentField);
                 requirementType1.AddRequirementDefinition(requirementDefinitionWithOneAttachment);
 
-                var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(TestPlant, _requirementDefinitionWithTwoCheckBoxesTitle, 2, 1);
+                var requirementDefinitionWithTwoCheckBoxes = new RequirementDefinition(TestPlant, _requirementDefinitionWithTwoCheckBoxesTitle, 2, RequirementUsage.ForAll, 1);
                 var cbField1 = new Field(TestPlant, "Label for checkBox - second", FieldType.CheckBox, 10);
                 var cbField2 = new Field(TestPlant, "Label for checkBox - first", FieldType.CheckBox, 2);
                 requirementDefinitionWithTwoCheckBoxes.AddField(cbField1);
                 requirementDefinitionWithTwoCheckBoxes.AddField(cbField2);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithTwoCheckBoxes);
 
-                var requirementDefinitionWithThreeNumberShowPrev = new RequirementDefinition(TestPlant, _requirementDefinitionWithThreeNumberShowPrevTitle, 2, 1);
+                var requirementDefinitionWithThreeNumberShowPrev = new RequirementDefinition(TestPlant, _requirementDefinitionWithThreeNumberShowPrevTitle, 2, RequirementUsage.ForAll, 1);
                 var numberFieldPrev1 = new Field(TestPlant, "Label for number - third", FieldType.Number, 15, _unit, true);
                 var numberFieldPrev2 = new Field(TestPlant, "Label for number - first", FieldType.Number, 2, _unit, true);
                 var numberFieldPrev3 = new Field(TestPlant, "Label for number - second", FieldType.Number, 10, _unit, true);
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 requirementDefinitionWithThreeNumberShowPrev.AddField(numberFieldPrev3);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithThreeNumberShowPrev);
 
-                var requirementDefinitionWithOneNumberNoPrev = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneNumberNoPrevTitle, 2, 1);
+                var requirementDefinitionWithOneNumberNoPrev = new RequirementDefinition(TestPlant, _requirementDefinitionWithOneNumberNoPrevTitle, 2, RequirementUsage.ForAll, 1);
                 var numberFieldNoPrev = new Field(TestPlant, "Label for number", FieldType.Number, 10, _unit, false);
                 requirementDefinitionWithOneNumberNoPrev.AddField(numberFieldNoPrev);
                 requirementType2.AddRequirementDefinition(requirementDefinitionWithOneNumberNoPrev);

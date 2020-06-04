@@ -94,7 +94,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             context.RequirementTypes.Add(requirementType);
             context.SaveChangesAsync().Wait();
 
-            var requirementDefinition = new RequirementDefinition(TestPlant, def, 2, 1);
+            var requirementDefinition = new RequirementDefinition(TestPlant, def, 2, RequirementUsage.ForAll, 1);
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChangesAsync().Wait();
 

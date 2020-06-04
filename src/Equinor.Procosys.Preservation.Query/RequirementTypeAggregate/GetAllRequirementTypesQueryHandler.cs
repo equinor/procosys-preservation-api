@@ -34,9 +34,10 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                 rd.Title,
                                 rd.IsVoided,
                                 rd.DefaultIntervalWeeks,
+                                rd.Usage,
                                 rd.SortKey,
                                 rd.NeedsUserInput,
-                                rd.Fields.Where(f => !f.IsVoided || request.IncludeVoided).Select(f
+                                rd.OrderedFields(request.IncludeVoided).Select(f
                                     => new FieldDto(
                                         f.Id,
                                         f.Label,
