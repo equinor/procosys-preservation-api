@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             TagType tagType,
             string disciplineCode,
             string areaCode,
+            string purchaseOrderCalloffCode,
             string tagNoSuffix,
             int stepId,
             IEnumerable<RequirementForCommand> requirements, 
@@ -23,6 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             ProjectName = projectName;
             TagType = tagType;
             DisciplineCode = disciplineCode;
+            PurchaseOrderCalloffCode = purchaseOrderCalloffCode;
             AreaCode = areaCode;
             TagNoSuffix = tagNoSuffix;
             StepId = stepId;
@@ -36,6 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         public override TagType TagType { get; }
         public override string DisciplineCode { get; }
         public override string AreaCode { get; }
+        public override string PurchaseOrderCalloffCode { get; }
         public override string TagNoSuffix { get; }
         public int StepId { get; }
         public IEnumerable<RequirementForCommand> Requirements { get; }

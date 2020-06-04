@@ -227,7 +227,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateAreaTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new CreateAreaTagCommand(ProjectWithAccess, TagType.PoArea, null, null, null, 1, null, null, null, null);
+            var command = new CreateAreaTagCommand(ProjectWithAccess, TagType.PoArea, null, null, null, null, 1, null, null, null, null);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -240,7 +240,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateAreaTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new CreateAreaTagCommand(ProjectWithoutAccess, TagType.PoArea, null, null, null, 1, null, null, null, null);
+            var command = new CreateAreaTagCommand(ProjectWithoutAccess, TagType.PoArea, null, null, null, null, 1, null, null, null, null);
             
             // act
             var result = await _dut.ValidateAsync(command);

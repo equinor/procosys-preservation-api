@@ -13,6 +13,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     return TagType.PreArea;
                 case AreaTagType.SiteArea:
                     return TagType.SiteArea;
+                case AreaTagType.PoArea:
+                    return TagType.PoArea;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(areaTagType), areaTagType, null);
             }
