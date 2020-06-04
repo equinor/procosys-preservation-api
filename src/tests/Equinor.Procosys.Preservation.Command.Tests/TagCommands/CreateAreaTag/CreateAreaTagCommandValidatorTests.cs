@@ -46,6 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 "D",
                 "A",
                 null,
+                null,
                 _stepId,
                 new List<RequirementForCommand>
                 {
@@ -154,6 +155,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 "DisciplineA",
                 "AreaA",
                 null,
+                null,
                 _stepId,
                 new List<RequirementForCommand>(),
                 "DescriptionA",
@@ -175,6 +177,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 TagType.PreArea,
                 "DisciplineA",
                 "AreaA",
+                null,
                 null,
                 _stepId,
                 new List<RequirementForCommand>

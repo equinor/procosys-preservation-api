@@ -5,14 +5,19 @@
         public abstract TagType TagType { get; }
         public abstract string DisciplineCode { get; }
         public abstract string AreaCode { get; }
+        public abstract string PurchaseOrderCalloffCode { get; }
         public abstract string TagNoSuffix { get; }
 
         public string GetTagNo()
         {
             var tagNo = $"{TagType.GetTagNoPrefix()}-{DisciplineCode}";
-            if (!string.IsNullOrEmpty(AreaCode))
+            if ((TagType == TagType.PreArea || TagType == TagType.SiteArea) && !string.IsNullOrEmpty(AreaCode))
             {
                 tagNo += $"-{AreaCode}";
+            }
+            else if (TagType == TagType.PoArea && !string.IsNullOrEmpty(PurchaseOrderCalloffCode))
+            {
+                tagNo += $"-{PurchaseOrderCalloffCode}";
             }
 
             if (!string.IsNullOrEmpty(TagNoSuffix))

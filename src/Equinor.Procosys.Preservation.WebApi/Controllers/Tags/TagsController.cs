@@ -361,6 +361,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 dto.AreaTagType.ConvertToTagType(),
                 dto.DisciplineCode,
                 dto.AreaCode,
+                dto.PurchaseOrderCalloffCode,
                 dto.TagNoSuffix,
                 dto.StepId,
                 requirements,
@@ -387,6 +388,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     dto.AreaTagType.ConvertToTagType(),
                     dto.DisciplineCode,
                     dto.AreaCode,
+                    dto.PurchaseOrderCalloffCode,
                     dto.TagNoSuffix));
 
             return this.FromResult(result);
