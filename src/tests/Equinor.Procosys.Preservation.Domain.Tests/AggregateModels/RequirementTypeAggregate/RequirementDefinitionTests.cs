@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         private RequirementDefinition _dut;
 
         [TestInitialize]
-        public void Setup() => _dut = new RequirementDefinition(TestPlant, "TitleA", 4, 10);
+        public void Setup() => _dut = new RequirementDefinition(TestPlant, "TitleA", 4, RequirementUsage.ForAll, 10);
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
@@ -21,6 +21,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual(4, _dut.DefaultIntervalWeeks);
             Assert.AreEqual(10, _dut.SortKey);
+            Assert.AreEqual(RequirementUsage.ForAll, _dut.Usage);
             Assert.IsFalse(_dut.IsVoided);
             Assert.AreEqual(0, _dut.Fields.Count);
         }
@@ -114,9 +115,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             _dut.AddField(f1);
             _dut.AddField(f2);
 
-            Assert.AreEqual(_dut.Fields.Count, _dut.OrderedFields().Count());
-            Assert.AreEqual(f2, _dut.OrderedFields().ElementAt(0));
-            Assert.AreEqual(f1, _dut.OrderedFields().ElementAt(1));
+            Assert.AreEqual(_dut.Fields.Count, _dut.OrderedFields(false).Count());
+            Assert.AreEqual(f2, _dut.OrderedFields(false).ElementAt(0));
+            Assert.AreEqual(f1, _dut.OrderedFields(false).ElementAt(1));
         }
 
         [TestMethod]
@@ -129,7 +130,20 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             _dut.AddField(f2);
             f2.Void();
 
-            Assert.AreEqual(_dut.Fields.Count-1, _dut.OrderedFields().Count());
+            Assert.AreEqual(1, _dut.OrderedFields(false).Count());
+        }
+
+        [TestMethod]
+        public void OrderedFields_ShouldReturnVoidedFields()
+        {
+            var f1 = new Field(TestPlant, "First", FieldType.Info, 10);
+            var f2 = new Field(TestPlant, "Second", FieldType.Info, 5);
+
+            _dut.AddField(f1);
+            _dut.AddField(f2);
+            f2.Void();
+
+            Assert.AreEqual(_dut.Fields.Count, _dut.OrderedFields(true).Count());
         }
     }
 }

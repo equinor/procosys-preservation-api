@@ -13,11 +13,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, false, new List<FieldDto>());
+            var dut = new RequirementDefinitionDto(1, "TitleA", true, 4, RequirementUsage.ForAll, 10, false, new List<FieldDto>());
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("TitleA", dut.Title);
             Assert.AreEqual(4, dut.DefaultIntervalWeeks);
+            Assert.AreEqual(RequirementUsage.ForAll, dut.Usage);
             Assert.AreEqual(10, dut.SortKey);
             Assert.IsTrue(dut.IsVoided);
             Assert.IsFalse(dut.NeedsUserInput);
@@ -27,13 +28,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenModeNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequirementDefinitionDto(1, "TitleA", true, 4, 10, true, null)
+                new RequirementDefinitionDto(1, "TitleA", true, 4, RequirementUsage.ForAll, 10, true, null)
             );
 
         [TestMethod]
         public void ConstructorWithFields_ShouldCreateDtoWithFieldsSortedBySortKey()
         {
-            var dut = new RequirementDefinitionDto(1, "TitleA", true, 4, 10, true, new List<FieldDto>
+            var dut = new RequirementDefinitionDto(1, "TitleA", true, 4, RequirementUsage.ForAll, 10, true, new List<FieldDto>
             {
                 new FieldDto(1, "", true, FieldType.Info, 1, null, null),
                 new FieldDto(2, "", true, FieldType.Info, 90, null, null),

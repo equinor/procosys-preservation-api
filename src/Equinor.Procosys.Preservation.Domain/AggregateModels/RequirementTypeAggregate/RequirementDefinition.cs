@@ -18,12 +18,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public RequirementDefinition(string plant, string title, int defaultIntervalWeeks,/* RequirementUsage usage,*/ int sortKey)
+        public RequirementDefinition(string plant, string title, int defaultIntervalWeeks, RequirementUsage usage, int sortKey)
             : base(plant)
         {
             Title = title;
             DefaultIntervalWeeks = defaultIntervalWeeks;
-            //Usage = usage;
+            Usage = usage;
             SortKey = sortKey;
         }
 
@@ -54,10 +54,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
             _fields.Add(field);
         }
-
-        public IOrderedEnumerable<Field> OrderedFields()
+        
+        public IOrderedEnumerable<Field> OrderedFields(bool includeVoided)
             => Fields
-                .Where(f => !f.IsVoided)
+                .Where(f => includeVoided || !f.IsVoided)
                 .OrderBy(f => f.SortKey);
 
         public void Void() => IsVoided = true;

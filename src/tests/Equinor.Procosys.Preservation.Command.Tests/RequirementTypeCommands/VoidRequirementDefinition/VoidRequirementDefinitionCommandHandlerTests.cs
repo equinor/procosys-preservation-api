@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
             var requirementType = new RequirementType(TestPlant, "TestCode", "ReqTypeTitle", 99);
             requirementType.SetProtectedIdForTesting(requirementTypeId);
 
-            _requirementDefinition = new RequirementDefinition(TestPlant, "ReqDefinitionTitle", 4, 88);
+            _requirementDefinition = new RequirementDefinition(TestPlant, "ReqDefinitionTitle", 4, RequirementUsage.ForAll, 88);
             _requirementDefinition.SetProtectedIdForTesting(requirementDefinitionId);
             requirementType.AddRequirementDefinition(_requirementDefinition);
 

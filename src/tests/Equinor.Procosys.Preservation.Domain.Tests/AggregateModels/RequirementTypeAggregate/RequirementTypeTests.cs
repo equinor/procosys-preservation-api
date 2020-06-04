@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         [TestMethod]
         public void AddRequirementDefinition_ShouldAddRequirementDefinitionToRequirementDefinitionsList()
         {
-            var rd = new RequirementDefinition(TestPlant, "", 4, 0);
+            var rd = new RequirementDefinition(TestPlant, "", 4, RequirementUsage.ForAll, 0);
 
             _dut.AddRequirementDefinition(rd);
 
