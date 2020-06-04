@@ -23,12 +23,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var mode = AddMode(context, "M");
+                var mode = AddMode(context, "M", false);
                 var responsible = AddResponsible(context, "R");
 
                 _journey1 = AddJourneyWithStep(context, "J1", StepTitle1InJourney1, mode, responsible);
                 _step1InJourney1 = _journey1.Steps.Single();
-                _journey1.AddStep(new Step(TestPlant, StepTitle2InJourney1, AddMode(context, "M2"), AddResponsible(context, "R2")));
+                _journey1.AddStep(new Step(TestPlant, StepTitle2InJourney1, AddMode(context, "M2", false), AddResponsible(context, "R2")));
 
                 _journey2 = AddJourneyWithStep(context, "J2", StepTitle1InJourney2, mode, responsible);
 

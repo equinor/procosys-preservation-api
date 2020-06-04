@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         public void SetMode_ShouldSetMode()
         {
             var modeId = 1;
-            var mode = new Mode(_dut.Plant, "ModeTitle");
+            var mode = new Mode(_dut.Plant, "ModeTitle", false);
             mode.SetProtectedIdForTesting(modeId);
             _dut.SetMode(mode);
 

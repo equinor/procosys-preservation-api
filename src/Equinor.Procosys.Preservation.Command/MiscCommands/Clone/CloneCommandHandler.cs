@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             {
                 if (targetModes.SingleOrDefault(t => t.Title == sourceMode.Title) == null)
                 {
-                    var targetMode = new Mode(targetPlant, sourceMode.Title);
+                    var targetMode = new Mode(targetPlant, sourceMode.Title, sourceMode.ForSupplier);
                     _modeRepository.Add(targetMode);
                 }
             }

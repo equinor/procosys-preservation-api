@@ -18,8 +18,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddMode(context, _mode1Title);
-                AddMode(context, _mode2Title);
+                AddMode(context, _mode1Title, true);
+                AddMode(context, _mode2Title, false);
             }
         }
 
@@ -37,6 +37,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
                 Assert.AreEqual(2, modes.Count);
                 Assert.AreEqual(_mode1Title, modes.First().Title);
                 Assert.AreEqual(_mode2Title, modes.Last().Title);
+                Assert.IsTrue(modes.First().ForSupplier);
+                Assert.IsFalse(modes.Last().ForSupplier);
             }
         }
     }

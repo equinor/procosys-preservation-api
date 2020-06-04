@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         {
             // Arrange
             _modeRepositoryMock = new Mock<IModeRepository>();
-            _mode = new Mode(TestPlant, _modeTitle);
+            _mode = new Mode(TestPlant, _modeTitle, false);
             _modeRepositoryMock
                 .Setup(x => x.GetByIdAsync(ModeId))
                     .Returns(Task.FromResult(_mode));

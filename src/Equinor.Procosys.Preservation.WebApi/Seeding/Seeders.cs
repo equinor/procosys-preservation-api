@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
         {
             for (var i = 0; i < entryCount; i++)
             {
-                var mode = new Mode(plant, $"Mode-{i}");
+                var mode = new Mode(plant, $"Mode-{i}", false);
                 modeRepository.Add(mode);
             }
         }

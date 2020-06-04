@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
                 .Setup(x => x.GetCurrentUserOid())
                 .Returns(_currentUserOid);
 
-            var newMode = new Mode(Plant, "TestMode");
+            var newMode = new Mode(Plant, "TestMode", false);
             dut.Modes.Add(newMode);
 
             await dut.SaveChangesAsync();
@@ -64,6 +64,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             Assert.AreEqual(user.Id, newMode.CreatedById);
             Assert.IsNull(newMode.ModifiedAtUtc);
             Assert.IsNull(newMode.ModifiedById);
+            Assert.IsFalse(newMode.ForSupplier);
         }
 
         [TestMethod]
@@ -79,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
                 .Setup(x => x.GetCurrentUserOid())
                 .Returns(_currentUserOid);
 
-            var newMode = new Mode(Plant, "TestMode");
+            var newMode = new Mode(Plant, "TestMode", false);
             dut.Modes.Add(newMode);
 
             await dut.SaveChangesAsync();

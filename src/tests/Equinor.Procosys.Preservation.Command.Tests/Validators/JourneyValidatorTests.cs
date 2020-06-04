@@ -21,8 +21,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _journeyId = AddJourneyWithStep(context, JourneyTitle, "S", AddMode(context, "M"), AddResponsible(context, "R")).Id;
-                _journeyId2 = AddJourneyWithStep(context, JourneyTitle2, "S", AddMode(context, "M2"), AddResponsible(context, "R2")).Id;
+                _journeyId = AddJourneyWithStep(context, JourneyTitle, "S", AddMode(context, "M", false), AddResponsible(context, "R")).Id;
+                _journeyId2 = AddJourneyWithStep(context, JourneyTitle2, "S", AddMode(context, "M2", false), AddResponsible(context, "R2")).Id;
             }
         }
 

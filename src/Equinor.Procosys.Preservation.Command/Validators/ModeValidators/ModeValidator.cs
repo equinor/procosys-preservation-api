@@ -40,5 +40,16 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ModeValidators
             await (from s in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Step>()
                 where s.ModeId == modeId
                 select s).AnyAsync(token);
+
+        public async Task<bool> ExistsAnotherModeIdForSupplierAsync(int modeId, bool forSupplier, CancellationToken token) => 
+            await (from m in _context.QuerySet<Mode>()
+                          where m.Id != modeId &&
+                                m.ForSupplier
+                          select m).AnyAsync(token);
+
+        public async Task<bool> ExistsAnotherModeTitleForSupplierAsync(string title, bool forSupplier, CancellationToken token) =>
+            await (from m in _context.QuerySet<Mode>()
+                where m.Title != title && forSupplier
+                select m).AnyAsync(token);
     }
 }
