@@ -10,5 +10,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
         Task<bool> ExistsWithSameTitleInAnotherJourneyAsync(int journeyId, string journeyTitle, CancellationToken token);
         Task<bool> IsVoidedAsync(int journeyId, CancellationToken token);
         Task<bool> AreAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token);
+        Task<bool> IsFirstStepIfModeIsForSupplier(int journeyId, int modeId, CancellationToken token);
     }
 }

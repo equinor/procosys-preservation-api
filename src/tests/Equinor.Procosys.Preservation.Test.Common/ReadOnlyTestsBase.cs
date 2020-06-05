@@ -71,9 +71,10 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return responsible;
         }
 
-        protected Mode AddMode(PreservationContext context, string title)
+        protected Mode AddMode(PreservationContext context, string title, bool forSupplier = false)
         {
             var mode = new Mode(TestPlant, title);
+            mode.ForSupplier = forSupplier;
             context.Modes.Add(mode);
             context.SaveChangesAsync().Wait();
             return mode;
@@ -83,6 +84,14 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var journey = new Journey(TestPlant, journeyTitle);
             journey.AddStep(new Step(TestPlant, stepTitle, mode, responsible));
+            context.Journeys.Add(journey);
+            context.SaveChangesAsync().Wait();
+            return journey;
+        }
+
+        protected Journey AddJourney(PreservationContext context, string journeyTitle)
+        {
+            var journey = new Journey(TestPlant, journeyTitle);
             context.Journeys.Add(journey);
             context.SaveChangesAsync().Wait();
             return journey;
