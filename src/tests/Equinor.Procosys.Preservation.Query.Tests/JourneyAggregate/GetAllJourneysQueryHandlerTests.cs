@@ -28,11 +28,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var mode1 = AddMode(context, _mode1Title);
+                var mode1 = AddMode(context, _mode1Title, false);
                 var responsible1 = AddResponsible(context, _responsible1Code);
                 var journey = AddJourneyWithStep(context, _journeyTitle, _step1Title, mode1, responsible1);
 
-                var mode2 = AddMode(context, _mode2Title);
+                var mode2 = AddMode(context, _mode2Title, false);
                 var responsible2 = AddResponsible(context, _responsible2Code);
                 journey.AddStep(new Step(TestPlant, _step2Title, mode2, responsible2));
                 context.SaveChangesAsync().Wait();

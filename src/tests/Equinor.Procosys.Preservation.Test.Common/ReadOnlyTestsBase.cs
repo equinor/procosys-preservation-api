@@ -71,9 +71,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return responsible;
         }
 
-        protected Mode AddMode(PreservationContext context, string title)
+        protected Mode AddMode(PreservationContext context, string title, bool forSupplier)
         {
-            var mode = new Mode(TestPlant, title);
+            var mode = new Mode(TestPlant, title, forSupplier);
             context.Modes.Add(mode);
             context.SaveChangesAsync().Wait();
             return mode;
@@ -83,6 +83,14 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var journey = new Journey(TestPlant, journeyTitle);
             journey.AddStep(new Step(TestPlant, stepTitle, mode, responsible));
+            context.Journeys.Add(journey);
+            context.SaveChangesAsync().Wait();
+            return journey;
+        }
+
+        protected Journey AddJourney(PreservationContext context, string journeyTitle)
+        {
+            var journey = new Journey(TestPlant, journeyTitle);
             context.Journeys.Add(journey);
             context.SaveChangesAsync().Wait();
             return journey;
@@ -192,9 +200,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 CurrentUser = context.Persons.Single(p => p.Oid == _currentUserOid),
                 Project1 = AddProject(context, _projectName1, "Project 1 description"),
                 Project2 = AddProject(context, _projectName2, "Project 2 description"),
-                Mode1 = AddMode(context, _mode1),
+                Mode1 = AddMode(context, _mode1, true),
                 Responsible1 = AddResponsible(context, _resp1),
-                Mode2 = AddMode(context, _mode2),
+                Mode2 = AddMode(context, _mode2, false),
                 Responsible2 = AddResponsible(context, _resp2),
                 ReqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqType1Code, "D1"),
                 ReqType2 = AddRequirementTypeWith1DefWithoutField(context, _reqType2Code, "D2")

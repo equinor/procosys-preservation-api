@@ -34,8 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         {
             var reqDefId = 0;
             _modeRepository = new ModeRepository(_plantProvider, _sourceModes);
-            _sourceModes.Add(new Mode(_sourcePlant, "ModeA"));
-            _sourceModes.Add(new Mode(_sourcePlant, "ModeB"));
+            _sourceModes.Add(new Mode(_sourcePlant, "ModeA", false));
+            _sourceModes.Add(new Mode(_sourcePlant, "ModeB", false));
 
             _responsibleRepository = new ResponsibleRepository(_plantProvider, _sourceResponsibles);
             _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeA", "ResponsibleTitleA"));

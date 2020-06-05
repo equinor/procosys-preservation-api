@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
                     _modeAdded = x;
                 });
 
-            _command = new CreateModeCommand(TestMode);
+            _command = new CreateModeCommand(TestMode, false);
 
             _dut = new CreateModeCommandHandler(
                 _modeRepositoryMock.Object,
@@ -48,6 +48,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
             Assert.AreEqual(0, result.Data);
             Assert.AreEqual(0, _modeAdded.Id);
             Assert.AreEqual(TestMode, _modeAdded.Title);
+            Assert.IsFalse(_modeAdded.ForSupplier);
         }
 
         [TestMethod]

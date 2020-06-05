@@ -9,16 +9,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ModeAggrega
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new Mode("PlantA", "TitleA");
+            var dut = new Mode("PlantA", "TitleA", false);
 
             Assert.AreEqual("PlantA", dut.Plant);
             Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual(false, dut.ForSupplier);
         }
 
         [TestMethod]
         public void VoidUnVoid_ShouldToggleIsVoided()
         {
-            var dut = new Mode("PlantA", "TitleA");
+            var dut = new Mode("PlantA", "TitleA", false);
             Assert.IsFalse(dut.IsVoided);
 
             dut.Void();

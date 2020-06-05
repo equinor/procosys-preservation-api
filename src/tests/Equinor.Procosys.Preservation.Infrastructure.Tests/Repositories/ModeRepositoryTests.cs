@@ -26,11 +26,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         {
             var modeMock = new Mock<Mode>();
             modeMock.SetupGet(m => m.Id).Returns(ModeId);
-            _mode = new Mode(TestPlant, TestMode);
+            _mode = new Mode(TestPlant, TestMode, false);
             _modes = new List<Mode>
             {
                 _mode,
-                new Mode(TestPlant, "M2"),
+                new Mode(TestPlant, "M2", false),
                 modeMock.Object
             };
             
