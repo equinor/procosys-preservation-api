@@ -14,9 +14,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         private readonly string _newTitle = "ModeTitleNew";
         private readonly string _rowVersion = "AAAAAAAAABA=";
 
-        private readonly bool _oldForSupplier = false;
-        private readonly bool _newForsuplier = true;
-
         private UpdateModeCommand _command;
         private UpdateModeCommandHandler _dut;
         private Mode _mode;
@@ -27,10 +24,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
             // Arrange
             var modeId = 1;
             var modeRepositoryMock = new Mock<IModeRepository>();
-            _mode = new Mode(TestPlant, _oldTitle, _oldForSupplier);
+            _mode = new Mode(TestPlant, _oldTitle, false);
             modeRepositoryMock.Setup(m => m.GetByIdAsync(modeId))
                 .Returns(Task.FromResult(_mode));
-            _command = new UpdateModeCommand(modeId, _newTitle, _newForsuplier, _rowVersion);
+            _command = new UpdateModeCommand(modeId, _newTitle, true, _rowVersion);
 
             _dut = new UpdateModeCommandHandler(
                 modeRepositoryMock.Object,

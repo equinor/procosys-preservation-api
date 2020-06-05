@@ -18,8 +18,9 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
                 .WithMessage(command => $"Mode with title already exists! Mode={command.Title}")
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
-                .MustAsync((command, token) => IsUniqueForSupplierAsync(command.ModeId, command.ForSupplier, token))
-                .WithMessage(command => $"Another mode for supplier already exists! Mode={command.Title}");
+                .MustAsync((command, token) => IsUniqueForSupplierAsync(command.ModeId, token))
+                .WithMessage(command => $"Another mode for supplier already exists! Mode={command.Title}")
+                .When(command => command.ForSupplier, ApplyConditionTo.CurrentValidator);
 
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);
@@ -27,8 +28,8 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
                 => !await modeValidator.ExistsAnotherModeWithSameTitleAsync(modeId, modeTitle, token);
             async Task<bool> NotBeAVoidedModeAsync(int modeId, CancellationToken token)
                 => !await modeValidator.IsVoidedAsync(modeId, token);
-            async Task<bool> IsUniqueForSupplierAsync(int modeId, bool forSupplier, CancellationToken token) =>
-                !await modeValidator.ExistsAnotherModeIdForSupplierAsync(modeId, forSupplier, token);
+            async Task<bool> IsUniqueForSupplierAsync(int modeId, CancellationToken token) =>
+                !await modeValidator.ExistsAnotherModeForSupplierAsync(modeId, token);
         }
     }
 }

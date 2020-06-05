@@ -41,15 +41,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ModeValidators
                 where s.ModeId == modeId
                 select s).AnyAsync(token);
 
-        public async Task<bool> ExistsAnotherModeIdForSupplierAsync(int modeId, bool forSupplier, CancellationToken token) => 
+        public async Task<bool> ExistsAnotherModeForSupplierAsync(int modeId, CancellationToken token) => 
             await (from m in _context.QuerySet<Mode>()
                           where m.Id != modeId &&
                                 m.ForSupplier
                           select m).AnyAsync(token);
 
-        public async Task<bool> ExistsAnotherModeTitleForSupplierAsync(string title, bool forSupplier, CancellationToken token) =>
+        public async Task<bool> ExistsModeForSupplierAsync(CancellationToken token) =>
             await (from m in _context.QuerySet<Mode>()
-                where m.Title != title && forSupplier
+                where m.ForSupplier
                 select m).AnyAsync(token);
     }
 }
