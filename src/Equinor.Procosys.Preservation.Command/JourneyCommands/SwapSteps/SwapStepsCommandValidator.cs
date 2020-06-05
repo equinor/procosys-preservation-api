@@ -22,7 +22,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
                 .MustAsync((command, token) => BeAnExistingStepBAsync(command.StepBId, token))
                 .WithMessage(command => $"StepB does not exist! StepB={command.StepBId}")
                 .MustAsync((command, token) => BeAdjacentStepsInAJourneyAsync(command.JourneyId, command.StepAId, command.StepBId, token))
-                .WithMessage(command => $"StepA and StepB are not adjacent! StepA={command.StepAId}, StepB={command.StepBId}");
+                .WithMessage(command => $"StepA and StepB are not adjacent! StepA={command.StepAId}, StepB={command.StepBId}")
+                .MustAsync((command, token) => NotIncludeSupplierStep(command.StepAId, command.StepBId, token))
+                .WithMessage(command => $"Supplier steps cannot be swapped! StepA={command.StepAId}, StepB={command.StepBId}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
@@ -32,6 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
                 => await stepValidator.ExistsAsync(stepId, token);
             async Task<bool> BeAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
                 => await journeyValidator.AreAdjacentStepsInAJourneyAsync(journeyId, stepAId, stepBId, token);
+            async Task<bool> NotIncludeSupplierStep(int stepAId, int stepBId, CancellationToken token)
+                => !await stepValidator.IsSupplierStep(stepAId, stepBId, token);
         }
     }
 }
