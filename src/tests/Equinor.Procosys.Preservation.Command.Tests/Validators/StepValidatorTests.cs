@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private Journey _journey1;
         private Journey _journey2;
         private Step _step1InJourney1;
+        private Step _step2InJourney1;
+        private Step _stepForSupplierInJourney1;
         private const string StepTitle1InJourney1 = "Step1";
         private const string StepTitle1InJourney2 = "Step2";
         private const string StepTitle2InJourney1 = "Step3";
+        private const string StepTitle3InJourney1 = "Step3";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -27,8 +31,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var responsible = AddResponsible(context, "R");
 
                 _journey1 = AddJourneyWithStep(context, "J1", StepTitle1InJourney1, mode, responsible);
-                _step1InJourney1 = _journey1.Steps.Single();
-                _journey1.AddStep(new Step(TestPlant, StepTitle2InJourney1, AddMode(context, "M2"), AddResponsible(context, "R2")));
+                _step1InJourney1 = _journey1.Steps.Single(s => s.Title == StepTitle1InJourney1);
+                _step2InJourney1 = new Step(TestPlant, StepTitle3InJourney1, AddMode(context, "M2"), AddResponsible(context, "R2"));
+                _stepForSupplierInJourney1 = new Step(TestPlant, StepTitle2InJourney1, AddMode(context, "M3", true),
+                    AddResponsible(context, "R3"));
+
+                _journey1.AddStep(_step2InJourney1);
+                _journey1.AddStep(_stepForSupplierInJourney1);
 
                 _journey2 = AddJourneyWithStep(context, "J2", StepTitle1InJourney2, mode, responsible);
 
@@ -160,6 +169,28 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new StepValidator(context);
                 var result = await dut.ExistsInExistingJourneyAsync(_step1InJourney1.Id, StepTitle1InJourney2, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsSupplierStep_IncludesSupplierStep_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new StepValidator(context);
+                var result = await dut.IsSupplierStep(_step1InJourney1.Id, _stepForSupplierInJourney1.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsSupplierStep_NotIncludesSupplierStep_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new StepValidator(context);
+                var result = await dut.IsSupplierStep(_step1InJourney1.Id, _step2InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }
