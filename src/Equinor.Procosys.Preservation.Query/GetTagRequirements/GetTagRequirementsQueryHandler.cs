@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 
                     var fields = requirementDto
                         .RequirementDefinition
-                        .OrderedFields()
+                        .OrderedFields(false)
                         .Select(f =>
                         {
                             var currentValue = requirement.GetCurrentFieldValue(f);

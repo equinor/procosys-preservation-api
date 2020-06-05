@@ -11,23 +11,26 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         private readonly List<Field> _fields = new List<Field>();
         
         public const int TitleLengthMax = 64;
+        public const int UsageMax = 32; // must be at least length of longest RequirementUsage enum
 
         protected RequirementDefinition()
             : base(null)
         {
         }
 
-        public RequirementDefinition(string plant, string title, int defaultIntervalWeeks, int sortKey)
+        public RequirementDefinition(string plant, string title, int defaultIntervalWeeks, RequirementUsage usage, int sortKey)
             : base(plant)
         {
             Title = title;
             DefaultIntervalWeeks = defaultIntervalWeeks;
+            Usage = usage;
             SortKey = sortKey;
         }
 
         public string Title { get; private set; }
         public bool IsVoided { get; private set; }
         public int DefaultIntervalWeeks { get; private set; }
+        public RequirementUsage Usage { get; private set; }
         public int SortKey { get; private set; }
         public IReadOnlyCollection<Field> Fields => _fields.AsReadOnly();
         public bool NeedsUserInput => _fields.Any(f => f.NeedsUserInput);
@@ -51,10 +54,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
             _fields.Add(field);
         }
-
-        public IOrderedEnumerable<Field> OrderedFields()
+        
+        public IOrderedEnumerable<Field> OrderedFields(bool includeVoided)
             => Fields
-                .Where(f => !f.IsVoided)
+                .Where(f => includeVoided || !f.IsVoided)
                 .OrderBy(f => f.SortKey);
 
         public void Void() => IsVoided = true;

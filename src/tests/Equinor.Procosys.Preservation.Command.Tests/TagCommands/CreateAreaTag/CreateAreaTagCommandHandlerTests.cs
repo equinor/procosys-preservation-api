@@ -97,6 +97,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 disciplineCode,
                 areaCode,
                 null,
+                null,
                 StepId,
                 new List<RequirementForCommand>
                 {
