@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
@@ -34,7 +35,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step doesn't exists! Step={command.StepId}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
-                .WithMessage(command => $"Step is voided! Step={command.StepId}");
+                .WithMessage(command => $"Step is voided! Step={command.StepId}")
+                .MustAsync((command, token) => BeASupplierStepAsync(command.StepId, token))
+                .WithMessage(command => $"Step is not for supplier! Step={command.StepId}")
+                    .When(command => command.TagType == TagType.PoArea, ApplyConditionTo.CurrentValidator);
 
             RuleForEach(command => command.Requirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
@@ -61,6 +65,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
             async Task<bool> NotBeAVoidedStepAsync(int stepId, CancellationToken token)
                 => !await stepValidator.IsVoidedAsync(stepId, token);
+
+            async Task<bool> BeASupplierStepAsync(int stepId, CancellationToken token)
+                => await stepValidator.IsForSupplierAsync(stepId, token);
 
             async Task<bool> BeAnExistingRequirementDefinitionAsync(RequirementForCommand requirement, CancellationToken token)
                 => await requirementDefinitionValidator.ExistsAsync(requirement.RequirementDefinitionId, token);

@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
@@ -39,6 +40,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 where s.Id == stepId
                 select s).SingleOrDefaultAsync(token);
             return step != null && step.IsVoided;
+        }
+
+        public async Task<bool> IsForSupplierAsync(int stepId, CancellationToken token)
+        {
+            var mode = await (from s in _context.QuerySet<Step>()
+                join m in _context.QuerySet<Mode>() on s.ModeId equals m.Id
+                where s.Id == stepId
+                select m).SingleOrDefaultAsync(token);
+            return mode != null && mode.ForSupplier;
         }
     }
 }
