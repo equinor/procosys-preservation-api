@@ -14,8 +14,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate
         {
         }
 
-        public Mode(string plant, string title)
-            : base(plant) => Title = title;
+        public Mode(string plant, string title, bool forSupplier) : base(plant)
+        {
+            Title = title;
+            ForSupplier = forSupplier;
+        }
 
         public string Title { get; set; }
         public bool IsVoided { get; private set; }

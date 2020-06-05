@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             string plant,
             [FromBody] CreateModeDto dto)
         {
-            var result = await _mediator.Send(new CreateModeCommand(dto.Title));
+            var result = await _mediator.Send(new CreateModeCommand(dto.Title, dto.ForSupplier));
             return this.FromResult(result);
         }
 
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             [FromRoute] int id,
             [FromBody] UpdateModeDto dto)
         {
-            var result = await _mediator.Send(new UpdateModeCommand(id, dto.Title, dto.RowVersion));
+            var result = await _mediator.Send(new UpdateModeCommand(id, dto.Title, dto.ForSupplier, dto.RowVersion));
             return this.FromResult(result);
         }
 

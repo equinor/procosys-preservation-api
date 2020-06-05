@@ -9,9 +9,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new CreateModeCommand("TitleA");
+            var dut = new CreateModeCommand("TitleA", false);
 
             Assert.AreEqual("TitleA", dut.Title);
+            Assert.IsFalse(dut.ForSupplier);
         }
     }
 }

@@ -15,13 +15,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
 
         private int _id = 1;
         private string _title = "Title";
+        private bool _forSupplier = true;
 
         [TestInitialize]
         public void Setup_OkState()
         {
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
-            _command = new UpdateModeCommand(_id, _title, null);
+            _command = new UpdateModeCommand(_id, _title, _forSupplier, null);
 
             _dut = new UpdateModeCommandValidator(_modeValidatorMock.Object);
         }
@@ -68,6 +69,29 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenAnotherModeForSupplierAlreadyExists_AndUpdatingModeToForSupplier()
+        {
+            _modeValidatorMock.Setup(r => r.ExistsAnotherModeForSupplierAsync(_id, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Another mode for supplier already exists!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldBeOk_WhenAnotherModeForSupplierAlreadyExists_AndNotUpdatingModeToForSupplier()
+        {
+            _modeValidatorMock.Setup(r => r.ExistsAnotherModeForSupplierAsync(_id, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsTrue(result.IsValid);
+            Assert.AreEqual(0, result.Errors.Count);
         }
     }
 }

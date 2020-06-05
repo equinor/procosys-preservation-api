@@ -23,6 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
 
             mode.Title = request.Title;
+            mode.ForSupplier = request.ForSupplier;
             mode.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

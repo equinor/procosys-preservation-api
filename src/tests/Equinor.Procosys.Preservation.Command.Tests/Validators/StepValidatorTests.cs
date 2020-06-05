@@ -31,8 +31,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
                 _journey1 = AddJourneyWithStep(context, "J1", StepTitle2InJourney1, supplierMode, responsible);
                 _stepForSupplierInJourney1 = _journey1.Steps.Single(s => s.Title == StepTitle2InJourney1);
-                _step1InJourney1 = new Step(TestPlant, StepTitle1InJourney1, AddMode(context, "M2"), AddResponsible(context, "R2"));
-                _step2InJourney1 = new Step(TestPlant, StepTitle3InJourney1, AddMode(context, "M3"), AddResponsible(context, "R3"));
+                _step1InJourney1 = new Step(TestPlant, StepTitle1InJourney1, AddMode(context, "M2", false), AddResponsible(context, "R2"));
+                _step2InJourney1 = new Step(TestPlant, StepTitle3InJourney1, AddMode(context, "M3", false), AddResponsible(context, "R3"));
 
                 _journey1.AddStep(_step1InJourney1);
                 _journey1.AddStep(_step2InJourney1);
