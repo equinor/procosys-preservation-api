@@ -45,6 +45,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             RuleFor(x => x.StorageArea)
                 .MaximumLength(Tag.StorageAreaLengthMax);
+                        
+            RuleFor(x => x.PurchaseOrderCalloffCode)
+                .NotNull()
+                .NotEmpty()
+                .When(x => x.AreaTagType == AreaTagType.PoArea);
 
             bool NotContainWhiteSpace(string suffix)
             {
