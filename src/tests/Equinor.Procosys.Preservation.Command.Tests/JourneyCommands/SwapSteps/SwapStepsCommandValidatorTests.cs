@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         [TestMethod]
         public void Validate_ShouldFail_WhenStepsIncludeSupplierStep()
         {
-            _stepValidatorMock.Setup(s => s.IsAnySupplierStep(_stepAId, _stepBId, default)).Returns(Task.FromResult(true));
+            _stepValidatorMock.Setup(s => s.IsAnyStepForSupplier(_stepAId, _stepBId, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 

@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
-            _stepValidatorMock.Setup(r => r.IsAllowedToUpdate(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(true));
+            _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplier(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(true));
 
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
@@ -147,7 +147,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenUpdatingToSupplierStepAndTheStepIsNotTheFirstInTheList()
         {
-            _stepValidatorMock.Setup(r => r.IsAllowedToUpdate(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(false));
+            _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplier(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 

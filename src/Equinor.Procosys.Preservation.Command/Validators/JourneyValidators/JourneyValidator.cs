@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
             return journey.AreAdjacentSteps(stepAId, stepBId);
         }
 
-        public async Task<bool> IsFirstStepInAJourneyIfASupplierStepAsync(int journeyId, int modeId, CancellationToken token)
+        public async Task<bool> IsFirstStepIfModeIsForSupplier(int journeyId, int modeId, CancellationToken token)
         {
             var journey = await _context.QuerySet<Journey>()
                 .Include(j => j.Steps)

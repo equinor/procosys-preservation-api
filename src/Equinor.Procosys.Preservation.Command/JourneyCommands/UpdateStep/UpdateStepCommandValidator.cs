@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             async Task<bool> NotBeAnExistingAndVoidedResponsibleAsync(string responsibleCode, CancellationToken token)
                 => !await responsibleValidator.ExistsAndIsVoidedAsync(responsibleCode, token);
             async Task<bool> BeFirstStepIfUpdatingToSupplierStep(int journeyId, int modeId, int stepId, CancellationToken token)
-                => await stepValidator.IsAllowedToUpdate(journeyId, modeId, stepId, token);
+                => await stepValidator.IsFirstStepOrModeIsNotForSupplier(journeyId, modeId, stepId, token);
         }
     }
 }

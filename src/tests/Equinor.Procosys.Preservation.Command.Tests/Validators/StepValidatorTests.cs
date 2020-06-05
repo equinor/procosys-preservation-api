@@ -28,10 +28,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var mode = AddMode(context, "M", true);
+                var supplierMode = AddMode(context, "M", true);
                 var responsible = AddResponsible(context, "R");
 
-                _journey1 = AddJourneyWithStep(context, "J1", StepTitle2InJourney1, mode, responsible);
+                _journey1 = AddJourneyWithStep(context, "J1", StepTitle2InJourney1, supplierMode, responsible);
                 _stepForSupplierInJourney1 = _journey1.Steps.Single(s => s.Title == StepTitle2InJourney1);
                 _step2ForSupplierInJourney1 = new Step(TestPlant, StepTitle4InJourney1, AddMode(context, "M1", true), AddResponsible(context, "R1"));
                 _step1InJourney1 = new Step(TestPlant, StepTitle1InJourney1, AddMode(context, "M2"), AddResponsible(context, "R2"));
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _journey1.AddStep(_step1InJourney1);
                 _journey1.AddStep(_step2InJourney1);
 
-                _journey2 = AddJourneyWithStep(context, "J2", StepTitle1InJourney2, mode, responsible);
+                _journey2 = AddJourneyWithStep(context, "J2", StepTitle1InJourney2, supplierMode, responsible);
 
                 context.SaveChangesAsync().Wait();
             }
@@ -176,45 +176,45 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsAnySupplierStep_IncludesSupplierStep_ReturnsTrue()
+        public async Task IsAnyStepForSupplier_IncludesSupplierStep_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsAnySupplierStep(_step1InJourney1.Id, _stepForSupplierInJourney1.Id, default);
+                var result = await dut.IsAnyStepForSupplier(_step1InJourney1.Id, _stepForSupplierInJourney1.Id, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsAnySupplierStep_NotIncludesSupplierStep_ReturnsFalse()
+        public async Task IsAnyStepForSupplier_NotIncludesSupplierStep_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsAnySupplierStep(_step1InJourney1.Id, _step2InJourney1.Id, default);
+                var result = await dut.IsAnyStepForSupplier(_step1InJourney1.Id, _step2InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task IsAllowedToUpdate_UpdatingFirstStepToSupplierStep_ReturnsTrue()
+        public async Task IsFirstStepOrModeIsNotForSupplier_UpdatingFirstStepToSupplierStep_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsAllowedToUpdate(_journey1.Id, _stepForSupplierInJourney1.ModeId, _stepForSupplierInJourney1.Id, default);
+                var result = await dut.IsFirstStepOrModeIsNotForSupplier(_journey1.Id, _stepForSupplierInJourney1.ModeId, _stepForSupplierInJourney1.Id, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsAllowedToUpdate_UpdatingNotFirstStepToSupplierStep_ReturnsFalse()
+        public async Task IsFirstStepOrModeIsNotForSupplier_UpdatingNotFirstStepToSupplierStep_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsAllowedToUpdate(_journey1.Id, _step2ForSupplierInJourney1.ModeId, _step2ForSupplierInJourney1.Id, default);
+                var result = await dut.IsFirstStepOrModeIsNotForSupplier(_journey1.Id, _step2ForSupplierInJourney1.ModeId, _step2ForSupplierInJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }

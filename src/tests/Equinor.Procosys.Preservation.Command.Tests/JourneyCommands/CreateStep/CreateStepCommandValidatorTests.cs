@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
-            _journeyValidatorMock.Setup(r => r.IsFirstStepInAJourneyIfASupplierStepAsync(_journeyId, _modeId, default))
+            _journeyValidatorMock.Setup(r => r.IsFirstStepIfModeIsForSupplier(_journeyId, _modeId, default))
                 .Returns(Task.FromResult(true));
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenSupplierStepIsNotAddedToTop()
         {
-            _journeyValidatorMock.Setup(j => j.IsFirstStepInAJourneyIfASupplierStepAsync(_journeyId, _modeId, default))
+            _journeyValidatorMock.Setup(j => j.IsFirstStepIfModeIsForSupplier(_journeyId, _modeId, default))
                 .Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
