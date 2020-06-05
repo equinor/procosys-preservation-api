@@ -97,5 +97,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("StepA and StepB are not adjacent!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenStepsIncludeSupportStep()
+        {
+            _stepValidatorMock.Setup(s => s.IsSupplierStep(_stepAId, _stepBId, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Supplier steps cannot be swapped!"));
+        }
     }
 }
