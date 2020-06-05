@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
