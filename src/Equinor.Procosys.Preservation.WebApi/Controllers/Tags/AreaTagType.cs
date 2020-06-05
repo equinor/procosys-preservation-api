@@ -3,6 +3,7 @@
     public enum AreaTagType
     {
         PreArea,
-        SiteArea
+        SiteArea,
+        PoArea
     }
 }

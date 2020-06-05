@@ -15,8 +15,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         private readonly string _numberLabel = "TestLabel";
         private readonly string _numberUnit = "TestUnit";
         private RequirementType _reqType1;
-        private RequirementDefinition _reqDef1;
-        private RequirementDefinition _reqDef2;
+        private RequirementDefinition _reqDefForAll;
+        private RequirementDefinition _reqDefVoided;
+        private RequirementDefinition _reqDefForOther;
+        private RequirementDefinition _reqDefForSupplier;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -24,14 +26,18 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             {
                 _reqType1 = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", 999);
 
-                _reqDef1 = _reqType1.RequirementDefinitions.First();
-                _reqDef2 = new RequirementDefinition(TestPlant, "D2", 2, 1);
-                _reqDef2.Void();
-                _reqType1.AddRequirementDefinition(_reqDef2);
+                _reqDefForAll = _reqType1.RequirementDefinitions.First();
+                _reqDefVoided = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForAll, 2);
+                _reqDefVoided.Void();
+                _reqDefForOther = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 3);
+                _reqDefForSupplier = new RequirementDefinition(TestPlant, "D4", 2, RequirementUsage.ForSuppliersOnly, 4);
+                _reqType1.AddRequirementDefinition(_reqDefVoided);
+                _reqType1.AddRequirementDefinition(_reqDefForOther);
+                _reqType1.AddRequirementDefinition(_reqDefForSupplier);
                 context.SaveChangesAsync().Wait();
 
-                AddNumberField(context, _reqDef1, _numberLabel, _numberUnit, true);
-                var f = AddNumberField(context, _reqDef1, "NUMBER", "mm", true);
+                AddNumberField(context, _reqDefForAll, _numberLabel, _numberUnit, true);
+                var f = AddNumberField(context, _reqDefForAll, "NUMBER", "mm", true);
                 f.Void();
                 context.SaveChangesAsync().Wait();
 
@@ -53,15 +59,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 
                 var requirementTypes = result.Data.ToList();
                 var requirementTypeDto = requirementTypes.Single(rt => rt.Id == _reqType1.Id);
-                var requirementDefinitionDto = requirementTypeDto.RequirementDefinitions.Single();
-                var fields = requirementDefinitionDto.Fields.ToList();
+                var requirementDefinitionDtoForAll = requirementTypeDto.RequirementDefinitions.Single(rd => rd.Id == _reqDefForAll.Id);
+                var fields = requirementDefinitionDtoForAll.Fields.ToList();
 
                 Assert.AreEqual(_reqType1.Code, requirementTypeDto.Code);
                 Assert.AreEqual(_reqType1.Title, requirementTypeDto.Title);
                 Assert.IsFalse(requirementTypeDto.IsVoided);
 
-                Assert.AreEqual(_reqDef1.Title, requirementDefinitionDto.Title);
-                Assert.IsFalse(requirementDefinitionDto.IsVoided);
+                AssertReqDef(_reqDefForAll, requirementDefinitionDtoForAll);
+                AssertReqDef(_reqDefForOther, requirementTypeDto.RequirementDefinitions.Single(rd => rd.Id == _reqDefForOther.Id));
+                AssertReqDef(_reqDefForSupplier, requirementTypeDto.RequirementDefinitions.Single(rd => rd.Id == _reqDefForSupplier.Id));
 
                 var fieldDto = fields[0];
                 Assert.AreEqual(_numberLabel, fieldDto.Label);
@@ -83,11 +90,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 
                 var requirementTypes = result.Data.ToList();
                 var requirementDefinitions = requirementTypes.First(rt => rt.Id == _reqType1.Id).RequirementDefinitions.ToList();
-                var fields = requirementDefinitions.First(rd => !rd.IsVoided).Fields.ToList();
+                var fields = requirementDefinitions.First(rd => rd.Id == _reqDefForAll.Id).Fields.ToList();
 
                 Assert.AreEqual(4, requirementTypes.Count);
                 Assert.IsTrue(requirementTypes.Any(j => j.IsVoided));
-                Assert.AreEqual(2, requirementDefinitions.Count);
+                Assert.AreEqual(4, requirementDefinitions.Count);
                 Assert.IsTrue(requirementDefinitions.Any(j => j.IsVoided));
                 Assert.AreEqual(2, fields.Count);
                 Assert.IsTrue(fields.Any(j => j.IsVoided));
@@ -109,6 +116,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 Assert.AreEqual(999, dtos[2].SortKey);
                 Assert.AreEqual(10000, dtos[3].SortKey);
             }
+        }
+
+        private void AssertReqDef(RequirementDefinition reqDefExpected, RequirementDefinitionDto reqDefDto)
+        {
+            Assert.AreEqual(reqDefExpected.Title, reqDefDto.Title);
+            Assert.AreEqual(reqDefExpected.Usage, reqDefDto.Usage);
+            Assert.AreEqual(reqDefExpected.DefaultIntervalWeeks, reqDefDto.DefaultIntervalWeeks);
+            Assert.AreEqual(reqDefExpected.SortKey, reqDefDto.SortKey);
+            Assert.AreEqual(reqDefExpected.IsVoided, reqDefDto.IsVoided);
         }
     }
 }

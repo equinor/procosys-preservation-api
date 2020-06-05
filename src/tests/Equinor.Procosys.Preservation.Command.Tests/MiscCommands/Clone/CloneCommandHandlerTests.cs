@@ -43,10 +43,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             
             _requirementTypeRepository = new RequirementTypeRepository(_plantProvider, _sourceRequirementTypes);
             var requirementTypeA = new RequirementType(_sourcePlant, "RequirementTypeCodeA", "RequirementTypeTitleA", 1);
-            var reqDefA1 = new RequirementDefinition(_sourcePlant, "RequirementDefCodeA1", 1, 2);
+            var reqDefA1 = new RequirementDefinition(_sourcePlant, "RequirementDefCodeA1", 1, RequirementUsage.ForAll, 2);
             reqDefA1.SetProtectedIdForTesting(++reqDefId);
             requirementTypeA.AddRequirementDefinition(reqDefA1);
-            var reqDefA2 = new RequirementDefinition(_sourcePlant, "RequirementDefCodeA2", 3, 4);
+            var reqDefA2 = new RequirementDefinition(_sourcePlant, "RequirementDefCodeA2", 3, RequirementUsage.ForAll, 4);
             reqDefA2.SetProtectedIdForTesting(++reqDefId);
             requirementTypeA.AddRequirementDefinition(reqDefA2);
             reqDefA1.AddField(new Field(_sourcePlant, "LabelA", FieldType.Number, 1, "UnitA", true));
@@ -240,6 +240,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 Assert.AreEqual(TestPlant, clone.Plant);
                 Assert.AreEqual(source.Title, clone.Title);
                 Assert.AreEqual(source.DefaultIntervalWeeks, clone.DefaultIntervalWeeks);
+                Assert.AreEqual(source.Usage, clone.Usage);
                 Assert.AreEqual(source.SortKey, clone.SortKey);
                 AssertClonedRequirementFields(source.Fields, clone.Fields);
             }

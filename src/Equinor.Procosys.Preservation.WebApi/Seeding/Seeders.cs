@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                 var requirementType = new RequirementType(plant, "Code", "Title", i);
                 for (var j = 0; j < 5; j++)
                 {
-                    var requirementDefinition = new RequirementDefinition(plant, $"RequirementDefinition-{j}", 2, j);
+                    var requirementDefinition = new RequirementDefinition(plant, $"RequirementDefinition-{j}", 2, RequirementUsage.ForAll, j);
                     requirementType.AddRequirementDefinition(requirementDefinition);
                 }
                 requirementTypeRepository.Add(requirementType);

@@ -88,13 +88,21 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return journey;
         }
 
+        protected Journey AddJourney(PreservationContext context, string journeyTitle)
+        {
+            var journey = new Journey(TestPlant, journeyTitle);
+            context.Journeys.Add(journey);
+            context.SaveChangesAsync().Wait();
+            return journey;
+        }
+
         protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string type, string def, int sortKey = 0)
         {
             var requirementType = new RequirementType(TestPlant, type, $"Title{type}", sortKey);
             context.RequirementTypes.Add(requirementType);
             context.SaveChangesAsync().Wait();
 
-            var requirementDefinition = new RequirementDefinition(TestPlant, def, 2, 1);
+            var requirementDefinition = new RequirementDefinition(TestPlant, def, 2, RequirementUsage.ForAll, 1);
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChangesAsync().Wait();
 

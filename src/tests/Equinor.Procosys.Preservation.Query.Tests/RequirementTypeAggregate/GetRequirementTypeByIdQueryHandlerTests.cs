@@ -30,13 +30,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 _requirementDefWithInfo = _requirementType.RequirementDefinitions.Single();
                 _infoField = AddInfoField(context, _requirementDefWithInfo, "LabelA");
 
-                _requirementDefWithNumber = new RequirementDefinition(TestPlant, "D2", 2, 1);
+                _requirementDefWithNumber = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForAll, 1);
                 _requirementType.AddRequirementDefinition(_requirementDefWithNumber);
                 
-                _requirementDefWithCheckbox = new RequirementDefinition(TestPlant, "D3", 2, 1);
+                _requirementDefWithCheckbox = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForAll, 1);
                 _requirementType.AddRequirementDefinition(_requirementDefWithCheckbox);
                 
-                _requirementDefWithAttachment = new RequirementDefinition(TestPlant, "D4", 2, 1);
+                _requirementDefWithAttachment = new RequirementDefinition(TestPlant, "D4", 2, RequirementUsage.ForAll, 1);
                 _requirementType.AddRequirementDefinition(_requirementDefWithAttachment);
 
                 context.SaveChangesAsync().Wait();

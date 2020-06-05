@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -37,10 +38,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             var dut = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "", false, 4, 999, false, _fieldsDtos),
-                new RequirementDefinitionDto(2, "", false, 4, 5, false, _fieldsDtos),
-                new RequirementDefinitionDto(3, "", false, 4, 500, false, _fieldsDtos),
-                new RequirementDefinitionDto(4, "", false, 4, 10, false, _fieldsDtos),
+                new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, false, _fieldsDtos),
+                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, false, _fieldsDtos),
+                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, false, _fieldsDtos),
+                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, false, _fieldsDtos),
             },
                 _rowVersion);
 
@@ -57,10 +58,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             var dut = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "", false, 4, 999, true, _fieldsDtos),
-                new RequirementDefinitionDto(2, "", false, 4, 5, true, _fieldsDtos),
-                new RequirementDefinitionDto(3, "", false, 4, 500, true, _fieldsDtos),
-                new RequirementDefinitionDto(4, "", false, 4, 10, true, _fieldsDtos),
+                new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, true, _fieldsDtos),
+                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, true, _fieldsDtos),
+                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, true, _fieldsDtos),
+                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, true, _fieldsDtos),
             },
                 _rowVersion);
 
@@ -77,14 +78,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             var dut = new RequirementTypeDto(1, "", "", true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "", false, 4, 999, true, _fieldsDtos),
-                new RequirementDefinitionDto(2, "", false, 4, 5, true, _fieldsDtos),
-                new RequirementDefinitionDto(3, "", false, 4, 500, true, _fieldsDtos),
-                new RequirementDefinitionDto(4, "", false, 4, 10, true, _fieldsDtos),
-                new RequirementDefinitionDto(5, "", false, 4, 999, false, _fieldsDtos),
-                new RequirementDefinitionDto(6, "", false, 4, 5, false, _fieldsDtos),
-                new RequirementDefinitionDto(7, "", false, 4, 500, false, _fieldsDtos),
-                new RequirementDefinitionDto(8, "", false, 4, 10, false, _fieldsDtos),
+                new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, true, _fieldsDtos),
+                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, true, _fieldsDtos),
+                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, true, _fieldsDtos),
+                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, true, _fieldsDtos),
+                new RequirementDefinitionDto(5, "", false, 4, RequirementUsage.ForAll, 999, false, _fieldsDtos),
+                new RequirementDefinitionDto(6, "", false, 4, RequirementUsage.ForAll, 5, false, _fieldsDtos),
+                new RequirementDefinitionDto(7, "", false, 4, RequirementUsage.ForAll, 500, false, _fieldsDtos),
+                new RequirementDefinitionDto(8, "", false, 4, RequirementUsage.ForAll, 10, false, _fieldsDtos),
             },
                 _rowVersion);
 

@@ -65,25 +65,25 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             var reqDefId = 1;
 
-            var reqDef1NotNeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 2, 0);
+            var reqDef1NotNeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 2, RequirementUsage.ForAll, 0);
             reqDef1NotNeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
             reqDef1NotNeedInputMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _reqDef1NotNeedInput = reqDef1NotNeedInputMock.Object;
             _reqDef1NotNeedInput.AddField(new Field(TestPlant, "", FieldType.Info, 0));
 
-            var reqDef2NotNeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 2, 0);
+            var reqDef2NotNeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 2, RequirementUsage.ForAll, 0);
             reqDef2NotNeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
             reqDef2NotNeedInputMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _reqDef2NotNeedInput = reqDef2NotNeedInputMock.Object;
             _reqDef2NotNeedInput.AddField(new Field(TestPlant, "", FieldType.Info, 0));
             
-            var reqDef1NeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 1, 0);
+            var reqDef1NeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 1, RequirementUsage.ForAll, 0);
             reqDef1NeedInputMock.SetupGet(r => r.Id).Returns(reqDefId++);
             reqDef1NeedInputMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _reqDef1NeedInput = reqDef1NeedInputMock.Object;
             _reqDef1NeedInput.AddField(new Field(TestPlant, "", FieldType.CheckBox, 0));
             
-            var reqDef2NeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 1, 0);
+            var reqDef2NeedInputMock = new Mock<RequirementDefinition>(TestPlant, "", 1, RequirementUsage.ForAll, 0);
             reqDef2NeedInputMock.SetupGet(r => r.Id).Returns(reqDefId);
             reqDef2NeedInputMock.SetupGet(r => r.Plant).Returns(TestPlant);
             _reqDef2NeedInput = reqDef2NeedInputMock.Object;
