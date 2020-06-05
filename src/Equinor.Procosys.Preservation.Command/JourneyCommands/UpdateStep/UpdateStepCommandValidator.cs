@@ -32,7 +32,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAnExistingAndVoidedResponsibleAsync(command.ResponsibleCode, token))
-                .WithMessage(command => $"Responsible is voided! ResponsibleCode={command.ResponsibleCode}");
+                .WithMessage(command => $"Responsible is voided! ResponsibleCode={command.ResponsibleCode}")
+                .MustAsync((command, token) => BeFirstStepIfUpdatingToSupplierStep(command.JourneyId, command.ModeId, command.StepId, token))
+                .WithMessage(command => $"Only the first step can be supplier step! Mode={command.ModeId}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
@@ -48,6 +50,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 => !await modeValidator.IsVoidedAsync(modeId, token);
             async Task<bool> NotBeAnExistingAndVoidedResponsibleAsync(string responsibleCode, CancellationToken token)
                 => !await responsibleValidator.ExistsAndIsVoidedAsync(responsibleCode, token);
+            async Task<bool> BeFirstStepIfUpdatingToSupplierStep(int journeyId, int modeId, int stepId, CancellationToken token)
+                => await stepValidator.IsAllowedToUpdate(journeyId, modeId, stepId, token);
         }
     }
 }

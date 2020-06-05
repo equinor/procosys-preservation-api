@@ -47,5 +47,22 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 join mode in _context.QuerySet<Mode>() on s.ModeId equals EF.Property<int>(mode, "Id")
                 where (s.Id == stepAId || s.Id == stepBId) && mode.ForSupplier
                 select mode).AnyAsync(token);
+
+        public async Task<bool> IsAllowedToUpdate(int journeyId, int modeId,
+            int stepId,
+            CancellationToken token)
+        {
+            var journey = await _context.QuerySet<Journey>()
+                .Include(j => j.Steps)
+                .SingleAsync(j => j.Id == journeyId, token);
+
+            if (journey.Steps.First().Id == stepId)
+            {
+                return true;
+            }
+
+            var mode = await _context.QuerySet<Mode>().SingleAsync(m => m.Id == modeId, token);
+            return !mode.ForSupplier;
+        }
     }
 }
