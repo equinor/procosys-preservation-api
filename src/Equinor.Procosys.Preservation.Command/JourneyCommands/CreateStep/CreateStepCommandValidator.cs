@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 => !await modeValidator.IsVoidedAsync(modeId, token);
 
             async Task<bool> BeFirstIfSupplierStep(int journeyId, int modeId, CancellationToken token)
-                => await journeyValidator.IsFirstStepInAJourneyIfSupplierStepAsync(journeyId, modeId, token);
+                => await journeyValidator.IsFirstStepInAJourneyIfASupplierStepAsync(journeyId, modeId, token);
         }
     }
 }
