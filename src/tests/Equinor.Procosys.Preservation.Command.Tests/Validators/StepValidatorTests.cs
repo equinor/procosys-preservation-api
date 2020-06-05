@@ -173,23 +173,23 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsSupplierStep_IncludesSupplierStep_ReturnsTrue()
+        public async Task IsAnySupplierStep_IncludesSupplierStep_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsSupplierStep(_step1InJourney1.Id, _stepForSupplierInJourney1.Id, default);
+                var result = await dut.IsAnySupplierStep(_step1InJourney1.Id, _stepForSupplierInJourney1.Id, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsSupplierStep_NotIncludesSupplierStep_ReturnsFalse()
+        public async Task IsAnySupplierStep_NotIncludesSupplierStep_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsSupplierStep(_step1InJourney1.Id, _step2InJourney1.Id, default);
+                var result = await dut.IsAnySupplierStep(_step1InJourney1.Id, _step2InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }

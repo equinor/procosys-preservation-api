@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
             async Task<bool> BeAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
                 => await journeyValidator.AreAdjacentStepsInAJourneyAsync(journeyId, stepAId, stepBId, token);
             async Task<bool> NotIncludeSupplierStep(int stepAId, int stepBId, CancellationToken token)
-                => !await stepValidator.IsSupplierStep(stepAId, stepBId, token);
+                => !await stepValidator.IsAnySupplierStep(stepAId, stepBId, token);
         }
     }
 }
