@@ -130,5 +130,51 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
+
+        [TestMethod]
+        public async Task ExistsAnotherModeForSupplierAsync_KnownId_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                AddMode(context, "SUPPLIER", true);
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsAnotherModeForSupplierAsync(_modeId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAnotherModeForSupplierAsync_UnknownId_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsAnotherModeForSupplierAsync(126234, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsModeForSupplierAsync_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                AddMode(context, "SUPPLIER", true);
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsModeForSupplierAsync(default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsModeForSupplierAsync_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.ExistsModeForSupplierAsync(default);
+                Assert.IsFalse(result);
+            }
+        }
     }
 }
