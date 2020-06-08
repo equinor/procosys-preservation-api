@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -25,5 +26,33 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 select rd).SingleOrDefaultAsync(token);
             return reqDef != null && reqDef.IsVoided;
         }
+
+        public async Task<bool> UsageIsBothForSupplierAndOtherAsync(List<int> requirementDefinitionIds, CancellationToken token)
+        {
+            var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
+            return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll)
+                   || (reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly) &&
+                       reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers));
+        }
+
+        public async Task<bool> UsageIsForOtherOnlyAsync(List<int> requirementDefinitionIds, CancellationToken token)
+        {
+            var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
+            return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll) ||
+                   reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers);
+        }
+
+        public async Task<bool> NoUsageIsForSupplierOnlyAsync(List<int> requirementDefinitionIds, CancellationToken token)
+        {
+            var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
+            return reqDefs.All(rd => rd.Usage != RequirementUsage.ForSuppliersOnly);
+        }
+
+        private async Task<List<RequirementDefinition>> GetRequirementDefinitions(
+            List<int> requirementDefinitionIds,
+            CancellationToken token)
+            => await (from rd in _context.QuerySet<RequirementDefinition>()
+                where requirementDefinitionIds.Contains(rd.Id)
+                select rd).ToListAsync(token);
     }
 }
