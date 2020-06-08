@@ -3,9 +3,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -18,14 +21,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         private const string TestTagNo2 = "TagNo2";
         private const string TestProjectName = "TestProjectX";
         private const string TestProjectDescription = "TestProjectXDescription";
+        private const int ModeId = 2;
         private const int StepId = 11;
         private const int ReqDefId1 = 99;
         private const int ReqDefId2 = 199;
         private const int Interval1 = 2;
         private const int Interval2 = 3;
 
-        private Mock<Step> _stepMock;
+        private Mock<Mode> _modeMock;
+        private Step _step;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
+        private Mock<IModeRepository> _modeRepositoryMock;
         private Project _projectAddedToRepository;
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
@@ -40,15 +46,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         [TestInitialize]
         public void Setup()
         {
-            // Arrange
-            _stepMock = new Mock<Step>();
-            _stepMock.SetupGet(s => s.Id).Returns(StepId);
-            _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+            _modeRepositoryMock = new Mock<IModeRepository>();
+            _modeMock = new Mock<Mode>();
+            _modeMock.SetupGet(m => m.Plant).Returns(TestPlant);
+            _modeMock.SetupGet(x => x.Id).Returns(ModeId);
+            _modeRepositoryMock
+                .Setup(r => r.GetByIdAsync(ModeId))
+                .Returns(Task.FromResult(_modeMock.Object));
             
+            // Arrange
+            _step = new Step(TestPlant, "S", _modeMock.Object, new Responsible(TestPlant, "RC", "RT"));
+            _step.SetProtectedIdForTesting(StepId);
+
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyRepositoryMock
                 .Setup(x => x.GetStepByStepIdAsync(StepId))
-                .Returns(Task.FromResult(_stepMock.Object));
+                .Returns(Task.FromResult(_step));
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _projectRepositoryMock
@@ -109,7 +122,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
             _command = new CreateTagsCommand(
                 new List<string>{TestTagNo1, TestTagNo2}, 
                 TestProjectName,
-                _stepMock.Object.Id,
+                _step.Id,
                 new List<RequirementForCommand>
                 {
                     new RequirementForCommand(ReqDefId1, Interval1),
@@ -121,6 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
             _dut = new CreateTagsCommandHandler(
                 _projectRepositoryMock.Object,
                 _journeyRepositoryMock.Object,
+                _modeRepositoryMock.Object,
                 _rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object,
@@ -210,6 +224,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
             
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateTagsCommand_ShouldReturnNotFound_WhenAddingTagWithOutPoToSupplierStep()
+        {
+            // Arrange
+            _modeMock.Object.ForSupplier = true;
+            _mainTagDetails1.PurchaseOrderNo = null;
+
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual($"Purchase Order for {_mainTagDetails1.TagNo} not found in project {TestProjectName}.", result.Errors[0]);
         }
 
         private void AssertTagProperties(CreateTagsCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject)
