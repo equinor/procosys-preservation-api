@@ -41,5 +41,42 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 
             Assert.IsFalse(result.IsValid);
         }
+
+        [TestMethod]
+        public void Fail_WhenPoTag_AndPoNotGiven()
+        {
+            var dut = new CreateAreaTagDtoValidator();
+
+            var inValidCreateAreaTagDto = new CreateAreaTagDto
+            {
+                AreaTagType = AreaTagType.PoArea,
+                ProjectName = "P",
+                DisciplineCode = "I",
+                Requirements = new List<TagRequirementDto> {new TagRequirementDto {IntervalWeeks = 2}}
+            };
+
+            var result = dut.Validate(inValidCreateAreaTagDto);
+
+            Assert.IsFalse(result.IsValid);
+        }
+
+        [TestMethod]
+        public void Validate_OK_WhenPoTag_AndPoGiven()
+        {
+            var dut = new CreateAreaTagDtoValidator();
+
+            var inValidCreateAreaTagDto = new CreateAreaTagDto
+            {
+                AreaTagType = AreaTagType.PoArea,
+                ProjectName = "P",
+                DisciplineCode = "I",
+                Requirements = new List<TagRequirementDto> {new TagRequirementDto {IntervalWeeks = 2}},
+                PurchaseOrderCalloffCode = "X"
+            };
+
+            var result = dut.Validate(inValidCreateAreaTagDto);
+
+            Assert.IsTrue(result.IsValid);
+        }
     }
 }

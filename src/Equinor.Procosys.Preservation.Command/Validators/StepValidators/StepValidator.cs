@@ -64,5 +64,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
             var mode = await _context.QuerySet<Mode>().SingleAsync(m => m.Id == modeId, token);
             return !mode.ForSupplier;
         }
+
+        public async Task<bool> IsForSupplierAsync(int stepId, CancellationToken token)
+        {
+            var mode = await (from s in _context.QuerySet<Step>()
+                join m in _context.QuerySet<Mode>() on s.ModeId equals m.Id
+                where s.Id == stepId
+                select m).SingleOrDefaultAsync(token);
+            return mode != null && mode.ForSupplier;
+        }
     }
 }
