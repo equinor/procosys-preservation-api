@@ -226,6 +226,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
+        [TestMethod]
+        public async Task HandlingCreateTagsCommand_ShouldReturnNotFound_WhenAddingTagWithOutPoToSupplierStep()
+        {
+            // Arrange
+            _modeMock.Object.ForSupplier = true;
+            _mainTagDetails1.PurchaseOrderNo = null;
+
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual($"Purchase Order for {_mainTagDetails1.TagNo} not found in project {TestProjectName}.", result.Errors[0]);
+        }
+
         private void AssertTagProperties(CreateTagsCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject)
         {
             Assert.AreEqual(mainTagDetails.AreaCode, tagAddedToProject.AreaCode);

@@ -270,6 +270,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             // Assert
             Assert.AreEqual(1, result.Errors.Count);
         }
+        
+        [TestMethod]
+        public async Task HandlingAutoScopeTagsCommand_ShouldReturnNotFound_WhenAddingTagWithOutPoToSupplierStep()
+        {
+            // Arrange
+            _modeMock.Object.ForSupplier = true;
+            _mainTagDetails1.PurchaseOrderNo = null;
+
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual($"Purchase Order for {_mainTagDetails1.TagNo} not found in project {TestProjectName}.", result.Errors[0]);
+        }
 
         private void AssertTagProperties(AutoScopeTagsCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject, int regDefId, int interval)
         {
