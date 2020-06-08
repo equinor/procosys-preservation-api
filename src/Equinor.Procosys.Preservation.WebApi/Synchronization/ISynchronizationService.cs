@@ -5,6 +5,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
 {
     public interface ISynchronizationService
     {
-        Task Synchronize(CancellationToken stoppingToken);
+        Task Synchronize(CancellationToken cancellationToken);
     }
 }
