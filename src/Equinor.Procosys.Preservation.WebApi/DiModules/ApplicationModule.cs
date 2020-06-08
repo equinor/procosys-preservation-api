@@ -86,6 +86,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
             services.AddScoped<IReadOnlyContext, PreservationContext>();
+            services.AddScoped<ISynchronizationService, SynchronizationService>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
