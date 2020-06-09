@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -63,6 +64,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public virtual DbSet<TagFunction> TagFunctions { get; set; }
         public virtual DbSet<TagFunctionRequirement> TagFunctionRequirements { get; set; }
         public virtual DbSet<Attachment> Attachments { get; set; }
+        public virtual DbSet<History> HistoryEntries { get; set; }
 
         private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
         {
