@@ -46,6 +46,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 column: "CreatedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_History_ObjectId_ASC",
+                table: "History",
+                column: "ObjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_History_PreservationRecordId",
                 table: "History",
                 column: "PreservationRecordId");

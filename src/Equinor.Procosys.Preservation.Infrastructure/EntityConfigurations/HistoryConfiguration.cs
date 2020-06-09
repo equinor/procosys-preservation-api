@@ -23,6 +23,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasConversion<string>()
                 .IsRequired();
 
+            builder
+                .HasIndex(p => p.ObjectId)
+                .HasName("IX_History_ObjectId_ASC");
+
             builder.HasCheckConstraint("constraint_history_check_valid_event_type", $"{nameof(History.EventType)} in ({GetValidEventTypes()})");
         }
 

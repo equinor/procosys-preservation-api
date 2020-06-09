@@ -64,6 +64,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("CreatedById");
 
+                    b.HasIndex("ObjectId")
+                        .HasName("IX_History_ObjectId_ASC");
+
                     b.HasIndex("PreservationRecordId");
 
                     b.ToTable("History");
