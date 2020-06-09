@@ -213,7 +213,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         }
         
         [TestMethod]
-        public void Validate_ShouldFailForNonSupplierStep_WhenRequirementForSupplierOnyGiven()
+        public void Validate_ShouldFailForNonSupplierStep_WhenRequirementForSupplierOnlyGiven()
         {
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
             _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
