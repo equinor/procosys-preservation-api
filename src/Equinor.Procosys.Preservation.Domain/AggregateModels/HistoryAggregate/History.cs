@@ -26,8 +26,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
 
         public string Description { get; private set; }
         public int CreatedById { get; private set; }
+        public int ObjectId { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public EventType EventType { get; private set; }
+        public ObjectType ObjectType { get; private set; }
 
         public PreservationRecord PreservationRecord { get; private set; }
 
