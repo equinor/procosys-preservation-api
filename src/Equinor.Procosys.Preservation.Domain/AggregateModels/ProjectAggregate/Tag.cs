@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private readonly List<TagRequirement> _requirements = new List<TagRequirement>();
         private readonly List<Action> _actions = new List<Action>();
         private readonly List<TagAttachment> _attachments = new List<TagAttachment>();
-        private readonly List<History> _historyEntries = new List<History>();
+        private readonly List<History> _history = new List<History>();
 
         public const int TagNoLengthMax = 255;
         public const int TagFunctionCodeLengthMax = 255;
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public IReadOnlyCollection<TagAttachment> Attachments => _attachments.AsReadOnly();
-        public IReadOnlyCollection<History> HistoryEntries => _historyEntries.AsReadOnly();
+        public IReadOnlyCollection<History> History => _history.AsReadOnly();
         public bool IsVoided { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set;  }
 
