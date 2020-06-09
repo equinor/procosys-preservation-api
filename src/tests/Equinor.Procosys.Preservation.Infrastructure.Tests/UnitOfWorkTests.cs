@@ -20,7 +20,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         private DbContextOptions<PreservationContext> _dbContextOptions;
         private Mock<IPlantProvider> _plantProviderMock;
         private Mock<IEventDispatcher> _eventDispatcherMock;
-        private Mock<ICurrentUserProvider> _currentUserProviderMock;
         private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
@@ -36,8 +35,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
 
             _eventDispatcherMock = new Mock<IEventDispatcher>();
 
-            _currentUserProviderMock = new Mock<ICurrentUserProvider>();
-
             _timeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
             TimeService.SetProvider(_timeProvider);
         }
@@ -51,14 +48,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             dut.Persons.Add(user);
             dut.SaveChanges();
 
-            _currentUserProviderMock
-                .Setup(x => x.GetCurrentUserOid())
-                .Returns(_currentUserOid);
-
             var newMode = new Mode(Plant, "TestMode", false);
             dut.Modes.Add(newMode);
 
-            await dut.SaveChangesAsync();
+            await dut.SaveChangesAsync(_currentUserOid, default);
 
             Assert.AreEqual(_currentTime, newMode.CreatedAtUtc);
             Assert.AreEqual(user.Id, newMode.CreatedById);
@@ -76,17 +69,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
             dut.Persons.Add(user);
             dut.SaveChanges();
 
-            _currentUserProviderMock
-                .Setup(x => x.GetCurrentUserOid())
-                .Returns(_currentUserOid);
-
             var newMode = new Mode(Plant, "TestMode", false);
             dut.Modes.Add(newMode);
 
-            await dut.SaveChangesAsync();
+            await dut.SaveChangesAsync(_currentUserOid, default);
 
             newMode.Void();
-            await dut.SaveChangesAsync();
+            await dut.SaveChangesAsync(_currentUserOid, default);
 
             Assert.AreEqual(_currentTime, newMode.ModifiedAtUtc);
             Assert.AreEqual(user.Id, newMode.ModifiedById);
