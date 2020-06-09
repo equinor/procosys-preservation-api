@@ -16,11 +16,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
 
         public History(
             string plant,
-            EventType eventType,
-            string description
-            ) : base(plant)
+            string description,
+            int objectId,
+            ObjectType objectType,
+            EventType eventType
+        ) : base(plant)
         {
             Description = description;
+            ObjectId = objectId;
+            ObjectType = objectType;
             EventType = eventType;
         }
 
