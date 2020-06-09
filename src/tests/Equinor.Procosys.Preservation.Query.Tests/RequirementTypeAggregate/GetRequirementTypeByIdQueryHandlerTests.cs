@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _requirementType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", 999);
                 _requirementDefWithInfo = _requirementType.RequirementDefinitions.Single();
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public async Task HandleGetRequirementTypeByIdQuery_KnownId_ShouldReturnRequirementTypeWithAllPropertiesSet()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetRequirementTypeByIdQueryHandler(context);
                 var result = await dut.Handle(new GetRequirementTypeByIdQuery(_requirementType.Id), default);
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public async Task HandleGetRequirementTypeByIdQuery_UnknownId_ShouldReturnNull()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetRequirementTypeByIdQueryHandler(context);
                 var result = await dut.Handle(new GetRequirementTypeByIdQuery(246), default);

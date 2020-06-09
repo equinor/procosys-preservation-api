@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _reqType1 = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", 999);
 
@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public async Task HandleGetAllRequirementTypesQuery_ShouldReturnNonVoidedRequirementTypesOnly_WhenNotGettingVoided()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetAllRequirementTypesQueryHandler(context);
                 var result = await dut.Handle(new GetAllRequirementTypesQuery(false), default);
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public async Task HandleGetAllRequirementTypesQuery_ShouldlncludeVoidedRequirementTypes_WhenGettingVoided()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetAllRequirementTypesQueryHandler(context);
                 var result = await dut.Handle(new GetAllRequirementTypesQuery(true), default);
@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public async Task HandleGetAllRequirementTypesQuery_ShouldReturnRequirementTypesSortedBySortKey()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetAllRequirementTypesQueryHandler(context);
                 var result = await dut.Handle(new GetAllRequirementTypesQuery(true), default);

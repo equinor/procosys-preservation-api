@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
 
@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_ReturnsOkResult()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
                 var result = await dut.Handle(_query, default);
@@ -98,7 +98,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_ReturnsNotFound_WhenNoTagFunctionWithRequirement()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var tagFunction = context.TagFunctions.Include(tf => tf.Requirements).Single();
                 var tagFunctionRequirement = tagFunction.Requirements.Single();
@@ -106,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 context.SaveChangesAsync().Wait();
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
                 var result = await dut.Handle(_query, default);
@@ -118,14 +118,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_ReturnsNotFound_WhenNoTagFunctionWithRequirement_BecauseOfVoidedTagFunction()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var tagFunction = context.TagFunctions.Include(tf => tf.Requirements).Single();
                 tagFunction.Void();
                 context.SaveChangesAsync().Wait();
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
                 var result = await dut.Handle(_query, default);
@@ -137,7 +137,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_ReturnsCorrectItems()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
                 var result = await dut.Handle(_query, default);
@@ -155,7 +155,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_SetsCorrectIsPreservedStatus()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new SearchTagsByTagFunctionQueryHandler(context, _tagApiServiceMock.Object, _plantProvider);
                 var result = await dut.Handle(_query, default);
@@ -169,7 +169,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_ReturnsEmptyList_WhenTagApiReturnsNull()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _tagApiServiceMock
                     .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, _testDataSet.Project1.Name, new List<string>{_tagFunctionCodeRegisterCodePair}))
@@ -186,7 +186,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         [TestMethod]
         public async Task Handle_ReturnsApiTags_WhenProjectRepositoryReturnsNull()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _tagApiServiceMock
                     .Setup(x => x.SearchTagsByTagFunctionsAsync(TestPlant, "Project XYZ", new List<string>{_tagFunctionCodeRegisterCodePair}))

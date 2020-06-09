@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
 
@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
         [TestMethod]
         public async Task HandleGetUniqueTagRequirementTypesQuery_ShouldReturnOkResult()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagRequirementTypesQueryHandler(context);
                 var result = await dut.Handle(_queryForProject1, default);
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
         [TestMethod]
         public async Task HandleGetUniqueTagRequirementTypesQuery_ShouldReturnCorrectUniqueRequirementTypes()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagRequirementTypesQueryHandler(context);
                 
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
         [TestMethod]
         public async Task HandleGetUniqueTagRequirementTypesQuery_ShouldReturnEmptyListOfUniqueRequirementTypes()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagRequirementTypesQueryHandler(context);
 

@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ResponsibleAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _responsible = AddResponsible(context, "R");
             }
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ResponsibleAggregate
         [TestMethod]
         public async Task HandleGetAllResponsiblesQueryHandler_ShouldReturnResponsibles()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var _dut = new GetAllResponsiblesQueryHandler(context);
                 var result = await _dut.Handle(new GetAllResponsiblesQuery(), default);

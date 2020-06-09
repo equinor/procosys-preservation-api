@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _mode = AddMode(context, "M", false);
             }
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
         [TestMethod]
         public async Task HandleGetModeByIdQueryHandler_KnownId_ShouldReturnMode()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetModeByIdQueryHandler(context);
                 var result = await dut.Handle(new GetModeByIdQuery(_mode.Id), default);
@@ -39,8 +39,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
         [TestMethod]
         public async Task HandleGetModeByIdQueryHandler_UnknownId_ShouldReturnNull()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
-                _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetModeByIdQueryHandler(context);
                 var result = await dut.Handle(new GetModeByIdQuery(1235), default);

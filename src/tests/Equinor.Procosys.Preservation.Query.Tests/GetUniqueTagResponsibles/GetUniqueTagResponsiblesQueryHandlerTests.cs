@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
 
@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
         [TestMethod]
         public async Task HandleGetUniqueTagResponsiblesQuery_ShouldReturnOkResult()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagResponsiblesQueryHandler(context);
                 var result = await dut.Handle(_queryForProject1, default);
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
         [TestMethod]
         public async Task HandleGetUniqueTagResponsiblesQuery_ShouldReturnCorrectUniqueResponsibleCodes()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagResponsiblesQueryHandler(context);
                 
@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
         [TestMethod]
         public async Task HandleGetUniqueTagResponsiblesQuery_ShouldReturnEmptyListOfUniqueResponsibleCodes()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagResponsiblesQueryHandler(context);
 
@@ -69,8 +69,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
         [TestMethod]
         public async Task HandleGetUniqueTagResponsiblesQuery_ShouldReturnCorrectUniqueResponsibleCodes_AfterTransfer()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
-                _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
 
                 var tag = context.Tags.Include(t => t.Requirements).ThenInclude(r => r.PreservationPeriods).First();
@@ -79,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
                 context.SaveChangesAsync().Wait();
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagResponsiblesQueryHandler(context);
 

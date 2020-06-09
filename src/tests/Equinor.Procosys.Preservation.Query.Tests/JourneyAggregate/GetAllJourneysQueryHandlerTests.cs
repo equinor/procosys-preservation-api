@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var mode1 = AddMode(context, _mode1Title, false);
                 var responsible1 = AddResponsible(context, _responsible1Code);
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public async Task HandleGetAllJourneysQuery_ShouldReturnNonVoidedJourneysOnly_WhenNotGettingVoided()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetAllJourneysQueryHandler(context);
 
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public async Task HandleGetAllJourneysQuery_ShouldReturnVoidedJourneys_WhenGettingVoided()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var journey = context.Journeys.Include(j => j.Steps).First();
                 journey.Void();
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
                 context.SaveChangesAsync().Wait();
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetAllJourneysQueryHandler(context);
                 var result = await dut.Handle(new GetAllJourneysQuery(true), default);

@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagAttachment
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
 
-            using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher);
 
             _testDataSet = AddTestDataSet(context);
 
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagAttachment
         [TestMethod]
         public async Task Handler_ReturnsAttachmentUri()
         {
-            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher);
 
             var query = new GetTagAttachmentQuery(_tagId, _attachmentId);
             var dut = new GetTagAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagAttachment
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher);
 
             var query = new GetTagAttachmentQuery(_tagId, 0);
             var dut = new GetTagAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);

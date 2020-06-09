@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _tfWithRequirement = AddTagFunction(context, "TFC2", "RC1");
                 var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R");
@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         [TestMethod]
         public async Task HandleGetTagFunctionDetailsQuery_ShouldReturnTagFunctionWithRequirement_WhenTagFunctionHaveRequirement()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetTagFunctionDetailsQueryHandler(context);
                 var result = await dut.Handle(new GetTagFunctionDetailsQuery(_tfWithRequirement.Code, _tfWithRequirement.RegisterCode), default);
@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         [TestMethod]
         public async Task HandleGetTagFunctionDetailsQuery_ShouldReturnTagFunctionWithoutRequirement_WhenTagFunctionHaveNoRequirements()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetTagFunctionDetailsQueryHandler(context);
                 var result = await dut.Handle(new GetTagFunctionDetailsQuery(_tfWithoutRequirement.Code, _tfWithoutRequirement.RegisterCode), default);
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         [TestMethod]
         public async Task HandleGetTagFunctionDetailsQuery_UnknownTagFunction_ShouldReturnNull()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetTagFunctionDetailsQueryHandler(context);
                 var result = await dut.Handle(new GetTagFunctionDetailsQuery("XX", _tfWithRequirement.RegisterCode), default);

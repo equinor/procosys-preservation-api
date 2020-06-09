@@ -17,8 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagFunctions
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher,
-                _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
 
@@ -29,8 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagFunctions
         [TestMethod]
         public async Task HandleGetUniqueTagFunctionsQuery_ShouldReturnOkResult()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
-                _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagFunctionsQueryHandler(context);
                 var result = await dut.Handle(_queryForProject1, default);
@@ -42,8 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagFunctions
         [TestMethod]
         public async Task HandleGetUniqueTagFunctionsQuery_ShouldReturnCorrectUniqueTagFunctions()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
-                _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagFunctionsQueryHandler(context);
 
@@ -56,8 +53,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagFunctions
         [TestMethod]
         public async Task HandleGetUniqueTagFunctionsQuery_ShouldReturnEmptyListOfUniqueTagFunctions()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
-                _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagFunctionsQueryHandler(context);
 

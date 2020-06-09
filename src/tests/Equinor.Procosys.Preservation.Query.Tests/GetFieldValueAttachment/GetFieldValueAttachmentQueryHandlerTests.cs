@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetFieldValueAttachment
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher);
 
             _uri = new Uri("http://whatever/file.txt");
             _attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetFieldValueAttachment
         [TestMethod]
         public async Task Handler_ReturnsAttachmentUri()
         {
-            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher);
 
             var query = new GetFieldValueAttachmentQuery(_tagId, _requirementId, _attachmentFieldId);
             var dut = new GetFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetFieldValueAttachment
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher);
 
             var query = new GetFieldValueAttachmentQuery(0, _requirementId, _attachmentFieldId);
             var dut = new GetFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);

@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
             }
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public async Task HandleGetJourneyByIdQueryHandler_KnownId_ShouldReturnJourney()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetJourneyByIdQueryHandler(context);
                 var result = await dut.Handle(new GetJourneyByIdQuery(_testDataSet.Journey2With1Step.Id), default);
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public async Task HandleGetJourneyByIdQueryHandler_UnknownId_ShouldReturnNull()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetJourneyByIdQueryHandler(context);
                 var result = await dut.Handle(new GetJourneyByIdQuery(1525), default);

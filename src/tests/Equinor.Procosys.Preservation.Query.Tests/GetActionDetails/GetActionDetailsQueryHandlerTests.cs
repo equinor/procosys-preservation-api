@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
 
@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsClosedAction()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionDetailsQuery(_tagId, _closedActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         public async Task Handler_ReturnsModifiedAction()
         {
             DateTime? modifiedTime;
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var openAction = context.Actions.Single(a => a.Id == _openActionId);
                 openAction.Title = "Changed title";
@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 modifiedTime = openAction.ModifiedAtUtc;
             }
 
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionDetailsQuery(_tagId, _openActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsOpenAction()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionDetailsQuery(_tagId, _openActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -120,7 +120,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionDetailsQuery(0, _closedActionId);
                 var dut = new GetActionDetailsQueryHandler(context);
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfActionIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionDetailsQuery(_tagId, 0);
                 var dut = new GetActionDetailsQueryHandler(context);

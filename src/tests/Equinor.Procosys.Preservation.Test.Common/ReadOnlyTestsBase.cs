@@ -24,7 +24,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected Mock<IPlantProvider> _plantProviderMock;
         protected IPlantProvider _plantProvider;
-        protected ICurrentUserProvider _currentUserProvider;
         protected IEventDispatcher _eventDispatcher;
         protected ManualTimeProvider _timeProvider;
 
@@ -34,10 +33,6 @@ namespace Equinor.Procosys.Preservation.Test.Common
             _plantProviderMock = new Mock<IPlantProvider>();
             _plantProviderMock.SetupGet(x => x.Plant).Returns(TestPlant);
             _plantProvider = _plantProviderMock.Object;
-
-            var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(x => x.GetCurrentUserOid()).Returns(_currentUserOid);
-            _currentUserProvider = currentUserProviderMock.Object;
 
             var eventDispatcher = new Mock<IEventDispatcher>();
             _eventDispatcher = eventDispatcher.Object;

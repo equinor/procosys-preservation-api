@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
 
@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
         [TestMethod]
         public async Task HandleGetUniqueTagModesQuery_ShouldReturnOkResult()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagModesQueryHandler(context);
                 var result = await dut.Handle(_queryForProject1, default);
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
         [TestMethod]
         public async Task HandleGetUniqueTagModesQuery_ShouldReturnCorrectUniqueModes()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagModesQueryHandler(context);
 
@@ -57,8 +57,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
         [TestMethod]
         public async Task HandleGetUniqueTagModesQuery_ShouldReturnEmptyListOfUniqueModes()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
-                _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new GetUniqueTagModesQueryHandler(context);
 

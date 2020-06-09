@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
 
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
         [TestMethod]
         public async Task Handler_ReturnsAttachments()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionAttachmentsQuery(_tagId, _actionId);
                 var dut = new GetActionAttachmentsQueryHandler(context);
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionAttachmentsQuery(0, _actionId);
                 var dut = new GetActionAttachmentsQueryHandler(context);
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfActionIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionAttachmentsQuery(_tagId, 0);
                 var dut = new GetActionAttachmentsQueryHandler(context);

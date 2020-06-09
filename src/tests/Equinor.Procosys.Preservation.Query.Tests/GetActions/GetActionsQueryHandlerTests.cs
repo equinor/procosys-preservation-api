@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
 
@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
         [TestMethod]
         public async Task Handler_ReturnsActions()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionsQuery(_tagId);
                 var dut = new GetActionsQueryHandler(context);
@@ -103,7 +103,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionsQuery(0);
                 var dut = new GetActionsQueryHandler(context);
@@ -119,8 +119,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
         [TestMethod]
         public async Task Handler_ReturnsActionsInCorrectOrder()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
-                _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var query = new GetActionsQuery(_tag2Id);
                 var dut = new GetActionsQueryHandler(context);

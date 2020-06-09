@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachment
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
 
-            using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher);
 
             _testDataSet = AddTestDataSet(context);
 
@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachment
         [TestMethod]
         public async Task Handler_ReturnsAttachmentUri()
         {
-            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher);
 
             var query = new GetActionAttachmentQuery(_tagId, _actionId, _attachmentId);
             var dut = new GetActionAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachment
         [TestMethod]
         public async Task Handler_ReturnsNotFound_IfActionIsNotFound()
         {
-            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
+            await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher);
 
             var query = new GetActionAttachmentQuery(_tagId, _actionId, 0);
             var dut = new GetActionAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
