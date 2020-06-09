@@ -19,57 +19,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate.History", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(1048)")
-                        .HasMaxLength(1048);
-
-                    b.Property<string>("EventType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Plant")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)")
-                        .HasMaxLength(255);
-
-                    b.Property<int?>("PreservationRecordId")
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("rowversion");
-
-                    b.Property<int?>("TagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("PreservationRecordId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("HistoryEntries");
-
-                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('AddRequirement','DeleteRequirement','VoidRequirement','UnvoidRequirement','VoidTag','UnvoidTag','StartPreservation','CompletePreservation','ChangeInterval','ManualTransfer','AutomaticTransfer')");
-                });
-
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
                 {
                     b.Property<int>("Id")
@@ -1248,23 +1197,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("TagId");
 
                     b.HasDiscriminator().HasValue("TagAttachment");
-                });
-
-            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate.History", b =>
-                {
-                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.PreservationRecord", "PreservationRecord")
-                        .WithMany()
-                        .HasForeignKey("PreservationRecordId");
-
-                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Tag", null)
-                        .WithMany("HistoryEntries")
-                        .HasForeignKey("TagId");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
