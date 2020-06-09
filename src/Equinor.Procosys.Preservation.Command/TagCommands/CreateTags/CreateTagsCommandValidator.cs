@@ -25,12 +25,24 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 .WithMessage("At least 1 TagNo must be given!")
                 .Must(BeUniqueTagNos)
                 .WithMessage("TagNos must be unique!");
-
-            RuleFor(command => command.Requirements)
-                .Must(r => r.Any())
-                .WithMessage("At least 1 requirement must be given!")
-                .Must(BeUniqueRequirements)
-                .WithMessage("Requirement definitions must be unique!");
+            
+            WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
+            {
+                RuleFor(command => command.Requirements)
+                    .Must(BeUniqueRequirements)
+                    .WithMessage(command => "Requirement definitions must be unique!")
+                    .MustAsync((_, requirements, token) => RequirementUsageIsForAllJourneysAsync(requirements, token))
+                    .WithMessage(command => "Requirements must include requirements to be used both for supplier and other than suppliers!");
+            }).Otherwise(() =>
+            {
+                RuleFor(command => command.Requirements)
+                    .Must(BeUniqueRequirements)
+                    .WithMessage(command => "Requirement definitions must be unique!")
+                    .MustAsync((_, requirements, token) => RequirementUsageIsForJourneysWithoutSupplierAsync(requirements, token))
+                    .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!")
+                    .MustAsync((_, requirements, token) => RequirementUsageIsNotForSupplierStepOnlyAsync(requirements, token))
+                    .WithMessage(command => "Requirements can't include requirements just for suppliers!");
+            });
 
             RuleForEach(command => command.TagNos)
                 .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProjectAsync(tagNo, command.ProjectName, token))
@@ -63,6 +75,24 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return reqIds.Distinct().Count() == reqIds.Count;
             }
+            
+            async Task<bool> RequirementUsageIsForAllJourneysAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
+            {
+                var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
+                return await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(reqIds, token);
+            }                        
+
+            async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
+            {
+                var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
+                return await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(reqIds, token);
+            }                        
+
+            async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
+            {
+                var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
+                return !await requirementDefinitionValidator.UsageCoversForSupplierOnlyAsync(reqIds, token);
+            }                        
 
             async Task<bool> NotBeAnExistingTagWithinProjectAsync(string tagNo, string projectName, CancellationToken token) =>
                 !await tagValidator.ExistsAsync(tagNo, projectName, token);
@@ -75,6 +105,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
 
             async Task<bool> NotBeAVoidedStepAsync(int stepId, CancellationToken token)
                 => !await stepValidator.IsVoidedAsync(stepId, token);
+
+            async Task<bool> BeASupplierStepAsync(int stepId, CancellationToken token)
+                => await stepValidator.IsForSupplierAsync(stepId, token);
 
             async Task<bool> BeAnExistingRequirementDefinitionAsync(RequirementForCommand requirement, CancellationToken token)
                 => await requirementDefinitionValidator.ExistsAsync(requirement.RequirementDefinitionId, token);
