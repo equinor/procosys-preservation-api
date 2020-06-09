@@ -45,6 +45,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
+using System;
 
 namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
 {
@@ -97,7 +98,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _currentUserProviderMock.Setup(c => c.IsCurrentUserAuthenticated()).Returns(false);
-            var command = new PreserveCommand(TagIdWithAccessToProject);
+            var command = new PreserveCommand(TagIdWithAccessToProject, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -113,7 +114,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnPreserveCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new PreserveCommand(TagIdWithAccessToProject);
+            var command = new PreserveCommand(TagIdWithAccessToProject, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -126,7 +127,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnPreserveCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new PreserveCommand(TagIdWithoutAccessToProject);
+            var command = new PreserveCommand(TagIdWithoutAccessToProject, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -140,7 +141,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new PreserveCommand(TagIdWithAccessToProject);
+            var command = new PreserveCommand(TagIdWithAccessToProject, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -155,7 +156,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new PreserveCommand(TagIdWithAccessToProject);
+            var command = new PreserveCommand(TagIdWithAccessToProject, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -170,7 +171,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnBulkPreserveCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new BulkPreserveCommand(new List<int>{TagIdWithAccessToProject});
+            var command = new BulkPreserveCommand(new List<int>{TagIdWithAccessToProject}, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -183,7 +184,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnBulkPreserveCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new BulkPreserveCommand(new List<int>{TagIdWithoutAccessToProject});
+            var command = new BulkPreserveCommand(new List<int>{TagIdWithoutAccessToProject}, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -197,7 +198,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new BulkPreserveCommand(new List<int>{TagIdWithAccessToProject});
+            var command = new BulkPreserveCommand(new List<int>{TagIdWithAccessToProject}, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -212,7 +213,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new BulkPreserveCommand(new List<int>{TagIdWithAccessToProject});
+            var command = new BulkPreserveCommand(new List<int>{TagIdWithAccessToProject}, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -227,7 +228,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateAreaTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new CreateAreaTagCommand(ProjectWithAccess, TagType.PoArea, null, null, null, null, 1, null, null, null, null);
+            var command = new CreateAreaTagCommand(ProjectWithAccess, TagType.PoArea, null, null, null, null, 1, null, null, null, null, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -240,7 +241,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateAreaTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new CreateAreaTagCommand(ProjectWithoutAccess, TagType.PoArea, null, null, null, null, 1, null, null, null, null);
+            var command = new CreateAreaTagCommand(ProjectWithoutAccess, TagType.PoArea, null, null, null, null, 1, null, null, null, null, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -255,7 +256,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateTagsCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new CreateTagsCommand(null, ProjectWithAccess, 1, null, null, null);
+            var command = new CreateTagsCommand(null, ProjectWithAccess, 1, null, null, null, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -268,7 +269,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateTagsCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new CreateTagsCommand(null, ProjectWithoutAccess, 1, null, null, null);
+            var command = new CreateTagsCommand(null, ProjectWithoutAccess, 1, null, null, null, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -283,7 +284,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnStartPreservationCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject});
+            var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject}, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -296,7 +297,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnStartPreservationCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new StartPreservationCommand(new List<int>{TagIdWithoutAccessToProject});
+            var command = new StartPreservationCommand(new List<int>{TagIdWithoutAccessToProject}, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -310,7 +311,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject});
+            var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject}, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -325,7 +326,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject});
+            var command = new StartPreservationCommand(new List<int>{TagIdWithAccessToProject}, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -340,7 +341,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateActionCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new CreateActionCommand(TagIdWithAccessToProject, null, null, null);
+            var command = new CreateActionCommand(TagIdWithAccessToProject, null, null, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -353,7 +354,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCreateActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new CreateActionCommand(TagIdWithoutAccessToProject, null, null, null);
+            var command = new CreateActionCommand(TagIdWithoutAccessToProject, null, null, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -367,7 +368,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new CreateActionCommand(TagIdWithAccessToProject, null, null, null);
+            var command = new CreateActionCommand(TagIdWithAccessToProject, null, null, null, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -382,7 +383,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new CreateActionCommand(TagIdWithAccessToProject, null, null, null);
+            var command = new CreateActionCommand(TagIdWithAccessToProject, null, null, null, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -397,7 +398,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateActionCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null);
+            var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -410,7 +411,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new UpdateActionCommand(TagIdWithoutAccessToProject, 0, null, null, null, null);
+            var command = new UpdateActionCommand(TagIdWithoutAccessToProject, 0, null, null, null, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -424,7 +425,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null);
+            var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -439,7 +440,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null);
+            var command = new UpdateActionCommand(TagIdWithAccessToProject, 0, null, null, null, null, Guid.Empty);
             
             // act
             var result = await _dut.ValidateAsync(command);
@@ -454,7 +455,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -467,7 +468,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCloseActionCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new CloseActionCommand(TagIdWithoutAccessToProject, 0, null);
+            var command = new CloseActionCommand(TagIdWithoutAccessToProject, 0, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -481,7 +482,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -496,7 +497,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null);
+            var command = new CloseActionCommand(TagIdWithAccessToProject, 0, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -511,7 +512,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new CompletePreservationCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)});
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> {new IdAndRowVersion(TagIdWithAccessToProject, null)}, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -524,7 +525,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnCompletePreservationCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithoutAccessToProject, null) });
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithoutAccessToProject, null) }, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -538,7 +539,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) });
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) }, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -553,7 +554,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) });
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(TagIdWithAccessToProject, null) }, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -568,7 +569,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnVoidTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new VoidTagCommand(TagIdWithAccessToProject, null);
+            var command = new VoidTagCommand(TagIdWithAccessToProject, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -581,7 +582,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnVoidTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new VoidTagCommand(TagIdWithoutAccessToProject, null);
+            var command = new VoidTagCommand(TagIdWithoutAccessToProject, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -595,7 +596,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new VoidTagCommand(TagIdWithAccessToProject, null);
+            var command = new VoidTagCommand(TagIdWithAccessToProject, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -610,7 +611,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new VoidTagCommand(TagIdWithAccessToProject, null);
+            var command = new VoidTagCommand(TagIdWithAccessToProject, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -625,7 +626,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUnvoidTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
+            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -638,7 +639,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUnvoidTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new UnvoidTagCommand(TagIdWithoutAccessToProject, null);
+            var command = new UnvoidTagCommand(TagIdWithoutAccessToProject, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -652,7 +653,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
+            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -667,7 +668,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
+            var command = new UnvoidTagCommand(TagIdWithAccessToProject, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -682,7 +683,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteTagAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null);
+            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -695,7 +696,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new DeleteTagAttachmentCommand(TagIdWithoutAccessToProject, 1, null);
+            var command = new DeleteTagAttachmentCommand(TagIdWithoutAccessToProject, 1, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -709,7 +710,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null);
+            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -724,7 +725,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null);
+            var command = new DeleteTagAttachmentCommand(TagIdWithAccessToProject, 1, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -739,7 +740,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUploadTagAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
+            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -752,7 +753,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUploadTagAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new UploadTagAttachmentCommand(TagIdWithoutAccessToProject, "F", true, new MemoryStream());
+            var command = new UploadTagAttachmentCommand(TagIdWithoutAccessToProject, "F", true, new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -766,7 +767,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
+            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -781,7 +782,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream());
+            var command = new UploadTagAttachmentCommand(TagIdWithAccessToProject, "F", true, new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -796,7 +797,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteFieldValueAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
+            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -809,7 +810,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteFieldValueAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new DeleteFieldValueAttachmentCommand(TagIdWithoutAccessToProject, 1, 1);
+            var command = new DeleteFieldValueAttachmentCommand(TagIdWithoutAccessToProject, 1, 1, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -823,7 +824,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
+            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -838,7 +839,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1);
+            var command = new DeleteFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -853,7 +854,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteActionAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null);
+            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -866,7 +867,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteActionAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new DeleteActionAttachmentCommand(TagIdWithoutAccessToProject, 1, 2, null);
+            var command = new DeleteActionAttachmentCommand(TagIdWithoutAccessToProject, 1, 2, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -880,7 +881,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null);
+            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -895,7 +896,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null);
+            var command = new DeleteActionAttachmentCommand(TagIdWithAccessToProject, 1, 2, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -910,7 +911,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUploadActionAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream());
+            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -923,7 +924,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUploadActionAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new UploadActionAttachmentCommand(TagIdWithoutAccessToProject, 1, "F", true, new MemoryStream());
+            var command = new UploadActionAttachmentCommand(TagIdWithoutAccessToProject, 1, "F", true, new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -937,7 +938,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream());
+            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -952,7 +953,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream());
+            var command = new UploadActionAttachmentCommand(TagIdWithAccessToProject, 1, "F", true, new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -967,7 +968,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_RequirementPreserveCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1);
+            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -980,7 +981,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_RequirementPreserveCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new RequirementPreserveCommand(TagIdWithoutAccessToProject, 1);
+            var command = new RequirementPreserveCommand(TagIdWithoutAccessToProject, 1, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -994,7 +995,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1);
+            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1009,7 +1010,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1);
+            var command = new RequirementPreserveCommand(TagIdWithAccessToProject, 1, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1024,7 +1025,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_RecordValuesCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null);
+            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1037,7 +1038,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_RecordValuesCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new RecordValuesCommand(TagIdWithoutAccessToProject, 1, null, null, null);
+            var command = new RecordValuesCommand(TagIdWithoutAccessToProject, 1, null, null, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1051,7 +1052,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null);
+            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1066,7 +1067,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null);
+            var command = new RecordValuesCommand(TagIdWithAccessToProject, 1, null, null, null, Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1081,7 +1082,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_UploadFieldValueAttachmentCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream());
+            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1094,7 +1095,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_UploadFieldValueAttachmentCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new UploadFieldValueAttachmentCommand(TagIdWithoutAccessToProject, 1, 1, "F", new MemoryStream());
+            var command = new UploadFieldValueAttachmentCommand(TagIdWithoutAccessToProject, 1, 1, "F", new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1108,7 +1109,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream());
+            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1123,7 +1124,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream());
+            var command = new UploadFieldValueAttachmentCommand(TagIdWithAccessToProject, 1, 1, "F", new MemoryStream(), Guid.Empty);
 
             // act
             var result = await _dut.ValidateAsync(command);

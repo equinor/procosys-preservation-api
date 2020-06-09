@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 _testDataSet = AddTestDataSet(context);
             }
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         [TestMethod]
         public async Task GetProjectName_KnownTagId_ShouldReturnProjectName()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 // Arrange
                 var dut = new TagHelper(context);
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         [TestMethod]
         public async Task GetProjectName_UnKnownTagId_ShouldReturnNull()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 // Arrange
                 var dut = new TagHelper(context);
@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         [TestMethod]
         public async Task GetResponsibleCode_KnownTagId_ShouldReturnResponsibleCode()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 // Arrange
                 var dut = new TagHelper(context);
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         [TestMethod]
         public async Task GetResponsibleCode_UnKnownTagId_ShouldReturnNull()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 // Arrange
                 var dut = new TagHelper(context);

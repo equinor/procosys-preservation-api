@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
     {
         private readonly Mock<IMediator> _mediatorMock = new Mock<IMediator>();
         private readonly CreateTagsDto _createTagsDto = new CreateTagsDto();
+        private readonly Mock<ICurrentUserProvider> _currentUserProviderMock = new Mock<ICurrentUserProvider>();
         private TagsController _dut;
 
         [TestInitialize]
@@ -25,7 +28,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagsCommand>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int>{5}) as Result<List<int>>));
-            _dut = new TagsController(_mediatorMock.Object);
+
+            _currentUserProviderMock
+                .Setup(x => x.GetCurrentUserOid())
+                .Returns(new Guid("12345678-1234-1234-1234-123456789123"));
+
+            _dut = new TagsController(_mediatorMock.Object, _currentUserProviderMock.Object);
         }
 
         [TestMethod]
