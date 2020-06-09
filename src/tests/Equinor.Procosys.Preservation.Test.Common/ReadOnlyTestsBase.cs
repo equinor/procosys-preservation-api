@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var responsible = new Responsible(TestPlant, code, $"{code}-Title");
             context.Responsibles.Add(responsible);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return responsible;
         }
 
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var mode = new Mode(TestPlant, title, forSupplier);
             context.Modes.Add(mode);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return mode;
         }
 
@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var journey = new Journey(TestPlant, journeyTitle);
             journey.AddStep(new Step(TestPlant, stepTitle, mode, responsible));
             context.Journeys.Add(journey);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return journey;
         }
 
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var journey = new Journey(TestPlant, journeyTitle);
             context.Journeys.Add(journey);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return journey;
         }
 
@@ -95,11 +95,11 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var requirementType = new RequirementType(TestPlant, type, $"Title{type}", sortKey);
             context.RequirementTypes.Add(requirementType);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
 
             var requirementDefinition = new RequirementDefinition(TestPlant, def, 2, RequirementUsage.ForAll, 1);
             requirementType.AddRequirementDefinition(requirementDefinition);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
 
             return requirementType;
         }
@@ -108,7 +108,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var person = new Person(oid, firstName, lastName);
             context.Persons.Add(person);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return person;
         }
 
@@ -120,7 +120,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 project.Close();
             }
             context.Projects.Add(project);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return project;
         }
 
@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var tag = new Tag(TestPlant, tagType, tagNo, description, step, requirements);
             parentProject.AddTag(tag);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return tag;
         }
 
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.Info, 0);
             rd.AddField(field);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return field;
         }
 
@@ -144,7 +144,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.Number, 0, unit, showPrevious);
             rd.AddField(field);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return field;
         }
 
@@ -152,7 +152,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.CheckBox, 0);
             rd.AddField(field);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return field;
         }
 
@@ -160,7 +160,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var field = new Field(TestPlant, label, FieldType.Attachment, 0);
             rd.AddField(field);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
             return field;
         }
 
@@ -210,7 +210,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
 
             var step2OnJourney1 = new Step(TestPlant, "Step2", testDataSet.Mode2, testDataSet.Responsible2);
             testDataSet.Journey1With2Steps.AddStep(step2OnJourney1);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
 
             for (var i = 0; i < 10; i++)
             {
@@ -285,7 +285,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 testDataSet.Project2.AddTag(tag);
             }
             
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
 
             return testDataSet;
         }
@@ -294,7 +294,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
         {
             var tf = new TagFunction(TestPlant, tagFunctionCode, "Description", registerCode);
             context.TagFunctions.Add(tf);
-            context.SaveChangesAsync().Wait();
+            context.SaveChangesAsync(_currentUserOid).Wait();
 
             return tf;
         }

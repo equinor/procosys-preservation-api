@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 _closedAction = new Action(TestPlant, "Closed", "Desc2", _dueUtc);
                 _closedAction.Close(_utcNow, _testDataSet.CurrentUser);
                 tag.AddAction(_closedAction);
-                context.SaveChangesAsync().Wait();
+                context.SaveChangesAsync(_currentUserOid).Wait();
 
                 _tagId = tag.Id;
                 _openActionId = _openAction.Id;
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
                 var openAction = context.Actions.Single(a => a.Id == _openActionId);
                 openAction.Title = "Changed title";
                 _timeProvider.Elapse(new TimeSpan(1, 1, 1, 1));
-                context.SaveChangesAsync().Wait();
+                context.SaveChangesAsync(_currentUserOid).Wait();
                 modifiedTime = openAction.ModifiedAtUtc;
             }
 

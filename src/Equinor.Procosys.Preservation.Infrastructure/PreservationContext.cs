@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
         public IQueryable<TEntity> QuerySet<TEntity>() where TEntity : class => Set<TEntity>().AsNoTracking();
 
-        public async Task<int> SaveChangesAsync(Guid currentUserOid, CancellationToken cancellationToken)
+        public async Task<int> SaveChangesAsync(Guid currentUserOid, CancellationToken cancellationToken = default)
         {
             await DispatchEventsAsync(cancellationToken);
             await SetAuditDataAsync(currentUserOid);
