@@ -129,7 +129,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                     new RequirementForCommand(ReqDefId2, Interval2),
                 },
                 "Remark",
-                "SA");
+                "SA",
+                TestUserOid);
             
             _dut = new CreateTagsCommandHandler(
                 _projectRepositoryMock.Object,
@@ -223,7 +224,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

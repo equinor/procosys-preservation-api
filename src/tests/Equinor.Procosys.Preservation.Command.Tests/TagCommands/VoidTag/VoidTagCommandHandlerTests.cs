@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
         public async Task HandlingVoidTagCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(TestUserOid, default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

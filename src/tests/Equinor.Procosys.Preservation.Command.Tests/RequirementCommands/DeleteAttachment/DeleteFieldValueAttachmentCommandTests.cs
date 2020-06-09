@@ -34,7 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Delete
             _command = new DeleteFieldValueAttachmentCommand(
                 _tagId, 
                 _reqId,
-                _attachmentFieldId);
+                _attachmentFieldId,
+                TestUserOid);
 
             _requirementDefinition = new Mock<RequirementDefinition>();
             _requirementDefinition.SetupGet(r => r.Id).Returns(_reqId);
@@ -141,7 +142,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Delete
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

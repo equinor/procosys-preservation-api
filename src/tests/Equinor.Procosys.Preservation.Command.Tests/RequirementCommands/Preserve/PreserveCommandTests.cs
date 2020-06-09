@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preserve
@@ -9,10 +10,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new PreserveCommand(17, 11);
+            var dut = new PreserveCommand(17, 11, Guid.Empty);
 
             Assert.AreEqual(17, dut.TagId);
             Assert.AreEqual(11, dut.RequirementId);
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }

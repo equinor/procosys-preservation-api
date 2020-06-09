@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
                 .Setup(r => r.GetJourneysByStepIdsAsync(new List<int> { stepId2 }))
                 .Returns(Task.FromResult(new List<Journey> { journey }));
             
-            _command = new CompletePreservationCommand(tagIdsWithRowVersion);
+            _command = new CompletePreservationCommand(tagIdsWithRowVersion, TestUserOid);
 
             _dut = new CompletePreservationCommandHandler(_tagRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
         }
@@ -134,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         {
             await _dut.Handle(_command, default);
 
-            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

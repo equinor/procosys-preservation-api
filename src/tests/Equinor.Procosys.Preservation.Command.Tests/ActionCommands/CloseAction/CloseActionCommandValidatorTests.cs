@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -31,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             _actionValidatorMock = new Mock<IActionValidator>();
             _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(true));
 
-            _command = new CloseActionCommand(_tagId, _actionId, null);
+            _command = new CloseActionCommand(_tagId, _actionId, null, Guid.Empty);
 
             _dut = new CloseActionCommandValidator(
                 _projectValidatorMock.Object,

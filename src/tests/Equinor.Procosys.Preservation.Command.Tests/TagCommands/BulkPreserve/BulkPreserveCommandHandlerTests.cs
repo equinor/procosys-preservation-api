@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
-            _command = new BulkPreserveCommand(tagIds);
+            _command = new BulkPreserveCommand(tagIds, TestUserOid);
 
             _tag1.StartPreservation();
             _tag2.StartPreservation();
@@ -137,7 +137,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _timeProvider.ElapseWeeks(TwoWeeksInterval);
             await _dut.Handle(_command, default);
 
-            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]
@@ -146,7 +146,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _timeProvider.ElapseWeeks(FourWeeksInterval);
             await _dut.Handle(_command, default);
 
-            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]
@@ -156,7 +156,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
                 _dut.Handle(_command, default)
             );
 
-            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Never);
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(_command.CurrentUserOid, default), Times.Never);
         }
     }
 }

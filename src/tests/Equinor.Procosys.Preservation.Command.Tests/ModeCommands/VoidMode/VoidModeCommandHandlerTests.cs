@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
             modeRepositoryMock.Setup(m => m.GetByIdAsync(modeId))
                 .Returns(Task.FromResult(_mode));
 
-            _command = new VoidModeCommand(modeId, _rowVersion);
+            _command = new VoidModeCommand(modeId, _rowVersion, TestUserOid);
 
             _dut = new VoidModeCommandHandler(
                 modeRepositoryMock.Object,
@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

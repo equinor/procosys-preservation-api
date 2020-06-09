@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -38,7 +39,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 _projectName,
                 _stepId,
                 null,
-                null);
+                null,
+                Guid.Empty);
 
             _dut = new AutoScopeTagsCommandValidator(
                 _tagValidatorMock.Object, 
@@ -110,7 +112,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 _projectName,
                 _stepId,
                 null,
-                null);
+                null,
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 
@@ -127,7 +130,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 _projectName,
                 _stepId,
                 null,
-                null);
+                null,
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 
@@ -158,7 +162,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 _projectName,
                 _stepId,
                 null,
-                null);
+                null,
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 

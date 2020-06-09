@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
             _reqTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
             _reqTypeValidatorMock.Setup(r => r.IsVoidedAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
 
-            _command = new UnvoidRequirementTypeCommand(_requirementTypeId, null);
+            _command = new UnvoidRequirementTypeCommand(_requirementTypeId, null, Guid.Empty);
             _dut = new UnvoidRequirementTypeCommandValidator(_reqTypeValidatorMock.Object);
         }
 

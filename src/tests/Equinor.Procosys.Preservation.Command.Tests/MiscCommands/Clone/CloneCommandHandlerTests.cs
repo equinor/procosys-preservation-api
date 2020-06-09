@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             _sourceTagFunctions.Add(tagFunctionA);
             _sourceTagFunctions.Add(tagFunctionB);
 
-            _command = new CloneCommand(_sourcePlant, TestPlant);
+            _command = new CloneCommand(_sourcePlant, TestPlant, TestUserOid);
             _dut = new CloneCommandHandler(
                 _plantProvider,
                 UnitOfWorkMock.Object,
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 _tagFunctionRepository);
 
             UnitOfWorkMock
-                .Setup(uiw => uiw.SaveChangesAsync(It.IsAny<CancellationToken>()))
+                .Setup(uiw => uiw.SaveChangesAsync(_command.CurrentUserOid, It.IsAny<CancellationToken>()))
                 .Callback(() =>
                 {
                     // Need this to simulate what EF Core do with Ids upon saving new Items
@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Exactly(2));
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Exactly(2));
         }
         
         [TestMethod]

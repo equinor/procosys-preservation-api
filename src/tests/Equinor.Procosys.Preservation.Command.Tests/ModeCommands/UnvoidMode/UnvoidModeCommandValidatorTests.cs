@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
             _modeValidatorMock.Setup(r => r.IsVoidedAsync(_modeId, default)).Returns(Task.FromResult(true));
 
-            _command = new UnvoidModeCommand(_modeId, null);
+            _command = new UnvoidModeCommand(_modeId, null, Guid.Empty);
             _dut = new UnvoidModeCommandValidator(_modeValidatorMock.Object);
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.MiscCommands.Clone;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             _plantCacheMock.Setup(r => r.IsValidPlantForCurrentUserAsync(_sourcePlant)).Returns(Task.FromResult(true));
             _plantCacheMock.Setup(r => r.IsValidPlantForCurrentUserAsync(_targetPlant)).Returns(Task.FromResult(true));
 
-            _command = new CloneCommand(_sourcePlant, _targetPlant);
+            _command = new CloneCommand(_sourcePlant, _targetPlant, Guid.Empty);
             _dut = new CloneCommandValidator(_plantCacheMock.Object);
         }
 
@@ -63,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         {
             var targetPlant = "PCS$STATOIL_BASIS";
             _plantCacheMock.Setup(r => r.IsValidPlantForCurrentUserAsync(targetPlant)).Returns(Task.FromResult(true));
-            var command = new CloneCommand(_sourcePlant, targetPlant);
+            var command = new CloneCommand(_sourcePlant, targetPlant, Guid.Empty);
             var result = _dut.Validate(command);
 
             Assert.IsFalse(result.IsValid);

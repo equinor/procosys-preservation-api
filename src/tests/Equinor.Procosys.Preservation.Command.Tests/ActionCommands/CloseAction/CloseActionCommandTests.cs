@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
@@ -9,11 +10,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new CloseActionCommand(2, 1, "AAAAAAAAABA=");
+            var dut = new CloseActionCommand(2, 1, "AAAAAAAAABA=", Guid.Empty);
 
             Assert.AreEqual(2, dut.TagId);
             Assert.AreEqual(1, dut.ActionId);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }

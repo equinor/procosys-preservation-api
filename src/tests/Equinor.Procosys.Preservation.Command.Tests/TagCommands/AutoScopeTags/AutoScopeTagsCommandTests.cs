@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,7 +17,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 "ProjectNameA",
                 2,
                 "RemarkA",
-                "SA_A");
+                "SA_A",
+                Guid.Empty);
 
             Assert.AreEqual("ProjectNameA", dut.ProjectName);
             Assert.AreEqual("RemarkA", dut.Remark);
@@ -24,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             Assert.AreEqual(2, dut.StepId);
             Assert.AreEqual(1, dut.TagNos.Count());
             Assert.AreEqual("TagNoA", dut.TagNos.First());
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }

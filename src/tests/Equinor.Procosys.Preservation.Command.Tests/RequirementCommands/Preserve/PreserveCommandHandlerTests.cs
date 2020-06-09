@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
 
-            _command = new PreserveCommand(TagId, RequirementId);
+            _command = new PreserveCommand(TagId, RequirementId, TestUserOid);
 
             _timeProvider.Elapse(TimeSpan.FromDays(-1));
             _tag.StartPreservation();
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         {
             await _dut.Handle(_command, default);
 
-            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

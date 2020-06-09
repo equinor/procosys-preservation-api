@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         [TestInitialize]
         public void Setup()
         {
-            _command = new DeleteTagAttachmentCommand(1, 3, _rowVersion);
+            _command = new DeleteTagAttachmentCommand(1, 3, _rowVersion, TestUserOid);
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Dele
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

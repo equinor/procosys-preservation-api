@@ -160,7 +160,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 TestProjectName,
                 step.Id,
                 "Remark",
-                "SA");
+                "SA",
+                TestUserOid);
             
             _dut = new AutoScopeTagsCommandHandler(
                 _projectRepositoryMock.Object,
@@ -255,7 +256,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

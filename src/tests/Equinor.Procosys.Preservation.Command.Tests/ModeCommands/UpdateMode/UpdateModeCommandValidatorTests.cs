@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -22,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         {
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
-            _command = new UpdateModeCommand(_id, _title, _forSupplier, null);
+            _command = new UpdateModeCommand(_id, _title, _forSupplier, null, Guid.Empty);
 
             _dut = new UpdateModeCommandValidator(_modeValidatorMock.Object);
         }

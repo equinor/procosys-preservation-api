@@ -38,7 +38,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
                 _reqId,
                 _attachmentFieldId,
                 _fileName,
-                new MemoryStream());
+                new MemoryStream(),
+                TestUserOid);
 
             _requirementDefinition = new Mock<RequirementDefinition>();
             _requirementDefinition.SetupGet(r => r.Id).Returns(_reqId);
@@ -169,7 +170,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

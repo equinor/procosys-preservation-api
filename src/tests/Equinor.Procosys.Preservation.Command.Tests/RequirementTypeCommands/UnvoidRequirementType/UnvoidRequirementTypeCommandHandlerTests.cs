@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
                 .Setup(r => r.GetByIdAsync(requirementTypeId))
                 .Returns(Task.FromResult(_requirementType));
 
-            _command = new UnvoidRequirementTypeCommand(requirementTypeId, _rowVersion);
+            _command = new UnvoidRequirementTypeCommand(requirementTypeId, _rowVersion, TestUserOid);
 
             _dut = new UnvoidRequirementTypeCommandHandler(
                 reqTypeRepositoryMock.Object,
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
         {
             await _dut.Handle(_command, default);
 
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

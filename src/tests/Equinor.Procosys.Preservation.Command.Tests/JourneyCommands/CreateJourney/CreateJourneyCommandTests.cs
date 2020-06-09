@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJourney
@@ -9,9 +10,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new CreateJourneyCommand("TitleA");
+            var dut = new CreateJourneyCommand("TitleA", Guid.Empty);
 
             Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.Upload;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
@@ -38,7 +39,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
                 ReqId, 
                 AttachmentFieldId,
                 "F",
-                new MemoryStream());
+                new MemoryStream(),
+                Guid.Empty);
 
             _dut = new UploadFieldValueAttachmentCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _fieldValidatorMock.Object);
         }

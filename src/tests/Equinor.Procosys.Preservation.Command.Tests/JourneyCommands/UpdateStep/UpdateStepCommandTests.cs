@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
@@ -9,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new UpdateStepCommand(1, 2, 3, "CODE", "TitleNew", "AAAAAAAAABA=");
+            var dut = new UpdateStepCommand(1, 2, 3, "CODE", "TitleNew", "AAAAAAAAABA=", Guid.Empty);
 
             Assert.AreEqual(1, dut.JourneyId);
             Assert.AreEqual(2, dut.StepId);
@@ -17,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.AreEqual("CODE", dut.ResponsibleCode);
             Assert.AreEqual("TitleNew", dut.Title);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }

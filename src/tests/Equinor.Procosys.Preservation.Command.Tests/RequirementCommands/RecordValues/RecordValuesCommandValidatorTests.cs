@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
@@ -44,14 +45,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
                 ReqId, 
                 null, 
                 null,
-                Comment);
+                Comment,
+                Guid.Empty);
 
             _recordValuesCommand = new RecordValuesCommand(
                 TagId, 
                 ReqId, 
                 new EditableList<NumberFieldValue>{new NumberFieldValue(NumberFieldId, 1282.91, false)}, 
                 new List<CheckBoxFieldValue>{new CheckBoxFieldValue(CheckBoxFieldId, true)}, 
-                Comment);
+                Comment,
+                Guid.Empty);
 
             _dut = new RecordValuesCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _fieldValidatorMock.Object);
         }

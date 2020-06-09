@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
         [TestInitialize]
         public void Setup()
         {
-            _commandWithoutOverwrite = new UploadTagAttachmentCommand(_tagId, _fileName, false, new MemoryStream());
+            _commandWithoutOverwrite = new UploadTagAttachmentCommand(_tagId, _fileName, false, new MemoryStream(), TestUserOid);
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             // Arrange
             await _dut.Handle(_commandWithoutOverwrite, default);
             Assert.IsTrue(_tag.Attachments.Count == 1);
-            var commandWithOverwrite = new UploadTagAttachmentCommand(_tagId, _fileName, true, new MemoryStream());
+            var commandWithOverwrite = new UploadTagAttachmentCommand(_tagId, _fileName, true, new MemoryStream(), TestUserOid);
 
             // Act
             var result = await _dut.Handle(commandWithOverwrite, default);
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             await _dut.Handle(_commandWithoutOverwrite, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_commandWithoutOverwrite.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

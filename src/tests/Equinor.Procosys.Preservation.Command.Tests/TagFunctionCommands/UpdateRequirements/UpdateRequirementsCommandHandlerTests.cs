@@ -205,7 +205,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             await _dut.Handle(_commandWithTwoRequirements, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(TestUserOid, default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_commandWithTwoRequirements.CurrentUserOid, default), Times.Once);
         }
 
         private void AssertRequirement(IReadOnlyCollection<TagFunctionRequirement> requirements, int reqDefId, int interval)

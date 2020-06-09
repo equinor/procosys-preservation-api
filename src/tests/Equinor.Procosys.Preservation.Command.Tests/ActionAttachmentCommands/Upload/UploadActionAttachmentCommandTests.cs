@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         public void Constructor_ShouldSetProperties()
         {
             var content = new MemoryStream();
-            var dut = new UploadActionAttachmentCommand(2, 3, "FileName", true, content);
+            var dut = new UploadActionAttachmentCommand(2, 3, "FileName", true, content, Guid.Empty);
 
             Assert.AreEqual(2, dut.TagId);
             Assert.AreEqual(3, dut.ActionId);
@@ -23,6 +23,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenContentNotGiven()
-            => Assert.ThrowsException<ArgumentNullException>(() => new UploadActionAttachmentCommand(2, 3, "FileName", true, null));
+            => Assert.ThrowsException<ArgumentNullException>(() => new UploadActionAttachmentCommand(2, 3, "FileName", true, null, Guid.Empty));
     }
 }

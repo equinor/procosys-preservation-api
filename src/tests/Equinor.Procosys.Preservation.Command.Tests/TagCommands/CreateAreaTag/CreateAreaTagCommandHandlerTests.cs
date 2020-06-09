@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -106,7 +107,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 },
                 null,
                 "Remark",
-                "SA");
+                "SA",
+                Guid.Empty);
 
             _dut = new CreateAreaTagCommandHandler(
                 _projectRepositoryMock.Object,
@@ -198,7 +200,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         private void AssertTagProperties(CreateAreaTagCommand command, Tag tagAddedToProject)

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.RequirementIsReadyToBePreservedAsync(TagId, RequirementId, default)).Returns(Task.FromResult(true));
-            _command = new PreserveCommand(TagId, RequirementId);
+            _command = new PreserveCommand(TagId, RequirementId, Guid.Empty);
 
             _dut = new PreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }

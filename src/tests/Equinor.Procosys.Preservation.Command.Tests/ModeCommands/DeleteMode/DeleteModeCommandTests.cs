@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
@@ -9,10 +10,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new DeleteModeCommand(1, "AAAAAAAAABA=");
+            var dut = new DeleteModeCommand(1, "AAAAAAAAABA=", Guid.Empty);
 
             Assert.AreEqual(1, dut.ModeId);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }

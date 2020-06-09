@@ -94,8 +94,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
                 .Returns(Task.FromResult(_journey));
 
-            _command = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode, _newTitle, _rowVersion);
-            _commandWithResponsible2 = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode2, _newTitle, _rowVersion);
+            _command = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode, _newTitle, _rowVersion, TestUserOid);
+            _commandWithResponsible2 = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode2, _newTitle, _rowVersion, TestUserOid);
 
             _dut = new UpdateStepCommandHandler(
                 journeyRepositoryMock.Object,
@@ -158,7 +158,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]
@@ -174,7 +174,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             // Assert
             _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Once);
-            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Exactly(2));
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(_command.CurrentUserOid, default), Times.Exactly(2));
             Assert.AreEqual(_addedResponsible.Code, _responsibleCode);
 
         }

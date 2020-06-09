@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
                 .Returns(Task.FromResult(journey));
 
-            _command = new SwapStepsCommand(journeyId, stepAId, _rowVersionA, stepBId, _rowVersionB);
+            _command = new SwapStepsCommand(journeyId, stepAId, _rowVersionA, stepBId, _rowVersionB, TestUserOid);
 
             _dut = new SwapStepsCommandHandler(
                 journeyRepositoryMock.Object,
@@ -106,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

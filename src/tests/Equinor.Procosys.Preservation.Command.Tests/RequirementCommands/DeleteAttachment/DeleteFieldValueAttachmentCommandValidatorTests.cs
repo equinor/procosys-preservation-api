@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.DeleteAttachment;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -35,7 +36,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Delete
             _command = new DeleteFieldValueAttachmentCommand(
                 TagId, 
                 ReqId, 
-                AttachmentFieldId);
+                AttachmentFieldId,
+                Guid.Empty);
 
             _dut = new DeleteFieldValueAttachmentCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _fieldValidatorMock.Object);
         }

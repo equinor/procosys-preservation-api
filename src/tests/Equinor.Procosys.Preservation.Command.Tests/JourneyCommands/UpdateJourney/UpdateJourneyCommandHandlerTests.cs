@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             _journey = new Journey(TestPlant, _oldTitle);
             journeyRepositoryMock.Setup(j => j.GetByIdAsync(testJourneyId))
                 .Returns(Task.FromResult(_journey));
-            _command = new UpdateJourneyCommand(testJourneyId, _newTitle, _rowVersion);
+            _command = new UpdateJourneyCommand(testJourneyId, _newTitle, _rowVersion, TestUserOid);
 
             _dut = new UpdateJourneyCommandHandler(
                 journeyRepositoryMock.Object,
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

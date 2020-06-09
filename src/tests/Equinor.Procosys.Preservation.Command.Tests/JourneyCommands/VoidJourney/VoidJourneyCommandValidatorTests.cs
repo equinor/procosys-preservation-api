@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidJourne
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
 
-            _command = new VoidJourneyCommand(_journeyId, null);
+            _command = new VoidJourneyCommand(_journeyId, null, Guid.Empty);
             _dut = new VoidJourneyCommandValidator(_journeyValidatorMock.Object);
         }
 

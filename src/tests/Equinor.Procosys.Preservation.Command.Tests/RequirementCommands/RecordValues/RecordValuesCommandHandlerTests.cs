@@ -30,14 +30,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
                 _reqId, 
                 new List<NumberFieldValue>{ new NumberFieldValue(_numberFieldId, 21, false)}, 
                 new List<CheckBoxFieldValue>{new CheckBoxFieldValue(_checkBoxFieldId, true)}, 
-                null);
+                null,
+                TestUserOid);
 
             _recordValuesCommandWithNullAsNumber = new RecordValuesCommand(
                 _tagId, 
                 _reqId, 
                 new List<NumberFieldValue>{new NumberFieldValue(_numberFieldId, null, false)}, 
                 null, 
-                null);
+                null,
+                TestUserOid);
 
             var requirementDefinitionWith2FieldsMock = new Mock<RequirementDefinition>();
             requirementDefinitionWith2FieldsMock.SetupGet(r => r.Id).Returns(_reqId);
@@ -122,7 +124,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             await _dut.Handle(_recordValuesCommandWithCheckedCheckBoxAndNumber, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_recordValuesCommandWithCheckedCheckBoxAndNumber.CurrentUserOid, default), Times.Once);
         }
     }
 }

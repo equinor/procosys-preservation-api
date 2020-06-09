@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
                 .Setup(r => r.GetByIdAsync(modeId))
                 .Returns(Task.FromResult(_mode));
 
-            _command = new UnvoidModeCommand(modeId, _rowVersion);
+            _command = new UnvoidModeCommand(modeId, _rowVersion, TestUserOid);
 
             _dut = new UnvoidModeCommandHandler(
                 modeRepositoryMock.Object,
@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
         {
             await _dut.Handle(_command, default);
 
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

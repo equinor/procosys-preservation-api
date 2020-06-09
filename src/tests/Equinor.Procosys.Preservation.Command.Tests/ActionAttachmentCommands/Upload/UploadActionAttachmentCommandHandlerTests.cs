@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             await _dut.Handle(_commandWithoutOverwrite, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(TestUserOid, default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_commandWithoutOverwrite.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

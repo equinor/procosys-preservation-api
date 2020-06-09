@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -37,7 +38,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
                 "",
                 "",
                 null,
-                null);
+                null,
+                Guid.Empty);
 
             _dut = new UpdateActionCommandValidator(
                 _projectValidatorMock.Object,

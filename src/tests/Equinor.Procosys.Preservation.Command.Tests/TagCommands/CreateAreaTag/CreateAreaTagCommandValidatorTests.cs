@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -55,7 +56,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 },
                 "Desc",
                 "Remark",
-                "SA");
+                "SA",
+                Guid.Empty);
 
             _dut = new CreateAreaTagCommandValidator(
                 _tagValidatorMock.Object, 
@@ -160,7 +162,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 new List<RequirementForCommand>(),
                 "DescriptionA",
                 "RemarkA",
-                "SA_A");
+                "SA_A",
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 
@@ -187,7 +190,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 },
                 "DescriptionA",
                 "RemarkA",
-                "SA_A");
+                "SA_A",
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 

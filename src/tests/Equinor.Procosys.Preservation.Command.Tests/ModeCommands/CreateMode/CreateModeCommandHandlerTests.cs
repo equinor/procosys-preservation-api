@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
                     _modeAdded = x;
                 });
 
-            _command = new CreateModeCommand(TestMode, false);
+            _command = new CreateModeCommand(TestMode, false, TestUserOid);
 
             _dut = new CreateModeCommandHandler(
                 _modeRepositoryMock.Object,
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

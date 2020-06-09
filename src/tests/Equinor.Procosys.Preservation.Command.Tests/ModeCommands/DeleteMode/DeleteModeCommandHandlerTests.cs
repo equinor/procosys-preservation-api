@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
             _modeRepositoryMock
                 .Setup(x => x.GetByIdAsync(ModeId))
                     .Returns(Task.FromResult(_mode));
-            _command = new DeleteModeCommand(ModeId, _rowVersion);
+            _command = new DeleteModeCommand(ModeId, _rowVersion, TestUserOid);
 
             _dut = new DeleteModeCommandHandler(
                 _modeRepositoryMock.Object,
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

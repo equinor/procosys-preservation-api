@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
                 .Returns(Task.FromResult(_personMock.Object));
 
-            _command = new CloseActionCommand(tagId, actionId, _rowVersion);
+            _command = new CloseActionCommand(tagId, actionId, _rowVersion, TestUserOid);
 
             _dut = new CloseActionCommandHandler(
                 _projectRepositoryMock.Object,
@@ -102,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         public async Task HandlingCloseActionCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

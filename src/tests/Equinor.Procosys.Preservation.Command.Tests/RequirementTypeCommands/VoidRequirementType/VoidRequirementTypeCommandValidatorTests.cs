@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
             _reqTypeValidatorMock = new Mock<IRequirementTypeValidator>();
             _reqTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
 
-            _command = new VoidRequirementTypeCommand(_requirementTypeId, null);
+            _command = new VoidRequirementTypeCommand(_requirementTypeId, null, Guid.Empty);
             _dut = new VoidRequirementTypeCommandValidator(_reqTypeValidatorMock.Object);
         }
 

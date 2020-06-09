@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.VoidTa
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(TestUserOid, default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

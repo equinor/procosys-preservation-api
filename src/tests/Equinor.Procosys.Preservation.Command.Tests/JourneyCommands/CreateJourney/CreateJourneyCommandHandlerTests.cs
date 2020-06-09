@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
                     _journeyAdded = journey;
                 });
 
-            _command = new CreateJourneyCommand(TestJourney);
+            _command = new CreateJourneyCommand(TestJourney, TestUserOid);
 
             _dut = new CreateJourneyCommandHandler(
                 _journeyRepositoryMock.Object,
@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJour
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

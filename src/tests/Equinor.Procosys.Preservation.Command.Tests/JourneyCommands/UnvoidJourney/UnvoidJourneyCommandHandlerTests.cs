@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
                 .Setup(r => r.GetByIdAsync(journeyId))
                 .Returns(Task.FromResult(_journey));
 
-            _command = new UnvoidJourneyCommand(journeyId, _rowVersion);
+            _command = new UnvoidJourneyCommand(journeyId, _rowVersion, TestUserOid);
 
             _dut = new UnvoidJourneyCommandHandler(
                 journeyRepositoryMock.Object,
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
         public async Task HandlingUnvoidJourneyCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

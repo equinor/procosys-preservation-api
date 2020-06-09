@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -23,7 +24,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 new List<RequirementForCommand>{new RequirementForCommand(11, 12)},
                 "DescriptionA",
                 "RemarkA",
-                "SA_A");
+                "SA_A",
+                Guid.Empty);
 
             Assert.AreEqual("ProjectNameA", dut.ProjectName);
             Assert.AreEqual("DisciplineA", dut.DisciplineCode);
@@ -51,7 +53,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 null,
                 null,
                 null,
-                null);
+                null,
+                Guid.Empty);
 
             Assert.IsNotNull(dut.Requirements);
             Assert.AreEqual(0, dut.Requirements.Count());

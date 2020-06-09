@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
@@ -37,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId2, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ReadyToBePreservedAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _command = new BulkPreserveCommand(_tagIds);
+            _command = new BulkPreserveCommand(_tagIds, Guid.Empty);
 
             _dut = new BulkPreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
@@ -53,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new BulkPreserveCommand(new List<int>());
+            var command = new BulkPreserveCommand(new List<int>(), Guid.Empty);
             
             var result = _dut.Validate(command);
 
@@ -65,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new BulkPreserveCommand(new List<int>{1, 1});
+            var command = new BulkPreserveCommand(new List<int>{1, 1}, Guid.Empty);
             
             var result = _dut.Validate(command);
 

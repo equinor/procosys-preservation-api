@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -26,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            _command = new CreateActionCommand(_tagId, "", "", null);
+            _command = new CreateActionCommand(_tagId, "", "", null, Guid.Empty);
 
             _dut = new CreateActionCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }

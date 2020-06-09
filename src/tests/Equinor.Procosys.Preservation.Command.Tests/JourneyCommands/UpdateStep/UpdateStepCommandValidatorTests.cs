@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
@@ -40,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
 
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
 
-            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, null);
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, null, Guid.Empty);
 
             _dut = new UpdateStepCommandValidator(
                 _journeyValidatorMock.Object,

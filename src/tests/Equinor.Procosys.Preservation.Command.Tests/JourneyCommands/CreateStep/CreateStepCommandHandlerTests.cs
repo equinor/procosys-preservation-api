@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleApiServiceMock.Setup(r => r.GetResponsibleAsync(TestPlant, ResponsibleCode))
                 .Returns(Task.FromResult(_pcsResponsibleMock.Object));
 
-            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode);
+            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode, TestUserOid);
 
             _dut = new CreateStepCommandHandler(_journeyRepositoryMock.Object,
                 _modeRepositoryMock.Object,
@@ -114,7 +114,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             await _dut.Handle(_command, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]
@@ -130,7 +130,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
 
             // Assert
             _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Once);
-            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Exactly(2));
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(_command.CurrentUserOid, default), Times.Exactly(2));
             Assert.AreEqual(_addedResponsible.Code, ResponsibleCode);
         }
 

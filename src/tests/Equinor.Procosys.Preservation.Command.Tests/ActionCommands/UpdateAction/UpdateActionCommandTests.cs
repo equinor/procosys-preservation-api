@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
         public void Constructor_ShouldSetProperties()
         {
             var dueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            var dut = new UpdateActionCommand(2, 1, "Title", "Description", dueTimeUtc, "AAAAAAAAABA=");
+            var dut = new UpdateActionCommand(2, 1, "Title", "Description", dueTimeUtc, "AAAAAAAAABA=", Guid.Empty);
 
             Assert.AreEqual(2, dut.TagId);
             Assert.AreEqual(1, dut.ActionId);
@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
             Assert.AreEqual("Description", dut.Description);
             Assert.AreEqual(dueTimeUtc, dut.DueTimeUtc);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }

@@ -45,13 +45,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
                 .Setup(r => r.GetTagByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new CreateActionCommand(_tagId, _title, _description, _dueTimeUtc);
+            _command = new CreateActionCommand(_tagId, _title, _description, _dueTimeUtc, TestUserOid);
 
             _dut = new CreateActionCommandHandler(
                 _projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
-                PlantProviderMock.Object
-                );
+                PlantProviderMock.Object);
         }
 
         [TestMethod]
@@ -70,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
         public async Task HandlingCreateActionCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]
@@ -80,7 +79,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateActio
                 _tagId,
                 _title,
                 _description,
-                new DateTime(2020, 1, 1, 1, 1, 1));
+                new DateTime(2020, 1, 1, 1, 1, 1),
+                TestUserOid);
 
             await Assert.ThrowsExceptionAsync<ArgumentException>(() => _dut.Handle(command, default));
         }

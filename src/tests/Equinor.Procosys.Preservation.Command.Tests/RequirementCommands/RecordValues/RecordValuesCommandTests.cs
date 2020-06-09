@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.RecordValues
@@ -9,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new RecordValuesCommand(1, 2, null, null, "Comment");
+            var dut = new RecordValuesCommand(1, 2, null, null, "Comment", Guid.Empty);
 
             Assert.AreEqual(1, dut.TagId);
             Assert.AreEqual(2, dut.RequirementId);
@@ -17,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             Assert.IsNotNull(dut.NumberValues);
             Assert.AreEqual(0, dut.NumberValues.Count);
             Assert.AreEqual("Comment", dut.Comment);
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }

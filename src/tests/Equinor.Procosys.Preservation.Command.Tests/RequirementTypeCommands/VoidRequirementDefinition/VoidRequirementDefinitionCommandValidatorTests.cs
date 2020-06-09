@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
             _reqDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _reqDefinitionValidatorMock.Setup(r => r.ExistsAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
-            _command = new VoidRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, null);
+            _command = new VoidRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, null, Guid.Empty);
             _dut = new VoidRequirementDefinitionCommandValidator(_reqTypeValidatorMock.Object, _reqDefinitionValidatorMock.Object);
         }
 

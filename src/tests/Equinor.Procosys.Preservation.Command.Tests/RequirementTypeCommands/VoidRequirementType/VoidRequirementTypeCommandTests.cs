@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
+﻿using System;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.VoidRequirementType
@@ -9,10 +10,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new VoidRequirementTypeCommand(1, "AAAAAAAAABA=");
+            var dut = new VoidRequirementTypeCommand(1, "AAAAAAAAABA=", Guid.Empty);
 
             Assert.AreEqual(1, dut.RequirementTypeId);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
+            Assert.AreEqual(Guid.Empty, dut.CurrentUserOid);
         }
     }
 }
