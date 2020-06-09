@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             }
             
             project.AddTag(areaTagToAdd);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<int>(areaTagToAdd.Id);
         }

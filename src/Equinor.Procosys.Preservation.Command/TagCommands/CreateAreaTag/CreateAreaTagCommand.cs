@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
@@ -19,7 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             IEnumerable<RequirementForCommand> requirements, 
             string description,
             string remark,
-            string storageArea)
+            string storageArea,
+            Guid currentUserOid)
         {
             ProjectName = projectName;
             TagType = tagType;
@@ -32,6 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             Description = description;
             Remark = remark;
             StorageArea = storageArea;
+            CurrentUserOid = currentUserOid;
         }
 
         public string ProjectName { get; }
@@ -45,5 +48,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
         public string Description { get; }
         public string Remark { get; }
         public string StorageArea { get; }
+        public Guid CurrentUserOid { get; }
     }
 }

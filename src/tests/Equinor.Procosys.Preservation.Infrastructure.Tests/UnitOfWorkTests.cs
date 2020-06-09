@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         [TestMethod]
         public async Task SaveChangesAsync_SetsCreatedProperties_WhenCreated()
         {
-            using var dut = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
+            using var dut = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcherMock.Object);
 
             var user = new Person(_currentUserOid, "Current", "User");
             dut.Persons.Add(user);
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
         [TestMethod]
         public async Task SaveChangesAsync_SetsModifiedProperties_WhenModified()
         {
-            using var dut = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcherMock.Object, _currentUserProviderMock.Object);
+            using var dut = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcherMock.Object);
 
             var user = new Person(_currentUserOid, "Current", "User");
             dut.Persons.Add(user);

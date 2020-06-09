@@ -12,7 +12,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
             string title,
             string description,
             DateTime? dueTimeUtc,
-            string rowVersion)
+            string rowVersion,
+            Guid currentUserOid)
         {
             TagId = tagId;
             ActionId = actionId;
@@ -20,6 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
             Description = description;
             DueTimeUtc = dueTimeUtc;
             RowVersion = rowVersion;
+            CurrentUserOid = currentUserOid;
         }
         public int TagId { get; }
         public int ActionId { get; }
@@ -27,5 +29,6 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
         public string Description { get; }
         public DateTime? DueTimeUtc { get; }
         public string RowVersion { get; }
+        public Guid CurrentUserOid { get; }
     }
 }

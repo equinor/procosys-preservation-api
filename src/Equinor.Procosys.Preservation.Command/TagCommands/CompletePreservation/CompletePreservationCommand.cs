@@ -9,11 +9,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
 {
     public class CompletePreservationCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
     {
-        public CompletePreservationCommand(IEnumerable<IdAndRowVersion> tags)
-            => Tags = tags ?? new List<IdAndRowVersion>();
+        public CompletePreservationCommand(IEnumerable<IdAndRowVersion> tags, Guid currentUserOid)
+        {
+            Tags = tags ?? new List<IdAndRowVersion>();
+            CurrentUserOid = currentUserOid;
+        }
 
         public IEnumerable<IdAndRowVersion> Tags { get; }
-        
+        public Guid CurrentUserOid { get; }
+
         public int TagId
         {
             get

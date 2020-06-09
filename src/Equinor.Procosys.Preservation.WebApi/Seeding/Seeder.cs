@@ -30,8 +30,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                 using (var dbContext = new PreservationContext(
                     scope.ServiceProvider.GetRequiredService<DbContextOptions<PreservationContext>>(),
                     plantProvider,
-                    scope.ServiceProvider.GetRequiredService<IEventDispatcher>(),
-                    new SeederUserProvider()))
+                    scope.ServiceProvider.GetRequiredService<IEventDispatcher>()))
                 {
                     // If the seeder user exists in the database, it's already been seeded. Don't seed again.
                     if (await dbContext.Persons.AnyAsync(p => p.Oid == s_seederUser.Oid))

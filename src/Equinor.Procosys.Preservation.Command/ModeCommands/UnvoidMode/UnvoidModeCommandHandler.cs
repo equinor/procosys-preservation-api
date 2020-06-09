@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode
 
             mode.UnVoid();
             mode.SetRowVersion(request.RowVersion);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<string>(mode.RowVersion.ConvertToString());
         }

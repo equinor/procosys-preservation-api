@@ -20,8 +20,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
     public class RequirementTypesController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public RequirementTypesController(IMediator mediator) => _mediator = mediator;
+        public RequirementTypesController(IMediator mediator, ICurrentUserProvider currentUserProvider)
+        {
+            _mediator = mediator;
+            _currentUserProvider = currentUserProvider;
+        }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
@@ -59,7 +64,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromRoute] int id,
             [FromBody] VoidRequirementTypeDto dto)
         {
-            var result = await _mediator.Send(new VoidRequirementTypeCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new VoidRequirementTypeCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return Ok(result);
         }
 
@@ -73,7 +78,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromRoute] int id,
             [FromBody] UnvoidRequirementTypeDto dto)
         {
-            var result = await _mediator.Send(new UnvoidRequirementTypeCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new UnvoidRequirementTypeCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return Ok(result);
         }
 
@@ -91,7 +96,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             var command = new VoidRequirementDefinitionCommand(
                 id,
                 requirementDefinitionId,
-                dto.RowVersion);
+                dto.RowVersion,
+                _currentUserProvider.GetCurrentUserOid());
             var result = await _mediator.Send(command);
             return Ok(result);
         }
@@ -110,7 +116,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             var command = new UnvoidRequirementDefinitionCommand(
                 id,
                 requirementDefinitionId,
-                dto.RowVersion);
+                dto.RowVersion,
+                _currentUserProvider.GetCurrentUserOid());
             var result = await _mediator.Send(command);
             return Ok(result);
         }

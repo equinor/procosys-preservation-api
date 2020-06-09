@@ -20,8 +20,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
     public class TagFunctionsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public TagFunctionsController(IMediator mediator) => _mediator = mediator;
+        public TagFunctionsController(IMediator mediator, ICurrentUserProvider currentUserProvider)
+        {
+            _mediator = mediator;
+            _currentUserProvider = currentUserProvider;
+        }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{code}")]
@@ -54,7 +59,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
                     dto.TagFunctionCode,
                     dto.RegisterCode,
                     requirements,
-                    dto.RowVersion));
+                    dto.RowVersion,
+                    _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -68,7 +74,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
             [FromRoute] string code,
             [FromBody] VoidTagFunctionDto dto)
         {
-            var result = await _mediator.Send(new VoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion));
+            var result = await _mediator.Send(new VoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return Ok(result);
         }
 
@@ -82,7 +88,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
             [FromRoute] string code,
             [FromBody] UnvoidTagFunctionDto dto)
         {
-            var result = await _mediator.Send(new UnvoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion));
+            var result = await _mediator.Send(new UnvoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return Ok(result);
         }
     }

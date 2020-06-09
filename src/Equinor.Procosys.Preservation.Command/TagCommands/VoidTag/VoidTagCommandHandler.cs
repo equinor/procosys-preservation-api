@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.VoidTag
             tag.Void();
             tag.SetRowVersion(request.RowVersion);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<string>(tag.RowVersion.ConvertToString());
         }

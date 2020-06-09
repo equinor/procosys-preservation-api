@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.DeleteAttach
 
             requirement.RecordAttachment(null, request.FieldId, requirementDefinition);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<Unit>(Unit.Value);
         }

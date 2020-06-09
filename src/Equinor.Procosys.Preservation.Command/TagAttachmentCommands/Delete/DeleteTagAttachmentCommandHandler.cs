@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
             
             tag.RemoveAttachment(attachment);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<Unit>(Unit.Value);
         }

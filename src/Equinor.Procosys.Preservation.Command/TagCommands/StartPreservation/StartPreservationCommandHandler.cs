@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
                 tag.StartPreservation();
             }
             
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
             
             return new SuccessResult<Unit>(Unit.Value);
         }

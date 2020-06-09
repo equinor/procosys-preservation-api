@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using MediatR;
 using ServiceResult;
 
@@ -11,13 +12,15 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             int requirementId,
             List<NumberFieldValue> numberValues,
             List<CheckBoxFieldValue> checkBoxValues,
-            string comment)
+            string comment,
+            Guid currentUserOid)
         {
             TagId = tagId;
             RequirementId = requirementId;
             NumberValues = numberValues ?? new List<NumberFieldValue>();
             CheckBoxValues = checkBoxValues ?? new List<CheckBoxFieldValue>();
             Comment = comment;
+            CurrentUserOid = currentUserOid;
         }
 
         public int TagId { get; }
@@ -25,5 +28,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
         public List<NumberFieldValue> NumberValues { get; }
         public List<CheckBoxFieldValue> CheckBoxValues { get; }
         public string Comment { get; }
+        public Guid CurrentUserOid { get; }
     }
 }

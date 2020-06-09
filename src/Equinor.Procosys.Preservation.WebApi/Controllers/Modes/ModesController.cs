@@ -20,8 +20,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
     public class ModesController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public ModesController(IMediator mediator) => _mediator = mediator;
+        public ModesController(IMediator mediator, ICurrentUserProvider currentUserProvider)
+        {
+            _mediator = mediator;
+            _currentUserProvider = currentUserProvider;
+        }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
@@ -57,7 +62,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             string plant,
             [FromBody] CreateModeDto dto)
         {
-            var result = await _mediator.Send(new CreateModeCommand(dto.Title, dto.ForSupplier));
+            var result = await _mediator.Send(new CreateModeCommand(dto.Title, dto.ForSupplier, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -71,7 +76,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             [FromRoute] int id,
             [FromBody] DeleteModeDto dto)
         {
-            var result = await _mediator.Send(new DeleteModeCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new DeleteModeCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -85,7 +90,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             [FromRoute] int id,
             [FromBody] UpdateModeDto dto)
         {
-            var result = await _mediator.Send(new UpdateModeCommand(id, dto.Title, dto.ForSupplier, dto.RowVersion));
+            var result = await _mediator.Send(new UpdateModeCommand(id, dto.Title, dto.ForSupplier, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -99,7 +104,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             [FromRoute] int id,
             [FromBody] VoidModeDto dto)
         {
-            var result = await _mediator.Send(new VoidModeCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new VoidModeCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -113,7 +118,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
             [FromRoute] int id,
             [FromBody] UnvoidModeDto dto)
         {
-            var result = await _mediator.Send(new UnvoidModeCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new UnvoidModeCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
     }

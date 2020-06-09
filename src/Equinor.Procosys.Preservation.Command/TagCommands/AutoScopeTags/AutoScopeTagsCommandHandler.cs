@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
                 addedTags.Add(tagToAdd);
             }
             
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());
         }

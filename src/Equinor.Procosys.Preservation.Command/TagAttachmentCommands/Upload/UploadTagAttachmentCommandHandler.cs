@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload
 
             await _blobStorage.UploadAsync(fullBlobPath, request.Content, request.OverwriteIfExists, cancellationToken);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<int>(attachment.Id);
         }

@@ -1,21 +1,24 @@
-﻿using MediatR;
+﻿using System;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete
 {
     public class DeleteActionAttachmentCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
-        public DeleteActionAttachmentCommand(int tagId, int actionId, int attachmentId, string rowVersion)
+        public DeleteActionAttachmentCommand(int tagId, int actionId, int attachmentId, string rowVersion, Guid currentUserOid)
         {
             TagId = tagId;
             ActionId = actionId;
             AttachmentId = attachmentId;
             RowVersion = rowVersion;
+            CurrentUserOid = currentUserOid;
         }
 
         public int TagId { get; }
         public int ActionId { get; }
         public int AttachmentId { get; }
         public string RowVersion { get; }
+        public Guid CurrentUserOid { get; }
     }
 }

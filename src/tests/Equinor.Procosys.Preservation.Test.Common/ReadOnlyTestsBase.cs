@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 .Options;
 
             // ensure current user exists in db
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 if (context.Persons.SingleOrDefault(p => p.Oid == _currentUserOid) == null)
                 {

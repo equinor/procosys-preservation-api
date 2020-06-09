@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
 
             tag.Preserve(currentUser);
             
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
             
             return new SuccessResult<Unit>(Unit.Value);
         }

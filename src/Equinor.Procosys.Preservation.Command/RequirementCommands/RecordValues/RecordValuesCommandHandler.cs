@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
 
             requirement.SetComment(request.Comment);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
              return new SuccessResult<Unit>(Unit.Value);
         }
 

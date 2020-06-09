@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequ
 
             requirementType.Void();
             requirementType.SetRowVersion(request.RowVersion);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<string>(requirementType.RowVersion.ConvertToString());
         }

@@ -15,8 +15,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
     public class CloneController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public CloneController(IMediator mediator) => _mediator = mediator;
+        public CloneController(IMediator mediator, ICurrentUserProvider currentUserProvider)
+        {
+            _mediator = mediator;
+            _currentUserProvider = currentUserProvider;
+        }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
         [HttpPut("Clone")]
@@ -31,7 +36,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
             string sourcePlant
             )
         {
-            var command = new CloneCommand(sourcePlant, targetPlant);
+            var command = new CloneCommand(sourcePlant, targetPlant, _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
 

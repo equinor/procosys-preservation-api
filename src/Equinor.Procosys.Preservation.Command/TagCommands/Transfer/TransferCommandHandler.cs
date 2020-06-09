@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                 tagsWithUpdatedRowVersion.Add(new IdAndRowVersion(tag.Id, tag.RowVersion.ConvertToString()));
             }
             
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
             
             return new SuccessResult<IEnumerable<IdAndRowVersion>>(tagsWithUpdatedRowVersion);
         }

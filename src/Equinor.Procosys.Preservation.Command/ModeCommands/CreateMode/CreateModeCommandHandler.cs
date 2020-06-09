@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
         {
             var newMode = new Mode(_plantProvider.Plant, request.Title, request.ForSupplier);
             _modeRepository.Add(newMode);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
             return new SuccessResult<int>(newMode.Id);
         }
     }

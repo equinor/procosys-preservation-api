@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Upload
 
             requirement.RecordAttachment(attachment, request.FieldId, requirementDefinition);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<int>(attachment.Id);
         }

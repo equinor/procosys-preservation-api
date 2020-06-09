@@ -8,10 +8,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
 {
     public class BulkPreserveCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
-        public BulkPreserveCommand(IEnumerable<int> tagIds) => TagIds = tagIds ?? new List<int>();
+        public BulkPreserveCommand(IEnumerable<int> tagIds, Guid currentUserOid)
+        {
+            TagIds = tagIds ?? new List<int>();
+            CurrentUserOid = currentUserOid;
+        }
 
         public IEnumerable<int> TagIds { get; }
-        
+        public Guid CurrentUserOid { get; }
+
         public int TagId
         {
             get

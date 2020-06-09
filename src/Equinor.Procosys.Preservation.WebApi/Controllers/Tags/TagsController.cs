@@ -55,8 +55,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     public class TagsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public TagsController(IMediator mediator) => _mediator = mediator;
+        public TagsController(IMediator mediator, ICurrentUserProvider currentUserProvider)
+        {
+            _mediator = mediator;
+            _currentUserProvider = currentUserProvider;
+        }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet]
@@ -142,7 +147,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     id,
                     dto.Title,
                     dto.Description,
-                    dto.DueTimeUtc);
+                    dto.DueTimeUtc,
+                    _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
 
@@ -166,7 +172,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                                   dto.Title,
                                   dto.Description,
                                   dto.DueTimeUtc,
-                                  dto.RowVersion);
+                                  dto.RowVersion,
+                                  _currentUserProvider.GetCurrentUserOid());
 
                 var result = await _mediator.Send(command);
 
@@ -187,7 +194,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var command = new CloseActionCommand(
                 id,
                 actionId,
-                dto.RowVersion);
+                dto.RowVersion,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
 
@@ -253,7 +261,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 actionId,
                 dto.File.FileName,
                 dto.OverwriteIfExists,
-                stream);
+                stream,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -275,7 +284,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 id,
                 actionId,
                 attachmentId,
-                dto.RowVersion);
+                dto.RowVersion,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(actionCommand);
             return this.FromResult(result);
@@ -294,7 +304,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var command = new UpdateTagCommand(id,
                 dto.Remark,
                 dto.StorageArea,
-                dto.RowVersion);
+                dto.RowVersion,
+                _currentUserProvider.GetCurrentUserOid());
             
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -318,7 +329,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 dto.StepId,
                 requirements,
                 dto.Remark,
-                dto.StorageArea);
+                dto.StorageArea,
+                _currentUserProvider.GetCurrentUserOid());
             
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -339,7 +351,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                     dto.ProjectName,
                     dto.StepId,
                     dto.Remark,
-                    dto.StorageArea));
+                    dto.StorageArea,
+                    _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -367,7 +380,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 requirements,
                 dto.Description,
                 dto.Remark,
-                dto.StorageArea);
+                dto.StorageArea,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -403,7 +417,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromRoute] int id)
         {
-            var result = await _mediator.Send(new StartPreservationCommand(new List<int>{id}));
+            var result = await _mediator.Send(new StartPreservationCommand(new List<int>{id}, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -416,7 +430,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromBody] List<int> tagIds)
         {
-            var result = await _mediator.Send(new StartPreservationCommand(tagIds));
+            var result = await _mediator.Send(new StartPreservationCommand(tagIds, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -429,7 +443,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromRoute] int id)
         {
-            var result = await _mediator.Send(new PreserveCommand(id));
+            var result = await _mediator.Send(new PreserveCommand(id, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -442,7 +456,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromBody] List<int> tagIds)
         {
-            var result = await _mediator.Send(new BulkPreserveCommand(tagIds));
+            var result = await _mediator.Send(new BulkPreserveCommand(tagIds, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -456,7 +470,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
             var tags = tagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
-            var result = await _mediator.Send(new TransferCommand(tags));
+            var result = await _mediator.Send(new TransferCommand(tags, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -470,7 +484,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromBody] CompletePreservationDto dto)
         {
-            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(id, dto.RowVersion) });
+            var command = new CompletePreservationCommand(new List<IdAndRowVersion> { new IdAndRowVersion(id, dto.RowVersion) }, _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -486,7 +500,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
             var tags = tagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
-            var result = await _mediator.Send(new CompletePreservationCommand(tags));
+            var result = await _mediator.Send(new CompletePreservationCommand(tags, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -513,7 +527,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 requirementId,
                 numberValues,
                 checkBoxValues,
-                requirementValuesDto?.Comment);
+                requirementValuesDto?.Comment,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -538,7 +553,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 requirementId,
                 fieldId,
                 dto.File.FileName,
-                stream);
+                stream,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -558,7 +574,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var command = new DeleteFieldValueAttachmentCommand(
                 id,
                 requirementId,
-                fieldId);
+                fieldId,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -601,7 +618,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromRoute] int requirementId)
         {
-            var result = await _mediator.Send(new RequirementPreserveCommand(id, requirementId));
+            var result = await _mediator.Send(new RequirementPreserveCommand(id, requirementId, _currentUserProvider.GetCurrentUserOid()));
             
             return this.FromResult(result);
         }
@@ -635,7 +652,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 id,
                 dto.File.FileName,
                 dto.OverwriteIfExists,
-                stream);
+                stream,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -655,7 +673,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var command = new DeleteTagAttachmentCommand(
                 id,
                 attachmentId,
-                dto.RowVersion);
+                dto.RowVersion,
+                _currentUserProvider.GetCurrentUserOid());
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -697,7 +716,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromBody] VoidTagDto dto)
         {
-            var result = await _mediator.Send(new VoidTagCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new VoidTagCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
 
             return this.FromResult(result);
         }
@@ -712,7 +731,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromBody] UnvoidTagDto dto)
         {
-            var result = await _mediator.Send(new UnvoidTagCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new UnvoidTagCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
 
             return this.FromResult(result);
         }

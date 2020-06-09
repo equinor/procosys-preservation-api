@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
             action.SetDueTime(request.DueTimeUtc);
             action.SetRowVersion(request.RowVersion);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<string>(action.RowVersion.ConvertToString());
         }
