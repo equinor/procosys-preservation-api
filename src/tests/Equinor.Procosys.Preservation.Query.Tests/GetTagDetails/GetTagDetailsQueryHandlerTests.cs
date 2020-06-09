@@ -45,6 +45,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
                 
                 var dto = result.Data;
+                var step = context.Steps.Single(s => s.Id == _testTag.StepId);
+                var mode = context.Modes.Single(m => m.Id == step.ModeId);
                 Assert.AreEqual(_testTag.AreaCode, dto.AreaCode);
                 Assert.AreEqual(_testTag.CommPkgNo, dto.CommPkgNo);
                 Assert.AreEqual(_testTag.Description, dto.Description);
@@ -54,10 +56,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), dto.Status);
                 Assert.AreEqual(_testTag.TagNo, dto.TagNo);
                 Assert.AreEqual(_testTag.TagType, dto.TagType);
-                Assert.AreEqual(_testTag.IsReadyToBePreserved(), dto.ReadyToBePreserved);
+                Assert.AreEqual(_testTag.IsReadyToBePreserved(mode.ForSupplier), dto.ReadyToBePreserved);
 
-                var step = context.Steps.Single(s => s.Id == _testTag.StepId);
-                var mode = context.Modes.Single(m => m.Id == step.ModeId);
                 var resp = context.Responsibles.Single(r => r.Id == step.ResponsibleId);
                 var journey = context.Journeys.Single(j => j.Steps.Any(s => s.Id == step.Id));
                 Assert.AreEqual(journey.Title, dto.JourneyTitle);

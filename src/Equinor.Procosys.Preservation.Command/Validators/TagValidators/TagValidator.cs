@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
 
@@ -50,7 +52,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 return false;
             }
 
-            return tag.IsReadyToBePreserved();
+            var mode = await
+                (from step in _context.QuerySet<Step>()
+                    join m in _context.QuerySet<Mode>() on step.ModeId equals m.Id
+                    where step.Id == tag.StepId
+                    select m).SingleAsync(token);
+
+            return tag.IsReadyToBePreserved(mode.ForSupplier);
         }
 
         public async Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token)
@@ -98,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 return false;
             }
                         
-            var journey = await (from j in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Journey>().Include(j => j.Steps)
+            var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
                 where j.Steps.Any(s => s.Id == tag.StepId)
                 select j).SingleOrDefaultAsync(token);
 
@@ -113,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 return false;
             }
                         
-            var journey = await (from j in _context.QuerySet<Domain.AggregateModels.JourneyAggregate.Journey>().Include(j => j.Steps)
+            var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
                 where j.Steps.Any(s => s.Id == tag.StepId)
                 select j).SingleOrDefaultAsync(token);
 

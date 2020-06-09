@@ -144,7 +144,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _requirements.Add(requirement);
-            UpdateNextDueTimeUtc();
+            UpdateNextDueTimeUtc(true);
         }
 
         public void AddAction(Action action)
@@ -204,7 +204,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             Status = PreservationStatus.Active;
-            UpdateNextDueTimeUtc();
+            UpdateNextDueTimeUtc(true);
         }
 
         public void CompletePreservation(Journey journey)
@@ -222,31 +222,31 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             NextDueTimeUtc = null;
         }
 
-        public bool IsReadyToBePreserved()
+        public bool IsReadyToBePreserved(bool tagIsInSupplierStep)
             => Status == PreservationStatus.Active && 
-               FirstUpcomingRequirement() != null;
+               FirstUpcomingRequirement(tagIsInSupplierStep) != null;
 
-        public void Preserve(Person preservedBy)
-            => Preserve(preservedBy, false);
+        public void Preserve(Person preservedBy, bool tagIsInSupplierStep)
+            => Preserve(preservedBy, false, tagIsInSupplierStep);
                 
-        public void Preserve(Person preservedBy, int requirementId)
+        public void Preserve(Person preservedBy, int requirementId, bool tagIsInSupplierStep)
         {
             var requirement = Requirements.Single(r => r.Id == requirementId);
             requirement.Preserve(preservedBy, false);
-            UpdateNextDueTimeUtc();
+            UpdateNextDueTimeUtc(tagIsInSupplierStep);
         }
 
-        public void BulkPreserve(Person preservedBy)
-            => Preserve(preservedBy, true);
+        public void BulkPreserve(Person preservedBy, bool tagIsInSupplierStep)
+            => Preserve(preservedBy, true, tagIsInSupplierStep);
 
-        public IEnumerable<TagRequirement> GetUpComingRequirements()
+        public IEnumerable<TagRequirement> GetUpComingRequirements(bool tagIsInSupplierStep)
         {
-            var GetUpComingRequirements = OrderedRequirements()
+            var GetUpComingRequirements = OrderedRequirements(tagIsInSupplierStep)
                 .Where(r => r.IsReadyAndDueToBePreserved());
             return GetUpComingRequirements;
         }
 
-        public IOrderedEnumerable<TagRequirement> OrderedRequirements()
+        public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool tagIsInSupplierStep)
             => Requirements
                 .Where(r => !r.IsVoided)
                 .OrderBy(r => r.NextDueTimeUtc);
@@ -309,25 +309,25 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool FollowsAJourney => TagType == TagType.Standard || TagType == TagType.PreArea;
 
-        private void Preserve(Person preservedBy, bool bulkPreserved)
+        private void Preserve(Person preservedBy, bool bulkPreserved, bool tagIsInSupplierStep)
         {
-            if (!IsReadyToBePreserved())
+            if (!IsReadyToBePreserved(tagIsInSupplierStep))
             {
                 throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
             }
 
-            foreach (var requirement in GetUpComingRequirements())
+            foreach (var requirement in GetUpComingRequirements(tagIsInSupplierStep))
             {
                 requirement.Preserve(preservedBy, bulkPreserved);
             }
         
-            UpdateNextDueTimeUtc();
+            UpdateNextDueTimeUtc(tagIsInSupplierStep);
         }
 
-        private TagRequirement FirstUpcomingRequirement()
-            => GetUpComingRequirements().FirstOrDefault();
+        private TagRequirement FirstUpcomingRequirement(bool tagIsInSupplierStep)
+            => GetUpComingRequirements(tagIsInSupplierStep).FirstOrDefault();
 
-        private void UpdateNextDueTimeUtc()
-            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
+        private void UpdateNextDueTimeUtc(bool tagIsInSupplierStep)
+            => NextDueTimeUtc = OrderedRequirements(tagIsInSupplierStep).FirstOrDefault()?.NextDueTimeUtc;
     }
 }

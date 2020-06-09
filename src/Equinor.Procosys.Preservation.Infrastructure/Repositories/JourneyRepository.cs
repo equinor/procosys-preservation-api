@@ -22,5 +22,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
             => DefaultQuery
                 .Where(journey => journey.Steps.Any(s => stepIds.Contains(s.Id)))
                 .ToListAsync();
+
+        public Task<List<Step>> GetStepsByStepIdsAsync(IEnumerable<int> stepIds)
+            => DefaultQuery
+                .SelectMany(j => j.Steps)
+                .Where(step => stepIds.Contains(step.Id))
+                .ToListAsync();
     }
 }
