@@ -67,8 +67,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                     new RequirementForCommand(ReqDefId1, Interval1),
                     new RequirementForCommand(ReqDefId2, Interval2),
                 },
-                RowVersion);
-            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null, RowVersion);
+                RowVersion,
+                TestUserOid);
+            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null, RowVersion, TestUserOid);
             
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock
@@ -204,7 +205,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             await _dut.Handle(_commandWithTwoRequirements, default);
             
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(TestUserOid, default), Times.Once);
         }
 
         private void AssertRequirement(IReadOnlyCollection<TagFunctionRequirement> requirements, int reqDefId, int interval)

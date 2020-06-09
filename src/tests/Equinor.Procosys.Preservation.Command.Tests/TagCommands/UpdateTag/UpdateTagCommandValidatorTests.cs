@@ -4,6 +4,7 @@ using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
 {
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            _command = new UpdateTagCommand(_tagId, _remark, _storageArea, null);
+            _command = new UpdateTagCommand(_tagId, _remark, _storageArea, null, Guid.Empty);
             _dut = new UpdateTagCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 

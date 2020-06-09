@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         [TestInitialize]
         public void Setup()
         {
-            _commandWithoutOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, false, new MemoryStream());
+            _commandWithoutOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, false, new MemoryStream(), TestUserOid);
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             // Arrange
             await _dut.Handle(_commandWithoutOverwrite, default);
             Assert.IsTrue(_action.Attachments.Count == 1);
-            var commandWithOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, true, new MemoryStream());
+            var commandWithOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, true, new MemoryStream(), TestUserOid);
 
             // Act
             var result = await _dut.Handle(commandWithOverwrite, default);
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             await _dut.Handle(_commandWithoutOverwrite, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(TestUserOid, default), Times.Once);
         }
 
         [TestMethod]

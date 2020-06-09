@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
                 .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new UnvoidTagCommand(tagId, _rowVersion);
+            _command = new UnvoidTagCommand(tagId, _rowVersion, TestUserOid);
 
             _dut = new UnvoidTagCommandHandler(
                 projectRepositoryMock.Object,
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
         public async Task HandlingUnvoidTagCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

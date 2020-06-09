@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
-            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 mode = AddMode(context, ModeTitle1, false);
                 forSupplierMode = AddMode(context, ModeTitle2, true);
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsWithSameTitleAsync_KnownTitle_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsWithSameTitleAsync(JourneyTitle, default);
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_KnownId_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsAsync(_journeyWithoutSupplierStepId, default);
@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsWithSameTitleAsync_UnknownTitle_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsWithSameTitleAsync("XXX", default);
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsAsync_UnknownId_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsAsync(126234, default);
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsWithSameTitleInAnotherJourneyAsync_SameTitleAsAnotherJourney_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithoutSupplierStepId, JourneyTitle2, default);
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsWithSameTitleInAnotherJourneyAsync_NewTitle_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithoutSupplierStepId, "XXXXXX", default);
@@ -106,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task ExistsWithSameTitleInAnotherJourneyAsync_SameTitle_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithSupplierStepId, JourneyTitle2, default);
@@ -117,13 +117,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var journey = context.Journeys.Single(j => j.Id == _journeyWithoutSupplierStepId);
                 journey.Void();
                 context.SaveChangesAsync().Wait();
             }
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsVoidedAsync(_journeyWithoutSupplierStepId, default);
@@ -134,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsVoidedAsync(_journeyWithoutSupplierStepId, default);
@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsVoidedAsync(126234, default);
@@ -156,7 +156,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsFirstStepInAJourneyIfASupplierStepAsync_SupplierStepNotFirstInList_ReturnsFalse()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsFirstStepIfModeIsForSupplier(_journeyWithSupplierStepId, forSupplierMode.Id, default);
@@ -167,7 +167,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsFirstStepInAJourneyIfASupplierStepAsync_SupplierStepIsFirstInList_ReturnsTrue()
         {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsFirstStepIfModeIsForSupplier(_emptyJourneyId, forSupplierMode.Id, default);

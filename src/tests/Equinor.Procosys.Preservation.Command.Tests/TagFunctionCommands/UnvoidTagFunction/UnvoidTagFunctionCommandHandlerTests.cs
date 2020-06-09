@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
             tagFunctionRepositoryMock.Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));
 
-            _command = new UnvoidTagFunctionCommand(TagFunctionCode, RegisterCode, _rowVersion);
+            _command = new UnvoidTagFunctionCommand(TagFunctionCode, RegisterCode, _rowVersion, TestUserOid);
             _dut = new UnvoidTagFunctionCommandHandler(
                 tagFunctionRepositoryMock.Object,
                 UnitOfWorkMock.Object);
@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
     }
 }

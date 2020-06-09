@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
                 .Setup(r => r.GetTagsByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(new List<Tag> {_tag1, _tag2}));
 
-            _command = new TransferCommand(tagIdsWithRowVersion);
+            _command = new TransferCommand(tagIdsWithRowVersion, TestUserOid);
 
             _dut = new TransferCommandHandler(projectRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
         }
@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         {
             await _dut.Handle(_command, default);
 
-            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(r => r.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
                 .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new UpdateTagCommand(tagId, _newRemark, _newStorageArea, _rowVersion);
+            _command = new UpdateTagCommand(tagId, _newRemark, _newStorageArea, _rowVersion, TestUserOid);
 
             _dut = new UpdateTagCommandHandler(
                 _projectRepositoryMock.Object,
@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
         public async Task HandlingUpdateTagCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
     }

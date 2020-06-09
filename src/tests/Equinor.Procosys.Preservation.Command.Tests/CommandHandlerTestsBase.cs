@@ -10,6 +10,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests
     public abstract class CommandHandlerTestsBase
     {
         protected const string TestPlant = "TestPlant";
+        protected readonly Guid TestUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         protected Mock<IUnitOfWork> UnitOfWorkMock;
         protected Mock<IPlantProvider> PlantProviderMock;
         protected ManualTimeProvider _timeProvider;

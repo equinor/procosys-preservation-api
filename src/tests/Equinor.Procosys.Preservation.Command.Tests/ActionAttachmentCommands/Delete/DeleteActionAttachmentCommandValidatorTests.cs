@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators;
@@ -25,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
 
-            _command = new DeleteActionAttachmentCommand(1, _actionId, 3, null);
+            _command = new DeleteActionAttachmentCommand(1, _actionId, 3, null, Guid.Empty);
 
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_command.TagId, default)).Returns(Task.FromResult(true));

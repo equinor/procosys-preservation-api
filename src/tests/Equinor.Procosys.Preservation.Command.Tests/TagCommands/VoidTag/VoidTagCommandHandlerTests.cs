@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
                 .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(_tag));
 
-            _command = new VoidTagCommand(tagId, _rowVersion);
+            _command = new VoidTagCommand(tagId, _rowVersion, TestUserOid);
 
             _dut = new VoidTagCommandHandler(
                 projectRepositoryMock.Object,
@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
         public async Task HandlingVoidTagCommand_ShouldSave()
         {
             await _dut.Handle(_command, default);
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(TestUserOid, default), Times.Once);
         }
 
         [TestMethod]

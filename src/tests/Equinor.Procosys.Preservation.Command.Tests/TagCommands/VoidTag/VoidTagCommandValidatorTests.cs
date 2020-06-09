@@ -4,6 +4,7 @@ using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using System;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
 {
@@ -24,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            _command = new VoidTagCommand(_tagId, null);
+            _command = new VoidTagCommand(_tagId, null, Guid.Empty);
             _dut = new VoidTagCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 

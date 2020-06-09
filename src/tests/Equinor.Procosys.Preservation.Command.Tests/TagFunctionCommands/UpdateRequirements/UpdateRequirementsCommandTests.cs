@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         public void Constructor_ShouldSetProperties_WithRequirements()
         {
             var req = new RequirementForCommand(1, 2);
-            var dut = new UpdateRequirementsCommand("TFC", "RC", new List<RequirementForCommand> {req}, "AAAAAAAAABA=");
+            var dut = new UpdateRequirementsCommand("TFC", "RC", new List<RequirementForCommand> {req}, "AAAAAAAAABA=", Guid.Empty);
 
             Assert.AreEqual("TFC", dut.TagFunctionCode);
             Assert.AreEqual("RC", dut.RegisterCode);
@@ -24,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         [TestMethod]
         public void Constructor_ShouldSetProperties_WithoutRequirements()
         {
-            var dut = new UpdateRequirementsCommand("TFC", "RC", null, null);
+            var dut = new UpdateRequirementsCommand("TFC", "RC", null, null, Guid.Empty);
 
             Assert.IsNotNull(dut.Requirements);
             Assert.AreEqual(0, dut.Requirements.Count());

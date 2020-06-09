@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UnvoidTagFunction;
 using Equinor.Procosys.Preservation.Command.Validators.TagFunctionValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -25,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
             _tagFunctionValidatorMock.Setup(r => r.IsVoidedAsync(_tagFunctionCode, default))
                 .Returns(Task.FromResult(true));
 
-            _command = new UnvoidTagFunctionCommand(_tagFunctionCode, RegisterCode, null);
+            _command = new UnvoidTagFunctionCommand(_tagFunctionCode, RegisterCode, null, Guid.Empty);
             _dut = new UnvoidTagFunctionCommandValidator(_tagFunctionValidatorMock.Object);
         }
 

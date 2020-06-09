@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
         [TestInitialize]
         public void Setup()
         {
-            _command = new DeleteActionAttachmentCommand(1, 2, 3, _rowVersion);
+            _command = new DeleteActionAttachmentCommand(1, 2, 3, _rowVersion, TestUserOid);
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
@@ -90,7 +90,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
             await _dut.Handle(_command, default);
 
             // Assert
-            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
+            UnitOfWorkMock.Verify(u => u.SaveChangesAsync(_command.CurrentUserOid, default), Times.Once);
         }
 
         [TestMethod]

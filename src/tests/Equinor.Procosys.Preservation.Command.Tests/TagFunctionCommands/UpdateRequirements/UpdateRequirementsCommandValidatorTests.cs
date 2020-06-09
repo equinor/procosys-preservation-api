@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
@@ -29,7 +30,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                     new RequirementForCommand(_rd1Id, 1),
                     new RequirementForCommand(_rd2Id, 1)
                 },
-                null);
+                null,
+                Guid.Empty);
 
             _dut = new UpdateRequirementsCommandValidator(_rdValidatorMock.Object);
         }
@@ -77,7 +79,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                     new RequirementForCommand(_rd1Id, 1),
                     new RequirementForCommand(_rd1Id, 1)
                 },
-                null);
+                null,
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -51,7 +52,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                     new RequirementForCommand(_rd2Id, 1)
                 },
                 null,
-                null);
+                null,
+                Guid.Empty);
 
             _dut = new CreateTagsCommandValidator(
                 _tagValidatorMock.Object, 
@@ -151,7 +153,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 _stepId,
                 new List<RequirementForCommand>(),
                 null,
-                null);
+                null,
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 
@@ -169,7 +172,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 _stepId,
                 new List<RequirementForCommand>{new RequirementForCommand(_rd1Id, 1)},
                 null,
-                null);
+                null,
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 
@@ -187,7 +191,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 _stepId,
                 new List<RequirementForCommand>{new RequirementForCommand(_rd1Id, 1)},
                 null,
-                null);
+                null,
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 
@@ -209,7 +214,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                     new RequirementForCommand(_rd1Id, 1)
                 },
                 null,
-                null);
+                null,
+                Guid.Empty);
             
             var result = _dut.Validate(command);
 
