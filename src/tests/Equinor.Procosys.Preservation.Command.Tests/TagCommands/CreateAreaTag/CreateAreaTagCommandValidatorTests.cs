@@ -173,7 +173,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldBoOkForNonSupplierStep_WhenRequirementsForOtherGiven()
+        public void Validate_ShouldBeValidForNonSupplierStep_WhenRequirementsForOtherGiven()
         {
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
             _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
