@@ -33,7 +33,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
 
         public void SetCreated(Person createdBy)
         {
-            
             CreatedAtUtc = TimeService.UtcNow;
             if (createdBy == null)
             {
