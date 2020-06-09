@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,18 +22,15 @@ namespace Equinor.Procosys.Preservation.Infrastructure
     {
         private readonly IPlantProvider _plantProvider;
         private readonly IEventDispatcher _eventDispatcher;
-        private readonly ICurrentUserProvider _currentUserProvider;
 
         public PreservationContext(
             DbContextOptions<PreservationContext> options,
             IPlantProvider plantProvider,
-            IEventDispatcher eventDispatcher,
-            ICurrentUserProvider currentUserProvider)
+            IEventDispatcher eventDispatcher)
             : base(options)
         {
             _plantProvider = plantProvider;
             _eventDispatcher = eventDispatcher;
-            _currentUserProvider = currentUserProvider;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -59,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public virtual DbSet<PreservationPeriod> PreservationPeriods { get; set; }
         public virtual DbSet<Project> Projects { get; set; }
         public virtual DbSet<FieldValue> FieldValues { get; set; }
-        public virtual DbSet<Action> Actions { get; set; }
+        public virtual DbSet<Domain.AggregateModels.ProjectAggregate.Action> Actions { get; set; }
         public virtual DbSet<TagFunction> TagFunctions { get; set; }
         public virtual DbSet<TagFunctionRequirement> TagFunctionRequirements { get; set; }
         public virtual DbSet<Attachment> Attachments { get; set; }
@@ -84,10 +82,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
         public IQueryable<TEntity> QuerySet<TEntity>() where TEntity : class => Set<TEntity>().AsNoTracking();
 
-        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        public async Task<int> SaveChangesAsync(Guid currentUserOid, CancellationToken cancellationToken)
         {
             await DispatchEventsAsync(cancellationToken);
-            await SetAuditDataAsync();
+            await SetAuditDataAsync(currentUserOid);
             try
             {
                 return await base.SaveChangesAsync(cancellationToken);
@@ -107,7 +105,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
             await _eventDispatcher.DispatchAsync(entities, cancellationToken);
         }
 
-        private async Task SetAuditDataAsync()
+        private async Task SetAuditDataAsync(Guid currentUserOid)
         {
             var addedEntries = ChangeTracker
                 .Entries<ICreationAuditable>()
@@ -120,7 +118,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure
 
             if (addedEntries.Any() || modifiedEntries.Any())
             {
-                var currentUserOid = _currentUserProvider.GetCurrentUserOid();
                 var currentUser = await Persons.SingleOrDefaultAsync(p => p.Oid == currentUserOid);
 
                 foreach (var entry in addedEntries)

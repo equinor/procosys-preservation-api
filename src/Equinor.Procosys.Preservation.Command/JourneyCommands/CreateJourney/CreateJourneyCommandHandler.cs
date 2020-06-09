@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
             var newJourney = new Journey(_plantProvider.Plant, request.Title);
 
             _journeyRepository.Add(newJourney);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<int>(newJourney.Id);
         }

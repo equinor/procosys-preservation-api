@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
 
             journey.Title = request.Title;
             journey.SetRowVersion(request.RowVersion);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<string>(journey.RowVersion.ConvertToString());
         }

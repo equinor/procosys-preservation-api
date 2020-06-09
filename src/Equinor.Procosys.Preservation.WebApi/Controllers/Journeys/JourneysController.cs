@@ -23,8 +23,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
     public class JourneysController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly ICurrentUserProvider _currentUserProvider;
 
-        public JourneysController(IMediator mediator) => _mediator = mediator;
+        public JourneysController(IMediator mediator, ICurrentUserProvider currentUserProvider)
+        {
+            _mediator = mediator;
+            _currentUserProvider = currentUserProvider;
+        }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
@@ -61,7 +66,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             string plant,
             [FromBody] CreateJourneyDto dto)
         {
-            var result = await _mediator.Send(new CreateJourneyCommand(dto.Title));
+            var result = await _mediator.Send(new CreateJourneyCommand(dto.Title, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -75,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromRoute] int id,
             [FromBody] CreateStepDto dto)
         {
-            var result = await _mediator.Send(new CreateStepCommand(id, dto.Title, dto.ModeId, dto.ResponsibleCode));
+            var result = await _mediator.Send(new CreateStepCommand(id, dto.Title, dto.ModeId, dto.ResponsibleCode, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -89,7 +94,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromRoute] int id,
             [FromBody] UpdateJourneyDto dto)
         {
-            var result = await _mediator.Send(new UpdateJourneyCommand(id, dto.Title, dto.RowVersion));
+            var result = await _mediator.Send(new UpdateJourneyCommand(id, dto.Title, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
             return this.FromResult(result);
         }
 
@@ -110,7 +115,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
                 dto.ModeId,
                 dto.ResponsibleCode,
                 dto.Title,
-                dto.RowVersion);
+                dto.RowVersion,
+                _currentUserProvider.GetCurrentUserOid());
             var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
@@ -125,7 +131,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromRoute] int id,
             [FromBody] VoidJourneyDto dto)
         {
-            var result = await _mediator.Send(new VoidJourneyCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new VoidJourneyCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
 
             return this.FromResult(result);
         }
@@ -140,7 +146,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromRoute] int id,
             [FromBody] UnvoidJourneyDto dto)
         {
-            var result = await _mediator.Send(new UnvoidJourneyCommand(id, dto.RowVersion));
+            var result = await _mediator.Send(new UnvoidJourneyCommand(id, dto.RowVersion, _currentUserProvider.GetCurrentUserOid()));
 
             return this.FromResult(result);
         }
@@ -159,8 +165,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
                 id, pairedStepsDto.StepA.Id, 
                 pairedStepsDto.StepA.RowVersion, 
                 pairedStepsDto.StepB.Id,
-                pairedStepsDto.StepB.RowVersion
-                );
+                pairedStepsDto.StepB.RowVersion,
+                _currentUserProvider.GetCurrentUserOid());
             var result = await _mediator.Send(command);
             return this.FromResult(result);
         }

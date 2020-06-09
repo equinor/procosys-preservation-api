@@ -50,11 +50,11 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                     return new NotFoundResult<Unit>($"Responsible with code {request.ResponsibleCode} not found");
                 }
                 // must save new Responsible to get id of it
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
             }
 
             journey.AddStep(new Step(_plantProvider.Plant, request.Title, mode, responsible));
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<Unit>(Unit.Value);
         }

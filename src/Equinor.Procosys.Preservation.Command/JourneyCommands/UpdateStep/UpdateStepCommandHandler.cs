@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                     return new NotFoundResult<string>($"Responsible with code {request.ResponsibleCode} not found");
                 }
                 // must save new Responsible to get id of it
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
             }
 
             step.SetMode(mode);
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             step.Title = request.Title;
             step.SetRowVersion(request.RowVersion);
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _unitOfWork.SaveChangesAsync(request.CurrentUserOid, cancellationToken);
 
             return new SuccessResult<string>(step.RowVersion.ConvertToString());
         }
