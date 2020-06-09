@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
@@ -13,7 +12,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private readonly List<TagRequirement> _requirements = new List<TagRequirement>();
         private readonly List<Action> _actions = new List<Action>();
         private readonly List<TagAttachment> _attachments = new List<TagAttachment>();
-        private readonly List<History> _history = new List<History>();
 
         public const int TagNoLengthMax = 255;
         public const int TagFunctionCodeLengthMax = 255;
@@ -95,7 +93,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public IReadOnlyCollection<TagAttachment> Attachments => _attachments.AsReadOnly();
-        public IReadOnlyCollection<History> History => _history.AsReadOnly();
         public bool IsVoided { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set;  }
 
