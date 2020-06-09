@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
 {
     public class History : PlantEntityBase, IAggregateRoot, ICreationAuditable
     {
-        public const int DescriptionLengthMax = 1048;
+        public const int DescriptionLengthMax = 1024;
 
         protected History()
             : base(null)
