@@ -34,6 +34,7 @@ using Equinor.Procosys.Preservation.Query.GetFieldValueAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
+using Equinor.Procosys.Preservation.Query.GetPreservationRecords;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -43,6 +44,7 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceResult;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
+using PreservationRecordDto = Equinor.Procosys.Preservation.Query.GetPreservationRecords.PreservationRecordDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
@@ -98,6 +100,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id)
         {
             var result = await _mediator.Send(new GetTagRequirementsQuery(id));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/PreservationRecords")]
+        public async Task<ActionResult<List<PreservationRecordDto>>> GetPreservationRecords(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementId)
+        {
+            var result = await _mediator.Send(new GetPreservationRecordsQuery(id, requirementId));
             return this.FromResult(result);
         }
 
