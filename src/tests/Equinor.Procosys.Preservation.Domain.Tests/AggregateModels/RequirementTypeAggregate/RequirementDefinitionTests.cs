@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.AreEqual("TitleA", _dut.Title);
             Assert.AreEqual(4, _dut.DefaultIntervalWeeks);
             Assert.AreEqual(10, _dut.SortKey);
-            Assert.AreEqual(RequirementUsage.ForAll, _dut.Usage);
+            Assert.AreEqual(RequirementUsage.ForAll, _dut.DefaultUsage);
             Assert.IsFalse(_dut.IsVoided);
             Assert.AreEqual(0, _dut.Fields.Count);
         }

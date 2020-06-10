@@ -30,13 +30,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasName("IX_RequirementDefinitions_Plant_ASC")
                 .IncludeProperties(x => new {x.IsVoided, x.CreatedAtUtc, x.ModifiedAtUtc, x.SortKey, x.Title});
      
-            builder.Property(x => x.Usage)
+            builder.Property(x => x.DefaultUsage)
                 .HasConversion<string>()
                 .HasDefaultValue(RequirementUsage.ForAll)
                 .HasMaxLength(RequirementDefinition.UsageMax)
                 .IsRequired();
 
-            builder.HasCheckConstraint("constraint_reqdef_check_valid_usage", $"{nameof(RequirementDefinition.Usage)} in ({GetValidUsages()})");
+            builder.HasCheckConstraint("constraint_reqdef_check_valid_usage", $"{nameof(RequirementDefinition.DefaultUsage)} in ({GetValidUsages()})");
         }
 
         private string GetValidUsages()

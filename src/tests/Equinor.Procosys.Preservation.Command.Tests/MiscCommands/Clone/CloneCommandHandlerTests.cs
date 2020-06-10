@@ -240,7 +240,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 Assert.AreEqual(TestPlant, clone.Plant);
                 Assert.AreEqual(source.Title, clone.Title);
                 Assert.AreEqual(source.DefaultIntervalWeeks, clone.DefaultIntervalWeeks);
-                Assert.AreEqual(source.Usage, clone.Usage);
+                Assert.AreEqual(source.DefaultUsage, clone.DefaultUsage);
                 Assert.AreEqual(source.SortKey, clone.SortKey);
                 AssertClonedRequirementFields(source.Fields, clone.Fields);
             }

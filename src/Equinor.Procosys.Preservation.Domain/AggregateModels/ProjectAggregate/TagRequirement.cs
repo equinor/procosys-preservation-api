@@ -35,6 +35,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             IntervalWeeks = intervalWeeks;
+            Usage = requirementDefinition.DefaultUsage;
             RequirementDefinitionId = requirementDefinition.Id;
             
             _initialPreservationPeriodStatus = requirementDefinition.NeedsUserInput
@@ -43,6 +44,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public int IntervalWeeks { get; private set; }
+        public RequirementUsage Usage { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set; }
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; private set; }

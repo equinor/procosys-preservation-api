@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         private void AssertReqDef(RequirementDefinition reqDefExpected, RequirementDefinitionDto reqDefDto)
         {
             Assert.AreEqual(reqDefExpected.Title, reqDefDto.Title);
-            Assert.AreEqual(reqDefExpected.Usage, reqDefDto.Usage);
+            Assert.AreEqual(reqDefExpected.DefaultUsage, reqDefDto.Usage);
             Assert.AreEqual(reqDefExpected.DefaultIntervalWeeks, reqDefDto.DefaultIntervalWeeks);
             Assert.AreEqual(reqDefExpected.SortKey, reqDefDto.SortKey);
             Assert.AreEqual(reqDefExpected.IsVoided, reqDefDto.IsVoided);
