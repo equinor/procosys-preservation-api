@@ -3,8 +3,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
@@ -22,8 +20,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         public async Task<Result<List<RequirementDto>>> Handle(GetTagRequirementsQuery request, CancellationToken cancellationToken)
         {
             // Get tag with all requirements and all previous preservation
-            var tagDto = await
-                (from tag in _context.QuerySet<Tag>()
+            var tag = await
+                (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements)
                             .ThenInclude(r => r.PreservationPeriods)
                             .ThenInclude(p => p.PreservationRecord)
@@ -31,21 +29,15 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                             .ThenInclude(r => r.PreservationPeriods)
                             .ThenInclude(p => p.FieldValues)
                             .ThenInclude(fv => fv.FieldValueAttachment)
-                    join step in _context.QuerySet<Step>() on tag.StepId equals step.Id
-                    join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
-                 where tag.Id == request.TagId
-                 select new
-                 {
-                     Tag = tag,
-                     Mode = mode
-                 } ).SingleOrDefaultAsync(cancellationToken);
+                 where t.Id == request.TagId
+                 select t).SingleOrDefaultAsync(cancellationToken);
 
-            if (tagDto == null)
+            if (tag == null)
             {
                 return new NotFoundResult<List<RequirementDto>>($"{nameof(Tag)} with ID {request.TagId} not found");
             }
 
-            var requirementDefinitionIds = tagDto.Tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();
+            var requirementDefinitionIds = tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();
 
             // get needed information about requirementType/Definition for all requirement on tag
             var requirementDtos = await
@@ -61,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                     }
                 ).ToListAsync(cancellationToken);
 
-            var requirements = tagDto.Tag
+            var requirements = tag
                 .OrderedRequirements()
                 .Select(requirement =>
                 {
