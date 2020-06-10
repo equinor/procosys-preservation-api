@@ -125,8 +125,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
 
             _dut = new PreserveCommandHandler(
                 _projectRepoMock.Object,
-                _journeyRepositoryMock.Object,
-                _modeRepositoryMock.Object,
                 _personRepoMock.Object,
                 UnitOfWorkMock.Object,
                 _currentUserProvider.Object);

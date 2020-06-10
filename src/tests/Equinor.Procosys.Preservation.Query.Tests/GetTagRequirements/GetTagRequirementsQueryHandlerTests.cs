@@ -407,7 +407,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 context.SaveChangesAsync().Wait();
 
                 _timeProvider.ElapseWeeks(_interval);
-                tag.Preserve(new Mock<Person>().Object, false);
+                tag.Preserve(new Mock<Person>().Object);
                 context.SaveChangesAsync().Wait();
             }
 

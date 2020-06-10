@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), dto.Status);
                 Assert.AreEqual(_testTag.TagNo, dto.TagNo);
                 Assert.AreEqual(_testTag.TagType, dto.TagType);
-                Assert.AreEqual(_testTag.IsReadyToBePreserved(mode.ForSupplier), dto.ReadyToBePreserved);
+                Assert.AreEqual(_testTag.IsReadyToBePreserved(), dto.ReadyToBePreserved);
 
                 var resp = context.Responsibles.Single(r => r.Id == step.ResponsibleId);
                 var journey = context.Journeys.Single(j => j.Steps.Any(s => s.Id == step.Id));

@@ -72,6 +72,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             TagNo = tagNo;
             Description = description;
             StepId = step.Id;
+            IsInSupplierStep = step.IsSupplierStep;
             _requirements.AddRange(reqList);
         }
 
@@ -89,6 +90,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string Remark { get; set; }
         public string StorageArea { get; set; }
         public int StepId { get; private set; }
+        public bool IsInSupplierStep { get; private set; }
         public string TagFunctionCode { get; set; }
         public string TagNo { get; private set; }
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
@@ -125,6 +127,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             StepId = step.Id;
+            IsInSupplierStep = step.IsSupplierStep;
         }
 
         public void AddRequirement(TagRequirement requirement)
@@ -145,7 +148,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _requirements.Add(requirement);
-            UpdateNextDueTimeUtc(true);
+            UpdateNextDueTimeUtc();
         }
 
         public void AddAction(Action action)
@@ -205,7 +208,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             Status = PreservationStatus.Active;
-            UpdateNextDueTimeUtc(true);
+            UpdateNextDueTimeUtc();
         }
 
         public void CompletePreservation(Journey journey)
@@ -223,36 +226,36 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             NextDueTimeUtc = null;
         }
 
-        public bool IsReadyToBePreserved(bool tagIsInSupplierStep)
+        public bool IsReadyToBePreserved()
             => Status == PreservationStatus.Active && 
-               FirstUpcomingRequirement(tagIsInSupplierStep) != null;
+               FirstUpcomingRequirement() != null;
 
-        public void Preserve(Person preservedBy, bool tagIsInSupplierStep)
-            => Preserve(preservedBy, false, tagIsInSupplierStep);
+        public void Preserve(Person preservedBy)
+            => Preserve(preservedBy, false);
                 
-        public void Preserve(Person preservedBy, int requirementId, bool tagIsInSupplierStep)
+        public void Preserve(Person preservedBy, int requirementId)
         {
             var requirement = Requirements.Single(r => r.Id == requirementId);
             requirement.Preserve(preservedBy, false);
-            UpdateNextDueTimeUtc(tagIsInSupplierStep);
+            UpdateNextDueTimeUtc();
         }
 
-        public void BulkPreserve(Person preservedBy, bool tagIsInSupplierStep)
-            => Preserve(preservedBy, true, tagIsInSupplierStep);
+        public void BulkPreserve(Person preservedBy)
+            => Preserve(preservedBy, true);
 
-        public IEnumerable<TagRequirement> GetUpComingRequirements(bool tagIsInSupplierStep)
+        public IEnumerable<TagRequirement> GetUpComingRequirements()
         {
-            var GetUpComingRequirements = OrderedRequirements(tagIsInSupplierStep)
+            var GetUpComingRequirements = OrderedRequirements()
                 .Where(r => r.IsReadyAndDueToBePreserved());
             return GetUpComingRequirements;
         }
 
-        public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool tagIsInSupplierStep)
+        public IOrderedEnumerable<TagRequirement> OrderedRequirements()
             => Requirements
                 .Where(r => !r.IsVoided)
                 .Where(r => r.Usage == RequirementUsage.ForAll || 
-                            (tagIsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
-                            (!tagIsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers))
+                            (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
+                            (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers))
                 .OrderBy(r => r.NextDueTimeUtc);
 
         public bool IsReadyToBeTransferred(Journey journey)
@@ -313,25 +316,25 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool FollowsAJourney => TagType == TagType.Standard || TagType == TagType.PreArea;
 
-        private void Preserve(Person preservedBy, bool bulkPreserved, bool tagIsInSupplierStep)
+        private void Preserve(Person preservedBy, bool bulkPreserved)
         {
-            if (!IsReadyToBePreserved(tagIsInSupplierStep))
+            if (!IsReadyToBePreserved())
             {
                 throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
             }
 
-            foreach (var requirement in GetUpComingRequirements(tagIsInSupplierStep))
+            foreach (var requirement in GetUpComingRequirements())
             {
                 requirement.Preserve(preservedBy, bulkPreserved);
             }
         
-            UpdateNextDueTimeUtc(tagIsInSupplierStep);
+            UpdateNextDueTimeUtc();
         }
 
-        private TagRequirement FirstUpcomingRequirement(bool tagIsInSupplierStep)
-            => GetUpComingRequirements(tagIsInSupplierStep).FirstOrDefault();
+        private TagRequirement FirstUpcomingRequirement()
+            => GetUpComingRequirements().FirstOrDefault();
 
-        private void UpdateNextDueTimeUtc(bool tagIsInSupplierStep)
-            => NextDueTimeUtc = OrderedRequirements(tagIsInSupplierStep).FirstOrDefault()?.NextDueTimeUtc;
+        private void UpdateNextDueTimeUtc()
+            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
     }
 }

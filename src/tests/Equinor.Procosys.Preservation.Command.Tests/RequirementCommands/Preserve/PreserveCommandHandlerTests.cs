@@ -81,8 +81,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
 
             _dut = new PreserveCommandHandler(
                 _projectRepoMock.Object,
-                _journeyRepositoryMock.Object,
-                _modeRepositoryMock.Object,
                 _personRepoMock.Object,
                 UnitOfWorkMock.Object,
                 _currentUserProvider.Object);

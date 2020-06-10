@@ -91,8 +91,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
 
             _dut = new BulkPreserveCommandHandler(
                 _projectRepoMock.Object,
-                _journeyRepositoryMock.Object,
-                _modeRepositoryMock.Object,
                 _personRepoMock.Object,
                 UnitOfWorkMock.Object,
                 _currentUserProvider.Object);

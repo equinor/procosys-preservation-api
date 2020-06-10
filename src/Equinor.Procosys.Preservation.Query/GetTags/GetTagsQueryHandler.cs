@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             var tags = orderedDtos.Select(dto =>
             {
                 var tagWithRequirements = tagsWithRequirements.Single(t => t.Id == dto.TagId);
-                var requirementDtos = tagWithRequirements.OrderedRequirements(dto.ForSupplier).Select(
+                var requirementDtos = tagWithRequirements.OrderedRequirements().Select(
                         r =>
                         {
                             var reqTypeDto =
@@ -131,7 +131,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     .ToList();
 
                 var isNew = IsNew(tagWithRequirements);
-                var isReadyToBePreserved = tagWithRequirements.IsReadyToBePreserved(dto.ForSupplier);
+                var isReadyToBePreserved = tagWithRequirements.IsReadyToBePreserved();
                 var isReadyToBeStarted = tagWithRequirements.IsReadyToBeStarted();
                 var isReadyToBeTransferred = tagWithRequirements.IsReadyToBeTransferred(dto.JourneyWithSteps);
                 var isReadyToBeCompleted = tagWithRequirements.IsReadyToBeCompleted(dto.JourneyWithSteps);
@@ -268,7 +268,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     IsVoided = tag.IsVoided,
                     JourneyId = journey.Id,
                     ModeTitle = mode.Title,
-                    ForSupplier = mode.ForSupplier,
                     McPkgNo = tag.McPkgNo,
                     NextDueTimeUtc = tag.NextDueTimeUtc,
                     PurchaseOrderNo = tag.PurchaseOrderNo,
@@ -387,7 +386,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             public int JourneyId { get; set; }
             public string McPkgNo { get; set; }
             public string ModeTitle { get; set; }
-            public bool ForSupplier { get; set; }
             public DateTime? NextDueTimeUtc { get; set; }
             public string PurchaseOrderNo { get; set; }
             public string ResponsibleCode { get; set; }
