@@ -6,6 +6,7 @@
         DeleteRequirement,
         VoidRequirement,
         UnvoidRequirement,
+        PreserveRequirement,
         VoidTag,
         UnvoidTag,
         StartPreservation,

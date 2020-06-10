@@ -28,6 +28,24 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
             EventType = eventType;
         }
 
+        public History(
+            string plant,
+            string description,
+            int objectId,
+            ObjectType objectType,
+            PreservationRecord preservationRecord
+        ) : this(plant, description, objectId, objectType, EventType.PreserveRequirement)
+        {
+            if (preservationRecord == null)
+            {
+                throw new ArgumentNullException(nameof(preservationRecord));
+            }
+            if (preservationRecord.Plant != plant)
+            {
+                throw new ArgumentException($"Can't relate item in {preservationRecord.Plant} to item in {plant}");
+            }
+        }
+
         public string Description { get; private set; }
         public int CreatedById { get; private set; }
         public int ObjectId { get; private set; }
