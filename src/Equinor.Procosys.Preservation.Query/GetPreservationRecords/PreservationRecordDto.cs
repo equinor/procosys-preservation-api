@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
-
+﻿
 namespace Equinor.Procosys.Preservation.Query.GetPreservationRecords
 {
     public class PreservationRecordDto
     {
         public PreservationRecordDto(
             int id,
+            bool bulkPreserved,
             string rowVersion)
         {
             Id = id;
+            BulkPreserved = bulkPreserved;
             RowVersion = rowVersion;
         }
 
         public int Id { get; }
+        public bool BulkPreserved { get; }
         public string RowVersion { get; }
     }
 }

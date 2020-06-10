@@ -6,13 +6,13 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecords
 {
     public class GetPreservationRecordsQuery : IRequest<Result<List<PreservationRecordDto>>>, ITagQueryRequest
     {
-        public GetPreservationRecordsQuery(int tagId, int requirementId)
+        public GetPreservationRecordsQuery(int tagId, int tagRequirementId)
         {
             TagId = tagId;
-            RequirementId = requirementId;
+            TagRequirementId = tagRequirementId;
         }
 
         public int TagId { get; }
-        public int RequirementId { get; }
+        public int TagRequirementId { get; }
     }
 }

@@ -43,7 +43,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult;
 using ServiceResult.ApiExtensions;
-using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using PreservationRecordDto = Equinor.Procosys.Preservation.Query.GetPreservationRecords.PreservationRecordDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
@@ -92,7 +91,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("{id}/Requirements")]
-        public async Task<ActionResult<List<RequirementDto>>> GetTagRequirements(
+        public async Task<ActionResult<List<TagRequirementDto>>> GetTagRequirements(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -100,20 +99,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id)
         {
             var result = await _mediator.Send(new GetTagRequirementsQuery(id));
-            return this.FromResult(result);
-        }
-
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
-        [HttpGet("{id}/PreservationRecords")]
-        public async Task<ActionResult<List<PreservationRecordDto>>> GetPreservationRecords(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
-            [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
-            string plant,
-            [FromRoute] int id,
-            [FromRoute] int requirementId)
-        {
-            var result = await _mediator.Send(new GetPreservationRecordsQuery(id, requirementId));
             return this.FromResult(result);
         }
 
@@ -730,6 +715,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(new UnvoidTagCommand(id, dto.RowVersion));
 
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Requirements/{requirementId}/PreservationRecords")]
+        public async Task<ActionResult<List<PreservationRecordDto>>> GetPreservationRecords(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int tagRequirementId)
+        {
+            var result = await _mediator.Send(new GetPreservationRecordsQuery(id, tagRequirementId));
             return this.FromResult(result);
         }
 
