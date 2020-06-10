@@ -43,10 +43,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         private TagRequirement _req1ForAllWithTwoWeekInterval;
         private TagRequirement _req2ForAllWithTwoWeekInterval;
         private TagRequirement _req3ForAllWithFourWeekInterval;
-        private TagRequirement _req1ForSupplierWithTwoWeekInterval;
-        private TagRequirement _req2ForSupplierWithTwoWeekInterval;
-        private TagRequirement _req1ForOtherWithTwoWeekInterval;
-        private TagRequirement _req2ForOtherWithTwoWeekInterval;
+        private TagRequirement _reqForSupplierInSupplierStep;
+        private TagRequirement _reqForSupplierInOtherStep;
+        private TagRequirement _reqForOtherInSupplierStep;
+        private TagRequirement _reqForOtherInOtherStep;
 
         private PreserveCommandHandler _dut;
 
@@ -79,20 +79,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
                 _req3ForAllWithFourWeekInterval
             });
 
-            _req1ForSupplierWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdForSupplierTwoWeekInterval);
-            _req1ForOtherWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdForOtherTwoWeekInterval);
+            _reqForSupplierInSupplierStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForSupplierTwoWeekInterval);
+            _reqForOtherInSupplierStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForOtherTwoWeekInterval);
             _tagWithSupplierAndOtherRequirementsInSupplierStep = new Tag(TestPlant, TagType.Standard, "", "", supplierStep, new List<TagRequirement>
             {
-                _req1ForSupplierWithTwoWeekInterval, 
-                _req1ForOtherWithTwoWeekInterval
+                _reqForSupplierInSupplierStep, 
+                _reqForOtherInSupplierStep
             });
 
-            _req2ForSupplierWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdForSupplierTwoWeekInterval);
-            _req2ForOtherWithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdForOtherTwoWeekInterval);
+            _reqForSupplierInOtherStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForSupplierTwoWeekInterval);
+            _reqForOtherInOtherStep = new TagRequirement(TestPlant, TwoWeeksInterval, rdForOtherTwoWeekInterval);
             _tagWithSupplierAndOtherRequirementsInOtherStep = new Tag(TestPlant, TagType.Standard, "", "", otherStep, new List<TagRequirement>
             {
-                _req2ForSupplierWithTwoWeekInterval, 
-                _req2ForOtherWithTwoWeekInterval
+                _reqForSupplierInOtherStep, 
+                _reqForOtherInOtherStep
             });
 
             _currentUserProvider = new Mock<ICurrentUserProvider>();
@@ -155,23 +155,29 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldPreserveRequirementsForSupplier_WhenTagIsInSupplierStep()
         {
+            var reqForSupplierInSupplierStepPeriod = _reqForSupplierInSupplierStep.ActivePeriod;
+            var reqForOtherInSupplierStepPeriod = _reqForOtherInSupplierStep.ActivePeriod;
+
             _timeProvider.ElapseWeeks(TwoWeeksInterval);
 
             await _dut.Handle(_commandForTagInSupplierStep, default);
 
-            Assert.IsNull(_req1ForOtherWithTwoWeekInterval.ActivePeriod.PreservationRecord);
-            Assert.IsNotNull(_req1ForSupplierWithTwoWeekInterval.ActivePeriod.PreservationRecord);
+            Assert.IsNotNull(reqForSupplierInSupplierStepPeriod.PreservationRecord);
+            Assert.IsNull(reqForOtherInSupplierStepPeriod.PreservationRecord);
         }
 
         [TestMethod]
         public async Task HandlingPreserveCommand_ShouldNotPreserveRequirementsForSupplier_WhenTagIsInOtherStep()
         {
+            var reqForOtherInOtherStepPeriod = _reqForOtherInOtherStep.ActivePeriod;
+            var reqForSupplierInOtherStepPeriod = _reqForSupplierInOtherStep.ActivePeriod;
+
             _timeProvider.ElapseWeeks(TwoWeeksInterval);
 
             await _dut.Handle(_commandForTagInOtherStep, default);
 
-            Assert.IsNull(_req1ForOtherWithTwoWeekInterval.ActivePeriod.PreservationRecord);
-            Assert.IsNotNull(_req1ForSupplierWithTwoWeekInterval.ActivePeriod.PreservationRecord);
+            Assert.IsNotNull(reqForOtherInOtherStepPeriod.PreservationRecord);
+            Assert.IsNull(reqForSupplierInOtherStepPeriod.PreservationRecord);
         }
 
         [TestMethod]

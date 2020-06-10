@@ -112,11 +112,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
+            var reqDefId = 2;
+
             var usage = RequirementUsage.ForSuppliersOnly;
             var requirementDefinition = new RequirementDefinition(TestPlant, "T", 1, usage, 1);
-            var reqDefId = 2;
             requirementDefinition.SetProtectedIdForTesting(reqDefId);
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, requirementDefinition);
 
             Assert.AreEqual(TestPlant, dut.Plant);
             Assert.AreEqual(reqDefId, dut.RequirementDefinitionId);

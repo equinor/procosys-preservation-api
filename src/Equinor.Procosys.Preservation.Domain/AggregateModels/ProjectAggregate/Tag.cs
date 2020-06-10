@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
@@ -249,6 +250,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool tagIsInSupplierStep)
             => Requirements
                 .Where(r => !r.IsVoided)
+                .Where(r => r.Usage == RequirementUsage.ForAll || 
+                            (tagIsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
+                            (!tagIsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers))
                 .OrderBy(r => r.NextDueTimeUtc);
 
         public bool IsReadyToBeTransferred(Journey journey)
