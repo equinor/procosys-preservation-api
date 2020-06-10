@@ -30,22 +30,22 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         public async Task<bool> UsageCoversBothForSupplierAndOtherAsync(List<int> requirementDefinitionIds, CancellationToken token)
         {
             var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
-            return reqDefs.Any(rd => rd.DefaultUsage == RequirementUsage.ForAll)
-                   || (reqDefs.Any(rd => rd.DefaultUsage == RequirementUsage.ForSuppliersOnly) &&
-                       reqDefs.Any(rd => rd.DefaultUsage == RequirementUsage.ForOtherThanSuppliers));
+            return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll)
+                   || (reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly) &&
+                       reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers));
         }
 
         public async Task<bool> UsageCoversForOtherThanSuppliersAsync(List<int> requirementDefinitionIds, CancellationToken token)
         {
             var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
-            return reqDefs.Any(rd => rd.DefaultUsage == RequirementUsage.ForAll) ||
-                   reqDefs.Any(rd => rd.DefaultUsage == RequirementUsage.ForOtherThanSuppliers);
+            return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll) ||
+                   reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers);
         }
 
         public async Task<bool> UsageCoversForSupplierOnlyAsync(List<int> requirementDefinitionIds, CancellationToken token)
         {
             var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
-            return reqDefs.Any(rd => rd.DefaultUsage == RequirementUsage.ForSuppliersOnly);
+            return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly);
         }
 
         private async Task<List<RequirementDefinition>> GetRequirementDefinitions(

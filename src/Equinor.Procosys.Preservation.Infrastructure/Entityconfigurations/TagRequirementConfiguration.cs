@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasMaxLength(RequirementDefinition.UsageMax)
                 .IsRequired();
 
-            builder.HasCheckConstraint("constraint_tagreq_check_valid_usage", $"{nameof(RequirementDefinition.DefaultUsage)} in ({GetValidUsages()})");
+            builder.HasCheckConstraint("constraint_tagreq_check_valid_usage", $"{nameof(RequirementDefinition.Usage)} in ({GetValidUsages()})");
         }
 
         private string GetValidUsages()

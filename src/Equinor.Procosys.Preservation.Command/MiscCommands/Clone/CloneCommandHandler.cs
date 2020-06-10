@@ -130,7 +130,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
                         targetRT.Plant,
                         sourceRD.Title,
                         sourceRD.DefaultIntervalWeeks, 
-                        sourceRD.DefaultUsage,
+                        sourceRD.Usage,
                         sourceRD.SortKey); 
                     targetRT.AddRequirementDefinition(targetRD);
                 }

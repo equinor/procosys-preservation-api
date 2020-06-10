@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             IntervalWeeks = intervalWeeks;
-            Usage = requirementDefinition.DefaultUsage;
+            Usage = requirementDefinition.Usage;
             RequirementDefinitionId = requirementDefinition.Id;
             
             _initialPreservationPeriodStatus = requirementDefinition.NeedsUserInput

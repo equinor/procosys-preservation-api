@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                             rd.Title,
                             rd.IsVoided,
                             rd.DefaultIntervalWeeks,
-                            rd.DefaultUsage,
+                            rd.Usage,
                             rd.SortKey,
                             rd.NeedsUserInput,
                             rd.OrderedFields(true)
