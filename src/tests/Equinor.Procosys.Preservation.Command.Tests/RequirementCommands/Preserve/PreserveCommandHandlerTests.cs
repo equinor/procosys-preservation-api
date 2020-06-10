@@ -27,8 +27,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
 
         private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IProjectRepository> _projectRepoMock;
-        private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private PreserveCommand _command;
@@ -63,10 +61,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
                 .Returns(_currentUserOid);
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tag));
-            _journeyRepositoryMock = new Mock<IJourneyRepository>();
-            _journeyRepositoryMock.Setup(j => j.GetStepByStepIdAsync(StepId)).Returns(Task.FromResult(step));
-            _modeRepositoryMock = new Mock<IModeRepository>();
-            _modeRepositoryMock.Setup(m => m.GetByIdAsync(ModeId)).Returns(Task.FromResult(mode));
             _personRepoMock = new Mock<IPersonRepository>();
             _personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))

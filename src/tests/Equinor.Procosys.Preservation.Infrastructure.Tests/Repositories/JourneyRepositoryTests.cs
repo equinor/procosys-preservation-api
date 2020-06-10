@@ -68,22 +68,5 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
 
             Assert.IsNull(result);
         }
-
-        [TestMethod]
-        public async Task GetStepsByStepIdsAsync_KnownId_ReturnsStep()
-        {
-            var result = await _dut.GetStepsByStepIdsAsync(new List<int>{StepId});
-
-            Assert.AreEqual(1, result.Count);
-            Assert.AreEqual(StepId, result.Single().Id);
-        }
-
-        [TestMethod]
-        public async Task GetStepsByStepIdsAsync_UnknownId_ReturnsNull()
-        {
-            var result = await _dut.GetStepsByStepIdsAsync(new List<int>{99});
-
-            Assert.AreEqual(0, result.Count);
-        }
     }
 }

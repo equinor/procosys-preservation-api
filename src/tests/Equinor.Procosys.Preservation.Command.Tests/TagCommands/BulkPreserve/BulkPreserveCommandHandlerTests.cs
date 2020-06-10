@@ -27,8 +27,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
 
         private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IProjectRepository> _projectRepoMock;
-        private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private BulkPreserveCommand _command;
@@ -74,12 +72,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             var tagIds = new List<int> {TagId1, TagId2};
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
-            _journeyRepositoryMock = new Mock<IJourneyRepository>();
-            _journeyRepositoryMock.Setup(j => j.GetStepsByStepIdsAsync(new List<int> {StepId}))
-                .Returns(Task.FromResult(new List<Step> {step}));
-            _modeRepositoryMock = new Mock<IModeRepository>();
-            _modeRepositoryMock.Setup(m => m.GetByIdsAsync(new List<int> {ModeId}))
-                .Returns(Task.FromResult(new List<Mode> {mode}));
             _personRepoMock = new Mock<IPersonRepository>();
             _personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))

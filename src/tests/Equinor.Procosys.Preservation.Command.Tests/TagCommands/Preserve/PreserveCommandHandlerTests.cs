@@ -30,8 +30,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
 
         private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IProjectRepository> _projectRepoMock;
-        private Mock<IJourneyRepository> _journeyRepositoryMock;
-        private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IPersonRepository> _personRepoMock;
         private Mock<ICurrentUserProvider> _currentUserProvider;
         private PreserveCommand _commandForTagWithForAllRequirements;
@@ -103,13 +101,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagWithForAllRequirementsId)).Returns(Task.FromResult(_tagWithForAllRequirements));
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagInOtherStepId)).Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInOtherStep));
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagInSupplierStepId)).Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInSupplierStep));
-            
-            _journeyRepositoryMock = new Mock<IJourneyRepository>();
-            _journeyRepositoryMock.Setup(j => j.GetStepByStepIdAsync(SupplierStepId)).Returns(Task.FromResult(supplierStep));
-            _journeyRepositoryMock.Setup(j => j.GetStepByStepIdAsync(OtherStepId)).Returns(Task.FromResult(otherStep));
-            _modeRepositoryMock = new Mock<IModeRepository>();
-            _modeRepositoryMock.Setup(m => m.GetByIdAsync(SupplierModeId)).Returns(Task.FromResult(supplierMode));
-            _modeRepositoryMock.Setup(m => m.GetByIdAsync(OtherModeId)).Returns(Task.FromResult(otherMode));
             
             _personRepoMock = new Mock<IPersonRepository>();
             _personRepoMock
