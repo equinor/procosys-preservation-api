@@ -9,10 +9,14 @@
         PreserveRequirement,
         VoidTag,
         UnvoidTag,
+        CreateTag,
+        DeleteTag,
         StartPreservation,
         CompletePreservation,
         ChangeInterval,
         ManualTransfer,
-        AutomaticTransfer
+        AutomaticTransfer,
+        AddAction,
+        CloseAction
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using System;
 using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 {
@@ -22,6 +23,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(f => f.EventType)
                 .HasConversion<string>()
                 .IsRequired();
+
+            builder.HasOne<PreservationRecord>()
+                .WithMany()
+                .OnDelete(DeleteBehavior.NoAction);
 
             builder
                 .HasIndex(p => p.ObjectId)

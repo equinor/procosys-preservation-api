@@ -43,16 +43,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
             {
                 throw new ArgumentException($"Can't relate item in {preservationRecord.Plant} to item in {plant}");
             }
+
+            PreservationRecordId = preservationRecord.Id;
         }
 
         public string Description { get; private set; }
         public int CreatedById { get; private set; }
         public int ObjectId { get; private set; }
+        public int? PreservationRecordId { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public EventType EventType { get; private set; }
         public ObjectType ObjectType { get; private set; }
-
-        public PreservationRecord PreservationRecord { get; private set; }
 
         public void SetCreated(Person createdBy)
         {
