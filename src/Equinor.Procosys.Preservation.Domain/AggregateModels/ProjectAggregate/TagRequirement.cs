@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool ReadyToBePreserved => PeriodReadyToBePreserved != null;
 
-        public override string ToString() => $"Interval {IntervalWeeks}, NextDue {NextDueTimeUtc}, ReqDefId {RequirementDefinitionId}";
+        public override string ToString() => $"Interval {IntervalWeeks}, NextDue {NextDueTimeUtc}, ReqDefId {RequirementDefinitionId}, Usage {Usage}";
 
         public int? GetNextDueInWeeks()
         {
