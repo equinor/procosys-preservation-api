@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
         public async Task<Result<int>> Handle(CreateAreaTagCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetByNameAsync(request.ProjectName);
+            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             
             if (project == null)
             {
