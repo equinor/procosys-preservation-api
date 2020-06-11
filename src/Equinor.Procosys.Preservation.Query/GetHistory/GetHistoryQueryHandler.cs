@@ -25,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
                         h.Description,
                         h.CreatedAtUtc,
                         h.CreatedById,
+                        h.EventType,
                         null, 
                         h.PreservationRecordId))
                 .ToListAsync(cancellationToken);
