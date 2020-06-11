@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
@@ -34,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
 
             if (tag == null)
             {
-                return new NotFoundResult<PreservationRecordDto>($"{nameof(Tag)} with ID {request.TagId} not found");
+                return new NotFoundResult<PreservationRecordDto>(Strings.EntityNotFound(nameof(Tag), request.TagId));
             }
 
             var requirement = tag.Requirements.SingleOrDefault(r => r.Id == request.RequirementId);
