@@ -31,10 +31,10 @@ using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetFieldValueAttachment;
+using Equinor.Procosys.Preservation.Query.GetPreservationRecord;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
-using Equinor.Procosys.Preservation.Query.GetPreservationRecords;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTags;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -43,7 +43,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult;
 using ServiceResult.ApiExtensions;
-using PreservationRecordDto = Equinor.Procosys.Preservation.Query.GetPreservationRecords.PreservationRecordDto;
+using PreservationRecordDto = Equinor.Procosys.Preservation.Query.GetPreservationRecord.PreservationRecordDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
@@ -718,17 +718,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
-        [HttpGet("{id}/Requirements/{requirementId}/PreservationRecords")]
-        public async Task<ActionResult<List<PreservationRecordDto>>> GetPreservationRecords(
+        [HttpGet("{id}/Requirements/{requirementId}/PreservationRecord/{preservationRecordId}")]
+        public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
-            [FromRoute] int tagRequirementId)
+            [FromRoute] int requirementId,
+            [FromRoute] int preservationRecordId)
         {
-            var result = await _mediator.Send(new GetPreservationRecordsQuery(id, tagRequirementId));
+            var result = await _mediator.Send(new GetPreservationRecordQuery(id, requirementId, preservationRecordId));
             return this.FromResult(result);
         }
 

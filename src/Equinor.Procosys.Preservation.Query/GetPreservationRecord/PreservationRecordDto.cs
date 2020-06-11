@@ -1,5 +1,4 @@
-﻿
-namespace Equinor.Procosys.Preservation.Query.GetPreservationRecords
+﻿namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
 {
     public class PreservationRecordDto
     {
