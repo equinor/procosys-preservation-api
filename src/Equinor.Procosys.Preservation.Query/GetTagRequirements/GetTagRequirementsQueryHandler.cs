@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                     join requirementType in _context.QuerySet<RequirementType>()
                         on EF.Property<int>(requirementDefinition, "RequirementTypeId") equals requirementType.Id
                     where requirementDefinitionIds.Contains(requirementDefinition.Id)
-                    select new Dto
+                    select new
                     {
                         ReqTypeCode = requirementType.Code,
                         ReqTypeTitle = requirementType.Title,
@@ -87,13 +87,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                 }).ToList();
             
             return new SuccessResult<List<RequirementDto>>(requirements);
-        }
-        
-        private class Dto
-        {
-            public string ReqTypeCode { get; set; }
-            public string ReqTypeTitle { get; set; }
-            public RequirementDefinition RequirementDefinition { get; set; }
         }
     }
 

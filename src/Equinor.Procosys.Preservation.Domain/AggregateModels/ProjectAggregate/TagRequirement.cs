@@ -35,6 +35,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             IntervalWeeks = intervalWeeks;
+            Usage = requirementDefinition.Usage;
             RequirementDefinitionId = requirementDefinition.Id;
             
             _initialPreservationPeriodStatus = requirementDefinition.NeedsUserInput
@@ -43,6 +44,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public int IntervalWeeks { get; private set; }
+        public RequirementUsage Usage { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set; }
         public bool IsVoided { get; private set; }
         public int RequirementDefinitionId { get; private set; }
@@ -57,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool ReadyToBePreserved => PeriodReadyToBePreserved != null;
 
-        public override string ToString() => $"Interval {IntervalWeeks}, NextDue {NextDueTimeUtc}, ReqDefId {RequirementDefinitionId}";
+        public override string ToString() => $"Interval {IntervalWeeks}, NextDue {NextDueTimeUtc}, ReqDefId {RequirementDefinitionId}, Usage {Usage}";
 
         public int? GetNextDueInWeeks()
         {

@@ -4,14 +4,16 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    partial class PreservationContextModelSnapshot : ModelSnapshot
+    [Migration("20200610105433_AddPreservationRecordId")]
+    partial class AddPreservationRecordId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,9 +138,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<int>("CreatedById")
                         .HasColumnType("int");
-
-                    b.Property<bool>("IsSupplierStep")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
@@ -610,9 +609,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasMaxLength(255);
 
-                    b.Property<bool>("IsInSupplierStep")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 
@@ -766,13 +762,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("TagId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Usage")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(32)")
-                        .HasMaxLength(32)
-                        .HasDefaultValue("ForAll");
-
                     b.Property<string>("_initialPreservationPeriodStatus")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -793,8 +782,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.ToTable("TagRequirements");
 
                     b.HasCheckConstraint("constraint_requirement_check_valid_initial_status", "_initialPreservationPeriodStatus in ('NeedsUserInput','ReadyToBePreserved')");
-
-                    b.HasCheckConstraint("constraint_tagreq_check_valid_usage", "Usage in ('ForAll','ForSuppliersOnly','ForOtherThanSuppliers')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate.Field", b =>
