@@ -4,9 +4,12 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -15,6 +18,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
     [TestClass]
     public class BulkPreserveCommandHandlerTests : CommandHandlerTestsBase
     {
+        private const int ModeId = 1;
+        private const int StepId = 17;
         private const int TagId1 = 7;
         private const int TagId2 = 8;
         private const int TwoWeeksInterval = 2;
@@ -37,8 +42,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         [TestInitialize]
         public void Setup()
         {
-            var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+            var mode = new Mode(TestPlant, "SUP", true);
+            mode.SetProtectedIdForTesting(ModeId);
+            var step = new Step(TestPlant, "SUP", mode, new Responsible(TestPlant, "C", "T"));
+            step.SetProtectedIdForTesting(StepId);
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
 
@@ -46,11 +53,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _req2OnTag1WithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rdMock.Object);
             _req1OnTag2WithTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, rdMock.Object);
             _req2OnTag2WithFourWeekInterval = new TagRequirement(TestPlant, FourWeeksInterval, rdMock.Object);
-            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            _tag1 = new Tag(TestPlant, TagType.Standard, "", "", step, new List<TagRequirement>
             {
                 _req1OnTag1WithTwoWeekInterval, _req2OnTag1WithFourWeekInterval
             });
-            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>
+            _tag2 = new Tag(TestPlant, TagType.Standard, "", "", step, new List<TagRequirement>
             {
                 _req1OnTag2WithTwoWeekInterval, _req2OnTag2WithFourWeekInterval
             });

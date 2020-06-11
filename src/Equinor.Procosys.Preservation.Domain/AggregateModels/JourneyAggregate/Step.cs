@@ -47,11 +47,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             Title = title;
             SortKey = 0;
             ModeId = mode.Id;
+            IsSupplierStep = mode.ForSupplier;
             ResponsibleId = responsible.Id;
         }
 
         public string Title { get; set; }
         public int ModeId { get; private set; }
+        public bool IsSupplierStep { get; private set; }
         public int ResponsibleId { get; private set; }
 
         public int SortKey { get; set; }
@@ -94,6 +96,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentNullException(nameof(mode));
             }
 
+            IsSupplierStep = mode.ForSupplier;
             ModeId = mode.Id;
         }
 

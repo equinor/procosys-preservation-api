@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
 
-        public override string ToString() => Title;
+        public override string ToString() => $"{Title} - {Usage}";
 
         public void SetCreated(Person createdBy)
         {
