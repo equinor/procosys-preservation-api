@@ -200,13 +200,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region SetStep
 
         [TestMethod]
-        public void SetStep_ShouldSetStepId()
+        public void SetStep_ShouldSetStepIdAndIsSupplierStep()
         {
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsInSupplierStep);
             var newStep = new Mock<Step>();
             newStep.SetupGet(x => x.Id).Returns(4);
             _dutWithOneReqNotNeedInputTwoWeekInterval.SetStep(newStep.Object);
 
             Assert.AreEqual(newStep.Object.Id, _dutWithOneReqNotNeedInputTwoWeekInterval.StepId);
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsInSupplierStep);
         }
 
         [TestMethod]

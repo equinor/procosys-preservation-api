@@ -235,7 +235,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 
         public void Preserve(Person preservedBy, int requirementId)
         {
-            var requirement = Requirements.Single(r => r.Id == requirementId);
+            var requirement = ActiveRequirementsDueToCurrentStep().Single(r => r.Id == requirementId);
             requirement.Preserve(preservedBy, false);
             UpdateNextDueTimeUtc();
         }
@@ -251,12 +251,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public IOrderedEnumerable<TagRequirement> OrderedRequirements()
-            => Requirements
-                .Where(r => !r.IsVoided)
-                .Where(r => r.Usage == RequirementUsage.ForAll || 
-                            (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
-                            (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers))
-                .OrderBy(r => r.NextDueTimeUtc);
+            => ActiveRequirementsDueToCurrentStep().OrderBy(r => r.NextDueTimeUtc);
 
         public bool IsReadyToBeTransferred(Journey journey)
         {
@@ -330,6 +325,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         
             UpdateNextDueTimeUtc();
         }
+
+        public IEnumerable<TagRequirement> ActiveRequirementsDueToCurrentStep()
+            => Requirements
+                .Where(r => !r.IsVoided)
+                .Where(r => r.Usage == RequirementUsage.ForAll || 
+                            (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
+                            (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers));
 
         private TagRequirement FirstUpcomingRequirement()
             => GetUpComingRequirements().FirstOrDefault();
