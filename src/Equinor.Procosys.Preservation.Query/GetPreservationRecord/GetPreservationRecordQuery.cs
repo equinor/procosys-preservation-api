@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using MediatR;
+﻿using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
 {
-    public class GetPreservationRecordQuery : IRequest<Result<List<PreservationRecordDto>>>, ITagQueryRequest
+    public class GetPreservationRecordQuery : IRequest<Result<PreservationRecordDto>>, ITagQueryRequest
     {
         public GetPreservationRecordQuery(int tagId, int requirementId, int preservationRecordId)
         {

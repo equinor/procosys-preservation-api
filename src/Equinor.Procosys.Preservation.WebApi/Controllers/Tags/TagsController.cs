@@ -718,7 +718,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("{id}/Requirements/{requirementId}/PreservationRecord/{preservationRecordId}")]
         public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
