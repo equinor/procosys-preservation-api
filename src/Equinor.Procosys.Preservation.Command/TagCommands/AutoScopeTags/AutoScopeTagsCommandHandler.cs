@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
             var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
             var addedTags = new List<Tag>();
-            var project = await _projectRepository.GetByNameAsync(request.ProjectName);
+            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             
             foreach (var tagNo in request.TagNos)
             {
