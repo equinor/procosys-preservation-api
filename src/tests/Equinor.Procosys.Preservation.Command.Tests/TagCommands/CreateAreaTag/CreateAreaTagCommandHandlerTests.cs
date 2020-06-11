@@ -122,10 +122,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         [TestMethod]
         public async Task HandlingCreateAreaTagCommand_ShouldAddProjectToRepository_WhenProjectNotExists()
         {
-            // Arrange
-            _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult((Project)null));
-
             // Act
             var result = await _dut.Handle(_command, default);
 
@@ -141,7 +137,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "");
             _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
+                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
 
             // Act
             var result = await _dut.Handle(_command, default);
@@ -154,10 +150,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         [TestMethod]
         public async Task HandlingCreateAreaTagCommand_ShouldAddTagToNewProject_WhenProjectNotExists()
         {
-            // Arrange
-            _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult((Project)null));
-
             // Act
             var result = await _dut.Handle(_command, default);
 
@@ -175,7 +167,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "");
             _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
+                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
             
             // Act
@@ -193,7 +185,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public async Task HandlingCreateAreaTagCommand_ShouldSave()
         {
             _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult(new Project(TestPlant, TestProjectName, "")));
+                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(new Project(TestPlant, TestProjectName, "")));
             // Act
             await _dut.Handle(_command, default);
             
