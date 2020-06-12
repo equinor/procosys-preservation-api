@@ -144,10 +144,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         [TestMethod]
         public async Task HandlingCreateTagsCommand_ShouldAddProjectToRepository_WhenProjectNotExists()
         {
-            // Arrange
-            _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult((Project)null));
-
             // Act
             var result = await _dut.Handle(_command, default);
 
@@ -163,8 +159,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         {
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "");
-            _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
+            _projectRepositoryMock.Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
 
             // Act
             var result = await _dut.Handle(_command, default);
@@ -177,10 +172,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         [TestMethod]
         public async Task HandlingCreateTagsCommand_ShouldAdd2TagsToNewProject_WhenProjectNotExists()
         {
-            // Arrange
-            _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult((Project)null));
-
             // Act
             var result = await _dut.Handle(_command, default);
 
@@ -199,8 +190,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         {
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "");
-            _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
+            _projectRepositoryMock.Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
             
             // Act
