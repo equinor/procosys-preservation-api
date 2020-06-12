@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
         public async Task<Result<PreservationRecordDto>> Handle(GetPreservationRecordQuery request,
             CancellationToken cancellationToken)
         {
-            // Get tag with all requirements, all periods, all preservation records
+            // Get tag with all requirements, all periods, all preservation records, all field values
             var tag = await
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements)
@@ -53,33 +53,11 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
                 return new NotFoundResult<PreservationRecordDto>(Strings.EntityNotFound(nameof(PreservationPeriod), request.PreservationRecordId));
             }
 
-            // get needed information about preservation record
-            var preservationRecordDto =
-                (from pr in _context.QuerySet<PreservationRecord>()
-                    where pr.Id == preservationRecord.Id
-                    select new Dto
-                    {
-                        PreservationRecordId = pr.Id,
-                        PresRecordBulkReserved = pr.BulkPreserved,
-                        PresRecordRowVersion = pr.RowVersion.ToString()
-                    });
+            // todo Expand PreservationRecordDto to also include information about the requirement definition and its recorded values
+            // see GetTagRequirements for this as it is very similar. GetTagRequirements get nearly the same data, but on open period
+            var preservationRecordDto = new PreservationRecordDto(preservationRecord.Id, preservationRecord.BulkPreserved);
 
-            var requirementDto =
-                preservationRecordDto.Single(rd => rd.PreservationRecordId == request.PreservationRecordId);
-
-            var preservRecordDto = new PreservationRecordDto(
-                preservationRecord.Id,
-                preservationRecord.BulkPreserved,
-                requirementDto.PresRecordRowVersion);
-
-            return new SuccessResult<PreservationRecordDto>(preservRecordDto);
-        }
-
-        private class Dto
-        {
-            public int PreservationRecordId { get; set; }
-            public bool PresRecordBulkReserved { get; set; }
-            public string PresRecordRowVersion { get; set; }
+            return new SuccessResult<PreservationRecordDto>(preservationRecordDto);
         }
     }
 }

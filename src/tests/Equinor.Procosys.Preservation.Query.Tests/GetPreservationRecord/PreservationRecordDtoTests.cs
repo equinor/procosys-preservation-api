@@ -9,11 +9,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new PreservationRecordDto(2, true, "AAAAAAAAABA=");
+            var dut = new PreservationRecordDto(2, true);
 
             Assert.AreEqual(2, dut.Id);
             Assert.IsTrue(dut.BulkPreserved);
-            Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }
 }

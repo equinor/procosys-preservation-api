@@ -4,16 +4,13 @@
     {
         public PreservationRecordDto(
             int id,
-            bool bulkPreserved,
-            string rowVersion)
+            bool bulkPreserved)
         {
             Id = id;
             BulkPreserved = bulkPreserved;
-            RowVersion = rowVersion;
         }
 
         public int Id { get; }
         public bool BulkPreserved { get; }
-        public string RowVersion { get; }
     }
 }

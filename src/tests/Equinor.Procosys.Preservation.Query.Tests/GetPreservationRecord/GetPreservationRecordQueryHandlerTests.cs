@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetPreservationRecord;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -17,10 +16,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
     public class GetGetPreservationRecordQueryHandlerTests : ReadOnlyTestsBase
     {
         private int _tagId;
-        private int _requirementId;
-        private  int _preservationRecordId;
-
-        //private readonly DateTime _dueTimeUtc = DateTime.UtcNow;
+        private int _requirementWithoutFieldId;
+        private int _preservationRecordId;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -28,24 +25,41 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 _currentUserProvider))
             {
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
-                var reqDef = new RequirementDefinition(TestPlant, "TestTitle", 2, RequirementUsage.ForAll, 1);
+                var requirementDefinitionWithoutField =
+                    AddRequirementTypeWith1DefWithoutField(context, "RT", "", 1).RequirementDefinitions.Single();
 
-                var requirement = new TagRequirement(TestPlant, 2, reqDef);
-                context.Add(requirement);
-                context.SaveChangesAsync().Wait();
-                _requirementId = requirement.Id;
+                var requirementWithoutField = new TagRequirement(TestPlant, 1, requirementDefinitionWithoutField);
 
-                var preservationRecord = new PreservationRecord(TestPlant, new Mock<Person>().Object, true);
-                context.Add(preservationRecord);
-                context.SaveChangesAsync().Wait();
-                _preservationRecordId = preservationRecord.Id;
-
-                var tag = new Tag(TestPlant, TagType.Standard, "TagNo", "Description", journey.Steps.ElementAt(0),
-                    new List<TagRequirement> {requirement});
+                var tag = new Tag(TestPlant,
+                    TagType.Standard, 
+                    "TagNo",
+                    "Description",
+                    journey.Steps.ElementAt(0),
+                    new List<TagRequirement>
+                    {
+                        requirementWithoutField
+                    });
                 context.Tags.Add(tag);
+                
+                Assert.IsNull(requirementWithoutField.ActivePeriod);
+                // All TagRequirements get an active Period when starting
+                tag.StartPreservation();
+                Assert.IsNotNull(requirementWithoutField.ActivePeriod);
+                
                 context.SaveChangesAsync().Wait();
                 _tagId = tag.Id;
+                _requirementWithoutFieldId = requirementWithoutField.Id;
 
+                var activePeriodForRequirementWithOutField =
+                    tag.Requirements.Single(r => r.Id == requirementWithoutField.Id).ActivePeriod;
+
+                Assert.IsNull(activePeriodForRequirementWithOutField.PreservationRecord);
+                // Active Period gets a Preservation Record and the current Active Period be a new active Period when preserving
+                tag.Preserve(new Mock<Person>().Object, _requirementWithoutFieldId);
+                Assert.IsNotNull(activePeriodForRequirementWithOutField.PreservationRecord);
+
+                context.SaveChangesAsync().Wait();
+                _preservationRecordId = activePeriodForRequirementWithOutField.PreservationRecord.Id;
             }
         }
 
@@ -54,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetPreservationRecordQuery(_tagId, _requirementId, _preservationRecordId);
+                var query = new GetPreservationRecordQuery(_tagId, _requirementWithoutFieldId, _preservationRecordId);
                 var dut = new GetPreservationRecordQueryHandler(context);
                 var result = await dut.Handle(query, default);
 
@@ -70,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 _currentUserProvider))
             {
                 var tagId = 11;
-                var query = new GetPreservationRecordQuery(tagId, _requirementId, _preservationRecordId);
+                var query = new GetPreservationRecordQuery(tagId, _requirementWithoutFieldId, _preservationRecordId);
                 var dut = new GetPreservationRecordQueryHandler(context);
                 var result = await dut.Handle(query, default);
 
@@ -102,7 +116,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 _currentUserProvider))
             {
                 var presevRecordId = 33;
-                var query = new GetPreservationRecordQuery(_tagId, _requirementId, presevRecordId);
+                var query = new GetPreservationRecordQuery(_tagId, _requirementWithoutFieldId, presevRecordId);
                 var dut = new GetPreservationRecordQueryHandler(context);
                 var result = await dut.Handle(query, default);
 
