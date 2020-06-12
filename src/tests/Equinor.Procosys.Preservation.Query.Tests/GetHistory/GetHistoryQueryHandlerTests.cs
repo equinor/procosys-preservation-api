@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetHistory;
@@ -57,6 +58,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
                 var result = await dut.Handle(_query, default);
 
                 Assert.AreEqual(2, result.Data.Count);
+                AssertHistory(_historyVoidTag, result.Data.Single(t => t.EventType == EventType.VoidTag));
+                AssertHistory(_historyCreateTag, result.Data.Single(t => t.EventType == EventType.CreateTag));
             }
         }
 
@@ -71,6 +74,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
 
                 Assert.AreEqual(0, result.Data.Count);
             }
+        }
+
+        private void AssertHistory(History expected, HistoryDto actual)
+        {
+            Assert.AreEqual(expected.Id, actual.Id);
+            Assert.AreEqual(expected.PreservationRecordId, actual.PreservationRecordId);
+            Assert.AreEqual(expected.Description, actual.Description);
+            Assert.AreEqual(expected.EventType, actual.EventType);
+            Assert.AreEqual(expected.CreatedById, actual.CreatedById);
+            Assert.AreEqual(expected.CreatedAtUtc, actual.CreatedAtUtc);
         }
     }
 }
