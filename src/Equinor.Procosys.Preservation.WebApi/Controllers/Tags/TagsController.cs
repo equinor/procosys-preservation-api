@@ -31,6 +31,7 @@ using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetFieldValueAttachment;
+using Equinor.Procosys.Preservation.Query.GetPreservationRecord;
 using Equinor.Procosys.Preservation.Query.GetHistory;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
@@ -715,6 +716,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(new UnvoidTagCommand(id, dto.RowVersion));
 
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Requirements/{requirementId}/PreservationRecord/{preservationRecordId}")]
+        public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementId,
+            [FromRoute] int preservationRecordId)
+        {
+            var result = await _mediator.Send(new GetPreservationRecordQuery(id, requirementId, preservationRecordId));
             return this.FromResult(result);
         }
 
