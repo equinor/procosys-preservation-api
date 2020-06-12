@@ -34,16 +34,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             var step = new Step(TestPlant, "S", modeMock.Object, responsibleMock.Object);
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
-            var requirements = new List<TagRequirement>
+
+            var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1");
+            project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagNo1", "Desc", step, new List<TagRequirement>
             {
                 new TagRequirement(TestPlant, 1, rdMock.Object),
                 new TagRequirement(TestPlant, 2, rdMock.Object),
                 new TagRequirement(TestPlant, 4, rdMock.Object)
-            };
-
-            var project1 = new Project(TestPlant, ProjectNameWithTags, "Desc1");
-            project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagNo1", "Desc", step, requirements));
-            project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagX", "Desc", step, requirements));
+            }));
+            project1.AddTag(new Tag(TestPlant, TagType.Standard, "TagX", "Desc", step, new List<TagRequirement>
+            {
+                new TagRequirement(TestPlant, 1, rdMock.Object),
+                new TagRequirement(TestPlant, 2, rdMock.Object),
+                new TagRequirement(TestPlant, 4, rdMock.Object)
+            }));
             var testTagMock = new Mock<Tag>();
             testTagMock.SetupGet(t => t.Id).Returns(TestTagId);
             testTagMock.SetupGet(t => t.Plant).Returns(TestPlant);
@@ -77,24 +81,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             var result = await _dut.GetAllTagsInProjectAsync(ProjectNameWithoutTags);
 
             Assert.AreEqual(0, result.Count);
-        }
-
-        [TestMethod]
-        public async Task GetByName_ReturnsProjectWith3Tags()
-        {
-            var result = await _dut.GetByNameAsync(ProjectNameWithTags);
-
-            Assert.AreEqual(ProjectNameWithTags, result.Name);
-            Assert.AreEqual(3, result.Tags.Count);
-        }
-
-        [TestMethod]
-        public async Task GetByName_ReturnsProjectWithNoTags()
-        {
-            var result = await _dut.GetByNameAsync(ProjectNameWithoutTags);
-
-            Assert.AreEqual(ProjectNameWithoutTags, result.Name);
-            Assert.AreEqual(0, result.Tags.Count);
         }
 
         [TestMethod]
