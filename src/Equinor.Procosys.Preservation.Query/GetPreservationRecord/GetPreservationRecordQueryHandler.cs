@@ -44,7 +44,9 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
                 return new NotFoundResult<PreservationRecordDto>(Strings.EntityNotFound(nameof(TagRequirement), request.RequirementId));
             }
 
-            var records = requirement.PreservationPeriods.Select(pp => pp.PreservationRecord);
+            var records = requirement.PreservationPeriods
+                .Where(pp => pp.PreservationRecord != null)
+                .Select(pp => pp.PreservationRecord);
             var preservationRecord = records.SingleOrDefault(pr => pr.Id == request.PreservationRecordId);
             if (preservationRecord == null)
             {
