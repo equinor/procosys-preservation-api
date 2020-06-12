@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("{id}/Requirements")]
-        public async Task<ActionResult<List<TagRequirementDto>>> GetTagRequirements(
+        public async Task<ActionResult<List<RequirementDto>>> GetTagRequirements(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
