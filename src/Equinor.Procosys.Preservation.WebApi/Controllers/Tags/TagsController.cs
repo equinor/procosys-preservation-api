@@ -32,6 +32,7 @@ using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetFieldValueAttachment;
 using Equinor.Procosys.Preservation.Query.GetPreservationRecord;
+using Equinor.Procosys.Preservation.Query.GetHistory;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
@@ -730,6 +731,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int preservationRecordId)
         {
             var result = await _mediator.Send(new GetPreservationRecordQuery(id, requirementId, preservationRecordId));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/History")]
+        public async Task<ActionResult<List<HistoryDto>>> GetTagHistory(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id)
+        {
+            var result = await _mediator.Send(new GetHistoryQuery(id));
             return this.FromResult(result);
         }
 
