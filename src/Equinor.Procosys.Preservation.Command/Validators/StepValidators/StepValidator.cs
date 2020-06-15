@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 .Include(j => j.Steps)
                 .SingleAsync(j => j.Id == journeyId, token);
 
-            if (journey.Steps.First().Id == stepId)
+            if (journey.OrderedSteps().First().Id == stepId)
             {
                 return true;
             }
