@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Description = "Desc1",
                         Id = 1,
                         McPkgNo = "McPkgNo1",
-                        PurchaseOrderNo = "PoNo1",
+                        PurchaseOrderTitle = "PoNo1",
                         TagFunctionCode = _tagFunctionCode,
                         RegisterCode = _registerCode,
                         MccrResponsibleCodes = "R1"
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Description = "Desc2",
                         Id = 2,
                         McPkgNo = "McPkgNo2",
-                        PurchaseOrderNo = "PoNo2",
+                        PurchaseOrderTitle = "PoNo1/CallOff1",
                         TagFunctionCode = _tagFunctionCode,
                         RegisterCode = _registerCode,
                         MccrResponsibleCodes = "R2"
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Description = "Desc3",
                         Id = 3,
                         McPkgNo = "McPkgNo3",
-                        PurchaseOrderNo = "PoNo3",
+                        PurchaseOrderTitle = "PoNo1/CallOff2",
                         TagFunctionCode = _tagFunctionCode,
                         RegisterCode = _registerCode,
                         MccrResponsibleCodes = "R3"
@@ -209,7 +209,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             Assert.AreEqual(tagOverview.CommPkgNo, tagDto.CommPkgNo);
             Assert.AreEqual(tagOverview.Description, tagDto.Description);
             Assert.AreEqual(tagOverview.McPkgNo, tagDto.McPkgNo);
-            Assert.AreEqual(tagOverview.PurchaseOrderNo, tagDto.PurchaseOrderNumber);
+            Assert.AreEqual(tagOverview.PurchaseOrderTitle, tagDto.PurchaseOrderNumber);
             Assert.AreEqual(tagOverview.MccrResponsibleCodes, tagDto.MccrResponsibleCodes);
         }
     }

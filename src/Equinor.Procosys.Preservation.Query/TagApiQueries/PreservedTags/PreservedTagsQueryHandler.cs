@@ -9,26 +9,26 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
+namespace Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags
 {
-    public class SearchTagsByTagNoQueryHandler : IRequestHandler<SearchTagsByTagNoQuery, Result<List<ProcosysTagDto>>>
+    public class PreservedTagsQueryHandler : IRequestHandler<PreservedTagsQuery, Result<List<ProcosysPreservedTagDto>>>
     {
         private readonly IReadOnlyContext _context;
         private readonly ITagApiService _tagApiService;
         private readonly IPlantProvider _plantProvider;
 
-        public SearchTagsByTagNoQueryHandler(IReadOnlyContext context, ITagApiService tagApiService, IPlantProvider plantProvider)
+        public PreservedTagsQueryHandler(IReadOnlyContext context, ITagApiService tagApiService, IPlantProvider plantProvider)
         {
             _context = context;
             _tagApiService = tagApiService;
             _plantProvider = plantProvider;
         }
 
-        public async Task<Result<List<ProcosysTagDto>>> Handle(SearchTagsByTagNoQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<ProcosysPreservedTagDto>>> Handle(PreservedTagsQuery request, CancellationToken cancellationToken)
         {
             var apiTags = await _tagApiService
-                .SearchTagsByTagNoAsync(_plantProvider.Plant, request.ProjectName, request.StartsWithTagNo)
-                ?? new List<ProcosysTagOverview>();
+                .GetPreservedTagsAsync(_plantProvider.Plant, request.ProjectName)
+                ?? new List<ProcosysPreservedTag>();
 
             var presTagNos = await (from tag in _context.QuerySet<Tag>()
                 join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
@@ -44,7 +44,8 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
                         new {ApiTag = x, PresTagNo = y})
                 .SelectMany(x => x.PresTagNo.DefaultIfEmpty(),
                     (x, y) =>
-                        new ProcosysTagDto(
+                        new ProcosysPreservedTagDto(
+                            x.ApiTag.Id,
                             x.ApiTag.TagNo,
                             x.ApiTag.Description,
                             x.ApiTag.PurchaseOrderTitle,
@@ -53,10 +54,17 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
                             x.ApiTag.TagFunctionCode,
                             x.ApiTag.RegisterCode,
                             x.ApiTag.MccrResponsibleCodes,
+                            x.ApiTag.PreservationRemark,
+                            x.ApiTag.StorageArea,
+                            x.ApiTag.ModeCode,
+                            x.ApiTag.Heating,
+                            x.ApiTag.Special,
+                            x.ApiTag.NextUpcommingDueTime,
+                            x.ApiTag.StartDate,
                             y != null))
                 .ToList();
 
-            return new SuccessResult<List<ProcosysTagDto>>(combinedTags);
+            return new SuccessResult<List<ProcosysPreservedTagDto>>(combinedTags);
         }
     }
 }
