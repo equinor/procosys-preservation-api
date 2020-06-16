@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
                 project.AddTag(_tagWithHistory);
 
                 _historyVoidTag = new History(TestPlant, "D", _tagWithHistory.ObjectGuid, ObjectType.Tag, EventType.VoidTag);
-                _historyCreateTag = new History(TestPlant, "D1", _tagWithHistory.ObjectGuid, ObjectType.Tag, EventType.CreateTag);
+                _historyCreateTag = new History(TestPlant, "D1", _tagWithHistory.ObjectGuid, ObjectType.Tag, EventType.TagCreated);
 
                 context.History.Add(_historyVoidTag);
                 context.History.Add(_historyCreateTag);
@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
 
                 Assert.AreEqual(2, result.Data.Count);
                 AssertHistory(_historyVoidTag, result.Data.Single(t => t.EventType == EventType.VoidTag));
-                AssertHistory(_historyCreateTag, result.Data.Single(t => t.EventType == EventType.CreateTag));
+                AssertHistory(_historyCreateTag, result.Data.Single(t => t.EventType == EventType.TagCreated));
             }
         }
 
