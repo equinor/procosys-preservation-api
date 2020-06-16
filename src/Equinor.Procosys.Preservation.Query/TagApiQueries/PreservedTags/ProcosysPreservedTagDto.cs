@@ -1,4 +1,6 @@
-﻿namespace Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags
+﻿using System;
+
+namespace Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags
 {
     public class ProcosysPreservedTagDto
     {
@@ -17,6 +19,8 @@
             string modeCode, 
             bool heating, 
             bool special,
+            DateTime? nextUpcommingDueTime,
+            DateTime? startDate,
             bool isPreserved)
         {
             Id = id;
@@ -33,6 +37,8 @@
             ModeCode = modeCode;
             Heating = heating;
             Special = special;
+            NextUpcommingDueTime = nextUpcommingDueTime;
+            StartDate = startDate;
             IsPreserved = isPreserved;
         }
 
@@ -50,6 +56,8 @@
         public string ModeCode { get; }
         public bool Heating { get; }
         public bool Special { get; }
+        public DateTime? NextUpcommingDueTime { get; }
+        public DateTime? StartDate { get; }
         public bool IsPreserved { get; }
     }
 }

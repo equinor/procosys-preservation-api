@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Equinor.Procosys.Preservation.MainApi.Tag
 {
@@ -19,5 +20,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         public string ModeCode { get; set; }
         public bool Heating { get; set; }
         public bool Special { get; set; }
+        public DateTime? NextUpcommingDueTime { get; set; }
+        public DateTime? StartDate { get; set; }
     }
 }

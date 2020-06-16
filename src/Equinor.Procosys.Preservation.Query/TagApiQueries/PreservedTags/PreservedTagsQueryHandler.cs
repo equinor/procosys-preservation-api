@@ -59,6 +59,8 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags
                             x.ApiTag.ModeCode,
                             x.ApiTag.Heating,
                             x.ApiTag.Special,
+                            x.ApiTag.NextUpcommingDueTime,
+                            x.ApiTag.StartDate,
                             y != null))
                 .ToList();
 
