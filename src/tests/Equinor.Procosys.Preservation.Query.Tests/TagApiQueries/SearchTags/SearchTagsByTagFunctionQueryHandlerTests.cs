@@ -209,7 +209,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             Assert.AreEqual(tagOverview.CommPkgNo, tagDto.CommPkgNo);
             Assert.AreEqual(tagOverview.Description, tagDto.Description);
             Assert.AreEqual(tagOverview.McPkgNo, tagDto.McPkgNo);
-            Assert.AreEqual(tagOverview.PurchaseOrderTitle, tagDto.PurchaseOrderNumber);
+            Assert.AreEqual(tagOverview.PurchaseOrderTitle, tagDto.PurchaseOrderTitle);
             Assert.AreEqual(tagOverview.MccrResponsibleCodes, tagDto.MccrResponsibleCodes);
         }
     }

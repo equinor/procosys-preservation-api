@@ -15,7 +15,7 @@
         {
             TagNo = tagNo;
             Description = description;
-            PurchaseOrderNumber = purchaseOrderTitle;
+            PurchaseOrderTitle = purchaseOrderTitle;
             CommPkgNo = commPkgNo;
             McPkgNo = mcPkgNo;
             RegisterCode = registerCode;
@@ -26,7 +26,7 @@
 
         public string TagNo { get; }
         public string Description { get; }
-        public string PurchaseOrderNumber { get; } // todo rename to PurchaseOrderTitle. Coordinate with UI-developers
+        public string PurchaseOrderTitle { get; }
         public string CommPkgNo { get; }
         public string McPkgNo { get; }
         public string RegisterCode { get; }
