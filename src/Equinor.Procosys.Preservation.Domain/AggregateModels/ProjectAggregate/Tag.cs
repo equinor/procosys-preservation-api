@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
+using Equinor.Procosys.Preservation.Domain.Events;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -74,8 +75,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             StepId = step.Id;
             IsInSupplierStep = step.IsSupplierStep;
             _requirements.AddRange(reqList);
+            ObjectGuid = Guid.NewGuid();
+            AddDomainEvent(new TagCreatedEvent(plant, ObjectGuid));
         }
 
+        public Guid ObjectGuid { get; private set; }
         public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }
