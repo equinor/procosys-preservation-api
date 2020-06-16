@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.MainApi.TagFunction
                 $"&registerCode={registerCode}" +
                 $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<ProcosysTagFunction>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysTagFunction>(url);
         }
     }
 }

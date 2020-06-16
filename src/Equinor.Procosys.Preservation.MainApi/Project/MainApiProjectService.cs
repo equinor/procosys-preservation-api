@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Project
                 $"&projectName={name}" +
                 $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<ProcosysProject>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysProject>(url);
         }
     }
 }

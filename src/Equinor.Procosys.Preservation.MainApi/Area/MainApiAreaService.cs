@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Area
                       $"&code={code}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<ProcosysArea>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysArea>(url);
         }
     }
 }
