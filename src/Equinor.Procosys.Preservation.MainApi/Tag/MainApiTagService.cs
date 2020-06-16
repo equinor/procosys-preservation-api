@@ -75,6 +75,20 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             return tagDetails;
         }
 
+        public async Task<IList<ProcosysPreservedTag>> GetPreservedTagsAsync(string plant, string projectName)
+        {
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
+            {
+                throw new ArgumentException($"Invalid plant: {plant}");
+            }
+
+            var url = $"{_baseAddress}PreservationTags" +
+                      $"?plantId={plant}" +
+                      $"&projectName={projectName}" +
+                      $"&api-version={_apiVersion}";
+            return await _mainApiClient.QueryAndDeserialize<List<ProcosysPreservedTag>>(url);
+        }
+
         public async Task<IList<ProcosysTagOverview>> SearchTagsByTagNoAsync(string plant, string projectName, string startsWithTagNo)
         {
             if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
