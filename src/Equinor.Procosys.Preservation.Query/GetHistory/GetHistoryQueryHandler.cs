@@ -19,23 +19,17 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
 
         public async Task<Result<List<HistoryDto>>> Handle(GetHistoryQuery request, CancellationToken cancellationToken)
         {
-            var tag = await
-                (from t in _context.QuerySet<Tag>()
-                   where t.Id == request.TagId
-                 select t).SingleOrDefaultAsync(cancellationToken);
-
-            var tagHistory = await
-                (from h in _context.QuerySet<History>()
-                    where tag.ObjectGuid == h.ObjectGuid
-                    select new HistoryDto(
-                        h.Id,
-                        h.Description,
-                        h.CreatedAtUtc,
-                        h.CreatedById,
-                        h.EventType,
-                        null, 
-                        h.PreservationRecordId))
-                .ToListAsync(cancellationToken);
+            var tagHistory = await (from h in _context.QuerySet<History>()
+                join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
+                where tag.Id == request.TagId
+                where tag.ObjectGuid == h.ObjectGuid
+                select new HistoryDto(h.Id,
+                    h.Description,
+                    h.CreatedAtUtc,
+                    h.CreatedById,
+                    h.EventType,
+                    null,
+                    h.PreservationRecordId)).ToListAsync(cancellationToken);
 
             return new SuccessResult<List<HistoryDto>>(tagHistory);
         }

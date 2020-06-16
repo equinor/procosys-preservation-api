@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
             string description,
             Guid objectGuid,
             PreservationRecord preservationRecord
-        ) : this(plant, description, objectGuid, ObjectType.Tag, EventType.PreserveRequirement)
+        ) : this(plant, description, objectGuid, ObjectType.Tag, EventType.RequirementPreserved)
         {
             if (preservationRecord == null)
             {

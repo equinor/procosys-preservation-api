@@ -6,36 +6,35 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
     {
         [Description("Requirement added")]
         RequirementAdded,
-        // todo rename as above ... fortid
-        [Description("Deleted requirement")]
-        DeleteRequirement,
-        [Description("Voided requirement")]
-        VoidRequirement,
-        [Description("Unvoided requirement")]
-        UnvoidRequirement,
-        [Description("Preserved requirement")]
-        PreserveRequirement,
-        [Description("Voided tag")]
-        VoidTag,
-        [Description("Unvoided tag")]
-        UnvoidTag,
+        [Description("Requirement deleted")]
+        RequirementDeleted,
+        [Description("Requirement voided")]
+        RequirementVoided,
+        [Description("Requirement unvoided")]
+        RequirementUnvoided,
+        [Description("Requirement preserved")]
+        RequirementPreserved,
+        [Description("Tag voided")]
+        TagVoided,
+        [Description("Tag unvoided")]
+        TagUnvoided,
         [Description("Tag created")]
         TagCreated,
-        [Description("Deleted tag")]
-        DeleteTag,
-        [Description("Started preservation")]
-        StartPreservation,
-        [Description("Completed preservation")]
-        CompletePreservation,
-        [Description("Changed interval")]
-        ChangeInterval,
-        [Description("Manually transferred")]
-        ManualTransfer,
-        [Description("Automatically transferred")]
-        AutomaticTransfer,
-        [Description("Added action")]
-        AddAction,
-        [Description("Closed action")]
-        CloseAction
+        [Description("Tag deleted")]
+        TagDeleted,
+        [Description("Preservation started")]
+        PreservationStarted,
+        [Description("Preservation completed")]
+        PreservationCompleted,
+        [Description("Interval changed")]
+        IntervalChanged,
+        [Description("Transferred manually")]
+        TransferredManually,
+        [Description("Transferred automatically")]
+        TransferredAutomatically,
+        [Description("Action added")]
+        ActionAdded,
+        [Description("Action closed")]
+        ActionClosed
     }
 }
