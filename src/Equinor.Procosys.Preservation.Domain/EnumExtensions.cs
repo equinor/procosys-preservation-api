@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Domain
             if (fieldInfo != null)
             {
                 var attrs = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), true);
-                if (attrs != null && attrs.Length > 0)
+                if (attrs.Length > 0)
                 {
                     description = ((DescriptionAttribute)attrs[0]).Description;
                 }
