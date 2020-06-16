@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         [TestMethod]
         public void GetDescription_WhenNoDescription_ShouldReturnEventType()
         {
-            const string expected = "EnumWithoutDescription";
+            var expected = TestEnums.EnumWithoutDescription.ToString();
             var actual = TestEnums.EnumWithoutDescription.GetDescription();
             Assert.AreEqual(expected, actual);
         }
