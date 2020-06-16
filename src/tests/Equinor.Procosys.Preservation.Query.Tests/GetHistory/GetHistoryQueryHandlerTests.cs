@@ -1,21 +1,30 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetHistory;
 using Equinor.Procosys.Preservation.Test.Common;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
+
 
 namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
 {
     [TestClass]
     public class GetHistoryQueryHandlerTests : ReadOnlyTestsBase
     {
-        private const int _tagIdWithNoHistory = 1;
-        private const int _tagIdWithHistory = 2;
-
+        private const int _tagIdWithNoHistory = 2;
+        
+        private Tag _tagWithHistory;
+        private Tag _tagWithNoHistory;
         private History _historyVoidTag;
         private History _historyCreateTag;
         private GetHistoryQuery _query;
@@ -24,9 +33,21 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _query = new GetHistoryQuery(_tagIdWithHistory);
-                _historyVoidTag = new History(TestPlant, "D", _tagIdWithHistory, ObjectType.Tag, EventType.VoidTag);
-                _historyCreateTag = new History(TestPlant, "D1", _tagIdWithHistory, ObjectType.Tag, EventType.CreateTag);
+                var step = new Step(TestPlant, "T", new Mode(TestPlant, "TI", false), new Responsible(TestPlant, "C", "TITL"));
+                var requirementDefinition = new RequirementDefinition(TestPlant, "T", 3, RequirementUsage.ForAll, 1);
+                var requirement = new TagRequirement(TestPlant, 2, requirementDefinition);
+
+                _tagWithNoHistory = new Tag(TestPlant, TagType.Standard, "T", "D", step, new List<TagRequirement> { requirement });
+                _tagWithNoHistory.SetProtectedIdForTesting(_tagIdWithNoHistory);
+                context.Tags.Add(_tagWithNoHistory);
+
+                _tagWithHistory = new Tag(TestPlant, TagType.Standard, "T1", "D1", step, new List<TagRequirement> { requirement });
+                context.Tags.Add(_tagWithHistory);
+
+                _historyVoidTag = new History(TestPlant, "D", _tagWithHistory.ObjectGuid, ObjectType.Tag, EventType.VoidTag);
+                _historyCreateTag = new History(TestPlant, "D1", _tagWithHistory.ObjectGuid, ObjectType.Tag, EventType.CreateTag);
+
+                _query = new GetHistoryQuery(_tagWithHistory.Id);
 
                 context.History.Add(_historyVoidTag);
                 context.History.Add(_historyCreateTag);
