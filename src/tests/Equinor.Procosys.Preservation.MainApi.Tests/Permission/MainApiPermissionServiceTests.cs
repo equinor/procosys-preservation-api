@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<string>>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<List<string>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<string>{ "A", "B", "C" }));
             // Act
             var result = await _dut.GetPermissionsAsync(_plant);
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<string>>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<List<string>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<string>()));
             // Act
             var result = await _dut.GetPermissionsAsync(_plant);
@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<string>>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<List<string>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<string>{ "A", "B", "C" }));
             // Act
             var result = await _dut.GetContentRestrictionsAsync(_plant);
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<List<string>>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<List<string>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<string>()));
             // Act
             var result = await _dut.GetContentRestrictionsAsync(_plant);

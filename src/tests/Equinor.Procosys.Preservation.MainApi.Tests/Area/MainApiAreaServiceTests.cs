@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysArea>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysArea>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_procosysArea));
             // Act
             var result = await _dut.GetAreaAsync(_plant, _procosysArea.Code);

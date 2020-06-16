@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Responsible
                 Description = "Description1",
             };
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysResponsible>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysResponsible>(It.IsAny<string>()))
                 .Returns(Task.FromResult(procosysResponsible));
             // Act
             var result = await _dut.GetResponsibleAsync(_plant, procosysResponsible.Code);

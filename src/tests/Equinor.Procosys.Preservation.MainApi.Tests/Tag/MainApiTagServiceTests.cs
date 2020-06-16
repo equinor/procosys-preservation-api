@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             };
 
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysTagSearchResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_searchPage1WithThreeItems))
                 .Returns(Task.FromResult(_searchPage2WithOneItem));
 
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         public async Task SearchTagsByTagNoAsync_ReturnsEmptyList_WhenResultIsInvalid_TestAsync()
         {
             _mainApiClient
-                .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
+                .Setup(x => x.QueryAndDeserializeAsync<ProcosysTagSearchResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
 
             var result = await _dut.SearchTagsByTagNoAsync("PCS$TESTPLANT", "TestProject", "A");
@@ -160,7 +160,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         public async Task SearchTagsByTagFunctionsAsync_ReturnsEmptyList_WhenResultIsInvalid_TestAsync()
         {
             _mainApiClient
-                .Setup(x => x.QueryAndDeserialize<ProcosysTagSearchResult>(It.IsAny<string>()))
+                .Setup(x => x.QueryAndDeserializeAsync<ProcosysTagSearchResult>(It.IsAny<string>()))
                 .Returns(Task.FromResult<ProcosysTagSearchResult>(null));
 
             var result = await _dut.SearchTagsByTagFunctionsAsync("PCS$TESTPLANT", "TestProject", new List<string>{"M"});
@@ -186,7 +186,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         {
             // Arrange
             _mainApiClient
-                .Setup(x => x.QueryAndDeserialize<List<ProcosysTagDetails>>(It.IsAny<string>()))
+                .Setup(x => x.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_tagDetails));
             var dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
 
@@ -223,7 +223,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         {
             // Arrange
             _mainApiClient
-                .Setup(x => x.QueryAndDeserialize<List<ProcosysTagDetails>>(It.IsAny<string>()))
+                .Setup(x => x.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(It.IsAny<string>()))
                 .Returns(Task.FromResult<List<ProcosysTagDetails>>(null));
             var dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
 

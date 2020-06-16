@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
             _logger = logger;
     }
 
-        public async Task<T> QueryAndDeserialize<T>(string url)
+        public async Task<T> QueryAndDeserializeAsync<T>(string url)
         {
             var httpClient = CreateHttpClient();
 

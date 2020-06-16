@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Discipline
                       $"&code={code}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<ProcosysDiscipline>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysDiscipline>(url);
         }
     }
 }
