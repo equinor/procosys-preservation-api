@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags
             Id = id;
             TagNo = tagNo;
             Description = description;
-            PurchaseOrderNumber = purchaseOrderTitle;
+            PurchaseOrderTitle = purchaseOrderTitle;
             CommPkgNo = commPkgNo;
             McPkgNo = mcPkgNo;
             RegisterCode = registerCode;
@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags
         public string CommPkgNo { get; }
         public string Description { get; }
         public string McPkgNo { get; }
-        public string PurchaseOrderNumber { get; }
+        public string PurchaseOrderTitle { get; }
         public string RegisterCode { get; }
         public string TagFunctionCode { get; }
         public string TagNo { get; }
