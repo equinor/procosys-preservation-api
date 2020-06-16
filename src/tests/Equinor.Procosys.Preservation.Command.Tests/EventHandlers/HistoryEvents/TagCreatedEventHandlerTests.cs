@@ -8,7 +8,7 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvents
 {
     [TestClass]
-    public class AddTagCreatedEventHandlerTests
+    public class TagCreatedEventHandlerTests
     {
         private Mock<IHistoryRepository> _historyRepositoryMock;
         private TagCreatedEventHandler _dut;
