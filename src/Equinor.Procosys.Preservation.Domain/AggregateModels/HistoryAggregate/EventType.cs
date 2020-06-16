@@ -4,8 +4,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
 {
     public enum EventType
     {
-        [Description("Added requirement")]
-        AddRequirement,
+        [Description("Requirement added")]
+        RequirementAdded,
+        // todo rename as above ... fortid
         [Description("Deleted requirement")]
         DeleteRequirement,
         [Description("Voided requirement")]
@@ -18,8 +19,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
         VoidTag,
         [Description("Unvoided tag")]
         UnvoidTag,
-        [Description("Created tag")]
-        CreateTag,
+        [Description("Tag created")]
+        TagCreated,
         [Description("Deleted tag")]
         DeleteTag,
         [Description("Started preservation")]

@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             IsInSupplierStep = step.IsSupplierStep;
             _requirements.AddRange(reqList);
             ObjectGuid = Guid.NewGuid();
-            AddDomainEvent(new HistoryEvent(plant, ObjectGuid, EventType.CreateTag, ObjectType.Tag));
+            AddDomainEvent(new TagCreatedEvent(plant, ObjectGuid));
         }
 
         public Guid ObjectGuid { get; private set; }
