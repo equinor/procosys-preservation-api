@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
                         new ProcosysTagDto(
                             x.ApiTag.TagNo,
                             x.ApiTag.Description,
-                            x.ApiTag.PurchaseOrderNo,
+                            x.ApiTag.PurchaseOrderTitle,
                             x.ApiTag.CommPkgNo,
                             x.ApiTag.McPkgNo,
                             x.ApiTag.TagFunctionCode,

@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Description = "Desc1",
                         Id = 1,
                         McPkgNo = "McPkgNo1",
-                        PurchaseOrderNo = "PoNo1",
+                        PurchaseOrderTitle = "PoNo1",
                         TagFunctionCode = "TFC1",
                         RegisterCode = "RC1",
                         MccrResponsibleCodes = "R1"
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Description = "Desc2",
                         Id = 2,
                         McPkgNo = "McPkgNo2",
-                        PurchaseOrderNo = "PoNo2",
+                        PurchaseOrderTitle = "PoNo1/CallOff1",
                         TagFunctionCode = "TFC2",
                         RegisterCode = "RC2",
                         MccrResponsibleCodes = "R2"
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                         Description = "Desc3",
                         Id = 3,
                         McPkgNo = "McPkgNo3",
-                        PurchaseOrderNo = "PoNo3",
+                        PurchaseOrderTitle = "PoNo1/CallOff2",
                         TagFunctionCode = "TFC3",
                         RegisterCode = "RC3",
                         MccrResponsibleCodes = "R3"
@@ -161,7 +161,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             Assert.AreEqual(tagOverview.CommPkgNo, tagDto.CommPkgNo);
             Assert.AreEqual(tagOverview.Description, tagDto.Description);
             Assert.AreEqual(tagOverview.McPkgNo, tagDto.McPkgNo);
-            Assert.AreEqual(tagOverview.PurchaseOrderNo, tagDto.PurchaseOrderNumber);
+            Assert.AreEqual(tagOverview.PurchaseOrderTitle, tagDto.PurchaseOrderNumber);
             Assert.AreEqual(tagOverview.MccrResponsibleCodes, tagDto.MccrResponsibleCodes);
         }
     }

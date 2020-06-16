@@ -5,7 +5,7 @@
         public ProcosysTagDto(
             string tagNo, 
             string description, 
-            string purchaseOrderNumber,
+            string purchaseOrderTitle,
             string commPkgNo,
             string mcPkgNo,
             string tagFunctionCode,
@@ -15,7 +15,7 @@
         {
             TagNo = tagNo;
             Description = description;
-            PurchaseOrderNumber = purchaseOrderNumber;
+            PurchaseOrderNumber = purchaseOrderTitle;
             CommPkgNo = commPkgNo;
             McPkgNo = mcPkgNo;
             RegisterCode = registerCode;
