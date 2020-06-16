@@ -13,12 +13,13 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers
 
         public HistoryEventHandler(IHistoryRepository historyRepository) => _historyRepository = historyRepository;
 
-        public async Task Handle(HistoryEvent notification, CancellationToken cancellationToken)
+        public Task Handle(HistoryEvent notification, CancellationToken cancellationToken)
         {
             var description = notification.EventType.GetDescription();
             var history = new History(notification.Plant, description, notification.ObjectGuid,
                 notification.ObjectType, notification.EventType);
             _historyRepository.Add(history);
+            return Task.CompletedTask;
         }
     }
 }
