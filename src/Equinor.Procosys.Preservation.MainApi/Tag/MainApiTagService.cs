@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -133,6 +136,21 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                 }
             } while (tagSearchResult != null && items.Count < tagSearchResult.MaxAvailable);
             return items;
+        }
+
+        public async Task MarkTagsAsMigratedAsync(string plant, IEnumerable<long> tagIds)
+        {
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
+            {
+                throw new ArgumentException($"Invalid plant: {plant}");
+            }
+
+            var url = $"{_baseAddress}PreservationTags" +
+                      $"?plantId={plant}" +
+                      $"&api-version={_apiVersion}";
+
+            var json = JsonSerializer.Serialize(tagIds);
+            await _mainApiClient.PutAsync(url, new StringContent(json, Encoding.Default, "application/json"));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
@@ -34,14 +35,12 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
         }
 
         [TestMethod]
-        public async Task QueryAndDeserializeReturnsDefaultObject_WhenRequestIsNotSuccessful_TestAsync()
+        public async Task QueryAndDeserialize_ThrowsException_WhenRequestIsNotSuccessful_TestAsync()
         {
             var httpClientFactory = HttpHelper.GetHttpClientFactory(HttpStatusCode.BadGateway, "");
             var dut = new BearerTokenApiClient(httpClientFactory, _bearerTokenProvider.Object, _logger.Object);
 
-            var response = await dut.QueryAndDeserialize<DummyClass>("");
-
-            Assert.AreEqual(default, response);
+            await Assert.ThrowsExceptionAsync<Exception>(async () => await dut.QueryAndDeserialize<DummyClass>(""));
         }
 
         [TestMethod]
