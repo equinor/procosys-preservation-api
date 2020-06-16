@@ -983,6 +983,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void AddAction_ShouldThrowException_WhenActionNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(null));
 
+        [TestMethod]
+        public void AddAction_ShouldAddActionAddedEvent()
+        {
+            var action = new Action(TestPlant, "", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(ActionAddedEvent));
+        }
+
         #endregion
 
         #region SetArea

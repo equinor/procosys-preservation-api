@@ -168,6 +168,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _actions.Add(action);
+            ObjectGuid = Guid.NewGuid();
+            AddDomainEvent(new ActionAddedEvent(action.Plant, ObjectGuid));
         }
 
         public void AddAttachment(TagAttachment attachment)
