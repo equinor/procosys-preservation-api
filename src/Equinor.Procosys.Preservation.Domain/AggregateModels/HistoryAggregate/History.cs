@@ -17,13 +17,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
         public History(
             string plant,
             string description,
-            int objectId,
+            Guid objectGuid,
             ObjectType objectType,
             EventType eventType
         ) : base(plant)
         {
             Description = description;
-            ObjectId = objectId;
+            ObjectGuid = objectGuid;
             ObjectType = objectType;
             EventType = eventType;
         }
@@ -31,9 +31,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
         public History(
             string plant,
             string description,
-            int objectId,
+            Guid objectGuid,
             PreservationRecord preservationRecord
-        ) : this(plant, description, objectId, ObjectType.Tag, EventType.PreserveRequirement)
+        ) : this(plant, description, objectGuid, ObjectType.Tag, EventType.RequirementPreserved)
         {
             if (preservationRecord == null)
             {
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
 
         public string Description { get; private set; }
         public int CreatedById { get; private set; }
-        public int ObjectId { get; private set; }
+        public Guid ObjectGuid { get; private set; }
         public int? PreservationRecordId { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public EventType EventType { get; private set; }
