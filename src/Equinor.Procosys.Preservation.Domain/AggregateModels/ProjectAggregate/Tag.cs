@@ -215,6 +215,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationStatus.Active;
             UpdateNextDueTimeUtc();
+            ObjectGuid = Guid.NewGuid();
+            AddDomainEvent(new PreservationStartedEvent(Plant, ObjectGuid));
         }
 
         public void CompletePreservation(Journey journey)

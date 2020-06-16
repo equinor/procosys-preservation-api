@@ -304,6 +304,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.ThrowsException<Exception>(() => dut.StartPreservation());
         }
 
+        [TestMethod]
+        public void Constructor_ShouldAddPreservationStartedEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(PreservationStartedEvent));
+        }
+
         #endregion
 
         #region IsReadyToBePreserved
