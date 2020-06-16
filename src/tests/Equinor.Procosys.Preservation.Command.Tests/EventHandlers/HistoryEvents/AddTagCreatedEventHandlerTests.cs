@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
     public class AddTagCreatedEventHandlerTests
     {
         private Mock<IHistoryRepository> _historyRepositoryMock;
-        private AddTagCreatedEventHandler _dut;
+        private TagCreatedEventHandler _dut;
         private History _historyAdded;
 
         [TestInitialize]
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
                     _historyAdded = history;
                 });
 
-            _dut = new AddTagCreatedEventHandler(_historyRepositoryMock.Object);
+            _dut = new TagCreatedEventHandler(_historyRepositoryMock.Object);
         }
 
         [TestMethod]

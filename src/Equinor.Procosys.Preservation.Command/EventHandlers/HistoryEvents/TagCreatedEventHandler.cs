@@ -7,11 +7,11 @@ using MediatR;
 
 namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
 {
-    public class AddTagCreatedEventHandler : INotificationHandler<TagCreatedEvent>
+    public class TagCreatedEventHandler : INotificationHandler<TagCreatedEvent>
     {
         private readonly IHistoryRepository _historyRepository;
 
-        public AddTagCreatedEventHandler(IHistoryRepository historyRepository) => _historyRepository = historyRepository;
+        public TagCreatedEventHandler(IHistoryRepository historyRepository) => _historyRepository = historyRepository;
 
         public Task Handle(TagCreatedEvent notification, CancellationToken cancellationToken)
         {
