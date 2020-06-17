@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
@@ -20,6 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
         private readonly IProjectRepository _projectRepository;
         private readonly IProjectApiService _projectApiService;
         private readonly ITagApiService _tagApiService;
+        private readonly ILogger<SyncProjectsCommandHandler> _logger;
 
         public SyncProjectsCommandHandler(
             IPlantProvider plantProvider, 
@@ -28,7 +30,8 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
             ICurrentUserProvider currentUserProvider,
             IProjectRepository projectRepository,
             IProjectApiService projectApiService,
-            ITagApiService tagApiService)
+            ITagApiService tagApiService,
+            ILogger<SyncProjectsCommandHandler> logger)
         {
             _plantProvider = plantProvider;
             _unitOfWork = unitOfWork;
@@ -37,6 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
             _projectRepository = projectRepository;
             _projectApiService = projectApiService;
             _tagApiService = tagApiService;
+            _logger = logger;
         }
 
         public async Task<Result<Unit>> Handle(SyncProjectsCommand request, CancellationToken cancellationToken)
@@ -53,13 +57,15 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
         private async Task SyncProjectData(string plant)
         {
             var projects = await _projectRepository.GetAllProjectsOnlyAsync();
-            var projectsWhichUserCanAccess =
-                await _permissionCache.GetProjectNamesForUserOidAsync(plant, _currentUserProvider.GetCurrentUserOid());
+            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
+            
+            var projectsWhichUserCanAccess = await _permissionCache.GetProjectNamesForUserOidAsync(plant, currentUserOid);
+            
             foreach (var project in projects)
             {
                 if (!projectsWhichUserCanAccess.Contains(project.Name))
                 {
-                    // todo log ?
+                    _logger.LogWarning($"Current user with oid {currentUserOid} don't have access to project {project.Name}. Synchronization skipped ...");
                     continue;
                 }
 
@@ -77,26 +83,29 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
             var allTagNos = standardTags.Select(t => t.TagNo).ToList();
 
             var page = 0;
-            // Use relative small pagesize since TagNos are added to querystring of url and maxlength is 2000
+            // Use relative small page size since TagNos are added to querystring of url and maxlength is 2000
             var pageSize = 50;
             IEnumerable<string> pageWithTagNos;
             do
             {
                 pageWithTagNos = allTagNos.Skip(pageSize * page).Take(pageSize).ToList();
-                
-                var pcsTags = await _tagApiService.GetTagDetailsAsync(plant, projectName, pageWithTagNos);
-                foreach (var pcsTag in pcsTags)
-                {
-                    var tag = standardTags.Single(t => t.TagNo == pcsTag.TagNo);
 
-                    tag.SetArea(pcsTag.AreaCode, pcsTag.Description);
-                    tag.SetDiscipline(pcsTag.DisciplineCode, pcsTag.DisciplineDescription);
-                    tag.Calloff = pcsTag.CallOffNo;
-                    tag.PurchaseOrderNo = pcsTag.PurchaseOrderNo;
-                    tag.CommPkgNo = pcsTag.CommPkgNo;
-                    tag.Description = pcsTag.Description;
-                    tag.McPkgNo = pcsTag.McPkgNo;
-                    tag.TagFunctionCode = pcsTag.TagFunctionCode;
+                if (pageWithTagNos.Any())
+                {
+                    var pcsTags = await _tagApiService.GetTagDetailsAsync(plant, projectName, pageWithTagNos);
+                    foreach (var pcsTag in pcsTags)
+                    {
+                        var tag = standardTags.Single(t => t.TagNo == pcsTag.TagNo);
+
+                        tag.SetArea(pcsTag.AreaCode, pcsTag.Description);
+                        tag.SetDiscipline(pcsTag.DisciplineCode, pcsTag.DisciplineDescription);
+                        tag.Calloff = pcsTag.CallOffNo;
+                        tag.PurchaseOrderNo = pcsTag.PurchaseOrderNo;
+                        tag.CommPkgNo = pcsTag.CommPkgNo;
+                        tag.Description = pcsTag.Description;
+                        tag.McPkgNo = pcsTag.McPkgNo;
+                        tag.TagFunctionCode = pcsTag.TagFunctionCode;
+                    }
                 }
 
                 page++;

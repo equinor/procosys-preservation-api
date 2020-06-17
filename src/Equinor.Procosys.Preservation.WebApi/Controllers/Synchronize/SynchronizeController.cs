@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Synchronize
 
         public SynchronizeController(IMediator mediator) => _mediator = mediator;
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)] // todo change to correct 
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPut("Projects")]
         public async Task<ActionResult> Projects(
             [FromHeader( Name = PlantProvider.PlantHeader)]
