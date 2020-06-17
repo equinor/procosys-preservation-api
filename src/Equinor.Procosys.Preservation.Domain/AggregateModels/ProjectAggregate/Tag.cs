@@ -248,6 +248,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             var requirement = ActiveRequirementsDueToCurrentStep().Single(r => r.Id == requirementId);
             requirement.Preserve(preservedBy, false);
             UpdateNextDueTimeUtc();
+            ObjectGuid = Guid.NewGuid();
+            AddDomainEvent(new RequirementPreservedEvent(Plant, ObjectGuid, requirement.RequirementDefinitionId));
         }
 
         public void BulkPreserve(Person preservedBy)

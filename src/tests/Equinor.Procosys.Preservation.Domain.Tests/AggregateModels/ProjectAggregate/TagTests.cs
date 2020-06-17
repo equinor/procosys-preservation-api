@@ -538,6 +538,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(requirement.NextDueTimeUtc, dut.NextDueTimeUtc);
             Assert.AreNotEqual(oldNextTime, requirement.NextDueTimeUtc);
         }
+
+        [TestMethod]
+        public void PreserveRequirement_ShouldAddRequirementPreservedEvent()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            var requirement = dut.Requirements.Single();
+            Assert.AreEqual(1, requirement.PreservationPeriods.Count);
+
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            dut.Preserve(_person, dut.Requirements.Single().Id);
+
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementPreservedEvent));
+        }
+
         #endregion
 
         #region BulkPreserve
