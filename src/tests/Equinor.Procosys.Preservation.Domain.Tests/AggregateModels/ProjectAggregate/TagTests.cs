@@ -1194,5 +1194,18 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+
+        #region Void
+
+        [TestMethod]
+        public void Void_ShouldAddTagVoidedEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.Void();
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(TagVoidedEvent));
+        }
+
+        #endregion
     }
 }

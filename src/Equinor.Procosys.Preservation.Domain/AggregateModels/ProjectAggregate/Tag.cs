@@ -108,7 +108,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
-        public void Void() => IsVoided = true;
+        public void Void()
+        {
+            IsVoided = true;
+            ObjectGuid = Guid.NewGuid();
+            AddDomainEvent(new TagVoidedEvent(Plant, ObjectGuid));
+        }
+
         public void UnVoid() => IsVoided = false;
 
         public void SetArea(string code, string description)
