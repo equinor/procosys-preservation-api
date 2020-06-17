@@ -875,6 +875,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(PreservationStatus.Completed, dut.Status);
         }
 
+        [TestMethod]
+        public void CompletePreservation_ShouldAddPreservationCompletedEvent()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            dut.CompletePreservation(_journey);
+
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(PreservationCompletedEvent));
+        }
 
         #endregion
 
