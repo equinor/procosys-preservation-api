@@ -19,15 +19,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .Must(BeUniqueRequirements)
                 .WithMessage("Requirement definitions must be unique!");
 
-            RuleForEach(x => x.NewRequirements.Select(r => r.IntervalWeeks))
-                .Must(RequirementMustHavePositiveInterval)
+            RuleForEach(x => x.NewRequirements)
+                .Must(NewRequirementMustHavePositiveInterval)
                 .WithMessage($"{nameof(TagRequirementDto.IntervalWeeks)} must be positive");
 
-            RuleForEach(x => x.updatedRequirements.Select(r => r.IntervalWeeks))
-                .Must(RequirementMustHavePositiveInterval)
+            RuleForEach(x => x.updatedRequirements)
+                .Must(UpdatedRequirementMustHavePositiveInterval)
                 .WithMessage($"{nameof(TagRequirementDto.IntervalWeeks)} must be positive");
 
-            bool RequirementMustHavePositiveInterval(int intervalWeeks) => intervalWeeks > 0;
 
             bool BeUniqueRequirements(UpdateTagStepAndRequirementsDto dto)
             {
@@ -36,5 +35,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 return reqIds.Distinct().Count() == reqIds.Count;
             }
         }
+
+        private bool UpdatedRequirementMustHavePositiveInterval(UpdatedTagRequirementDto arg) => arg.IntervalWeeks > 0;
+
+        private bool NewRequirementMustHavePositiveInterval(TagRequirementDto arg) => arg.IntervalWeeks > 0;
     }
 }
