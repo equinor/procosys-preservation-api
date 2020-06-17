@@ -69,24 +69,27 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             {
                 var updatedReqIds = updatedRequirements.Select(u => u.RequirementDefinitionId).ToList();
                 var newReqIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
+                var allReqIds = updatedReqIds.Union(newReqIds).ToList();
 
-                return await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(updatedReqIds.Union(newReqIds).ToList(), token);
+                return (allReqIds.Count==0) || (await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(allReqIds, token));
             }
 
             async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IList<UpdateRequirementForCommand> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
             {
                 var updatedReqIds = updatedRequirements.Select(u => u.RequirementDefinitionId).ToList();
                 var newReqIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
+                var allReqIds = updatedReqIds.Union(newReqIds).ToList();
 
-                return await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(updatedReqIds.Union(newReqIds).ToList(), token);
+                return (allReqIds.Count == 0) || await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(updatedReqIds.Union(newReqIds).ToList(), token);
             }
 
             async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IList<UpdateRequirementForCommand> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
             {
                 var updatedReqIds = updatedRequirements.Select(u => u.RequirementDefinitionId).ToList();
                 var newReqIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
+                var allReqIds = updatedReqIds.Union(newReqIds).ToList();
 
-                return !await requirementDefinitionValidator.UsageCoversForSupplierOnlyAsync(updatedReqIds.Union(newReqIds).ToList(), token);
+                return (allReqIds.Count == 0) || !await requirementDefinitionValidator.UsageCoversForSupplierOnlyAsync(updatedReqIds.Union(newReqIds).ToList(), token);
             }
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)

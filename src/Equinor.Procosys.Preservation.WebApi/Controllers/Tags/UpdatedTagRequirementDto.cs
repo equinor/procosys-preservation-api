@@ -4,7 +4,6 @@
     {
         public int RequirementDefinitionId { get; set; }
         public int IntervalWeeks { get; set; }
-
         public bool Voided { get; set; }
     }
 }

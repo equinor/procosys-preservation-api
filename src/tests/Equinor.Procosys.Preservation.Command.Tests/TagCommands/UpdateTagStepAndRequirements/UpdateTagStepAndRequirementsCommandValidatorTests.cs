@@ -92,6 +92,24 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
+        public void Validate_ShouldBeValid_WhenEmptyLists()
+        {
+            // Arrange
+            _command = new UpdateTagStepAndRequirementsCommand(
+                _tagId,
+                _supplierStep,
+                new List<UpdateRequirementForCommand>(),
+                new List<RequirementForCommand>(),
+                null);
+
+            // Act
+            var result = _dut.Validate(_command);
+
+            // Assert
+            Assert.IsTrue(result.IsValid);
+        }
+
+        [TestMethod]
         public void Validate_ShouldFail_WhenAnyReqAlreadyExists()
         {
             // Arrange

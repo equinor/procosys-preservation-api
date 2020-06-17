@@ -316,11 +316,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromBody] UpdateTagStepAndRequirementsDto dto)
         {
-            IList<RequirementForCommand> newRequirements = dto.NewRequirments.
+            IList<RequirementForCommand> newRequirements = dto.NewRequirements.
                 Select(r => new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks)).ToList();
 
             IList<UpdateRequirementForCommand> updatedRequirements = dto.updatedRequirements.Select(r =>
                 new UpdateRequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks, r.Voided)).ToList();
+
             var command = new UpdateTagStepAndRequirementsCommand(id, dto.StepId, updatedRequirements, newRequirements, dto.RowVersion);
 
             var result = await _mediator.Send(command);
