@@ -294,6 +294,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             SetStep(journey.GetNextStep(StepId));
+            ObjectGuid = Guid.NewGuid();
+            AddDomainEvent(new TransferredManuallyEvent(Plant, ObjectGuid));
         }
 
         public void SetCreated(Person createdBy)

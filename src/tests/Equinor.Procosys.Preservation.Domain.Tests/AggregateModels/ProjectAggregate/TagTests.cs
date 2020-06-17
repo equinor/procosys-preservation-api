@@ -857,6 +857,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.ThrowsException<Exception>(() => dut.Transfer(_journey));
         }
 
+        [TestMethod]
+        public void Transfer_ShouldAddTransferredManuallyEvent()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.Transfer(_journey);
+
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(TransferredManuallyEvent));
+        }
+
         #endregion
 
         #region CompletePreservation
