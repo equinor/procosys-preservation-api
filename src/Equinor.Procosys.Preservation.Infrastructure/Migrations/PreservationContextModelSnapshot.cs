@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("History");
 
-                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','TagDeleted','PreservationStarted','PreservationCompleted','IntervalChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed')");
+                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('AddRequirement','DeleteRequirement','VoidRequirement','UnvoidRequirement','PreserveRequirement','VoidTag','UnvoidTag','CreateTag','DeleteTag','StartPreservation','CompletePreservation','ChangeInterval','ManualTransfer','AutomaticTransfer','AddAction','CloseAction')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
