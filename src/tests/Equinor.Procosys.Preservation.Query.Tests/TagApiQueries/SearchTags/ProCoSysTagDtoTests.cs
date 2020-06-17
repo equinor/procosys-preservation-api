@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
 
             Assert.AreEqual("TagNo", dut.TagNo);
             Assert.AreEqual("Desc", dut.Description);
-            Assert.AreEqual("PoNo", dut.PurchaseOrderNumber);
+            Assert.AreEqual("PoNo", dut.PurchaseOrderTitle);
             Assert.AreEqual("CommPkgNo", dut.CommPkgNo);
             Assert.AreEqual("McPkgNo", dut.McPkgNo);
             Assert.AreEqual("McPkgNo", dut.McPkgNo);

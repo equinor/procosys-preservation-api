@@ -5,6 +5,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
     [DebuggerDisplay("{TagNo}")]
     public class ProcosysTagDetails
     {
+        public long Id { get; set; }
         public string AreaCode { get; set; }
         public string AreaDescription { get; set; }
         public string CallOffNo { get; set; }

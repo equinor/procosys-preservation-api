@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysProject>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysProject>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_result));
 
             // Act

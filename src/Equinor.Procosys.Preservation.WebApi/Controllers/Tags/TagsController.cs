@@ -353,6 +353,33 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
+        [HttpPost("MigrateStandard")]
+        public async Task<ActionResult<int>> MigrateTags(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromBody] CreateTagsDto dto)
+        {
+            var requirements = dto.Requirements?
+                .Select(r =>
+                    new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
+            var command = new CreateTagsCommand(
+                dto.TagNos,
+                dto.ProjectName,
+                dto.StepId,
+                requirements,
+                dto.Remark,
+                dto.StorageArea)
+            {
+                Migration = true
+            };
+
+            var result = await _mediator.Send(command);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("AutoScope")]
         public async Task<ActionResult<int>> AutoScopeTags(
             [FromHeader( Name = PlantProvider.PlantHeader)]

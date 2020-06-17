@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
                       "&withCommPkgsOnly=false" +
                       $"&api-version={_apiVersion}";
 
-            var projects = await _mainApiClient.QueryAndDeserialize<List<ProcosysProject>>(url);
+            var projects = await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysProject>>(url);
             return projects != null ? projects.Select(p => p.Name).ToList() : new List<string>();
         }
 
@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
                       $"?plantId={plantId}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<List<string>>(url) ?? new List<string>();
+            return await _mainApiClient.QueryAndDeserializeAsync<List<string>>(url) ?? new List<string>();
         }
 
         public async Task<IList<string>> GetContentRestrictionsAsync(string plantId)
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
                       $"?plantId={plantId}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<List<string>>(url) ?? new List<string>();
+            return await _mainApiClient.QueryAndDeserializeAsync<List<string>>(url) ?? new List<string>();
         }
     }
 }

@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysDiscipline>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysDiscipline>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_procosysDiscipline));
 
             // Act

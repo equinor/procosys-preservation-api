@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
@@ -27,21 +28,19 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
             var httpClientFactory = HttpHelper.GetHttpClientFactory(HttpStatusCode.OK, "{\"Id\": 123}");
             var dut = new BearerTokenApiClient(httpClientFactory, _bearerTokenProvider.Object, _logger.Object);
 
-            var response = await dut.QueryAndDeserialize<DummyClass>("");
+            var response = await dut.QueryAndDeserializeAsync<DummyClass>("");
 
             Assert.IsNotNull(response);
             Assert.AreEqual(123, response.Id);
         }
 
         [TestMethod]
-        public async Task QueryAndDeserializeReturnsDefaultObject_WhenRequestIsNotSuccessful_TestAsync()
+        public async Task QueryAndDeserialize_ThrowsException_WhenRequestIsNotSuccessful_TestAsync()
         {
             var httpClientFactory = HttpHelper.GetHttpClientFactory(HttpStatusCode.BadGateway, "");
             var dut = new BearerTokenApiClient(httpClientFactory, _bearerTokenProvider.Object, _logger.Object);
 
-            var response = await dut.QueryAndDeserialize<DummyClass>("");
-
-            Assert.AreEqual(default, response);
+            await Assert.ThrowsExceptionAsync<Exception>(async () => await dut.QueryAndDeserializeAsync<DummyClass>(""));
         }
 
         [TestMethod]
@@ -50,7 +49,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
             var httpClientFactory = HttpHelper.GetHttpClientFactory(HttpStatusCode.OK, "");
             var dut = new BearerTokenApiClient(httpClientFactory, _bearerTokenProvider.Object, _logger.Object);
 
-            await Assert.ThrowsExceptionAsync<JsonException>(async () => await dut.QueryAndDeserialize<DummyClass>(""));
+            await Assert.ThrowsExceptionAsync<JsonException>(async () => await dut.QueryAndDeserializeAsync<DummyClass>(""));
         }
 
         private class DummyClass

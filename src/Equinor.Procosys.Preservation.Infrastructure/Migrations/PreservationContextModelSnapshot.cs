@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.3")
+                .HasAnnotation("ProductVersion", "3.1.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -41,8 +41,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ObjectId")
-                        .HasColumnType("int");
+                    b.Property<Guid>("ObjectGuid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("ObjectType")
                         .HasColumnType("int");
@@ -64,14 +64,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("CreatedById");
 
-                    b.HasIndex("ObjectId")
-                        .HasName("IX_History_ObjectId_ASC");
+                    b.HasIndex("ObjectGuid")
+                        .HasName("IX_History_ObjectGuid_ASC");
 
                     b.HasIndex("PreservationRecordId");
 
                     b.ToTable("History");
 
-                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('AddRequirement','DeleteRequirement','VoidRequirement','UnvoidRequirement','PreserveRequirement','VoidTag','UnvoidTag','CreateTag','DeleteTag','StartPreservation','CompletePreservation','ChangeInterval','ManualTransfer','AutomaticTransfer','AddAction','CloseAction')");
+                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','TagDeleted','PreservationStarted','PreservationCompleted','IntervalChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
@@ -628,6 +628,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<DateTime?>("NextDueTimeUtc")
                         .HasColumnType("datetime2");
+
+                    b.Property<Guid>("ObjectGuid")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Plant")
                         .IsRequired()
