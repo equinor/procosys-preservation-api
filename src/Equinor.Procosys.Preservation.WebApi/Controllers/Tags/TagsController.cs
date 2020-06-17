@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,6 +25,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.CheckAreaTagNo;
@@ -42,6 +45,7 @@ using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using ServiceResult;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
@@ -300,6 +304,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             
             var result = await _mediator.Send(command);
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [HttpPut("{id}/UpdateTagStepAndRequirements")]
+        public async Task<IActionResult> UpdateTagStepAndRequirements(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] UpdateTagStepAndRequirementsDto dto)
+        {
+            IList<RequirementForCommand> newRequirements = dto.NewRequirments.
+                Select(r => new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks)).ToList();
+
+            IList<UpdateRequirementForCommand> updatedRequirements = dto.updatedRequirements.Select(r =>
+                new UpdateRequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks, r.Voided)).ToList();
+            var command = new UpdateTagStepAndRequirementsCommand(id, dto.StepId, updatedRequirements, newRequirements, dto.RowVersion);
+
+            var result = await _mediator.Send(command);
+            return this.FromResult(result);
+            throw new NotImplementedException();
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
