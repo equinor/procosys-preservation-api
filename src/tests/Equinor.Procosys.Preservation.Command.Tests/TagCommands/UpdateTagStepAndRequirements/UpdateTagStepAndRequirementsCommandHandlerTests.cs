@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.MainApi.Area;
-using Equinor.Procosys.Preservation.MainApi.Discipline;
-using Equinor.Procosys.Preservation.MainApi.Project;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -19,24 +14,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
     [TestClass]
     public class UpdateTagStepAndRequirementsCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const string TestProjectName = "TestProjectX";
         private const string PlantName = "TestPlant";
         private const int TagId = 123;
         private const int StepId = 11;
         private const int ReqDefId1 = 99;
         private const int ReqDefId2 = 199;
+        private const int TagReqId = 0;
         private const int Interval1 = 2;
         private const int Interval2 = 3;
-        private const string DisciplineDescription = "DisciplineDescription";
-        private const string AreaDescription = "AreaDescription";
+        private const string RowVersion = "AAAAAAAAD6U=";
 
         private Mock<Step> _stepMock;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
-        private Mock<IProjectApiService> _projectApiServiceMock;
-        private Mock<IDisciplineApiService> _disciplineApiServiceMock;
-        private Mock<IAreaApiService> _areaApiServiceMock;
         private Mock<Tag> _tagMock;
 
         private UpdateTagStepAndRequirementsCommand _command;
@@ -116,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 StepId,
                 new List<UpdateRequirementForCommand>()
                 {
-                    new UpdateRequirementForCommand(ReqDefId2, Interval1, true)
+                    new UpdateRequirementForCommand(TagReqId, Interval1, true, RowVersion)
                 },
                 new List<RequirementForCommand>(),
                 null);
@@ -152,7 +143,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 StepId,
                 new List<UpdateRequirementForCommand>()
                 {
-                    new UpdateRequirementForCommand(ReqDefId2, Interval1, false)
+                    new UpdateRequirementForCommand(TagReqId, Interval1, false, RowVersion)
                 },
                 new List<RequirementForCommand>(),
                 null);
@@ -177,7 +168,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             Assert.AreEqual(1, _tagMock.Object.Requirements.Count);
             Assert.AreEqual(false, _tagMock.Object.Requirements.First().IsVoided);
             Assert.AreEqual(Interval1, _tagMock.Object.Requirements.First().IntervalWeeks);
-            Assert.AreEqual(TimeService.UtcNow.AddWeeks(Interval1), _tagMock.Object.NextDueTimeUtc);
+            Assert.AreEqual(null, _tagMock.Object.NextDueTimeUtc);
         }
     }
 }

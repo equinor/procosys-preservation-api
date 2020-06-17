@@ -6,22 +6,30 @@ using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
 {
     public class UpdateTagStepAndRequirementsCommandValidator : AbstractValidator<UpdateTagStepAndRequirementsCommand>
     {
+        private readonly IReadOnlyContext _context;
+
         public UpdateTagStepAndRequirementsCommandValidator(
              IProjectValidator projectValidator,
              ITagValidator tagValidator,
              IStepValidator stepValidator,
-             IRequirementDefinitionValidator requirementDefinitionValidator)
+             IRequirementDefinitionValidator requirementDefinitionValidator,
+             IReadOnlyContext context)
         {
+            _context = context;
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
             RuleFor(command => command)
-                .Must((command) => BeUniqueRequirements(command.UpdatedRequirements, command.NewRequirements))
+                .MustAsync((_, command, token) => BeUniqueRequirements(command.UpdatedRequirements, command.NewRequirements, token))
                 .WithMessage(command => "Requirement definitions must be unique!");
 
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
@@ -50,46 +58,49 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             async Task<bool> BeASupplierStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsForSupplierAsync(stepId, token);
 
-            bool BeUniqueRequirements(IList<UpdateRequirementForCommand> updatedRequirements, IList<RequirementForCommand> newRequirements)
+            async Task<bool> BeUniqueRequirements(IList<UpdateRequirementForCommand> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
             {
-                var updatedReqIds = updatedRequirements.Select(u => u.RequirementDefinitionId).ToList();
-                var newReqIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
+                var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
 
-                if ((updatedReqIds.Distinct().Count() != updatedRequirements.Count) ||
-                    (newReqIds.Distinct().Count() != newRequirements.Count))
+                var newReqDefIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
+
+                if (newReqDefIds.Distinct().Count() != newRequirements.Count)
                 {
                     return false;
                 }
 
-                return updatedReqIds.Intersect(newReqIds).Any()==false;
+                return updatedReqDefIds.Intersect(newReqDefIds).Any()==false;
 
             }
 
             async Task<bool> RequirementUsageIsForAllJourneysAsync(IList<UpdateRequirementForCommand> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
             {
-                var updatedReqIds = updatedRequirements.Select(u => u.RequirementDefinitionId).ToList();
-                var newReqIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
-                var allReqIds = updatedReqIds.Union(newReqIds).ToList();
+                var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
 
-                return (allReqIds.Count==0) || (await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(allReqIds, token));
+                var newReqDefIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
+                var allReqDefIds = updatedReqDefIds.Union(newReqDefIds).ToList();
+
+                return (allReqDefIds.Count==0) || (await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(allReqDefIds, token));
             }
 
             async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IList<UpdateRequirementForCommand> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
             {
-                var updatedReqIds = updatedRequirements.Select(u => u.RequirementDefinitionId).ToList();
-                var newReqIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
-                var allReqIds = updatedReqIds.Union(newReqIds).ToList();
+                var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
 
-                return (allReqIds.Count == 0) || await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(updatedReqIds.Union(newReqIds).ToList(), token);
+                var newReqDefIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
+                var allReqDefIds = updatedReqDefIds.Union(newReqDefIds).ToList();
+
+                return (allReqDefIds.Count == 0) || await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(allReqDefIds, token);
             }
 
             async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IList<UpdateRequirementForCommand> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
             {
-                var updatedReqIds = updatedRequirements.Select(u => u.RequirementDefinitionId).ToList();
-                var newReqIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
-                var allReqIds = updatedReqIds.Union(newReqIds).ToList();
+                var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
 
-                return (allReqIds.Count == 0) || !await requirementDefinitionValidator.UsageCoversForSupplierOnlyAsync(updatedReqIds.Union(newReqIds).ToList(), token);
+                var newReqDefIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
+                var allReqDefIds = updatedReqDefIds.Union(newReqDefIds).ToList();
+
+                return (allReqDefIds.Count == 0) || !await requirementDefinitionValidator.UsageCoversForSupplierOnlyAsync(allReqDefIds, token);
             }
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
@@ -98,6 +109,16 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 => await tagValidator.ExistsAsync(tagId, token);
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
+        }
+
+        private async Task<List<int>> GetAllUpdatedReqDefIds(IList<UpdateRequirementForCommand> updatedRequirements, CancellationToken token)
+        {
+            var updatedReqIds = updatedRequirements.Select(u => u.RequirementId);
+            var updatedReqDefIds = await (from req in _context.QuerySet<TagRequirement>()
+                where updatedReqIds.Contains(req.Id)
+                select req.RequirementDefinitionId).ToListAsync(token);
+
+            return updatedReqDefIds;
         }
     }
 }

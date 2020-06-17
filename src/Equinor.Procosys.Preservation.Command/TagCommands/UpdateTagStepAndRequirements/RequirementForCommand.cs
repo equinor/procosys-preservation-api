@@ -2,15 +2,17 @@
 {
     public class UpdateRequirementForCommand
     {
-        public UpdateRequirementForCommand(int requirementDefinitionId, int intervalWeeks, bool isVoided)
+        public UpdateRequirementForCommand(int requirementId, int intervalWeeks, bool isVoided, string rowVersion)
         {
-            RequirementDefinitionId = requirementDefinitionId;
+            RequirementId = requirementId;
             IntervalWeeks = intervalWeeks;
             IsVoided = isVoided;
+            RowVersion = rowVersion;
         }
 
-        public int RequirementDefinitionId { get;  }
+        public int RequirementId { get;  }
         public int IntervalWeeks { get; }
         public bool IsVoided { get; }
+        public string RowVersion { get; set; }
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using System.Collections.Generic;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -8,7 +6,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     {
         public int StepId { get; set; }
         public IList<TagRequirementDto> NewRequirements { get; set; }
-        public IList<UpdatedTagRequirementDto> updatedRequirements { get; set; }
+        public IList<UpdatedTagRequirementDto> UpdatedRequirements { get; set; }
         public string RowVersion { get; set; }
     }
 }

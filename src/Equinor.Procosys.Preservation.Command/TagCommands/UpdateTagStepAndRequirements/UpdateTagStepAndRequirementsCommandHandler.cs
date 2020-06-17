@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             {
                 foreach (var tagRequirement in tag.Requirements)
                 {
-                    if (tagRequirement.RequirementDefinitionId == updateRequirementForCommand.RequirementDefinitionId)
+                    if (tagRequirement.Id == updateRequirementForCommand.RequirementId)
                     {
                         if ((updateRequirementForCommand.IsVoided != tagRequirement.IsVoided) && updateRequirementForCommand.IsVoided)
                         {
@@ -56,8 +56,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
 
                         if (tagRequirement.IntervalWeeks != updateRequirementForCommand.IntervalWeeks)
                         {
-                            tag.ChangeInterval(tagRequirement.RequirementDefinitionId, updateRequirementForCommand.IntervalWeeks);
+                            tag.ChangeInterval(tagRequirement.Id, updateRequirementForCommand.IntervalWeeks);
                         }
+                        tagRequirement.SetRowVersion(updateRequirementForCommand.RowVersion);
                     }
                 }
             }

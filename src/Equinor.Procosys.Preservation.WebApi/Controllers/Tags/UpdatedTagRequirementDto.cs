@@ -2,8 +2,9 @@
 {
     public class UpdatedTagRequirementDto
     {
-        public int RequirementDefinitionId { get; set; }
+        public int RequirementId { get; set; }
         public int IntervalWeeks { get; set; }
         public bool Voided { get; set; }
+        public string RowVersion { get; set; }
     }
 }
