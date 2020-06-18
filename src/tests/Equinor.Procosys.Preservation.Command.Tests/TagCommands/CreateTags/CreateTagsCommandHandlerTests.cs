@@ -228,7 +228,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
 
             // Assert
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.AreEqual($"Purchase Order for {_mainTagDetails1.TagNo} not found in project {TestProjectName}.", result.Errors[0]);
+            Assert.AreEqual($"Purchase Order for {_mainTagDetails1.TagNo} not found in project {TestProjectName}. Tag can not be in a Supplier step", result.Errors[0]);
         }
 
         private void AssertTagProperties(CreateTagsCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject)

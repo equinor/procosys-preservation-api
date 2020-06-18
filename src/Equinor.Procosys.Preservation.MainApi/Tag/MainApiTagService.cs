@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -61,11 +62,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
             var url = $"{_baseAddress}Tag/ByTagNos" +
                 $"?plantId={plant}" +
-                $"&projectName={projectName}" +
+                $"&projectName={WebUtility.UrlEncode(projectName)}" +
                 $"&api-version={_apiVersion}";
             foreach (var tagNo in tagNos)
             {
-                url += $"&tagNos={tagNo}";
+                url += $"&tagNos={WebUtility.UrlEncode(tagNo)}";
             }
 
             var tagDetails = await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(url);
@@ -87,7 +88,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
             var url = $"{_baseAddress}PreservationTags" +
                       $"?plantId={plant}" +
-                      $"&projectName={projectName}" +
+                      $"&projectName={WebUtility.UrlEncode(projectName)}" +
                       $"&api-version={_apiVersion}";
             return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysPreservedTag>>(url);
         }
@@ -106,8 +107,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             {
                 var url = $"{_baseAddress}Tag/Search" +
                     $"?plantId={plant}" +
-                    $"&startsWithTagNo={startsWithTagNo}" +
-                    $"&projectName={projectName}" +
+                    $"&startsWithTagNo={WebUtility.UrlEncode(startsWithTagNo)}" +
+                    $"&projectName={WebUtility.UrlEncode(projectName)}" +
                     $"&currentPage={currentPage++}" +
                     $"&itemsPerPage={_tagSearchPageSize}" +
                     $"&api-version={_apiVersion}";
@@ -134,7 +135,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             {
                 var url = $"{_baseAddress}Tag/Search/ByTagFunction" +
                           $"?plantId={plant}" +
-                          $"&projectName={projectName}" +
+                          $"&projectName={WebUtility.UrlEncode(projectName)}" +
                           $"&currentPage={currentPage++}" +
                           $"&itemsPerPage={_tagSearchPageSize}" +
                           $"&api-version={_apiVersion}";

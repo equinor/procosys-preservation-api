@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -32,7 +33,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Project
 
             var url = $"{_baseAddress}ProjectByName" +
                 $"?plantId={plant}" +
-                $"&projectName={name}" +
+                $"&projectName={WebUtility.UrlEncode(name)}" +
                 $"&api-version={_apiVersion}";
 
             return await _mainApiClient.QueryAndDeserializeAsync<ProcosysProject>(url);
