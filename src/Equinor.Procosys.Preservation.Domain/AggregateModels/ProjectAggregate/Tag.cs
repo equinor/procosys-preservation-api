@@ -254,8 +254,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return GetUpComingRequirements;
         }
 
-        public IOrderedEnumerable<TagRequirement> OrderedRequirements()
-            => ActiveRequirementsDueToCurrentStep().OrderBy(r => r.NextDueTimeUtc);
+        public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool includeVoided = false)
+            => ActiveRequirementsDueToCurrentStep(includeVoided).OrderBy(r => r.NextDueTimeUtc);
 
         public bool IsReadyToBeTransferred(Journey journey)
         {
@@ -330,9 +330,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
         }
 
-        public IEnumerable<TagRequirement> ActiveRequirementsDueToCurrentStep()
+        public IEnumerable<TagRequirement> ActiveRequirementsDueToCurrentStep(bool includeVoided = false)
             => Requirements
-                .Where(r => !r.IsVoided)
+                .Where(r => includeVoided ? r.IsVoided || !r.IsVoided : !r.IsVoided)
                 .Where(r => r.Usage == RequirementUsage.ForAll || 
                             (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
                             (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers));
