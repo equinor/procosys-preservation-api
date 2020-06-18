@@ -280,7 +280,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void SetUpdatedInterval(int intervalWeeks)
         {
             IntervalWeeks = intervalWeeks;
-            if (ActivePeriod!=null)
+            if (ActivePeriod != null)
             {
                 NextDueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);
                 ActivePeriod.UpdateDueTimeUtc(NextDueTimeUtc.Value);

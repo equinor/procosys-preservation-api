@@ -117,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAnyReqAlreadyExists()
+        public void Validate_ShouldFail_WhenAnyRequirementAlreadyExists()
         {
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);
@@ -165,7 +165,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new UpdateRequirementForCommand(_tr1Id, 1, true, RowVersion),
                     new UpdateRequirementForCommand(_tr2Id, 1, false, RowVersion)
                 },
-                new List<RequirementForCommand> {new RequirementForCommand(_rd3NotSupplierId, 1),},
+                new List<RequirementForCommand> {new RequirementForCommand(_rd3NotSupplierId, 1)},
                 null);
 
             // Act
@@ -190,7 +190,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new UpdateRequirementForCommand(_tr1Id, 1, true, RowVersion),
                     new UpdateRequirementForCommand(_tr2Id, 1, false, RowVersion)
                 },
-                new List<RequirementForCommand> {new RequirementForCommand(_rd3NotSupplierId, 1),},
+                new List<RequirementForCommand> {new RequirementForCommand(_rd3NotSupplierId, 1)},
                 null);
 
             // Act
@@ -215,7 +215,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new UpdateRequirementForCommand(_tr1Id, 1, true, RowVersion),
                     new UpdateRequirementForCommand(_tr2Id, 1, false, RowVersion)
                 },
-                new List<RequirementForCommand> {new RequirementForCommand(_rd3NotSupplierId, 1),},
+                new List<RequirementForCommand> {new RequirementForCommand(_rd3NotSupplierId, 1)},
                 null);
 
             // Act
@@ -226,7 +226,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenDoesntExist()
+        public void Validate_ShouldFail_WhenTagNotExists()
         {
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);

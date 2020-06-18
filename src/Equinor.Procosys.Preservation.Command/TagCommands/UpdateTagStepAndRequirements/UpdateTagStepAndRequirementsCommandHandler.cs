@@ -9,7 +9,6 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
 {
-
     public class UpdateTagStepAndRequirementsCommandHandler : IRequestHandler<UpdateTagStepAndRequirementsCommand, Result<string>>
     {
         private readonly IProjectRepository _projectRepository;
@@ -44,10 +43,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 tag.UpdateRequirement(update.RequirementId, update.IsVoided, update.IntervalWeeks, update.RowVersion);
             }
 
-            foreach (var requestNewRequirement in request.NewRequirements)
+            foreach (var newRequirement in request.NewRequirements)
             {
-                var reqDef = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(requestNewRequirement.RequirementDefinitionId);
-                tag.AddRequirement(new TagRequirement(_plantProvider.Plant, requestNewRequirement.IntervalWeeks, reqDef ));
+                var reqDef = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(newRequirement.RequirementDefinitionId);
+                tag.AddRequirement(new TagRequirement(_plantProvider.Plant, newRequirement.IntervalWeeks, reqDef));
             }
 
             tag.SetRowVersion(request.RowVersion);

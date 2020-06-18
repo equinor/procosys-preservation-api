@@ -12,7 +12,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
         public IList<RequirementForCommand> NewRequirements { get; }
         public string RowVersion { get; }
 
-        public UpdateTagStepAndRequirementsCommand(int tagId, int stepId, IList<UpdateRequirementForCommand> updatedRequirements, IList<RequirementForCommand> newRequirements, string rowVersion)
+        public UpdateTagStepAndRequirementsCommand(
+            int tagId,
+            int stepId,
+            IList<UpdateRequirementForCommand> updatedRequirements,
+            IList<RequirementForCommand> newRequirements,
+            string rowVersion)
         {
             TagId = tagId;
             StepId = stepId;

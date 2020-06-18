@@ -332,7 +332,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public IEnumerable<TagRequirement> ActiveRequirementsDueToCurrentStep(bool includeVoided = false)
             => Requirements
-                .Where(r => includeVoided ? r.IsVoided || !r.IsVoided : !r.IsVoided)
+                .Where(r => includeVoided || !r.IsVoided)
                 .Where(r => r.Usage == RequirementUsage.ForAll || 
                             (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
                             (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers));
