@@ -25,10 +25,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         private const int TwoWeeksInterval = 2;
         private const int FourWeeksInterval = 4;
 
-        private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
-        private Mock<ICurrentUserProvider> _currentUserProvider;
         private BulkPreserveCommand _command;
         private Tag _tag1;
         private Tag _tag2;
@@ -65,17 +63,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             {
                 _tag1, _tag2
             };
-            _currentUserProvider = new Mock<ICurrentUserProvider>();
-            _currentUserProvider
-                .Setup(x => x.GetCurrentUserOid())
-                .Returns(_currentUserOid);
             var tagIds = new List<int> {TagId1, TagId2};
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
             _personRepoMock = new Mock<IPersonRepository>();
             _personRepoMock
-                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
-                .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
+                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
+                .Returns(Task.FromResult(new Person(CurrentUserOid, "Test", "User")));
             _command = new BulkPreserveCommand(tagIds);
 
             _tag1.StartPreservation();
@@ -85,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
                 _projectRepoMock.Object,
                 _personRepoMock.Object,
                 UnitOfWorkMock.Object,
-                _currentUserProvider.Object);
+                CurrentUserProviderMock.Object);
         }
 
         [TestMethod]

@@ -17,22 +17,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         private readonly int _personId = 16;
         private readonly string _rowVersion = "AAAAAAAAABA=";
 
-        private readonly  Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
-
         private CloseActionCommand _command;
         private CloseActionCommandHandler _dut;
 
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Action _action;
         private Mock<IPersonRepository> _personRepositoryMock;
-        private Mock<ICurrentUserProvider> _currentUserProviderMock;
         private Mock<Person> _personMock;
 
         [TestInitialize]
         public void Setup()
         {
             _projectRepositoryMock = new Mock<IProjectRepository>();
-            _currentUserProviderMock = new Mock<ICurrentUserProvider>();
             _personRepositoryMock = new Mock<IPersonRepository>();
 
             var tagId = 2;
@@ -51,12 +47,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
                 .Setup(r => r.GetTagByTagIdAsync(tagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
-            _currentUserProviderMock
-                .Setup(x => x.GetCurrentUserOid())
-                .Returns(_currentUserOid);
-
             _personRepositoryMock
-                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
+                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
                 .Returns(Task.FromResult(_personMock.Object));
 
             _command = new CloseActionCommand(tagId, actionId, _rowVersion);
@@ -65,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
                 _projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 _personRepositoryMock.Object,
-                _currentUserProviderMock.Object
+                CurrentUserProviderMock.Object
             );
         }
 
