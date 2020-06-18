@@ -162,6 +162,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             _requirements.Add(requirement);
             UpdateNextDueTimeUtc();
+            AddDomainEvent(new RequirementAddedEvent(requirement.Plant, ObjectGuid, requirement.RequirementDefinitionId));
         }
 
         public void AddAction(Action action)
