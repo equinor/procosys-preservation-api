@@ -111,14 +111,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void Void()
         {
             IsVoided = true;
-            ObjectGuid = Guid.NewGuid();
             AddDomainEvent(new TagVoidedEvent(Plant, ObjectGuid));
         }
 
         public void UnVoid()
         {
             IsVoided = false;
-            ObjectGuid = Guid.NewGuid();
             AddDomainEvent(new TagUnvoidedEvent(Plant, ObjectGuid));
         }
 
@@ -179,7 +177,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _actions.Add(action);
-            ObjectGuid = Guid.NewGuid();
             AddDomainEvent(new ActionAddedEvent(action.Plant, ObjectGuid));
         }
 
@@ -226,7 +223,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationStatus.Active;
             UpdateNextDueTimeUtc();
-            ObjectGuid = Guid.NewGuid();
             AddDomainEvent(new PreservationStartedEvent(Plant, ObjectGuid));
         }
 
@@ -243,7 +239,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             Status = PreservationStatus.Completed;
             NextDueTimeUtc = null;
-            ObjectGuid = Guid.NewGuid();
             AddDomainEvent(new PreservationCompletedEvent(Plant, ObjectGuid));
         }
 
@@ -259,7 +254,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             var requirement = ActiveRequirementsDueToCurrentStep().Single(r => r.Id == requirementId);
             requirement.Preserve(preservedBy, false);
             UpdateNextDueTimeUtc();
-            ObjectGuid = Guid.NewGuid();
             AddDomainEvent(new RequirementPreservedEvent(Plant, ObjectGuid, requirement.RequirementDefinitionId));
         }
 
@@ -305,7 +299,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             SetStep(journey.GetNextStep(StepId));
-            ObjectGuid = Guid.NewGuid();
             AddDomainEvent(new TransferredManuallyEvent(Plant, ObjectGuid));
         }
 
