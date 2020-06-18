@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly);
         }
 
-        public async Task<bool> BeUniqueRequirements(IEnumerable<int> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
+        public async Task<bool> BeUniqueRequirements(IEnumerable<int> updatedRequirements, IEnumerable<int> newRequirements, CancellationToken token)
         {
             var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
 
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return updatedReqDefIds.Intersect(newReqDefIds).Any() == false;
         }
 
-        public async Task<bool> RequirementUsageIsForAllJourneysAsync(IEnumerable<int> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
+        public async Task<bool> RequirementUsageIsForAllJourneysAsync(IEnumerable<int> updatedRequirements, IEnumerable<int> newRequirements, CancellationToken token)
         {
             var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
 
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return (allReqDefIds.Count == 0) || (await UsageCoversBothForSupplierAndOtherAsync(allReqDefIds, token));
         }
 
-        public async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IEnumerable<int> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
+        public async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IEnumerable<int> updatedRequirements, IEnumerable<int> newRequirements, CancellationToken token)
         {
             var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
 
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return (allReqDefIds.Count == 0) || await UsageCoversForOtherThanSuppliersAsync(allReqDefIds, token);
         }
 
-        public async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<int> updatedRequirements, IList<RequirementForCommand> newRequirements, CancellationToken token)
+        public async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<int> updatedRequirements, IEnumerable<int> newRequirements, CancellationToken token)
         {
             var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
 

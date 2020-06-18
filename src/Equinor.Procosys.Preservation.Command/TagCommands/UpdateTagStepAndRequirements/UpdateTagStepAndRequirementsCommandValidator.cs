@@ -20,20 +20,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
             RuleFor(command => command)
-                .MustAsync((_, command, token) => requirementDefinitionValidator.BeUniqueRequirements(command.UpdatedRequirements.Select(u => u.RequirementId), command.NewRequirements, token))
+                .MustAsync((_, command, token) => requirementDefinitionValidator.BeUniqueRequirements(command.UpdatedRequirements.Select(u => u.RequirementId), command.NewRequirements.Select(r => r.RequirementDefinitionId), token))
                 .WithMessage(command => "Requirement definitions must be unique!");
 
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {
                 RuleFor(command => command)
-                    .MustAsync((_, command, token) => requirementDefinitionValidator.RequirementUsageIsForAllJourneysAsync(command.UpdatedRequirements.Select(u => u.RequirementId), command.NewRequirements, token))
+                    .MustAsync((_, command, token) => requirementDefinitionValidator.RequirementUsageIsForAllJourneysAsync(command.UpdatedRequirements.Select(u => u.RequirementId), command.NewRequirements.Select(r => r.RequirementDefinitionId), token))
                     .WithMessage(command => "Requirements must include requirements to be used both for supplier and other than suppliers!");
             }).Otherwise(() =>
             {
                 RuleFor(command => command)
-                    .MustAsync((_, command, token) => requirementDefinitionValidator.RequirementUsageIsForJourneysWithoutSupplierAsync(command.UpdatedRequirements.Select(u => u.RequirementId), command.NewRequirements, token))
+                    .MustAsync((_, command, token) => requirementDefinitionValidator.RequirementUsageIsForJourneysWithoutSupplierAsync(command.UpdatedRequirements.Select(u => u.RequirementId), command.NewRequirements.Select(r => r.RequirementDefinitionId), token))
                     .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!")
-                    .MustAsync((_, command, token) => requirementDefinitionValidator.RequirementUsageIsNotForSupplierStepOnlyAsync(command.UpdatedRequirements.Select(u => u.RequirementId), command.NewRequirements, token))
+                    .MustAsync((_, command, token) => requirementDefinitionValidator.RequirementUsageIsNotForSupplierStepOnlyAsync(command.UpdatedRequirements.Select(u => u.RequirementId), command.NewRequirements.Select(r => r.RequirementDefinitionId), token))
                     .WithMessage(command => "Requirements can't include requirements just for suppliers!");
             });
 

@@ -66,6 +66,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 .Setup(
                     r => r.UsageCoversForOtherThanSuppliersAsync(new List<int> {_tr1Id}, default))
                 .Returns(Task.FromResult(true));
+
+
         }
 
         [TestMethod]

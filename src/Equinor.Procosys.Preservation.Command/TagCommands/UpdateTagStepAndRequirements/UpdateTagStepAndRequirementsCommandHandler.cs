@@ -50,7 +50,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 tag.AddRequirement(new TagRequirement(_plantProvider.Plant, requestNewRequirement.IntervalWeeks, reqDef ));
             }
 
-            
             tag.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
