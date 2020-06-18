@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 // Since we don't want to ask main api for same data both in validator and here, we do it here only
                 if (mode.ForSupplier && string.IsNullOrEmpty(tagDetails.PurchaseOrderNo))
                 {
-                    return new NotFoundResult<List<int>>($"Purchase Order for {tagNo} not found in project {request.ProjectName}.");
+                    return new NotFoundResult<List<int>>($"Purchase Order for {tagNo} not found in project {request.ProjectName}. Tag can not be in a Supplier step");
                 }
 
                 if (project == null)
