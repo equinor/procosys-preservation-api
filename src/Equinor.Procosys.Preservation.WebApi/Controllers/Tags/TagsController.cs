@@ -101,9 +101,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromRoute] int id)
+            [FromRoute] int id,
+            [FromQuery] bool includeVoided = false)
         {
-            var result = await _mediator.Send(new GetTagRequirementsQuery(id));
+            var result = await _mediator.Send(new GetTagRequirementsQuery(id, includeVoided));
             return this.FromResult(result);
         }
 
