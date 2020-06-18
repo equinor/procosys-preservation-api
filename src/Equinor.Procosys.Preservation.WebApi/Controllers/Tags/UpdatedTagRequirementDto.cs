@@ -4,7 +4,7 @@
     {
         public int RequirementId { get; set; }
         public int IntervalWeeks { get; set; }
-        public bool Voided { get; set; }
+        public bool IsVoided { get; set; }
         public string RowVersion { get; set; }
     }
 }
