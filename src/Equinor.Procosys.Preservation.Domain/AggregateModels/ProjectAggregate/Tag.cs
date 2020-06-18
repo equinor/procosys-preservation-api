@@ -343,13 +343,36 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         private void UpdateNextDueTimeUtc()
             => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
 
+        public void UpdateRequirement(int requirementId, bool isVoided, int intervalWeeks, string requirementRowVersion)
+        {
+            var tagRequirement =
+                Requirements.Single(r => r.Id == requirementId);
+
+            if (tagRequirement.IsVoided != isVoided)
+            {
+                if (isVoided)
+                {
+                    tagRequirement.Void();
+                }
+                else
+                {
+                    tagRequirement.UnVoid();
+                }
+            }
+
+            if (tagRequirement.IntervalWeeks != intervalWeeks)
+            {
+                ChangeInterval(tagRequirement.Id, intervalWeeks);
+            }
+
+            tagRequirement.SetRowVersion(requirementRowVersion);
+        }
+
         public void ChangeInterval(int requirementId, int intervalWeeks)
         {
             var tagRequirement = Requirements.Single(r => r.Id == requirementId);
             tagRequirement.SetUpdatedInterval(intervalWeeks);
             UpdateNextDueTimeUtc();
-
-            //PE: Add history
         }
     }
 }

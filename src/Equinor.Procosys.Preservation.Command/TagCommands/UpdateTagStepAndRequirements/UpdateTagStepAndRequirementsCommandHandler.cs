@@ -39,28 +39,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             
             tag.SetStep(step);
 
-            foreach (var updateRequirementForCommand in request.UpdatedRequirements)
+            foreach (var update in request.UpdatedRequirements)
             {
-                foreach (var tagRequirement in tag.Requirements)
-                {
-                    if (tagRequirement.Id == updateRequirementForCommand.RequirementId)
-                    {
-                        if ((updateRequirementForCommand.IsVoided != tagRequirement.IsVoided) && updateRequirementForCommand.IsVoided)
-                        {
-                            tagRequirement.Void();
-                        }
-                        else
-                        {
-                            tagRequirement.UnVoid();
-                        }
-
-                        if (tagRequirement.IntervalWeeks != updateRequirementForCommand.IntervalWeeks)
-                        {
-                            tag.ChangeInterval(tagRequirement.Id, updateRequirementForCommand.IntervalWeeks);
-                        }
-                        tagRequirement.SetRowVersion(updateRequirementForCommand.RowVersion);
-                    }
-                }
+                tag.UpdateRequirement(update.RequirementId, update.IsVoided, update.IntervalWeeks, update.RowVersion);
             }
 
             foreach (var requestNewRequirement in request.NewRequirements)
@@ -69,6 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 tag.AddRequirement(new TagRequirement(_plantProvider.Plant, requestNewRequirement.IntervalWeeks, reqDef ));
             }
 
+            
             tag.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
