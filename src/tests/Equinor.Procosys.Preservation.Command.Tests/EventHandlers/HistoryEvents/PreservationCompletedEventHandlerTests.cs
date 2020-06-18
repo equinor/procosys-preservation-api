@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             var plant = "TestPlant";
             _dut.Handle(new PreservationCompletedEvent(plant, objectGuid), default);
 
-            // Arrange
+            // Assert
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
             Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
