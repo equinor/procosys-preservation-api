@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Microsoft.Extensions.Logging;
@@ -16,10 +18,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
     {
         private const string TagNo1 = "TagNo1";
         private const string TagNo2 = "TagNo2";
+        private const string OldTagDescription1 = "OldTagDescription1";
+        private const string OldTagDescription2 = "OldTagDescription2";
+        private const string NewTagDescription1 = "NewTagDescription1";
+        private const string NewTagDescription2 = "NewTagDescription2";
+
         private const string ProjectName1 = "Project1";
-        private const string OldProjectDescription1 = "OldProject1Description";
         private const string ProjectName2 = "Project2";
         private const string ProjectNameNoAccess = "ProjectNoAccess";
+        private const string OldProjectDescription1 = "OldProject1Description";
         private const string OldProjectDescription2 = "OldProject2Description";
         private const string ProjectDescriptionNoAccess = "ProjectDescriptionNoAccess";
         private const string NewProjectDescription1 = "NewProject1Description";
@@ -42,18 +49,45 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
         private ProcosysProject _mainProject2;
         private ProcosysProject _mainProjectNoAccess;
         private Mock<ILogger<SyncProjectsCommandHandler>> _loggerMock;
+        private Tag _tag1;
+        private Tag _tag2;
 
         [TestInitialize]
         public void Setup()
         {
+            // Assert projects in preservation
             _project1 = new Project(TestPlant, ProjectName1, OldProjectDescription1);
             _project2 = new Project(TestPlant, ProjectName2, OldProjectDescription2);
             _projectNoAccess = new Project(TestPlant, ProjectNameNoAccess, ProjectDescriptionNoAccess);
+
+            // Assert tags in preservation
+            var rdMock = new Mock<RequirementDefinition>();
+            rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);
+
+            var stepMock = new Mock<Step>();
+            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+            _tag1 = new Tag(TestPlant, TagType.Standard, TagNo1, OldTagDescription1, stepMock.Object, new List<TagRequirement>
+            {
+                new TagRequirement(TestPlant, 4, rdMock.Object)
+            });
+            _tag2 = new Tag(TestPlant, TagType.Standard, TagNo2, OldTagDescription2, stepMock.Object, new List<TagRequirement>
+            {
+                new TagRequirement(TestPlant, 4, rdMock.Object)
+            });
+            var tags = new List<Tag>
+            {
+                _tag1, _tag2
+            };
+
             _projectRepositoryMock = new Mock<IProjectRepository>();
+            _projectRepositoryMock.Setup(r => r.GetStandardTagsInProjectOnlyAsync(ProjectName1)).Returns(Task.FromResult(tags));
+            _projectRepositoryMock.Setup(r => r.GetStandardTagsInProjectOnlyAsync(ProjectName2)).Returns(Task.FromResult(new List<Tag>()));
+            _projectRepositoryMock.Setup(r => r.GetStandardTagsInProjectOnlyAsync(ProjectNameNoAccess)).Returns(Task.FromResult(new List<Tag>()));
             _projectRepositoryMock
                 .Setup(p => p.GetAllProjectsOnlyAsync())
                 .Returns(Task.FromResult(new List<Project>{ _project1, _project2, _projectNoAccess}));
 
+            // Assert projects in main
             _mainProject1 = new ProcosysProject
             {
                 Name = ProjectName1,
@@ -73,14 +107,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
                 IsClosed = true
             };
 
-            _projectRepositoryMock
-                .Setup(p => p.GetStandardTagsInProjectOnlyAsync(ProjectName1))
-                .Returns(Task.FromResult(new List<Tag>()));
-
-            _projectRepositoryMock
-                .Setup(p => p.GetStandardTagsInProjectOnlyAsync(ProjectName2))
-                .Returns(Task.FromResult(new List<Tag>()));
-
             _projectApiServiceMock = new Mock<IProjectApiService>();
             _projectApiServiceMock
                 .Setup(x => x.GetProjectAsync(TestPlant, ProjectName1))
@@ -92,24 +118,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
                 .Setup(x => x.GetProjectAsync(TestPlant, ProjectNameNoAccess))
                 .Returns(Task.FromResult(_mainProjectNoAccess));
 
-            _permissionCacheMock = new Mock<IPermissionCache>();
-            _permissionCacheMock.Setup(p => p.GetProjectNamesForUserOidAsync(TestPlant, CurrentUserOid))
-                .Returns(Task.FromResult<IList<string>>(new List<string> {ProjectName1, ProjectName2}));
-
+            // Assert tags in preservation
             _mainTagDetails1 = new ProcosysTagDetails
             {
                 AreaCode = "AreaCode1",
                 AreaDescription = "AreaDescription1",
                 CallOffNo = "CalloffNo1",
                 CommPkgNo = "CommPkgNo1",
-                Description = "Description1",
+                Description = NewTagDescription1,
                 DisciplineCode = "DisciplineCode1",
                 DisciplineDescription = "DisciplineDescription1",
                 McPkgNo = "McPkgNo1",
                 PurchaseOrderNo = "PurchaseOrderNo1",
                 TagFunctionCode = "TagFunctionCode1",
-                TagNo = TagNo1,
-                ProjectDescription = OldProjectDescription1
+                TagNo = TagNo1
             };
             _mainTagDetails2 = new ProcosysTagDetails
             {
@@ -117,14 +139,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
                 AreaDescription = "AreaDescription2",
                 CallOffNo = "CalloffNo2",
                 CommPkgNo = "CommPkgNo2",
-                Description = "Description2",
+                Description = NewTagDescription2,
                 DisciplineCode = "DisciplineCode2",
                 DisciplineDescription = "DisciplineDescription1",
                 McPkgNo = "McPkgNo2",
                 PurchaseOrderNo = "PurchaseOrderNo2",
                 TagFunctionCode = "TagFunctionCode2",
-                TagNo = TagNo2,
-                ProjectDescription = OldProjectDescription1
+                TagNo = TagNo2
             };
 
             IList<ProcosysTagDetails> mainTagDetailList = new List<ProcosysTagDetails> {_mainTagDetails1, _mainTagDetails2};
@@ -132,6 +153,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
             _tagApiServiceMock
                 .Setup(x => x.GetTagDetailsAsync(TestPlant, ProjectName1, new List<string>{TagNo1, TagNo2}))
                 .Returns(Task.FromResult(mainTagDetailList));
+            
+            // Assert other interfaces and device in test (dut)
+            _permissionCacheMock = new Mock<IPermissionCache>();
+            _permissionCacheMock.Setup(p => p.GetProjectNamesForUserOidAsync(TestPlant, CurrentUserOid))
+                .Returns(Task.FromResult<IList<string>>(new List<string> {ProjectName1, ProjectName2}));
 
             _command = new SyncProjectsCommand();
 
@@ -160,6 +186,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
         }
 
         [TestMethod]
+        public async Task HandlingSyncProjectsCommand_ShouldUpdateTags()
+        {
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            AssertTagProperties(_mainTagDetails1, _tag1);
+            AssertTagProperties(_mainTagDetails2, _tag2);
+        }
+
+        [TestMethod]
         public async Task HandlingSyncProjectsCommand_ShouldNotUpdateProject_ForProjectWithoutAccess()
         {
             // Act
@@ -167,6 +205,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
 
             // Assert
             _projectApiServiceMock.Verify(x => x.GetProjectAsync(TestPlant, ProjectNameNoAccess), Times.Never);
+            _projectRepositoryMock.Verify(p => p.GetStandardTagsInProjectOnlyAsync(ProjectNameNoAccess), Times.Never);
             Assert.AreEqual(ProjectDescriptionNoAccess, _projectNoAccess.Description);
             Assert.IsFalse(_projectNoAccess.IsClosed);
         }

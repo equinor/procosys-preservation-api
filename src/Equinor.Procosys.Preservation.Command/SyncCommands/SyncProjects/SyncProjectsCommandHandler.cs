@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
                     {
                         var tag = standardTags.Single(t => t.TagNo == pcsTag.TagNo);
 
-                        tag.SetArea(pcsTag.AreaCode, pcsTag.Description);
+                        tag.SetArea(pcsTag.AreaCode, pcsTag.AreaDescription);
                         tag.SetDiscipline(pcsTag.DisciplineCode, pcsTag.DisciplineDescription);
                         tag.Calloff = pcsTag.CallOffNo;
                         tag.PurchaseOrderNo = pcsTag.PurchaseOrderNo;
