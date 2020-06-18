@@ -58,6 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
             services.Configure<AttachmentOptions>(configuration.GetSection("AttachmentOptions"));
             services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
+            services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
 
             services.AddDbContext<PreservationContext>(options =>
             {
@@ -77,16 +78,22 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IPlantCache, PlantCache>();
             services.AddScoped<IPermissionCache, PermissionCache>();
             services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
-            services.AddScoped<ICurrentUserProvider, CurrentUserProvider>();
+            services.AddScoped<IClaimsProvider, ClaimsProvider>();
+            services.AddScoped<CurrentUserProvider>();
+            services.AddScoped<ICurrentUserProvider>(x => x.GetRequiredService<CurrentUserProvider>());
+            services.AddScoped<ICurrentUserSetter>(x => x.GetRequiredService<CurrentUserProvider>());
+            services.AddScoped<PlantProvider>();
+            services.AddScoped<IPlantProvider>(x => x.GetRequiredService<PlantProvider>());
+            services.AddScoped<IPlantSetter>(x => x.GetRequiredService<PlantProvider>());
             services.AddScoped<IAccessValidator, AccessValidator>();
             services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
             services.AddScoped<IContentRestrictionsChecker, ContentRestrictionsChecker>();
             services.AddScoped<ITagHelper, TagHelper>();
-            services.AddScoped<IPlantProvider, PlantProvider>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
             services.AddScoped<IReadOnlyContext, PreservationContext>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
+            services.AddScoped<IAuthenticator, Authenticator>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
@@ -96,7 +103,9 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<ITagFunctionRepository, TagFunctionRepository>();
 
-            services.AddScoped<IBearerTokenProvider, RequestBearerTokenProvider>();
+            services.AddScoped<RequestBearerTokenProvider>();
+            services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<RequestBearerTokenProvider>());
+            services.AddScoped<IBearerTokenSetter>(x => x.GetRequiredService<RequestBearerTokenProvider>());
             services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();

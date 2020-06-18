@@ -47,13 +47,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
 
         public async Task<bool> IsValidPlantForCurrentUserAsync(string plantId)
         {
-            var userOid = _currentUserProvider.TryGetCurrentUserOid();
-            if (!userOid.HasValue)
-            {
-                return false;
-            }
+            var userOid = _currentUserProvider.GetCurrentUserOid();
 
-            return await IsValidPlantForUserAsync(plantId, userOid.Value);
+            return await IsValidPlantForUserAsync(plantId, userOid);
         }
 
         public void Clear(Guid userOid) => _cacheManager.Remove(PlantsCacheKey(userOid));

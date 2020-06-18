@@ -35,26 +35,33 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
                 Interval = _options.CurrentValue.Interval.TotalMilliseconds,
                 AutoReset = false
             };
-            _timer.Elapsed += _timer_Elapsed;
+            _timer.Elapsed += Timer_Elapsed;
             _timer.Start();
 
             return Task.CompletedTask;
         }
 
-        private void _timer_Elapsed(object sender, ElapsedEventArgs e)
+        private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
             _logger.LogInformation("Doing timed work");
 
-            using (var scope = _services.CreateScope())
+            try
             {
+                using var scope = _services.CreateScope();
                 var syncService =
                     scope.ServiceProvider
                         .GetRequiredService<ISynchronizationService>();
 
                 syncService.Synchronize(default).GetAwaiter().GetResult();
             }
-
-            _timer.Start();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error doing timed work");
+            }
+            finally
+            {
+                _timer.Start();
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

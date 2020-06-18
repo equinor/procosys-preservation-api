@@ -1,33 +1,15 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain;
-using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
-    public class PlantProvider : IPlantProvider
+    public class PlantProvider : IPlantProvider, IPlantSetter
     {
         public const string PlantHeader = "x-plant";
+        private string _plant;
 
-        private readonly IHttpContextAccessor _accessor;
-        private string _temporaryPlant;
+        public string Plant => _plant ?? throw new Exception("Could not determine current plant");
 
-        public PlantProvider(IHttpContextAccessor accessor) => _accessor = accessor;
-
-        public string Plant
-        {
-            get
-            {
-                if (_temporaryPlant != null)
-                {
-                    return _temporaryPlant;
-                }
-                return _accessor?.HttpContext?.Request?.Headers[PlantHeader].ToString().ToUpperInvariant() ??
-                       throw new Exception("Could not determine current plant");
-            }
-        }
-
-        public void SetTemporaryPlant(string plant) => _temporaryPlant = plant;
-
-        public void ReleaseTemporaryPlant() => _temporaryPlant = null;
+        public void SetPlant(string plant) => _plant = plant;
     }
 }

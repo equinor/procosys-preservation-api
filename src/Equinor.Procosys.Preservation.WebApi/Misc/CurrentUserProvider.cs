@@ -1,32 +1,22 @@
 ﻿using System;
-using System.Security.Claims;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.WebApi.Authorizations;
-using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
-    public class CurrentUserProvider : ICurrentUserProvider
+    public class CurrentUserProvider : ICurrentUserProvider, ICurrentUserSetter
     {
-        private readonly IHttpContextAccessor _accessor;
-
-        public CurrentUserProvider(IHttpContextAccessor accessor) => _accessor = accessor;
-
-        public ClaimsPrincipal GetCurrentUser() => _accessor.HttpContext.User;
+        private Guid? _currentUserOid;
 
         public Guid GetCurrentUserOid()
         {
-            var userOid = TryGetCurrentUserOid();
-
-            if (userOid.HasValue)
+            if (_currentUserOid.HasValue)
             {
-                return userOid.Value;
+                return _currentUserOid.Value;
             }
+
             throw new Exception("Unable to determine current user");
         }
 
-        public Guid? TryGetCurrentUserOid() => GetCurrentUser().Claims.TryGetOid();
-
-        public bool IsCurrentUserAuthenticated() => GetCurrentUser().Identity.IsAuthenticated;
+        public void SetCurrentUser(Guid oid) => _currentUserOid = oid;
     }
 }

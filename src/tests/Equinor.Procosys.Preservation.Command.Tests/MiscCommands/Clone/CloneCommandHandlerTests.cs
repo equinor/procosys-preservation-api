@@ -65,6 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             _command = new CloneCommand(_sourcePlant, TestPlant);
             _dut = new CloneCommandHandler(
                 _plantProvider,
+                _plantProvider,
                 UnitOfWorkMock.Object,
                 _modeRepository,
                 _responsibleRepository,
