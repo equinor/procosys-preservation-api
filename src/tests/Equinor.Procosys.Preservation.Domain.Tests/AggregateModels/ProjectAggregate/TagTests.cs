@@ -1043,6 +1043,35 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region CloseAction
+
+        [TestMethod]
+        public void CloseAction_ShouldCloseAction()
+        {
+            var action = new Action(TestPlant, "", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
+
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.Actions.First().IsClosed);
+        }
+
+        [TestMethod]
+        public void CloseAction_ShouldThrowException_WhenActionIdIsInvalid()
+            => Assert.ThrowsException<InvalidOperationException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(0, _person, DateTime.UtcNow, "AAAAAAAAABA="));
+
+        [TestMethod]
+        public void CloseAction_ShouldAddActionClosedEvent()
+        {
+            var action = new Action(TestPlant, "", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
+
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(ActionClosedEvent));
+        }
+
+        #endregion
+
         #region SetArea
 
         [TestMethod]

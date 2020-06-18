@@ -180,6 +180,20 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddDomainEvent(new ActionAddedEvent(action.Plant, ObjectGuid));
         }
 
+        public void CloseAction(int actionId, Person closedBy, DateTime closedAtUtc, string rowVersion)
+        {
+            var action = Actions.Single(a => a.Id == actionId);
+
+            if (action == null)
+            {
+                throw new ArgumentNullException(nameof(action));
+            }
+
+            action.Close(closedAtUtc, closedBy);
+            action.SetRowVersion(rowVersion);
+            AddDomainEvent(new ActionClosedEvent(action.Plant, ObjectGuid));
+        }
+
         public void AddAttachment(TagAttachment attachment)
         {
             if (attachment == null)
