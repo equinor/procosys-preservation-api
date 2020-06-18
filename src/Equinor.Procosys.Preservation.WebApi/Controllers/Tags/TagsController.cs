@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -45,7 +43,6 @@ using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Razor.TagHelpers;
 using ServiceResult;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
@@ -327,7 +324,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
-            throw new NotImplementedException();
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
