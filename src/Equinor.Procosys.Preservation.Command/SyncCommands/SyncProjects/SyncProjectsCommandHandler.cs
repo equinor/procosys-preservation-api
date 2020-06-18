@@ -14,32 +14,32 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
 {
     public class SyncProjectsCommandHandler : IRequestHandler<SyncProjectsCommand, Result<Unit>>
     {
-        private readonly IPlantProvider _plantProvider;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IPermissionCache _permissionCache;
-        private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProjectRepository _projectRepository;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IPlantProvider _plantProvider;
         private readonly IProjectApiService _projectApiService;
         private readonly ITagApiService _tagApiService;
+        private readonly IPermissionCache _permissionCache;
+        private readonly ICurrentUserProvider _currentUserProvider;
         private readonly ILogger<SyncProjectsCommandHandler> _logger;
 
         public SyncProjectsCommandHandler(
-            IPlantProvider plantProvider, 
-            IUnitOfWork unitOfWork,
-            IPermissionCache permissionCache,
-            ICurrentUserProvider currentUserProvider,
             IProjectRepository projectRepository,
+            IUnitOfWork unitOfWork,
+            IPlantProvider plantProvider, 
             IProjectApiService projectApiService,
             ITagApiService tagApiService,
+            IPermissionCache permissionCache,
+            ICurrentUserProvider currentUserProvider,
             ILogger<SyncProjectsCommandHandler> logger)
         {
-            _plantProvider = plantProvider;
-            _unitOfWork = unitOfWork;
-            _permissionCache = permissionCache;
-            _currentUserProvider = currentUserProvider;
             _projectRepository = projectRepository;
+            _unitOfWork = unitOfWork;
+            _plantProvider = plantProvider;
             _projectApiService = projectApiService;
             _tagApiService = tagApiService;
+            _permissionCache = permissionCache;
+            _currentUserProvider = currentUserProvider;
             _logger = logger;
         }
 
