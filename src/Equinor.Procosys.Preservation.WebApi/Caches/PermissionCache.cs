@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Infrastructure.Caching;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Microsoft.Extensions.Options;

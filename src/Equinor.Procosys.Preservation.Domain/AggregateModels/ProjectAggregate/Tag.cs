@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string DisciplineDescription { get; private set; }
         public TagType TagType { get; private set; }
         public string McPkgNo { get; set; }
-        public string Description { get; private set; }
+        public string Description { get; set; }
         public string PurchaseOrderNo { get; set; }
         public string Remark { get; set; }
         public string StorageArea { get; set; }

@@ -26,6 +26,16 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
 
         public async Task<T> QueryAndDeserializeAsync<T>(string url)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new ArgumentNullException(nameof(url));
+            }
+
+            if (url.Length > 2000)
+            {
+                throw new ArgumentException("url exceed max 2000 characters", nameof(url));
+            }
+
             var httpClient = CreateHttpClient();
 
             var stopWatch = Stopwatch.StartNew();
