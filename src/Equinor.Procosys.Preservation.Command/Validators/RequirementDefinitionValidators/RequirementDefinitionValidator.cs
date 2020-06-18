@@ -49,13 +49,12 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly);
         }
 
-        public async Task<bool> BeUniqueRequirements(IEnumerable<int> updatedRequirements, IEnumerable<int> newRequirements, CancellationToken token)
+        public async Task<bool> BeUniqueRequirements(IEnumerable<int> updatedTagReqIds, IEnumerable<int> newReqDefIds, CancellationToken token)
         {
-            var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
+            var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedTagReqIds, token);
 
-            var newReqDefIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
-
-            if (newReqDefIds.Distinct().Count() != newRequirements.Count)
+            Possible muiltiple enumerations må fikses!!
+            if (newReqDefIds.Distinct().Count() != newReqDefIds.Count())
             {
                 return false;
             }
@@ -63,37 +62,34 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return updatedReqDefIds.Intersect(newReqDefIds).Any() == false;
         }
 
-        public async Task<bool> RequirementUsageIsForAllJourneysAsync(IEnumerable<int> updatedRequirements, IEnumerable<int> newRequirements, CancellationToken token)
+        public async Task<bool> RequirementUsageIsForAllJourneysAsync(IEnumerable<int> updatedTagReqIds, IEnumerable<int> newReqDefIds, CancellationToken token)
         {
-            var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
+            var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedTagReqIds, token);
 
-            var newReqDefIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
             var allReqDefIds = updatedReqDefIds.Union(newReqDefIds).ToList();
 
             return (allReqDefIds.Count == 0) || (await UsageCoversBothForSupplierAndOtherAsync(allReqDefIds, token));
         }
 
-        public async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IEnumerable<int> updatedRequirements, IEnumerable<int> newRequirements, CancellationToken token)
+        public async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IEnumerable<int> updatedTagReqIds, IEnumerable<int> newReqDefIds, CancellationToken token)
         {
-            var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
+            var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedTagReqIds, token);
 
-            var newReqDefIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
             var allReqDefIds = updatedReqDefIds.Union(newReqDefIds).ToList();
 
             return (allReqDefIds.Count == 0) || await UsageCoversForOtherThanSuppliersAsync(allReqDefIds, token);
         }
 
-        public async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<int> updatedRequirements, IEnumerable<int> newRequirements, CancellationToken token)
+        public async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<int> updatedTagReqIds, IEnumerable<int> newReqDefIds, CancellationToken token)
         {
-            var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedRequirements, token);
+            var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedTagReqIds, token);
 
-            var newReqDefIds = newRequirements.Select(r => r.RequirementDefinitionId).ToList();
             var allReqDefIds = updatedReqDefIds.Union(newReqDefIds).ToList();
 
             return (allReqDefIds.Count == 0) || !await UsageCoversForSupplierOnlyAsync(allReqDefIds, token);
         }
 
-        public async Task<List<int>> GetAllUpdatedReqDefIds(IEnumerable<int> updatedTagReqIds, CancellationToken token)
+        private async Task<List<int>> GetAllUpdatedReqDefIds(IEnumerable<int> updatedTagReqIds, CancellationToken token)
         {
             var updatedReqDefIds = await (from req in _context.QuerySet<TagRequirement>()
                                           where updatedTagReqIds.Contains(req.Id)
