@@ -25,8 +25,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public string Name { get; private set; }
-        public string Description { get; private set; }
-        public bool IsClosed { get; private set; }
+        public string Description { get; set; }
+        public bool IsClosed { get; set; }
         public IReadOnlyCollection<Tag> Tags => _tags.AsReadOnly();
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }

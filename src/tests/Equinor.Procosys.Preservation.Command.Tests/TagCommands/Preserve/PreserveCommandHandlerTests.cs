@@ -28,10 +28,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         private const int TwoWeeksInterval = 2;
         private const int FourWeeksInterval = 4;
 
-        private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
-        private Mock<ICurrentUserProvider> _currentUserProvider;
         private PreserveCommand _commandForTagWithForAllRequirements;
         private PreserveCommand _commandForTagInSupplierStep;
         private PreserveCommand _commandForTagInOtherStep;
@@ -93,10 +91,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
                 _reqForOtherInOtherStep
             });
 
-            _currentUserProvider = new Mock<ICurrentUserProvider>();
-            _currentUserProvider
-                .Setup(x => x.GetCurrentUserOid())
-                .Returns(_currentUserOid);
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagWithForAllRequirementsId)).Returns(Task.FromResult(_tagWithForAllRequirements));
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagInOtherStepId)).Returns(Task.FromResult(_tagWithSupplierAndOtherRequirementsInOtherStep));
@@ -104,8 +98,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             
             _personRepoMock = new Mock<IPersonRepository>();
             _personRepoMock
-                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
-                .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
+                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
+                .Returns(Task.FromResult(new Person(CurrentUserOid, "Test", "User")));
             _commandForTagWithForAllRequirements = new PreserveCommand(TagWithForAllRequirementsId);
             _commandForTagInOtherStep = new PreserveCommand(TagInOtherStepId);
             _commandForTagInSupplierStep = new PreserveCommand(TagInSupplierStepId);
@@ -118,7 +112,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
                 _projectRepoMock.Object,
                 _personRepoMock.Object,
                 UnitOfWorkMock.Object,
-                _currentUserProvider.Object);
+                CurrentUserProviderMock.Object);
         }
 
         [TestMethod]

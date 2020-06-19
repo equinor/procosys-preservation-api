@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string DisciplineDescription { get; private set; }
         public TagType TagType { get; private set; }
         public string McPkgNo { get; set; }
-        public string Description { get; private set; }
+        public string Description { get; set; }
         public string PurchaseOrderNo { get; set; }
         public string Remark { get; set; }
         public string StorageArea { get; set; }
@@ -266,7 +266,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 
         public void Preserve(Person preservedBy, int requirementId)
         {
-            var requirement = ActiveRequirementsDueToCurrentStep().Single(r => r.Id == requirementId);
+            var requirement = RequirementsDueToCurrentStep().Single(r => r.Id == requirementId);
             requirement.Preserve(preservedBy, false);
             UpdateNextDueTimeUtc();
             AddDomainEvent(new RequirementPreservedEvent(Plant, ObjectGuid, requirement.RequirementDefinitionId));
@@ -282,8 +282,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return GetUpComingRequirements;
         }
 
-        public IOrderedEnumerable<TagRequirement> OrderedRequirements()
-            => ActiveRequirementsDueToCurrentStep().OrderBy(r => r.NextDueTimeUtc);
+        public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool includeVoided = false)
+            => RequirementsDueToCurrentStep(includeVoided).OrderBy(r => r.NextDueTimeUtc);
 
         public bool IsReadyToBeTransferred(Journey journey)
         {
@@ -359,9 +359,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
         }
 
-        public IEnumerable<TagRequirement> ActiveRequirementsDueToCurrentStep()
+        public IEnumerable<TagRequirement> RequirementsDueToCurrentStep(bool includeVoided = false)
             => Requirements
-                .Where(r => !r.IsVoided)
+                .Where(r => includeVoided || !r.IsVoided)
                 .Where(r => r.Usage == RequirementUsage.ForAll || 
                             (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
                             (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers));
@@ -371,5 +371,37 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void UpdateNextDueTimeUtc()
             => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
+
+        public void UpdateRequirement(int requirementId, bool isVoided, int intervalWeeks, string requirementRowVersion)
+        {
+            var tagRequirement =
+                Requirements.Single(r => r.Id == requirementId);
+
+            if (tagRequirement.IsVoided != isVoided)
+            {
+                if (isVoided)
+                {
+                    tagRequirement.Void();
+                }
+                else
+                {
+                    tagRequirement.UnVoid();
+                }
+            }
+
+            if (tagRequirement.IntervalWeeks != intervalWeeks)
+            {
+                ChangeInterval(tagRequirement.Id, intervalWeeks);
+            }
+
+            tagRequirement.SetRowVersion(requirementRowVersion);
+        }
+
+        public void ChangeInterval(int requirementId, int intervalWeeks)
+        {
+            var tagRequirement = Requirements.Single(r => r.Id == requirementId);
+            tagRequirement.SetUpdatedInterval(intervalWeeks);
+            UpdateNextDueTimeUtc();
+        }
     }
 }

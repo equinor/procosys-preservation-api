@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.WebApi.Caches;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,7 +45,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<string>> GetPermissions(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
@@ -59,7 +57,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<string>> GetPermissionsFromMain(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
         {
             var permissions = await _permissionApiService.GetPermissionsAsync(plant);
@@ -71,7 +68,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<string>> GetProjects(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();

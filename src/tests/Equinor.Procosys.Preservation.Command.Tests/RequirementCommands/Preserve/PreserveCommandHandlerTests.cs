@@ -29,10 +29,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         private const int RequirementForOtherId = 72;
         private const int Interval = 2;
 
-        private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IProjectRepository> _projectRepoMock;
         private Mock<IPersonRepository> _personRepoMock;
-        private Mock<ICurrentUserProvider> _currentUserProvider;
         private PreserveCommand _commandForSupplierRequirement;
         private PreserveCommand _commandForOtherRequirement;
         private TagRequirement _requirementForSupplier;
@@ -81,17 +79,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
             });
             _tagInOtherStep.SetProtectedIdForTesting(TagInOtherStepId);
 
-            _currentUserProvider = new Mock<ICurrentUserProvider>();
-            _currentUserProvider
-                .Setup(x => x.GetCurrentUserOid())
-                .Returns(_currentUserOid);
             _projectRepoMock = new Mock<IProjectRepository>();
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagInSupplierStepId)).Returns(Task.FromResult(_tagInSupplierStep));
             _projectRepoMock.Setup(r => r.GetTagByTagIdAsync(TagInOtherStepId)).Returns(Task.FromResult(_tagInOtherStep));
             _personRepoMock = new Mock<IPersonRepository>();
             _personRepoMock
-                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _currentUserOid)))
-                .Returns(Task.FromResult(new Person(_currentUserOid, "Test", "User")));
+                .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
+                .Returns(Task.FromResult(new Person(CurrentUserOid, "Test", "User")));
 
             _commandForSupplierRequirement = new PreserveCommand(TagInSupplierStepId, RequirementForSupplierId);
             _commandForOtherRequirement = new PreserveCommand(TagInOtherStepId, RequirementForOtherId);
@@ -109,7 +103,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
                 _projectRepoMock.Object,
                 _personRepoMock.Object,
                 UnitOfWorkMock.Object,
-                _currentUserProvider.Object);
+                CurrentUserProviderMock.Object);
         }
 
         [TestMethod]
