@@ -30,7 +30,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<RequirementTypeDto>>> GetRequirementTypes(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {
@@ -43,7 +42,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<ResponsibleDto>>> GetResponsibles(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {
@@ -56,7 +54,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {
@@ -69,7 +66,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<ModeDto>>> GetModes(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {
@@ -82,7 +78,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<AreaDto>>> GetAreas(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {
@@ -95,7 +90,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<TagFunctionCodeDto>>> GetTagFunctions(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {
@@ -108,7 +102,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         public async Task<ActionResult<List<DisciplineDto>>> GetTagDisciplines(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {

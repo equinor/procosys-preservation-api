@@ -24,7 +24,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsibles
         public async Task<ActionResult<IEnumerable<ResponsibleDto>>> GetAllResponsibles(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
         {
             var result = await _mediator.Send(new GetAllResponsiblesQuery());

@@ -31,7 +31,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] bool includeVoided = false)
         {
@@ -44,7 +43,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         public async Task<ActionResult<JourneyDto>> GetJourney(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {

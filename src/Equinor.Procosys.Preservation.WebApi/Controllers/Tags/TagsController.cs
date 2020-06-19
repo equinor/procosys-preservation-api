@@ -65,7 +65,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<IEnumerable<TagDto>>> GetTags(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] FilterDto filter,
             [FromQuery] SortingDto sorting,
@@ -82,7 +81,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<TagDetailsDto>> GetTagDetails(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -95,7 +93,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<RequirementDto>>> GetTagRequirements(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -108,7 +105,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<ActionDto>>> GetTagActions(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -121,7 +117,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<ActionDetailsDto>> GetTagActionDetails(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int actionId)
@@ -201,7 +196,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<ActionAttachmentDto>>> GetActionAttachments(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int actionId)
@@ -215,7 +209,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult> GetActionAttachment(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int actionId,
@@ -407,7 +400,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<Query.CheckAreaTagNo.AreaTagDto>> CheckAreaTagNo(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] AreaTagDto dto)
         {
@@ -598,7 +590,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> GetFieldValueAttachment(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int requirementId,
@@ -640,7 +631,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<TagAttachmentDto>>> GetTagAttachments(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -695,7 +685,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult> GetTagAttachment(
             [FromHeader(Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int attachmentId,
@@ -751,7 +740,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int requirementId,
@@ -766,7 +754,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<HistoryDto>>> GetTagHistory(
             [FromHeader( Name = PlantProvider.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
