@@ -97,6 +97,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
 
             return updatedReqDefIds;
         }
+
         private async Task<List<RequirementDefinition>> GetRequirementDefinitions(
             List<int> requirementDefinitionIds,
             CancellationToken token)

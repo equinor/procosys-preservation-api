@@ -51,8 +51,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tagMock.Object));
 
-
-
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             var rdMock1 = new Mock<RequirementDefinition>();
             rdMock1.SetupGet(x => x.Id).Returns(ReqDefId1);
@@ -120,7 +118,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             Assert.AreEqual(1, _tagMock.Object.Requirements.Count);
             Assert.AreEqual(false, _tagMock.Object.Requirements.First().IsVoided);
             Assert.AreEqual(Interval2, _tagMock.Object.Requirements.First().IntervalWeeks);
-            
 
             // Act
             var result2 = await _dut.Handle(updateOnExistingcommand, default);
@@ -156,7 +153,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             Assert.AreEqual(1, _tagMock.Object.Requirements.Count);
             Assert.AreEqual(false, _tagMock.Object.Requirements.First().IsVoided);
             Assert.AreEqual(Interval2, _tagMock.Object.Requirements.First().IntervalWeeks);
-
 
             // Act
             var result2 = await _dut.Handle(updateOnExistingcommand, default);
