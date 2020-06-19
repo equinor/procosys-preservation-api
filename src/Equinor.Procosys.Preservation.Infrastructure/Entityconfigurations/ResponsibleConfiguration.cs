@@ -18,14 +18,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasMaxLength(Responsible.CodeLengthMax)
                 .IsRequired();
 
-            builder.Property(x => x.Title)
+            builder.Property(x => x.Description)
                 .HasMaxLength(Responsible.TitleLengthMax)
                 .IsRequired();
 
             builder
                 .HasIndex(x => x.Plant)
                 .HasName("IX_Responsibles_Plant_ASC")
-                .IncludeProperties(x => new {x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, x.Title});
+                .IncludeProperties(x => new {x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, Title = x.Description});
         }
     }
 }

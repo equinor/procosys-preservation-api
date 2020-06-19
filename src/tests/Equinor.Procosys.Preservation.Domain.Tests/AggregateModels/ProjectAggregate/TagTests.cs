@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestInitialize]
         public void Setup()
         {
-            var responsible = new Responsible(TestPlant, "RC", "RT");
+            var responsible = new Responsible(TestPlant, "RC", "RD");
             _supplierStep = new Step(TestPlant, "SUP", new Mode(TestPlant, "SUP", true), responsible);
             _supplierStep.SetProtectedIdForTesting(3);
             _otherStep = new Step(TestPlant, "OTHER", new Mode(TestPlant, "O", false), responsible);

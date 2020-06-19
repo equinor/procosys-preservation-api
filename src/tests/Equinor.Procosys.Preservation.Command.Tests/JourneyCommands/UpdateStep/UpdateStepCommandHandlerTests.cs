@@ -63,9 +63,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
                 .Setup(r => r.GetByIdAsync(_modeId))
                 .Returns(Task.FromResult(_modeMock.Object));
 
-            _responsible = new Responsible(TestPlant, _responsibleCode, _oldTitle);
+            _responsible = new Responsible(TestPlant, _responsibleCode, "D1");
             _responsible.SetProtectedIdForTesting(_responsibleId);
-            _responsible2 = new Responsible(TestPlant, _responsibleCode2, _newTitle);
+            _responsible2 = new Responsible(TestPlant, _responsibleCode2, "D2");
             _responsible2.SetProtectedIdForTesting(_responsibleId2);
 
             _responsibleRepositoryMock = new Mock<IResponsibleRepository>();
