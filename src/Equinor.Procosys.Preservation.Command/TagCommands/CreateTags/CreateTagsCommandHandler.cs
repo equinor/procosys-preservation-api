@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
+        private readonly IModeRepository _modeRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
@@ -24,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
         public CreateTagsCommandHandler(
             IProjectRepository projectRepository,
             IJourneyRepository journeyRepository,
+            IModeRepository modeRepository, 
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
@@ -31,6 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
         {
             _projectRepository = projectRepository;
             _journeyRepository = journeyRepository;
+            _modeRepository = modeRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
@@ -42,9 +46,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
             var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
+            var mode = await _modeRepository.GetByIdAsync(step.ModeId);
 
             var addedTags = new List<Tag>();
-            var project = await _projectRepository.GetByNameAsync(request.ProjectName);
+            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             
             var tagDetailList = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, request.ProjectName, request.TagNos);
             
@@ -55,6 +60,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 {
                     return new NotFoundResult<List<int>>($"Details for Tag {tagNo} not found in project {request.ProjectName}");
                 }
+
+                // Todo TECH This type of validation should be in validator not in handler.
+                // Since we don't want to ask main api for same data both in validator and here, we do it here only
+                if (mode.ForSupplier && string.IsNullOrEmpty(tagDetails.PurchaseOrderNo))
+                {
+                    return new NotFoundResult<List<int>>($"Purchase Order for {tagNo} not found in project {request.ProjectName}. Tag can not be in a Supplier step");
+                }
+
                 if (project == null)
                 {
                     project = new Project(_plantProvider.Plant, request.ProjectName, tagDetails.ProjectDescription);
@@ -65,6 +78,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
 
                 project.AddTag(tagToAdd);
                 addedTags.Add(tagToAdd);
+            }
+
+            // Todo Remove Migration handling when migration period from old to new preservation in ProCoSys is over
+            if (request.Migration)
+            {
+                await _tagApiService.MarkTagsAsMigratedAsync(_plantProvider.Plant, tagDetailList.Select(t => t.Id));
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -89,7 +108,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 _plantProvider.Plant,
                 TagType.Standard,
                 tagDetails.TagNo,
-                tagDetails.Description,
+                tagDetails.Description ?? "",
                 step,
                 requirements)
             {

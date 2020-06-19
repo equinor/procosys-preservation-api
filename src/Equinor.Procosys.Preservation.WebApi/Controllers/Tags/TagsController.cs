@@ -31,6 +31,8 @@ using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetFieldValueAttachment;
+using Equinor.Procosys.Preservation.Query.GetPreservationRecord;
+using Equinor.Procosys.Preservation.Query.GetHistory;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
@@ -320,6 +322,33 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 dto.Remark,
                 dto.StorageArea);
             
+            var result = await _mediator.Send(command);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
+        [HttpPost("MigrateStandard")]
+        public async Task<ActionResult<int>> MigrateTags(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromBody] CreateTagsDto dto)
+        {
+            var requirements = dto.Requirements?
+                .Select(r =>
+                    new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
+            var command = new CreateTagsCommand(
+                dto.TagNos,
+                dto.ProjectName,
+                dto.StepId,
+                requirements,
+                dto.Remark,
+                dto.StorageArea)
+            {
+                Migration = true
+            };
+
             var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
@@ -714,6 +743,34 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(new UnvoidTagCommand(id, dto.RowVersion));
 
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Requirements/{requirementId}/PreservationRecord/{preservationRecordId}")]
+        public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementId,
+            [FromRoute] int preservationRecordId)
+        {
+            var result = await _mediator.Send(new GetPreservationRecordQuery(id, requirementId, preservationRecordId));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/History")]
+        public async Task<ActionResult<List<HistoryDto>>> GetTagHistory(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id)
+        {
+            var result = await _mediator.Send(new GetHistoryQuery(id));
             return this.FromResult(result);
         }
 

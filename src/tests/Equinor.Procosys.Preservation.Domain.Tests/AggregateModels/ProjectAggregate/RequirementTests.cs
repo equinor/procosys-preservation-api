@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Equinor.Procosys.Preservation.Test.Common;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
@@ -111,10 +112,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            var reqDefId = 2;
+
+            var usage = RequirementUsage.ForSuppliersOnly;
+            var requirementDefinition = new RequirementDefinition(TestPlant, "T", 1, usage, 1);
+            requirementDefinition.SetProtectedIdForTesting(reqDefId);
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, requirementDefinition);
 
             Assert.AreEqual(TestPlant, dut.Plant);
-            Assert.AreEqual(_reqDefWithCheckBoxFieldMock.Object.Id, dut.RequirementDefinitionId);
+            Assert.AreEqual(reqDefId, dut.RequirementDefinitionId);
+            Assert.AreEqual(usage, dut.Usage);
             Assert.IsFalse(dut.IsVoided);
             Assert.IsFalse(dut.ReadyToBePreserved);
             _timeProvider.ElapseWeeks(TwoWeeksInterval);

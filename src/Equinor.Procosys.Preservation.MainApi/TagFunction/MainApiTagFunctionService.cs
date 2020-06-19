@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -32,11 +33,11 @@ namespace Equinor.Procosys.Preservation.MainApi.TagFunction
 
             var url = $"{_baseAddress}Library/TagFunction" +
                 $"?plantId={plant}" +
-                $"&tagFunctionCode={tagFunctionCode}" +
-                $"&registerCode={registerCode}" +
+                $"&tagFunctionCode={WebUtility.UrlEncode(tagFunctionCode)}" +
+                $"&registerCode={WebUtility.UrlEncode(registerCode)}" +
                 $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<ProcosysTagFunction>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysTagFunction>(url);
         }
     }
 }

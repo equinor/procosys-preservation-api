@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -33,10 +34,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Discipline
 
             var url = $"{_baseAddress}Library/Discipline" +
                       $"?plantId={plant}" +
-                      $"&code={code}" +
+                      $"&code={WebUtility.UrlEncode(code)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<ProcosysDiscipline>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysDiscipline>(url);
         }
     }
 }

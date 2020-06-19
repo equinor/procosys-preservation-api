@@ -17,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             bool readyToBePreserved,
             List<FieldDto> fields,
             string comment,
+            bool isVoided,
             string rowVersion)
         {
             Id = id;
@@ -30,6 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             RequirementDefinitionTitle = requirementDefinitionTitle;
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
             Comment = comment;
+            IsVoided = isVoided;
             RowVersion = rowVersion;
         }
 
@@ -47,6 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         public bool ReadyToBePreserved { get; }
         public List<FieldDto> Fields { get; }
         public string Comment { get; }
+        public bool IsVoided { get;  }
         public string RowVersion { get; }
     }
 }

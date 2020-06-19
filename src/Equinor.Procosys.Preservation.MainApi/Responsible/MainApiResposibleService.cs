@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -32,10 +33,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Responsible
 
             var url = $"{_baseAddress}Library/Responsible" +
                       $"?plantId={plant}" +
-                      $"&code={code}" +
+                      $"&code={WebUtility.UrlEncode(code)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserialize<ProcosysResponsible>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysResponsible>(url);
         }
     }
 }

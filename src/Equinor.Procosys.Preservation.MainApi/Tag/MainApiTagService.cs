@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Plant;
@@ -58,14 +62,14 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
             var url = $"{_baseAddress}Tag/ByTagNos" +
                 $"?plantId={plant}" +
-                $"&projectName={projectName}" +
+                $"&projectName={WebUtility.UrlEncode(projectName)}" +
                 $"&api-version={_apiVersion}";
             foreach (var tagNo in tagNos)
             {
-                url += $"&tagNos={tagNo}";
+                url += $"&tagNos={WebUtility.UrlEncode(tagNo)}";
             }
 
-            var tagDetails = await _mainApiClient.QueryAndDeserialize<List<ProcosysTagDetails>>(url);
+            var tagDetails = await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(url);
             
             if (tagDetails == null)
             {
@@ -73,6 +77,20 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                 return default;
             }
             return tagDetails;
+        }
+
+        public async Task<IList<ProcosysPreservedTag>> GetPreservedTagsAsync(string plant, string projectName)
+        {
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
+            {
+                throw new ArgumentException($"Invalid plant: {plant}");
+            }
+
+            var url = $"{_baseAddress}PreservationTags" +
+                      $"?plantId={plant}" +
+                      $"&projectName={WebUtility.UrlEncode(projectName)}" +
+                      $"&api-version={_apiVersion}";
+            return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysPreservedTag>>(url);
         }
 
         public async Task<IList<ProcosysTagOverview>> SearchTagsByTagNoAsync(string plant, string projectName, string startsWithTagNo)
@@ -89,12 +107,12 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             {
                 var url = $"{_baseAddress}Tag/Search" +
                     $"?plantId={plant}" +
-                    $"&startsWithTagNo={startsWithTagNo}" +
-                    $"&projectName={projectName}" +
+                    $"&startsWithTagNo={WebUtility.UrlEncode(startsWithTagNo)}" +
+                    $"&projectName={WebUtility.UrlEncode(projectName)}" +
                     $"&currentPage={currentPage++}" +
                     $"&itemsPerPage={_tagSearchPageSize}" +
                     $"&api-version={_apiVersion}";
-                tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
+                tagSearchResult = await _mainApiClient.QueryAndDeserializeAsync<ProcosysTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
                 {
                     items.AddRange(tagSearchResult.Items);
@@ -117,7 +135,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             {
                 var url = $"{_baseAddress}Tag/Search/ByTagFunction" +
                           $"?plantId={plant}" +
-                          $"&projectName={projectName}" +
+                          $"&projectName={WebUtility.UrlEncode(projectName)}" +
                           $"&currentPage={currentPage++}" +
                           $"&itemsPerPage={_tagSearchPageSize}" +
                           $"&api-version={_apiVersion}";
@@ -126,13 +144,28 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                     url += $"&tagFunctionCodeRegisterCodePairs={tagFunctionCodeRegisterCodePair}";
                 }
 
-                tagSearchResult = await _mainApiClient.QueryAndDeserialize<ProcosysTagSearchResult>(url);
+                tagSearchResult = await _mainApiClient.QueryAndDeserializeAsync<ProcosysTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
                 {
                     items.AddRange(tagSearchResult.Items);
                 }
             } while (tagSearchResult != null && items.Count < tagSearchResult.MaxAvailable);
             return items;
+        }
+
+        public async Task MarkTagsAsMigratedAsync(string plant, IEnumerable<long> tagIds)
+        {
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
+            {
+                throw new ArgumentException($"Invalid plant: {plant}");
+            }
+
+            var url = $"{_baseAddress}PreservationTags" +
+                      $"?plantId={plant}" +
+                      $"&api-version={_apiVersion}";
+
+            var json = JsonSerializer.Serialize(tagIds);
+            await _mainApiClient.PutAsync(url, new StringContent(json, Encoding.Default, "application/json"));
         }
     }
 }

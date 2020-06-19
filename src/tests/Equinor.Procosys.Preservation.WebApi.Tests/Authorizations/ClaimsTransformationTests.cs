@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
-using Equinor.Procosys.Preservation.WebApi.Caches;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 

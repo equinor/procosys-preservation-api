@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -23,10 +24,19 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
             _logger = logger;
     }
 
-        public async Task<T> QueryAndDeserialize<T>(string url)
+        public async Task<T> QueryAndDeserializeAsync<T>(string url)
         {
-            var httpClient = _httpClientFactory.CreateClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerTokenProvider.GetBearerToken());
+            if (string.IsNullOrEmpty(url))
+            {
+                throw new ArgumentNullException(nameof(url));
+            }
+
+            if (url.Length > 2000)
+            {
+                throw new ArgumentException("url exceed max 2000 characters", nameof(url));
+            }
+
+            var httpClient = CreateHttpClient();
 
             var stopWatch = Stopwatch.StartNew();
             var response = await httpClient.GetAsync(url);
@@ -34,14 +44,36 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogDebug($"Request was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
-                return default;
+                _logger.LogError($"Request was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
+                throw new Exception();
             }
 
             _logger.LogDebug($"Request was successful and took {stopWatch.Elapsed.TotalSeconds}s.");
             var jsonResult = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<T>(jsonResult);
             return result;
+        }
+
+        public async Task PutAsync(string url, HttpContent content)
+        {
+            var httpClient = CreateHttpClient();
+
+            var stopWatch = Stopwatch.StartNew();
+            var response = await httpClient.PutAsync(url, content);
+            stopWatch.Stop();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError($"Request was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
+                throw new Exception();
+            }
+        }
+
+        private HttpClient CreateHttpClient()
+        {
+            var httpClient = _httpClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _bearerTokenProvider.GetBearerToken());
+            return httpClient;
         }
     }
 }

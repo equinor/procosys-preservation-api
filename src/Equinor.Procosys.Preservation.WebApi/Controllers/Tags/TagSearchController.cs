@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
@@ -59,6 +60,25 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromQuery] string projectName)
         {
             var result = await _mediator.Send(new SearchTagsByTagFunctionQuery(projectName));
+            return this.FromResult(result);
+        }
+
+        /// <summary>
+        /// Gets preservation tags from old ProCoSys. DTO enriched with preservation info from new solution
+        /// </summary>
+        /// <param name="plant"></param>
+        /// <param name="projectName"></param>
+        /// <returns>All preserved tags in old ProCoSys</returns>
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("Preserved")]
+        public async Task<ActionResult<List<ProcosysPreservedTagDto>>> Get(
+            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromQuery] string projectName)
+        {
+            var result = await _mediator.Send(new PreservedTagsQuery(projectName));
             return this.FromResult(result);
         }
     }

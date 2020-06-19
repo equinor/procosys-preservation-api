@@ -3,10 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.MainApi.Tag;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -19,6 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         private const string TestTagNo2 = "TagNo2";
         private const string TestProjectName = "TestProjectX";
         private const string TestProjectDescription = "TestProjectXDescription";
+        private const int ModeId = 2;
         private const int StepId = 11;
         private const int ReqDefId1 = 99;
         private const int ReqDefId2a = 109;
@@ -27,8 +31,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         private const int Interval1 = 2;
         private const int Interval2 = 3;
 
-        private Mock<Step> _stepMock;
+        private Mock<Mode> _modeMock;
+        private Step step;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
+        private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<ITagFunctionRepository> _tfRepositoryMock;
         private Project _projectAddedToRepository;
         private Mock<IProjectRepository> _projectRepositoryMock;
@@ -49,15 +55,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             var registerCode1 = "RegisterCodeCode1";
             var tagFunctionCode2 = "TagFunctionCode2";
             var registerCode2 = "RegisterCodeCode2";
-
-            _stepMock = new Mock<Step>();
-            _stepMock.SetupGet(s => s.Id).Returns(StepId);
-            _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+            _modeRepositoryMock = new Mock<IModeRepository>();
+            _modeMock = new Mock<Mode>();
+            _modeMock.SetupGet(m => m.Plant).Returns(TestPlant);
+            _modeMock.SetupGet(x => x.Id).Returns(ModeId);
+            _modeRepositoryMock
+                .Setup(r => r.GetByIdAsync(ModeId))
+                .Returns(Task.FromResult(_modeMock.Object));
+            
+            // Arrange
+            step = new Step(TestPlant, "S", _modeMock.Object, new Responsible(TestPlant, "RC", "RT"));
+            step.SetProtectedIdForTesting(StepId);
             
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
             _journeyRepositoryMock
                 .Setup(x => x.GetStepByStepIdAsync(StepId))
-                .Returns(Task.FromResult(_stepMock.Object)); 
+                .Returns(Task.FromResult(step)); 
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _projectRepositoryMock
@@ -145,13 +158,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             _command = new AutoScopeTagsCommand(
                 new List<string>{TestTagNo1, TestTagNo2}, 
                 TestProjectName,
-                _stepMock.Object.Id,
+                step.Id,
                 "Remark",
                 "SA");
             
             _dut = new AutoScopeTagsCommandHandler(
                 _projectRepositoryMock.Object,
                 _journeyRepositoryMock.Object,
+                _modeRepositoryMock.Object,
                 _tfRepositoryMock.Object,
                 _rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
@@ -162,10 +176,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         [TestMethod]
         public async Task HandlingAutoScopeTagsCommand_ShouldAddProjectToRepository_WhenProjectNotExists()
         {
-            // Arrange
-            _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult((Project)null));
-
             // Act
             var result = await _dut.Handle(_command, default);
 
@@ -182,7 +192,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "");
             _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
+                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
 
             // Act
             var result = await _dut.Handle(_command, default);
@@ -195,10 +205,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         [TestMethod]
         public async Task HandlingAutoScopeTagsCommand_ShouldAdd2TagsToNewProject_WhenProjectNotExists()
         {
-            // Arrange
-            _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult((Project)null));
-
             // Act
             var result = await _dut.Handle(_command, default);
 
@@ -218,7 +224,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             // Arrange
             var project = new Project(TestPlant, TestProjectName, "");
             _projectRepositoryMock
-                .Setup(r => r.GetByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
+                .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
             Assert.AreEqual(0, project.Tags.Count);
             
             // Act
@@ -255,6 +261,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
 
             // Assert
             Assert.AreEqual(1, result.Errors.Count);
+        }
+        
+        [TestMethod]
+        public async Task HandlingAutoScopeTagsCommand_ShouldReturnNotFound_WhenAddingTagWithOutPoToSupplierStep()
+        {
+            // Arrange
+            _modeMock.Object.ForSupplier = true;
+            _mainTagDetails1.PurchaseOrderNo = null;
+
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.AreEqual($"Purchase Order for {_mainTagDetails1.TagNo} not found in project {TestProjectName}.", result.Errors[0]);
         }
 
         private void AssertTagProperties(AutoScopeTagsCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject, int regDefId, int interval)

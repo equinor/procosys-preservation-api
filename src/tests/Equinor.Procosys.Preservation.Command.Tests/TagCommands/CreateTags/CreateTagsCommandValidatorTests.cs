@@ -26,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         private int _stepId = 1;
         private int _rd1Id = 2;
         private int _rd2Id = 3;
+        private List<RequirementForCommand> _requirements;
 
         [TestInitialize]
         public void Setup_OkState()
@@ -34,22 +35,25 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
 
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(true));
 
             _projectValidatorMock = new Mock<IProjectValidator>();
 
             _rdValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd1Id, default)).Returns(Task.FromResult(true));
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
 
+            _requirements = new List<RequirementForCommand>
+            {
+                new RequirementForCommand(_rd1Id, 1),
+                new RequirementForCommand(_rd2Id, 1)
+            };
             _command = new CreateTagsCommand(
                 new List<string>{_tagNo1, _tagNo2}, 
                 _projectName,
                 _stepId,
-                new List<RequirementForCommand>
-                {
-                    new RequirementForCommand(_rd1Id, 1),
-                    new RequirementForCommand(_rd2Id, 1)
-                },
+                _requirements,
                 null,
                 null);
 
@@ -143,31 +147,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenNoRequirementsGiven()
-        {
-            var command = new CreateTagsCommand(
-                new List<string>{_tagNo1}, 
-                _projectName,
-                _stepId,
-                new List<RequirementForCommand>(),
-                null,
-                null);
-            
-            var result = _dut.Validate(command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("At least 1 requirement must be given!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenNoTagNosGiven()
         {
             var command = new CreateTagsCommand(
                 new List<string>(), 
                 _projectName,
                 _stepId,
-                new List<RequirementForCommand>{new RequirementForCommand(_rd1Id, 1)},
+                _requirements,
                 null,
                 null);
             
@@ -185,7 +171,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
                 new List<string>{"X","x"}, 
                 _projectName,
                 _stepId,
-                new List<RequirementForCommand>{new RequirementForCommand(_rd1Id, 1)},
+                _requirements,
                 null,
                 null);
             
@@ -194,6 +180,93 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("TagNos must be unique!"));
+        }
+        
+        [TestMethod]
+        public void Validate_ShouldFailForNonSupplierStep_WhenNoRequirementsGiven()
+        {
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+            var command = new CreateTagsCommand(
+                new List<string>{_tagNo1, _tagNo2}, 
+                _projectName,
+                _stepId,
+                new List<RequirementForCommand>(),
+                null,
+                null);
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for other than suppliers!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldBeValidForNonSupplierStep_WhenRequirementsForOtherGiven()
+        {
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+            _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsTrue(result.IsValid);
+        }
+        
+        [TestMethod]
+        public void Validate_ShouldFailForNonSupplierStep_WhenRequirementForSupplierOnlyGiven()
+        {
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+            _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.UsageCoversForSupplierOnlyAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements can't include requirements just for suppliers!"));
+        }
+        
+        [TestMethod]
+        public void Validate_ShouldFailForNonSupplierStep_WhenRequirementForOtherNotGiven()
+        {
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for other than suppliers!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailForSupplierStep_WhenNoRequirementsGiven()
+        {
+            var command = new CreateTagsCommand(
+                new List<string>{_tagNo1, _tagNo2}, 
+                _projectName,
+                _stepId,
+                new List<RequirementForCommand>(),
+                null,
+                null);
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used both for supplier and other than suppliers!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFailForSupplierStep_WhenRequirementForSupplierNotGiven()
+        {
+            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used both for supplier and other than suppliers!"));
         }
 
         [TestMethod]

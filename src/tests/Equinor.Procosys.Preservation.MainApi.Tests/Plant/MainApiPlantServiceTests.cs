@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             var mainApiClient = new Mock<IBearerTokenApiClient>();
             mainApiClient
-                .Setup(x => x.QueryAndDeserialize<List<ProcosysPlant>>(It.IsAny<string>()))
+                .Setup(x => x.QueryAndDeserializeAsync<List<ProcosysPlant>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<ProcosysPlant>
                 {
                     new ProcosysPlant { Id = _plantId, Title = _plantTitle },

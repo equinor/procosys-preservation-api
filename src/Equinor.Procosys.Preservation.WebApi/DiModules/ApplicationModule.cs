@@ -13,6 +13,7 @@ using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagFunctionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -102,6 +103,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IRequirementTypeRepository, RequirementTypeRepository>();
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<ITagFunctionRepository, TagFunctionRepository>();
+            services.AddScoped<IHistoryRepository, HistoryRepository>();
 
             services.AddScoped<RequestBearerTokenProvider>();
             services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<RequestBearerTokenProvider>());

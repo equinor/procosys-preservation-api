@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
+using Equinor.Procosys.Preservation.Domain.Events;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
@@ -71,9 +73,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             TagNo = tagNo;
             Description = description;
             StepId = step.Id;
+            IsInSupplierStep = step.IsSupplierStep;
             _requirements.AddRange(reqList);
+            ObjectGuid = Guid.NewGuid();
+            AddDomainEvent(new TagCreatedEvent(plant, ObjectGuid));
         }
 
+        public Guid ObjectGuid { get; private set; }
         public PreservationStatus Status { get; private set; }
         public string AreaCode { get; private set; }
         public string AreaDescription { get; private set; }
@@ -83,11 +89,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public string DisciplineDescription { get; private set; }
         public TagType TagType { get; private set; }
         public string McPkgNo { get; set; }
-        public string Description { get; private set; }
+        public string Description { get; set; }
         public string PurchaseOrderNo { get; set; }
         public string Remark { get; set; }
         public string StorageArea { get; set; }
         public int StepId { get; private set; }
+        public bool IsInSupplierStep { get; private set; }
         public string TagFunctionCode { get; set; }
         public string TagNo { get; private set; }
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
@@ -124,6 +131,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             StepId = step.Id;
+            IsInSupplierStep = step.IsSupplierStep;
         }
 
         public void AddRequirement(TagRequirement requirement)
@@ -231,7 +239,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 
         public void Preserve(Person preservedBy, int requirementId)
         {
-            var requirement = Requirements.Single(r => r.Id == requirementId);
+            var requirement = ActiveRequirementsDueToCurrentStep().Single(r => r.Id == requirementId);
             requirement.Preserve(preservedBy, false);
             UpdateNextDueTimeUtc();
         }
@@ -247,9 +255,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public IOrderedEnumerable<TagRequirement> OrderedRequirements()
-            => Requirements
-                .Where(r => !r.IsVoided)
-                .OrderBy(r => r.NextDueTimeUtc);
+            => ActiveRequirementsDueToCurrentStep().OrderBy(r => r.NextDueTimeUtc);
 
         public bool IsReadyToBeTransferred(Journey journey)
         {
@@ -323,6 +329,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         
             UpdateNextDueTimeUtc();
         }
+
+        public IEnumerable<TagRequirement> ActiveRequirementsDueToCurrentStep()
+            => Requirements
+                .Where(r => !r.IsVoided)
+                .Where(r => r.Usage == RequirementUsage.ForAll || 
+                            (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
+                            (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers));
 
         private TagRequirement FirstUpcomingRequirement()
             => GetUpComingRequirements().FirstOrDefault();

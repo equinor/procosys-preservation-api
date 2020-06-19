@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.TagFunction
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserialize<ProcosysTagFunction>(It.IsAny<string>()))
+                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysTagFunction>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_result));
             var dut = new MainApiTagFunctionService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
 

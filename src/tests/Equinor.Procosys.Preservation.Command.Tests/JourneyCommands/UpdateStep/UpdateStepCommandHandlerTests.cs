@@ -147,7 +147,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             var result = await _dut.Handle(_command, default);
 
             // Assert
-            
             Assert.AreEqual(1, result.Errors.Count);
             Assert.AreEqual($"Responsible with code {_command.ResponsibleCode} not found", result.Errors[0]);
         }

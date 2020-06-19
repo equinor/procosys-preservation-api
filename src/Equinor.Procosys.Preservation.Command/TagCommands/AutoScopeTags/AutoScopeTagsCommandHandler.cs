@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
@@ -17,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IJourneyRepository _journeyRepository;
+        private readonly IModeRepository _modeRepository;
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -26,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
         public AutoScopeTagsCommandHandler(
             IProjectRepository projectRepository,
             IJourneyRepository journeyRepository, 
+            IModeRepository modeRepository, 
             ITagFunctionRepository tagFunctionRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
@@ -34,6 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
         {
             _projectRepository = projectRepository;
             _journeyRepository = journeyRepository;
+            _modeRepository = modeRepository;
             _tagFunctionRepository = tagFunctionRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
@@ -45,6 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
         {
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             var tagDetailList = await _tagApiService.GetTagDetailsAsync(_plantProvider.Plant, request.ProjectName, request.TagNos);
+            var mode = await _modeRepository.GetByIdAsync(step.ModeId);
 
             var tagFunctionsWithRequirements = await GetNeededTagFunctionsWithRequirementsAsync(tagDetailList);
 
@@ -57,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
             var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
 
             var addedTags = new List<Tag>();
-            var project = await _projectRepository.GetByNameAsync(request.ProjectName);
+            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             
             foreach (var tagNo in request.TagNos)
             {
@@ -73,6 +78,13 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
                 if (tagFunctionWithRequirement == null)
                 {
                     return new NotFoundResult<List<int>>($"TagFunction for {Key(tagDetails)} not found with requirements defined");
+                }
+
+                // Todo TECH This type of validation should be in validator not in handler.
+                // Since we don't want to ask main api for same data both in validator and here, we do it here only
+                if (mode.ForSupplier && string.IsNullOrEmpty(tagDetails.PurchaseOrderNo))
+                {
+                    return new NotFoundResult<List<int>>($"Purchase Order for {tagNo} not found in project {request.ProjectName}.");
                 }
 
                 if (project == null)
