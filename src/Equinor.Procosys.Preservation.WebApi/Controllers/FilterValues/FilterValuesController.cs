@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagAreas;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagDisciplines;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagFunctions;

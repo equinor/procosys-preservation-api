@@ -7,7 +7,6 @@ using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirem
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
