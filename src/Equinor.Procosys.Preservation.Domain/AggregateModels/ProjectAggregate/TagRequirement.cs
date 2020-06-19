@@ -276,5 +276,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{nameof(TagRequirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't record values");
             }
         }
+
+        public void SetUpdatedInterval(int intervalWeeks)
+        {
+            IntervalWeeks = intervalWeeks;
+            if (ActivePeriod != null)
+            {
+                NextDueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);
+                ActivePeriod.UpdateDueTimeUtc(NextDueTimeUtc.Value);
+            }
+        }
     }
 }
