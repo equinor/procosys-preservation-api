@@ -239,7 +239,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 
         public void Preserve(Person preservedBy, int requirementId)
         {
-            var requirement = ActiveRequirementsDueToCurrentStep().Single(r => r.Id == requirementId);
+            var requirement = RequirementsDueToCurrentStep().Single(r => r.Id == requirementId);
             requirement.Preserve(preservedBy, false);
             UpdateNextDueTimeUtc();
         }
@@ -255,7 +255,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         }
 
         public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool includeVoided = false)
-            => ActiveRequirementsDueToCurrentStep(includeVoided).OrderBy(r => r.NextDueTimeUtc);
+            => RequirementsDueToCurrentStep(includeVoided).OrderBy(r => r.NextDueTimeUtc);
 
         public bool IsReadyToBeTransferred(Journey journey)
         {
@@ -330,7 +330,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
         }
 
-        public IEnumerable<TagRequirement> ActiveRequirementsDueToCurrentStep(bool includeVoided = false)
+        public IEnumerable<TagRequirement> RequirementsDueToCurrentStep(bool includeVoided = false)
             => Requirements
                 .Where(r => includeVoided || !r.IsVoided)
                 .Where(r => r.Usage == RequirementUsage.ForAll || 
