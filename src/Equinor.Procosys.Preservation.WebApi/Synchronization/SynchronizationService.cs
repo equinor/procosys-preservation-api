@@ -71,11 +71,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
                 _plantSetter.SetPlant(plant);
                 await _claimsTransformation.TransformAsync(currentUser);
 
+                var startTime = TimeService.UtcNow;
                 await SynchronizeProjects();
                 await SynchronizeResponsibles();
                 await SynchronizeTagFunctions();
+                var endTime = TimeService.UtcNow;
 
-                _logger.LogInformation($"Plant {plant} synchronized.");
+                _logger.LogInformation($"Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
             }
         }
 
@@ -84,13 +86,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             _logger.LogInformation($"Synchronizing projects");
 
             var result = await _mediator.Send(new SyncProjectsCommand());
+
             if (result.ResultType == ServiceResult.ResultType.Ok)
             {
-                _logger.LogWarning($"Synchronizing projects complete");
+                _logger.LogWarning($"Synchronizing projects complete.");
             }
             else
             {
-                _logger.LogWarning($"Synchronizing projects failed");
+                _logger.LogWarning($"Synchronizing projects failed.");
             }
         }
 
