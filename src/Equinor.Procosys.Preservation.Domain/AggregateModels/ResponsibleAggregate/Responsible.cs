@@ -7,22 +7,22 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggreg
     public class Responsible : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         public const int CodeLengthMax = 255;
-        public const int TitleLengthMax = 255;
+        public const int DescriptionLengthMax = 255;
 
         protected Responsible()
             : base(null)
         {
         }
 
-        public Responsible(string plant, string code, string title)
+        public Responsible(string plant, string code, string description)
             : base(plant)
         {
             Code = code;
-            Title = title;
+            Description = description;
         }
 
         public string Code { get; private set; }
-        public string Title { get; private set; }
+        public string Description { get; private set; }
         public bool IsVoided { get; private set; }
 
         public DateTime CreatedAtUtc { get; private set; }

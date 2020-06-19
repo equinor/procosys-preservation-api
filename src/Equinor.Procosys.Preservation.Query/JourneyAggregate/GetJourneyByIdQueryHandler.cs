@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                 .ToListAsync(cancellationToken);
             var responsibles = await (from r in _context.QuerySet<Responsible>()
                     where responsibleIds.Contains(r.Id)
-                    select new ResponsibleDto(r.Id, r.Code, r.Title, r.RowVersion.ConvertToString()))
+                    select new ResponsibleDto(r.Id, r.Code, r.Description, r.RowVersion.ConvertToString()))
                 .ToListAsync(cancellationToken);
 
             var journeyDto = new JourneyDto(

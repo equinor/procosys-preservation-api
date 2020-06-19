@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         [TestInitialize]
         public void Setup()
         {
-            var responsible = new Responsible(TestPlant, "C", "T");
+            var responsible = new Responsible(TestPlant, "C", "D");
 
             var supplierMode = new Mode(TestPlant, "SUP", true);
             supplierMode.SetProtectedIdForTesting(SupplierModeId);
