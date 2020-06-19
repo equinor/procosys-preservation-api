@@ -58,9 +58,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             _rdValidatorMock.Setup(r => r.ExistsAsync(_tr2Id, default))
                 .Returns(Task.FromResult(true));
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd3NotSupplierId, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.BeUniqueRequirements(new List<int>{_tr1Id, _tr2Id}, new List<int>(), default))
+                .Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.BeUniqueRequirements(new List<int>(), new List<int>(), default))
+                .Returns(Task.FromResult(true));
             _rdValidatorMock
                 .Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(
                     new List<int> {_tr1Id, _tr2Id, _rd3NotSupplierId}, default))
+                .Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.RequirementUsageIsForAllJourneysAsync(new List<int> { _tr1Id, _tr2Id }, new List<int>(), default))
+                .Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.RequirementUsageIsForAllJourneysAsync(new List<int> (), new List<int>(), default))
                 .Returns(Task.FromResult(true));
             _rdValidatorMock
                 .Setup(

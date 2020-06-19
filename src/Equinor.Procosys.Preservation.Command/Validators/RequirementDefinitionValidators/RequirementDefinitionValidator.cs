@@ -52,14 +52,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         public async Task<bool> BeUniqueRequirements(IEnumerable<int> updatedTagReqIds, IEnumerable<int> newReqDefIds, CancellationToken token)
         {
             var updatedReqDefIds = await GetAllUpdatedReqDefIds(updatedTagReqIds, token);
-
-            Possible muiltiple enumerations må fikses!!
-            if (newReqDefIds.Distinct().Count() != newReqDefIds.Count())
+            var newReqDefIdsList = newReqDefIds.ToList();
+            
+            if (newReqDefIdsList.Distinct().Count() != newReqDefIdsList.Count())
             {
                 return false;
             }
 
-            return updatedReqDefIds.Intersect(newReqDefIds).Any() == false;
+            return updatedReqDefIds.Intersect(newReqDefIdsList).Any() == false;
         }
 
         public async Task<bool> RequirementUsageIsForAllJourneysAsync(IEnumerable<int> updatedTagReqIds, IEnumerable<int> newReqDefIds, CancellationToken token)
