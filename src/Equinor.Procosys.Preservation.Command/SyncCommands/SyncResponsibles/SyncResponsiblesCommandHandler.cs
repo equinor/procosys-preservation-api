@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles
             foreach (var responsible in responsibles)
             {
                 var pcsResponsible = await _responsibleApiService.GetResponsibleAsync(plant, responsible.Code);
-                responsible.Title = pcsResponsible.Description;
+                responsible.Description = pcsResponsible.Description;
             }
         }
     }
