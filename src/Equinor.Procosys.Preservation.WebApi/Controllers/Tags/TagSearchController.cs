@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using Equinor.Procosys.Preservation.WebApi.Misc;

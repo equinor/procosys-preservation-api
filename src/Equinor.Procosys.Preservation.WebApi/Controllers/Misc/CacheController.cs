@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.WebApi.Caches;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
