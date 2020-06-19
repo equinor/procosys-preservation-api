@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
@@ -65,37 +66,41 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
 
             foreach (var plant in await _plantCache.GetPlantIdsForUserOidAsync(_synchronizationUserOid))
             {
+                _logger.LogInformation($"Synchronizing plant {plant}...");
+
                 _plantSetter.SetPlant(plant);
                 await _claimsTransformation.TransformAsync(currentUser);
 
-                await SynchronizeProjects(plant);
-                await SynchronizeResponsibles(plant);
-                await SynchronizeTagFunctions(plant);
-                await SynchronizeTags(plant);
+                await SynchronizeProjects();
+                await SynchronizeResponsibles();
+                await SynchronizeTagFunctions();
+
+                _logger.LogInformation($"Plant {plant} synchronized.");
             }
         }
 
-        private Task SynchronizeProjects(string plant)
+        private async Task SynchronizeProjects()
         {
-            _logger.LogInformation($"Synchronizing projects for plant {plant}");
+            _logger.LogInformation($"Synchronizing projects");
+
+            var result = await _mediator.Send(new SyncProjectsCommand());
+            if (result.ResultType == ServiceResult.ResultType.Ok)
+            {
+                _logger.LogWarning($"Synchronizing projects complete");
+            }
+            else
+            {
+                _logger.LogWarning($"Synchronizing projects failed");
+            }
+        }
+
+        private Task SynchronizeResponsibles()
+        {
             return Task.CompletedTask;
         }
 
-        private Task SynchronizeResponsibles(string plant)
+        private Task SynchronizeTagFunctions()
         {
-            _logger.LogInformation($"Synchronizing responsibles for plant {plant}");
-            return Task.CompletedTask;
-        }
-
-        private Task SynchronizeTagFunctions(string plant)
-        {
-            _logger.LogInformation($"Synchronizing tag functions for plant {plant}");
-            return Task.CompletedTask;
-        }
-
-        private Task SynchronizeTags(string plant)
-        {
-            _logger.LogInformation($"Synchronizing tags for plant {plant}");
             return Task.CompletedTask;
         }
     }
