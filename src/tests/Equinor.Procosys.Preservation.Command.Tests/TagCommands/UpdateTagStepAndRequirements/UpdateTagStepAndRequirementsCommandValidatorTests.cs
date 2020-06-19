@@ -74,17 +74,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 .Setup(
                     r => r.UsageCoversForOtherThanSuppliersAsync(new List<int> {_tr1Id}, default))
                 .Returns(Task.FromResult(true));
-
-
         }
 
         [TestMethod]
         public void Validate_ShouldBeValid_WhenOkState()
         {
+            // Arrange
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);
 
-            // Arrange
             _command = new UpdateTagStepAndRequirementsCommand(
                 _tagId,
                 _supplierStep,
@@ -106,10 +104,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         [TestMethod]
         public void Validate_ShouldBeValid_WhenEmptyLists()
         {
+            // Arrange
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);
 
-            // Arrange
             _command = new UpdateTagStepAndRequirementsCommand(
                 _tagId,
                 _supplierStep,
@@ -127,10 +125,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyRequirementAlreadyExists()
         {
+            // Arrange
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);
 
-            // Arrange
             _command = new UpdateTagStepAndRequirementsCommand(
                 _tagId,
                 _supplierStep,
@@ -155,10 +153,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         [TestMethod]
         public void Validate_ShouldFail_WhenSupplierStepAndHasNoRequirmentsForSupplier()
         {
+            // Arrange
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);
 
-            // Arrange
             _rdValidatorMock
                 .Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(
                     new List<int> {_tr1Id, _tr2Id, _rd3NotSupplierId},
@@ -186,10 +184,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         [TestMethod]
         public void Validate_ShouldFail_WhenTagIsVoided()
         {
+            // Arrange
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);
 
-            // Arrange
             _command = new UpdateTagStepAndRequirementsCommand(
                 _voidedTagId,
                 _supplierStep,
@@ -211,10 +209,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         [TestMethod]
         public void Validate_ShouldFail_WhenProjectIsClosed()
         {
+            // Arrange
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);
 
-            // Arrange
             _command = new UpdateTagStepAndRequirementsCommand(
                 _tagIdOnClosedProject,
                 _supplierStep,
@@ -236,10 +234,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         [TestMethod]
         public void Validate_ShouldFail_WhenTagNotExists()
         {
+            // Arrange
             _dut = new UpdateTagStepAndRequirementsCommandValidator(_projectValidatorMock.Object,
                 _tagValidatorMock.Object, _stepValidatorMock.Object, _rdValidatorMock.Object);
 
-            // Arrange
             _command = new UpdateTagStepAndRequirementsCommand(
                 _notFoundTagId,
                 _supplierStep,

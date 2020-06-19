@@ -12,7 +12,7 @@ using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
     [TestClass]
-    public class RequirementTests
+    public class TagRequirementTests
     {
         #region Setup
 
