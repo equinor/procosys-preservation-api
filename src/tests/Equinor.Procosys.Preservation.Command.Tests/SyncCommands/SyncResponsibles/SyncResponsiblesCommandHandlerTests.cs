@@ -6,10 +6,10 @@ using Equinor.Procosys.Preservation.MainApi.Responsible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncResposibles
+namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncResponsibles
 {
     [TestClass]
-    public class SyncResposiblesCommandHandlerTests : CommandHandlerTestsBase
+    public class SyncResponsiblesCommandHandlerTests : CommandHandlerTestsBase
     {
         private const string ResponsibleCode1 = "Responsible1";
         private const string ResponsibleCode2 = "Responsible2";
