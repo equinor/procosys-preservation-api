@@ -499,36 +499,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             }
         }
 
-        //[TestMethod]
-        //public async Task Handler_IncludeVoidedRequirements()
-        //{
-        //    using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
-        //    {
-        //        var tag = context.Tags.Include(t => t.Requirements).Single();
-
-        //        var requirement = context.TagRequirements.Single(r => r.Id == _requirementDefinitionWithTwoCheckBoxesId);
-        //        tag.UpdateRequirement(_requirementDefinitionWithTwoCheckBoxesId, true, requirement.IntervalWeeks, requirement.RowVersion.ToString());
-        //        context.SaveChangesAsync().Wait();
-        //    }
-
-        //    using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
-        //    {
-        //        var query = new GetTagRequirementsQuery(_tagId, true);
-        //        var dut = new GetTagRequirementsQueryHandler(context);
-
-        //        var result = await dut.Handle(query, default);
-
-        //        Assert.IsNotNull(result);
-        //        Assert.AreEqual(ResultType.Ok, result.ResultType);
-
-        //        var requirementIncludingVoided = result.Data;
-        //        Assert.AreEqual(6, requirementIncludingVoided.Count);
-
-        //        //var fieldWithAttachment = requirementWithAttachment.Fields.Single(f => f.Id == attachmentField);
-        //        //AssertAttachmentField(fieldWithAttachment, fieldValueAttachment);
-        //    }
-        //}
-
         private void AssertRequirements(List<RequirementDto> requirements)
         {
             var requirementWithoutField = requirements.Single(r => r.Id == _requirementWithoutFieldId);
