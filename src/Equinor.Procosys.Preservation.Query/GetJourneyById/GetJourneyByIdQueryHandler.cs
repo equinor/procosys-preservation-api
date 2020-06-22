@@ -5,29 +5,37 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Domain.Services;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
+namespace Equinor.Procosys.Preservation.Query.GetJourneyById
 {
-    public class GetJourneyByIdQueryHandler : IRequestHandler<GetJourneyByIdQuery, Result<JourneyDto>>
+    public class GetJourneyByIdQueryHandler : IRequestHandler<GetJourneyByIdQuery, Result<JourneyDetailsDto>>
     {
         private readonly IReadOnlyContext _context;
+        private readonly IJourneyService _journeyService;
 
-        public GetJourneyByIdQueryHandler(IReadOnlyContext context) => _context = context;
+        public GetJourneyByIdQueryHandler(IReadOnlyContext context, IJourneyService journeyService)
+        {
+            _context = context;
+            _journeyService = journeyService;
+        }
 
-        public async Task<Result<JourneyDto>> Handle(GetJourneyByIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<JourneyDetailsDto>> Handle(GetJourneyByIdQuery request, CancellationToken cancellationToken)
         {
             var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
                 where j.Id == request.Id
                 select j).SingleOrDefaultAsync(cancellationToken);
             if (journey == null)
             {
-                return new NotFoundResult<JourneyDto>(Strings.EntityNotFound(nameof(Journey), request.Id));
+                return new NotFoundResult<JourneyDetailsDto>(Strings.EntityNotFound(nameof(Journey), request.Id));
             }
+
+            var journeyInUse = await _journeyService.IsJourneyInUseAsync(request.Id, cancellationToken);
 
             var modeIds = journey.Steps.Select(x => x.ModeId);
             var responsibleIds = journey.Steps.Select(x => x.ResponsibleId);
@@ -41,12 +49,13 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                     select new ResponsibleDto(r.Id, r.Code, r.Description, r.RowVersion.ConvertToString()))
                 .ToListAsync(cancellationToken);
 
-            var journeyDto = new JourneyDto(
+            var journeyDto = new JourneyDetailsDto(
                 journey.Id,
                 journey.Title,
+                journeyInUse,
                 journey.IsVoided,
                 journey.OrderedSteps().Select(step =>
-                    new StepDto(
+                    new StepDetailsDto(
                         step.Id,
                         step.Title,
                         step.IsVoided,
@@ -56,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                     )
                 ),
                 journey.RowVersion.ConvertToString());
-            return new SuccessResult<JourneyDto>(journeyDto);
+            return new SuccessResult<JourneyDetailsDto>(journeyDto);
         }
     }
 }
