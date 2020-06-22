@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
         {
             for (var i = 0; i < entryCount; i++)
             {
-                var responsible = new Responsible(plant, $"ResponsibleCode-{i}", $"ResponsibleTitle-{i}");
+                var responsible = new Responsible(plant, $"ResponsibleCode-{i}", $"ResponsibleDesc-{i}");
                 responsibleRepository.Add(responsible);
             }
         }

@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles
                  select new ResponsibleDto(
                      responsible.Id,
                      responsible.Code,
-                     responsible.Title))
+                     responsible.Description))
                 .Distinct()
                 .ToListAsync(cancellationToken);
             

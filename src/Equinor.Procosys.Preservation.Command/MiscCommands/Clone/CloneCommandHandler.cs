@@ -90,9 +90,9 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
 
             foreach (var sourceResponsible in sourceResponsibles)
             {
-                if (targetResponsibles.SingleOrDefault(t => t.Title == sourceResponsible.Title) == null)
+                if (targetResponsibles.SingleOrDefault(t => t.Description == sourceResponsible.Description) == null)
                 {
-                    var targetResponsible = new Responsible(targetPlant, sourceResponsible.Code, sourceResponsible.Title);
+                    var targetResponsible = new Responsible(targetPlant, sourceResponsible.Code, sourceResponsible.Description);
                     _responsibleRepository.Add(targetResponsible);
                 }
             }

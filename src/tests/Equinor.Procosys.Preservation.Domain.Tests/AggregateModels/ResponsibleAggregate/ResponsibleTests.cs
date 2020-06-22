@@ -9,11 +9,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Responsible
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new Responsible("PlantA", "CodeA", "TitleA");
+            var dut = new Responsible("PlantA", "CodeA", "DescA");
 
             Assert.AreEqual("PlantA", dut.Plant);
             Assert.AreEqual("CodeA", dut.Code);
-            Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual("DescA", dut.Description);
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _mode = new Mode(TestPlant, "SUP", true);
             _mode.SetProtectedIdForTesting(3);
 
-            _responsible = new Responsible(TestPlant, "RC", "RT");
+            _responsible = new Responsible(TestPlant, "RC", "RD");
             _responsible.SetProtectedIdForTesting(4);
 
             _dut = new Step(TestPlant, "S", _mode, _responsible);
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         public void SetResponsible_ShouldSetResponsible()
         {
             var responsibleId = 1;
-            var responsible = new Responsible(_dut.Plant, "C", "Title");
+            var responsible = new Responsible(_dut.Plant, "C", "Desc");
             responsible.SetProtectedIdForTesting(responsibleId);
             _dut.SetResponsible(responsible);
 
