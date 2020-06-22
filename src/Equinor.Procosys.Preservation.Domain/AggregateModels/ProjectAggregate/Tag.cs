@@ -407,8 +407,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void ChangeInterval(int requirementId, int intervalWeeks)
         {
             var tagRequirement = Requirements.Single(r => r.Id == requirementId);
+
+            var fromInterval = tagRequirement.IntervalWeeks;
+
             tagRequirement.SetUpdatedInterval(intervalWeeks);
+
+            var toInterval = tagRequirement.IntervalWeeks;
+
             UpdateNextDueTimeUtc();
+            AddDomainEvent(new IntervalChangedEvent(Plant, ObjectGuid, fromInterval, toInterval));
         }
     }
 }

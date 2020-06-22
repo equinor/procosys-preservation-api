@@ -1325,5 +1325,32 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+
+        #region ChangeInterval
+
+        [TestMethod]
+        public void ChangeInterval_ShouldChangeInterval()
+        {
+            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+            Assert.AreEqual(2, requirement.IntervalWeeks);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.ChangeInterval(requirement.Id, 1);
+
+            Assert.AreEqual(requirement.IntervalWeeks, 1);
+        }
+
+        [TestMethod]
+        public void ChangeInterval_ShouldAddIntervalChangedEvent()
+        {
+            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+            Assert.AreEqual(2, requirement.IntervalWeeks);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.ChangeInterval(requirement.Id, 3);
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(IntervalChangedEvent));
+        }
+
+        #endregion
     }
 }
