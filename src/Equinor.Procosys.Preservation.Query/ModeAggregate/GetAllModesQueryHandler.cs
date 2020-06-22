@@ -19,8 +19,10 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
         public async Task<Result<IEnumerable<ModeDto>>> Handle(GetAllModesQuery request, CancellationToken cancellationToken)
         {
             var modes = await (from m in _context.QuerySet<Mode>()
+                where request.IncludeVoided || !m.IsVoided
                 select m).ToListAsync(cancellationToken);
-            return new SuccessResult<IEnumerable<ModeDto>>(modes.Select(mode => new ModeDto(mode.Id, mode.Title, mode.ForSupplier, mode.RowVersion.ConvertToString())));
+            return new SuccessResult<IEnumerable<ModeDto>>(modes.Select(mode
+                => new ModeDto(mode.Id, mode.Title, mode.IsVoided, mode.ForSupplier, mode.RowVersion.ConvertToString())));
         }
     }
 }
