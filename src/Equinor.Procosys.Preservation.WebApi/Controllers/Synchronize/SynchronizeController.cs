@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Synchronize
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPut("Projects")]
         public async Task<ActionResult> Projects(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)

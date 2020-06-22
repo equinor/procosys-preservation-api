@@ -5,7 +5,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
     public class PlantProvider : IPlantProvider, IPlantSetter
     {
-        public const string PlantHeader = "x-plant";
         private string _plant;
 
         public string Plant => _plant ?? throw new Exception("Could not determine current plant");

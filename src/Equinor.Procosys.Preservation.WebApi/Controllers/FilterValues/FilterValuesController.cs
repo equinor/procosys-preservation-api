@@ -9,7 +9,7 @@ using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagModes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("RequirementTypes")]
         public async Task<ActionResult<List<RequirementTypeDto>>> GetRequirementTypes(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Responsibles")]
         public async Task<ActionResult<List<ResponsibleDto>>> GetResponsibles(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Journeys")]
         public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Modes")]
         public async Task<ActionResult<List<ModeDto>>> GetModes(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Areas")]
         public async Task<ActionResult<List<AreaDto>>> GetAreas(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("TagFunctions")]
         public async Task<ActionResult<List<TagFunctionCodeDto>>> GetTagFunctions(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -106,7 +106,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Disciplines")]
         public async Task<ActionResult<List<DisciplineDto>>> GetTagDisciplines(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,

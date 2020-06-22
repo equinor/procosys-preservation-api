@@ -4,8 +4,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.WebApi.Caches;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,7 +30,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         [Authorize]
         [HttpPut("Clear")]
         public void Clear(
-            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
@@ -44,7 +43,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         [Authorize]
         [HttpGet("PermissionsFromCache")]
         public async Task<IList<string>> GetPermissions(
-            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
@@ -57,7 +56,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         [Authorize]
         [HttpGet("PermissionsFromMain")]
         public async Task<IList<string>> GetPermissionsFromMain(
-            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
@@ -69,7 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         [Authorize]
         [HttpGet("ProjectsFromCache")]
         public async Task<IList<string>> GetProjects(
-            [FromHeader(Name = PlantProvider.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
