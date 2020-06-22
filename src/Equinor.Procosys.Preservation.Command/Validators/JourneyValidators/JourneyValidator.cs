@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
@@ -43,22 +42,16 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 where j.Id == journeyId
                 select j).SingleOrDefaultAsync(token);
 
-            return journey.AreAdjacentSteps(stepAId, stepBId);
+            return journey != null && journey.AreAdjacentSteps(stepAId, stepBId);
         }
 
-        public async Task<bool> IsFirstStepIfModeIsForSupplier(int journeyId, int modeId, CancellationToken token)
+        public async Task<bool> HasAnyStepsAsync(int journeyId, CancellationToken token)
         {
             var journey = await _context.QuerySet<Journey>()
                 .Include(j => j.Steps)
                 .SingleAsync(j => j.Id == journeyId, token);
 
-            if (!journey.Steps.Any())
-            {
-                return true;
-            }
-
-            var mode = await _context.QuerySet<Mode>().SingleAsync(m => m.Id == modeId, token);
-            return mode.ForSupplier == false;
+            return journey != null && journey.Steps.Any();
         }
     }
 }
