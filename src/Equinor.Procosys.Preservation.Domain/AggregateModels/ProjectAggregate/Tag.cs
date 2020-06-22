@@ -313,8 +313,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{nameof(Tag)} {Id} can not be transferred");
             }
 
+            var fromStep = journey.Steps.Single(s => s.Id == StepId).Title;
+
             SetStep(journey.GetNextStep(StepId));
-            AddDomainEvent(new TransferredManuallyEvent(Plant, ObjectGuid));
+
+            var toStep = journey.Steps.Single(s => s.Id == StepId).Title;
+
+            AddDomainEvent(new TransferredManuallyEvent(Plant, ObjectGuid, fromStep, toStep));
         }
 
         public void SetCreated(Person createdBy)
