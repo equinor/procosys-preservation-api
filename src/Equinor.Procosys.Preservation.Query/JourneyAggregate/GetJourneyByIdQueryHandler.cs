@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
 
             var modes = await (from m in _context.QuerySet<Mode>()
                     where modeIds.Contains(m.Id)
-                    select new ModeDto(m.Id, m.Title, m.ForSupplier, m.RowVersion.ConvertToString()))
+                    select new ModeDto(m.Id, m.Title, m.IsVoided, m.ForSupplier, m.RowVersion.ConvertToString()))
                 .ToListAsync(cancellationToken);
             var responsibles = await (from r in _context.QuerySet<Responsible>()
                     where responsibleIds.Contains(r.Id)
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
                 journey.Id,
                 journey.Title,
                 journey.IsVoided,
-                journey.OrderedSteps().Select(step =>
+                journey.OrderedSteps().Where(s => !s.IsVoided || request.IncludeVoided).Select(step =>
                     new StepDto(
                         step.Id,
                         step.Title,
