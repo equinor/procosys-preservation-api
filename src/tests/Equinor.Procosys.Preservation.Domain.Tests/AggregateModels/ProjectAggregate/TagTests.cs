@@ -1303,18 +1303,27 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void UpdateRequirement_VoidUnvoid_ShouldAddRelevantEvents()
+        public void UpdateRequirement_Void_ShouldAddRequirementVoidedEvents()
         {
             var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
             _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, true, 1, "AAAAAAAAABA=");
 
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementVoidedEvent));
+        }
+
+        [TestMethod]
+        public void UpdateRequirement_Unvoid_ShouldAddRequirementUnvoidedEvents()
+        {
+            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+            requirement.Void();
 
             _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, false, 1, "AAAAAAAAABA=");
+
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementUnvoidedEvent));
         }
-        
+
         #endregion
     }
 }
