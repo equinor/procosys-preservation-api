@@ -387,10 +387,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 if (isVoided)
                 {
                     tagRequirement.Void();
+                    AddDomainEvent(new RequirementVoidedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId));
                 }
                 else
                 {
                     tagRequirement.UnVoid();
+                    AddDomainEvent(new RequirementUnvoidedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId));
                 }
             }
 
