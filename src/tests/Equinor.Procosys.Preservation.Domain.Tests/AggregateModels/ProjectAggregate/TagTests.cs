@@ -1306,7 +1306,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void UpdateRequirement_Void_ShouldAddRequirementVoidedEvents()
         {
             var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
-            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, true, 1, "AAAAAAAAABA=");
+            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementVoidedEvent));
@@ -1318,9 +1318,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
             requirement.Void();
 
-            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, false, 1, "AAAAAAAAABA=");
+            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementUnvoidedEvent));
         }
 
