@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
@@ -24,7 +23,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsibles
         public async Task<ActionResult<IEnumerable<ResponsibleDto>>> GetAllResponsibles(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
         {
             var result = await _mediator.Send(new GetAllResponsiblesQuery());

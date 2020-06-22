@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestInitialize]
         public void Setup()
         {
-            var responsible = new Responsible(TestPlant, "RC", "RT");
+            var responsible = new Responsible(TestPlant, "RC", "RD");
             _supplierStep = new Step(TestPlant, "SUP", new Mode(TestPlant, "SUP", true), responsible);
             _supplierStep.SetProtectedIdForTesting(3);
             _otherStep = new Step(TestPlant, "OTHER", new Mode(TestPlant, "O", false), responsible);
@@ -735,13 +735,40 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void OrderedRequirements_ShouldNotReturnVoidedRequirements()
+        public void OrderedRequirements_ShouldNotReturnOrderedVoidedRequirements()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
             dut.StartPreservation();
             dut.Requirements.ElementAt(0).Void();
 
             Assert.AreEqual(1, dut.OrderedRequirements().Count());
+        }
+
+        [TestMethod]
+        public void OrderedRequirements_ShouldReturnOrderedVoidedRequirements()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            dut.Requirements.ElementAt(0).Void();
+
+            Assert.AreEqual(2, dut.OrderedRequirements(true).Count());
+        }
+
+        [TestMethod]
+        public void OrderedRequirements_ShouldNotReturnVoidedRequirements()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            dut.Requirements.ElementAt(0).Void();
+
+            Assert.AreEqual(1, dut.RequirementsDueToCurrentStep().Count());
+        }
+
+        [TestMethod]
+        public void OrderedRequirements_ShouldReturnVoidedRequirements()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            dut.Requirements.ElementAt(0).Void(); 
+
+            Assert.AreEqual(2, dut.RequirementsDueToCurrentStep(true).Count());
         }
 
         [TestMethod]
@@ -794,7 +821,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #region Transfer
 
-        [TestMethod]
+       [TestMethod]
         public void Transfer_ShouldTransferToNextStep()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);

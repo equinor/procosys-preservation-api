@@ -174,7 +174,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
         }
 
         [TestMethod]
-        public async Task HandlingSyncProjectsCommand_ShouldUpdateProjects()
+        public async Task HandlingProjectsCommand_ShouldUpdateProjects()
         {
             // Act
             var result = await _dut.Handle(_command, default);
@@ -186,7 +186,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
         }
 
         [TestMethod]
-        public async Task HandlingSyncProjectsCommand_ShouldUpdateTags()
+        public async Task HandlingProjectsCommand_ShouldUpdateTags()
         {
             // Act
             var result = await _dut.Handle(_command, default);
@@ -198,7 +198,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
         }
 
         [TestMethod]
-        public async Task HandlingSyncProjectsCommand_ShouldNotUpdateProject_ForProjectWithoutAccess()
+        public async Task HandlingProjectsCommand_ShouldNotUpdateProject_ForProjectWithoutAccess()
         {
             // Act
             await _dut.Handle(_command, default);
@@ -211,7 +211,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
         }
 
         [TestMethod]
-        public async Task HandlingSyncProjectsCommand_ShouldSave()
+        public async Task HandlingProjectsCommand_ShouldSave()
         {
             // Act
             await _dut.Handle(_command, default);

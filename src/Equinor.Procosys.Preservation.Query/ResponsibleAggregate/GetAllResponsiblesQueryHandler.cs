@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
                 responsible => new ResponsibleDto(
                     responsible.Id,
                     responsible.Code,
-                    responsible.Title,
+                    responsible.Description,
                     responsible.RowVersion.ConvertToString())));
         }
     }

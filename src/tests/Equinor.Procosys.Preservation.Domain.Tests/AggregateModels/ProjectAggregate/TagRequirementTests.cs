@@ -12,7 +12,7 @@ using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
     [TestClass]
-    public class RequirementTests
+    public class TagRequirementTests
     {
         #region Setup
 
@@ -1278,12 +1278,51 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region SetUpdatedInterval
+
+        [TestMethod]
+        public void SetUpdatedInterval_ShouldOnlySetIntervalIfNoActivePeriods()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            Assert.AreEqual(null, dut.ActivePeriod);
+            Assert.AreEqual(TwoWeeksInterval, dut.IntervalWeeks);
+
+            // Act
+            dut.SetUpdatedInterval(34);
+
+            // Assert
+            Assert.AreEqual(34, dut.IntervalWeeks);
+
+        }
+
+        [TestMethod]
+        public void SetUpdatedInterval_ShouldUpdateActivePeriodOnSetInterval()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
+            dut.StartPreservation();
+            Assert.IsNotNull(dut.ActivePeriod);
+            Assert.AreEqual(TwoWeeksInterval, dut.IntervalWeeks);
+            var next = dut.ActivePeriod.DueTimeUtc;
+            int newWeekInterval = 34;
+
+            // Act
+            dut.SetUpdatedInterval(newWeekInterval);
+
+            // Assert
+            Assert.AreEqual(newWeekInterval, dut.IntervalWeeks);
+            Assert.AreEqual(next.AddWeeks(newWeekInterval - TwoWeeksInterval), dut.ActivePeriod.DueTimeUtc);
+        }
+
+        #endregion
+
         #region privates
 
         private void RecordAndPreseve(
-            TagRequirement dut,
-            double numberToRecord,
-            double? expectedPreviousRecorded)
+        TagRequirement dut,
+        double numberToRecord,
+        double? expectedPreviousRecorded)
         {
             _timeProvider.Elapse(TimeSpan.FromDays(5));
 

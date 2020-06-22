@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
 
         public IReadOnlyCollection<TagFunctionRequirement> Requirements => _requirements.AsReadOnly();
         public string Code { get; private set; }
-        public string Description { get; private set; }
+        public string Description { get; set; }
         public string RegisterCode { get; private set; }
         public bool IsVoided { get; private set; }
 

@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         [TestInitialize]
         public void Setup()
         {
-            var responsible = new Responsible(TestPlant, ResponsibleCode, "Title1");
+            var responsible = new Responsible(TestPlant, ResponsibleCode, "Desc");
 
             var responsibles = new List<Responsible> { responsible};
 

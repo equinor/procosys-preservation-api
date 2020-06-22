@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
@@ -35,7 +34,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<ProcosysTagDto>>> SearchTagsByTagNo(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName,
             [FromQuery] string startsWithTagNo)
@@ -55,7 +53,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<ProcosysTagDto>>> SearchTagsByTagFunctions(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {
@@ -74,7 +71,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<ActionResult<List<ProcosysPreservedTagDto>>> Get(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromQuery] string projectName)
         {

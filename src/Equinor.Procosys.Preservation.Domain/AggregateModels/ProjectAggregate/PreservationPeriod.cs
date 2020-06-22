@@ -235,5 +235,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             RemoveAnyOldFieldValue(field.Id);
         }
+
+        public void UpdateDueTimeUtc(DateTime nextDueTimeUtc) => DueTimeUtc = nextDueTimeUtc;
     }
 }

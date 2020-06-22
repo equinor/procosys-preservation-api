@@ -38,8 +38,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             _sourceModes.Add(new Mode(_sourcePlant, "ModeB", false));
 
             _responsibleRepository = new ResponsibleRepository(_plantProvider, _sourceResponsibles);
-            _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeA", "ResponsibleTitleA"));
-            _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeB", "ResponsibleTitleB"));
+            _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeA", "ResponsibleDescA"));
+            _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeB", "ResponsibleDescB"));
             
             _requirementTypeRepository = new RequirementTypeRepository(_plantProvider, _sourceRequirementTypes);
             var requirementTypeA = new RequirementType(_sourcePlant, "RequirementTypeCodeA", "RequirementTypeTitleA", 1);
@@ -169,7 +169,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 Assert.IsNotNull(clone);
                 Assert.AreEqual(TestPlant, clone.Plant);
                 Assert.AreEqual(source.Code, clone.Code);
-                Assert.AreEqual(source.Title, clone.Title);
+                Assert.AreEqual(source.Description, clone.Description);
             }
         }
 

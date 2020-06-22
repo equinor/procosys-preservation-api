@@ -28,7 +28,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         public async Task<ActionResult<TagFunctionDetailsDto>> GetTagFunctionDetails(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] string code,
             [FromQuery] string registerCode)

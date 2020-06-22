@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 .Returns(Task.FromResult(_modeMock.Object));
             
             // Arrange
-            step = new Step(TestPlant, "S", _modeMock.Object, new Responsible(TestPlant, "RC", "RT"));
+            step = new Step(TestPlant, "S", _modeMock.Object, new Responsible(TestPlant, "RC", "RD"));
             step.SetProtectedIdForTesting(StepId);
             
             _journeyRepositoryMock = new Mock<IJourneyRepository>();

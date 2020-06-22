@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             var otherMode = new Mode(TestPlant, "HOOKUP", false);
             otherMode.SetProtectedIdForTesting(OtherModeId);
 
-            var responsible = new Responsible(TestPlant, "C", "T");
+            var responsible = new Responsible(TestPlant, "C", "D");
             var supplierStep = new Step(TestPlant, "SUP", supplierMode, responsible);
             supplierStep.SetProtectedIdForTesting(SupplierStepId);
             var otherStep = new Step(TestPlant, "HOOKUP", otherMode, responsible);

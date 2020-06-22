@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _stepCId = 967;
 
             var m = new Mode(TestPlant, "M", false);
-            var r = new Responsible(TestPlant, "RC", "RT");
+            var r = new Responsible(TestPlant, "RC", "RD");
             
             _stepA = new Step(TestPlant, "SA", m, r);
             _stepA.SetProtectedIdForTesting(_stepAId);

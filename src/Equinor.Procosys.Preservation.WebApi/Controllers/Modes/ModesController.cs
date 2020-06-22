@@ -28,7 +28,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         public async Task<ActionResult<ModeDto>> GetModes(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant)
         {
             var result = await _mediator.Send(new GetAllModesQuery());
@@ -40,7 +39,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         public async Task<ActionResult<ModeDto>> GetMode(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {

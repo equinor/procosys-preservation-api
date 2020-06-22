@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         {
             var mode = new Mode(TestPlant, "SUP", true);
             mode.SetProtectedIdForTesting(ModeId);
-            var step = new Step(TestPlant, "SUP", mode, new Responsible(TestPlant, "C", "T"));
+            var step = new Step(TestPlant, "SUP", mode, new Responsible(TestPlant, "C", "D"));
             step.SetProtectedIdForTesting(StepId);
             var rdMock = new Mock<RequirementDefinition>();
             rdMock.SetupGet(rd => rd.Plant).Returns(TestPlant);

@@ -1301,7 +1301,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public async Task ValidateAsync_OnGetTagRequirementsQuery_ShouldReturnTrue_WhenAccessToProject()
         {
-            var query = new GetTagRequirementsQuery(TagIdWithAccessToProject);
+            var query = new GetTagRequirementsQuery(TagIdWithAccessToProject, false);
             // act
             var result = await _dut.ValidateAsync(query);
 
@@ -1312,7 +1312,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public async Task ValidateAsync_OnGetTagRequirementsQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
-            var query = new GetTagRequirementsQuery(TagIdWithoutAccessToProject);
+            var query = new GetTagRequirementsQuery(TagIdWithoutAccessToProject, false);
             // act
             var result = await _dut.ValidateAsync(query);
 
