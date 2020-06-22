@@ -3,6 +3,8 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
+using Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles;
+using Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
@@ -97,14 +99,36 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             }
         }
 
-        private Task SynchronizeResponsibles()
+        private async Task SynchronizeResponsibles()
         {
-            return Task.CompletedTask;
+            _logger.LogInformation($"Synchronizing responsibles");
+
+            var result = await _mediator.Send(new SyncResponsiblesCommand());
+
+            if (result.ResultType == ServiceResult.ResultType.Ok)
+            {
+                _logger.LogWarning($"Synchronizing responsibles complete.");
+            }
+            else
+            {
+                _logger.LogWarning($"Synchronizing responsibles failed.");
+            }
         }
 
-        private Task SynchronizeTagFunctions()
+        private async Task SynchronizeTagFunctions()
         {
-            return Task.CompletedTask;
+            _logger.LogInformation($"Synchronizing tag functions");
+
+            var result = await _mediator.Send(new SyncTagFunctionsCommand());
+
+            if (result.ResultType == ServiceResult.ResultType.Ok)
+            {
+                _logger.LogWarning($"Synchronizing tag functions complete.");
+            }
+            else
+            {
+                _logger.LogWarning($"Synchronizing tag functions failed.");
+            }
         }
     }
 }
