@@ -108,7 +108,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 _plantProvider.Plant,
                 TagType.Standard,
                 tagDetails.TagNo,
-                tagDetails.Description ?? "",
+                tagDetails.Description,
                 step,
                 requirements)
             {
