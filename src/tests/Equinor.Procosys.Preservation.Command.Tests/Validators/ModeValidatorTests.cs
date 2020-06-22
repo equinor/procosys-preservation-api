@@ -13,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     {
         private const string ModeTitle = "TestMode";
         private int _modeId;
-                
+        private int _supplierModeId;
+
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -22,6 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var responsible = AddResponsible(context, "R");
                 AddJourneyWithStep(context, "J", "S", mode, responsible);
                 _modeId = mode.Id;
+                _supplierModeId = AddMode(context, "SUPPLIER", true).Id;
             }
         }
 
@@ -136,7 +138,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddMode(context, "SUPPLIER", true);
                 var dut = new ModeValidator(context);
                 var result = await dut.ExistsAnotherModeForSupplierAsync(_modeId, default);
                 Assert.IsTrue(result);
@@ -144,13 +145,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAnotherModeForSupplierAsync_UnknownId_ReturnsFalse()
+        public async Task ExistsAnotherModeForSupplierAsync_UnknownId_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
                 var result = await dut.ExistsAnotherModeForSupplierAsync(126234, default);
-                Assert.IsFalse(result);
+                Assert.IsTrue(result);
             }
         }
 
@@ -159,7 +160,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddMode(context, "SUPPLIER", true);
                 var dut = new ModeValidator(context);
                 var result = await dut.ExistsModeForSupplierAsync(default);
                 Assert.IsTrue(result);
@@ -167,12 +167,23 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsModeForSupplierAsync_ReturnsFalse()
+        public async Task IsForSupplierAsync_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new ModeValidator(context);
-                var result = await dut.ExistsModeForSupplierAsync(default);
+                var result = await dut.IsForSupplierAsync(_supplierModeId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsForSupplierAsync_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new ModeValidator(context);
+                var result = await dut.IsForSupplierAsync(_modeId, default);
                 Assert.IsFalse(result);
             }
         }

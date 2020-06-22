@@ -29,8 +29,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
-            _journeyValidatorMock.Setup(r => r.IsFirstStepIfModeIsForSupplier(_journeyId, _modeId, default))
-                .Returns(Task.FromResult(true));
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
             _stepValidatorMock = new Mock<IStepValidator>();
@@ -136,14 +134,25 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenSupplierStepIsNotAddedToTop()
         {
-            _journeyValidatorMock.Setup(j => j.IsFirstStepIfModeIsForSupplier(_journeyId, _modeId, default))
-                .Returns(Task.FromResult(false));
+            _journeyValidatorMock.Setup(r => r.HasAnyStepsAsync(_journeyId, default)).Returns(Task.FromResult(true));
+            _modeValidatorMock.Setup(r => r.IsForSupplierAsync(_modeId, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Supplier step can only be chosen as the first step!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldBeOk_WhenSupplierStepIsAddedToTop()
+        {
+            _journeyValidatorMock.Setup(r => r.HasAnyStepsAsync(_journeyId, default)).Returns(Task.FromResult(false));
+            _modeValidatorMock.Setup(r => r.IsForSupplierAsync(_modeId, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsTrue(result.IsValid);
         }
     }
 }
