@@ -9,8 +9,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new GetJourneyByIdQuery(2);
+            var dut = new GetJourneyByIdQuery(2, true);
             Assert.AreEqual(2, dut.Id);
+            Assert.IsTrue(dut.IncludeVoided);
         }
     }
 }

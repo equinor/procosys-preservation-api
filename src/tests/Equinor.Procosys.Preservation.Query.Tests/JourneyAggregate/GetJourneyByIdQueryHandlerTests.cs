@@ -18,6 +18,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _testDataSet = AddTestDataSet(context);
+                var step1 = _testDataSet.Journey1With2Steps.Steps.First();
+                step1.Void();
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -27,14 +30,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetJourneyByIdQueryHandler(context);
-                var result = await dut.Handle(new GetJourneyByIdQuery(_testDataSet.Journey2With1Step.Id), default);
+                var result = await dut.Handle(new GetJourneyByIdQuery(_testDataSet.Journey1With2Steps.Id, true), default);
 
                 var journey = result.Data;
 
-                Assert.AreEqual(_testDataSet.Journey2With1Step.Title, journey.Title);
+                Assert.AreEqual(_testDataSet.Journey1With2Steps.Title, journey.Title);
 
                 var steps = journey.Steps.ToList();
-                Assert.AreEqual(1, steps.Count);
+                Assert.AreEqual(2, steps.Count);
 
                 var step = steps.First();
                 Assert.IsNotNull(step.Mode);
@@ -45,12 +48,26 @@ namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
         }
 
         [TestMethod]
+        public async Task HandleGetJourneyByIdQueryHandler_KnownId_ShouldNotReturnVoidedStepsInJourneyWhenExcludedInRequest()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetJourneyByIdQueryHandler(context);
+                var result = await dut.Handle(new GetJourneyByIdQuery(_testDataSet.Journey1With2Steps.Id, false), default);
+
+                var journey = result.Data;
+                var steps = journey.Steps.ToList();
+                Assert.AreEqual(1, steps.Count);
+            }
+        }
+
+        [TestMethod]
         public async Task HandleGetJourneyByIdQueryHandler_UnknownId_ShouldReturnNull()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetJourneyByIdQueryHandler(context);
-                var result = await dut.Handle(new GetJourneyByIdQuery(1525), default);
+                var result = await dut.Handle(new GetJourneyByIdQuery(1525, false), default);
 
                 Assert.IsNull(result.Data);
             }
