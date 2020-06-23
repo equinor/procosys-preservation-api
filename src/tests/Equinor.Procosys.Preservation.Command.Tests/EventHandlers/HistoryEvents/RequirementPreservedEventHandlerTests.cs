@@ -52,14 +52,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Act
             var objectGuid = Guid.NewGuid();
-            _dut.Handle(new RequirementPreservedEvent(_plant, objectGuid, _requirementDefinitionId), default);
+            var preservationRecordGuid = Guid.NewGuid();
+            _dut.Handle(new RequirementPreservedEvent(_plant, objectGuid, _requirementDefinitionId, 2, preservationRecordGuid), default);
 
             // Assert
-            var expectedDescription = _historyAdded?.EventType.GetDescription() + " - " + _requirementDefinition.Title;
+            var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - '{_requirementDefinition.Title}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(_plant, _historyAdded.Plant);
             Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
+            Assert.AreEqual(preservationRecordGuid, _historyAdded.PreservationRecordGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.RequirementPreserved, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
