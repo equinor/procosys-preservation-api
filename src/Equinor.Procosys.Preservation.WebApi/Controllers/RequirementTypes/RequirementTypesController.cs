@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirem
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RequirementTypeDto>>> GetRequirementTypes(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] bool includeVoided = false)
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{id}")]
         public async Task<ActionResult<RequirementTypeDto>> GetRequirementType(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromRoute] int id)
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Void")]
         public async Task<ActionResult<RequirementTypeDto>> VoidRequirementType(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Unvoid")]
         public async Task<ActionResult<RequirementTypeDto>> UnvoidRequirementType(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Void")]
         public async Task<ActionResult<RequirementDefinitionDto>> VoidRequirementDefinition(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Unvoid")]
         public async Task<ActionResult<RequirementDefinitionDto>> UnvoidRequirementDefinition(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,

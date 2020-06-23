@@ -18,8 +18,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureConcurrencyToken();
 
             builder.Property(x => x.Description)
-                .HasMaxLength(Tag.DescriptionLengthMax)
-                .IsRequired();
+                .HasMaxLength(Tag.DescriptionLengthMax);
 
             builder.Property(x => x.Remark)
                 .HasMaxLength(Tag.RemarkLengthMax);

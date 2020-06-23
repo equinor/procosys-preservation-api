@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggreg
         }
 
         public string Code { get; private set; }
-        public string Description { get; private set; }
+        public string Description { get; set; }
         public bool IsVoided { get; private set; }
 
         public DateTime CreatedAtUtc { get; private set; }

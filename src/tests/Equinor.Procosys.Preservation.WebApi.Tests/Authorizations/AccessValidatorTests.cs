@@ -66,7 +66,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public void Setup()
         {
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            _currentUserProviderMock.Setup(c => c.IsCurrentUserAuthenticated()).Returns(true);
 
             _projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
             _contentRestrictionsCheckerMock = new Mock<IContentRestrictionsChecker>();
@@ -90,20 +89,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
                 _contentRestrictionsCheckerMock.Object,
                 tagHelperMock.Object,
                 _loggerMock.Object);
-        }
-
-        [TestMethod]
-        public async Task ValidateAsync_OnAnyCommand_ShouldReturnFalse_WhenCurrentUserNotAuthenticated()
-        {
-            // Arrange
-            _currentUserProviderMock.Setup(c => c.IsCurrentUserAuthenticated()).Returns(false);
-            var command = new PreserveCommand(TagIdWithAccessToProject);
-            
-            // act
-            var result = await _dut.ValidateAsync(command);
-
-            // Assert
-            Assert.IsFalse(result);
         }
 
         #region commands

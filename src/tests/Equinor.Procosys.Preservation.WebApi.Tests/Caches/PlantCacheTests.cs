@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
                 .Returns(new CacheOptions());
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            _currentUserProviderMock.Setup(c => c.TryGetCurrentUserOid()).Returns(_currentUserOid);
+            _currentUserProviderMock.Setup(c => c.GetCurrentUserOid()).Returns(_currentUserOid);
 
             _plantApiServiceMock = new Mock<IPlantApiService>();
             _plantApiServiceMock.Setup(p => p.GetPlantsAsync()).Returns(Task.FromResult(

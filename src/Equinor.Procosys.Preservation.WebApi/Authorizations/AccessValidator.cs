@@ -38,11 +38,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 throw new ArgumentNullException(nameof(request));
             }
 
-            if (!_currentUserProvider.IsCurrentUserAuthenticated())
-            {
-                return false;
-            }
-
             var userOid = _currentUserProvider.GetCurrentUserOid();
             if (request is IProjectRequest projectRequest && !_projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
             {
