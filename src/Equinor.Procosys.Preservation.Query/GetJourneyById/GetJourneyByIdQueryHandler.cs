@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
 
             var modes = await (from m in _context.QuerySet<Mode>()
                     where modeIds.Contains(m.Id)
-                    select new ModeDto(m.Id, m.Title, m.ForSupplier, m.RowVersion.ConvertToString()))
+                    select new ModeDto(m.Id, m.Title, m.IsVoided, m.ForSupplier, m.RowVersion.ConvertToString()))
                 .ToListAsync(cancellationToken);
             var responsibles = await (from r in _context.QuerySet<Responsible>()
                     where responsibleIds.Contains(r.Id)
@@ -53,16 +53,18 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
                 journey.Title,
                 journeyInUse,
                 journey.IsVoided,
-                journey.OrderedSteps().Select(step =>
-                    new StepDetailsDto(
-                        step.Id,
-                        step.Title,
-                        step.IsVoided,
-                        modes.FirstOrDefault(x => x.Id == step.ModeId),
-                        responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId),
-                        step.RowVersion.ConvertToString()
-                    )
-                ),
+                journey.OrderedSteps()
+                    .Where(s => !s.IsVoided || request.IncludeVoided)
+                    .Select(step =>
+                        new StepDetailsDto(
+                            step.Id,
+                            step.Title,
+                            step.IsVoided,
+                            modes.FirstOrDefault(x => x.Id == step.ModeId),
+                            responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId),
+                            step.RowVersion.ConvertToString()
+                        )
+                    ),
                 journey.RowVersion.ConvertToString());
             return new SuccessResult<JourneyDetailsDto>(journeyDto);
         }

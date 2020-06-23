@@ -28,9 +28,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         public async Task<ActionResult<ModeDto>> GetModes(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            string plant)
+            string plant,
+            [FromQuery] bool includeVoided = false)
         {
-            var result = await _mediator.Send(new GetAllModesQuery());
+            var result = await _mediator.Send(new GetAllModesQuery(includeVoided));
             return this.FromResult(result);
         }
 

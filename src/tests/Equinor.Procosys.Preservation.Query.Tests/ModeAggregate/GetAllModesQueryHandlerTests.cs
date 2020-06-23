@@ -18,8 +18,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                AddMode(context, _mode1Title, true);
+                var mode = AddMode(context, _mode1Title, true);
+                mode.Void();
                 AddMode(context, _mode2Title, false);
+                context.SaveChangesAsync().Wait();
             }
         }
 
@@ -30,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
             {
                 var dut = new GetAllModesQueryHandler(context);
 
-                var result = await dut.Handle(new GetAllModesQuery(), default);
+                var result = await dut.Handle(new GetAllModesQuery(true), default);
 
                 var modes = result.Data.ToList();
 
@@ -39,6 +41,22 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
                 Assert.AreEqual(_mode2Title, modes.Last().Title);
                 Assert.IsTrue(modes.First().ForSupplier);
                 Assert.IsFalse(modes.Last().ForSupplier);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetAllModesQueryHandler_ShouldNotReturnVoidedModes_WhenExcludedInRequest()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetAllModesQueryHandler(context);
+
+                var result = await dut.Handle(new GetAllModesQuery(false), default);
+
+                var modes = result.Data.ToList();
+
+                Assert.AreEqual(1, modes.Count);
+                Assert.AreEqual(_mode2Title, modes.Single().Title);
             }
         }
     }

@@ -9,11 +9,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new ModeDto(3, "M", false, "AAAAAAAAABA=");
+            var dut = new ModeDto(3, "M", true, true, "AAAAAAAAABA=");
 
             Assert.AreEqual(3, dut.Id);
             Assert.AreEqual("M", dut.Title);
-            Assert.AreEqual(false, dut.ForSupplier);
+            Assert.IsTrue(dut.IsVoided);
+            Assert.IsTrue(dut.ForSupplier);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }

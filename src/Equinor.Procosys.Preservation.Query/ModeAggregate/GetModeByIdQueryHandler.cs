@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
                 return new NotFoundResult<ModeDto>(Strings.EntityNotFound(nameof(Mode), request.Id));
             }
 
-            return new SuccessResult<ModeDto>(new ModeDto(mode.Id, mode.Title, mode.ForSupplier, mode.RowVersion.ConvertToString()));
+            return new SuccessResult<ModeDto>(new ModeDto(mode.Id, mode.Title, mode.IsVoided, mode.ForSupplier, mode.RowVersion.ConvertToString()));
         }
     }
 }
