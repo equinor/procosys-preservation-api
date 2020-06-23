@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             _dut.Handle(new TransferredManuallyEvent(plant, objectGuid, fromStep, toStep), default);
 
             // Assert
-            var expectedDescription = _historyAdded?.EventType.GetDescription() + " - From: " + fromStep + " To: " + toStep;
+            var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - From '{fromStep}' To '{toStep}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);

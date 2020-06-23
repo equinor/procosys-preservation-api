@@ -1,5 +1,6 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,15 +39,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             // Act
             var objectGuid = Guid.NewGuid();
             var plant = "TestPlant";
-            _dut.Handle(new ActionAddedEvent(plant, objectGuid), default);
+            var title = "Action1";
+            _dut.Handle(new ActionAddedEvent(plant, objectGuid, title), default);
 
             // Assert
+            var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - '{title}'";
+
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
             Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.ActionAdded, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
+            Assert.AreEqual(expectedDescription, _historyAdded.Description);
             Assert.IsNull(_historyAdded.PreservationRecordId);
         }
     }

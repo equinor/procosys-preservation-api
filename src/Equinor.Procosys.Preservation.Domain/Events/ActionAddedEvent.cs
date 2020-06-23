@@ -7,12 +7,15 @@ namespace Equinor.Procosys.Preservation.Domain.Events
     {
         public ActionAddedEvent(
             string plant,
-            Guid objectGuid)
+            Guid objectGuid,
+            string title)
         {
             Plant = plant;
             ObjectGuid = objectGuid;
+            Title = title;
         }
         public string Plant { get; }
         public Guid ObjectGuid { get; }
+        public string Title { get; }
     }
 }

@@ -178,7 +178,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _actions.Add(action);
-            AddDomainEvent(new ActionAddedEvent(action.Plant, ObjectGuid));
+            AddDomainEvent(new ActionAddedEvent(action.Plant, ObjectGuid, action.Title));
         }
 
         public void CloseAction(int actionId, Person closedBy, DateTime closedAtUtc, string rowVersion)

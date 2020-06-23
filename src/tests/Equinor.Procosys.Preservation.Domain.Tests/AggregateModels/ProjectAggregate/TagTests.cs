@@ -314,7 +314,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Constructor_ShouldAddPreservationStartedEvent()
+        public void StartPreservation_ShouldAddPreservationStartedEvent()
         {
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
 
