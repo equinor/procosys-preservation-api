@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags;
 using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.TAG_READ)]
         [HttpGet]
         public async Task<ActionResult<List<ProcosysTagDto>>> SearchTagsByTagNo(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName,
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.TAG_READ)]
         [HttpGet("ByTagFunctions")]
         public async Task<ActionResult<List<ProcosysTagDto>>> SearchTagsByTagFunctions(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)
@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Preserved")]
         public async Task<ActionResult<List<ProcosysPreservedTagDto>>> Get(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)

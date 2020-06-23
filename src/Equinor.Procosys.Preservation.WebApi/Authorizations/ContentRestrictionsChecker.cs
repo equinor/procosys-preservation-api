@@ -1,20 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
     public class ContentRestrictionsChecker : IContentRestrictionsChecker
     {
-        private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IClaimsProvider _claimsProvider;
 
-        public ContentRestrictionsChecker(ICurrentUserProvider currentUserProvider) => _currentUserProvider = currentUserProvider;
+        public ContentRestrictionsChecker(IClaimsProvider claimsProvider) => _claimsProvider = claimsProvider;
 
         public bool HasCurrentUserExplicitNoRestrictions()
         {
-            var claimWithContentRestriction = GetContentRestrictionClaims(_currentUserProvider.GetCurrentUser().Claims);
+            var claimWithContentRestriction = GetContentRestrictionClaims(_claimsProvider.GetCurrentUser().Claims);
 
             // the rule for saying that a user do not have any restriction, is that user has one and only one restriction with value %
             return claimWithContentRestriction.Count == 1 && HasContentRestrictionClaim(claimWithContentRestriction, ClaimsTransformation.NoRestrictions);
@@ -27,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 return false;
             }
             
-            var claimWithContentRestriction = GetContentRestrictionClaims(_currentUserProvider.GetCurrentUser().Claims);
+            var claimWithContentRestriction = GetContentRestrictionClaims(_claimsProvider.GetCurrentUser().Claims);
             return HasContentRestrictionClaim(claimWithContentRestriction, responsibleCode);
         }
 
