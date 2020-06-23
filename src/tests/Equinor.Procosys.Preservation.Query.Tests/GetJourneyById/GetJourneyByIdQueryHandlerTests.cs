@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
                 var result = await dut.Handle(new GetJourneyByIdQuery(_testDataSet.Journey1With2Steps.Id, true), default);
 
                 var journey = result.Data;
-                Assert.AreEqual(_testDataSet.Journey2With1Step.Title, journey.Title);
+                Assert.AreEqual(_testDataSet.Journey1With2Steps.Title, journey.Title);
 
                 var steps = journey.Steps.ToList();
                 Assert.AreEqual(2, steps.Count);
@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
                 var journeyId = _testDataSet.Journey2With1Step.Id;
 
                 var dut = new GetJourneyByIdQueryHandler(context);
-                var result = await dut.Handle(new GetJourneyByIdQuery(journeyId), default);
+                var result = await dut.Handle(new GetJourneyByIdQuery(journeyId, true), default);
 
                 var journey = result.Data;
                 Assert.IsTrue(journey.IsInUse);
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetJourneyByIdQueryHandler(context);
-                var result = await dut.Handle(new GetJourneyByIdQuery(journeyId), default);
+                var result = await dut.Handle(new GetJourneyByIdQuery(journeyId, true), default);
 
                 var journey = result.Data;
                 Assert.IsFalse(journey.IsInUse);
