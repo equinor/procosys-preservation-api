@@ -26,10 +26,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
             _journeyValidatorMock.Setup(r => r.AreAdjacentStepsInAJourneyAsync(_journeyId, _stepAId, _stepBId, default))
                 .Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(true));
 
             _stepValidatorMock = new Mock<IStepValidator>();
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepAId, default)).Returns(Task.FromResult(true));
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepBId, default)).Returns(Task.FromResult(true));
 
             _command = new SwapStepsCommand(_journeyId, _stepAId, null, _stepBId, null);
 
@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         public void Validate_ShouldFail_WhenStepANotExists()
         {
             // Arrange
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepAId, default)).Returns(Task.FromResult(false));
+            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(false));
 
             // Act
             var result = _dut.Validate(_command);
@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         public void Validate_ShouldFail_WhenStepBNotExists()
         {
             // Arrange
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepBId, default)).Returns(Task.FromResult(false));
+            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(false));
 
             // Act
             var result = _dut.Validate(_command);
