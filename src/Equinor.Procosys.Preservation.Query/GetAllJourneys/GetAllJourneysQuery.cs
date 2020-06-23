@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.JourneyAggregate
+namespace Equinor.Procosys.Preservation.Query.GetAllJourneys
 {
     public class GetAllJourneysQuery : IRequest<Result<IEnumerable<JourneyDto>>>
     {

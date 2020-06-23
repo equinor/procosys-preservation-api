@@ -2,12 +2,12 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.JourneyAggregate;
+using Equinor.Procosys.Preservation.Query.GetAllJourneys;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.JourneyAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetAllJourneys
 {
     [TestClass]
     public class GetAllJourneysQueryHandlerTests : ReadOnlyTestsBase
