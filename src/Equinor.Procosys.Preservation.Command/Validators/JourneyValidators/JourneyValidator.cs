@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
@@ -52,6 +53,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 .SingleAsync(j => j.Id == journeyId, token);
 
             return journey != null && journey.Steps.Any();
+        }
+
+        public async Task<bool> IsInUseAsync(long journeyId, CancellationToken cancellationToken)
+        {
+            var stepIds = await (from step in _context.QuerySet<Step>()
+                where EF.Property<int>(step, "JourneyId") == journeyId
+                select step.Id).ToListAsync(cancellationToken: cancellationToken);
+
+            var inUse = await (from tag in _context.QuerySet<Tag>()
+                where stepIds.Contains(tag.StepId)
+                select tag).AnyAsync(cancellationToken);
+            return inUse;
         }
     }
 }

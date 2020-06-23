@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +19,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 
         private int _journeyWithStepId;
         private int _emptyJourneyId;
+        private Step _step;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _journeyWithStepId = AddJourneyWithStep(context, JourneyTitle1, "S", AddMode(context, "M", false), AddResponsible(context, "R")).Id;
+                var journeyWithStep = AddJourneyWithStep(context, JourneyTitle1, "S", AddMode(context, "M", false), AddResponsible(context, "R"));
+                _step = journeyWithStep.Steps.Single();
+                _journeyWithStepId = journeyWithStep.Id;
                 _emptyJourneyId = AddJourney(context, JourneyTitle2).Id;
             }
         }
@@ -160,6 +166,58 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.HasAnyStepsAsync(_journeyWithStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task IsInUseAsync_NoSteps_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsInUseAsync(_emptyJourneyId, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task IsInUseAsync_NoTagsUsesAnySteps_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsInUseAsync(_journeyWithStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task IsInUseAsync_UnknownJourney_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsInUseAsync(1267, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task IsInUseAsync_ReturnsTrue_AfterTagAddedToAStep()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var project = AddProject(context, "P", "Project description");
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D").RequirementDefinitions.First();
+                AddTag(context, project, TagType.Standard, "TagNo", "Tag description", _step,
+                    new List<TagRequirement> {new TagRequirement(TestPlant, 2, rd)});
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsInUseAsync(_journeyWithStepId, default);
                 Assert.IsTrue(result);
             }
         }

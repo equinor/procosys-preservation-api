@@ -22,7 +22,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
-using Equinor.Procosys.Preservation.Domain.Services;
 using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Infrastructure.Caching;
@@ -83,7 +82,6 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IEventDispatcher, EventDispatcher>();
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
             services.AddScoped<IReadOnlyContext, PreservationContext>();
-            services.AddScoped<IJourneyService, JourneyService>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();

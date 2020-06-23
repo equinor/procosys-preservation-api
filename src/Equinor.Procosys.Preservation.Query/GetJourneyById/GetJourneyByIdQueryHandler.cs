@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.Services;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 using MediatR;
@@ -17,13 +17,8 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
     public class GetJourneyByIdQueryHandler : IRequestHandler<GetJourneyByIdQuery, Result<JourneyDetailsDto>>
     {
         private readonly IReadOnlyContext _context;
-        private readonly IJourneyService _journeyService;
 
-        public GetJourneyByIdQueryHandler(IReadOnlyContext context, IJourneyService journeyService)
-        {
-            _context = context;
-            _journeyService = journeyService;
-        }
+        public GetJourneyByIdQueryHandler(IReadOnlyContext context) => _context = context;
 
         public async Task<Result<JourneyDetailsDto>> Handle(GetJourneyByIdQuery request, CancellationToken cancellationToken)
         {
@@ -35,7 +30,11 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
                 return new NotFoundResult<JourneyDetailsDto>(Strings.EntityNotFound(nameof(Journey), request.Id));
             }
 
-            var journeyInUse = await _journeyService.IsJourneyInUseAsync(request.Id, cancellationToken);
+            var stepIds = journey.Steps.Select(s => s.Id).ToList();
+
+            var journeyInUse = await (from tag in _context.QuerySet<Tag>()
+                where stepIds.Contains(tag.StepId)
+                select tag).AnyAsync(cancellationToken);
 
             var modeIds = journey.Steps.Select(x => x.ModeId);
             var responsibleIds = journey.Steps.Select(x => x.ResponsibleId);
