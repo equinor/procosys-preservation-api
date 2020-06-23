@@ -16,6 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
     public class CloneCommandHandler : IRequestHandler<CloneCommand, Result<Unit>>
     {
         private readonly IPlantProvider _plantProvider;
+        private readonly IPlantSetter _plantSetter;
         private readonly IModeRepository _modeRepository;
         private readonly IResponsibleRepository _responsibleRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
@@ -24,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
 
         public CloneCommandHandler(
             IPlantProvider plantProvider,
+            IPlantSetter plantSetter,
             IUnitOfWork unitOfWork,
             IModeRepository modeRepository,
             IResponsibleRepository responsibleRepository,
@@ -31,6 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             ITagFunctionRepository tagFunctionRepository)
         {
             _plantProvider = plantProvider;
+            _plantSetter = plantSetter;
             _modeRepository = modeRepository;
             _responsibleRepository = responsibleRepository;
             _requirementTypeRepository = requirementTypeRepository;
@@ -64,9 +67,10 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
 
         private async Task CloneModes(string sourcePlant, string targetPlant)
         {
-            _plantProvider.SetTemporaryPlant(sourcePlant);
+            var originalPlant = _plantProvider.Plant;
+            _plantSetter.SetPlant(sourcePlant);
             var sourceModes = await _modeRepository.GetAllAsync();
-            _plantProvider.ReleaseTemporaryPlant();
+            _plantSetter.SetPlant(originalPlant);
 
             var targetModes = await _modeRepository.GetAllAsync();
 
@@ -82,9 +86,10 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
 
         private async Task CloneResponsibles(string sourcePlant, string targetPlant)
         {
-            _plantProvider.SetTemporaryPlant(sourcePlant);
+            var originalPlant = _plantProvider.Plant;
+            _plantSetter.SetPlant(sourcePlant);
             var sourceResponsibles = await _responsibleRepository.GetAllAsync();
-            _plantProvider.ReleaseTemporaryPlant();
+            _plantSetter.SetPlant(originalPlant);
 
             var targetResponsibles = await _responsibleRepository.GetAllAsync();
 
@@ -100,9 +105,10 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
 
         private async Task CloneRequirementTypes(string sourcePlant, string targetPlant)
         {
-            _plantProvider.SetTemporaryPlant(sourcePlant);
+            var originalPlant = _plantProvider.Plant;
+            _plantSetter.SetPlant(sourcePlant);
             var sourceRTs = await _requirementTypeRepository.GetAllAsync();
-            _plantProvider.ReleaseTemporaryPlant();
+            _plantSetter.SetPlant(originalPlant);
 
             var targetRTs = await _requirementTypeRepository.GetAllAsync();
 
@@ -159,11 +165,12 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
 
         private async Task CloneTagFunctions(string sourcePlant, string targetPlant)
         {
-            _plantProvider.SetTemporaryPlant(sourcePlant);
+            var originalPlant = _plantProvider.Plant;
+            _plantSetter.SetPlant(sourcePlant);
             var sourceTagFunctions = await _tagFunctionRepository.GetAllAsync();
             var sourceRTs = await _requirementTypeRepository.GetAllAsync();
             var sourceRDs = sourceRTs.SelectMany(rt => rt.RequirementDefinitions).ToList();
-            _plantProvider.ReleaseTemporaryPlant();
+            _plantSetter.SetPlant(originalPlant);
 
             var targetTagFunctions = await _tagFunctionRepository.GetAllAsync();
             var targetRTs = await _requirementTypeRepository.GetAllAsync();

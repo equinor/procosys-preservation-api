@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
 using Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.ModeAggregate;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
         public async Task<ActionResult<ModeDto>> GetModes(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant)
         {
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{id}")]
         public async Task<ActionResult<ModeDto>> GetMode(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromRoute] int id)
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
         [HttpPost]
         public async Task<ActionResult<int>> AddMode(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteMode(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateMode(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -90,7 +90,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Void")]
         public async Task<ActionResult> VoidMode(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Unvoid")]
         public async Task<ActionResult> UnvoidMode(
-            [FromHeader( Name = PlantProvider.PlantHeader)]
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,

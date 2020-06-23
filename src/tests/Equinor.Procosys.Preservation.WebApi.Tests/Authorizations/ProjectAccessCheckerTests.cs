@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -19,10 +19,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimTypes.UserData, ClaimsTransformation.GetProjectClaimValue(ProjectName)));
             principal.AddIdentity(claimsIdentity);
-            var currentUserProviderMock = new Mock<ICurrentUserProvider>();
-            currentUserProviderMock.Setup(u => u.GetCurrentUser()).Returns(principal);
+            var claimsProviderMock = new Mock<IClaimsProvider>();
+            claimsProviderMock.Setup(c => c.GetCurrentUser()).Returns(principal);
             
-            _dut = new ProjectAccessChecker(currentUserProviderMock.Object);
+            _dut = new ProjectAccessChecker(claimsProviderMock.Object);
         }
 
         [TestMethod]

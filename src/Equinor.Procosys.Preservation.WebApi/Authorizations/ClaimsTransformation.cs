@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             contentRestrictions?.ToList().ForEach(
                 contentRestriction => claimsIdentity.AddClaim(
                     new Claim(ClaimTypes.UserData, GetContentRestrictionClaimValue(contentRestriction))));
-            
+
             principal.AddIdentity(claimsIdentity);
         }
 

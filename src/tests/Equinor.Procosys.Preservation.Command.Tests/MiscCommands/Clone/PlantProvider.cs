@@ -1,28 +1,16 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using System;
+using Equinor.Procosys.Preservation.Domain;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
 {
-    public class PlantProvider : IPlantProvider
+    public class PlantProvider : IPlantProvider, IPlantSetter
     {
-        private string _temporaryPlant;
-        private readonly string _plant;
+        private string _plant;
 
         public PlantProvider(string plant) => _plant = plant;
 
-        public string Plant
-        {
-            get
-            {
-                if (_temporaryPlant != null)
-                {
-                    return _temporaryPlant;
-                }
-                return _plant;
-            }
-        }
+        public string Plant => _plant ?? throw new Exception("Could not determine current plant");
 
-        public void SetTemporaryPlant(string plant) => _temporaryPlant = plant;
-
-        public void ReleaseTemporaryPlant() => _temporaryPlant = null;
+        public void SetPlant(string plant) => _plant = plant;
     }
 }

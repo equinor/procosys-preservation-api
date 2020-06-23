@@ -4,7 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Equinor.Procosys.Preservation.Command;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query;
+using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.DIModules;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Equinor.Procosys.Preservation.WebApi.Seeding;
@@ -13,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -150,7 +153,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                 app.UseDeveloperExceptionPage();
             }
 
-            app.AddGlobalExceptionHandling();
+            app.UseGlobalExceptionHandling();
 
             app.UseCors(AllowAllOriginsCorsPolicy);
 
@@ -171,8 +174,13 @@ namespace Equinor.Procosys.Preservation.WebApi
 
             app.UseRouting();
 
+            app.UseCurrentPlant();
+            app.UseCurrentBearerToken();
+
             app.UseAuthentication();
+            app.UseCurrentUser();
             app.UseAuthorization();
+            
 
             app.UseResponseCompression();
 

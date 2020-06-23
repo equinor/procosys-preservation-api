@@ -1,18 +1,16 @@
 ﻿using Equinor.Procosys.Preservation.MainApi.Client;
-using Microsoft.AspNetCore.Http;
 
 namespace Equinor.Procosys.Preservation.WebApi.Misc
 {
-    public class RequestBearerTokenProvider : IBearerTokenProvider
+    public class RequestBearerTokenProvider : IBearerTokenProvider, IBearerTokenSetter
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private string _token;
 
-        public RequestBearerTokenProvider(IHttpContextAccessor httpContextAccessor) => _httpContextAccessor = httpContextAccessor;
+        public string GetBearerToken() => _token;
 
-        public string GetBearerToken()
+        public void SetBearerToken(string token)
         {
-            var authorizationHeader = _httpContextAccessor.HttpContext.Request.Headers["Authorization"];
-            return authorizationHeader.ToString().Split(' ')[1];
+            _token = token;
         }
     }
 }
