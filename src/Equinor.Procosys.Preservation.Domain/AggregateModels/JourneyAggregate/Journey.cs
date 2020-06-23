@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             step.SortKey = _steps.Count;
         }
 
-        public void RemoveStep(Step step) // todo unit test
+        public void RemoveStep(Step step)
         {
             if (step == null)
             {
