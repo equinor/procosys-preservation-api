@@ -18,6 +18,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
             await (from j in _context.QuerySet<Journey>()
                 where j.Id == journeyId
                 select j).AnyAsync(token);
+        
+        public async Task<bool> StepExistsAsync(int journeyId, int stepId, CancellationToken token)
+        {
+            var journey = await _context.QuerySet<Journey>()
+                .Include(j => j.Steps)
+                .SingleOrDefaultAsync(j => j.Id == journeyId, token);
+
+            return journey != null && journey.Steps.Any(s => s.Id == stepId);
+        }
 
         public async Task<bool> ExistsWithSameTitleAsync(string journeyTitle, CancellationToken token) =>
             await (from j in _context.QuerySet<Journey>()
@@ -50,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
         {
             var journey = await _context.QuerySet<Journey>()
                 .Include(j => j.Steps)
-                .SingleAsync(j => j.Id == journeyId, token);
+                .SingleOrDefaultAsync(j => j.Id == journeyId, token);
 
             return journey != null && journey.Steps.Any();
         }

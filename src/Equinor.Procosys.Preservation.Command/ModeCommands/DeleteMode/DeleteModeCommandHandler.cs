@@ -21,8 +21,10 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
         public async Task<Result<Unit>> Handle(DeleteModeCommand request, CancellationToken cancellationToken)
         {
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
-            _modeRepository.Remove(mode);
+            
             mode.SetRowVersion(request.RowVersion);
+            _modeRepository.Remove(mode);
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);
         }

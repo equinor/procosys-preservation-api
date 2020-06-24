@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
-                .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
+                .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepId, token))
                 .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
                 .MustAsync((command, token) => HaveUniqueStepTitleInJourneyAsync(command.StepId, command.Title, token))
                 .WithMessage(command => $"Another step with title already exists in a journey! Step={command.Title}")
@@ -38,18 +38,25 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
-            async Task<bool> BeAnExistingStepAsync(int stepId, CancellationToken token)
-                => await stepValidator.ExistsAsync(stepId, token);
+            
+            async Task<bool> BeAnExistingStepInJourneyAsync(int journeyId, int stepId, CancellationToken token)
+                => await journeyValidator.StepExistsAsync(journeyId, stepId, token);
+            
             async Task<bool> HaveUniqueStepTitleInJourneyAsync(int stepId, string stepTitle, CancellationToken token) =>
                 !await stepValidator.ExistsInExistingJourneyAsync(stepId, stepTitle, token);
+            
             async Task<bool> NotBeAVoidedStepAsync(int stepId, CancellationToken token)
                 => !await stepValidator.IsVoidedAsync(stepId, token);
+            
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);
+            
             async Task<bool> NotBeAVoidedModeAsync(int modeId, CancellationToken token)
                 => !await modeValidator.IsVoidedAsync(modeId, token);
+            
             async Task<bool> NotBeAnExistingAndVoidedResponsibleAsync(string responsibleCode, CancellationToken token)
                 => !await responsibleValidator.ExistsAndIsVoidedAsync(responsibleCode, token);
+            
             async Task<bool> BeFirstStepIfUpdatingToSupplierStep(int journeyId, int modeId, int stepId, CancellationToken token)
                 => await stepValidator.IsFirstStepOrModeIsNotForSupplier(journeyId, modeId, stepId, token);
         }
