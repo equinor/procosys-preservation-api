@@ -8,6 +8,7 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.GetAllJourneys;
 using Equinor.Procosys.Preservation.Query.GetJourneyById;
@@ -112,6 +113,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
                 dto.Title,
                 dto.RowVersion);
             var result = await _mediator.Send(command);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [HttpPut("{id}/Steps/{stepId}/Void")]
+        public async Task<ActionResult> VoidStep(
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int stepId,
+            [FromBody] VoidStepDto dto)
+        {
+            var result = await _mediator.Send(new VoidStepCommand(id, stepId, dto.RowVersion));
             return this.FromResult(result);
         }
 
