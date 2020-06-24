@@ -158,6 +158,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
+        [HttpDelete("{id}/Steps/{stepId}")]
+        public async Task<ActionResult> DeleteStep(
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int stepId,
+            [FromBody] DeleteStepDto dto)
+        {
+            var result = await _mediator.Send(new DeleteStepCommand(id, stepId, dto.RowVersion));
+            return this.FromResult(result);
+        }
+
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Steps/{stepId}/Void")]
         public async Task<ActionResult> VoidStep(
@@ -185,35 +199,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromBody] UnvoidStepDto dto)
         {
             var result = await _mediator.Send(new UnvoidStepCommand(id, stepId, dto.RowVersion));
-            return this.FromResult(result);
-        }
-
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
-        [HttpPut("{id}/Void")]
-        public async Task<IActionResult> VoidJourney(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
-            [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
-            string plant,
-            [FromRoute] int id,
-            [FromBody] VoidJourneyDto dto)
-        {
-            var result = await _mediator.Send(new VoidJourneyCommand(id, dto.RowVersion));
-
-            return this.FromResult(result);
-        }
-
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
-        [HttpPut("{id}/Unvoid")]
-        public async Task<IActionResult> UnvoidJourney(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
-            [Required]
-            string plant,
-            [FromRoute] int id,
-            [FromRoute] int stepId,
-            [FromBody] DeleteStepDto dto)
-        {
-            var result = await _mediator.Send(new DeleteStepCommand(id, stepId, dto.RowVersion));
             return this.FromResult(result);
         }
 
