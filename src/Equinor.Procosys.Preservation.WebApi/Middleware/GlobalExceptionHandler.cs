@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.Exceptions;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Equinor.Procosys.Preservation.WebApi.Middleware
 {
@@ -28,7 +29,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 // Call the next delegate/middleware in the pipeline
                 await _next(context);
             }
-            catch (UnauthorizedAccessException u)
+            catch (UnauthorizedAccessException)
             {
                 _logger.LogWarning("Unauthorized");
                 context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
@@ -38,11 +39,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
             catch (FluentValidation.ValidationException ve)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/text";
-                var response = new ValidationErrorResponse(ve.Errors.Count(),
-                    ve.Errors.Select(x => new ValidationError(x.PropertyName, x.ErrorMessage, x.AttemptedValue)));
-                var json = JsonSerializer.Serialize(response);
+                context.Response.ContentType = "application/problem+json";
+                var errors = new Dictionary<string, string[]>();
+                foreach (var error in ve.Errors)
+                {
+                    errors.Add(error.PropertyName, new[] {error.ErrorMessage});
+                }
+                var problems = new ValidationProblemDetails(errors)
+                {
+                    Status = context.Response.StatusCode,
+                    Title = $"Business validation errors: {errors.Count}"
+                };
+                var json = JsonSerializer.Serialize(problems);
                 _logger.LogInformation(json);
+
                 await context.Response.WriteAsync(json);
             }
             catch (ConcurrencyException)
@@ -60,32 +70,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 context.Response.ContentType = "application/text";
                 await context.Response.WriteAsync("Something went wrong!");
             }
-        }
-
-        private class ValidationErrorResponse
-        {
-            public ValidationErrorResponse(int errorCount, IEnumerable<ValidationError> errors)
-            {
-                ErrorCount = errorCount;
-                Errors = errors;
-            }
-
-            public int ErrorCount { get; }
-            public IEnumerable<ValidationError> Errors { get; }
-        }
-
-        private class ValidationError
-        {
-            public ValidationError(string propertyName, string errorMessage, object attemptedValue)
-            {
-                PropertyName = propertyName;
-                ErrorMessage = errorMessage;
-                AttemptedValue = attemptedValue;
-            }
-
-            public string PropertyName { get; set; }
-            public string ErrorMessage { get; set; }
-            public object AttemptedValue { get; set; }
         }
     }
 }
