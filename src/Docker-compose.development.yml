@@ -5,4 +5,4 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
-      - ${APPDATA}/Microsoft/UserSecrets/e47b709b-5c82-4a61-935c-823e332955f9/:/root/.microsoft/usersecrets/e47b709b-5c82-4a61-935c-823e332955f9/
+      - ${APPDATA}/Microsoft/UserSecrets/e47b709b-5c82-4a61-935c-823e332955f9/:/home/apprunner/.microsoft/usersecrets/e47b709b-5c82-4a61-935c-823e332955f9/
