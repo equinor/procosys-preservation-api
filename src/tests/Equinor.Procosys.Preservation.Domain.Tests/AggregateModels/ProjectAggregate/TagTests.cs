@@ -246,6 +246,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
                 _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_dutWithOneReqNotNeedInputTwoWeekInterval
                     .Requirements.First()));
 
+        [TestMethod]
+        public void AddRequirement_ShouldAddRequirementAddedEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_reqNeedInputThreeWeekInterval);
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementAddedEvent));
+        }
+
         #endregion
 
         #region StartPreservation
@@ -302,6 +311,15 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             Assert.ThrowsException<Exception>(() => dut.StartPreservation());
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldAddPreservationStartedEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(PreservationStartedEvent));
         }
 
         #endregion
@@ -529,6 +547,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(requirement.NextDueTimeUtc, dut.NextDueTimeUtc);
             Assert.AreNotEqual(oldNextTime, requirement.NextDueTimeUtc);
         }
+
+        [TestMethod]
+        public void PreserveRequirement_ShouldAddRequirementPreservedEvent()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            var requirement = dut.Requirements.Single();
+            Assert.AreEqual(1, requirement.PreservationPeriods.Count);
+
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            dut.Preserve(_person, dut.Requirements.Single().Id);
+
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementPreservedEvent));
+        }
+
         #endregion
 
         #region BulkPreserve
@@ -858,6 +893,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.ThrowsException<Exception>(() => dut.Transfer(_journey));
         }
 
+        [TestMethod]
+        public void Transfer_ShouldAddTransferredManuallyEvent()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.Transfer(_journey);
+
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(TransferredManuallyEvent));
+        }
+
         #endregion
 
         #region CompletePreservation
@@ -893,6 +939,17 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(PreservationStatus.Completed, dut.Status);
         }
 
+        [TestMethod]
+        public void CompletePreservation_ShouldAddPreservationCompletedEvent()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            dut.CompletePreservation(_journey);
+
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(PreservationCompletedEvent));
+        }
 
         #endregion
 
@@ -1009,6 +1066,45 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void AddAction_ShouldThrowException_WhenActionNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(null));
+
+        [TestMethod]
+        public void AddAction_ShouldAddActionAddedEvent()
+        {
+            var action = new Action(TestPlant, "", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(ActionAddedEvent));
+        }
+
+        #endregion
+
+        #region CloseAction
+
+        [TestMethod]
+        public void CloseAction_ShouldCloseAction()
+        {
+            var action = new Action(TestPlant, "", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
+
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.Actions.First().IsClosed);
+        }
+
+        [TestMethod]
+        public void CloseAction_ShouldThrowException_WhenActionIdIsInvalid()
+            => Assert.ThrowsException<InvalidOperationException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(0, _person, DateTime.UtcNow, "AAAAAAAAABA="));
+
+        [TestMethod]
+        public void CloseAction_ShouldAddActionClosedEvent()
+        {
+            var action = new Action(TestPlant, "", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
+
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(ActionClosedEvent));
+        }
 
         #endregion
 
@@ -1160,6 +1256,99 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Act and Arrange
             Assert.IsFalse(dut.FollowsAJourney);
+        }
+
+        #endregion
+
+        #region Void
+
+        [TestMethod]
+        public void Void_ShouldAddTagVoidedEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.Void();
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(TagVoidedEvent));
+        }
+
+        #endregion
+
+        #region Unvoid
+
+        [TestMethod]
+        public void Void_ShouldAddTagUnvoidedEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.Void();
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(TagVoidedEvent));
+        }
+
+        #endregion
+
+        #region UpdateRequirement
+
+        [TestMethod]
+        public void UpdateRequirement_ShouldUpdateRequirement()
+        {
+            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+
+            Assert.IsFalse(requirement.IsVoided);
+            Assert.AreEqual(requirement.IntervalWeeks, 2);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, true, 1, "AAAAAAAAABA=");
+
+            Assert.IsTrue(requirement.IsVoided);
+            Assert.AreEqual(requirement.IntervalWeeks, 1);
+        }
+
+        [TestMethod]
+        public void UpdateRequirement_Void_ShouldAddRequirementVoidedEvents()
+        {
+            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementVoidedEvent));
+        }
+
+        [TestMethod]
+        public void UpdateRequirement_Unvoid_ShouldAddRequirementUnvoidedEvents()
+        {
+            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+            requirement.Void();
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementUnvoidedEvent));
+        }
+
+        #endregion
+
+        #region ChangeInterval
+
+        [TestMethod]
+        public void ChangeInterval_ShouldChangeInterval()
+        {
+            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+            Assert.AreEqual(2, requirement.IntervalWeeks);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.ChangeInterval(requirement.Id, 1);
+
+            Assert.AreEqual(requirement.IntervalWeeks, 1);
+        }
+
+        [TestMethod]
+        public void ChangeInterval_ShouldAddIntervalChangedEvent()
+        {
+            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+            Assert.AreEqual(2, requirement.IntervalWeeks);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.ChangeInterval(requirement.Id, 3);
+
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(IntervalChangedEvent));
         }
 
         #endregion

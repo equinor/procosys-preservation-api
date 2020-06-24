@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         }
                 
         [TestMethod]
-        public async Task HandlingCloseActionCommand_ShouldSetAndReturnRowVersion()
+        public async Task HandlingCloseActionCommand_ShouldSetRowVersion()
         {
             // Act
             var result = await _dut.Handle(_command, default);
@@ -86,7 +86,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             Assert.AreEqual(0, result.Errors.Count);
             // In real life EF Core will create a new RowVersion when save.
             // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
-            Assert.AreEqual(_rowVersion, result.Data);
             Assert.AreEqual(_rowVersion, _action.RowVersion.ConvertToString());
         }
 

@@ -3,7 +3,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
 {
-    public class CloseActionCommand : IRequest<Result<string>>, ITagCommandRequest
+    public class CloseActionCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public CloseActionCommand(int tagId, int actionId, string rowVersion)
         {

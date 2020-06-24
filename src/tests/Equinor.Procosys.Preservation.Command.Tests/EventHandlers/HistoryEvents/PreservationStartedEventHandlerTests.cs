@@ -8,10 +8,10 @@ using Moq;
 namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvents
 {
     [TestClass]
-    public class AddTagCreatedEventHandlerTests
+    public class PreservationStartedEventHandlerTests
     {
         private Mock<IHistoryRepository> _historyRepositoryMock;
-        private AddTagCreatedEventHandler _dut;
+        private PreservationStartedEventHandler _dut;
         private History _historyAdded;
 
         [TestInitialize]
@@ -26,27 +26,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
                     _historyAdded = history;
                 });
 
-            _dut = new AddTagCreatedEventHandler(_historyRepositoryMock.Object);
+            _dut = new PreservationStartedEventHandler(_historyRepositoryMock.Object);
         }
 
         [TestMethod]
-        public void Handle_ShouldAddTagCreatedHistoryRecord()
+        public void Handle_ShouldAddPreservationStartedHistoryRecord()
         {
             // Arrange
             Assert.IsNull(_historyAdded);
-            
+
             // Act
             var objectGuid = Guid.NewGuid();
             var plant = "TestPlant";
-            _dut.Handle(new TagCreatedEvent(plant, objectGuid), default);
+            _dut.Handle(new PreservationStartedEvent(plant, objectGuid), default);
 
-            // Arrange
+            // Assert
             Assert.IsNotNull(_historyAdded);
-            Assert.AreEqual(plant,_historyAdded.Plant);
-            Assert.AreEqual(objectGuid,_historyAdded.ObjectGuid);
+            Assert.AreEqual(plant, _historyAdded.Plant);
+            Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
             Assert.IsNotNull(_historyAdded.Description);
-            Assert.AreEqual(EventType.TagCreated,_historyAdded.EventType);
-            Assert.AreEqual(ObjectType.Tag,_historyAdded.ObjectType);
+            Assert.AreEqual(EventType.PreservationStarted, _historyAdded.EventType);
+            Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
             Assert.IsNull(_historyAdded.PreservationRecordId);
         }
     }

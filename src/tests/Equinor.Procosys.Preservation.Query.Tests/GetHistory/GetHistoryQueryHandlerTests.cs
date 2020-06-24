@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
 
-
 namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
 {
     [TestClass]

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -9,7 +8,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
 {
-    public class CloseActionCommandHandler : IRequestHandler<CloseActionCommand, Result<string>>
+    public class CloseActionCommandHandler : IRequestHandler<CloseActionCommand, Result<Unit>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -29,19 +28,16 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
             _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<Result<string>> Handle(CloseActionCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(CloseActionCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
-            var action = tag.Actions.Single(a => a.Id == request.ActionId);
-
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
-            
-            action.Close(TimeService.UtcNow, currentUser);
-            action.SetRowVersion(request.RowVersion);
-            
+
+            tag.CloseAction(request.ActionId, currentUser, TimeService.UtcNow, request.RowVersion);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<string>(action.RowVersion.ConvertToString());
+            return new SuccessResult<Unit>(Unit.Value);
         }
     }
 }
