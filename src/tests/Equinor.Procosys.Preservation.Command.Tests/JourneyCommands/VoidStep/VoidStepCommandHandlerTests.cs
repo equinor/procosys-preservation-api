@@ -68,14 +68,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidStep
         }
 
         [TestMethod]
-        public async Task HandlingVoidStepCommand_ShouldSetAndReturnRowVersion()
+        public async Task HandlingVoidStepCommand_ShouldSetRowVersion()
         {
             // Act
             var result = await _dut.Handle(_command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(_rowVersion, result.Data);
             Assert.AreEqual(_rowVersion, _step.RowVersion.ConvertToString());
         }
 

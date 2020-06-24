@@ -88,8 +88,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             step2.SortKey = tmp;
         }
 
-        public void VoidStep(Step step)
+        public void VoidStep(int stepId, string stepRowVersion)
         {
+            var step = Steps.Single(s => s.Id == stepId);
+
             if (step == null)
             {
                 throw new ArgumentNullException(nameof(step));
@@ -101,10 +103,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             step.Void();
+            step.SetRowVersion(stepRowVersion);
         }
 
-        public void UnvoidStep(Step step)
+        public void UnvoidStep(int stepId, string stepRowVersion)
         {
+            var step = Steps.Single(s => s.Id == stepId);
+
             if (step == null)
             {
                 throw new ArgumentNullException(nameof(step));
@@ -116,6 +121,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             step.UnVoid();
+            step.SetRowVersion(stepRowVersion);
         }
 
         public bool AreAdjacentSteps(int stepId1, int stepId2)
