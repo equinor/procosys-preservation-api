@@ -88,6 +88,21 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             step.Void();
         }
 
+        public void UnvoidStep(Step step)
+        {
+            if (step == null)
+            {
+                throw new ArgumentNullException(nameof(step));
+            }
+
+            if (step.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't relate item in {step.Plant} to item in {Plant}");
+            }
+
+            step.UnVoid();
+        }
+
         public bool AreAdjacentSteps(int stepId1, int stepId2)
         {
             var orderedSteps = OrderedSteps().ToList();
