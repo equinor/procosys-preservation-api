@@ -81,6 +81,20 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
+        public void RemoveStep_ShouldRemoveStepFromStepsList()
+        {
+            // Arrange
+            Assert.AreEqual(3, _dutWith3Steps.Steps.Count);
+
+            // Act
+            _dutWith3Steps.RemoveStep(_stepA);
+
+            // Assert
+            Assert.AreEqual(2, _dutWith3Steps.Steps.Count);
+            Assert.IsFalse(_dutWith3Steps.Steps.Contains(_stepA));
+        }
+
+        [TestMethod]
         public void AddStep_ShouldSetIncreasedSortKey()
         {
             var step1 = new Mock<Step>();

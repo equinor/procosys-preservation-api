@@ -11,7 +11,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
     {
         private const int ModeId = 12;
         private const string _rowVersion = "AAAAAAAAABA=";
-        private const string _modeTitle = "title";
         private Mock<IModeRepository> _modeRepositoryMock;
         private Mode _mode;
         private DeleteModeCommand _command;
@@ -22,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
         {
             // Arrange
             _modeRepositoryMock = new Mock<IModeRepository>();
-            _mode = new Mode(TestPlant, _modeTitle, false);
+            _mode = new Mode(TestPlant, "M", false);
             _modeRepositoryMock
                 .Setup(x => x.GetByIdAsync(ModeId))
                     .Returns(Task.FromResult(_mode));

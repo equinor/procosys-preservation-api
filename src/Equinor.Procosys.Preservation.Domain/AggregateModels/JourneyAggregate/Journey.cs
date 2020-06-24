@@ -59,6 +59,21 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             step.SortKey = _steps.Count;
         }
 
+        public void RemoveStep(Step step)
+        {
+            if (step == null)
+            {
+                throw new ArgumentNullException(nameof(step));
+            }
+            
+            if (step.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't remove item in {step.Plant} from item in {Plant}");
+            }
+
+            _steps.Remove(step);
+        }
+
         public void SwapSteps(int stepId1, int stepId2)
         {
             if (!AreAdjacentSteps(stepId1, stepId2))

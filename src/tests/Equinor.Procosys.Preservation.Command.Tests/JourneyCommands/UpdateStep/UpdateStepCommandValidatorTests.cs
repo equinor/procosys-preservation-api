@@ -30,9 +30,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
 
             _stepValidatorMock = new Mock<IStepValidator>();
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
             _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplier(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(true));
 
             _modeValidatorMock = new Mock<IModeValidator>();
@@ -70,10 +70,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepNotExists()
+        public void Validate_ShouldFail_WhenStepNotExistsInJourney()
         {
             // Arrange
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(false));
+            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
 
             // Act
             var result = _dut.Validate(_command);
