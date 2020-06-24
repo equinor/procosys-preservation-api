@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 name: "ObjectGuid",
                 table: "PreservationRecords",
                 nullable: false,
-                defaultValue: Guid.NewGuid());
+                defaultValue: Guid.Empty);
 
             migrationBuilder.AddColumn<int>(
                 name: "DueWeeks",
@@ -23,6 +23,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 table: "History",
                 nullable: true,
                 defaultValue: null);
+
+            migrationBuilder.Sql("Update PreservationRecords Set ObjectGuid = NEWID() where ObjectGuid = '00000000-0000-0000-0000-000000000000'");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -54,8 +54,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
         public DateTime CreatedAtUtc { get; private set; }
         public EventType EventType { get; private set; }
         public ObjectType ObjectType { get; private set; }
-        public int? DueWeeks { get; set; }
-        public Guid PreservationRecordGuid { get; set; }
+        public int? DueInWeeks { get; set; }
+        public Guid? PreservationRecordGuid { get; set; }
 
         public void SetCreated(Person createdBy)
         {

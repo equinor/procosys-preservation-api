@@ -9,19 +9,19 @@ namespace Equinor.Procosys.Preservation.Domain.Events
             string plant,
             Guid objectGuid,
             int requirementDefinitionId,
-            int? nextDueInWeeks,
+            int? dueInWeeks,
             Guid preservationRecordGuid)
         {
             Plant = plant;
             ObjectGuid = objectGuid;
             RequirementDefinitionId = requirementDefinitionId;
-            NextDueInWeeks = nextDueInWeeks;
+            DueInWeeks = dueInWeeks;
             PreservationRecordGuid = preservationRecordGuid;
         }
         public string Plant { get; }
         public Guid ObjectGuid { get; }
         public int RequirementDefinitionId { get; }
-        public int? NextDueInWeeks { get; }
+        public int? DueInWeeks { get; }
         public Guid PreservationRecordGuid { get; }
     }
 }
