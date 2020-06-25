@@ -1,7 +1,9 @@
-﻿namespace Equinor.Procosys.Preservation.MainApi.Client
+﻿using System.Threading.Tasks;
+
+namespace Equinor.Procosys.Preservation.MainApi.Client
 {
     public interface IBearerTokenProvider
     {
-        string GetBearerToken();
+        ValueTask<string> GetBearerTokenOnBehalfOfCurrentUserAsync();
     }
 }
