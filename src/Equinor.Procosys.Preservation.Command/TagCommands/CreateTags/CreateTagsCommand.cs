@@ -29,8 +29,5 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
         public IEnumerable<RequirementForCommand> Requirements { get; }
         public string Remark { get; }
         public string StorageArea { get; }
-        
-        // Todo Remove Migration property when migration period from old to new preservation in ProCoSys is over
-        public bool Migration { get; set; }
     }
 }

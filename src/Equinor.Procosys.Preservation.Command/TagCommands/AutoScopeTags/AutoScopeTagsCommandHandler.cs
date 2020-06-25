@@ -99,6 +99,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
                 addedTags.Add(tagToAdd);
             }
             
+            // Todo Remove Migration handling when migration period from old to new preservation in ProCoSys is over
+            await _tagApiService.MarkTagsAsMigratedAsync(_plantProvider.Plant, tagDetailList.Select(t => t.Id));
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());

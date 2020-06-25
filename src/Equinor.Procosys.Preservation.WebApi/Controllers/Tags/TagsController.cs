@@ -361,10 +361,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 dto.StepId,
                 requirements,
                 dto.Remark,
-                dto.StorageArea)
-            {
-                Migration = true
-            };
+                dto.StorageArea);
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
