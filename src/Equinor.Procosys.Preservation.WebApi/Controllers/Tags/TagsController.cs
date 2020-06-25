@@ -332,7 +332,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .Select(r =>
                     new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             var command = new CreateTagsCommand(
-                dto.TagNos.ToList(),
+                dto.TagNos,
                 dto.ProjectName,
                 dto.StepId,
                 requirements,
@@ -356,7 +356,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .Select(r =>
                     new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             var command = new CreateTagsCommand(
-                dto.TagNos.ToList(),
+                dto.TagNos,
                 dto.ProjectName,
                 dto.StepId,
                 requirements,

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
@@ -8,14 +9,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
     public class CreateTagsCommand : IRequest<Result<List<int>>>, IProjectRequest
     {
         public CreateTagsCommand(
-            IList<string> tagNos,
+            IEnumerable<string> tagNos,
             string projectName,
             int stepId,
             IEnumerable<RequirementForCommand> requirements,
             string remark,
             string storageArea)
         {
-            TagNos = tagNos ?? new List<string>();
+            TagNos = tagNos != null ? tagNos.ToList() : new List<string>();
             ProjectName = projectName;
             StepId = stepId;
             Requirements = requirements ?? new List<RequirementForCommand>();
