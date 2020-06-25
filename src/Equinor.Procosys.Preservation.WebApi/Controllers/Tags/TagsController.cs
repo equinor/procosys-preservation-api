@@ -378,7 +378,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(
                 new AutoScopeTagsCommand(
-                    dto.TagNos,
+                    dto.TagNos.ToList(),
                     dto.ProjectName,
                     dto.StepId,
                     dto.Remark,

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -82,35 +81,20 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
             var standardTags = await _projectRepository.GetStandardTagsInProjectOnlyAsync(projectName);
             var allTagNos = standardTags.Select(t => t.TagNo).ToList();
 
-            var page = 0;
-            // Use relative small page size since TagNos are added to querystring of url and maxlength is 2000
-            var pageSize = 50;
-            IEnumerable<string> pageWithTagNos;
-            do
+            var pcsTags = await _tagApiService.GetTagDetailsAsync(plant, projectName, allTagNos);
+            foreach (var pcsTag in pcsTags)
             {
-                pageWithTagNos = allTagNos.Skip(pageSize * page).Take(pageSize).ToList();
+                var tag = standardTags.Single(t => t.TagNo == pcsTag.TagNo);
 
-                if (pageWithTagNos.Any())
-                {
-                    var pcsTags = await _tagApiService.GetTagDetailsAsync(plant, projectName, pageWithTagNos);
-                    foreach (var pcsTag in pcsTags)
-                    {
-                        var tag = standardTags.Single(t => t.TagNo == pcsTag.TagNo);
-
-                        tag.SetArea(pcsTag.AreaCode, pcsTag.AreaDescription);
-                        tag.SetDiscipline(pcsTag.DisciplineCode, pcsTag.DisciplineDescription);
-                        tag.Calloff = pcsTag.CallOffNo;
-                        tag.PurchaseOrderNo = pcsTag.PurchaseOrderNo;
-                        tag.CommPkgNo = pcsTag.CommPkgNo;
-                        tag.Description = pcsTag.Description;
-                        tag.McPkgNo = pcsTag.McPkgNo;
-                        tag.TagFunctionCode = pcsTag.TagFunctionCode;
-                    }
-                }
-
-                page++;
-
-            } while (pageWithTagNos.Count() == pageSize);
+                tag.SetArea(pcsTag.AreaCode, pcsTag.AreaDescription);
+                tag.SetDiscipline(pcsTag.DisciplineCode, pcsTag.DisciplineDescription);
+                tag.Calloff = pcsTag.CallOffNo;
+                tag.PurchaseOrderNo = pcsTag.PurchaseOrderNo;
+                tag.CommPkgNo = pcsTag.CommPkgNo;
+                tag.Description = pcsTag.Description;
+                tag.McPkgNo = pcsTag.McPkgNo;
+                tag.TagFunctionCode = pcsTag.TagFunctionCode;
+            }
         }
     }
 }
