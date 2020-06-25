@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 var problems = new ValidationProblemDetails(errors)
                 {
                     Status = context.Response.StatusCode,
-                    Title = $"Business validation errors: {errors.Count}"
+                    Title = $"One or more business validation errors occurred. ({errors.Count})"
                 };
                 var json = JsonSerializer.Serialize(problems);
                 _logger.LogInformation(json);
