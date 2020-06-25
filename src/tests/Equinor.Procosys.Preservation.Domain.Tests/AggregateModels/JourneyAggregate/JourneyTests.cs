@@ -175,5 +175,29 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(_stepC, steps.ElementAt(1));
             Assert.AreEqual(_stepA, steps.ElementAt(2));
         }
+
+        [TestMethod]
+        public void VoidStep_ShouldVoidStep()
+        {
+            var stepToVoid = _dutWith3Steps.Steps.First();
+            Assert.IsTrue(stepToVoid.IsVoided == false);
+
+            _dutWith3Steps.VoidStep(stepToVoid.Id, "AAAAAAAAABA=");
+
+            Assert.IsTrue(stepToVoid.IsVoided);
+        }
+
+        [TestMethod]
+        public void UnvoidStep_ShouldUnvoidStep()
+        {
+            var stepToUnvoid = _dutWith3Steps.Steps.First();
+            stepToUnvoid.Void();
+
+            Assert.IsTrue(stepToUnvoid.IsVoided == true);
+
+            _dutWith3Steps.UnvoidStep(stepToUnvoid.Id, "AAAAAAAAABA=");
+
+            Assert.IsFalse(stepToUnvoid.IsVoided);
+        }
     }
 }

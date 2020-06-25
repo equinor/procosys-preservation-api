@@ -7,9 +7,11 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidStep;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.GetAllJourneys;
 using Equinor.Procosys.Preservation.Query.GetJourneyById;
@@ -155,7 +157,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             var result = await _mediator.Send(command);
             return this.FromResult(result);
         }
-        
+
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
         [HttpDelete("{id}/Steps/{stepId}")]
         public async Task<ActionResult> DeleteStep(
@@ -167,6 +169,36 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromBody] DeleteStepDto dto)
         {
             var result = await _mediator.Send(new DeleteStepCommand(id, stepId, dto.RowVersion));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [HttpPut("{id}/Steps/{stepId}/Void")]
+        public async Task<ActionResult> VoidStep(
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int stepId,
+            [FromBody] VoidStepDto dto)
+        {
+            var result = await _mediator.Send(new VoidStepCommand(id, stepId, dto.RowVersion));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [HttpPut("{id}/Steps/{stepId}/Unvoid")]
+        public async Task<ActionResult> UnvoidStep(
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int stepId,
+            [FromBody] UnvoidStepDto dto)
+        {
+            var result = await _mediator.Send(new UnvoidStepCommand(id, stepId, dto.RowVersion));
             return this.FromResult(result);
         }
 
