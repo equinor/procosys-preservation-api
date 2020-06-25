@@ -183,27 +183,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         }
 
         [TestMethod]
-        public async Task GetTagDetails_ShouldCallMainApiClientManyTimes_WhenManyTagNos()
-        {
-            // Arrange
-            _mainApiClient
-                .Setup(x => x.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(_tagDetails));
-            var allTagNos = new List<string>();
-            for (var i = 0; i < 60; i++)
-            {
-                allTagNos.Add($"Tag{i}");
-            }
-
-            // Act
-            await _dut.GetTagDetailsAsync("PCS$TESTPLANT", "TestProject", allTagNos);
-
-            // Assert
-            _mainApiClient.Verify(x => x.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(It.IsAny<string>()),
-                Times.Exactly(2));
-        }
-
-        [TestMethod]
         public async Task GetTagDetails_ThrowsException_IfPlantIsInvalid()
             => await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
                 await _dut.GetTagDetailsAsync("INVALIDPLANT", "TestProject", new List<string> {"TagNo1"}));
@@ -249,6 +228,27 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             Assert.AreEqual(details.TagFunctionCode, tag.TagFunctionCode);
             Assert.AreEqual(details.RegisterCode, tag.RegisterCode);
             Assert.AreEqual(details.TagNo, tag.TagNo);
+        }
+
+        [TestMethod]
+        public async Task GetTagDetails_ShouldCallMainApiClientManyTimes_WhenManyTagNos()
+        {
+            // Arrange
+            _mainApiClient
+                .Setup(x => x.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(_tagDetails));
+            var allTagNos = new List<string>();
+            for (var i = 0; i < 60; i++)
+            {
+                allTagNos.Add($"Tag{i}");
+            }
+
+            // Act
+            await _dut.GetTagDetailsAsync("PCS$TESTPLANT", "TestProject", allTagNos);
+
+            // Assert
+            _mainApiClient.Verify(x => x.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(It.IsAny<string>()),
+                Times.Exactly(2));
         }
     }
 }
