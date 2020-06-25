@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step does not exist! Step={command.StepId}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
-                .WithMessage(command => $"Step is voided! Step={command.StepId}");
+                .WithMessage(command => $"Step is already voided! Step={command.StepId}");
 
             async Task<bool> BeAnExistingStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.ExistsAsync(stepId, token);

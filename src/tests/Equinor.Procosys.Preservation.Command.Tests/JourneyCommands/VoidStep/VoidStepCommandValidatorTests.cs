@@ -21,7 +21,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidStep
         {
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
-            _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(false));
 
             _command = new VoidStepCommand(_journeyId, _stepId, null);
             _dut = new VoidStepCommandValidator(_stepValidatorMock.Object);
@@ -57,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidStep
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step is voided!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step is already voided!"));
         }
     }
 }
