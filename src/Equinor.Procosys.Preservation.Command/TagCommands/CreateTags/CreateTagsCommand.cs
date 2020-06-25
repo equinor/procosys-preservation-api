@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
     public class CreateTagsCommand : IRequest<Result<List<int>>>, IProjectRequest
     {
         public CreateTagsCommand(
-            IEnumerable<string> tagNos,
+            IList<string> tagNos,
             string projectName,
             int stepId,
             IEnumerable<RequirementForCommand> requirements,
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             StorageArea = storageArea;
         }
 
-        public IEnumerable<string> TagNos { get; }
+        public IList<string> TagNos { get; }
         public string ProjectName { get; }
         public int StepId { get; }
         public IEnumerable<RequirementForCommand> Requirements { get; }
