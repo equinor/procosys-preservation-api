@@ -142,6 +142,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
             Assert.AreEqual(action.Title, actionDto.Title);
             Assert.AreEqual(action.IsClosed, actionDto.IsClosed);
             Assert.AreEqual(action.DueTimeUtc, actionDto.DueTimeUtc);
+            Assert.AreEqual(action.Attachments.Count, actionDto.AttachmentCount);
         }
     }
 }
