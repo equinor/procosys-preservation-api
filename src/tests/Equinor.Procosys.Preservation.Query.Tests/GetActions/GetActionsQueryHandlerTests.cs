@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -39,6 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
                 _testDataSet = AddTestDataSet(context);
 
                 var tag = _testDataSet.Project1.Tags.First();
+                var attachment = new ActionAttachment(TestPlant, Guid.NewGuid(), "FileA");
 
                 _openAction = new Action(TestPlant, "Open", "Desc1", _utcNow);
                 tag.AddAction(_openAction);
@@ -55,6 +57,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
                 _openActionWithDueTime = new Action(TestPlant, "OpenWithDueTime", "D1", _dueTimeUtc);
                 _openActionWithoutDueTime = new Action(TestPlant, "OpenWithoutDueTime", "D3", _dueTimeUtc);
                 _openActionWithoutDueTime.SetDueTime(null);
+                _openAction.AddAttachment(attachment);
                 _closedActionWithEarliestDueTime = new Action(TestPlant, "ClosedWithEarliestDueTime", "D5", _dueTimeUtc);
                 _closedActionWithEarliestDueTime.Close(_utcNow, personMock.Object);
                 _closedActionWithDueTime = new Action(TestPlant, "ClosedWithDueTime", "D4", _dueTimeUtc);
