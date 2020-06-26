@@ -753,11 +753,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilterType = VoidedFilterType.NotVoided}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilter = VoidedFilterType.NotVoided}), default);
                 AssertCount(result.Data, 19);
                 AssertIsVoided(result.Data, false);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilterType = VoidedFilterType.Voided}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilter = VoidedFilterType.Voided}), default);
                 AssertCount(result.Data, 1);
                 AssertIsVoided(result.Data, true);
             }
@@ -782,7 +782,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 McPkgNoStartsWith = $"{_testDataSet.McPkgPrefix}-0",
                 PurchaseOrderNoStartsWith = $"{_testDataSet.PoPrefix}-0",
                 CallOffStartsWith = $"{_testDataSet.CallOffPrefix}-0",
-                VoidedFilterType = VoidedFilterType.NotVoided
+                VoidedFilter = VoidedFilterType.NotVoided
             };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
