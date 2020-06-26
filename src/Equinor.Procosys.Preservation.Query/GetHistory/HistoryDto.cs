@@ -9,14 +9,14 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
             int id,
             string description,
             DateTime createdAtUtc,
-            int createdById,
+            PersonDto createdBy,
             EventType eventType,
             int? dueWeeks,
             int? preservationRecordId)
         {
             Id = id;
             Description = description;
-            CreatedById = createdById;
+            CreatedBy = createdBy;
             CreatedAtUtc = createdAtUtc;
             EventType = eventType;
             DueWeeks = dueWeeks;
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
         public int Id { get; }
         public string Description { get; }
         public DateTime CreatedAtUtc { get; }
-        public int CreatedById { get; }
+        public PersonDto CreatedBy { get; }
         public EventType EventType { get; }
         public int? DueWeeks { get; }
         public int? PreservationRecordId { get; }
