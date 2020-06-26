@@ -217,6 +217,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     where EF.Property<int>(a, "TagId") == tag.Id && a.ClosedAtUtc.HasValue
                     select a.Id).Any()
                 where project.Name == request.ProjectName &&
+                      (request.Filter.VoidedFilterType == VoidedFilterType.All ||
+                       (request.Filter.VoidedFilterType == VoidedFilterType.NotVoided && !tag.IsVoided) ||
+                       (request.Filter.VoidedFilterType == VoidedFilterType.Voided && tag.IsVoided)) &&
                       (!request.Filter.DueFilters.Any() || 
                            (request.Filter.DueFilters.Contains(DueFilterType.OverDue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
                            (request.Filter.DueFilters.Contains(DueFilterType.ThisWeek) && tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) ||

@@ -5,6 +5,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 {
     public class Filter
     {
+        public VoidedFilterType VoidedFilterType { get; set; } = VoidedFilterType.NotVoided;
         public ActionStatus? ActionStatus { get; set; }
         public IEnumerable<DueFilterType> DueFilters { get; set; } = new List<DueFilterType>();
         public PreservationStatus? PreservationStatus { get; set; }
