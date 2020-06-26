@@ -20,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
             RuleFor(command => command)
+                // todo must not void all requirements
                 .MustAsync((_, command, token) => requirementDefinitionValidator.BeUniqueRequirements(command.UpdatedRequirements.Select(u => u.RequirementId).ToList(), command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(), token))
                 .WithMessage(command => "Requirement definitions must be unique!");
 

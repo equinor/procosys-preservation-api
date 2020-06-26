@@ -411,6 +411,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 ChangeInterval(tagRequirement.Id, intervalWeeks);
             }
 
+            if (Requirements.All(r => r.IsVoided))
+            {
+                throw new Exception("At least one requirement must exists as non-voided");
+            }
+
             tagRequirement.SetRowVersion(requirementRowVersion);
         }
 
