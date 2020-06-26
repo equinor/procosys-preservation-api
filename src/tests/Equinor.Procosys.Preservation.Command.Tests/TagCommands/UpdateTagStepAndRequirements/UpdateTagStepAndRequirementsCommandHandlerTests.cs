@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirem
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -13,43 +14,35 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
     [TestClass]
     public class UpdateTagStepAndRequirementsCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const string PlantName = "TestPlant";
         private const int TagId = 123;
-        private const int StepId = 11;
+        private const int StepId1 = 11;
+        private const int StepId2 = 12;
         private const int ReqDefId1 = 99;
         private const int ReqDefId2 = 199;
-        private const int TagReqId = 0;
+        private const int TagReqId = 10;
         private const int Interval1 = 2;
         private const int Interval2 = 3;
         private const string RowVersion = "AAAAAAAAD6U=";
 
-        private Mock<Step> _stepMock;
+        private Mock<Step> _stepMock1;
+        private Mock<Step> _stepMock2;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
-        private Mock<Tag> _tagMock;
+        private Tag _tag;
 
-        private UpdateTagStepAndRequirementsCommand _command;
         private UpdateTagStepAndRequirementsCommandHandler _dut;
 
         [TestInitialize]
         public void Setup()
         {
             // Arrange
-            _stepMock = new Mock<Step>();
-            _stepMock.SetupGet(s => s.Id).Returns(StepId);
-            _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
-
-            _tagMock = new Mock<Tag>();
-            _tagMock.Setup(t => t.Plant).Returns(PlantName);
-
-            _journeyRepositoryMock = new Mock<IJourneyRepository>();
-            _journeyRepositoryMock
-                .Setup(x => x.GetStepByStepIdAsync(StepId))
-                .Returns(Task.FromResult(_stepMock.Object));
-
-            _projectRepositoryMock = new Mock<IProjectRepository>();
-            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tagMock.Object));
+            _stepMock1 = new Mock<Step>();
+            _stepMock1.SetupGet(s => s.Id).Returns(StepId1);
+            _stepMock1.SetupGet(s => s.Plant).Returns(TestPlant);
+            _stepMock2 = new Mock<Step>();
+            _stepMock2.SetupGet(s => s.Id).Returns(StepId2);
+            _stepMock2.SetupGet(s => s.Plant).Returns(TestPlant);
 
             _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
             var rdMock1 = new Mock<RequirementDefinition>();
@@ -62,15 +55,23 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(ReqDefId2))
                 .Returns(Task.FromResult(rdMock2.Object));
 
-            _command = new UpdateTagStepAndRequirementsCommand(
-                TagId,
-                StepId,
-                new List<UpdateRequirementForCommand>(),
-                new List<RequirementForCommand>
-                {
-                    new RequirementForCommand(ReqDefId2, Interval2)
-                }, 
-                null);
+            var tagRequirement = new TagRequirement(TestPlant, Interval1, rdMock1.Object);
+            tagRequirement.SetProtectedIdForTesting(TagReqId);
+            _tag = new Tag(TestPlant, TagType.Standard, "X", "D", _stepMock1.Object, new List<TagRequirement>
+            {
+                tagRequirement
+            });
+
+            _journeyRepositoryMock = new Mock<IJourneyRepository>();
+            _journeyRepositoryMock
+                .Setup(x => x.GetStepByStepIdAsync(StepId1))
+                .Returns(Task.FromResult(_stepMock1.Object));
+            _journeyRepositoryMock
+                .Setup(x => x.GetStepByStepIdAsync(StepId2))
+                .Returns(Task.FromResult(_stepMock2.Object));
+
+            _projectRepositoryMock = new Mock<IProjectRepository>();
+            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(TagId)).Returns(Task.FromResult(_tag));
 
             _dut = new UpdateTagStepAndRequirementsCommandHandler(
                 _projectRepositoryMock.Object,
@@ -78,92 +79,114 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 _rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object);
+
+            Assert.AreEqual(1, _tag.Requirements.Count);
         }
 
         [TestMethod]
-        public async Task HandlingUpdateTagStepAndRequirementsCommand_WhenAllIsOk()
-        {
-            // 
-            Assert.AreEqual(0, _tagMock.Object.Requirements.Count);
-
-            // Act
-            var result = await _dut.Handle(_command, default);
-
-            // Assert
-            Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(_stepMock.Object.Id, _tagMock.Object.StepId);
-            Assert.AreEqual(1, _tagMock.Object.Requirements.Count);
-        }
-
-        [TestMethod]
-        public async Task HandlingUpdateTagStepAndRequirementsCommand_RequirementIsUpdatedWithVoided()
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldAddNewRequirement_WhenAddingAddNewRequirement()
         {
             // Arrange
-            var updateOnExistingcommand = new UpdateTagStepAndRequirementsCommand(
+            var updatedRequirements = new List<UpdateRequirementForCommand>();
+            var newRequirements = new List<RequirementForCommand>
+            {
+                new RequirementForCommand(ReqDefId2, Interval2)
+            };
+            var command = new UpdateTagStepAndRequirementsCommand(
                 TagId,
-                StepId,
-                new List<UpdateRequirementForCommand>()
-                {
-                    new UpdateRequirementForCommand(TagReqId, Interval1, true, RowVersion)
-                },
-                new List<RequirementForCommand>(),
-                null);
-
+                StepId1,
+                updatedRequirements,
+                newRequirements, 
+                RowVersion);
+            
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(_stepMock.Object.Id, _tagMock.Object.StepId);
-            Assert.AreEqual(1, _tagMock.Object.Requirements.Count);
-            Assert.AreEqual(false, _tagMock.Object.Requirements.First().IsVoided);
-            Assert.AreEqual(Interval2, _tagMock.Object.Requirements.First().IntervalWeeks);
-
-            // Act
-            var result2 = await _dut.Handle(updateOnExistingcommand, default);
-
-            // Assert
-            Assert.AreEqual(0, result2.Errors.Count);
-            Assert.AreEqual(_stepMock.Object.Id, _tagMock.Object.StepId);
-            Assert.AreEqual(1, _tagMock.Object.Requirements.Count);
-            Assert.AreEqual(true, _tagMock.Object.Requirements.First().IsVoided);
-            Assert.AreEqual(Interval1, _tagMock.Object.Requirements.First().IntervalWeeks);
+            Assert.AreEqual(StepId1, _tag.StepId);
+            Assert.AreEqual(2, _tag.Requirements.Count);
         }
 
         [TestMethod]
-        public async Task HandlingUpdateTagStepAndRequirementsCommand_TagNextDueTimeUtcUpdated()
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldUpdateExistingRequirement()
         {
             // Arrange
-            var updateOnExistingcommand = new UpdateTagStepAndRequirementsCommand(
+            Assert.AreEqual(Interval1, _tag.Requirements.First().IntervalWeeks);
+            Assert.IsFalse(_tag.Requirements.First().IsVoided);
+            var updatedRequirements = new List<UpdateRequirementForCommand>
+            {
+                new UpdateRequirementForCommand(TagReqId, Interval2, true, RowVersion)
+            };
+            var command = new UpdateTagStepAndRequirementsCommand(
                 TagId,
-                StepId,
-                new List<UpdateRequirementForCommand>()
-                {
-                    new UpdateRequirementForCommand(TagReqId, Interval1, false, RowVersion)
-                },
+                StepId2,
+                updatedRequirements,
                 new List<RequirementForCommand>(),
-                null);
+                RowVersion);
 
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(command, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(_stepMock.Object.Id, _tagMock.Object.StepId);
-            Assert.AreEqual(1, _tagMock.Object.Requirements.Count);
-            Assert.AreEqual(false, _tagMock.Object.Requirements.First().IsVoided);
-            Assert.AreEqual(Interval2, _tagMock.Object.Requirements.First().IntervalWeeks);
+            Assert.AreEqual(StepId2, _tag.StepId);
+            Assert.AreEqual(1, _tag.Requirements.Count);
+            Assert.IsTrue(_tag.Requirements.First().IsVoided);
+            Assert.AreEqual(Interval2, _tag.Requirements.First().IntervalWeeks);
+        }
 
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldNotStartPreservationOnNewRequirements_WhenPreservationNotStarted()
+        {
+            // Arrange
+            var updatedRequirements = new List<UpdateRequirementForCommand>();
+            var newRequirements = new List<RequirementForCommand>
+            {
+                new RequirementForCommand(ReqDefId2, Interval2)
+            };
+            var command = new UpdateTagStepAndRequirementsCommand(
+                TagId,
+                StepId1,
+                updatedRequirements,
+                newRequirements, 
+                RowVersion);
+            
             // Act
-            var result2 = await _dut.Handle(updateOnExistingcommand, default);
+            var result = await _dut.Handle(command, default);
 
             // Assert
-            Assert.AreEqual(0, result2.Errors.Count);
-            Assert.AreEqual(_stepMock.Object.Id, _tagMock.Object.StepId);
-            Assert.AreEqual(1, _tagMock.Object.Requirements.Count);
-            Assert.AreEqual(false, _tagMock.Object.Requirements.First().IsVoided);
-            Assert.AreEqual(Interval1, _tagMock.Object.Requirements.First().IntervalWeeks);
-            Assert.AreEqual(null, _tagMock.Object.NextDueTimeUtc);
+            Assert.AreEqual(0, result.Errors.Count);
+            var newReq = _tag.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
+            Assert.IsNull(newReq.ActivePeriod);
+            Assert.IsNull(newReq.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldStartPreservationOnNewRequirements_WhenPreservationActive()
+        {
+            // Arrange
+            _tag.StartPreservation();
+            var updatedRequirements = new List<UpdateRequirementForCommand>();
+            var newRequirements = new List<RequirementForCommand>
+            {
+                new RequirementForCommand(ReqDefId2, Interval2)
+            };
+            var command = new UpdateTagStepAndRequirementsCommand(
+                TagId,
+                StepId1,
+                updatedRequirements,
+                newRequirements, 
+                RowVersion);
+            
+            // Act
+            var result = await _dut.Handle(command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            var newReq = _tag.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
+            Assert.IsNotNull(newReq.ActivePeriod);
+            Assert.IsNotNull(newReq.NextDueTimeUtc);
         }
     }
 }
