@@ -161,6 +161,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _requirements.Add(requirement);
+            if (Status == PreservationStatus.Active)
+            {
+                requirement.StartPreservation();
+            }
             UpdateNextDueTimeUtc();
             AddDomainEvent(new RequirementAddedEvent(requirement.Plant, ObjectGuid, requirement.RequirementDefinitionId));
         }
@@ -405,6 +409,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             if (tagRequirement.IntervalWeeks != intervalWeeks)
             {
                 ChangeInterval(tagRequirement.Id, intervalWeeks);
+            }
+
+            if (Requirements.All(r => r.IsVoided))
+            {
+                throw new Exception("At least one requirement must exists as non-voided");
             }
 
             tagRequirement.SetRowVersion(requirementRowVersion);
