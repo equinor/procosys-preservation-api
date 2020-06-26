@@ -94,13 +94,20 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _reqDef2NeedInput = new RequirementDefinition(TestPlant, "", 1, RequirementUsage.ForAll, 0);
             _reqDef2NeedInput.SetProtectedIdForTesting(++reqDefId);
             _reqDef2NeedInput.AddField(new Field(TestPlant, "", FieldType.CheckBox, 0));
-            
+
+            var reqId = 510;
             _reqNotNeedInputForAllTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDef1NotNeedInput);
+            _reqNotNeedInputForAllTwoWeekInterval.SetProtectedIdForTesting(++reqId);
             _reqNotNeedInputForSupplierTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefNotNeedInputForSupplier);
+            _reqNotNeedInputForSupplierTwoWeekInterval.SetProtectedIdForTesting(++reqId);
             _reqNotNeedInputForOtherTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefNotNeedInputForOther);
+            _reqNotNeedInputForOtherTwoWeekInterval.SetProtectedIdForTesting(++reqId);
             _reqNotNeedInputForAllThreeWeekInterval = new TagRequirement(TestPlant, ThreeWeeksInterval, _reqDef2NotNeedInput);
+            _reqNotNeedInputForAllThreeWeekInterval.SetProtectedIdForTesting(++reqId);
             _reqNeedInputTwoWeekInterval = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDef1NeedInput);
+            _reqNeedInputTwoWeekInterval.SetProtectedIdForTesting(++reqId);
             _reqNeedInputThreeWeekInterval = new TagRequirement(TestPlant, ThreeWeeksInterval, _reqDef2NeedInput);
+            _reqNeedInputThreeWeekInterval.SetProtectedIdForTesting(++reqId);
 
             _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther = new List<TagRequirement>
             {
@@ -1291,37 +1298,43 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void UpdateRequirement_ShouldUpdateRequirement()
         {
-            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.First();
 
             Assert.IsFalse(requirement.IsVoided);
             Assert.AreEqual(requirement.IntervalWeeks, 2);
 
-            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, true, 1, "AAAAAAAAABA=");
+            dut.UpdateRequirement(requirement.Id, true, 1, "AAAAAAAAABA=");
 
             Assert.IsTrue(requirement.IsVoided);
             Assert.AreEqual(requirement.IntervalWeeks, 1);
         }
 
         [TestMethod]
-        public void UpdateRequirement_Void_ShouldAddRequirementVoidedEvents()
+        public void UpdateRequirement_Void_ShouldAddRequirementVoidedEvent()
         {
-            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
-            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.First();
+            
+            // Act
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
-            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementVoidedEvent));
+            Assert.AreEqual(2, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementVoidedEvent));
         }
 
         [TestMethod]
-        public void UpdateRequirement_Unvoid_ShouldAddRequirementUnvoidedEvents()
+        public void UpdateRequirement_Unvoid_ShouldAddRequirementUnvoidedEvent()
         {
-            var requirement = _oneReq_NotNeedInputTwoWeekInterval.First();
-            requirement.Void();
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.First();
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+            
+            // Act
+            dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            _dutWithOneReqNotNeedInputTwoWeekInterval.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
-
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
-            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementUnvoidedEvent));
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementUnvoidedEvent));
         }
 
         #endregion
