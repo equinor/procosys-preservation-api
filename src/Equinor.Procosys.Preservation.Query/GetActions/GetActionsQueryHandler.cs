@@ -22,6 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActions
             var tag = await
                 (from t in _context.QuerySet<Tag>()
                         .Include(t => t.Actions)
+                        .ThenInclude(a => a.Attachments)
                     where t.Id == request.TagId
                     select t).SingleOrDefaultAsync(cancellationToken);
             
@@ -42,6 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActions
                     action.Title,
                     action.DueTimeUtc,
                     action.IsClosed,
+                    action.Attachments.ToList().Count,
                     action.RowVersion.ConvertToString())).ToList();
             return new SuccessResult<List<ActionDto>>(actions);
         }
