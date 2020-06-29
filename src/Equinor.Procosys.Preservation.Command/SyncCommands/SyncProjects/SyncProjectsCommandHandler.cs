@@ -68,11 +68,14 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
                     continue;
                 }
 
-                var pcsProject = await _projectApiService.GetProjectAsync(plant, project.Name);
-                project.IsClosed = pcsProject.IsClosed;
-                project.Description = pcsProject.Description;
+                var pcsProject = await _projectApiService.TryGetProjectAsync(plant, project.Name);
+                if (pcsProject != null)
+                {
+                    project.IsClosed = pcsProject.IsClosed;
+                    project.Description = pcsProject.Description;
 
-                await SyncTagData(plant, project.Name);
+                    await SyncTagData(plant, project.Name);
+                }
             }
         }
 

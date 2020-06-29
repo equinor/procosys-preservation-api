@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Discipline
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysDiscipline> GetDisciplineAsync(string plant, string code)
+        public async Task<ProcosysDiscipline> TryGetDisciplineAsync(string plant, string code)
         {
             if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
             {
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Discipline
                       $"&code={WebUtility.UrlEncode(code)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysDiscipline>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysDiscipline>(url);
         }
     }
 }
