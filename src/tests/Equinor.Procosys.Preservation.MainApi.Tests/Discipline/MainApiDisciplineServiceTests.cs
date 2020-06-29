@@ -43,19 +43,19 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
         }
 
         [TestMethod]
-        public async Task GetDiscipline_ShouldThrowException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetDisciplineAsync("INVALIDPLANT", "C"));
+        public async Task TryGetDiscipline_ShouldThrowException_WhenPlantIsInvalid()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.TryGetDisciplineAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
-        public async Task GetDiscipline_ShouldReturnDiscipline()
+        public async Task TryGetDiscipline_ShouldReturnDiscipline()
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysDiscipline>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProcosysDiscipline>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_procosysDiscipline));
 
             // Act
-            var result = await _dut.GetDisciplineAsync(_plant, _procosysDiscipline.Code);
+            var result = await _dut.TryGetDisciplineAsync(_plant, _procosysDiscipline.Code);
 
             // Assert
             Assert.AreEqual(_procosysDiscipline.Code, result.Code);

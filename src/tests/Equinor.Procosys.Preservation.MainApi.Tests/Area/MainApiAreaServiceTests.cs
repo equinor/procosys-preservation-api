@@ -43,18 +43,18 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
         }
 
         [TestMethod]
-        public async Task GetAreaCode_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetAreaAsync("INVALIDPLANT", "C"));
+        public async Task TryGetAreaCode_ThrowsException_WhenPlantIsInvalid()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.TryGetAreaAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
-        public async Task GetAreaCode_ReturnsAreaCode()
+        public async Task TryGetAreaCode_ReturnsAreaCode()
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysArea>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProcosysArea>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_procosysArea));
             // Act
-            var result = await _dut.GetAreaAsync(_plant, _procosysArea.Code);
+            var result = await _dut.TryGetAreaAsync(_plant, _procosysArea.Code);
 
             // Assert
             Assert.AreEqual(_procosysArea.Code, result.Code);
