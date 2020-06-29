@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                 .Returns(Task.FromResult(new List<RequirementDefinition> {rdMock1.Object, rdMock2.Object}));
 
             _tagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
-            _tagFunctionApiServiceMock.Setup(t => t.GetTagFunctionAsync(TestPlant, TagFunctionCode, RegisterCode))
+            _tagFunctionApiServiceMock.Setup(t => t.TryGetTagFunctionAsync(TestPlant, TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(new ProcosysTagFunction
                 {
                     Code = TagFunctionCode,

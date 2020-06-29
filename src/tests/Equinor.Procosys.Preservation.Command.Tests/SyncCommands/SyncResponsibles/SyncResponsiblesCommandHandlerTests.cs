@@ -54,10 +54,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncResponsib
 
             _responsibleApiServiceMock = new Mock<IResponsibleApiService>();
             _responsibleApiServiceMock
-                .Setup(x => x.GetResponsibleAsync(TestPlant, ResponsibleCode1))
+                .Setup(x => x.TryGetResponsibleAsync(TestPlant, ResponsibleCode1))
                 .Returns(Task.FromResult(_mainResponsible1));
             _responsibleApiServiceMock
-                .Setup(x => x.GetResponsibleAsync(TestPlant, ResponsibleCode2))
+                .Setup(x => x.TryGetResponsibleAsync(TestPlant, ResponsibleCode2))
                 .Returns(Task.FromResult(_mainResponsible2));
 
 
