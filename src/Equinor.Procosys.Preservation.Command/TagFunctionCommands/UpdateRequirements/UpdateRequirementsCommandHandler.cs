@@ -61,12 +61,12 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
 
         private async Task<TagFunction> CreateNewTagFunctionAsync(string tagFunctionCode, string registerCode)
         {
-            var procosysTagFunction = await _tagFunctionApiService.GetTagFunctionAsync(_plantProvider.Plant, tagFunctionCode, registerCode);
-            if (procosysTagFunction == null)
+            var pcsTagFunction = await _tagFunctionApiService.TryGetTagFunctionAsync(_plantProvider.Plant, tagFunctionCode, registerCode);
+            if (pcsTagFunction == null)
             {
                 return null;
             }
-            var tagFunction = new TagFunction(_plantProvider.Plant, tagFunctionCode, procosysTagFunction.Description, registerCode);
+            var tagFunction = new TagFunction(_plantProvider.Plant, tagFunctionCode, pcsTagFunction.Description, registerCode);
             _tagFunctionRepository.Add(tagFunction);
             return tagFunction;
         }

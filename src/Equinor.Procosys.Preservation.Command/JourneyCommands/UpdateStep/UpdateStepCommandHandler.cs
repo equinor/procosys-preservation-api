@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 
         private async Task<Responsible> CreateResponsibleAsync(string responsibleCode)
         {
-            var mainResponsible = await _responsibleApiService.GetResponsibleAsync(_plantProvider.Plant, responsibleCode);
+            var mainResponsible = await _responsibleApiService.TryGetResponsibleAsync(_plantProvider.Plant, responsibleCode);
             if (mainResponsible == null)
             {
                 return null;
