@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Command.PersonCommands.CreateOrUpdate;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
+using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.WebApi.Middleware
 {
@@ -16,34 +14,30 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
 
         public VerifyOidInDbMiddleware(RequestDelegate next) => _next = next;
 
-        public async Task InvokeAsync(HttpContext context, PreservationContext preservationContext, ICurrentUserProvider currentUserProvider)
+        public async Task InvokeAsync(
+            HttpContext context,
+            IHttpContextAccessor httpContextAccessor,
+            IMediator mediator,
+            ILogger<VerifyOidInDbMiddleware> logger)
         {
-            var exists = preservationContext.Persons.Any(p => p.Oid.Equals(currentUserProvider.GetCurrentUserOid()));
-
-            if (!exists)
+            var httpContextUser = httpContextAccessor.HttpContext.User;
+            var oid = httpContextUser.Claims.TryGetOid();
+            if (oid.HasValue)
             {
-                var givenName = context.User.Claims.TryGetGivenName();
-                var surName = context.User.Claims.TryGetSurName();
+                var givenName = httpContextUser.Claims.TryGetGivenName();
+                var surName = httpContextUser.Claims.TryGetSurName();
 
-                if (string.IsNullOrWhiteSpace(givenName) || string.IsNullOrWhiteSpace(surName))
-                {
-                    throw new Exception("Not able to find necessary claims to create user");
-                }
-
-                var person = new Person(currentUserProvider.GetCurrentUserOid(), givenName, surName);
-
+                var command = new CreateOrUpdatePersonCommand(oid.Value, givenName, surName);
                 try
                 {
-                    preservationContext.Persons.Add(person);
-                    preservationContext.SaveChanges();
-                    
+                    await mediator.Send(command);
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     // We have to do this silently as concurrency is a very likely problem.
                     // For a user accessing preservation for the first time, there will probably be multiple
                     // requests in parallel.
-                    preservationContext.Entry(person).State = EntityState.Detached;
+                    logger.LogError("Exception handling CreateOrUpdatePersonCommand", e);
                 }
             }
             

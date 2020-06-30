@@ -20,8 +20,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
         }
 
         public Guid Oid { get; private set; }
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
 
