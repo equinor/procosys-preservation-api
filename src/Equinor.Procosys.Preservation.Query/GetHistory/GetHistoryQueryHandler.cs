@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,14 +22,16 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
         {
             var tagHistory = await (from h in _context.QuerySet<History>()
                 join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
+                join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
                 where tag.Id == request.TagId
                 where tag.ObjectGuid == h.ObjectGuid
-                select new HistoryDto(h.Id,
+                select new HistoryDto(
+                    h.Id,
                     h.Description,
                     h.CreatedAtUtc,
-                    h.CreatedById,
+                    new PersonDto(createdBy.Id, createdBy.FirstName, createdBy.LastName),
                     h.EventType,
-                    null,
+                    h.DueInWeeks,
                     h.PreservationRecordId)).ToListAsync(cancellationToken);
 
             return new SuccessResult<List<HistoryDto>>(tagHistory);

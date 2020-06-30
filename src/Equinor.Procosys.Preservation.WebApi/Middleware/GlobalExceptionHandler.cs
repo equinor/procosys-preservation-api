@@ -43,12 +43,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 var errors = new Dictionary<string, string[]>();
                 foreach (var error in ve.Errors)
                 {
-                    errors.Add(error.PropertyName, new[] {error.ErrorMessage});
+                    if (!errors.ContainsKey(error.PropertyName))
+                    {
+                        errors.Add(error.PropertyName, new[] {error.ErrorMessage});
+                    }
+                    else
+                    {
+                        var errorsForProperty = errors[error.PropertyName].ToList();
+                        errorsForProperty.Add(error.ErrorMessage);
+                        errors[error.PropertyName] = errorsForProperty.ToArray();
+                    }
                 }
                 var problems = new ValidationProblemDetails(errors)
                 {
                     Status = context.Response.StatusCode,
-                    Title = $"One or more business validation errors occurred. ({errors.Count})"
+                    Title = $"One or more business validation errors occurred. ({ve.Errors.Count()})"
                 };
                 var json = JsonSerializer.Serialize(problems);
                 _logger.LogInformation(json);

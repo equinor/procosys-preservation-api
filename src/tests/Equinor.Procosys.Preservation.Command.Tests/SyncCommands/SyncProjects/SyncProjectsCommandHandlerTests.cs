@@ -153,6 +153,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
             _tagApiServiceMock
                 .Setup(x => x.GetTagDetailsAsync(TestPlant, ProjectName1, new List<string>{TagNo1, TagNo2}))
                 .Returns(Task.FromResult(mainTagDetailList));
+            _tagApiServiceMock
+                .Setup(x => x.GetTagDetailsAsync(TestPlant, ProjectName2, new List<string>()))
+                .Returns(Task.FromResult(new List<ProcosysTagDetails>() as IList<ProcosysTagDetails>));
             
             // Assert other interfaces and device in test (dut)
             _permissionCacheMock = new Mock<IPermissionCache>();

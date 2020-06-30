@@ -6,12 +6,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
 {
     public class UpdateTagStepAndRequirementsCommand : IRequest<Result<string>>, ITagCommandRequest
     {
-        public int TagId { get; }
-        public int StepId { get; }
-        public IList<UpdateRequirementForCommand> UpdatedRequirements { get; }
-        public IList<RequirementForCommand> NewRequirements { get; }
-        public string RowVersion { get; }
-
         public UpdateTagStepAndRequirementsCommand(
             int tagId,
             int stepId,
@@ -25,5 +19,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             NewRequirements = newRequirements;
             RowVersion = rowVersion;
         }
+
+        public int TagId { get; }
+        public int StepId { get; }
+        public IList<UpdateRequirementForCommand> UpdatedRequirements { get; }
+        public IList<RequirementForCommand> NewRequirements { get; }
+        public string RowVersion { get; }
     }
 }

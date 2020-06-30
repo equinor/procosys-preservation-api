@@ -5,6 +5,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 {
     public class Filter
     {
+        // todo set default to VoidedFilterType.NotVoided; on next line when client has implemented filter.
+        // The spec says that when user explicit set no filters, the default is to not show Voided tags.
+        // For now we show all tags, regardless if Voided or not
+        public VoidedFilterType VoidedFilter { get; set; } = VoidedFilterType.All;
         public ActionStatus? ActionStatus { get; set; }
         public IEnumerable<DueFilterType> DueFilters { get; set; } = new List<DueFilterType>();
         public PreservationStatus? PreservationStatus { get; set; }

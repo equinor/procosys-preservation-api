@@ -740,6 +740,30 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
         
         [TestMethod]
+        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnVoided()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.First();
+                tag.Void();
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilter = VoidedFilterType.NotVoided}), default);
+                AssertCount(result.Data, 19);
+                AssertIsVoided(result.Data, false);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {VoidedFilter = VoidedFilterType.Voided}), default);
+                AssertCount(result.Data, 1);
+                AssertIsVoided(result.Data, true);
+            }
+        }
+
+        [TestMethod]
         public async Task HandleGetAllTagsInProjectQuery_ShouldFilterWhenAllFiltersSet()
         {
             var filter = new Filter
@@ -757,7 +781,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
                 CommPkgNoStartsWith = $"{_testDataSet.CommPkgPrefix}-0",
                 McPkgNoStartsWith = $"{_testDataSet.McPkgPrefix}-0",
                 PurchaseOrderNoStartsWith = $"{_testDataSet.PoPrefix}-0",
-                CallOffStartsWith = $"{_testDataSet.CallOffPrefix}-0"
+                CallOffStartsWith = $"{_testDataSet.CallOffPrefix}-0",
+                VoidedFilter = VoidedFilterType.NotVoided
             };
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -800,7 +825,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
                 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnIsNew_BeforeNewPeriodHasElapsed()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldSetIsNew_BeforeNewPeriodHasElapsed()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -811,7 +836,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         }
                 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnIsFalse_AfterNewPeriodHasElapsed()
+        public async Task HandleGetAllTagsInProjectQuery_ShouldNotSetIsNew_AfterNewPeriodHasElapsed()
         {
             var timeSpan = new TimeSpan(_tagIsNewHours+1, 0, 0);
             _timeProvider.Elapse(timeSpan);
@@ -913,6 +938,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             foreach (var tag in data.Tags)
             {
                 Assert.AreEqual(actionStatus, tag.ActionStatus);
+            }
+        }
+
+        private void AssertIsVoided(TagsResult data, bool isVoided)
+        {
+            foreach (var tag in data.Tags)
+            {
+                Assert.AreEqual(isVoided, tag.IsVoided);
             }
         }
     }
