@@ -8,9 +8,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Misc
 
         public string GetBearerToken() => _token;
 
-        public void SetBearerToken(string token)
-        {
-            _token = token;
-        }
+        public void SetBearerToken(string token) => _token = token;
     }
 }
