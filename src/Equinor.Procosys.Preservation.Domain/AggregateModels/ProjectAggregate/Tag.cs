@@ -389,8 +389,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public void UpdateRequirement(int requirementId, bool isVoided, int intervalWeeks, string requirementRowVersion)
         {
-            var tagRequirement =
-                Requirements.Single(r => r.Id == requirementId);
+            var tagRequirement = Requirements.Single(r => r.Id == requirementId);
 
             if (tagRequirement.IsVoided != isVoided)
             {

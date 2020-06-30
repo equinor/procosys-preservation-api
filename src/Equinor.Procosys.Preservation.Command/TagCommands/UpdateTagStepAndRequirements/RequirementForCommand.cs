@@ -2,15 +2,15 @@
 {
     public class UpdateRequirementForCommand
     {
-        public UpdateRequirementForCommand(int requirementId, int intervalWeeks, bool isVoided, string rowVersion)
+        public UpdateRequirementForCommand(int tagRequirementId, int intervalWeeks, bool isVoided, string rowVersion)
         {
-            RequirementId = requirementId;
+            TagRequirementId = tagRequirementId;
             IntervalWeeks = intervalWeeks;
             IsVoided = isVoided;
             RowVersion = rowVersion;
         }
 
-        public int RequirementId { get;  }
+        public int TagRequirementId { get;  }
         public int IntervalWeeks { get; }
         public bool IsVoided { get; }
         public string RowVersion { get; set; }

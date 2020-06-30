@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -121,12 +122,80 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag.IsReadyToBeTransferred(journey);
         }
 
+        public async Task<bool> AllRequirementsWillBeVoidedAsync(
+            int tagId,
+            List<int> requirementIdsToBeVoided,
+            CancellationToken token)
+        {
+            var tag = await GetTagWithRequirements(tagId, token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            var nonVoidedRequirementIds = tag.Requirements.Where(r => !r.IsVoided).Select(r => r.Id);
+            return !nonVoidedRequirementIds.Except(requirementIdsToBeVoided).Any();
+        }
+
         public async Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken token)
         {
             var tag = await GetTagWithAttachments(tagId, token);
 
             return tag?.GetAttachmentByFileName(fileName) != null;
         }
+
+        public async Task<bool> HasRequirementAsync(int tagId, int tagRequirementId, CancellationToken token)
+        {
+            var tag = await GetTagWithRequirements(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            var requirement = tag.Requirements.SingleOrDefault(r => r.Id == tagRequirementId);
+
+            return requirement != null;
+        }
+
+        public async Task<bool> AllRequirementsWillBeUniqueAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token)
+        {
+            var tag = await GetTagWithRequirements(tagId, token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+            if (requirementDefinitionIdsToBeAdded.Count == 0)
+            {
+                return true;
+            }
+
+            var allRequirementDefinitionIds = tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();
+            allRequirementDefinitionIds.AddRange(requirementDefinitionIdsToBeAdded);
+            return allRequirementDefinitionIds.Count == allRequirementDefinitionIds.Distinct().Count();
+        }
+
+        public Task<bool> UsageCoversBothForSupplierAndOtherAsync(
+            int tagId,
+            List<int> tagRequirementIdsToBeVoided,
+            List<int> requirementDefinitionIdsToBeAdded,
+            CancellationToken token)
+            => throw new System.NotImplementedException();
+
+        public Task<bool> UsageCoversForOtherThanSuppliersAsync(
+            int tagId,
+            List<int> tagRequirementIdsToBeVoided,
+            List<int> requirementDefinitionIdsToBeAdded,
+            CancellationToken token)
+            => throw new System.NotImplementedException();
+
+        public Task<bool> UsageCoversForSupplierOnlyAsync(
+            int tagId,
+            List<int> tagRequirementIdsToBeVoided,
+            List<int> requirementDefinitionIdsToBeAdded,
+            CancellationToken token)
+            => throw new System.NotImplementedException();
 
         private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken token)
         {
