@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.PersonCommands.CreateOrUpdate;
+using Equinor.Procosys.Preservation.Command.PersonCommands.CreatePerson;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 var givenName = httpContextUser.Claims.TryGetGivenName();
                 var surName = httpContextUser.Claims.TryGetSurName();
 
-                var command = new CreateOrUpdatePersonCommand(oid.Value, givenName, surName);
+                var command = new CreatePersonCommand(oid.Value, givenName, surName);
                 try
                 {
                     await mediator.Send(command);
@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                     // We have to do this silently as concurrency is a very likely problem.
                     // For a user accessing preservation for the first time, there will probably be multiple
                     // requests in parallel.
-                    logger.LogError("Exception handling CreateOrUpdatePersonCommand", e);
+                    logger.LogError($"Exception handling {nameof(CreatePersonCommand)}", e);
                 }
             }
             

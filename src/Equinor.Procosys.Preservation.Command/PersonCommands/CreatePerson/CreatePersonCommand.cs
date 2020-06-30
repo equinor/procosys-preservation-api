@@ -2,11 +2,11 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateOrUpdate
+namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreatePerson
 {
-    public class CreateOrUpdatePersonCommand : IRequest<Result<Unit>>
+    public class CreatePersonCommand : IRequest<Result<Unit>>
     {
-        public CreateOrUpdatePersonCommand(Guid oid, string firstName, string lastName)
+        public CreatePersonCommand(Guid oid, string firstName, string lastName)
         {
             Oid = oid;
             FirstName = firstName;

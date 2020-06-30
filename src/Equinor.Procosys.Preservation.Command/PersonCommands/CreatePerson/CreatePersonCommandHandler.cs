@@ -5,40 +5,28 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateOrUpdate
+namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreatePerson
 {
-    public class CreateOrUpdatePersonCommandHandler : IRequestHandler<CreateOrUpdatePersonCommand, Result<Unit>>
+    public class CreatePersonCommandHandler : IRequestHandler<CreatePersonCommand, Result<Unit>>
     {
         private readonly IPersonRepository _personRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CreateOrUpdatePersonCommandHandler(IPersonRepository personRepository, IUnitOfWork unitOfWork)
+        public CreatePersonCommandHandler(IPersonRepository personRepository, IUnitOfWork unitOfWork)
         {
             _personRepository = personRepository;
             _unitOfWork = unitOfWork;
         }
 
         // todo write unit test after review ok
-        public async Task<Result<Unit>> Handle(CreateOrUpdatePersonCommand request, CancellationToken cancellationToken)
+        public async Task<Result<Unit>> Handle(CreatePersonCommand request, CancellationToken cancellationToken)
         {
-            var save = false;
             var person = await _personRepository.GetByOidAsync(request.Oid);
 
             if (person == null)
             {
                 person = new Person(request.Oid, request.FirstName, request.LastName);
                 _personRepository.Add(person);
-                save = true;
-            }
-            else if (person.FirstName != request.FirstName || person.LastName != request.LastName)
-            {
-                person.FirstName = request.FirstName;
-                person.LastName = request.LastName;
-                save = true;
-            }
-
-            if (save)
-            {
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
             
