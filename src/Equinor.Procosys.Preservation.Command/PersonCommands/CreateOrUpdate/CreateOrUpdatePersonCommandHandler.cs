@@ -7,17 +7,18 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateOrUpdate
 {
-    public class CreateOrUpdateCommandHandler : IRequestHandler<CreateOrUpdatePersonCommand, Result<Unit>>
+    public class CreateOrUpdatePersonCommandHandler : IRequestHandler<CreateOrUpdatePersonCommand, Result<Unit>>
     {
         private readonly IPersonRepository _personRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public CreateOrUpdateCommandHandler(IPersonRepository personRepository, IUnitOfWork unitOfWork)
+        public CreateOrUpdatePersonCommandHandler(IPersonRepository personRepository, IUnitOfWork unitOfWork)
         {
             _personRepository = personRepository;
             _unitOfWork = unitOfWork;
         }
 
+        // todo write unit test after review ok
         public async Task<Result<Unit>> Handle(CreateOrUpdatePersonCommand request, CancellationToken cancellationToken)
         {
             var save = false;
