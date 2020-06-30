@@ -12,8 +12,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureModificationAudit();
             builder.ConfigureConcurrencyToken();
 
-            builder.Property(x => x.Oid)
-                .IsRequired();
+            builder.HasIndex(x => x.Oid)
+                .IsUnique();
 
             builder.Property(x => x.FirstName)
                 .HasMaxLength(Person.FirstNameLengthMax)

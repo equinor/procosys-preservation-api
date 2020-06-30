@@ -179,6 +179,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 
             app.UseAuthentication();
             app.UseCurrentUser();
+            app.UseVerifyOidInDb();
             app.UseAuthorization();
             
 

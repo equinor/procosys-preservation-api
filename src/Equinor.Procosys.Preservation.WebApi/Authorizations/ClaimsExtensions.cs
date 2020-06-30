@@ -8,6 +8,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
     public static class ClaimsExtensions
     {
         public const string OidType = "http://schemas.microsoft.com/identity/claims/objectidentifier";
+        public const string GivenNameType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname";
+        public const string SurNameType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
 
         public static Guid? TryGetOid(this IEnumerable<Claim> claims)
         {
@@ -18,6 +20,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             }
 
             return null;
+        }
+
+        public static string TryGetGivenName(this IEnumerable<Claim> claims)
+        {
+            var givenName = claims.SingleOrDefault(c => c.Type == GivenNameType);
+
+            return givenName?.Value;
+        }
+
+        public static string TryGetSurName(this IEnumerable<Claim> claims)
+        {
+            var surName = claims.SingleOrDefault(c => c.Type == SurNameType);
+
+            return surName?.Value;
         }
     }
 }
