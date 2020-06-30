@@ -38,15 +38,15 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
         }
 
         [TestMethod]
-        public async Task GetProject_ReturnsProject()
+        public async Task TryGetProject_ReturnsProject()
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysProject>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProcosysProject>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_result));
 
             // Act
-            var result = await _dut.GetProjectAsync(_plant, _name);
+            var result = await _dut.TryGetProjectAsync(_plant, _name);
 
             // Assert
             Assert.AreEqual(_name, result.Name);

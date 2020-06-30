@@ -20,6 +20,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.TagFunction
         private readonly string TagFunctionCode = "CodeTF";
         private readonly string RegisterCode = "CodeR";
         private readonly string Description = "Description1";
+        private MainApiTagFunctionService _dut;
 
         [TestInitialize]
         public void Setup()
@@ -41,19 +42,20 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.TagFunction
                 Description = Description,
                 RegisterCode = RegisterCode
             };
+
+            _dut = new MainApiTagFunctionService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
         }
 
         [TestMethod]
-        public async Task GetTagFunction_ReturnsTagFunction()
+        public async Task TryGetTagFunction_ReturnsTagFunction()
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysTagFunction>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProcosysTagFunction>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_result));
-            var dut = new MainApiTagFunctionService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
 
             // Act
-            var result = await dut.GetTagFunctionAsync(_plant, TagFunctionCode, RegisterCode);
+            var result = await _dut.TryGetTagFunctionAsync(_plant, TagFunctionCode, RegisterCode);
 
             // Assert
             Assert.AreEqual(TagFunctionCode, result.Code);
@@ -62,11 +64,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.TagFunction
         }
 
         [TestMethod]
-        public async Task GetTagFunction_ThrowsException_WhenPlantIsInvalid()
-        {
-            var dut = new MainApiTagFunctionService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
-
-            await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await dut.GetTagFunctionAsync("INVALIDPLANT", "", ""));
-        }
+        public async Task TryGetTagFunction_ThrowsException_WhenPlantIsInvalid()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
+                await _dut.TryGetTagFunctionAsync("INVALIDPLANT", "", ""));
     }
 }

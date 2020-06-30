@@ -109,13 +109,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
 
             _projectApiServiceMock = new Mock<IProjectApiService>();
             _projectApiServiceMock
-                .Setup(x => x.GetProjectAsync(TestPlant, ProjectName1))
+                .Setup(x => x.TryGetProjectAsync(TestPlant, ProjectName1))
                 .Returns(Task.FromResult(_mainProject1));
             _projectApiServiceMock
-                .Setup(x => x.GetProjectAsync(TestPlant, ProjectName2))
+                .Setup(x => x.TryGetProjectAsync(TestPlant, ProjectName2))
                 .Returns(Task.FromResult(_mainProject2));
             _projectApiServiceMock
-                .Setup(x => x.GetProjectAsync(TestPlant, ProjectNameNoAccess))
+                .Setup(x => x.TryGetProjectAsync(TestPlant, ProjectNameNoAccess))
                 .Returns(Task.FromResult(_mainProjectNoAccess));
 
             // Assert tags in preservation
@@ -207,7 +207,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
             await _dut.Handle(_command, default);
 
             // Assert
-            _projectApiServiceMock.Verify(x => x.GetProjectAsync(TestPlant, ProjectNameNoAccess), Times.Never);
+            _projectApiServiceMock.Verify(x => x.TryGetProjectAsync(TestPlant, ProjectNameNoAccess), Times.Never);
             _projectRepositoryMock.Verify(p => p.GetStandardTagsInProjectOnlyAsync(ProjectNameNoAccess), Times.Never);
             Assert.AreEqual(ProjectDescriptionNoAccess, _projectNoAccess.Description);
             Assert.IsFalse(_projectNoAccess.IsClosed);

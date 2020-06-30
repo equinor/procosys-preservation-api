@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Responsible
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysResponsible> GetResponsibleAsync(string plant, string code)
+        public async Task<ProcosysResponsible> TryGetResponsibleAsync(string plant, string code)
         {
             if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
             {
@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Responsible
                       $"&code={WebUtility.UrlEncode(code)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserializeAsync<ProcosysResponsible>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysResponsible>(url);
         }
     }
 }

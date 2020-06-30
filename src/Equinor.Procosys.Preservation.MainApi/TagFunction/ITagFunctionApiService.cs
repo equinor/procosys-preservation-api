@@ -4,6 +4,6 @@ namespace Equinor.Procosys.Preservation.MainApi.TagFunction
 {
     public interface ITagFunctionApiService
     {
-        Task<ProcosysTagFunction> GetTagFunctionAsync(string plant, string tagFunctionCode, string registerCode);
+        Task<ProcosysTagFunction> TryGetTagFunctionAsync(string plant, string tagFunctionCode, string registerCode);
     }
 }

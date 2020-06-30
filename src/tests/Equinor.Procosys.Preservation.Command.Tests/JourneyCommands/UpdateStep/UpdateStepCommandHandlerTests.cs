@@ -81,14 +81,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _pcsResponsibleMock = new Mock<ProcosysResponsible>();
 
             _responsibleApiServiceMock = new Mock<IResponsibleApiService>();
-            _responsibleApiServiceMock.Setup(r => r.GetResponsibleAsync(TestPlant, _responsibleCode))
+            _responsibleApiServiceMock.Setup(r => r.TryGetResponsibleAsync(TestPlant, _responsibleCode))
                 .Returns(Task.FromResult(_pcsResponsibleMock.Object));
 
             _step = new Step(TestPlant, _oldTitle, _modeMock.Object, _responsible);
             _step.SetProtectedIdForTesting(stepId);
             _journey.AddStep(_step);
 
-            _responsibleApiServiceMock.Setup(s => s.GetResponsibleAsync(TestPlant, _responsibleCode))
+            _responsibleApiServiceMock.Setup(s => s.TryGetResponsibleAsync(TestPlant, _responsibleCode))
                 .Returns(Task.FromResult(new ProcosysResponsible { Description = "ResponsibleTitle" }));
 
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
@@ -140,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             // Arrange
             _responsibleRepositoryMock
                 .Setup(r => r.GetByCodeAsync(_responsibleCode)).Returns(Task.FromResult((Responsible)null));
-            _responsibleApiServiceMock.Setup(s => s.GetResponsibleAsync(TestPlant, _responsibleCode))
+            _responsibleApiServiceMock.Setup(s => s.TryGetResponsibleAsync(TestPlant, _responsibleCode))
                 .Returns(Task.FromResult((ProcosysResponsible)null));
 
             // Act
