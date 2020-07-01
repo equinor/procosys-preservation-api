@@ -97,73 +97,73 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasForSupplierOnlyUsageAsync_UsageForAllRequirement_ReturnsFalse()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForAllRequirement_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var reqIds = new List<int> {_reqDefForAllId};
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.HasForSupplierOnlyUsageAsync(reqIds, default);
+                var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task HasForSupplierOnlyUsageAsync_UsageForOtherRequirement_ReturnsFalse()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForOtherRequirement_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var reqIds = new List<int> {_reqDefForOtherId};
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.HasForSupplierOnlyUsageAsync(reqIds, default);
+                var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task HasForSupplierOnlyUsageAsync_UsageForSupplierRequirement_ReturnsTrue()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForSupplierRequirement_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var reqIds = new List<int> {_reqDefForSupplierId};
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.HasForSupplierOnlyUsageAsync(reqIds, default);
+                var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task HasForSupplierOnlyUsageAsync_UsageForSupplierAndOtherAndForAllRequirement_ReturnsTrue()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForSupplierAndOtherAndForAllRequirement_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var reqIds = new List<int> {_reqDefForSupplierId, _reqDefForOtherId, _reqDefForAllId};
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.HasForSupplierOnlyUsageAsync(reqIds, default);
+                var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task HasForSupplierOnlyUsageAsync_UnknownRequirement_ReturnsFalse()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UnknownRequirement_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var reqIds = new List<int> {0};
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.HasForSupplierOnlyUsageAsync(reqIds, default);
+                var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task HasForSupplierOnlyUsageAsync_NoRequirements_ReturnsFalse()
+        public async Task HasAnyForSupplierOnlyUsageAsync_NoRequirements_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var reqIds = new List<int>();
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.HasForSupplierOnlyUsageAsync(reqIds, default);
+                var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsFalse(result);
             }
         }

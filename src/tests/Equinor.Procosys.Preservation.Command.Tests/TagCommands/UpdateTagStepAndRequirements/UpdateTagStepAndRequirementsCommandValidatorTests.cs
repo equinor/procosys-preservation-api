@@ -195,7 +195,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             _rdValidatorMock.Setup(r => r.ExistsAsync(_reqDef3Id, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.UsageCoversForOtherThanSuppliersAsync(_tagId, new List<int>(), new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.HasForSupplierOnlyUsageAsync(_tagId, new List<int>(), new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(t => t.HasAnyForSupplierOnlyUsageAsync(_tagId, new List<int>(), new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
             var command = new UpdateTagStepAndRequirementsCommand(
                 _tagId,
                 _stepId,

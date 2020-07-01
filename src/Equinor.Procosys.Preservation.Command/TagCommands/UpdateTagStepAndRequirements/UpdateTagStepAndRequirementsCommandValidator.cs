@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
-                => !await tagValidator.HasForSupplierOnlyUsageAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
+                => !await tagValidator.HasAnyForSupplierOnlyUsageAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
             async Task<bool> BeASupplierStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsForSupplierAsync(stepId, token);
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)

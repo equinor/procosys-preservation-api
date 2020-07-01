@@ -188,7 +188,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         {
             _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
             _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
-            _rdValidatorMock.Setup(r => r.HasForSupplierOnlyUsageAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.HasAnyForSupplierOnlyUsageAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 

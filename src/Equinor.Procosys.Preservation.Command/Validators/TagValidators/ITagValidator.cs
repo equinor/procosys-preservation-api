@@ -39,6 +39,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         
         Task<bool> UsageCoversForOtherThanSuppliersAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
         
-        Task<bool> HasForSupplierOnlyUsageAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
+        Task<bool> HasAnyForSupplierOnlyUsageAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
     }
 }

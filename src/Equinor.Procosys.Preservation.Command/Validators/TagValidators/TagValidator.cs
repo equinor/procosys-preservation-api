@@ -210,7 +210,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
         }
 
-        public async Task<bool> HasForSupplierOnlyUsageAsync(
+        public async Task<bool> HasAnyForSupplierOnlyUsageAsync(
             int tagId,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
@@ -229,7 +229,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 return false;
             }
 
-            return await _requirementDefinitionValidator.HasForSupplierOnlyUsageAsync(requirementDefinitionIds, token);
+            return await _requirementDefinitionValidator.HasAnyForSupplierOnlyUsageAsync(requirementDefinitionIds, token);
         }
 
         private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken token)
