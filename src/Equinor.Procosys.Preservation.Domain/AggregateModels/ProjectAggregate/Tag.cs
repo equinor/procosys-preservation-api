@@ -359,34 +359,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool FollowsAJourney => TagType == TagType.Standard || TagType == TagType.PreArea;
 
-        private void Preserve(Person preservedBy, bool bulkPreserved)
-        {
-            if (!IsReadyToBePreserved())
-            {
-                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
-            }
-
-            foreach (var requirement in GetUpComingRequirements())
-            {
-                requirement.Preserve(preservedBy, bulkPreserved);
-            }
-        
-            UpdateNextDueTimeUtc();
-        }
-
         public IEnumerable<TagRequirement> RequirementsDueToCurrentStep(bool includeVoided = false)
             => Requirements
                 .Where(r => includeVoided || !r.IsVoided)
                 .Where(r => r.Usage == RequirementUsage.ForAll || 
                             (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
                             (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers));
-
-        private TagRequirement FirstUpcomingRequirement()
-            => GetUpComingRequirements().FirstOrDefault();
-
-        private void UpdateNextDueTimeUtc()
-            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
-
+        
         public void UpdateRequirement(int requirementId, bool isVoided, int intervalWeeks, string requirementRowVersion)
         {
             var tagRequirement = Requirements.Single(r => r.Id == requirementId);
@@ -410,11 +389,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 ChangeInterval(tagRequirement.Id, intervalWeeks);
             }
 
-            if (Requirements.All(r => r.IsVoided))
-            {
-                throw new Exception("At least one requirement must exists as non-voided");
-            }
-
             tagRequirement.SetRowVersion(requirementRowVersion);
         }
 
@@ -431,5 +405,26 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
             AddDomainEvent(new IntervalChangedEvent(Plant, ObjectGuid, fromInterval, toInterval));
         }
+
+        private void Preserve(Person preservedBy, bool bulkPreserved)
+        {
+            if (!IsReadyToBePreserved())
+            {
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
+            }
+
+            foreach (var requirement in GetUpComingRequirements())
+            {
+                requirement.Preserve(preservedBy, bulkPreserved);
+            }
+        
+            UpdateNextDueTimeUtc();
+        }
+
+        private TagRequirement FirstUpcomingRequirement()
+            => GetUpComingRequirements().FirstOrDefault();
+
+        private void UpdateNextDueTimeUtc()
+            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
     }
 }
