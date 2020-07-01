@@ -207,27 +207,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldFail_WhenVoidingOnlyRequirement()
-        {
-            // Arrange
-            var tagRequirement = _tagWithOneRequirement.Requirements.First();
-            Assert.IsFalse(tagRequirement.IsVoided);
-            var updatedRequirements = new List<UpdateRequirementForCommand>
-            {
-                new UpdateRequirementForCommand(tagRequirement.Id, ThreeWeekInterval, true, RowVersion)
-            };
-            var command = new UpdateTagStepAndRequirementsCommand(
-                TagId1,
-                StepId2,
-                updatedRequirements,
-                new List<RequirementForCommand>(),
-                RowVersion);
-
-            // Act
-            await Assert.ThrowsExceptionAsync<Exception>(() => _dut.Handle(command, default));
-        }
-
-        [TestMethod]
         public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldBeAbleToVoidRequirement_WhenNonVoidingRequirementExistsAfter()
         {
             // Arrange
