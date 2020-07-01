@@ -96,9 +96,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             string plant,
             [FromRoute] int id,
-            [FromQuery] bool includeVoided = false)
+            [FromQuery] bool includeVoided = false,
+            [FromQuery] bool includeAllUsages = false)
         {
-            var result = await _mediator.Send(new GetTagRequirementsQuery(id, includeVoided));
+            var result = await _mediator.Send(new GetTagRequirementsQuery(id, includeVoided, includeAllUsages));
             return this.FromResult(result);
         }
 
