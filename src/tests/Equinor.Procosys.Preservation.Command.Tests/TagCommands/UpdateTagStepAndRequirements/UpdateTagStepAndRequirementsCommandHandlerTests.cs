@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
@@ -204,27 +203,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             var newReq = _tagWithOneRequirement.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
             Assert.IsNotNull(newReq.ActivePeriod);
             Assert.IsNotNull(newReq.NextDueTimeUtc);
-        }
-
-        [TestMethod]
-        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldFail_WhenVoidingOnlyRequirement()
-        {
-            // Arrange
-            var tagRequirement = _tagWithOneRequirement.Requirements.First();
-            Assert.IsFalse(tagRequirement.IsVoided);
-            var updatedRequirements = new List<UpdateRequirementForCommand>
-            {
-                new UpdateRequirementForCommand(tagRequirement.Id, ThreeWeekInterval, true, RowVersion)
-            };
-            var command = new UpdateTagStepAndRequirementsCommand(
-                TagId1,
-                StepId2,
-                updatedRequirements,
-                new List<RequirementForCommand>(),
-                RowVersion);
-
-            // Act
-            await Assert.ThrowsExceptionAsync<Exception>(() => _dut.Handle(command, default));
         }
 
         [TestMethod]
