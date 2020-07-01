@@ -796,24 +796,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void OrderedRequirements_ShouldNotReturnVoidedRequirements()
-        {
-            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
-            dut.Requirements.ElementAt(0).Void();
-
-            Assert.AreEqual(1, dut.RequirementsDueToCurrentStep().Count());
-        }
-
-        [TestMethod]
-        public void OrderedRequirements_ShouldReturnVoidedRequirements()
-        {
-            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
-            dut.Requirements.ElementAt(0).Void(); 
-
-            Assert.AreEqual(2, dut.RequirementsDueToCurrentStep(true).Count());
-        }
-
-        [TestMethod]
         public void OrderedRequirements_ShouldChange_WhenPreserve()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
@@ -857,6 +839,56 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var orderedRequirements = dut.OrderedRequirements().ToList();
             Assert.AreEqual(3, orderedRequirements.Count);
             Assert.IsNull(orderedRequirements.FirstOrDefault(r => r.RequirementDefinitionId == _reqDefNotNeedInputForOtherId));
+        }
+
+        #endregion
+
+        #region RequirementsDueToCurrentStep
+        
+        [TestMethod]
+        public void RequirementsDueToCurrentStep_ShouldNotReturnVoidedRequirements()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            dut.Requirements.ElementAt(0).Void();
+
+            Assert.AreEqual(1, dut.RequirementsDueToCurrentStep().Count());
+        }
+
+        [TestMethod]
+        public void RequirementsDueToCurrentStep_ShouldReturnVoidedRequirements()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            dut.Requirements.ElementAt(0).Void(); 
+
+            Assert.AreEqual(2, dut.RequirementsDueToCurrentStep(true).Count());
+        }
+
+        [TestMethod]
+        public void RequirementsDueToCurrentStep_ShouldReturnAllRequirements()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+
+            Assert.AreEqual(4, dut.RequirementsDueToCurrentStep(includeAllUsages: true).Count());
+        }
+
+        [TestMethod]
+        public void RequirementsDueToCurrentStep_ShouldReturnRequirementsAccordingToStep_WhenInSupplierStep()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+
+            var requirements = dut.RequirementsDueToCurrentStep().ToList();
+            Assert.AreEqual(3, requirements.Count);
+            Assert.IsFalse(requirements.Any(r => r.Usage == RequirementUsage.ForOtherThanSuppliers));
+        }
+
+        [TestMethod]
+        public void RequirementsDueToCurrentStep_ShouldReturnRequirementsAccordingToStep_WhenInOtherStep()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+
+            var requirements = dut.RequirementsDueToCurrentStep().ToList();
+            Assert.AreEqual(3, requirements.Count);
+            Assert.IsFalse(requirements.Any(r => r.Usage == RequirementUsage.ForSuppliersOnly));
         }
 
         #endregion

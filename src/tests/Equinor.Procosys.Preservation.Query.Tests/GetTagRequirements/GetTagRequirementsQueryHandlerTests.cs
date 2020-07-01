@@ -172,7 +172,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(_tagId, false);
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -198,7 +198,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(_tagId, false);
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -220,7 +220,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(_tagId, true);
+                var query = new GetTagRequirementsQuery(_tagId, true, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -248,7 +248,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 _timeProvider.ElapseWeeks(_requestTimeAfterPreservationStartedInWeeks);
 
-                var query = new GetTagRequirementsQuery(_tagId, false);
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -292,7 +292,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(_tagId, false);
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -345,7 +345,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(_tagId, false);
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -389,7 +389,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(_tagId, false);
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -410,7 +410,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(_tagId, false);
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -465,7 +465,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(_tagId, false);
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -488,7 +488,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetTagRequirementsQuery(0, false);
+                var query = new GetTagRequirementsQuery(0, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
