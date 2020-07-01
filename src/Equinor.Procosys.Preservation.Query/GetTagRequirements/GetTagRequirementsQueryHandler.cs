@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                 ).ToListAsync(cancellationToken);
 
             var requirements = tag
-                .OrderedRequirements(request.IncludeVoided)
+                .OrderedRequirements(request.IncludeVoided, request.IncludeAllUsages)
                 .Select(requirement =>
                 {
                     // .Single should be OK here since all requirements for a tag should be to unique Definitions
