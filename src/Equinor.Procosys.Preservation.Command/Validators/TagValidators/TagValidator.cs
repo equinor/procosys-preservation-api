@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -12,8 +13,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
     public class TagValidator : ITagValidator
     {
         private readonly IReadOnlyContext _context;
+        private readonly IRequirementDefinitionValidator _requirementDefinitionValidator;
 
-        public TagValidator(IReadOnlyContext context) => _context = context;
+        public TagValidator(IReadOnlyContext context, IRequirementDefinitionValidator requirementDefinitionValidator)
+        {
+            _context = context;
+            _requirementDefinitionValidator = requirementDefinitionValidator;
+        }
 
         public async Task<bool> ExistsAsync(int tagId, CancellationToken token) =>
             await (from t in _context.QuerySet<Tag>()
@@ -122,22 +128,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag.IsReadyToBeTransferred(journey);
         }
 
-        public async Task<bool> AllRequirementsWillBeVoidedAsync(
-            int tagId,
-            List<int> requirementIdsToBeVoided,
-            CancellationToken token)
-        {
-            var tag = await GetTagWithRequirements(tagId, token);
-
-            if (tag == null)
-            {
-                return false;
-            }
-
-            var nonVoidedRequirementIds = tag.Requirements.Where(r => !r.IsVoided).Select(r => r.Id);
-            return !nonVoidedRequirementIds.Except(requirementIdsToBeVoided).Any();
-        }
-
         public async Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken token)
         {
             var tag = await GetTagWithAttachments(tagId, token);
@@ -176,26 +166,71 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return allRequirementDefinitionIds.Count == allRequirementDefinitionIds.Distinct().Count();
         }
 
-        public Task<bool> UsageCoversBothForSupplierAndOtherAsync(
+        public async Task<bool> UsageCoversBothForSupplierAndOtherAsync(
             int tagId,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
-            => throw new System.NotImplementedException();
+        {
+            List<int> requirementDefinitionIds;
+            Tag tag;
+            (tag, requirementDefinitionIds) = await GetRequirementDefinitionIdsFromNonVoidedRequirements(
+                tagId,
+                tagRequirementIdsToBeVoided,
+                requirementDefinitionIdsToBeAdded,
+                token);
 
-        public Task<bool> UsageCoversForOtherThanSuppliersAsync(
-            int tagId,
-            List<int> tagRequirementIdsToBeVoided,
-            List<int> requirementDefinitionIdsToBeAdded,
-            CancellationToken token)
-            => throw new System.NotImplementedException();
+            if (tag == null)
+            {
+                return false;
+            }
 
-        public Task<bool> UsageCoversForSupplierOnlyAsync(
+            return await _requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(requirementDefinitionIds, token);
+        }
+
+        public async Task<bool> UsageCoversForOtherThanSuppliersAsync(
             int tagId,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
-            => throw new System.NotImplementedException();
+        {
+            List<int> requirementDefinitionIds;
+            Tag tag;
+            (tag, requirementDefinitionIds) = await GetRequirementDefinitionIdsFromNonVoidedRequirements(
+                tagId,
+                tagRequirementIdsToBeVoided,
+                requirementDefinitionIdsToBeAdded,
+                token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
+        }
+
+        public async Task<bool> HasForSupplierOnlyUsageAsync(
+            int tagId,
+            List<int> tagRequirementIdsToBeVoided,
+            List<int> requirementDefinitionIdsToBeAdded,
+            CancellationToken token)
+        {
+            List<int> requirementDefinitionIds;
+            Tag tag;
+            (tag, requirementDefinitionIds) = await GetRequirementDefinitionIdsFromNonVoidedRequirements(
+                tagId,
+                tagRequirementIdsToBeVoided,
+                requirementDefinitionIdsToBeAdded,
+                token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return await _requirementDefinitionValidator.HasForSupplierOnlyUsageAsync(requirementDefinitionIds, token);
+        }
 
         private async Task<Tag> GetTagWithoutIncludes(int tagId, CancellationToken token)
         {
@@ -228,6 +263,33 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 where t.Id == tagId
                 select t).SingleOrDefaultAsync(token);
             return tag;
+        }
+
+        private async Task<(Tag, List<int>)> GetRequirementDefinitionIdsFromNonVoidedRequirements(
+            int tagId,
+            List<int> tagRequirementIdsToBeVoided,
+            List<int> requirementDefinitionIdsToBeAdded,
+            CancellationToken token)
+        {
+            var tag = await GetTagWithRequirements(tagId, token);
+            if (tag == null)
+            {
+                return (null, new List<int>());
+            }
+
+            var nonVoidedTagRequirementIds = 
+                tag.Requirements
+                    .Where(r => !r.IsVoided)
+                    .Select(r => r.Id)
+                    .Except(tagRequirementIdsToBeVoided).ToList();
+            
+            var nonVoidedRequirementDefinitionIds = 
+                tag.Requirements
+                    .Where(r => nonVoidedTagRequirementIds.Contains(r.Id))
+                    .Select(r => r.RequirementDefinitionId).ToList();
+            nonVoidedRequirementDefinitionIds.AddRange(requirementDefinitionIdsToBeAdded);
+
+            return (tag, nonVoidedRequirementDefinitionIds);
         }
     }
 }

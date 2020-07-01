@@ -102,7 +102,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         {
             // Arrange
             _rdValidatorMock.Setup(r => r.ExistsAsync(_reqDef3Id, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.AllRequirementsWillBeVoidedAsync(_tagId, new List<int>{_tagReq1Id, _tagReq2Id}, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.UsageCoversBothForSupplierAndOtherAsync(_tagId, new List<int>{_tagReq1Id, _tagReq2Id}, new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
             var command = new UpdateTagStepAndRequirementsCommand(
@@ -128,7 +127,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.UsageCoversBothForSupplierAndOtherAsync(_tagId, new List<int>{_tagReq1Id, _tagReq2Id}, new List<int>(), default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.AllRequirementsWillBeVoidedAsync(_tagId, new List<int>{_tagReq1Id, _tagReq2Id}, default)).Returns(Task.FromResult(true));
             var command = new UpdateTagStepAndRequirementsCommand(
                 _tagId,
                 _supplierStep,

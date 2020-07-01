@@ -31,8 +31,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             
         Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token);
         
-        Task<bool> AllRequirementsWillBeVoidedAsync(int tagId, List<int> tagRequirementIdsToBeVoided, CancellationToken token);
-        
         Task<bool> HasRequirementAsync(int tagId, int tagRequirementId, CancellationToken token);
         
         Task<bool> AllRequirementsWillBeUniqueAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
@@ -41,6 +39,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         
         Task<bool> UsageCoversForOtherThanSuppliersAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
         
-        Task<bool> UsageCoversForSupplierOnlyAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
+        Task<bool> HasForSupplierOnlyUsageAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
     }
 }

@@ -10,6 +10,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         Task<bool> IsVoidedAsync(int requirementDefinitionId, CancellationToken token);
         Task<bool> UsageCoversBothForSupplierAndOtherAsync(List<int> requirementDefinitionIds, CancellationToken token);
         Task<bool> UsageCoversForOtherThanSuppliersAsync(List<int> requirementDefinitionIds, CancellationToken token);
-        Task<bool> UsageCoversForSupplierOnlyAsync(List<int> requirementDefinitionIds, CancellationToken token);
+        Task<bool> HasForSupplierOnlyUsageAsync(List<int> requirementDefinitionIds, CancellationToken token);
     }
 }

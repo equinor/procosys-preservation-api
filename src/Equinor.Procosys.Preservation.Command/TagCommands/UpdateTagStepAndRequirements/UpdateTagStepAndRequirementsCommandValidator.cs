@@ -20,29 +20,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
-            RuleFor(command => command)
-                .MustAsync((_, command, token) =>
-                    RequirementsMustBeUniqueAfterUpdateAsync(
-                        command.TagId,
-                        command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
-                        token))
-                .WithMessage(command => "Requirements must be unique!")
-                .MustAsync((_, command, token) =>
-                    NotAllRequirementsCanBeVoidedAfterUpdateAsync(
-                        command.TagId, 
-                        command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
-                        command.NewRequirements.Any(), 
-                        token))
-                .WithMessage(command => "Not all requirement can be voided!");
-
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {
                 RuleFor(command => command)
                     .MustAsync((_, command, token) =>
+                        RequirementsMustBeUniqueAfterUpdateAsync(
+                            command.TagId,
+                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
+                            token))
+                    .WithMessage(command => "Requirements must be unique!")
+                    .MustAsync((_, command, token) =>
                         RequirementUsageIsForAllJourneysAsync(
-                            command.TagId, 
+                            command.TagId,
                             command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
-                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(), 
+                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
                     .WithMessage(command =>
                         "Requirements must include requirements to be used both for supplier and other than suppliers!");
@@ -50,18 +41,24 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             {
                 RuleFor(command => command)
                     .MustAsync((_, command, token) =>
+                        RequirementsMustBeUniqueAfterUpdateAsync(
+                            command.TagId,
+                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
+                            token))
+                    .WithMessage(command => "Requirements must be unique!")
+                    .MustAsync((_, command, token) =>
                         RequirementUsageIsForJourneysWithoutSupplierAsync(
-                            command.TagId, 
+                            command.TagId,
                             command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
-                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(), 
+                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
                     .WithMessage(command =>
                         "Requirements must include requirements to be used for other than suppliers!")
                     .MustAsync((_, command, token) =>
                         RequirementUsageIsNotForSupplierStepOnlyAsync(
-                            command.TagId, 
+                            command.TagId,
                             command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
-                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(), 
+                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
                     .WithMessage(command => "Requirements can't include requirements just for suppliers!");
             });
@@ -89,9 +86,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             async Task<bool> RequirementsMustBeUniqueAfterUpdateAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token)
                 => requirementDefinitionIdsToBeAdded.Count == 0 || 
                    await tagValidator.AllRequirementsWillBeUniqueAsync(tagId, requirementDefinitionIdsToBeAdded, token);
-            async Task<bool> NotAllRequirementsCanBeVoidedAfterUpdateAsync(int tagId, List<int> tagRequirementIdsToBeVoided, bool newRequirementAdded, CancellationToken token)
-                => newRequirementAdded || 
-                   !await tagValidator.AllRequirementsWillBeVoidedAsync(tagId, tagRequirementIdsToBeVoided, token);
             async Task<bool> RequirementUsageIsForAllJourneysAsync(
                 int tagId, 
                 List<int> tagRequirementIdsToBeVoided,
@@ -109,7 +103,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
-                => !await tagValidator.UsageCoversForSupplierOnlyAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
+                => !await tagValidator.HasForSupplierOnlyUsageAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
             async Task<bool> BeASupplierStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsForSupplierAsync(stepId, token);
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
