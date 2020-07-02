@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -58,7 +59,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
         public async Task Synchronize(CancellationToken cancellationToken)
         {
             var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
-            _bearerTokenSetter.SetBearerToken(bearerToken);
+            _bearerTokenSetter.SetBearerToken(bearerToken, false);
 
             _currentUserSetter.SetCurrentUser(_synchronizationUserOid);
 

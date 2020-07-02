@@ -105,10 +105,10 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<ITagFunctionRepository, TagFunctionRepository>();
             services.AddScoped<IHistoryRepository, HistoryRepository>();
 
-            services.AddScoped<TokenProvider>();
-            services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<TokenProvider>());
-            services.AddScoped<IBearerTokenSetter>(x => x.GetRequiredService<TokenProvider>());
-            services.AddScoped<IApplicationAuthenticator>(x => x.GetRequiredService<TokenProvider>());
+            services.AddScoped<Authenticator>();
+            services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<Authenticator>());
+            services.AddScoped<IBearerTokenSetter>(x => x.GetRequiredService<Authenticator>());
+            services.AddScoped<IApplicationAuthenticator>(x => x.GetRequiredService<Authenticator>());
             services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();
