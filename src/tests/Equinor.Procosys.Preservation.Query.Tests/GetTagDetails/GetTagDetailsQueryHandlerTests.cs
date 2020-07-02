@@ -48,6 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 var step = context.Steps.Single(s => s.Id == _testTag.StepId);
                 var mode = context.Modes.Single(m => m.Id == step.ModeId);
                 Assert.AreEqual(_testTag.AreaCode, dto.AreaCode);
+                Assert.AreEqual(_testTag.Calloff, dto.CalloffNo);
                 Assert.AreEqual(_testTag.CommPkgNo, dto.CommPkgNo);
                 Assert.AreEqual(_testTag.Description, dto.Description);
                 Assert.AreEqual(_testTag.Id, dto.Id);

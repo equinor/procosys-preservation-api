@@ -30,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                     select new TagDetailsDto
                                     {
                                         AreaCode = tag.AreaCode,
+                                        CalloffNo = tag.Calloff,
                                         CommPkgNo = tag.CommPkgNo,
                                         Description = tag.Description,
                                         Id = tag.Id,
