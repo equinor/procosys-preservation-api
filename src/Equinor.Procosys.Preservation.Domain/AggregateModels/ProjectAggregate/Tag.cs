@@ -161,6 +161,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _requirements.Add(requirement);
+            if (Status == PreservationStatus.Active)
+            {
+                requirement.StartPreservation();
+            }
             UpdateNextDueTimeUtc();
             AddDomainEvent(new RequirementAddedEvent(requirement.Plant, ObjectGuid, requirement.RequirementDefinitionId));
         }
@@ -288,8 +292,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return GetUpComingRequirements;
         }
 
-        public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool includeVoided = false)
-            => RequirementsDueToCurrentStep(includeVoided).OrderBy(r => r.NextDueTimeUtc);
+        public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool includeVoided = false, bool includeAllUsages = false)
+            => RequirementsDueToCurrentStep(includeVoided, includeAllUsages)
+                .OrderBy(r => r.NextDueTimeUtc);
 
         public bool IsReadyToBeTransferred(Journey journey)
         {
@@ -355,38 +360,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public bool FollowsAJourney => TagType == TagType.Standard || TagType == TagType.PreArea;
 
-        private void Preserve(Person preservedBy, bool bulkPreserved)
-        {
-            if (!IsReadyToBePreserved())
-            {
-                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
-            }
-
-            foreach (var requirement in GetUpComingRequirements())
-            {
-                requirement.Preserve(preservedBy, bulkPreserved);
-            }
-        
-            UpdateNextDueTimeUtc();
-        }
-
-        public IEnumerable<TagRequirement> RequirementsDueToCurrentStep(bool includeVoided = false)
+        public IEnumerable<TagRequirement> RequirementsDueToCurrentStep(bool includeVoided = false, bool includeAllUsages = false)
             => Requirements
                 .Where(r => includeVoided || !r.IsVoided)
-                .Where(r => r.Usage == RequirementUsage.ForAll || 
+                .Where(r => includeAllUsages || r.Usage == RequirementUsage.ForAll || 
                             (IsInSupplierStep && r.Usage == RequirementUsage.ForSuppliersOnly) ||
                             (!IsInSupplierStep && r.Usage == RequirementUsage.ForOtherThanSuppliers));
-
-        private TagRequirement FirstUpcomingRequirement()
-            => GetUpComingRequirements().FirstOrDefault();
-
-        private void UpdateNextDueTimeUtc()
-            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
-
+        
         public void UpdateRequirement(int requirementId, bool isVoided, int intervalWeeks, string requirementRowVersion)
         {
-            var tagRequirement =
-                Requirements.Single(r => r.Id == requirementId);
+            var tagRequirement = Requirements.Single(r => r.Id == requirementId);
 
             if (tagRequirement.IsVoided != isVoided)
             {
@@ -423,5 +406,26 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
             AddDomainEvent(new IntervalChangedEvent(Plant, ObjectGuid, fromInterval, toInterval));
         }
+
+        private void Preserve(Person preservedBy, bool bulkPreserved)
+        {
+            if (!IsReadyToBePreserved())
+            {
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be preserved");
+            }
+
+            foreach (var requirement in GetUpComingRequirements())
+            {
+                requirement.Preserve(preservedBy, bulkPreserved);
+            }
+        
+            UpdateNextDueTimeUtc();
+        }
+
+        private TagRequirement FirstUpcomingRequirement()
+            => GetUpComingRequirements().FirstOrDefault();
+
+        private void UpdateNextDueTimeUtc()
+            => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
     }
 }

@@ -19,7 +19,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         private readonly Uri _baseAddress;
         private readonly IBearerTokenApiClient _mainApiClient;
         private readonly IPlantCache _plantCache;
-        private readonly ILogger<MainApiTagService> _logger;
         private readonly int _tagSearchPageSize;
 
         public MainApiTagService(
@@ -30,7 +29,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         {
             _mainApiClient = mainApiClient;
             _plantCache = plantCache;
-            _logger = logger;
             _apiVersion = options.CurrentValue.ApiVersion;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
             if (options.CurrentValue.TagSearchPageSize < 1)
@@ -40,7 +38,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             _tagSearchPageSize = options.CurrentValue.TagSearchPageSize;
             if (_tagSearchPageSize < 100)
             {
-                _logger.LogWarning("Tag search page size is set to a low value. This may impact the overall performance!");
+                logger.LogWarning("Tag search page size is set to a low value. This may impact the overall performance!");
             }
             if (_tagSearchPageSize <= 0)
             {
@@ -48,11 +46,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             }
         }
 
-        public async Task<IList<ProcosysTagDetails>> GetTagDetailsAsync(string plant, string projectName, IEnumerable<string> tagNos)
+        public async Task<IList<ProcosysTagDetails>> GetTagDetailsAsync(string plant, string projectName, IList<string> allTagNos)
         {
-            if (tagNos == null)
+            if (allTagNos == null)
             {
-                throw new ArgumentNullException(nameof(tagNos));
+                throw new ArgumentNullException(nameof(allTagNos));
 
             }
             if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
@@ -60,22 +58,35 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
                 throw new ArgumentException($"Invalid plant: {plant}");
             }
 
-            var url = $"{_baseAddress}Tag/ByTagNos" +
+            var baseUrl = $"{_baseAddress}Tag/ByTagNos" +
                 $"?plantId={plant}" +
                 $"&projectName={WebUtility.UrlEncode(projectName)}" +
                 $"&api-version={_apiVersion}";
-            foreach (var tagNo in tagNos)
-            {
-                url += $"&tagNos={WebUtility.UrlEncode(tagNo)}";
-            }
 
-            var tagDetails = await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(url);
-            
-            if (tagDetails == null)
+            var tagDetails = new List<ProcosysTagDetails>();
+            var page = 0;
+            // Use relative small page size since TagNos are added to querystring of url and maxlength is 2000
+            var pageSize = 50;
+            IEnumerable<string> pageWithTagNos;
+            do
             {
-                _logger.LogWarning($"Tag details returned no data. URL: {url}");
-                return default;
-            }
+                pageWithTagNos = allTagNos.Skip(pageSize * page).Take(pageSize).ToList();
+
+                if (pageWithTagNos.Any())
+                {
+                    var url = baseUrl;
+                    foreach (var tagNo in pageWithTagNos)
+                    {
+                        url += $"&tagNos={WebUtility.UrlEncode(tagNo)}";
+                    }
+
+                    var tagDetailsPage = await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(url);
+                    tagDetails.AddRange(tagDetailsPage);
+                }
+
+                page++;
+
+            } while (pageWithTagNos.Count() == pageSize);
             return tagDetails;
         }
 

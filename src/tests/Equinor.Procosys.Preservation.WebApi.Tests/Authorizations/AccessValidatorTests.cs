@@ -19,6 +19,8 @@ using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -653,6 +655,120 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region UpdateTagCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new UpdateTagCommand(TagIdWithAccessToProject, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new UpdateTagCommand(TagIdWithoutAccessToProject, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateTagCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new UpdateTagCommand(TagIdWithAccessToProject, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateTagCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new UpdateTagCommand(TagIdWithAccessToProject, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region UpdateTagStepAndRequirementsCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, 0, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithoutAccessToProject, 0, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, 0, null, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, 0, null, null, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -1301,7 +1417,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public async Task ValidateAsync_OnGetTagRequirementsQuery_ShouldReturnTrue_WhenAccessToProject()
         {
-            var query = new GetTagRequirementsQuery(TagIdWithAccessToProject, false);
+            var query = new GetTagRequirementsQuery(TagIdWithAccessToProject, false, false);
             // act
             var result = await _dut.ValidateAsync(query);
 
@@ -1312,7 +1428,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public async Task ValidateAsync_OnGetTagRequirementsQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
-            var query = new GetTagRequirementsQuery(TagIdWithoutAccessToProject, false);
+            var query = new GetTagRequirementsQuery(TagIdWithoutAccessToProject, false, false);
             // act
             var result = await _dut.ValidateAsync(query);
 

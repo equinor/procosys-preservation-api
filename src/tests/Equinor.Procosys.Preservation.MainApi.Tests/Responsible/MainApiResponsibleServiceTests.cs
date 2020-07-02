@@ -34,11 +34,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Responsible
         }
 
         [TestMethod]
-        public async Task GetResponsibleCode_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.GetResponsibleAsync("INVALIDPLANT", "C"));
+        public async Task TryGetResponsibleCode_ThrowsException_WhenPlantIsInvalid()
+            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.TryGetResponsibleAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
-        public async Task GetResponsibleCode_ReturnsResponsibleCode()
+        public async Task TryGetResponsibleCode_ReturnsResponsibleCode()
         {
             // Arrange
             var procosysResponsible = new ProcosysResponsible
@@ -48,10 +48,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Responsible
                 Description = "Description1",
             };
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserializeAsync<ProcosysResponsible>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProcosysResponsible>(It.IsAny<string>()))
                 .Returns(Task.FromResult(procosysResponsible));
             // Act
-            var result = await _dut.GetResponsibleAsync(_plant, procosysResponsible.Code);
+            var result = await _dut.TryGetResponsibleAsync(_plant, procosysResponsible.Code);
 
             // Assert
             Assert.AreEqual(procosysResponsible.Code, result.Code);

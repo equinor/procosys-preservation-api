@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
             Assert.AreEqual(expected.PreservationRecordId, actual.PreservationRecordId);
             Assert.AreEqual(expected.Description, actual.Description);
             Assert.AreEqual(expected.EventType, actual.EventType);
-            Assert.AreEqual(expected.CreatedById, actual.CreatedById);
+            Assert.AreEqual(expected.CreatedById, actual.CreatedBy.Id);
             Assert.AreEqual(expected.CreatedAtUtc, actual.CreatedAtUtc);
         }
     }

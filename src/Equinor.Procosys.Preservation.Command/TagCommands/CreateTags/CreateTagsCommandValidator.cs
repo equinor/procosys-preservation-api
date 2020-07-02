@@ -91,7 +91,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
-                return !await requirementDefinitionValidator.UsageCoversForSupplierOnlyAsync(reqIds, token);
+                return !await requirementDefinitionValidator.HasAnyForSupplierOnlyUsageAsync(reqIds, token);
             }                        
 
             async Task<bool> NotBeAnExistingTagWithinProjectAsync(string tagNo, string projectName, CancellationToken token) =>

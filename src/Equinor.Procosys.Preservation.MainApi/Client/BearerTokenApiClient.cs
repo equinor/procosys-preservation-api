@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -22,9 +23,15 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
             _httpClientFactory = httpClientFactory;
             _bearerTokenProvider = bearerTokenProvider;
             _logger = logger;
-    }
+        }
+
+        public async Task<T> TryQueryAndDeserializeAsync<T>(string url)
+            => await QueryAndDeserializeAsync<T>(url, true);
 
         public async Task<T> QueryAndDeserializeAsync<T>(string url)
+            => await QueryAndDeserializeAsync<T>(url, false);
+
+        private async Task<T> QueryAndDeserializeAsync<T>(string url, bool tryGet)
         {
             if (string.IsNullOrEmpty(url))
             {
@@ -38,12 +45,17 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
 
             var httpClient = await CreateHttpClientAsync();
 
-            var stopWatch = Stopwatch.StartNew();
             var response = await httpClient.GetAsync(url);
+            var stopWatch = Stopwatch.StartNew();
             stopWatch.Stop();
 
             if (!response.IsSuccessStatusCode)
             {
+                if (tryGet && response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    _logger.LogWarning($"Request returned 'Not found' and took {stopWatch.Elapsed.TotalSeconds}s.");
+                    return default;
+                }
                 _logger.LogError($"Request was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
                 throw new Exception();
             }

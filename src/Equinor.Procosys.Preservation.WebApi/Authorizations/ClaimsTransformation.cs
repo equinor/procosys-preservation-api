@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.WebApi.Caches;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations

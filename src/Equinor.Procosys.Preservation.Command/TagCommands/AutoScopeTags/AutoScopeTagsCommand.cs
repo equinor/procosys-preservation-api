@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
     public class AutoScopeTagsCommand : IRequest<Result<List<int>>>, IProjectRequest
     {
         public AutoScopeTagsCommand(
-            IEnumerable<string> tagNos,
+            IList<string> tagNos,
             string projectName,
             int stepId,
             string remark,
@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
             StorageArea = storageArea;
         }
 
-        public IEnumerable<string> TagNos { get; }
+        public IList<string> TagNos { get; }
         public string ProjectName { get; }
         public int StepId { get; }
         public string Remark { get; }

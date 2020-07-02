@@ -96,9 +96,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [Required]
             string plant,
             [FromRoute] int id,
-            [FromQuery] bool includeVoided = false)
+            [FromQuery] bool includeVoided = false,
+            [FromQuery] bool includeAllUsages = false)
         {
-            var result = await _mediator.Send(new GetTagRequirementsQuery(id, includeVoided));
+            var result = await _mediator.Send(new GetTagRequirementsQuery(id, includeVoided, includeAllUsages));
             return this.FromResult(result);
         }
 
@@ -361,10 +362,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 dto.StepId,
                 requirements,
                 dto.Remark,
-                dto.StorageArea)
-            {
-                Migration = true
-            };
+                dto.StorageArea);
 
             var result = await _mediator.Send(command);
             return this.FromResult(result);
@@ -381,7 +379,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             var result = await _mediator.Send(
                 new AutoScopeTagsCommand(
-                    dto.TagNos,
+                    dto.TagNos.ToList(),
                     dto.ProjectName,
                     dto.StepId,
                     dto.Remark,
@@ -793,6 +791,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 new Filter(),
                 new Paging(paging.Page, paging.Size)
             );
+
+            if (filter.VoidedFilter.HasValue)
+            {
+                query.Filter.VoidedFilter = filter.VoidedFilter.Value;
+            }
 
             if (filter.ActionStatus.HasValue)
             {

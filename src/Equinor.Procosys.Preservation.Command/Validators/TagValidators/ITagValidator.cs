@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
@@ -29,5 +30,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token);
             
         Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token);
+        
+        Task<bool> HasRequirementAsync(int tagId, int tagRequirementId, CancellationToken token);
+        
+        Task<bool> AllRequirementsWillBeUniqueAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
+        
+        Task<bool> UsageCoversBothForSupplierAndOtherAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
+        
+        Task<bool> UsageCoversForOtherThanSuppliersAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
+        
+        Task<bool> HasAnyForSupplierOnlyUsageAsync(int tagId, List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
     }
 }

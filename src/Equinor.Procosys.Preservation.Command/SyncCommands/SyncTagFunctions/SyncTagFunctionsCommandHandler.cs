@@ -44,8 +44,11 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions
             
             foreach (var tagFunction in tagFunctions)
             {
-                var pcsTagFunction = await _tagFunctionApiService.GetTagFunctionAsync(plant, tagFunction.Code, tagFunction.RegisterCode);
-                tagFunction.Description = pcsTagFunction.Description;
+                var pcsTagFunction = await _tagFunctionApiService.TryGetTagFunctionAsync(plant, tagFunction.Code, tagFunction.RegisterCode);
+                if (pcsTagFunction != null)
+                {
+                    tagFunction.Description = pcsTagFunction.Description;
+                }
             }
         }
     }

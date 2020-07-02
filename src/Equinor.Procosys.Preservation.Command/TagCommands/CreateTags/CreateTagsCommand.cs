@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
@@ -15,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             string remark,
             string storageArea)
         {
-            TagNos = tagNos ?? new List<string>();
+            TagNos = tagNos != null ? tagNos.ToList() : new List<string>();
             ProjectName = projectName;
             StepId = stepId;
             Requirements = requirements ?? new List<RequirementForCommand>();
@@ -23,14 +24,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             StorageArea = storageArea;
         }
 
-        public IEnumerable<string> TagNos { get; }
+        public IList<string> TagNos { get; }
         public string ProjectName { get; }
         public int StepId { get; }
         public IEnumerable<RequirementForCommand> Requirements { get; }
         public string Remark { get; }
         public string StorageArea { get; }
-        
-        // Todo Remove Migration property when migration period from old to new preservation in ProCoSys is over
-        public bool Migration { get; set; }
     }
 }

@@ -19,10 +19,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
             {
                 currentUserSetter.SetCurrentUser(oid.Value);
             }
-            else
-            {
-                throw new Exception("Unable to determine current user");
-            }
 
             // Call the next delegate/middleware in the pipeline
             await _next(context);

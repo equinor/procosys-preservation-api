@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
     public class TagIdWithRowVersionDto
     {
