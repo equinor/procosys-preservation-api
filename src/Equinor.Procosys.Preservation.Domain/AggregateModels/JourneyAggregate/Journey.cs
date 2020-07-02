@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
     public class Journey : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
+        public const string DuplicatePrefix = " - Copy";
         public const int TitleLengthMin = 3;
         public const int TitleLengthMax = 255;
 

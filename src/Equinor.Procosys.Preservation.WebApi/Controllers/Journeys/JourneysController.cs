@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep;
+using Equinor.Procosys.Preservation.Command.JourneyCommands.DuplicateJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidStep;
@@ -79,6 +80,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
             [FromBody] UpdateJourneyDto dto)
         {
             var result = await _mediator.Send(new UpdateJourneyCommand(id, dto.Title, dto.RowVersion));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
+        [HttpPut("{id}")]
+        public async Task<ActionResult<int>> DuplicateJourney(
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromRoute] int id)
+        {
+            var result = await _mediator.Send(new DuplicateJourneyCommand(id));
             return this.FromResult(result);
         }
         
