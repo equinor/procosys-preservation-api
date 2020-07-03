@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -119,6 +120,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
             if (request.TagType == TagType.PoArea)
             {
+                if (string.IsNullOrEmpty(request.PurchaseOrderCalloffCode))
+                {
+                    throw new Exception($"Tags of type {TagType.PoArea} must have {nameof(request.PurchaseOrderCalloffCode)}");
+                }
                 var poParts = request.PurchaseOrderCalloffCode.Split('/');
                 purchaseOrderNo = poParts[0].Trim();
                 if (poParts.Length > 1)
