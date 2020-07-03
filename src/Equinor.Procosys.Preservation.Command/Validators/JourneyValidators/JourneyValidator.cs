@@ -76,7 +76,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
             return inUse;
         }
 
-        // todeo write tests
         public async Task<bool> ExistsWithDuplicateTitleAsync(int journeyId, CancellationToken token)
         {
             var journey = await (from j in _context.QuerySet<Journey>()
