@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.WebApi.Authentication;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using MediatR;
@@ -26,7 +28,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IBearerTokenSetter _bearerTokenSetter;
         private readonly IClaimsTransformation _claimsTransformation;
-        private readonly IAuthenticator _authenticator;
+        private readonly IApplicationAuthenticator _authenticator;
         private readonly IPlantCache _plantCache;
 
         public SynchronizationService(
@@ -37,7 +39,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             ICurrentUserSetter currentUserSetter,
             IBearerTokenSetter bearerTokenSetter,
             IClaimsTransformation claimsTransformation,
-            IAuthenticator authenticator,
+            IApplicationAuthenticator authenticator,
             IPlantCache plantCache,
             IOptionsMonitor<SynchronizationOptions> options)
         {
@@ -56,8 +58,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
 
         public async Task Synchronize(CancellationToken cancellationToken)
         {
-            var bearerToken = await _authenticator.GetBearerTokenAsync();
-            _bearerTokenSetter.SetBearerToken(bearerToken);
+            var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
+            _bearerTokenSetter.SetBearerToken(bearerToken, false);
 
             _currentUserSetter.SetCurrentUser(_synchronizationUserOid);
 

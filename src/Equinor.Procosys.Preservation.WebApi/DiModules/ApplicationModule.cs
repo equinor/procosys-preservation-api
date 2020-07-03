@@ -44,6 +44,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Equinor.Procosys.Preservation.WebApi.Synchronization;
+using Equinor.Procosys.Preservation.WebApi.Authentication;
 
 namespace Equinor.Procosys.Preservation.WebApi.DIModules
 {
@@ -94,7 +95,6 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IUnitOfWork>(x => x.GetRequiredService<PreservationContext>());
             services.AddScoped<IReadOnlyContext, PreservationContext>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
-            services.AddScoped<IAuthenticator, Authenticator>();
 
             services.AddScoped<IProjectRepository, ProjectRepository>();
             services.AddScoped<IModeRepository, ModeRepository>();
@@ -105,9 +105,10 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<ITagFunctionRepository, TagFunctionRepository>();
             services.AddScoped<IHistoryRepository, HistoryRepository>();
 
-            services.AddScoped<RequestBearerTokenProvider>();
-            services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<RequestBearerTokenProvider>());
-            services.AddScoped<IBearerTokenSetter>(x => x.GetRequiredService<RequestBearerTokenProvider>());
+            services.AddScoped<Authenticator>();
+            services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<Authenticator>());
+            services.AddScoped<IBearerTokenSetter>(x => x.GetRequiredService<Authenticator>());
+            services.AddScoped<IApplicationAuthenticator>(x => x.GetRequiredService<Authenticator>());
             services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();
