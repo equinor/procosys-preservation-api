@@ -17,6 +17,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
     public class CreateAreaTagCommandHandlerTests : CommandHandlerTestsBase
     {
         private const string TestProjectName = "TestProjectX";
+        private const string TestPurchaseOrder = "TestPurchaseOrder";
+        private const string TestCalloff = "TestCalloff";
         private const int StepId = 11;
         private const int ReqDefId1 = 99;
         private const int ReqDefId2 = 199;
@@ -34,7 +36,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         private Mock<IDisciplineApiService> _disciplineApiServiceMock;
         private Mock<IAreaApiService> _areaApiServiceMock;
 
-        private CreateAreaTagCommand _command;
+        private CreateAreaTagCommand _createPreAreaCommand;
+        private CreateAreaTagCommand _createSiteAreaCommand;
+        private CreateAreaTagCommand _createPoAreaWithPurchasedOrderCommand;
+        private CreateAreaTagCommand _createPoAreaWithCalloffCommand;
         private CreateAreaTagCommandHandler _dut;
 
         [TestInitialize]
@@ -91,12 +96,60 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                     Description = AreaDescription
                 }));
 
-            _command = new CreateAreaTagCommand(
+            _createPreAreaCommand = new CreateAreaTagCommand(
                 TestProjectName,
                 TagType.PreArea,
                 disciplineCode,
                 areaCode,
+                "notused",
                 null,
+                StepId,
+                new List<RequirementForCommand>
+                {
+                    new RequirementForCommand(ReqDefId1, Interval1),
+                    new RequirementForCommand(ReqDefId2, Interval2),
+                },
+                null,
+                "Remark",
+                "SA");
+            _createSiteAreaCommand = new CreateAreaTagCommand(
+                TestProjectName,
+                TagType.SiteArea,
+                disciplineCode,
+                areaCode,
+                "notused",
+                null,
+                StepId,
+                new List<RequirementForCommand>
+                {
+                    new RequirementForCommand(ReqDefId1, Interval1),
+                    new RequirementForCommand(ReqDefId2, Interval2),
+                },
+                null,
+                "Remark",
+                "SA");
+            _createPoAreaWithPurchasedOrderCommand = new CreateAreaTagCommand(
+                TestProjectName,
+                TagType.PoArea,
+                disciplineCode,
+                areaCode,
+                TestPurchaseOrder,
+                null,
+                StepId,
+                new List<RequirementForCommand>
+                {
+                    new RequirementForCommand(ReqDefId1, Interval1),
+                    new RequirementForCommand(ReqDefId2, Interval2),
+                },
+                null,
+                "Remark",
+                "SA");
+            _createPoAreaWithCalloffCommand = new CreateAreaTagCommand(
+                TestProjectName,
+                TagType.PoArea,
+                disciplineCode,
+                areaCode,
+                $"{TestPurchaseOrder}/{TestCalloff}",
                 null,
                 StepId,
                 new List<RequirementForCommand>
@@ -123,7 +176,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public async Task HandlingCreateAreaTagCommand_ShouldAddProjectToRepository_WhenProjectNotExists()
         {
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_createPreAreaCommand, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
@@ -140,7 +193,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(project));
 
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_createPreAreaCommand, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
@@ -151,14 +204,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public async Task HandlingCreateAreaTagCommand_ShouldAddTagToNewProject_WhenProjectNotExists()
         {
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_createPreAreaCommand, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             
             var tags = _projectAddedToRepository.Tags;
             Assert.AreEqual(1, tags.Count);
-            AssertTagProperties(_command, tags.First());
         }
 
         [TestMethod]
@@ -171,14 +223,69 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(0, project.Tags.Count);
             
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_createPreAreaCommand, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             
             var tags = project.Tags;
             Assert.AreEqual(1, tags.Count);
-            AssertTagProperties(_command, tags.First());
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateAreaTagCommand_ShouldSetCorrectProperties_WhenCreatingPreAreaTag()
+        {
+            // Act
+            var result = await _dut.Handle(_createPreAreaCommand, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            
+            var tags = _projectAddedToRepository.Tags;
+            Assert.AreEqual(1, tags.Count);
+            AssertTagProperties(_createPreAreaCommand, tags.First(), null, null);
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateAreaTagCommand_ShouldSetCorrectProperties_WhenCreatingSiteAreaTag()
+        {
+            // Act
+            var result = await _dut.Handle(_createSiteAreaCommand, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            
+            var tags = _projectAddedToRepository.Tags;
+            Assert.AreEqual(1, tags.Count);
+            AssertTagProperties(_createSiteAreaCommand, tags.First(), null, null);
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateAreaTagCommand_ShouldSetCorrectProperties_WhenCreatingPoAreaTagWithJustPo()
+        {
+            // Act
+            var result = await _dut.Handle(_createPoAreaWithPurchasedOrderCommand, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            
+            var tags = _projectAddedToRepository.Tags;
+            Assert.AreEqual(1, tags.Count);
+            AssertTagProperties(_createPoAreaWithPurchasedOrderCommand, tags.First(), TestPurchaseOrder, null);
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateAreaTagCommand_ShouldSetCorrectProperties_WhenCreatingPoAreaTagWithPoAndCo()
+        {
+            // Act
+            var result = await _dut.Handle(_createPoAreaWithCalloffCommand, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            
+            var tags = _projectAddedToRepository.Tags;
+            Assert.AreEqual(1, tags.Count);
+            AssertTagProperties(_createPoAreaWithCalloffCommand, tags.First(), TestPurchaseOrder, TestCalloff);
         }
 
         [TestMethod]
@@ -187,17 +294,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _projectRepositoryMock
                 .Setup(r => r.GetProjectOnlyByNameAsync(TestProjectName)).Returns(Task.FromResult(new Project(TestPlant, TestProjectName, "")));
             // Act
-            await _dut.Handle(_command, default);
+            await _dut.Handle(_createPreAreaCommand, default);
             
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
-        private void AssertTagProperties(CreateAreaTagCommand command, Tag tagAddedToProject)
+        private void AssertTagProperties(CreateAreaTagCommand command, Tag tagAddedToProject, string expectedPurchaseOrder, string expectedCalloff)
         {
             Assert.AreEqual(command.AreaCode, tagAddedToProject.AreaCode);
             Assert.AreEqual(AreaDescription, tagAddedToProject.AreaDescription);
-            Assert.IsNull(tagAddedToProject.Calloff);
+            Assert.AreEqual(expectedCalloff, tagAddedToProject.Calloff);
             Assert.IsNull(tagAddedToProject.CommPkgNo);
             Assert.AreEqual(command.DisciplineCode, tagAddedToProject.DisciplineCode);
             Assert.AreEqual(DisciplineDescription, tagAddedToProject.DisciplineDescription);
@@ -206,7 +313,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             Assert.AreEqual(command.Description, tagAddedToProject.Description);
             Assert.AreEqual(command.Remark, tagAddedToProject.Remark);
             Assert.AreEqual(command.StorageArea, tagAddedToProject.StorageArea);
-            Assert.IsNull(tagAddedToProject.PurchaseOrderNo);
+            Assert.AreEqual(expectedPurchaseOrder, tagAddedToProject.PurchaseOrderNo);
             Assert.AreEqual(TestPlant, tagAddedToProject.Plant);
             Assert.AreEqual(StepId, tagAddedToProject.StepId);
             Assert.IsNull(tagAddedToProject.TagFunctionCode);

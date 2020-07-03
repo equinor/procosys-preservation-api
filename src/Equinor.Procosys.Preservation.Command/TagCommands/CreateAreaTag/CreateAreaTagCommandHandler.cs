@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -114,6 +115,23 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
             }
 
+            string purchaseOrderNo = null;
+            string calloff = null;
+
+            if (request.TagType == TagType.PoArea)
+            {
+                if (string.IsNullOrEmpty(request.PurchaseOrderCalloffCode))
+                {
+                    throw new Exception($"Tags of type {TagType.PoArea} must have {nameof(request.PurchaseOrderCalloffCode)}");
+                }
+                var poParts = request.PurchaseOrderCalloffCode.Split('/');
+                purchaseOrderNo = poParts[0].Trim();
+                if (poParts.Length > 1)
+                {
+                    calloff = poParts[1].Trim();
+                }
+            }
+
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             return new Tag(
                 _plantProvider.Plant,
@@ -123,6 +141,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 step,
                 requirements)
             {
+                PurchaseOrderNo = purchaseOrderNo,
+                Calloff = calloff,
                 Remark = request.Remark,
                 StorageArea = request.StorageArea
             };
