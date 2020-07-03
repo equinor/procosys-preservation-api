@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.Extensions.Options;
@@ -14,8 +13,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Authentication
         private readonly IOptions<AuthenticatorOptions> _options;
         private bool _canUseOnBehalfOf;
         private string _requestToken;
-        private AuthenticationResult _onBehalfOfUserToken;
-        private AuthenticationResult _applicationToken;
+        private string _onBehalfOfUserToken;
+        private string _applicationToken;
 
         public Authenticator(IOptions<AuthenticatorOptions> options) => _options = options;
 
@@ -29,7 +28,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authentication
         {
             if (_canUseOnBehalfOf)
             {
-                if (_onBehalfOfUserToken == null || _onBehalfOfUserToken.ExpiresOn < TimeService.UtcNow.AddMinutes(10))
+                if (_onBehalfOfUserToken == null)
                 {
                     var app = ConfidentialClientApplicationBuilder
                         .Create(_options.Value.PreservationApiClientId)
@@ -41,9 +40,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Authentication
                         .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken.ToString()))
                         .ExecuteAsync();
 
-                    _onBehalfOfUserToken = tokenResult;
+                    _onBehalfOfUserToken = tokenResult.AccessToken;
                 }
-                return _onBehalfOfUserToken.AccessToken;
+                return _onBehalfOfUserToken;
             }
             else
             {
@@ -53,7 +52,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authentication
 
         public async ValueTask<string> GetBearerTokenForApplicationAsync()
         {
-            if (_applicationToken == null || _applicationToken.ExpiresOn < TimeService.UtcNow.AddMinutes(10))
+            if (_applicationToken == null)
             {
                 var app = ConfidentialClientApplicationBuilder
                     .Create(_options.Value.MainApiClientId)
@@ -65,9 +64,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Authentication
                     .AcquireTokenForClient(new List<string> { _options.Value.MainApiScope })
                     .ExecuteAsync();
 
-                _applicationToken = tokenResult;
+                _applicationToken = tokenResult.AccessToken;
             }
-            return _applicationToken.AccessToken;
+            return _applicationToken;
         }
     }
 }
