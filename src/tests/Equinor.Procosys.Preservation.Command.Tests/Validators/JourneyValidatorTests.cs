@@ -14,21 +14,24 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class JourneyValidatorTests : ReadOnlyTestsBase
     {
-        private const string JourneyTitle1 = "Journey1";
-        private const string JourneyTitle2 = "Journey2";
+        private const string JourneyWithStepTitle = "JourneyWithStep";
+        private const string JourneyWithoutStepTitle = "JourneyWithoutStepTitle";
 
         private int _journeyWithStepId;
-        private int _emptyJourneyId;
+        private int _journeyWithoutStepId;
+        private int _journeyWithDuplicateId;
+        private int _journeyWithoutDuplicateId;
         private Step _step;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var journeyWithStep = AddJourneyWithStep(context, JourneyTitle1, "S", AddMode(context, "M", false), AddResponsible(context, "R"));
+                var journeyWithStep = AddJourneyWithStep(context, JourneyWithStepTitle, "S", AddMode(context, "M", false), AddResponsible(context, "R"));
                 _step = journeyWithStep.Steps.Single();
-                _journeyWithStepId = journeyWithStep.Id;
-                _emptyJourneyId = AddJourney(context, JourneyTitle2).Id;
+                _journeyWithStepId = _journeyWithoutDuplicateId = journeyWithStep.Id;
+                _journeyWithoutStepId = _journeyWithDuplicateId = AddJourney(context, JourneyWithoutStepTitle).Id;
+                AddJourney(context, $"{JourneyWithoutStepTitle}{Journey.DuplicatePrefix}");
             }
         }
 
@@ -93,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsWithSameTitleAsync(JourneyTitle1, default);
+                var result = await dut.ExistsWithSameTitleAsync(JourneyWithStepTitle, default);
                 Assert.IsTrue(result);
             }
         }
@@ -115,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithStepId, JourneyTitle2, default);
+                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithStepId, JourneyWithoutStepTitle, default);
                 Assert.IsTrue(result);
             }
         }
@@ -137,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithStepId, JourneyTitle1, default);
+                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithStepId, JourneyWithStepTitle, default);
                 Assert.IsFalse(result);
             }
         }
@@ -187,7 +190,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasAnyStepsAsync(_emptyJourneyId, default);
+                var result = await dut.HasAnyStepsAsync(_journeyWithoutStepId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -220,7 +223,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsInUseAsync(_emptyJourneyId, default);
+                var result = await dut.IsInUseAsync(_journeyWithoutStepId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -263,6 +266,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsInUseAsync(_journeyWithStepId, default);
                 Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsWithDuplicateTitleAsync_KnownDuplicate_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.ExistsWithDuplicateTitleAsync(_journeyWithDuplicateId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsWithDuplicateTitleAsync_KnownNotDuplicate_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.ExistsWithDuplicateTitleAsync(_journeyWithoutDuplicateId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsWithDuplicateTitleAsync_UnknownKnownId_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.ExistsWithDuplicateTitleAsync(92982, default);
+                Assert.IsFalse(result);
             }
         }
     }

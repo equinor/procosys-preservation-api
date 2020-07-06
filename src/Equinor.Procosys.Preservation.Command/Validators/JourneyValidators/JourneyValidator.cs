@@ -75,5 +75,20 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 select tag).AnyAsync(cancellationToken);
             return inUse;
         }
+
+        public async Task<bool> ExistsWithDuplicateTitleAsync(int journeyId, CancellationToken token)
+        {
+            var journey = await (from j in _context.QuerySet<Journey>()
+                where j.Id == journeyId
+                select j).SingleOrDefaultAsync(token);
+            if (journey == null)
+            {
+                return false;
+            }
+            
+            return await (from j in _context.QuerySet<Journey>()
+                where j.Title == $"{journey.Title}{Journey.DuplicatePrefix}"
+                select j).AnyAsync(token);
+        }
     }
 }
