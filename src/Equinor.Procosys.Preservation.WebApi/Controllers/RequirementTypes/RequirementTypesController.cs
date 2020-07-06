@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.AddRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
@@ -11,6 +12,7 @@ using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 {
@@ -44,6 +46,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         {
             var result = await _mediator.Send(new GetRequirementTypeByIdQuery(id));
             return Ok(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
+        [HttpPost]
+        public async Task<ActionResult<int>> AddRequirementType(
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromBody] AddRequirementTypeDto dto)
+        {
+            var result = await _mediator.Send(new AddRequirementTypeCommand(dto.SortKey, dto.Code, dto.Title));
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
