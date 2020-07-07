@@ -28,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         private readonly List<RequirementType> _sourceRequirementTypes = new List<RequirementType>();
         private TagFunctionRepository _tagFunctionRepository;
         private readonly List<TagFunction> _sourceTagFunctions = new List<TagFunction>();
+        private const string _requirementIconOther = "Other";
 
         [TestInitialize]
         public void Setup()
@@ -42,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeB", "ResponsibleDescB"));
             
             _requirementTypeRepository = new RequirementTypeRepository(_plantProvider, _sourceRequirementTypes);
-            var requirementTypeA = new RequirementType(_sourcePlant, "RequirementTypeCodeA", "RequirementTypeTitleA", 1);
+            var requirementTypeA = new RequirementType(_sourcePlant, "RequirementTypeCodeA", "RequirementTypeTitleA", _requirementIconOther, 1);
             var reqDefA1 = new RequirementDefinition(_sourcePlant, "RequirementDefCodeA1", 1, RequirementUsage.ForAll, 2);
             reqDefA1.SetProtectedIdForTesting(++reqDefId);
             requirementTypeA.AddRequirementDefinition(reqDefA1);
@@ -50,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             reqDefA2.SetProtectedIdForTesting(++reqDefId);
             requirementTypeA.AddRequirementDefinition(reqDefA2);
             reqDefA1.AddField(new Field(_sourcePlant, "LabelA", FieldType.Number, 1, "UnitA", true));
-            var requirementTypeB = new RequirementType(_sourcePlant, "RequirementTypeCodeB", "RequirementTypeTitleB", 2);
+            var requirementTypeB = new RequirementType(_sourcePlant, "RequirementTypeCodeB", "RequirementTypeTitleB", _requirementIconOther, 2);
             _sourceRequirementTypes.Add(requirementTypeA);
             _sourceRequirementTypes.Add(requirementTypeB);
 

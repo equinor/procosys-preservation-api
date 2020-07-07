@@ -968,6 +968,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("int");
 
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Other");
+
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 

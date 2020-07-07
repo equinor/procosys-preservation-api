@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D").RequirementDefinitions.Single();
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D", "Other").RequirementDefinitions.Single();
 
                 _infoFieldId = AddInfoField(context, rd, "I").Id;
                 _numberFieldId = AddNumberField(context, rd, "N", "mm", true).Id;

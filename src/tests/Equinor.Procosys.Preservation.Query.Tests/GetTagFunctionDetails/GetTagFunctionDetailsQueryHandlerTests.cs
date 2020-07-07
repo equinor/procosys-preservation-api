@@ -16,13 +16,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         private TagFunction _tfWithRequirement;
         private TagFunction _tfWithoutRequirement;
         private RequirementDefinition _requirementDefinition;
+        private const string _requirementIconOther = "Other";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tfWithRequirement = AddTagFunction(context, "TFC2", "RC1");
-                var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R");
+                var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R", _requirementIconOther);
                 _requirementDefinition = rt.RequirementDefinitions.First();
                 _tfWithRequirement.AddRequirement(new TagFunctionRequirement(TestPlant, 4, _requirementDefinition));
                 

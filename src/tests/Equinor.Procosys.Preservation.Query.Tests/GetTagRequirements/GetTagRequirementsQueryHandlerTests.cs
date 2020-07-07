@@ -20,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
     public class GetTagRequirementsQueryHandlerTests : ReadOnlyTestsBase
     {
         protected const string _unit = "unit";
+        private const string _requirementIconOther = "Other";
         const string _requirementType1Code = "Code1";
         const string _requirementType1Title = "Title1";
         const string _requirementType2Code = "Code2";
@@ -68,9 +69,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
 
-                var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, 0);
+                var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, _requirementIconOther,0);
                 context.RequirementTypes.Add(requirementType1);
-                var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, 0);
+                var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, _requirementIconOther,0);
                 context.RequirementTypes.Add(requirementType2);
                 context.SaveChangesAsync().Wait();
 

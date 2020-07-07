@@ -96,9 +96,9 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return journey;
         }
 
-        protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string typeCode, string defTitle, int sortKey = 0)
+        protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string typeCode, string defTitle, string icon, int sortKey = 0)
         {
-            var requirementType = new RequirementType(TestPlant, typeCode, $"Title{typeCode}", sortKey);
+            var requirementType = new RequirementType(TestPlant, typeCode, $"Title{typeCode}", icon, sortKey);
             context.RequirementTypes.Add(requirementType);
             context.SaveChangesAsync().Wait();
 
@@ -194,6 +194,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var _resp2 = "R2";
             var _reqType1Code = "ROT";
             var _reqType2Code = "AREA";
+            var _reqIconOther = "Other";
             
             var testDataSet = new TestDataSet
             {
@@ -204,8 +205,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
                 Responsible1 = AddResponsible(context, _resp1),
                 Mode2 = AddMode(context, _mode2, false),
                 Responsible2 = AddResponsible(context, _resp2),
-                ReqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqType1Code, "D1"),
-                ReqType2 = AddRequirementTypeWith1DefWithoutField(context, _reqType2Code, "D2")
+                ReqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqType1Code, "D1", _reqIconOther),
+                ReqType2 = AddRequirementTypeWith1DefWithoutField(context, _reqType2Code, "D2", _reqIconOther)
             };
 
             testDataSet.Journey1With2Steps =

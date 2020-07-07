@@ -18,12 +18,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         private Mock<DbSet<RequirementType>> _dbSetMock;
 
         private RequirementTypeRepository _dut;
+        private readonly string _requirementIconOther = "Other";
 
         [TestInitialize]
         public void Setup()
         {
             
-            var requirementType = new RequirementType(TestPlant, "C1", "T1", 0);
+            var requirementType = new RequirementType(TestPlant, "C1", "T1", _requirementIconOther,0);
             var rdMock1 = new Mock<RequirementDefinition>();
             rdMock1.SetupGet(r => r.Id).Returns(ReqDefId);
             rdMock1.SetupGet(r => r.Plant).Returns(TestPlant);
@@ -38,8 +39,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             _requirementTypes = new List<RequirementType>
             {
                 requirementType,
-                new RequirementType(TestPlant, "C2", "T2", 0),
-                new RequirementType(TestPlant, "C3", "T3", 0)
+                new RequirementType(TestPlant, "C2", "T2", _requirementIconOther,0),
+                new RequirementType(TestPlant, "C3", "T3", _requirementIconOther, 0)
             };
             
             _dbSetMock = _requirementTypes.AsQueryable().BuildMockDbSet();

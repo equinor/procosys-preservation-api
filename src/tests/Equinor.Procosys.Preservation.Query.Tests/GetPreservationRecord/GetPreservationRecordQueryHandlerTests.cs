@@ -18,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
         private int _tagId;
         private int _requirementWithoutFieldId;
         private int _preservationRecordId;
+        private const string _requirementIconOther = "Other";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -26,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
             {
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
                 var requirementDefinitionWithoutField =
-                    AddRequirementTypeWith1DefWithoutField(context, "RT", "", 1).RequirementDefinitions.Single();
+                    AddRequirementTypeWith1DefWithoutField(context, "RT", "", _requirementIconOther, 1).RequirementDefinitions.Single();
 
                 var requirementWithoutField = new TagRequirement(TestPlant, 1, requirementDefinitionWithoutField);
 

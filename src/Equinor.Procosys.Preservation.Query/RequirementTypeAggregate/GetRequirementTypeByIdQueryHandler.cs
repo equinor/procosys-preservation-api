@@ -32,6 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                 reqType.Id,
                 reqType.Code,
                 reqType.Title,
+                reqType.Icon,
                 reqType.IsVoided,
                 reqType.SortKey,
                 reqType.RequirementDefinitions.Select(rd =>

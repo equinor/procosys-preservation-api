@@ -256,7 +256,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var project = AddProject(context, "P", "Project description");
-                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D").RequirementDefinitions.First();
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", "Other").RequirementDefinitions.First();
                 AddTag(context, project, TagType.Standard, "TagNo", "Tag description", _step,
                     new List<TagRequirement> {new TagRequirement(TestPlant, 2, rd)});
             }

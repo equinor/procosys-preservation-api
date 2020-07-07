@@ -20,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
         private History _historyVoidTag;
         private History _historyCreateTag;
         private GetHistoryQuery _query;
+        private readonly string _requirementIconOther = "Other";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
             {
                 var project = AddProject(context, "P", "Project description");
                 var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1", false), AddResponsible(context, "R1"));
-                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D").RequirementDefinitions.First();
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", _requirementIconOther).RequirementDefinitions.First();
 
                 _tagWithNoHistory = new Tag(TestPlant, TagType.Standard, "TagNo", "Tag description", journey.Steps.First(),
                     new List<TagRequirement> { new TagRequirement(TestPlant, 2, rd) });

@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var notClosedProject = AddProject(context, ProjectNameNotClosed, "Project description");
                 var closedProject = AddProject(context, ProjectNameClosed, "Project description", true);
 
-                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D").RequirementDefinitions.First();
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D", "Other").RequirementDefinitions.First();
 
                 var req = new TagRequirement(TestPlant, 2, rd);
                 var t1 = AddTag(context, notClosedProject, TagType.Standard, "T1", "Tag description", step, new List<TagRequirement>{ req });

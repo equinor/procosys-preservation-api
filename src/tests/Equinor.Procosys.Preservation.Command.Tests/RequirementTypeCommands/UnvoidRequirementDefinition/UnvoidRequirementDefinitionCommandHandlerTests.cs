@@ -15,6 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
         private UnvoidRequirementDefinitionCommand _command;
         private UnvoidRequirementDefinitionCommandHandler _dut;
         private readonly string _rowVersion = "AAAAAAAAABA=";
+        private readonly string _requirementIconOther = "Other";
 
         [TestInitialize]
         public void Setup()
@@ -23,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
             var reqTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
             var requirementTypeId = 1;
             var requirementDefinitionId = 2;
-            var requirementType = new RequirementType(TestPlant, "TestCode", "ReqTypeTitle", 99);
+            var requirementType = new RequirementType(TestPlant, "TestCode", "ReqTypeTitle", _requirementIconOther, 99);
             requirementType.SetProtectedIdForTesting(requirementTypeId);
 
             _requirementDefinition = new RequirementDefinition(TestPlant, "ReqDefinitionTitle", 4, RequirementUsage.ForAll, 88);

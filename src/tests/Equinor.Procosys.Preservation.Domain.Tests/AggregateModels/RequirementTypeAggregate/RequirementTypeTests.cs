@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
     public class RequirementTypeTests
     {
         private const string TestPlant = "PlantA";
-        private readonly RequirementType _dut = new RequirementType(TestPlant, "CodeA", "TitleA", 10);
+        private readonly RequirementType _dut = new RequirementType(TestPlant, "CodeA", "TitleA", "Other", 10);
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
