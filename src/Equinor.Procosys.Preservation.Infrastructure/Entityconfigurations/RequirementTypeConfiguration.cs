@@ -29,6 +29,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasDefaultValue(RequirementTypeIcon.Other)
                 .IsRequired();
 
+            builder.HasCheckConstraint("constraint_requirement_type_check_icon", $"{nameof(RequirementType.Icon)} in ({GetValidIcons()})");
+
             builder
                 .HasMany(x => x.RequirementDefinitions)
                 .WithOne()
