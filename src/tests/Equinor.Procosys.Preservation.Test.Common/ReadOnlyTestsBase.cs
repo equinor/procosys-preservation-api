@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             return journey;
         }
 
-        protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string typeCode, string defTitle, string icon, int sortKey = 0)
+        protected RequirementType AddRequirementTypeWith1DefWithoutField(PreservationContext context, string typeCode, string defTitle, RequirementTypeIcon icon, int sortKey = 0)
         {
             var requirementType = new RequirementType(TestPlant, typeCode, $"Title{typeCode}", icon, sortKey);
             context.RequirementTypes.Add(requirementType);
@@ -194,8 +194,8 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var _resp2 = "R2";
             var _reqType1Code = "ROT";
             var _reqType2Code = "AREA";
-            var _reqIconOther = "Other";
-            
+            RequirementTypeIcon _reqIconOther = RequirementTypeIcon.Other;
+
             var testDataSet = new TestDataSet
             {
                 CurrentUser = context.Persons.Single(p => p.Oid == _currentUserOid),

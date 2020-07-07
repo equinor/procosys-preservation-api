@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
         private VoidRequirementTypeCommand _command;
         private VoidRequirementTypeCommandHandler _dut;
         private readonly string _rowVersion = "AAAAAAAAABA=";
-        private readonly string _requirementIconOther = "Other";
+        RequirementTypeIcon _reqIconOther = RequirementTypeIcon.Other;
 
         [TestInitialize]
         public void Setup()
@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
             var requirementTypeId = 1;
             var reqTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
 
-            _requirementType = new RequirementType(TestPlant, "TestCode", "RequirementTypeTitle", _requirementIconOther, 10);
+            _requirementType = new RequirementType(TestPlant, "TestCode", "RequirementTypeTitle", _reqIconOther, 10);
             _requirementType.SetProtectedIdForTesting(requirementTypeId);
 
             reqTypeRepositoryMock.Setup(m => m.GetByIdAsync(requirementTypeId))

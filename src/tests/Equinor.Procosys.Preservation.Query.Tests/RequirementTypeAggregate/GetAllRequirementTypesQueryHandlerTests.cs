@@ -19,14 +19,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         private RequirementDefinition _reqDefVoided;
         private RequirementDefinition _reqDefForOther;
         private RequirementDefinition _reqDefForSupplier;
-        private readonly string _requirementIconOther = "Other";
-
+        RequirementTypeIcon _reqIconOther = RequirementTypeIcon.Other;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _reqType1 = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", _requirementIconOther, 999);
+                _reqType1 = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", _reqIconOther, 999);
 
                 _reqDefForAll = _reqType1.RequirementDefinitions.First();
                 _reqDefVoided = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForAll, 2);
@@ -43,11 +42,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
                 f.Void();
                 context.SaveChangesAsync().Wait();
 
-                var reqType2 = AddRequirementTypeWith1DefWithoutField(context, "T2", "D2", _requirementIconOther, 7);
+                var reqType2 = AddRequirementTypeWith1DefWithoutField(context, "T2", "D2", _reqIconOther, 7);
                 reqType2.Void();
                 context.SaveChangesAsync().Wait();
-                AddRequirementTypeWith1DefWithoutField(context, "T3", "D3", _requirementIconOther, 10000);
-                AddRequirementTypeWith1DefWithoutField(context, "T4", "D4", _requirementIconOther, 1);
+                AddRequirementTypeWith1DefWithoutField(context, "T3", "D3", _reqIconOther, 10000);
+                AddRequirementTypeWith1DefWithoutField(context, "T4", "D4", _reqIconOther, 1);
             }
         }
 

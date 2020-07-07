@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetHistory;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -20,7 +21,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
         private History _historyVoidTag;
         private History _historyCreateTag;
         private GetHistoryQuery _query;
-        private readonly string _requirementIconOther = "Other";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
             {
                 var project = AddProject(context, "P", "Project description");
                 var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1", false), AddResponsible(context, "R1"));
-                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", _requirementIconOther).RequirementDefinitions.First();
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", RequirementTypeIcon.Other).RequirementDefinitions.First();
 
                 _tagWithNoHistory = new Tag(TestPlant, TagType.Standard, "TagNo", "Tag description", journey.Steps.First(),
                     new List<TagRequirement> { new TagRequirement(TestPlant, 2, rd) });

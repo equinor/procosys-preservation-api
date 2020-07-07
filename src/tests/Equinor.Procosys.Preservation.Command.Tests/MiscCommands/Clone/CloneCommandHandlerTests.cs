@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         private readonly List<RequirementType> _sourceRequirementTypes = new List<RequirementType>();
         private TagFunctionRepository _tagFunctionRepository;
         private readonly List<TagFunction> _sourceTagFunctions = new List<TagFunction>();
-        private const string _requirementIconOther = "Other";
+        private readonly RequirementTypeIcon _requirementIconOther = RequirementTypeIcon.Other;
 
         [TestInitialize]
         public void Setup()

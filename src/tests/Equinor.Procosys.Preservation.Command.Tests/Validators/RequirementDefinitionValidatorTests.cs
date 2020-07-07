@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _requirementType = AddRequirementTypeWith1DefWithoutField(context, "R", "D1", "Other");
+                _requirementType = AddRequirementTypeWith1DefWithoutField(context, "R", "D1", RequirementTypeIcon.Other);
                 _reqDefForAllId = _requirementType.RequirementDefinitions.First().Id;
                 var reqDefForSupplier = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
                 _requirementType.AddRequirementDefinition(reqDefForSupplier);

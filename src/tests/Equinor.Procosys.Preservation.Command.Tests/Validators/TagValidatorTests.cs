@@ -21,7 +21,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private const string ProjectName = "P";
         private const string TagNo1 = "PA-13";
         private const string TagNo2 = "PA-14";
-        private readonly string _requirementIconOther = "Other";
         private int _tagWithOneReqsId;
         private int _tagWithAllReqsId;
         private int _standardTagNotStartedInFirstStepId;
@@ -46,9 +45,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1",false), AddResponsible(context, "R1"));
                 journey.AddStep(new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2")));
 
-                var requirementType = AddRequirementTypeWith1DefWithoutField(context, "R1", "D1", _requirementIconOther);
+                var requirementType = AddRequirementTypeWith1DefWithoutField(context, "R1", "D1", RequirementTypeIcon.Other);
                 var reqDefForAll1 = requirementType.RequirementDefinitions.First();
-                var reqDefForAll2 = AddRequirementTypeWith1DefWithoutField(context, "R2", "D2", _requirementIconOther).RequirementDefinitions.First();
+                var reqDefForAll2 = AddRequirementTypeWith1DefWithoutField(context, "R2", "D2", RequirementTypeIcon.Other).RequirementDefinitions.First();
                 var reqDefForSupplier = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
                 requirementType.AddRequirementDefinition(reqDefForSupplier);
                 var reqDefForOther = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 1);

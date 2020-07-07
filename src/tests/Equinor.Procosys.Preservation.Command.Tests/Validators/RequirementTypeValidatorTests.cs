@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var requirementType = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", "Other");
+                var requirementType = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", RequirementTypeIcon.Other);
                 _reqTypeId = requirementType.Id;
             }
         }

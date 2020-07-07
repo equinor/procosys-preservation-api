@@ -12,16 +12,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
     {
         private readonly List<FieldDto> _fieldsDtos = new List<FieldDto>();
         private const string _rowVersion = "AAAAAAAAABA=";
-        private const string _requirementIconOther = "Other";
+        RequirementTypeIcon _reqIconOther = RequirementTypeIcon.Other;
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new RequirementTypeDto(1, "CodeA", "TitleA", _requirementIconOther, true, 10, new List<RequirementDefinitionDto>(), _rowVersion);
+            var dut = new RequirementTypeDto(1, "CodeA", "TitleA", _reqIconOther, true, 10, new List<RequirementDefinitionDto>(), _rowVersion);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("CodeA", dut.Code);
             Assert.AreEqual("TitleA", dut.Title);
+            Assert.AreEqual(RequirementTypeIcon.Other, dut.Icon);
             Assert.AreEqual(10, dut.SortKey);
             Assert.IsTrue(dut.IsVoided);
             Assert.AreEqual(0, dut.RequirementDefinitions.Count());
@@ -31,13 +32,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenDefinitionsNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() =>
-                new RequirementTypeDto(1, "CodeA", "TitleA", _requirementIconOther, true, 10, null, _rowVersion)
+                new RequirementTypeDto(1, "CodeA", "TitleA", _reqIconOther, true, 10, null, _rowVersion)
             );
 
         [TestMethod]
         public void ConstructorWithRequirementDefinitionsNotNeedInput_ShouldSortRequirementDefinitionsBySortKey()
         {
-            var dut = new RequirementTypeDto(1, "", "", _requirementIconOther, true, 10, new List<RequirementDefinitionDto>
+            var dut = new RequirementTypeDto(1, "", "", _reqIconOther, true, 10, new List<RequirementDefinitionDto>
             {
                 new RequirementDefinitionDto(1, "",  false, 4, RequirementUsage.ForAll, 999, false, _fieldsDtos),
                 new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, false, _fieldsDtos),
@@ -57,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void ConstructorWithRequirementDefinitionsNeedingInput_ShouldSortRequirementDefinitionsBySortKey()
         {
-            var dut = new RequirementTypeDto(1, "", "", _requirementIconOther, true, 10, new List<RequirementDefinitionDto>
+            var dut = new RequirementTypeDto(1, "", "", _reqIconOther, true, 10, new List<RequirementDefinitionDto>
             {
                 new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, true, _fieldsDtos),
                 new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, true, _fieldsDtos),
@@ -77,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void ConstructorWithRequirementDefinitionsBothNeedInputAndNotNeedInput_ShouldSortRequirementDefinitionsByNeedingInputThenSortKey()
         {
-            var dut = new RequirementTypeDto(1, "", "", _requirementIconOther, true, 10, new List<RequirementDefinitionDto>
+            var dut = new RequirementTypeDto(1, "", "", _reqIconOther, true, 10, new List<RequirementDefinitionDto>
             {
                 new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, true, _fieldsDtos),
                 new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, true, _fieldsDtos),

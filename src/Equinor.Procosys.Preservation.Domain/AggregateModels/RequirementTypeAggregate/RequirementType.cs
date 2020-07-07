@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public RequirementType(string plant, string code, string title, string icon, int sortKey)
+        public RequirementType(string plant, string code, string title, RequirementTypeIcon icon, int sortKey)
             : base(plant)
         {
             Code = code;
@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
         public string Code { get; private set; }
         public string Title { get; private set; }
-        public string Icon { get; private set; }
+        public RequirementTypeIcon Icon { get; private set; }
         public bool IsVoided { get; private set; }
         public int SortKey { get; private set; }
         public IReadOnlyCollection<RequirementDefinition> RequirementDefinitions => _requirementDefinitions.AsReadOnly();

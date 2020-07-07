@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var project = AddProject(context, "P", "Project description");
                 var journey = AddJourneyWithStep(context, "J", "S1", AddMode(context, "M1", false), AddResponsible(context, "R1"));
-                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", "Other").RequirementDefinitions.First();
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", RequirementTypeIcon.Other).RequirementDefinitions.First();
 
                 var tag = AddTag(context, project, TagType.Standard, "TagNo", "Tag description", journey.Steps.First(),
                     new List<TagRequirement> {new TagRequirement(TestPlant, 2, rd)});

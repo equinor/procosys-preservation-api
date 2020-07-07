@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.MainApi.Tag;
@@ -23,7 +24,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         private const string _tagFunctionCode = "TFC1";
         private const string _registerCode = "RC1";
         private readonly string _tagFunctionCodeRegisterCodePair = $"{_tagFunctionCode}|{_registerCode}";
-        private readonly string _requirementIconOther = "Other";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
                 _testDataSet = AddTestDataSet(context);
 
                 var tf = AddTagFunction(context, _tagFunctionCode, _registerCode);
-                var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R", _requirementIconOther);
+                var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R", RequirementTypeIcon.Other);
                 tf.AddRequirement(new TagFunctionRequirement(TestPlant, 4, rt.RequirementDefinitions.First()));
                 
                 context.SaveChangesAsync().Wait();

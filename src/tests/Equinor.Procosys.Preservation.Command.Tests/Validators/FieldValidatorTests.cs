@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D", "Other").RequirementDefinitions.Single();
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D", RequirementTypeIcon.Other).RequirementDefinitions.Single();
 
                 _infoFieldId = AddInfoField(context, rd, "I").Id;
                 _numberFieldId = AddNumberField(context, rd, "N", "mm", true).Id;
