@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
-        [HttpPut("{id}")]
+        [HttpPut("{id}/Duplicate")]
         public async Task<ActionResult<int>> DuplicateJourney(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
