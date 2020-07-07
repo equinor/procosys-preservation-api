@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.AddRequirementType
+namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType
 {
-    public class AddRequirementTypeCommandValidator : AbstractValidator<AddRequirementTypeCommand>
+    public class CreateRequirementTypeCommandValidator : AbstractValidator<CreateRequirementTypeCommand>
     {
-        public AddRequirementTypeCommandValidator(IRequirementTypeValidator requirementTypeValidator)
+        public CreateRequirementTypeCommandValidator(IRequirementTypeValidator requirementTypeValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 

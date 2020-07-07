@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.AddRequirementType;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
@@ -50,14 +50,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
         [HttpPost]
-        public async Task<ActionResult<int>> AddRequirementType(
+        public async Task<ActionResult<int>> CreateRequirementType(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
-            [FromBody] AddRequirementTypeDto dto)
+            [FromBody] CreateRequirementTypeDto dto)
         {
-            var result = await _mediator.Send(new AddRequirementTypeCommand(dto.SortKey, dto.Code, dto.Title));
+            var result = await _mediator.Send(new CreateRequirementTypeCommand(dto.SortKey, dto.Code, dto.Title));
             return this.FromResult(result);
         }
 

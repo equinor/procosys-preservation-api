@@ -1,11 +1,11 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.AddRequirementType
+namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType
 {
-    public class AddRequirementTypeCommand : IRequest<Result<int>>
+    public class CreateRequirementTypeCommand : IRequest<Result<int>>
     {
-        public AddRequirementTypeCommand(int sortKey, string code, string title)
+        public CreateRequirementTypeCommand(int sortKey, string code, string title)
         {
             SortKey = sortKey;
             Code = code;
