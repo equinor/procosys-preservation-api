@@ -13,9 +13,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
 
-        public CreateRequirementTypeCommandHandler(IRequirementTypeRepository modeRepository, IUnitOfWork unitOfWork, IPlantProvider plantProvider)
+        public CreateRequirementTypeCommandHandler(IRequirementTypeRepository requirementTypeRepository, IUnitOfWork unitOfWork, IPlantProvider plantProvider)
         {
-            _requirementTypeRepository = modeRepository;
+            _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
         }
