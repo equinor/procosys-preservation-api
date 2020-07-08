@@ -6,6 +6,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValida
     public interface IRequirementTypeValidator
     {
         Task<bool> ExistsAsync(int requirementTypeId, CancellationToken token);
+        Task<bool> RequirementDefinitionExistsAsync(int requirementTypeId, CancellationToken token);
         Task<bool> IsVoidedAsync(int requirementTypeId, CancellationToken token);
     }
 }
