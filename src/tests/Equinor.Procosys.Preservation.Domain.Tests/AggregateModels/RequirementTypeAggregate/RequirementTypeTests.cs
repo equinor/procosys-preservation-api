@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
     public class RequirementTypeTests
     {
         private const string TestPlant = "PlantA";
-        private readonly RequirementType _dut = new RequirementType(TestPlant, "CodeA", "TitleA", 10);
+        private readonly RequirementType _dut = new RequirementType(TestPlant, "CodeA", "TitleA", RequirementTypeIcon.Other, 10);
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
@@ -17,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.AreEqual(TestPlant, _dut.Plant);
             Assert.AreEqual("CodeA", _dut.Code);
             Assert.AreEqual("TitleA", _dut.Title);
+            Assert.AreEqual(RequirementTypeIcon.Other, _dut.Icon);
             Assert.AreEqual(10, _dut.SortKey);
             Assert.IsFalse(_dut.IsVoided);
             Assert.AreEqual(0, _dut.RequirementDefinitions.Count);

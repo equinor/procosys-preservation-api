@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetFieldValueAttachment
 
             var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
 
-            var reqDef = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1").RequirementDefinitions.Single();
+            var reqDef = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", RequirementTypeIcon.Other).RequirementDefinitions.Single();
             var attachmentField = new Field(TestPlant, "Label", FieldType.Attachment, 0);
             reqDef.AddField(attachmentField);
             context.SaveChangesAsync().Wait();

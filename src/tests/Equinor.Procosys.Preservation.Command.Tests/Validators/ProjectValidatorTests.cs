@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var notClosedProject = AddProject(context, ProjectNameNotClosed, "Project description");
                 var closedProject = AddProject(context, ProjectNameClosed, "Project description", true);
 
-                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D").RequirementDefinitions.First();
+                var rd = AddRequirementTypeWith1DefWithoutField(context, "T", "D", RequirementTypeIcon.Other).RequirementDefinitions.First();
 
                 var req = new TagRequirement(TestPlant, 2, rd);
                 var t1 = AddTag(context, notClosedProject, TagType.Standard, "T1", "Tag description", step, new List<TagRequirement>{ req });

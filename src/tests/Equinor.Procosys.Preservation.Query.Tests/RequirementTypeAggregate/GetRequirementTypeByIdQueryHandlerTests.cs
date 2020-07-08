@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _requirementType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", 999);
+                _requirementType = AddRequirementTypeWith1DefWithoutField(context, "T1", "D1", RequirementTypeIcon.Other, 999);
                 _requirementDefWithInfo = _requirementType.RequirementDefinitions.Single();
                 _infoField = AddInfoField(context, _requirementDefWithInfo, "LabelA");
 
