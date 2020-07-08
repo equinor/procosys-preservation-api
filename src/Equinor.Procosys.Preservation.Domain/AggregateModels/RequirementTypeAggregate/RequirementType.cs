@@ -11,22 +11,25 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
         public const int CodeLengthMax = 32;
         public const int TitleLengthMax = 64;
+        public const int IconLengthMax = 32;
 
         protected RequirementType()
             : base(null)
         {
         }
 
-        public RequirementType(string plant, string code, string title, int sortKey)
+        public RequirementType(string plant, string code, string title, RequirementTypeIcon icon, int sortKey)
             : base(plant)
         {
             Code = code;
             Title = title;
             SortKey = sortKey;
+            Icon = icon;
         }
 
         public string Code { get; private set; }
         public string Title { get; private set; }
+        public RequirementTypeIcon Icon { get; private set; }
         public bool IsVoided { get; private set; }
         public int SortKey { get; private set; }
         public IReadOnlyCollection<RequirementDefinition> RequirementDefinitions => _requirementDefinitions.AsReadOnly();

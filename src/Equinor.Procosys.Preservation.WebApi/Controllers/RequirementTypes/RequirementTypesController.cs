@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
@@ -12,6 +13,7 @@ using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using ServiceResult.ApiExtensions;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 {
@@ -87,6 +89,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         {
             var result = await _mediator.Send(new UnvoidRequirementTypeCommand(id, dto.RowVersion));
             return Ok(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteRequirementType(
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] DeleteRequirementTypeDto dto)
+        {
+            var result = await _mediator.Send(new DeleteRequirementTypeCommand(id, dto.RowVersion));
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]

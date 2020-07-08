@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetPreservationRecord;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -26,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
             {
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
                 var requirementDefinitionWithoutField =
-                    AddRequirementTypeWith1DefWithoutField(context, "RT", "", 1).RequirementDefinitions.Single();
+                    AddRequirementTypeWith1DefWithoutField(context, "RT", "", RequirementTypeIcon.Other, 1).RequirementDefinitions.Single();
 
                 var requirementWithoutField = new TagRequirement(TestPlant, 1, requirementDefinitionWithoutField);
 

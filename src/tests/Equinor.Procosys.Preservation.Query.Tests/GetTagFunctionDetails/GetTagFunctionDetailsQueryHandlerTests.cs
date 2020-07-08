@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _tfWithRequirement = AddTagFunction(context, "TFC2", "RC1");
-                var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R");
+                var rt = AddRequirementTypeWith1DefWithoutField(context, "ROT", "R", RequirementTypeIcon.Other);
                 _requirementDefinition = rt.RequirementDefinitions.First();
                 _tfWithRequirement.AddRequirement(new TagFunctionRequirement(TestPlant, 4, _requirementDefinition));
                 

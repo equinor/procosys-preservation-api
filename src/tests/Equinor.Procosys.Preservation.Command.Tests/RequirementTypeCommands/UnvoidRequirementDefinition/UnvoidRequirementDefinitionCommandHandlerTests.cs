@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
             var reqTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
             var requirementTypeId = 1;
             var requirementDefinitionId = 2;
-            var requirementType = new RequirementType(TestPlant, "TestCode", "ReqTypeTitle", 99);
+            var requirementType = new RequirementType(TestPlant, "TestCode", "ReqTypeTitle", RequirementTypeIcon.Other, 99);
             requirementType.SetProtectedIdForTesting(requirementTypeId);
 
             _requirementDefinition = new RequirementDefinition(TestPlant, "ReqDefinitionTitle", 4, RequirementUsage.ForAll, 88);
