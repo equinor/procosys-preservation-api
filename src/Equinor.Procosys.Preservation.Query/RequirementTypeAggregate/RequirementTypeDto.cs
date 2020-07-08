@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 {
@@ -10,6 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             int id,
             string code,
             string title,
+            RequirementTypeIcon icon,
             bool isVoided,
             int sortKey,
             IEnumerable<RequirementDefinitionDto> requirementDefinitions,
@@ -22,6 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             Id = id;
             Code = code;
             Title = title;
+            Icon = icon;
             IsVoided = isVoided;
             SortKey = sortKey;
             RowVersion = rowVersion;
@@ -31,6 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public int Id { get; }
         public string Code { get; }
         public string Title { get; }
+        public RequirementTypeIcon Icon { get; }
         public bool IsVoided { get; }
         public int SortKey { get; }
         public string RowVersion { get; }

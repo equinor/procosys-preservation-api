@@ -968,6 +968,13 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<int>("CreatedById")
                         .HasColumnType("int");
 
+                    b.Property<string>("Icon")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(32)")
+                        .HasMaxLength(32)
+                        .HasDefaultValue("Other");
+
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 
@@ -1002,6 +1009,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.ToTable("RequirementTypes");
+
+                    b.HasCheckConstraint("constraint_requirement_type_check_icon", "Icon in ('Area','Battery','Bearings','Electrical','Heating','Installation','Measure','Nitrogen','Other','Pressure','Rotate')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", b =>

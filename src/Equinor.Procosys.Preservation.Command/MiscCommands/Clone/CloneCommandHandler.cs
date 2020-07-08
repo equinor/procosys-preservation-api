@@ -117,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
                 var targetRT = targetRTs.SingleOrDefault(t => t.Title == sourceRT.Title);
                 if (targetRT == null)
                 {
-                    targetRT = new RequirementType(targetPlant, sourceRT.Code, sourceRT.Title, sourceRT.SortKey);
+                    targetRT = new RequirementType(targetPlant, sourceRT.Code, sourceRT.Title, sourceRT.Icon, sourceRT.SortKey);
                     _requirementTypeRepository.Add(targetRT);
                 }
 
