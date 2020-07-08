@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    [Migration("20200708090515_IconOnRequirementType")]
+    [Migration("20200708104639_IconOnRequirementType")]
     partial class IconOnRequirementType
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -973,7 +973,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<string>("Icon")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("nvarchar(32)")
+                        .HasMaxLength(32)
                         .HasDefaultValue("Other");
 
                     b.Property<bool>("IsVoided")

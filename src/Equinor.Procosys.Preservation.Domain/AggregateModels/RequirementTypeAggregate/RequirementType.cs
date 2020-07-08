@@ -11,6 +11,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
         public const int CodeLengthMax = 32;
         public const int TitleLengthMax = 64;
+        public const int IconLengthMax = 32;
 
         protected RequirementType()
             : base(null)

@@ -971,7 +971,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<string>("Icon")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("nvarchar(max)")
+                        .HasColumnType("nvarchar(32)")
+                        .HasMaxLength(32)
                         .HasDefaultValue("Other");
 
                     b.Property<bool>("IsVoided")

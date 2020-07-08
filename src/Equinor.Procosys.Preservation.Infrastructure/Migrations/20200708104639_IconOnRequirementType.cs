@@ -9,15 +9,14 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
             migrationBuilder.AddColumn<string>(
                 name: "Icon",
                 table: "RequirementTypes",
-                nullable: false,
                 maxLength: 32,
+                nullable: false,
                 defaultValue: "Other");
 
             migrationBuilder.CreateCheckConstraint(
                 name: "constraint_requirement_type_check_icon",
                 table: "RequirementTypes",
                 sql: "Icon in ('Area','Battery','Bearings','Electrical','Heating','Installation','Measure','Nitrogen','Other','Pressure','Rotate')");
-
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
