@@ -27,6 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                     => new RequirementTypeDto(rt.Id,
                         rt.Code,
                         rt.Title,
+                        rt.Icon,
                         rt.IsVoided,
                         rt.SortKey,
                         rt.RequirementDefinitions.Where(rd => !rd.IsVoided || request.IncludeVoided).Select(rd
