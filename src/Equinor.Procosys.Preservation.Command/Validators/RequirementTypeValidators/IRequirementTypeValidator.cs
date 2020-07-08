@@ -8,5 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValida
         Task<bool> ExistsAsync(int requirementTypeId, CancellationToken token);
         Task<bool> RequirementDefinitionExistsAsync(int requirementTypeId, CancellationToken token);
         Task<bool> IsVoidedAsync(int requirementTypeId, CancellationToken token);
+        Task<bool> IsNotUniqueCodeAsync(int requirementTypeId, string code, CancellationToken token);
+        Task<bool> IsNotUniqueTitleAsync(int requirementTypeId, string title, CancellationToken token);
     }
 }

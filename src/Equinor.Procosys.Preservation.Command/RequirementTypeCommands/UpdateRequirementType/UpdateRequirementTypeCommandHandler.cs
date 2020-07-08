@@ -22,7 +22,11 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
         {
             var requirementType = await _requirementTypeRepository.GetByIdAsync(request.RequirementTypeId);
 
-           // requirementType.Void(); TODO
+            requirementType.Title = request.Title;
+            requirementType.Code = request.Code;
+            requirementType.Icon = request.Icon;
+            requirementType.SortKey = request.SortKey;
+
             requirementType.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

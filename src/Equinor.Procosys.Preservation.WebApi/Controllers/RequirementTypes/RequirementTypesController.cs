@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromRoute] int id,
             [FromBody] UpdateRequirementTypeDto dto)
         {
-            var result = await _mediator.Send(new UpdateRequirementTypeCommand(id, dto.RowVersion, dto.SortKey, dto.Title, dto.Code));
+            var result = await _mediator.Send(new UpdateRequirementTypeCommand(id, dto.RowVersion, dto.SortKey, dto.Title, dto.Code, dto.Icon));
             return Ok(result);
         }
 
