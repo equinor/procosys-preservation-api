@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
         {
             // Arrange
             _requirementTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
-            _requirementType = new RequirementType(TestPlant, "Code", "Title", 10);
+            _requirementType = new RequirementType(TestPlant, "Code", "Title", RequirementTypeIcon.Other, 10);
             _requirementTypeRepositoryMock
                 .Setup(x => x.GetByIdAsync(RequirementTypeId))
                     .Returns(Task.FromResult(_requirementType));
