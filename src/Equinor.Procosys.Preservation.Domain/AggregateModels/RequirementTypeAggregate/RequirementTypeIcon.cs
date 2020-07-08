@@ -3,15 +3,15 @@
     public enum RequirementTypeIcon
     {
         Area,
-        Electrical,
         Battery,
         Bearings,
+        Electrical,
         Heating,
         Installation,
         Measure,
         Nitrogen,
+        Other,
         Pressure,
-        Rotate,
-        Other
+        Rotate
     }
 }

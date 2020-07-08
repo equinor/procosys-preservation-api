@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 {
     [DbContext(typeof(PreservationContext))]
-    [Migration("20200707075236_IconOnRequirementType")]
+    [Migration("20200708090515_IconOnRequirementType")]
     partial class IconOnRequirementType
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1010,6 +1010,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("ModifiedById");
 
                     b.ToTable("RequirementTypes");
+
+                    b.HasCheckConstraint("constraint_requirement_type_check_icon", "Icon in ('Area','Battery','Bearings','Electrical','Heating','Installation','Measure','Nitrogen','Other','Pressure','Rotate')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", b =>

@@ -37,6 +37,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
         }
+
         private string GetValidIcons()
         {
             var fieldTypes = Enum.GetNames(typeof(RequirementTypeIcon)).Select(t => $"'{t}'");
