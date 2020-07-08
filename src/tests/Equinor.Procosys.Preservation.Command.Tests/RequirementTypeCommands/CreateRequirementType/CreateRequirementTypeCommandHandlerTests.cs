@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
                     _reqTypeAdded = x;
                 });
 
-            _command = new CreateRequirementTypeCommand(10, TestRequirementTypeCode, TestRequirementTypeTitle);
+            _command = new CreateRequirementTypeCommand(10, TestRequirementTypeCode, TestRequirementTypeTitle, RequirementTypeIcon.Other);
 
             _dut = new CreateRequirementTypeCommandHandler(
                 _reqTypeRepositoryMock.Object,

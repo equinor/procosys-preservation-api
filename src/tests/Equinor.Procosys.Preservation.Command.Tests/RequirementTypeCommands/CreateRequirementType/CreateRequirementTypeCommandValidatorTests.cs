@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -21,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         public void Setup_OkState()
         {
             _requirementTypeValidatorMock = new Mock<IRequirementTypeValidator>();
-            _command = new CreateRequirementTypeCommand(_sortKey, _code, _title);
+            _command = new CreateRequirementTypeCommand(_sortKey, _code, _title, RequirementTypeIcon.Other);
             _dut = new CreateRequirementTypeCommandValidator(_requirementTypeValidatorMock.Object);
         }
 

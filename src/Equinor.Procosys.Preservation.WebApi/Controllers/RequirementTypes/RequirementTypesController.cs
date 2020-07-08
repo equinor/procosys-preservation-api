@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             string plant,
             [FromBody] CreateRequirementTypeDto dto)
         {
-            var result = await _mediator.Send(new CreateRequirementTypeCommand(dto.SortKey, dto.Code, dto.Title));
+            var result = await _mediator.Send(new CreateRequirementTypeCommand(dto.SortKey, dto.Code, dto.Title, dto.Icon));
             return this.FromResult(result);
         }
 

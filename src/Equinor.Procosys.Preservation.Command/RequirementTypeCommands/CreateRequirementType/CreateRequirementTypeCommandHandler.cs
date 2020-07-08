@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
 
         public async Task<Result<int>> Handle(CreateRequirementTypeCommand request, CancellationToken cancellationToken)
         {
-            var newRequirementType = new RequirementType(_plantProvider.Plant, request.Code, request.Title, request.SortKey);
+            var newRequirementType = new RequirementType(_plantProvider.Plant, request.Code, request.Title, request.Icon, request.SortKey);
             _requirementTypeRepository.Add(newRequirementType);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<int>(newRequirementType.Id);

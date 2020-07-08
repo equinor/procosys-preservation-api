@@ -11,6 +11,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .MaximumLength(RequirementType.TitleLengthMax);
             RuleFor(x => x.Code)
                 .MaximumLength(RequirementType.CodeLengthMax);
+            RuleFor(x => x.Icon).NotNull();
+            RuleFor(x => x.SortKey).NotNull();
         }
     }
 }
