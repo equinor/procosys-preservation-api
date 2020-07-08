@@ -13,12 +13,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     public class RequirementTypeValidatorTests : ReadOnlyTestsBase
     {
         private int _reqTypeId;
-                        
+        private const string Code = "Code";
+
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var requirementType = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", RequirementTypeIcon.Other);
+                var requirementType = AddRequirementTypeWith1DefWithoutField(context, Code, "D", RequirementTypeIcon.Other);
                 _reqTypeId = requirementType.Id;
             }
         }
@@ -80,6 +81,50 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new RequirementTypeValidator(context);
                 var result = await dut.IsVoidedAsync(126234, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AddRequirementType_IsNotUniqueTitleAsync_SameTitleAsAnotherRequirementType_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.IsNotUniqueTitleAsync($"Title{Code}", default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AddRequirementType_IsNotUniqueTitleAsync_SameTitleAsAnotherRequirementType_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.IsNotUniqueTitleAsync("XXXXXX", default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AddRequirementType_IsNotUniqueCodeAsync_SameCodeAsAnotherRequirementType_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.IsNotUniqueCodeAsync(Code, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AddRequirementType_IsNotUniqueCodeAsync_SameCodeAsAnotherRequirementType_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.IsNotUniqueCodeAsync("XXXXXX", default);
                 Assert.IsFalse(result);
             }
         }
