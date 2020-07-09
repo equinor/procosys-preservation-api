@@ -18,6 +18,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValida
                 where rt.Id == requirementTypeId
                 select rt).AnyAsync(token);
 
+        public async Task<bool> RequirementDefinitionExistsAsync(int requirementTypeId, CancellationToken token)
+        {
+            var reqType = await _context.QuerySet<RequirementType>()
+                .Include(rt => rt.RequirementDefinitions)
+                .SingleOrDefaultAsync(rt => rt.Id == requirementTypeId, token);
+
+            return reqType != null && reqType.RequirementDefinitions.Count != 0;
+        }
+
         public async Task<bool> IsVoidedAsync(int requirementTypeId, CancellationToken token)
         {
             var reqType = await (from rt in _context.QuerySet<RequirementType>()

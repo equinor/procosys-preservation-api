@@ -1,4 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using System;
+using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -22,11 +24,25 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired()
                 .HasMaxLength(RequirementType.TitleLengthMax);
 
+            builder.Property(f => f.Icon)
+                .HasConversion<string>()
+                .HasMaxLength(RequirementType.IconLengthMax)
+                .HasDefaultValue(RequirementTypeIcon.Other)
+                .IsRequired();
+
+            builder.HasCheckConstraint("constraint_requirement_type_check_icon", $"{nameof(RequirementType.Icon)} in ({GetValidIcons()})");
+
             builder
                 .HasMany(x => x.RequirementDefinitions)
                 .WithOne()
                 .IsRequired()
                 .OnDelete(DeleteBehavior.NoAction);
+        }
+
+        private string GetValidIcons()
+        {
+            var fieldTypes = Enum.GetNames(typeof(RequirementTypeIcon)).Select(t => $"'{t}'");
+            return string.Join(',', fieldTypes);
         }
     }
 }
