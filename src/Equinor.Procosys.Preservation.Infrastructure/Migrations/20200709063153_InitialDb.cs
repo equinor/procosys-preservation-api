@@ -161,6 +161,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     Plant = table.Column<string>(maxLength: 255, nullable: false),
                     Code = table.Column<string>(maxLength: 32, nullable: false),
                     Title = table.Column<string>(maxLength: 64, nullable: false),
+                    Icon = table.Column<string>(maxLength: 32, nullable: false, defaultValue: "Other"),
                     IsVoided = table.Column<bool>(nullable: false),
                     SortKey = table.Column<int>(nullable: false),
                     CreatedAtUtc = table.Column<DateTime>(nullable: false),
@@ -172,6 +173,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RequirementTypes", x => x.Id);
+                    table.CheckConstraint("constraint_requirement_type_check_icon", "Icon in ('Area','Battery','Bearings','Electrical','Heating','Installation','Measure','Nitrogen','Other','Pressure','Rotate')");
                     table.ForeignKey(
                         name: "FK_RequirementTypes_Persons_CreatedById",
                         column: x => x.CreatedById,
