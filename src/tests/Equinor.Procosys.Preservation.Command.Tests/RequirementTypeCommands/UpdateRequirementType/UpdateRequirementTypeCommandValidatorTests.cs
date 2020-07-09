@@ -20,7 +20,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         private readonly string _code = "Code test";
         private RequirementTypeIcon _icon = RequirementTypeIcon.Other;
 
-
         [TestInitialize]
         public void Setup_OkState()
         {
