@@ -92,7 +92,6 @@ stages:
 
   jobs:
 
-
   # Deploy to AKS
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
@@ -141,7 +140,6 @@ stages:
 
   jobs:
 
-
   # Deploy to AKS
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
@@ -186,7 +184,6 @@ stages:
     serviceConnection: '${{ variables.prodServiceConnection }}'
 
   jobs:
-
 
   # Deploy to AKS
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
