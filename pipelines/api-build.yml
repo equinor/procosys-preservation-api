@@ -95,8 +95,7 @@ stages:
   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
     parameters:
       dependsOn: ''
-      #deploymentName: 'run_migration_script'
-      deploymentName: 'will_not_run_migration_script_until_november_fix'
+      deploymentName: 'run_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.serviceConnection }}'
       kvName: '${{ variables.commonKeyVault }}'
@@ -142,9 +141,8 @@ stages:
   # Run Migration Script
   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
     parameters:
-      dependsOn: ''
-      #deploymentName: 'run_migration_script'
-      deploymentName: 'will_not_run_migration_script_until_november_fix'
+      dependsOn: ''      
+      deploymentName: 'run_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.serviceConnection }}'
       kvName: '${{ variables.commonKeyVault }}'
@@ -188,8 +186,7 @@ stages:
   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
     parameters:
       dependsOn: ''
-      #deploymentName: 'run_migration_script'
-      deploymentName: 'will_not_run_migration_script_until_november_fix'
+      deploymentName: 'run_migration_script'      
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.serviceConnection }}'
       kvName: '${{ variables.commonKeyVault }}'

@@ -152,5 +152,49 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
+
+        [TestMethod]
+        public async Task AddRequirementType_IsNotUniqueTitleAsync_SameTitleAsAnotherRequirementType_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.IsNotUniqueTitleAsync($"Title{Code}", default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AddRequirementType_IsNotUniqueTitleAsync_SameTitleAsAnotherRequirementType_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.IsNotUniqueTitleAsync("XXXXXX", default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AddRequirementType_IsNotUniqueCodeAsync_SameCodeAsAnotherRequirementType_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.IsNotUniqueCodeAsync(Code, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AddRequirementType_IsNotUniqueCodeAsync_SameCodeAsAnotherRequirementType_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.IsNotUniqueCodeAsync("XXXXXX", default);
+                Assert.IsFalse(result);
+            }
+        }
     }
 }

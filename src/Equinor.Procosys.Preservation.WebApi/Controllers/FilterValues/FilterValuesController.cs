@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("RequirementTypes")]
         public async Task<ActionResult<List<RequirementTypeDto>>> GetRequirementTypes(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)
@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Responsibles")]
         public async Task<ActionResult<List<ResponsibleDto>>> GetResponsibles(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Journeys")]
         public async Task<ActionResult<List<JourneyDto>>> GetJourneys(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Modes")]
         public async Task<ActionResult<List<ModeDto>>> GetModes(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)
@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Areas")]
         public async Task<ActionResult<List<AreaDto>>> GetAreas(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("TagFunctions")]
         public async Task<ActionResult<List<TagFunctionCodeDto>>> GetTagFunctions(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Disciplines")]
         public async Task<ActionResult<List<DisciplineDto>>> GetTagDisciplines(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromQuery] string projectName)
