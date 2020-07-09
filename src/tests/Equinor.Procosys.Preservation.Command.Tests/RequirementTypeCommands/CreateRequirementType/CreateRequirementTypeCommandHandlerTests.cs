@@ -37,7 +37,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
             );
         }
 
-
         [TestMethod]
         public async Task HandlingCreateReqTypeCommand_ShouldAddReqTypeToRepository()
         {

@@ -34,6 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValida
                 select rt).SingleOrDefaultAsync(token);
             return reqType != null && reqType.IsVoided;
         }
+
         public async Task<bool> IsNotUniqueCodeAsync(string code, CancellationToken token) =>
             await (from rt in _context.QuerySet<RequirementType>()
                 where rt.Code == code
