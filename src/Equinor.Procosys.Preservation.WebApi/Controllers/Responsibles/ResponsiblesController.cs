@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Responsibles
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ResponsibleDto>>> GetAllResponsibles(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant)
         {

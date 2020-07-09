@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{code}")]
         public async Task<ActionResult<TagFunctionDetailsDto>> GetTagFunctionDetails(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromRoute] string code,
@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut]
         public async Task<ActionResult> UpdateRequirements(
-            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
