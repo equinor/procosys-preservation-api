@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequir
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
@@ -60,6 +61,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         {
             var result = await _mediator.Send(new CreateRequirementTypeCommand(dto.SortKey, dto.Code, dto.Title, dto.Icon));
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [HttpPut("{id}/Update")]
+        public async Task<ActionResult<RequirementTypeDto>> UpdateRequirementType(
+            [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] UpdateRequirementTypeDto dto)
+        {
+            var result = await _mediator.Send(new UpdateRequirementTypeCommand(id, dto.RowVersion, dto.SortKey, dto.Title, dto.Code, dto.Icon));
+            return Ok(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]

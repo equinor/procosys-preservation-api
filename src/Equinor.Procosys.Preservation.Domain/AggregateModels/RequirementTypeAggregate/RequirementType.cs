@@ -27,11 +27,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             Icon = icon;
         }
 
-        public string Code { get; private set; }
-        public string Title { get; private set; }
-        public RequirementTypeIcon Icon { get; private set; }
+        public string Code { get; set; }
+        public string Title { get; set; }
+        public RequirementTypeIcon Icon { get; set; }
         public bool IsVoided { get; private set; }
-        public int SortKey { get; private set; }
+        public int SortKey { get; set; }
         public IReadOnlyCollection<RequirementDefinition> RequirementDefinitions => _requirementDefinitions.AsReadOnly();
 
         public DateTime CreatedAtUtc { get; private set; }
