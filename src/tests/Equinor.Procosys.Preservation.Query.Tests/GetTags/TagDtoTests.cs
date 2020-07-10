@@ -32,6 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             "PoNo",
             new List<RequirementDto> {new RequirementDto(0, null, default, default, false)},
             "Resp",
+            "RespDescription",
             PreservationStatus.Active.GetDisplayValue(),
             "SA",
             "TagFunctionCode",
@@ -66,6 +67,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), _dut.Status);
             Assert.AreEqual("SA", _dut.StorageArea);
             Assert.AreEqual("Resp", _dut.ResponsibleCode);
+            Assert.AreEqual("RespDescription", _dut.ResponsibleDescription);
             Assert.AreEqual("TagFunctionCode", _dut.TagFunctionCode);
             Assert.AreEqual("TagNo", _dut.TagNo);
             Assert.AreEqual(TagType.Standard, _dut.TagType);
