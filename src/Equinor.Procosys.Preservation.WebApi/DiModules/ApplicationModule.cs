@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
 {
     public static class ApplicationModule
     {
-        public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
+        public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
             TimeService.SetProvider(new SystemTimeProvider());
 

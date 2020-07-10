@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 
             services.AddApplicationInsightsTelemetry();
             services.AddMediatrModules();
-            services.AddApplicationModules(Configuration, _environment);
+            services.AddApplicationModules(Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
