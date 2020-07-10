@@ -163,6 +163,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     dto.PurchaseOrderNo,
                     requirementDtos,
                     dto.ResponsibleCode,
+                    dto.ResponsibleDescription,
                     dto.Status.GetDisplayValue(),
                     dto.StorageArea,
                     dto.TagFunctionCode,
@@ -275,6 +276,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     NextDueTimeUtc = tag.NextDueTimeUtc,
                     PurchaseOrderNo = tag.PurchaseOrderNo,
                     ResponsibleCode = responsible.Code,
+                    ResponsibleDescription = responsible.Description,
                     Status = tag.Status,
                     StepId = step.Id,
                     StorageArea = tag.StorageArea,
@@ -392,6 +394,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
             public DateTime? NextDueTimeUtc { get; set; }
             public string PurchaseOrderNo { get; set; }
             public string ResponsibleCode { get; set; }
+            public string ResponsibleDescription { get; set; }
             public PreservationStatus Status { get; set; }
             public string StorageArea { get; set; }
             public int StepId { get; set; }
