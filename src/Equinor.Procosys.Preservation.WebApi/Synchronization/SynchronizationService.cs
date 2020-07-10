@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,6 +11,7 @@ using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Authentication;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.WebApi.Telemetry;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -22,6 +23,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
     {
         private readonly Guid _synchronizationUserOid;
         private readonly ILogger<SynchronizationService> _logger;
+        private readonly ITelemetryClient _telemetryClient;
         private readonly IMediator _mediator;
         private readonly IClaimsProvider _claimsProvider;
         private readonly IPlantSetter _plantSetter;
@@ -33,6 +35,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
 
         public SynchronizationService(
             ILogger<SynchronizationService> logger,
+            ITelemetryClient telemetryClient,
             IMediator mediator,
             IClaimsProvider claimsProvider,
             IPlantSetter plantSetter,
@@ -44,6 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             IOptionsMonitor<SynchronizationOptions> options)
         {
             _logger = logger;
+            _telemetryClient = telemetryClient;
             _mediator = mediator;
             _claimsProvider = claimsProvider;
             _currentUserSetter = currentUserSetter;
@@ -76,16 +80,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
                 await _claimsTransformation.TransformAsync(currentUser);
 
                 var startTime = TimeService.UtcNow;
-                await SynchronizeProjects();
-                await SynchronizeResponsibles();
-                await SynchronizeTagFunctions();
+                await SynchronizeProjects(plant);
+                await SynchronizeResponsibles(plant);
+                await SynchronizeTagFunctions(plant);
                 var endTime = TimeService.UtcNow;
 
                 _logger.LogInformation($"Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
+                _telemetryClient.TrackMetric("Synchronization Time", (endTime - startTime).TotalSeconds, "Plant", plant);
             }
         }
 
-        private async Task SynchronizeProjects()
+        private async Task SynchronizeProjects(string plant)
         {
             _logger.LogInformation($"Synchronizing projects");
 
@@ -94,14 +99,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             if (result.ResultType == ServiceResult.ResultType.Ok)
             {
                 _logger.LogWarning($"Synchronizing projects complete.");
+                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Succeeded" }, { "Plant", plant }, { "Type", "Projects" } });
             }
             else
             {
                 _logger.LogWarning($"Synchronizing projects failed.");
+                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Failed" }, { "Plant", plant }, { "Type", "Projects" } });
             }
         }
 
-        private async Task SynchronizeResponsibles()
+        private async Task SynchronizeResponsibles(string plant)
         {
             _logger.LogInformation($"Synchronizing responsibles");
 
@@ -110,14 +117,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             if (result.ResultType == ServiceResult.ResultType.Ok)
             {
                 _logger.LogWarning($"Synchronizing responsibles complete.");
+                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Succeeded" }, { "Plant", plant }, { "Type", "Responsibles" } });
             }
             else
             {
                 _logger.LogWarning($"Synchronizing responsibles failed.");
+                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Failed" }, { "Plant", plant }, { "Type", "Responsibles" } });
             }
         }
 
-        private async Task SynchronizeTagFunctions()
+        private async Task SynchronizeTagFunctions(string plant)
         {
             _logger.LogInformation($"Synchronizing tag functions");
 
@@ -126,10 +135,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             if (result.ResultType == ServiceResult.ResultType.Ok)
             {
                 _logger.LogWarning($"Synchronizing tag functions complete.");
+                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Succeeded" }, { "Plant", plant }, { "Type", "Tag Functions" } });
             }
             else
             {
                 _logger.LogWarning($"Synchronizing tag functions failed.");
+                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Failed" }, { "Plant", plant }, { "Type", "Tag Functions" } });
             }
         }
     }
