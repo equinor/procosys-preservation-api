@@ -97,7 +97,7 @@ stages:
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
       deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
+      dependsOn: 'run_migration_script'
       serviceConnection: '${{ variables.serviceConnection }}'
       env: '${{ variables.envName }}'
       envRg: 'pcs-hosting-rg'
@@ -115,7 +115,7 @@ stages:
   # Run Migration Script
   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
     parameters:
-      dependsOn: 'deploy_to_k8s'
+      dependsOn: ''
       deploymentName: 'run_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.serviceConnection }}'
@@ -146,7 +146,7 @@ stages:
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
       deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
+      dependsOn: 'run_migration_script'
       serviceConnection: '${{ variables.serviceConnection }}'
       env: '${{ variables.envName }}'
       envRg: 'pcs-hosting-rg'
@@ -164,7 +164,7 @@ stages:
   # Run Migration Script
   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
     parameters:
-      dependsOn: 'deploy_to_k8s'      
+      dependsOn: ''      
       deploymentName: 'run_migration_script'
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.serviceConnection }}'
@@ -192,7 +192,7 @@ stages:
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
       deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
+      dependsOn: 'run_migration_script'
       serviceConnection: '${{ variables.serviceConnection }}'
       env: '${{ variables.envName }}'
       envRg: 'pcs-hosting-rg'
@@ -210,7 +210,7 @@ stages:
   # Run Migration Script
   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
     parameters:
-      dependsOn: 'deploy_to_k8s'
+      dependsOn: ''
       deploymentName: 'run_migration_script'      
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.serviceConnection }}'
