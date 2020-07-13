@@ -22,14 +22,12 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
         public async Task<Result<Unit>> Handle(DeleteRequirementDefinitionCommand request, CancellationToken cancellationToken)
         {
             var requirementType = await _requirementTypeRepository.GetByIdAsync(request.RequirementTypeId);
-
-            var requirementDefinition =
-                requirementType.RequirementDefinitions.Single(rd => rd.Id == request.RequirementDefinitionId);
+            var requirementDefinition = requirementType.RequirementDefinitions.Single(rd => rd.Id == request.RequirementDefinitionId);
+            
             requirementDefinition.SetRowVersion(request.RowVersion);
-
             requirementType.RemoveRequirementDefinition(requirementDefinition);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);
         }
     }

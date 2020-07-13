@@ -159,7 +159,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
-        [HttpDelete("{id}/RequirementDefinitions/{requirementDefinitionId}/Delete")]
+        [HttpDelete("{id}/RequirementDefinitions/{requirementDefinitionId}")]
         public async Task<ActionResult> DeleteRequirementDefinition(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]

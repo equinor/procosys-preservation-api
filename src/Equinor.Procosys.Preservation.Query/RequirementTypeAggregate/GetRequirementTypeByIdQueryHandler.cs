@@ -43,6 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                             rd.Usage,
                             rd.SortKey,
                             rd.NeedsUserInput,
+                            rd.RowVersion.ConvertToString(),
                             rd.OrderedFields(true)
                                 .Select(f => new FieldDto(
                                     f.Id,
