@@ -176,5 +176,30 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             var result = await _mediator.Send(command);
             return Ok(result);
         }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Update")]
+        public async Task<ActionResult<RequirementDefinitionDto>> UpdateRequirementDefinition(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementDefinitionId,
+            [FromBody] UpdateRequirementDefinitionDto dto)
+        {
+
+            var updatedFields = dto.UpdatedFields.Select(f =>
+                new Field(plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+            var newFields = dto.NewFields.Select(f =>
+                new Field(plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+
+            var command = new UnvoidRequirementDefinitionCommand(
+                id,
+                requirementDefinitionId,
+                dto.RowVersion);
+            var result = await _mediator.Send(command);
+            return Ok(result);
+        }
     }
 }

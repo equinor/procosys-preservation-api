@@ -6,7 +6,13 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
 {
     public class UpdateRequirementTypeCommand : IRequest<Result<string>>
     {
-        public UpdateRequirementTypeCommand(int requirementTypeId, string rowVersion, int sortKey, string title, string code, RequirementTypeIcon icon)
+        public UpdateRequirementTypeCommand(
+            int requirementTypeId,
+            string rowVersion,
+            int sortKey,
+            string title,
+            string code,
+            RequirementTypeIcon icon)
         {
             RequirementTypeId = requirementTypeId;
             RowVersion = rowVersion;

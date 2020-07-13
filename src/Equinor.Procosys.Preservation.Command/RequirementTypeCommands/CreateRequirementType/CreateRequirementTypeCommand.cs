@@ -6,7 +6,11 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
 {
     public class CreateRequirementTypeCommand : IRequest<Result<int>>
     {
-        public CreateRequirementTypeCommand(int sortKey, string code, string title, RequirementTypeIcon icon)
+        public CreateRequirementTypeCommand(
+            int sortKey,
+            string code,
+            string title,
+            RequirementTypeIcon icon)
         {
             SortKey = sortKey;
             Code = code;
