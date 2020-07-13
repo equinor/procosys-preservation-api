@@ -10,7 +10,10 @@ using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.DIModules;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Equinor.Procosys.Preservation.WebApi.Seeding;
+using Equinor.Procosys.Preservation.WebApi.Telemetry;
 using FluentValidation.AspNetCore;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -140,9 +143,9 @@ namespace Equinor.Procosys.Preservation.WebApi
                 options.EnableForHttps = true;
             });
 
+            services.AddApplicationInsightsTelemetry();
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration);
-            services.AddApplicationInsightsTelemetry();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
