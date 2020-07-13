@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
@@ -8,6 +10,7 @@ using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequir
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
@@ -101,6 +104,23 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromBody] DeleteRequirementTypeDto dto)
         {
             var result = await _mediator.Send(new DeleteRequirementTypeCommand(id, dto.RowVersion));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
+        [HttpPost("{id}/RequirementDefinitions")]
+        public async Task<ActionResult<int>> CreateRequirementDefinition(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] CreateRequirementDefinitionDto dto)
+        {
+            var fields = dto.Fields?.Select(f =>
+                new Field(plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+            var result = await _mediator.Send(new CreateRequirementDefinitionCommand(id, dto.SortKey, dto.Usage,
+                dto.Title, dto.DefaultIntervalWeeks, fields));
             return this.FromResult(result);
         }
 
