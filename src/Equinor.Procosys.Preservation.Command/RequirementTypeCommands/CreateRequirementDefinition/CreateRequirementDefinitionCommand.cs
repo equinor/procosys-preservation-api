@@ -8,7 +8,13 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
 {
     public class CreateRequirementDefinitionCommand : IRequest<Result<int>>
     {
-        public CreateRequirementDefinitionCommand(int id, int sortKey, RequirementUsage usage, string title, int defaultIntervalWeeks, IEnumerable<Field> fields = null)
+        public CreateRequirementDefinitionCommand(
+            int id,
+            int sortKey,
+            RequirementUsage usage,
+            string title,
+            int defaultIntervalWeeks,
+            IEnumerable<Field> fields = null)
         {
             RequirementTypeId = id;
             SortKey = sortKey;

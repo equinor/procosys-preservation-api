@@ -10,7 +10,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
 {
     public class CreateRequirementDefinitionCommandValidator : AbstractValidator<CreateRequirementDefinitionCommand>
     {
-        public CreateRequirementDefinitionCommandValidator(IRequirementDefinitionValidator requirementDefinitionValidator, IRequirementTypeValidator requirementTypeValidator)
+        public CreateRequirementDefinitionCommandValidator(
+            IRequirementDefinitionValidator requirementDefinitionValidator,
+            IRequirementTypeValidator requirementTypeValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 

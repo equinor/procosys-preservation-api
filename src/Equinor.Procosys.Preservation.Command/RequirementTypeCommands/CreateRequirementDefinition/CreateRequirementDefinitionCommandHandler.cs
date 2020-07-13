@@ -14,8 +14,10 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
 
-        public CreateRequirementDefinitionCommandHandler(IRequirementTypeRepository requirementTypeRepository,
-            IUnitOfWork unitOfWork, IPlantProvider plantProvider)
+        public CreateRequirementDefinitionCommandHandler(
+            IRequirementTypeRepository requirementTypeRepository,
+            IUnitOfWork unitOfWork,
+            IPlantProvider plantProvider)
         {
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
@@ -25,8 +27,12 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
         public async Task<Result<int>> Handle(CreateRequirementDefinitionCommand request, CancellationToken cancellationToken)
         {
             var requirementType = await _requirementTypeRepository.GetByIdAsync(request.RequirementTypeId);
-            var newRequirementDefinition = new RequirementDefinition(_plantProvider.Plant, request.Title,
-                request.DefaultIntervalWeeks, request.Usage, request.SortKey);
+            var newRequirementDefinition = new RequirementDefinition(
+                _plantProvider.Plant,
+                request.Title,
+                request.DefaultIntervalWeeks,
+                request.Usage,
+                request.SortKey);
             requirementType.AddRequirementDefinition(newRequirementDefinition);
 
             foreach (var field in request.Fields ?? Enumerable.Empty<Field>())
