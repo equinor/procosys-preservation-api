@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +27,11 @@ namespace Equinor.Procosys.Preservation.Query.ModeAggregate
                 return new NotFoundResult<ModeDto>(Strings.EntityNotFound(nameof(Mode), request.Id));
             }
 
-            return new SuccessResult<ModeDto>(new ModeDto(mode.Id, mode.Title, mode.IsVoided, mode.ForSupplier, mode.RowVersion.ConvertToString()));
+            var inUse = await (from s in _context.QuerySet<Step>()
+                where s.ModeId == mode.Id
+                select s).AnyAsync(cancellationToken);
+
+            return new SuccessResult<ModeDto>(new ModeDto(mode.Id, mode.Title, mode.IsVoided, mode.ForSupplier, inUse, mode.RowVersion.ConvertToString()));
         }
     }
 }
