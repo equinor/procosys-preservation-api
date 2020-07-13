@@ -54,6 +54,21 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             _requirementDefinitions.Add(requirementDefinition);
         }
 
+        public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition)
+        {
+            if (requirementDefinition == null)
+            {
+                throw new ArgumentNullException(nameof(requirementDefinition));
+            }
+
+            if (requirementDefinition.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't remove item in {requirementDefinition.Plant} from item in {Plant}");
+            }
+
+            _requirementDefinitions.Remove(requirementDefinition);
+        }
+
         public void Void() => IsVoided = true;
         public void UnVoid() => IsVoided = false;
         

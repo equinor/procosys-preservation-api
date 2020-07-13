@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
@@ -155,6 +156,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 dto.RowVersion);
             var result = await _mediator.Send(command);
             return Ok(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
+        [HttpDelete("{id}/RequirementDefinitions/{requirementDefinitionId}/Delete")]
+        public async Task<ActionResult> DeleteRequirementDefinition(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementDefinitionId,
+            [FromBody] DeleteRequirementDefinitionDto dto)
+        {
+            var result = await _mediator.Send(new DeleteRequirementDefinitionCommand(id, requirementDefinitionId, dto.RowVersion));
+            return this.FromResult(result);
         }
     }
 }
