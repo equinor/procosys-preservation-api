@@ -8,7 +8,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
@@ -25,8 +24,6 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
             var tagHistory = await (from h in _context.QuerySet<History>()
                 join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
                 join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
-                //join preservationRecord in _context.QuerySet<PreservationRecord>() on h.PreservationRecordGuid equals preservationRecord.ObjectGuid
-                //join preservationPeriod in _context.QuerySet<PreservationPeriod>() on preservationRecord.Id equals preservationPeriod.PreservationRecord.Id
                 from preservationRecord in _context.QuerySet<PreservationRecord>()
                     .Where(pr => pr.ObjectGuid == EF.Property<Guid>(h, "PreservationRecordGuid")).DefaultIfEmpty() //left join
                 from preservationPeriod in _context.QuerySet<PreservationPeriod>()
@@ -40,11 +37,12 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
                     h.EventType,
                     h.DueInWeeks,
                     preservationPeriod.TagRequirementId,
-                    h.PreservationRecordGuid))
-                //.OrderByDescending(dto => dto.CreatedAtUtc)
-                .ToListAsync(cancellationToken);
+                    h.PreservationRecordGuid)
+                ).ToListAsync(cancellationToken);
 
-            return new SuccessResult<List<HistoryDto>>(tagHistory);
+            var tagHistoryOrdered = tagHistory.OrderByDescending(h => h.CreatedAtUtc).ToList();
+
+            return new SuccessResult<List<HistoryDto>>(tagHistoryOrdered);
         }
     }
 }
