@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -18,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
     {
         private int _tagId;
         private int _requirementWithoutFieldId;
+        private Guid _preservationRecordGuid;
         private int _preservationRecordId;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -60,6 +62,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 Assert.IsNotNull(activePeriodForRequirementWithOutField.PreservationRecord);
 
                 context.SaveChangesAsync().Wait();
+                _preservationRecordGuid = activePeriodForRequirementWithOutField.PreservationRecord.ObjectGuid;
                 _preservationRecordId = activePeriodForRequirementWithOutField.PreservationRecord.Id;
             }
         }
@@ -69,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var query = new GetPreservationRecordQuery(_tagId, _requirementWithoutFieldId, _preservationRecordId);
+                var query = new GetPreservationRecordQuery(_tagId, _requirementWithoutFieldId, _preservationRecordGuid);
                 var dut = new GetPreservationRecordQueryHandler(context);
                 var result = await dut.Handle(query, default);
 
@@ -85,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 _currentUserProvider))
             {
                 var tagId = 11;
-                var query = new GetPreservationRecordQuery(tagId, _requirementWithoutFieldId, _preservationRecordId);
+                var query = new GetPreservationRecordQuery(tagId, _requirementWithoutFieldId, _preservationRecordGuid);
                 var dut = new GetPreservationRecordQueryHandler(context);
                 var result = await dut.Handle(query, default);
 
@@ -101,7 +104,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 _currentUserProvider))
             {
                 var reqId = 22;
-                var query = new GetPreservationRecordQuery(_tagId, reqId, _preservationRecordId);
+                var query = new GetPreservationRecordQuery(_tagId, reqId, _preservationRecordGuid);
                 var dut = new GetPreservationRecordQueryHandler(context);
                 var result = await dut.Handle(query, default);
 
@@ -116,13 +119,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                var presevRecordId = 33;
-                var query = new GetPreservationRecordQuery(_tagId, _requirementWithoutFieldId, presevRecordId);
+                var presevRecordGuid = new Guid();
+                var query = new GetPreservationRecordQuery(_tagId, _requirementWithoutFieldId, presevRecordGuid);
                 var dut = new GetPreservationRecordQueryHandler(context);
                 var result = await dut.Handle(query, default);
 
                 Assert.AreEqual(1, result.Errors.Count);
-                Assert.IsTrue(result.Errors[0].StartsWith(Strings.EntityNotFound(nameof(PreservationPeriod), presevRecordId)));
+                Assert.IsTrue(result.Errors[0].StartsWith($"{nameof(PreservationPeriod)} not found"));
             }
         }
     }
