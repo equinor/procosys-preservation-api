@@ -13,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public Field(string plant,
+        public Field(
+            string plant,
             string label,
             FieldType fieldType,
             int sortKey,
