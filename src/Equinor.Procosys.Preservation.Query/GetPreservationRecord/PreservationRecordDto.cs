@@ -9,6 +9,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
             int id,
             bool bulkPreserved,
             string requirementTypeTitle,
+            string requirementTypeCode,
             RequirementTypeIcon icon,
             string requirementDefinitionTitle,
             int intervalWeeks,
@@ -18,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
             Id = id;
             BulkPreserved = bulkPreserved;
             RequirementTypeTitle = requirementTypeTitle;
+            RequirementTypeCode = requirementTypeCode;
             Icon = icon;
             RequirementDefinitionTitle = requirementDefinitionTitle;
             IntervalWeeks = intervalWeeks;
@@ -28,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
         public int Id { get; }
         public bool BulkPreserved { get; }
         public string RequirementTypeTitle { get; }
+        public string RequirementTypeCode { get; }
         public RequirementTypeIcon Icon { get; }
         public string RequirementDefinitionTitle { get; }
         public int IntervalWeeks { get; }

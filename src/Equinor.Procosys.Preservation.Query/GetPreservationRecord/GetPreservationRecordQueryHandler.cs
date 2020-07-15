@@ -57,6 +57,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
                     {
                         ReqTypeIcon = requirementType.Icon,
                         ReqTypeTitle = requirementType.Title,
+                        ReqTypeCode = requirementType.Code,
                         RequirementDefinition = requirementDefinition,
                     }
                 ).SingleOrDefaultAsync(cancellationToken);
@@ -98,6 +99,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
                 preservationPeriod.PreservationRecord.Id,
                 preservationPeriod.PreservationRecord.BulkPreserved,
                 requirementDto.ReqTypeTitle,
+                requirementDto.ReqTypeCode,
                 requirementDto.ReqTypeIcon,
                 requirementDto.RequirementDefinition.Title,
                 requirementDto.RequirementDefinition.DefaultIntervalWeeks,
