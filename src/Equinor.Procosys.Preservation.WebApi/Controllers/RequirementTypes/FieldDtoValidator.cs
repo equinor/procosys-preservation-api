@@ -18,8 +18,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .NotNull()
                 .WithMessage("Sort key for field cannot be null");
 
+            RuleFor(x => x.SortKey)
+                .Must(MustBePositive)
+                .WithMessage("Sort key must be positive");
+
             RuleFor(x => x.FieldType)
                 .NotNull();
         }
+
+        private bool MustBePositive(int arg) => arg > 0;
     }
 }

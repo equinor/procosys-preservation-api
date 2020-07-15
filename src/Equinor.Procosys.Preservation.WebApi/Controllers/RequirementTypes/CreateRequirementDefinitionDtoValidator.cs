@@ -18,12 +18,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .NotNull()
                 .WithMessage("Sort key cannot be null");
 
+            RuleFor(x => x.SortKey)
+                .Must(MustBePositive)
+                .WithMessage("Sort key must be positive");
+
             RuleFor(x => x.Usage)
                 .NotNull()
                 .WithMessage("Usage cannot be null");
 
             RuleFor(x => x.DefaultIntervalWeeks)
-                .Must(RequirementDefinitionMustHavePositiveInterval)
+                .Must(MustBePositive)
                 .WithMessage("Week interval must be positive");
 
             RuleForEach(x => x.Fields)
@@ -39,7 +43,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
         }
 
-        private bool RequirementDefinitionMustHavePositiveInterval(int arg) => arg > 0;
+        private bool MustBePositive(int arg) => arg > 0;
 
         private bool NotBeDuplicates(IList<FieldDto> fields)
         {
