@@ -2,11 +2,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
@@ -133,7 +135,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromBody] CreateRequirementDefinitionDto dto)
         {
             var fields = dto.Fields?.Select(f =>
-                new Field(plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+                new FieldsForCommand(f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
             var result = await _mediator.Send(new CreateRequirementDefinitionCommand(id, dto.SortKey, dto.Usage,
                 dto.Title, dto.DefaultIntervalWeeks, fields));
             return this.FromResult(result);
@@ -190,14 +192,33 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         {
 
             var updatedFields = dto.UpdatedFields.Select(f =>
-                new Field(plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+                new UpdateFieldsForCommand(
+                    f.Id, 
+                    f.Label, 
+                    f.FieldType, 
+                    f.SortKey, 
+                    f.RowVersion, 
+                    f.Unit, 
+                    f.ShowPrevious)).ToList();
             var newFields = dto.NewFields.Select(f =>
-                new Field(plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+                new FieldsForCommand(
+                    f.Label, 
+                    f.FieldType, 
+                    f.SortKey, 
+                    f.Unit, 
+                    f.ShowPrevious)).ToList();
 
-            var command = new UnvoidRequirementDefinitionCommand(
+            var command = new UpdateRequirementDefinitionCommand(
+                plant,
                 id,
                 requirementDefinitionId,
-                dto.RowVersion);
+                dto.SortKey,
+                dto.Usage,
+                dto.Title,
+                dto.DefaultIntervalWeeks,
+                dto.RowVersion,
+                updatedFields,
+                newFields);
             var result = await _mediator.Send(command);
             return Ok(result);
         }

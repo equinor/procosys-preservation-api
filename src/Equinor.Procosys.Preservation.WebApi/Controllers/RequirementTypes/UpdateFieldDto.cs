@@ -2,6 +2,7 @@
 {
     public class UpdateFieldDto : FieldDto
     {
+        public int Id { get; set; }
         public string RowVersion { get; set; }
     }
 }

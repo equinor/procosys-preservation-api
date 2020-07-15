@@ -15,22 +15,28 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             string title,
             int defaultIntervalWeeks,
             string rowVersion,
-            IList<Field> updatedFields,
-            IList<Field> newFields)
+            IList<UpdateFieldsForCommand> updatedFields,
+            IList<FieldsForCommand> newFields)
         {
             RequirementTypeId = requirementTypeId;
-            RowVersion = rowVersion;
-            SortKey = sortKey;
+            RequirementDefinitionId = requirementDefinitionId;
             Title = title;
-            //Code = code;
-            //Icon = icon;
+            SortKey = sortKey;
+            Usage = usage;
+            RowVersion = rowVersion;
+            DefaultIntervalWeeks = defaultIntervalWeeks;
+            UpdateFields = updatedFields;
+            NewFields = newFields;
         }
 
         public int RequirementTypeId { get; }
-        public string RowVersion { get; }
+        public int RequirementDefinitionId { get; }
         public int SortKey { get; }
-        public string Code { get; }
         public string Title { get; }
-        public RequirementTypeIcon Icon { get; }
+        public int DefaultIntervalWeeks { get; }
+        public RequirementUsage Usage { get; }
+        public string RowVersion { get; }
+        public IList<UpdateFieldsForCommand> UpdateFields { get; }
+        public IList<FieldsForCommand> NewFields { get; }
     }
 }

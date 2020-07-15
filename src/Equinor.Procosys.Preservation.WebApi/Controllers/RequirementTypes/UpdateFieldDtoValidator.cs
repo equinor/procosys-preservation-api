@@ -7,6 +7,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
     {
         public UpdateFieldDtoValidator()
         {
+            RuleFor(x => x.Id)
+                .NotNull()
+                .WithMessage("Id of fields to update must be included");
+
             RuleFor(x => x.Label)
                 .NotNull()
                 .MaximumLength(Field.LabelLengthMax);

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -35,9 +36,15 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
                 request.SortKey);
             requirementType.AddRequirementDefinition(newRequirementDefinition);
 
-            foreach (var field in request.Fields ?? Enumerable.Empty<Field>())
+            foreach (var field in request.Fields)
             {
-                newRequirementDefinition.AddField(field);
+                newRequirementDefinition.AddField(new Field(
+                    _plantProvider.Plant, 
+                    field.Label, 
+                    field.FieldType, 
+                    field.SortKey, 
+                    field.Unit, 
+                    field.ShowPrevious));
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
