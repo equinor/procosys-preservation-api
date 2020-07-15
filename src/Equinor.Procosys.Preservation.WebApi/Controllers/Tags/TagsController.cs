@@ -33,6 +33,7 @@ using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
 using Equinor.Procosys.Preservation.Query.GetFieldValueAttachment;
+using Equinor.Procosys.Preservation.Query.GetHistoricalFieldValueAttachment;
 using Equinor.Procosys.Preservation.Query.GetHistory;
 using Equinor.Procosys.Preservation.Query.GetPreservationRecord;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
@@ -759,17 +760,44 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
-        [HttpGet("{id}/Requirements/{requirementId}/PreservationRecord/{preservationRecordGuid}")]
+        [HttpGet("{id}/Requirements/{tagRequirementId}/PreservationRecord/{preservationRecordGuid}")]
         public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromRoute] int id,
-            [FromRoute] int requirementId,
+            [FromRoute] int tagRequirementId,
             [FromRoute] Guid preservationRecordGuid)
         {
-            var result = await _mediator.Send(new GetPreservationRecordQuery(id, requirementId, preservationRecordGuid));
+            var result = await _mediator.Send(new GetPreservationRecordQuery(id, tagRequirementId, preservationRecordGuid));
             return this.FromResult(result);
+        }
+
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("{id}/Requirements/{tagRequirementId}/PreservationRecord/{preservationRecordGuid}/Attachment")]
+        public async Task<IActionResult> GetHistoricalFieldValueAttachment(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int tagRequirementId,
+            [FromRoute] Guid preservationRecordGuid,
+            [FromQuery] bool redirect = false)
+        {
+            var result = await _mediator.Send(new GetHistoricalFieldValueAttachmentQuery(id, tagRequirementId, preservationRecordGuid));
+
+            if (result.ResultType != ResultType.Ok)
+            {
+                return this.FromResult(result);
+            }
+
+            if (!redirect)
+            {
+                return Ok(result.Data.ToString());
+            }
+
+            return Redirect(result.Data.ToString());
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]

@@ -39,10 +39,10 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
                 return new NotFoundResult<PreservationRecordDto>(Strings.EntityNotFound(nameof(Tag), request.TagId));
             }
 
-            var tagRequirement = tag.Requirements.SingleOrDefault(r => r.Id == request.RequirementId);
+            var tagRequirement = tag.Requirements.SingleOrDefault(r => r.Id == request.TagRequirementId);
             if (tagRequirement == null)
             {
-                return new NotFoundResult<PreservationRecordDto>(Strings.EntityNotFound(nameof(TagRequirement), request.RequirementId));
+                return new NotFoundResult<PreservationRecordDto>(Strings.EntityNotFound(nameof(TagRequirement), request.TagRequirementId));
             }
 
             var requirementDefinitionId = tagRequirement.RequirementDefinitionId;
