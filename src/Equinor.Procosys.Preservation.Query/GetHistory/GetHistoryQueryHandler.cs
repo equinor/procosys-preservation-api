@@ -29,6 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
                 from preservationPeriod in _context.QuerySet<PreservationPeriod>()
                     .Where(pr => pr.PreservationRecord.Id == EF.Property<int>(preservationRecord, "Id")).DefaultIfEmpty() // left join
                 where tag.ObjectGuid == h.ObjectGuid
+                where tag.Id == request.TagId
                 select new HistoryDto(
                     h.Id,
                     h.Description,
