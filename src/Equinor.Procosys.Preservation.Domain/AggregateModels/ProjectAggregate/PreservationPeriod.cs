@@ -39,6 +39,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
+        public int TagRequirementId { get; set; }
 
         public void Preserve(Person preservedBy, bool bulkPreserved)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -758,16 +759,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
-        [HttpGet("{id}/Requirements/{requirementId}/PreservationRecord/{preservationRecordId}")]
+        [HttpGet("{id}/Requirements/{requirementId}/PreservationRecord/{preservationRecordGuid}")]
         public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromRoute] int id,
             [FromRoute] int requirementId,
-            [FromRoute] int preservationRecordId)
+            [FromRoute] Guid preservationRecordGuid)
         {
-            var result = await _mediator.Send(new GetPreservationRecordQuery(id, requirementId, preservationRecordId));
+            var result = await _mediator.Send(new GetPreservationRecordQuery(id, requirementId, preservationRecordGuid));
             return this.FromResult(result);
         }
 
