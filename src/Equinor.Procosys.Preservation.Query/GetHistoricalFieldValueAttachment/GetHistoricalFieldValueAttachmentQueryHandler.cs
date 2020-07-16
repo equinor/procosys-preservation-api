@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -67,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Query.GetHistoricalFieldValueAttachment
                 return new NotFoundResult<Uri>($"{nameof(PreservationPeriod)} not found");
             }
 
-            if (preservationPeriod.FieldValues.Count != 1)
+            if (preservationPeriod.FieldValues.Count != 1 || preservationPeriod.FieldValues.ToList()[0].FieldValueAttachment == null)
             {
                 return new NotFoundResult<Uri>($"{nameof(FieldValue)} with type attachment was not found");
             }
