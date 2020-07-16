@@ -136,7 +136,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
 
             Assert.IsNotNull(result);
             Assert.AreEqual(ResultType.Ok, result.ResultType);
-                
             Assert.AreEqual(result.Data, _uri);
         }
 

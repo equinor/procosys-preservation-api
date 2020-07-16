@@ -8,11 +8,11 @@ namespace Equinor.Procosys.Preservation.Query.GetHistoricalFieldValueAttachment
     {
         public GetHistoricalFieldValueAttachmentQuery(
             int tagId,
-            int tagTagRequirementId,
+            int tagRequirementId,
             Guid preservationRecordGuid)
         {
             TagId = tagId;
-            TagRequirementId = tagTagRequirementId;
+            TagRequirementId = tagRequirementId;
             PreservationRecordGuid = preservationRecordGuid;
         }
 
