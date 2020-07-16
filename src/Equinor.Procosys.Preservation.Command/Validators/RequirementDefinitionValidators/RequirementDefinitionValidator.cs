@@ -73,13 +73,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             var needsUserInput = fieldTypes.Any(ft => ft == FieldType.Number ||
                                                  ft == FieldType.Attachment ||
                                                  ft == FieldType.CheckBox);
-            var reqType = await (from rt in _context.QuerySet<RequirementType>()
-                where rt.Id == requirementTypeId
-                select rt).SingleOrDefaultAsync(token);
+            var reqType = await _context.QuerySet<RequirementType>()
+                .Include(rt => rt.RequirementDefinitions)
+                .ThenInclude(r => r.Fields)
+                .SingleOrDefaultAsync(rt => rt.Id == requirementTypeId, token);
 
-            var reqDefs = reqType.RequirementDefinitions.ToList();
+            var reqDefinitions = reqType.RequirementDefinitions;
 
-            return reqDefs.Any(rd => rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
+            return reqDefinitions.Any(rd => rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
         }
     }
 }
