@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,8 +24,12 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
             var tagHistory = await (from h in _context.QuerySet<History>()
                 join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
                 join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
-                where tag.Id == request.TagId
+                from preservationRecord in _context.QuerySet<PreservationRecord>()
+                    .Where(pr => pr.ObjectGuid == EF.Property<Guid>(h, "PreservationRecordGuid")).DefaultIfEmpty() //left join
+                from preservationPeriod in _context.QuerySet<PreservationPeriod>()
+                    .Where(pr => pr.PreservationRecord.Id == EF.Property<int>(preservationRecord, "Id")).DefaultIfEmpty() // left join
                 where tag.ObjectGuid == h.ObjectGuid
+                where tag.Id == request.TagId
                 select new HistoryDto(
                     h.Id,
                     h.Description,
@@ -32,9 +37,13 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
                     new PersonDto(createdBy.Id, createdBy.FirstName, createdBy.LastName),
                     h.EventType,
                     h.DueInWeeks,
-                    h.PreservationRecordId)).ToListAsync(cancellationToken);
+                    preservationPeriod.TagRequirementId,
+                    h.PreservationRecordGuid)
+                ).ToListAsync(cancellationToken);
 
-            return new SuccessResult<List<HistoryDto>>(tagHistory);
+            var tagHistoryOrdered = tagHistory.OrderByDescending(h => h.CreatedAtUtc).ToList();
+
+            return new SuccessResult<List<HistoryDto>>(tagHistoryOrdered);
         }
     }
 }
