@@ -13,7 +13,6 @@ using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequir
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
@@ -135,7 +134,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromBody] CreateRequirementDefinitionDto dto)
         {
             var fields = dto.Fields?.Select(f =>
-                new FieldsForCommand(f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+                new FieldsForCommand(f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious)).ToList();
             var result = await _mediator.Send(new CreateRequirementDefinitionCommand(id, dto.SortKey, dto.Usage,
                 dto.Title, dto.DefaultIntervalWeeks, fields));
             return this.FromResult(result);
@@ -209,7 +208,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                     f.ShowPrevious)).ToList();
 
             var command = new UpdateRequirementDefinitionCommand(
-                plant,
                 id,
                 requirementDefinitionId,
                 dto.SortKey,

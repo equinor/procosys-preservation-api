@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -66,15 +67,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         public async Task<bool> IsNotUniqueTitleOnRequirementTypeAsync(
             int requirementTypeId,
             string reqDefTitle,
-            IEnumerable<Field> fields,
+            List<FieldType> fieldTypes,
             CancellationToken token)
         {
-            var needsUserInput = fields.Any(f => f.NeedsUserInput);
+            var needsUserInput = fieldTypes.Any(ft => ft == FieldType.Number ||
+                                                 ft == FieldType.Attachment ||
+                                                 ft == FieldType.CheckBox);
             var reqType = await (from rt in _context.QuerySet<RequirementType>()
                 where rt.Id == requirementTypeId
                 select rt).SingleOrDefaultAsync(token);
 
-            var reqDefs = reqType.RequirementDefinitions;
+            var reqDefs = reqType.RequirementDefinitions.ToList();
+
             return reqDefs.Any(rd => rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
         }
     }

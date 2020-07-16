@@ -36,17 +36,20 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
                 request.SortKey);
             requirementType.AddRequirementDefinition(newRequirementDefinition);
 
-            foreach (var field in request.Fields)
+            if (request.Fields != null)
             {
-                newRequirementDefinition.AddField(new Field(
-                    _plantProvider.Plant, 
-                    field.Label, 
-                    field.FieldType, 
-                    field.SortKey, 
-                    field.Unit, 
-                    field.ShowPrevious));
+                foreach (var field in request.Fields)
+                {
+                    newRequirementDefinition.AddField(new Field(
+                        _plantProvider.Plant,
+                        field.Label,
+                        field.FieldType,
+                        field.SortKey,
+                        field.Unit,
+                        field.ShowPrevious));
+                }
             }
-
+            
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<int>(newRequirementDefinition.Id);
         }

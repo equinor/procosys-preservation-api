@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
@@ -21,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         private int SortKey = 10;
         private string Title = "Title";
         private RequirementUsage Usage = RequirementUsage.ForAll;
-        private IEnumerable<Field> Fields = new []{new Field("PCS$TEST_PLANT", "Label text", FieldType.Attachment, 10)};
+        private IList<FieldsForCommand> Fields = new []{new FieldsForCommand("Label text", FieldType.Attachment, 10), };
 
         [TestInitialize]
         public void Setup_OkState()
@@ -46,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDefinitionWithSameTitleAlreadyExistsOnRequirementType()
         {
-            _requirementDefinitionValidatorMock.Setup(r => r.IsNotUniqueTitleOnRequirementTypeAsync(ReqTypeId, Title, Fields, default)).Returns(Task.FromResult(true));
+            _requirementDefinitionValidatorMock.Setup(r => r.IsNotUniqueTitleOnRequirementTypeAsync(ReqTypeId, Title, Fields.Select(f => f.FieldType).ToList(), default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 

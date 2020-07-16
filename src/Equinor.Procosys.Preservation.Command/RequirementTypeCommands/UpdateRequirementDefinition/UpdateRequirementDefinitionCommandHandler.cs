@@ -33,7 +33,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             requirementDefinition.Title = request.Title;
             requirementDefinition.SortKey = request.SortKey;
             requirementDefinition.Usage = request.Usage;
-            //todo må legge til needs user input?
             requirementDefinition.DefaultIntervalWeeks = request.DefaultIntervalWeeks;
 
             var fieldsToDelete = requirementDefinition.Fields.Where(f => request.UpdateFields.All(up => up.Id != f.Id));
