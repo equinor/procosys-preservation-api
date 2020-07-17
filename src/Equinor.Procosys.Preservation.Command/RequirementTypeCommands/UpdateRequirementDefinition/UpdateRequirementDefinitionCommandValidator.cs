@@ -43,14 +43,13 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 IList<FieldsForCommand> newFields, 
                 CancellationToken token)
             {
-
-                var fieldTypes1 = updatedFields.Select(uf => uf.FieldType).ToList();
-                var fieldTypes2 = newFields.Select(nf => nf.FieldType).ToList();
+                var fieldTypesFromUpdated = updatedFields.Select(uf => uf.FieldType).ToList();
+                var fieldTypesFromNew = newFields.Select(nf => nf.FieldType).ToList();
 
                 return !await requirementDefinitionValidator.IsNotUniqueTitleOnRequirementTypeAsync(
                     reqTypeId, 
                     title,
-                    fieldTypes1.Concat(fieldTypes2).ToList(), 
+                    fieldTypesFromUpdated.Concat(fieldTypesFromNew).ToList(), 
                     token);
             }
         }
