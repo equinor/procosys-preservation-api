@@ -16,7 +16,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands
             FieldType = fieldType;
             ShowPrevious = showPrevious;
             Unit = unit;
-
         }
 
         public string Label { get; }
@@ -24,9 +23,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands
         public bool? ShowPrevious { get; }
         public int SortKey { get; }
         public FieldType FieldType { get; }
-        //public bool NeedsUserInput =>
-        //    FieldType == FieldType.Number ||
-        //    FieldType == FieldType.Attachment ||
-        //    FieldType == FieldType.CheckBox;
+        public bool NeedsUserInput =>
+            FieldType == FieldType.Number ||
+            FieldType == FieldType.Attachment ||
+            FieldType == FieldType.CheckBox;
     }
 }

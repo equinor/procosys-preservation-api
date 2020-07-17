@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         public async Task<bool> IsNotUniqueTitleOnRequirementTypeAsync(
             int requirementTypeId,
             string reqDefTitle,
-            List<FieldType> fieldTypes,
+            IList<FieldType> fieldTypes,
             CancellationToken token)
         {
             var needsUserInput = fieldTypes.Any(ft => ft == FieldType.Number ||

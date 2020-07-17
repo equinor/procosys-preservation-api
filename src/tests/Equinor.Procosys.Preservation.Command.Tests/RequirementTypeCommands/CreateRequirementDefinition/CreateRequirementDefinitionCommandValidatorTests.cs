@@ -23,7 +23,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         private int SortKey = 10;
         private string Title = "Title";
         private RequirementUsage Usage = RequirementUsage.ForAll;
-        private IList<FieldsForCommand> Fields = new []{new FieldsForCommand("Label text", FieldType.Attachment, 10), };
+        private IList<FieldsForCommand> Fields = new List<FieldsForCommand>
+        {
+            new FieldsForCommand("Label text", FieldType.Attachment, 10)
+        };
 
         [TestInitialize]
         public void Setup_OkState()
@@ -48,7 +51,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDefinitionWithSameTitleAlreadyExistsOnRequirementType()
         {
-            _requirementDefinitionValidatorMock.Setup(r => r.IsNotUniqueTitleOnRequirementTypeAsync(ReqTypeId, Title, Fields.Select(f => f.FieldType).ToList(), default)).Returns(Task.FromResult(true));
+            var fieldTypes = Fields.Select(f => f.FieldType).ToList();
+            _requirementDefinitionValidatorMock.Setup(r => r.IsNotUniqueTitleOnRequirementTypeAsync(ReqTypeId, Title, fieldTypes, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 
