@@ -2,11 +2,14 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
+namespace Equinor.Procosys.Preservation.Query.GetHistoricalFieldValueAttachment
 {
-    public class GetPreservationRecordQuery : IRequest<Result<PreservationRecordDto>>, ITagQueryRequest
+    public class GetHistoricalFieldValueAttachmentQuery : IRequest<Result<Uri>>, ITagQueryRequest
     {
-        public GetPreservationRecordQuery(int tagId, int tagRequirementId, Guid preservationRecordGuid)
+        public GetHistoricalFieldValueAttachmentQuery(
+            int tagId,
+            int tagRequirementId,
+            Guid preservationRecordGuid)
         {
             TagId = tagId;
             TagRequirementId = tagRequirementId;

@@ -94,7 +94,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
         private void AssertHistory(History expected, HistoryDto actual)
         {
             Assert.AreEqual(expected.Id, actual.Id);
-            Assert.AreEqual(expected.PreservationRecordId, actual.PreservationRecordId);
+            Assert.AreEqual(expected.PreservationRecordGuid, actual.PreservationRecordGuid);
             Assert.AreEqual(expected.Description, actual.Description);
             Assert.AreEqual(expected.EventType, actual.EventType);
             Assert.AreEqual(expected.CreatedById, actual.CreatedBy.Id);

@@ -21,7 +21,9 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 where rd.Id == requirementDefinitionId
                 select rd).AnyAsync(token);
 
-        public async Task<bool> IsVoidedAsync(int requirementDefinitionId, CancellationToken token)
+        public async Task<bool> IsVoidedAsync(
+            int requirementDefinitionId,
+            CancellationToken token)
         {
             var reqDef = await (from rd in _context.QuerySet<RequirementDefinition>()
                 where rd.Id == requirementDefinitionId
@@ -29,7 +31,9 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return reqDef != null && reqDef.IsVoided;
         }
 
-        public async Task<bool> UsageCoversBothForSupplierAndOtherAsync(List<int> requirementDefinitionIds, CancellationToken token)
+        public async Task<bool> UsageCoversBothForSupplierAndOtherAsync(
+            List<int> requirementDefinitionIds,
+            CancellationToken token)
         {
             var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll)
@@ -37,14 +41,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                        reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers));
         }
 
-        public async Task<bool> UsageCoversForOtherThanSuppliersAsync(List<int> requirementDefinitionIds, CancellationToken token)
+        public async Task<bool> UsageCoversForOtherThanSuppliersAsync(
+            List<int> requirementDefinitionIds,
+            CancellationToken token)
         {
             var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll) ||
                    reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers);
         }
 
-        public async Task<bool> HasAnyForSupplierOnlyUsageAsync(List<int> requirementDefinitionIds, CancellationToken token)
+        public async Task<bool> HasAnyForSupplierOnlyUsageAsync(
+            List<int> requirementDefinitionIds,
+            CancellationToken token)
         {
             var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly);
@@ -74,5 +82,20 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             => await (from tfr in _context.QuerySet<TagFunctionRequirement>()
                 where tfr.RequirementDefinitionId == requirementDefinitionId
                 select tfr).AnyAsync(token);
+
+        public async Task<bool> IsNotUniqueTitleOnRequirementTypeAsync(
+            int requirementTypeId,
+            string reqDefTitle,
+            IEnumerable<Field> fields,
+            CancellationToken token)
+        {
+            var needsUserInput = fields.Any(f => f.NeedsUserInput);
+            var reqType = await (from rt in _context.QuerySet<RequirementType>()
+                where rt.Id == requirementTypeId
+                select rt).SingleOrDefaultAsync(token);
+
+            var reqDefs = reqType.RequirementDefinitions;
+            return reqDefs.Any(rd => rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
+        }
     }
 }

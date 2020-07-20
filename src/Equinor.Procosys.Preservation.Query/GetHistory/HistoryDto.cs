@@ -12,7 +12,8 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
             PersonDto createdBy,
             EventType eventType,
             int? dueWeeks,
-            int? preservationRecordId)
+            int? tagRequirementId,
+            Guid? preservationRecordGuid)
         {
             Id = id;
             Description = description;
@@ -20,7 +21,8 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
             CreatedAtUtc = createdAtUtc;
             EventType = eventType;
             DueWeeks = dueWeeks;
-            PreservationRecordId = preservationRecordId;
+            TagRequirementId = tagRequirementId;
+            PreservationRecordGuid = preservationRecordGuid;
         }
 
         public int Id { get; }
@@ -29,6 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
         public PersonDto CreatedBy { get; }
         public EventType EventType { get; }
         public int? DueWeeks { get; }
-        public int? PreservationRecordId { get; }
+        public int? TagRequirementId { get; }
+        public Guid? PreservationRecordGuid { get; }
     }
 }

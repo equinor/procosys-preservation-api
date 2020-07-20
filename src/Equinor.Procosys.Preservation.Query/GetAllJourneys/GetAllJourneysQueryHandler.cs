@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.GetAllJourneys
                             {
                                 var modeDto = modes
                                     .Where(m => m.Id == s.ModeId)
-                                    .Select(m => new ModeDto(m.Id, m.Title, m.ForSupplier, m.IsVoided, m.RowVersion.ConvertToString()))
+                                    .Select(m => new ModeDto(m.Id, m.Title, m.ForSupplier, m.IsVoided, true, m.RowVersion.ConvertToString()))
                                     .Single();
                                 var responsibleDto = responsibles
                                     .Where(r => r.Id == s.ResponsibleId)

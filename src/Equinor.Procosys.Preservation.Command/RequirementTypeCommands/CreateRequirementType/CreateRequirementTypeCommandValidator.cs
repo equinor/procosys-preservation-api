@@ -13,9 +13,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotExistsARequirementTypeWithSameCode(command.Code, token))
-                .WithMessage(command => $"Requirement type with this code already exists!")
+                .WithMessage("Requirement type with this code already exists!")
                 .MustAsync((command, token) => NotExistsARequirementTypeWithSameTitle(command.Title, token))
-                .WithMessage(command => $"Requirement type with this title already exists!");
+                .WithMessage("Requirement type with this title already exists!");
 
             async Task<bool> NotExistsARequirementTypeWithSameCode(string code, CancellationToken token)
                 => !await requirementTypeValidator.IsNotUniqueCodeAsync(code, token);

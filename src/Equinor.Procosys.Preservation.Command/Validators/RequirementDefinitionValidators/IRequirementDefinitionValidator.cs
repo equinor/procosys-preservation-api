@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators
 {
@@ -14,5 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         Task<bool> FieldsExistAsync(int requirementDefinitionId, CancellationToken token);
         Task<bool> TagRequirementsExistAsync(int requirementDefinitionId, CancellationToken token);
         Task<bool> TagFunctionRequirementsExistAsync(int requirementDefinitionId, CancellationToken token);
+        Task<bool> IsNotUniqueTitleOnRequirementTypeAsync(int requirementTypeId, string reqDefTitle, IEnumerable<Field> fields,
+            CancellationToken token);
     }
 }

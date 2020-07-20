@@ -76,6 +76,7 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
+
 # Dev deploy stage
 - stage: dev
   displayName: 'Dev'
@@ -92,12 +93,24 @@ stages:
 
   jobs:
 
+  # Run Migration Script (Predeploy)
+  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'run_migration_script'
+      envGroup: '${{ variables.envGroupName }}'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      kvName: '${{ variables.commonKeyVault }}'
+      kvRgName: 'pcs-common-rg'
+      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+      serverName: '${{ variables.sqlServerName }}.database.windows.net'
+      databaseName: '${{ variables.sqlDatabaseName }}'
 
   # Deploy to AKS
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
       deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
+      dependsOn: 'run_migration_script'
       serviceConnection: '${{ variables.serviceConnection }}'
       env: '${{ variables.envName }}'
       envRg: 'pcs-hosting-rg'
@@ -111,19 +124,7 @@ stages:
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
-      
-  # Run Migration Script
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: 'deploy_to_k8s'
-      deploymentName: 'run_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: '${{ variables.commonKeyVault }}'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-      serverName: '${{ variables.sqlServerName }}.database.windows.net'
-      databaseName: '${{ variables.sqlDatabaseName }}'
+
 
 # Test deploy stage
 - stage: test
@@ -141,12 +142,24 @@ stages:
 
   jobs:
 
+  # Run Migration Script (Predeploy)
+  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+    parameters:
+      dependsOn: ''      
+      deploymentName: 'run_migration_script'
+      envGroup: '${{ variables.envGroupName }}'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      kvName: '${{ variables.commonKeyVault }}'
+      kvRgName: 'pcs-common-rg'
+      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+      serverName: '${{ variables.sqlServerName }}.database.windows.net'
+      databaseName: '${{ variables.sqlDatabaseName }}'      
 
   # Deploy to AKS
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
       deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
+      dependsOn: 'run_migration_script'
       serviceConnection: '${{ variables.serviceConnection }}'
       env: '${{ variables.envName }}'
       envRg: 'pcs-hosting-rg'
@@ -160,19 +173,7 @@ stages:
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
-      
-  # Run Migration Script
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: 'deploy_to_k8s'      
-      deploymentName: 'run_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: '${{ variables.commonKeyVault }}'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-      serverName: '${{ variables.sqlServerName }}.database.windows.net'
-      databaseName: '${{ variables.sqlDatabaseName }}'      
+
 
 # Prod deploy stage
 - stage: prod
@@ -187,12 +188,24 @@ stages:
 
   jobs:
 
+  # Run Migration Script (Predeploy)
+  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'run_migration_script'      
+      envGroup: '${{ variables.envGroupName }}'
+      serviceConnection: '${{ variables.serviceConnection }}'
+      kvName: '${{ variables.commonKeyVault }}'
+      kvRgName: 'pcs-common-rg'
+      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+      serverName: '${{ variables.sqlServerName }}.database.windows.net'
+      databaseName: '${{ variables.sqlDatabaseName }}'      
 
   # Deploy to AKS
   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
     parameters:
       deploymentName: 'deploy_to_k8s'
-      dependsOn: ''
+      dependsOn: 'run_migration_script'
       serviceConnection: '${{ variables.serviceConnection }}'
       env: '${{ variables.envName }}'
       envRg: 'pcs-hosting-rg'
@@ -206,16 +219,3 @@ stages:
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
-      
-  # Run Migration Script
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: 'deploy_to_k8s'
-      deploymentName: 'run_migration_script'      
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: '${{ variables.commonKeyVault }}'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-      serverName: '${{ variables.sqlServerName }}.database.windows.net'
-      databaseName: '${{ variables.sqlDatabaseName }}'      
