@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using FluentValidation;
 
@@ -7,7 +8,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney
 {
     public class DeleteJourneyCommandValidator : AbstractValidator<DeleteJourneyCommand>
     {
-        public DeleteJourneyCommandValidator(IJourneyValidator journeyValidator)
+        public DeleteJourneyCommandValidator(
+            IJourneyValidator journeyValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
             
@@ -17,7 +20,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney
                 .MustAsync((command, token) => BeAVoidedJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey is not voided! Journey={command.JourneyId}")
                 .MustAsync((command, token) => NotBeUsedAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey is used! Journey={command.JourneyId}");
+                .WithMessage(command => $"Journey is used! Journey={command.JourneyId}")
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
@@ -27,6 +32,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney
 
             async Task<bool> NotBeUsedAsync(int journeyId, CancellationToken token)
                 => !await journeyValidator.IsInUseAsync(journeyId, token);
+
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }
