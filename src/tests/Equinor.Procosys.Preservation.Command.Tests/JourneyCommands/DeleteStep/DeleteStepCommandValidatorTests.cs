@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
 
-            _command = new DeleteStepCommand(_journeyId, _stepId, null);
+            _command = new DeleteStepCommand(_journeyId, _stepId, _rowVersion);
 
             _dut = new DeleteStepCommandValidator(
                 _journeyValidatorMock.Object,

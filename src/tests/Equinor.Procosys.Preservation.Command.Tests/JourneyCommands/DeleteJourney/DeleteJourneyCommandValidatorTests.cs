@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteJour
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
 
-            _command = new DeleteJourneyCommand(_id, null);
+            _command = new DeleteJourneyCommand(_id, _rowVersion);
 
             _dut = new DeleteJourneyCommandValidator(_journeyValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
