@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
@@ -12,18 +13,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
     [TestClass]
     public class UpdateStepCommandValidatorTests
     {
+        private UpdateStepCommand _command;
         private UpdateStepCommandValidator _dut;
+
         private Mock<IJourneyValidator> _journeyValidatorMock;
         private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IModeValidator> _modeValidatorMock;
-        private UpdateStepCommand _command;
         private Mock<IResponsibleValidator> _responsibleValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
 
         private int _journeyId = 2;
         private int _stepId = 1;
         private int _modeId = 3;
         private string _responsibleCode = "TestCode";
         private string _title = "Title";
+        private string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()
@@ -38,15 +42,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
 
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
 
-            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, null);
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, _rowVersion);
 
             _dut = new UpdateStepCommandValidator(
                 _journeyValidatorMock.Object,
                 _stepValidatorMock.Object,
                 _modeValidatorMock.Object,
-                _responsibleValidatorMock.Object);
+                _responsibleValidatorMock.Object,
+                _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -154,6 +162,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Only the first step can be supplier step!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            const string invalidRowVersion = "String";
+
+            var command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, invalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid RowVersion!"));
         }
     }
 }
