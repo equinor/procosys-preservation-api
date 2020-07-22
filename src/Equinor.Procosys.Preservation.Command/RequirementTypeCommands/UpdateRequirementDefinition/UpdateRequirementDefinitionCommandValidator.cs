@@ -25,7 +25,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 .WithMessage(command => $"Requirement type is voided! RequirementType={command.RequirementTypeId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition is voided! RequirementDefinition={command.RequirementDefinitionId}")
-                .MustAsync((command, token) => RequirementDefinitionTitleMustBeUniqueOnType(command.RequirementTypeId, command.Title, command.UpdateFields, command.NewFields, token))
+                .MustAsync((command, token) 
+                    => RequirementDefinitionTitleMustBeUniqueOnType(command.RequirementTypeId, command.RequirementDefinitionId, command.Title, command.UpdateFields, command.NewFields, token))
                 .WithMessage(command => $"A requirement definition with this title already exists on the requirement type! RequirementType={command.RequirementTypeId}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
@@ -38,6 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
             async Task<bool> RequirementDefinitionTitleMustBeUniqueOnType(
                 int reqTypeId, 
+                int reqDefId,
                 string title, 
                 IList<UpdateFieldsForCommand> updatedFields, 
                 IList<FieldsForCommand> newFields, 
@@ -46,8 +48,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 var fieldTypesFromUpdated = updatedFields.Select(uf => uf.FieldType).ToList();
                 var fieldTypesFromNew = newFields.Select(nf => nf.FieldType).ToList();
 
-                return !await requirementDefinitionValidator.IsNotUniqueTitleOnRequirementTypeAsync(
-                    reqTypeId, 
+                return !await requirementDefinitionValidator.IsNotUniqueUpdatedTitleOnRequirementTypeAsync(
+                    reqTypeId,
+                    reqDefId,
                     title,
                     fieldTypesFromUpdated.Concat(fieldTypesFromNew).ToList(), 
                     token);

@@ -35,16 +35,21 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             requirementDefinition.Usage = request.Usage;
             requirementDefinition.DefaultIntervalWeeks = request.DefaultIntervalWeeks;
 
-            var fieldsToDelete = requirementDefinition.Fields.Where(f => request.UpdateFields.All(up => up.Id != f.Id));
+            var fieldsToDelete = requirementDefinition.Fields.Where(f => request.UpdateFields.All(up => up.Id == f.Id && up.Delete));
 
             foreach (var f in request.UpdateFields)
             {
-                requirementDefinition.UpdateField(f.Id, f.Label, f.FieldType, f.SortKey, f.RowVersion, f.Unit, f.ShowPrevious);
+                var fieldToUpdate = requirementDefinition.Fields.Single(field => field.Id == f.Id);
+                fieldToUpdate.Label = f.Label;
+                fieldToUpdate.Unit = f.Unit;
+                fieldToUpdate.ShowPrevious = f.ShowPrevious;
+                fieldToUpdate.SortKey = f.SortKey;
+                fieldToUpdate.SetRowVersion(f.RowVersion);
             }
 
             foreach (var f in fieldsToDelete)
             {
-                requirementDefinition.RemoveField(new Field(_plantProvider.Plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+                _requirementTypeRepository.RemoveField(f);
             }
 
             foreach (var f in request.NewFields)
@@ -53,11 +58,10 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             }
 
             requirementDefinition.SetRowVersion(request.RowVersion);
-            requirementType.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<string>(requirementType.RowVersion.ConvertToString());
+            return new SuccessResult<string>(requirementDefinition.RowVersion.ConvertToString());
         }
     }
 }

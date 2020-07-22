@@ -8,9 +8,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
     public class RequirementTypeRepository : RepositoryBase<RequirementType>, IRequirementTypeRepository
     {
+        readonly PreservationContext _context;
         public RequirementTypeRepository(PreservationContext context)
             : base(context.RequirementTypes, context.RequirementTypes.Include(x => x.RequirementDefinitions).ThenInclude(x => x.Fields))
         {
+            _context = context;
         }
 
         public Task<RequirementDefinition> GetRequirementDefinitionByIdAsync(int requirementDefinitionId)
@@ -23,5 +25,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .SelectMany(rt => rt.RequirementDefinitions)
                 .Where(rd => requirementDefinitionIds.Contains(rd.Id))
                 .ToListAsync();
+
+        public void RemoveField(Field field) => _context.Fields.Remove(field);
     }
 }

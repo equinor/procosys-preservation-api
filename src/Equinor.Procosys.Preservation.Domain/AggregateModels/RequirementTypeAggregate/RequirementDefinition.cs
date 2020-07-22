@@ -55,47 +55,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             _fields.Add(field);
         }
 
-        public void RemoveField(Field field)
-        {
-            if (field == null)
-            {
-                throw new ArgumentNullException(nameof(field));
-            }
-
-            if (field.Plant != Plant)
-            {
-                throw new ArgumentException($"Can't relate item in {field.Plant} to item in {Plant}");
-            }
-
-            _fields.Remove(field);
-        }
-
-        public void UpdateField(int fieldId, string label, FieldType fieldType, int sortKey, string rowVersion, string unit, bool? showPrevious)
-        {
-            var field = Fields.Single(r => r.Id == fieldId);
-
-            //if (field.IsVoided != isVoided)
-            //{
-            //    //if (isVoided)
-            //    //{
-            //    //    requirementDefinition.Void();
-            //    //    AddDomainEvent(new RequirementVoidedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId));
-            //    //}
-            //    //else
-            //    //{
-            //    //    tagRequirement.UnVoid();
-            //    //    AddDomainEvent(new RequirementUnvoidedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId));
-            //    //}
-            //}
-
-            //if (field.Label != label)
-            //{
-            //    field.Label = label;
-            //}
-
-            //tagRequirement.SetRowVersion(requirementRowVersion);
-        }
-
         public IOrderedEnumerable<Field> OrderedFields(bool includeVoided)
             => Fields
                 .Where(f => includeVoided || !f.IsVoided)

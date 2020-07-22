@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -81,6 +80,26 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             var reqDefinitions = reqType.RequirementDefinitions;
 
             return reqDefinitions.Any(rd => rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
+        }
+
+        public async Task<bool> IsNotUniqueUpdatedTitleOnRequirementTypeAsync(
+            int requirementTypeId,
+            int requirementDefinitionId,
+            string reqDefTitle,
+            IList<FieldType> fieldTypes,
+            CancellationToken token)
+        {
+            var needsUserInput = fieldTypes.Any(ft => ft == FieldType.Number ||
+                                                      ft == FieldType.Attachment ||
+                                                      ft == FieldType.CheckBox);
+            var reqType = await _context.QuerySet<RequirementType>()
+                .Include(rt => rt.RequirementDefinitions)
+                .ThenInclude(r => r.Fields)
+                .SingleOrDefaultAsync(rt => rt.Id == requirementTypeId, token);
+
+            var reqDefinitions = reqType.RequirementDefinitions;
+
+            return reqDefinitions.Any(rd => rd.Id != requirementDefinitionId && rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
         }
     }
 }

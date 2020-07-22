@@ -198,6 +198,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                     f.SortKey, 
                     f.RowVersion, 
                     f.Unit, 
+                    f.Delete,
                     f.ShowPrevious)).ToList();
             var newFields = dto.NewFields.Select(f =>
                 new FieldsForCommand(

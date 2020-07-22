@@ -38,6 +38,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                 rd.Usage,
                                 rd.SortKey,
                                 rd.NeedsUserInput,
+                                rd.RowVersion.ConvertToString(),
                                 rd.OrderedFields(request.IncludeVoided).Select(f
                                     => new FieldDto(
                                         f.Id,
@@ -46,6 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                         f.FieldType,
                                         f.SortKey,
                                         f.Unit,
+                                        f.RowVersion.ConvertToString(),
                                         f.ShowPrevious)))),
                         rt.RowVersion.ConvertToString()))
                     .OrderBy(rt => rt.SortKey);

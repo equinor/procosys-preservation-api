@@ -37,11 +37,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             SortKey = sortKey;
         }
 
-        public string Label { get; private set; }
-        public string Unit { get; private set; }
+        public string Label { get; set; }
+        public string Unit { get; set; }
         public bool IsVoided { get; private set; }
-        public bool? ShowPrevious { get; private set; }
-        public int SortKey { get; private set; }
+        public bool? ShowPrevious { get; set; }
+        public int SortKey { get; set; }
         public FieldType FieldType { get; private set; }
         public bool NeedsUserInput =>
             FieldType == FieldType.Number ||

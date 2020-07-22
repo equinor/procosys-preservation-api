@@ -4,5 +4,6 @@
     {
         public int Id { get; set; }
         public string RowVersion { get; set; }
+        public bool Delete { get; set; }
     }
 }

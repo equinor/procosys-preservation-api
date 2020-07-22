@@ -11,6 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             int sortKey,
             string rowVersion,
             string unit = null,
+            bool delete = false,
             bool? showPrevious = null)
         {
             Id = id;
@@ -19,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             FieldType = fieldType;
             ShowPrevious = showPrevious;
             Unit = unit;
+            Delete = delete;
             RowVersion = rowVersion;
         }
 
@@ -29,5 +31,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
         public int SortKey { get; }
         public FieldType FieldType { get; }
         public string RowVersion { get;  }
+        public bool Delete { get; }
     }
 }
