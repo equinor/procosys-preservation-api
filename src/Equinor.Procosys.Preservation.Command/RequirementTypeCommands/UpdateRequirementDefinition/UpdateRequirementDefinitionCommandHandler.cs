@@ -35,8 +35,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             requirementDefinition.Usage = request.Usage;
             requirementDefinition.DefaultIntervalWeeks = request.DefaultIntervalWeeks;
 
-            var fieldsToDelete = requirementDefinition.Fields.Where(f => request.UpdateFields.All(up => up.Id == f.Id && up.Delete));
-
             foreach (var f in request.UpdateFields)
             {
                 var fieldToUpdate = requirementDefinition.Fields.Single(field => field.Id == f.Id);
@@ -47,10 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 fieldToUpdate.SetRowVersion(f.RowVersion);
             }
 
-            foreach (var f in fieldsToDelete)
-            {
-                _requirementTypeRepository.RemoveField(f);
-            }
+            //TODO delete fields that are to be deleted. Need to agree on business logic 
 
             foreach (var f in request.NewFields)
             {

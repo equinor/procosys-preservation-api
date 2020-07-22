@@ -8,7 +8,5 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         Task<RequirementDefinition> GetRequirementDefinitionByIdAsync (int requirementDefinitionId);
         
         Task<List<RequirementDefinition>> GetRequirementDefinitionsByIdsAsync(IList<int> requirementDefinitionIds);
-
-        void RemoveField(Field field);
     }
 }
