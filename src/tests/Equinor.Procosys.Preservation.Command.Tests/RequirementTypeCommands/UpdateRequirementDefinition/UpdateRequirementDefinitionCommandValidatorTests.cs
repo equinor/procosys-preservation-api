@@ -118,8 +118,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             var fieldTypesConcatenated = fieldTypes1.Concat(fieldTypes2).ToList();
 
             _reqDefinitionValidatorMock
-                .Setup(r => r.IsNotUniqueTitleOnRequirementTypeAsync(
-                    _requirementTypeId, 
+                .Setup(r => r.IsNotUniqueUpdatedTitleOnRequirementTypeAsync(
+                    _requirementTypeId,
+                    _requirementDefinitionId,
                     _title, 
                     fieldTypesConcatenated,
                     default)).Returns(Task.FromResult(true));
