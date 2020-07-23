@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -12,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
         public UpdateActionCommandValidator(
             IProjectValidator projectValidator,
             ITagValidator tagValidator,
-            IActionValidator actionValidator)
+            IActionValidator actionValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -26,7 +28,9 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
                 .MustAsync((command, token) => BeAnExistingActionAsync(command.ActionId, token))
                 .WithMessage(command => $"Action doesn't exist! Action={command.ActionId}")
                 .MustAsync((command, token) => NotBeAClosedActionAsync(command.ActionId, token))
-                .WithMessage(command => $"Action is closed! Action={command.ActionId}");
+                .WithMessage(command => $"Action is closed! Action={command.ActionId}")
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
@@ -38,6 +42,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
                 => await actionValidator.ExistsAsync(actionId, token);
             async Task<bool> NotBeAClosedActionAsync(int actionId, CancellationToken token)
                 => !await actionValidator.IsClosedAsync(actionId, token);
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }

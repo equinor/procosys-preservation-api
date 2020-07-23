@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -11,14 +12,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
     [TestClass]
     public class UpdateActionCommandValidatorTests
     {
+        private UpdateActionCommand _command;
         private UpdateActionCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IActionValidator> _actionValidatorMock;
-        private UpdateActionCommand _command;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
 
         private readonly int _tagId = 2;
         private readonly int _actionId = 3;
+        private string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()
@@ -31,18 +34,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
             _actionValidatorMock = new Mock<IActionValidator>();
             _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(true));
 
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+
             _command = new UpdateActionCommand(
                 _tagId,
                 _actionId,
                 "",
                 "",
                 null,
-                null);
+                _rowVersion);
 
             _dut = new UpdateActionCommandValidator(
                 _projectValidatorMock.Object,
                 _tagValidatorMock.Object,
-                _actionValidatorMock.Object
+                _actionValidatorMock.Object,
+                _rowVersionValidatorMock.Object
                 );
         }
 
@@ -112,6 +119,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Action doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            const string invalidRowVersion = "String";
+
+            var command = new UpdateActionCommand(_tagId, _actionId, "", "", null, invalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid RowVersion!"));
         }
     }
 }
