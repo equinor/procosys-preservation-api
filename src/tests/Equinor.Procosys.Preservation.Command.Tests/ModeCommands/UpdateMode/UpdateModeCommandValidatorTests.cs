@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
 
-            _command = new UpdateModeCommand(_id, _title, _forSupplier, null);
+            _command = new UpdateModeCommand(_id, _title, _forSupplier, _rowVersion);
 
             _dut = new UpdateModeCommandValidator(_modeValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
