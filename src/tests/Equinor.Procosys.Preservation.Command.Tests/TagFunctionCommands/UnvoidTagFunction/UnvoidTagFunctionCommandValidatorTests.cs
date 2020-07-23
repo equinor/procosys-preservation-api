@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UnvoidTagFunction;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.TagFunctionValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -10,23 +11,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
     public class UnvoidTagFunctionCommandValidatorTests
     {
         private Mock<ITagFunctionValidator> _tagFunctionValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private UnvoidTagFunctionCommand _command;
         private UnvoidTagFunctionCommandValidator _dut;
 
         private readonly string _tagFunctionCode = "TFC";
+        private readonly string _registerCode = "RC";
+        private string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()
         {
-            const string RegisterCode = "RC";
-
             _tagFunctionValidatorMock = new Mock<ITagFunctionValidator>();
             _tagFunctionValidatorMock.Setup(r => r.ExistsAsync(_tagFunctionCode, default)).Returns(Task.FromResult(true));
             _tagFunctionValidatorMock.Setup(r => r.IsVoidedAsync(_tagFunctionCode, default))
                 .Returns(Task.FromResult(true));
 
-            _command = new UnvoidTagFunctionCommand(_tagFunctionCode, RegisterCode, null);
-            _dut = new UnvoidTagFunctionCommandValidator(_tagFunctionValidatorMock.Object);
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+
+            _command = new UnvoidTagFunctionCommand(_tagFunctionCode, _registerCode, _rowVersion);
+            _dut = new UnvoidTagFunctionCommandValidator(_tagFunctionValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -59,6 +64,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag function is not voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            const string invalidRowVersion = "String";
+
+            var command = new UnvoidTagFunctionCommand(_tagFunctionCode, _registerCode, invalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid RowVersion!"));
         }
     }
 }
