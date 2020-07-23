@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +42,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
                 where f.Id == fieldId
                 select f).SingleOrDefaultAsync(token);
             return field != null && (field.FieldType == FieldType.Attachment);
+        }
+
+        public async Task<bool> FieldTypeIsNotChanged(UpdateFieldsForCommand fieldToUpdate, CancellationToken token)
+        {
+            var field = await (from f in _context.QuerySet<Field>()
+                where f.Id == fieldToUpdate.Id
+                select f).SingleOrDefaultAsync(token);
+
+            return field != null && field.FieldType == fieldToUpdate.FieldType;
         }
     }
 }

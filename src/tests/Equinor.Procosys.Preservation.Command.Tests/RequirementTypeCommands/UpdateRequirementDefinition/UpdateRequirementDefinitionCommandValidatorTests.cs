@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
+using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
     {
         private Mock<IRequirementTypeValidator> _reqTypeValidatorMock;
         private Mock<IRequirementDefinitionValidator> _reqDefinitionValidatorMock;
+        private Mock<IFieldValidator> _fieldValidatorMock;
 
         private UpdateRequirementDefinitionCommand _command;
         private UpdateRequirementDefinitionCommandValidator _dut;
@@ -40,6 +42,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             _reqDefinitionValidatorMock.Setup(rd => rd.ExistsAsync(_requirementDefinitionId, default))
                 .Returns(Task.FromResult(true));
 
+            _fieldValidatorMock = new Mock<IFieldValidator>();
+
             _command = new UpdateRequirementDefinitionCommand(
                 _requirementTypeId, 
                 _requirementDefinitionId, 
@@ -50,7 +54,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
                 _rowVersion, 
                 _updatedFields, 
                 _newFields);
-            _dut = new UpdateRequirementDefinitionCommandValidator(_reqTypeValidatorMock.Object, _reqDefinitionValidatorMock.Object);
+            _dut = new UpdateRequirementDefinitionCommandValidator(
+                _reqTypeValidatorMock.Object, 
+                _reqDefinitionValidatorMock.Object,
+                _fieldValidatorMock.Object);
         }
 
         [TestMethod]
