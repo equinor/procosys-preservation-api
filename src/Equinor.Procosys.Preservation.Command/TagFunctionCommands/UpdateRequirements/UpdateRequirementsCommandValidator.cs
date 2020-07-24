@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using FluentValidation;
 
@@ -9,7 +10,9 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
 {
     public class UpdateRequirementsCommandValidator : AbstractValidator<UpdateRequirementsCommand>
     {
-        public UpdateRequirementsCommandValidator(IRequirementDefinitionValidator requirementDefinitionValidator)
+        public UpdateRequirementsCommandValidator(
+            IRequirementDefinitionValidator requirementDefinitionValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -30,6 +33,10 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                         $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
             });
 
+            RuleFor(command => command)
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+
             async Task<bool> BeAnExistingRequirementDefinitionAsync(RequirementForCommand requirement, CancellationToken token)
                 => await requirementDefinitionValidator.ExistsAsync(requirement.RequirementDefinitionId, token);
 
@@ -46,7 +53,10 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(reqIds, token);
-            }                        
+            }
+
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }
