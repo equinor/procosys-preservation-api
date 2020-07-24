@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
         private VoidModeCommand _command;
         private VoidModeCommandValidator _dut;
         private readonly int _modeId = 2;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

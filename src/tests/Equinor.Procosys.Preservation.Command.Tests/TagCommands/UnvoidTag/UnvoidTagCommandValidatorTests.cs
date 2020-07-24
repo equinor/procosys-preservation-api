@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
         private UnvoidTagCommand _command;
         private UnvoidTagCommandValidator _dut;
         private readonly int _tagId = 2;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

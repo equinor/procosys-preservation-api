@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
         private int _id = 1;
         private string _title = "Title";
         private bool _forSupplier = true;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

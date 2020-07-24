@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
         private DeleteRequirementTypeCommand _command;
 
         private int _id = 1;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

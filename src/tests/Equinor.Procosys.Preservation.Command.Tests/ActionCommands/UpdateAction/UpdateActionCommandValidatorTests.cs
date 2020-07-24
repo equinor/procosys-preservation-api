@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateActio
 
         private readonly int _tagId = 2;
         private readonly int _actionId = 3;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

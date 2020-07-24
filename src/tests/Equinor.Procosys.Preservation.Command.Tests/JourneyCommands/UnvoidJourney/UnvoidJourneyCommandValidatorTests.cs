@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJour
         private UnvoidJourneyCommandValidator _dut;
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
 
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
         private readonly int _journeyId = 2;
 
         [TestInitialize]

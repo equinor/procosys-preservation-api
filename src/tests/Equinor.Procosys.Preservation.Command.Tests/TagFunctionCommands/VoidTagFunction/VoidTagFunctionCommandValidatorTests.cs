@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.VoidTa
         private VoidTagFunctionCommandValidator _dut;
 
         private readonly string _tagFunctionCode = "TFC";
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
         private readonly string _registerCode = "RC";
 
         [TestInitialize]

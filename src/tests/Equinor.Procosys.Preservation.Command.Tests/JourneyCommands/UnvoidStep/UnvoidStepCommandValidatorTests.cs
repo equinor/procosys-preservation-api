@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidStep
 
         private int _journeyId = 2;
         private int _stepId = 1;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

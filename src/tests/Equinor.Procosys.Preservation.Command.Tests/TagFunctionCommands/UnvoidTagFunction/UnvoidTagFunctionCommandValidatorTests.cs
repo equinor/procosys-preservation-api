@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
 
         private readonly string _tagFunctionCode = "TFC";
         private readonly string _registerCode = "RC";
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

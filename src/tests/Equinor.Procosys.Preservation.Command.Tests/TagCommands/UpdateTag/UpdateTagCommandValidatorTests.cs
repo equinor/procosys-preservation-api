@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
         private readonly int _tagId = 2;
         private readonly string _remark = "Remark";
         private readonly string _storageArea = "StorageArea";
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

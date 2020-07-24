@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Dele
 
         private int _tagId = 2;
         private int _attachmentId = 3;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

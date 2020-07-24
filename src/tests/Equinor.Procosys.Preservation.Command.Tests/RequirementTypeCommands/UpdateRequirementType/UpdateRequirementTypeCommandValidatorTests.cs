@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         private readonly int _sortKey = 1;
         private readonly string _title = "Title test";
         private readonly string _code = "Code test";
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
         private RequirementTypeIcon _icon = RequirementTypeIcon.Other;
 
         [TestInitialize]

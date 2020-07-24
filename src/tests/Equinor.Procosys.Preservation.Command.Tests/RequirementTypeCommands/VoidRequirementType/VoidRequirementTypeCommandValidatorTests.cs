@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
         private VoidRequirementTypeCommand _command;
         private VoidRequirementTypeCommandValidator _dut;
         private readonly int _requirementTypeId = 2;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()

@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
 
         private int _journeyId = 1;
         private int _stepId = 2;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
         private Mock<IStepValidator> _stepValidatorMock;
 
         [TestInitialize]

@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         private UpdateRequirementsCommand _command;
         private int _rd1Id = 2;
         private int _rd2Id = 3;
-        private string _rowVersion = "AAAAAAAAJ00=";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()
