@@ -43,7 +43,6 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                             rd.Usage,
                             rd.SortKey,
                             rd.NeedsUserInput,
-                            rd.RowVersion.ConvertToString(),
                             rd.OrderedFields(true)
                                 .Select(f => new FieldDto(
                                     f.Id,
@@ -52,7 +51,8 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                     f.FieldType,
                                     f.SortKey,
                                     f.Unit,
-                                    f.ShowPrevious)))),
+                                    f.ShowPrevious)),
+                            rd.RowVersion.ConvertToString())),
                 reqType.RowVersion.ConvertToString());
 
             return new SuccessResult<RequirementTypeDto>(dto);

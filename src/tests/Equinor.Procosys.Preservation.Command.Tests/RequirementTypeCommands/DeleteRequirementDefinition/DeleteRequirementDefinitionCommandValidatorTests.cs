@@ -86,5 +86,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag function requirement with this requirement definition exists!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenRequirementDefinitionHasFields()
+        {
+            _requirementDefinitionValidatorMock.Setup(r => r.FieldsExistAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition has fields!"));
+        }
     }
 }
