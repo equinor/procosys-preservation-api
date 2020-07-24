@@ -15,7 +15,8 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             RequirementUsage usage,
             int sortKey,
             bool needsUserInput,
-            IEnumerable<FieldDto> fields)
+            IEnumerable<FieldDto> fields,
+            string rowVersion)
         {
             if (fields == null)
             {
@@ -27,8 +28,9 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             DefaultIntervalWeeks = defaultIntervalWeeks;
             Usage = usage;
             SortKey = sortKey;
-            Fields = fields.OrderBy(f => f.SortKey);
             NeedsUserInput = needsUserInput;
+            Fields = fields.OrderBy(f => f.SortKey);
+            RowVersion = rowVersion;
         }
 
         public int Id { get; }
@@ -37,7 +39,8 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public int DefaultIntervalWeeks { get; }
         public RequirementUsage Usage { get; }
         public int SortKey { get; }
-        public IEnumerable<FieldDto> Fields { get; }
         public bool NeedsUserInput { get; }
+        public IEnumerable<FieldDto> Fields { get; }
+        public string RowVersion { get; }
     }
 }
