@@ -6,6 +6,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
     {
         public int Id { get; set; }
         public string TagNo { get; set; }
+        public bool IsVoided { get; set; }
         public string Description { get; set; }
         public string Status { get; set; }
         public string JourneyTitle { get; set; }
