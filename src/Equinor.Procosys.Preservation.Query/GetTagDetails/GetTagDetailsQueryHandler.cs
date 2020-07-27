@@ -34,6 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         CommPkgNo = tag.CommPkgNo,
                                         Description = tag.Description,
                                         Id = tag.Id,
+                                        IsVoided = tag.IsVoided,
                                         JourneyTitle = journey.Title,
                                         McPkgNo = tag.McPkgNo,
                                         Mode = mode.Title,

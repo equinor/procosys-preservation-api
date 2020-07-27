@@ -46,7 +46,8 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
                                         f.FieldType,
                                         f.SortKey,
                                         f.Unit,
-                                        f.ShowPrevious)))),
+                                        f.ShowPrevious)),
+                                rd.RowVersion.ConvertToString())),
                         rt.RowVersion.ConvertToString()))
                     .OrderBy(rt => rt.SortKey);
 

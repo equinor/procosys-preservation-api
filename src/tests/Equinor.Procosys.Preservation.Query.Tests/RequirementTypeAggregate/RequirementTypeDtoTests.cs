@@ -40,12 +40,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             var dut = new RequirementTypeDto(1, "", "", _reqIconOther, true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "",  false, 4, RequirementUsage.ForAll, 999, false, _fieldsDtos),
-                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, false, _fieldsDtos),
-                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, false, _fieldsDtos),
-                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, false, _fieldsDtos),
-            },
-                _rowVersion);
+                new RequirementDefinitionDto(1, "",  false, 4, RequirementUsage.ForAll, 999, false, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, false, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, false, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, false, _fieldsDtos, _rowVersion),
+            }, _rowVersion);
 
             var requirementDefinitions = dut.RequirementDefinitions.ToList();
             Assert.AreEqual(4, requirementDefinitions.Count);
@@ -60,12 +59,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             var dut = new RequirementTypeDto(1, "", "", _reqIconOther, true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, true, _fieldsDtos),
-                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, true, _fieldsDtos),
-                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, true, _fieldsDtos),
-                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, true, _fieldsDtos),
-            },
-                _rowVersion);
+                new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, true, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, true, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, true, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, true, _fieldsDtos, _rowVersion),
+            }, _rowVersion);
 
             var requirementDefinitions = dut.RequirementDefinitions.ToList();
             Assert.AreEqual(4, requirementDefinitions.Count);
@@ -80,16 +78,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             var dut = new RequirementTypeDto(1, "", "", _reqIconOther, true, 10, new List<RequirementDefinitionDto>
             {
-                new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, true, _fieldsDtos),
-                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, true, _fieldsDtos),
-                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, true, _fieldsDtos),
-                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, true, _fieldsDtos),
-                new RequirementDefinitionDto(5, "", false, 4, RequirementUsage.ForAll, 999, false, _fieldsDtos),
-                new RequirementDefinitionDto(6, "", false, 4, RequirementUsage.ForAll, 5, false, _fieldsDtos),
-                new RequirementDefinitionDto(7, "", false, 4, RequirementUsage.ForAll, 500, false, _fieldsDtos),
-                new RequirementDefinitionDto(8, "", false, 4, RequirementUsage.ForAll, 10, false, _fieldsDtos),
-            },
-                _rowVersion);
+                new RequirementDefinitionDto(1, "", false, 4, RequirementUsage.ForAll, 999, true, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(2, "", false, 4, RequirementUsage.ForAll, 5, true, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(3, "", false, 4, RequirementUsage.ForAll, 500, true, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(4, "", false, 4, RequirementUsage.ForAll, 10, true, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(5, "", false, 4, RequirementUsage.ForAll, 999, false, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(6, "", false, 4, RequirementUsage.ForAll, 5, false, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(7, "", false, 4, RequirementUsage.ForAll, 500, false, _fieldsDtos, _rowVersion),
+                new RequirementDefinitionDto(8, "", false, 4, RequirementUsage.ForAll, 10, false, _fieldsDtos, _rowVersion),
+            }, _rowVersion);
 
             var requirementDefinitions = dut.RequirementDefinitions.ToList();
             Assert.AreEqual(8, requirementDefinitions.Count);
