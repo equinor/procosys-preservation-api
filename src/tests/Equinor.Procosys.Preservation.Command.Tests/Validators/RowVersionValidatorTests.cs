@@ -29,5 +29,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             var result = await _dut.IsValid(invalidRowVersion, default);
             Assert.IsFalse(result);
         }
+
+        [TestMethod]
+        public async Task IsValid_EmptyString_ReturnsFalse()
+        {
+            var result = await _dut.IsValid(string.Empty, default);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task IsValid_Null_ReturnsFalse()
+        {
+            var result = await _dut.IsValid(null, default);
+            Assert.IsFalse(result);
+        }
     }
 }

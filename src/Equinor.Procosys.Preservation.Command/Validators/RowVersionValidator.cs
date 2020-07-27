@@ -6,21 +6,20 @@ namespace Equinor.Procosys.Preservation.Command.Validators
 {
     public class RowVersionValidator : IRowVersionValidator
     {
-        public async Task<bool> IsValid(string rowVersion, CancellationToken cancellationToken) 
-            => TryConvertBase64StringToByteArray(rowVersion, out _);
+        public async Task<bool> IsValid(string rowVersion, CancellationToken cancellationToken)
+            => !string.IsNullOrWhiteSpace(rowVersion) && TryConvertBase64StringToByteArray(rowVersion);
 
-        private static bool TryConvertBase64StringToByteArray(string input, out byte[] output)
+        private static bool TryConvertBase64StringToByteArray(string input)
+        {
+            try
             {
-                output = null;
-                try
-                {
-                    output = Convert.FromBase64String(input);
-                    return true;
-                }
-                catch (FormatException)
-                {
-                    return false;
-                }
+                Convert.FromBase64String(input);
+                return true;
             }
+            catch (FormatException)
+            {
+                return false;
+            }
+        }
     }
 }
