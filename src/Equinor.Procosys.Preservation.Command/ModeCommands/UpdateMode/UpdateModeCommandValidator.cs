@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using FluentValidation;
 
@@ -7,7 +8,9 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
 {
     public class UpdateModeCommandValidator : AbstractValidator<UpdateModeCommand>
     {
-        public UpdateModeCommandValidator(IModeValidator modeValidator)
+        public UpdateModeCommandValidator(
+            IModeValidator modeValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -20,7 +23,9 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
                 .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
                 .MustAsync((command, token) => IsUniqueForSupplierAsync(command.ModeId, token))
                 .WithMessage(command => $"Another mode for supplier already exists! Mode={command.Title}")
-                .When(command => command.ForSupplier, ApplyConditionTo.CurrentValidator);
+                .When(command => command.ForSupplier, ApplyConditionTo.CurrentValidator)
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);
@@ -30,6 +35,8 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
                 => !await modeValidator.IsVoidedAsync(modeId, token);
             async Task<bool> IsUniqueForSupplierAsync(int modeId, CancellationToken token) =>
                 !await modeValidator.ExistsAnotherModeForSupplierAsync(modeId, token);
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }

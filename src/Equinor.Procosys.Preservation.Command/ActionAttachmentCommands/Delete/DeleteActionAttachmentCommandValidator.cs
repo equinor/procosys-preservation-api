@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
@@ -14,7 +15,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete
             IProjectValidator projectValidator,
             ITagValidator tagValidator,
             IAttachmentValidator attachmentValidator,
-            IActionValidator actionValidator)
+            IActionValidator actionValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -30,7 +32,9 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete
                 .MustAsync((command, token) => NotBeAClosedActionAsync(command.ActionId, token))
                 .WithMessage(command => $"Action is closed! Action={command.ActionId}")
                 .MustAsync((command, token) => BeAnExistingAttachmentAsync(command.AttachmentId, token))
-                .WithMessage(command => $"Attachment doesn't exist! Attachment={command.AttachmentId}");
+                .WithMessage(command => $"Attachment doesn't exist! Attachment={command.AttachmentId}")
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
@@ -44,6 +48,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete
                 => !await actionValidator.IsClosedAsync(actionId, token);
             async Task<bool> BeAnExistingAttachmentAsync(int attachmentId, CancellationToken token)
                 => await attachmentValidator.ExistsAsync(attachmentId, token);
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }

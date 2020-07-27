@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.TagFunctionValidators;
 using FluentValidation;
 
@@ -7,7 +8,9 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunct
 {
     public class VoidTagFunctionCommandValidator : AbstractValidator<VoidTagFunctionCommand>
     {
-        public VoidTagFunctionCommandValidator(ITagFunctionValidator tagFunctionValidator)
+        public VoidTagFunctionCommandValidator(
+            ITagFunctionValidator tagFunctionValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -15,12 +18,16 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunct
                 .MustAsync((command, token) => BeAnExistingTagFunctionAsync(command.TagFunctionCode, token))
                 .WithMessage(command => $"Tag function doesn't exist! TagFunction={command.TagFunctionCode}")
                 .MustAsync((command, token) => NotBeAVoidedTagFunctionAsync(command.TagFunctionCode, token))
-                .WithMessage(command => $"Tag function is already voided! TagFunction={command.TagFunctionCode}");
+                .WithMessage(command => $"Tag function is already voided! TagFunction={command.TagFunctionCode}")
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingTagFunctionAsync(string tagFunctionCode, CancellationToken token)
                 => await tagFunctionValidator.ExistsAsync(tagFunctionCode, token);
             async Task<bool> NotBeAVoidedTagFunctionAsync(string tagFunctionCode, CancellationToken token)
                 => !await tagFunctionValidator.IsVoidedAsync(tagFunctionCode, token);
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }

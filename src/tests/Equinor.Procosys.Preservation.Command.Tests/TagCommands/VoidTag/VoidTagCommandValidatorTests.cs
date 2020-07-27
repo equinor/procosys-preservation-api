@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.VoidTag;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,10 +13,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
     {
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
 
         private VoidTagCommand _command;
         private VoidTagCommandValidator _dut;
         private readonly int _tagId = 2;
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()
@@ -24,8 +27,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
-            _command = new VoidTagCommand(_tagId, null);
-            _dut = new VoidTagCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+
+            _command = new VoidTagCommand(_tagId, _rowVersion);
+            _dut = new VoidTagCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -70,6 +76,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is voided!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            const string invalidRowVersion = "String";
+
+            var command = new VoidTagCommand(_tagId, invalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid RowVersion!"));
         }
     }
 }

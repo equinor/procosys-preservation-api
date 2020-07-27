@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using FluentValidation;
 
@@ -7,7 +8,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRe
 {
     public class UnvoidRequirementTypeCommandValidator : AbstractValidator<UnvoidRequirementTypeCommand>
     {
-        public UnvoidRequirementTypeCommandValidator(IRequirementTypeValidator requirementTypeValidator)
+        public UnvoidRequirementTypeCommandValidator(
+            IRequirementTypeValidator requirementTypeValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -15,12 +18,16 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRe
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type doesn't exist! RequirementType={command.RequirementTypeId}")
                 .MustAsync((command, token) => BeAVoidedRequirementTypeAsync(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type is not voided! RequirementType={command.RequirementTypeId}");
+                .WithMessage(command => $"Requirement type is not voided! RequirementType={command.RequirementTypeId}")
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
             async Task<bool> BeAVoidedRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.IsVoidedAsync(requirementTypeId, token);
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }

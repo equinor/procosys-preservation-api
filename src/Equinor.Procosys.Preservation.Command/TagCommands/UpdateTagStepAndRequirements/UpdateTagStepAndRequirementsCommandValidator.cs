@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
@@ -16,7 +17,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
              IProjectValidator projectValidator,
              ITagValidator tagValidator,
              IStepValidator stepValidator,
-             IRequirementDefinitionValidator requirementDefinitionValidator)
+             IRequirementDefinitionValidator requirementDefinitionValidator,
+             IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -67,8 +69,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
-                .WithMessage(command => $"Tag is voided! Tag={command.TagId}");
-            
+                .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+
             RuleForEach(command => command.UpdatedRequirements)
                 .MustAsync((command, req, __, token) => BeAnExistingTagRequirementAsync(command.TagId, req.TagRequirementId, token))
                 .WithMessage((_, req) => $"Requirement doesn't exists! Requirement={req.TagRequirementId}");
@@ -116,6 +120,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
             async Task<bool> BeAnExistingTagRequirementAsync(int tagId, int tagRequirementId, CancellationToken token)
                 => await tagValidator.HasRequirementAsync(tagId, tagRequirementId, token);
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }
