@@ -2,6 +2,7 @@
 {
     public enum RequirementTypeIcon
     {
+        Other,
         Area,
         Battery,
         Bearings,
