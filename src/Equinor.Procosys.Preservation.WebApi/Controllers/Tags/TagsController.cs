@@ -19,6 +19,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
+using Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
@@ -809,6 +810,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id)
         {
             var result = await _mediator.Send(new GetHistoryQuery(id));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_DELETE)]
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteTag(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] DeleteTagDto dto)
+        {
+            var result = await _mediator.Send(new DeleteTagCommand(id, dto.ProjectName, dto.RowVersion));
             return this.FromResult(result);
         }
 
