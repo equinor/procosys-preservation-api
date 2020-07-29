@@ -10,7 +10,7 @@
         Installation,
         Measure,
         Nitrogen,
-        Other,
+        Power,
         Pressure,
         Rotate
     }
