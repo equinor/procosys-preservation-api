@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey doesn't exist!"));
         }
 
         [TestMethod]

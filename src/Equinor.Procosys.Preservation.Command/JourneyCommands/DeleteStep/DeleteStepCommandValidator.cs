@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep
             
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey doesn't exists! Journey={command.JourneyId}")
+                .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepId, token))
                 .WithMessage(command => $"Step doesn't exists! Step={command.StepId}")
                 .MustAsync((command, token) => BeAVoidedStepAsync(command.StepId, token))

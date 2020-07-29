@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney
             
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey doesn't exists! Journey={command.JourneyId}")
+                .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAVoidedJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey is not voided! Journey={command.JourneyId}")
                 .MustAsync((command, token) => NotBeUsedAsync(command.JourneyId, token))
