@@ -12,6 +12,7 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
@@ -23,6 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private const string TagNo2 = "PA-14";
         private int _tagWithOneReqsId;
         private int _tagWithAllReqsId;
+        private int _standardTagCompletedId;
         private int _standardTagNotStartedInFirstStepId;
         private int _standardTagStartedAndInLastStepId;
         private int _preAreaTagNotStartedInFirstStepId;
@@ -62,6 +64,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther)
                     });
 
+                var standardTagCompleted = AddTag(context, project, TagType.Standard, TagNo2, "",
+                    journey.Steps.Last(), new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
+                standardTagCompleted.StartPreservation();
+                standardTagCompleted.CompletePreservation(journey);
                 var standardTagStartedInLastStep = AddTag(context, project, TagType.Standard, TagNo2, "",
                     journey.Steps.Last(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 standardTagStartedInLastStep.StartPreservation();
@@ -96,6 +102,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _poAreaTagNotStartedId = poAreaTagNotStarted.Id;
                 _siteAreaTagStartedId = siteAreaTagStarted.Id;
                 _poAreaTagStartedId = poAreaTagStarted.Id;
+                _standardTagCompletedId = standardTagCompleted.Id;
             }
         }
 
@@ -753,6 +760,114 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
                 var result = await dut.HasAnyForSupplierOnlyUsageAsync(tag.Id, new List<int>{_tagReqForSupplierId}, new List<int>(), default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsInUseAsync_StatusActive_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _standardTagStartedAndInLastStepId);
+
+                Assert.AreEqual(0, tag.Attachments.Count);
+                Assert.AreEqual(0, tag.Actions.Count);
+
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInUseAsync(tag.Id, default);
+
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsInUseAsync_StatusCompleted_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _standardTagCompletedId);
+
+                Assert.AreEqual(0, tag.Attachments.Count);
+                Assert.AreEqual(0, tag.Actions.Count);
+
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInUseAsync(tag.Id, default);
+
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsInUseAsync_HasAction_ReturnsTrue()
+        {
+            var dueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
+
+                Assert.AreEqual(0, tag.Attachments.Count);
+                Assert.AreEqual(PreservationStatus.NotStarted, tag.Status);
+
+                tag.AddAction(new Action(TestPlant, "", "", dueTimeUtc));
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInUseAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsInUseAsync_HasAttachment_ReturnsTrue()
+        {
+            var fileName = "A.txt";
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
+
+                Assert.AreEqual(0, tag.Actions.Count);
+                Assert.AreEqual(PreservationStatus.NotStarted, tag.Status);
+
+                tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, fileName));
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInUseAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsInUseAsync_NotInUse_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
+
+                Assert.AreEqual(0, tag.Attachments.Count);
+                Assert.AreEqual(0, tag.Actions.Count);
+
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInUseAsync(tag.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsInUseAsync_UnknownTag_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsInUseAsync(0, default);
                 Assert.IsFalse(result);
             }
         }

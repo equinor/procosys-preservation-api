@@ -1,36 +1,39 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney;
+using Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag;
 using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteJourney
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.DeleteTag
 {
     [TestClass]
-    public class DeleteJourneyCommandValidatorTests
+    public class DeleteTagCommandValidatorTests
     {
-        private DeleteJourneyCommandValidator _dut;
-        private Mock<IJourneyValidator> _journeyValidatorMock;
+        private DeleteTagCommand _command;
+        private DeleteTagCommandValidator _dut;
+        private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
-        private DeleteJourneyCommand _command;
 
-        private int _id = 1;
+        private int _tagId = 1;
+        private readonly string _projectName = "ProjectName";
         private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()
         {
-            _journeyValidatorMock = new Mock<IJourneyValidator>();
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(true));
-            _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(true));
-
+            _tagValidatorMock = new Mock<ITagValidator>();
+            _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(true));
+            
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
 
-            _command = new DeleteJourneyCommand(_id, _rowVersion);
+            _command = new DeleteTagCommand(_tagId, _projectName, _rowVersion);
 
-            _dut = new DeleteJourneyCommandValidator(_journeyValidatorMock.Object, _rowVersionValidatorMock.Object);
+            _dut = new DeleteTagCommandValidator(
+                _tagValidatorMock.Object,
+                _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -42,39 +45,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyNotExists()
+        public void Validate_ShouldFail_WhenTagNotExists()
         {
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_id, default)).Returns(Task.FromResult(false));
-            
+            _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(false));
+
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyNotVoided()
+        public void Validate_ShouldFail_WhenTagNotVoided()
         {
-            _journeyValidatorMock.Setup(r => r.IsVoidedAsync(_id, default)).Returns(Task.FromResult(false));
-            
+            _tagValidatorMock.Setup(r => r.IsVoidedAsync(_tagId, default)).Returns(Task.FromResult(false));
+
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey is not voided!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is not voided!"));
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyIsInUse()
+        public void Validate_ShouldFail_WhenTagIsInUse()
         {
-            _journeyValidatorMock.Setup(r => r.IsInUseAsync(_id, default)).Returns(Task.FromResult(true));
-            
+            _tagValidatorMock.Setup(r => r.IsInUseAsync(_tagId, default)).Returns(Task.FromResult(true));
+
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey is used!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is in use!"));
         }
 
         [TestMethod]
@@ -82,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteJour
         {
             const string invalidRowVersion = "String";
 
-            var command = new DeleteJourneyCommand(_id, invalidRowVersion);
+            var command = new DeleteTagCommand(_tagId, _projectName, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(command);
