@@ -294,11 +294,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> IsInUseAsync(long tagId, CancellationToken token)
         {
-            var tag = await (from t in _context.QuerySet<Tag>()
-                    .Include(t => t.Attachments)
-                             where (t.Id == tagId)
-                select t).SingleOrDefaultAsync();
-
             var inUse = await (from t in _context.QuerySet<Tag>()
                     .Include(t => t.Attachments)
                     .Include(t => t.Actions)
