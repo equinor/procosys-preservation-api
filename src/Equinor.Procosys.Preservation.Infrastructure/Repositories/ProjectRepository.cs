@@ -51,6 +51,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .ToListAsync();
 
         public void RemoveTag(Tag tag)
-            => _context.Tags.Remove(tag);
+        {
+            foreach (var tagRequirement in tag.Requirements)
+            {
+                _context.TagRequirements.Remove(tagRequirement);
+            }
+            _context.Tags.Remove(tag);
+        }
     }
 }
