@@ -6,7 +6,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
     public class SavedFilter : PlantEntityBase, ICreationAuditable
     {
         public const int TitleLengthMax = 255;
-        public const int CriteriaLengthMax = 1024;
+        public const int CriteriaLengthMax = 8000;
 
         public SavedFilter(string plant) : base(plant)
         {
