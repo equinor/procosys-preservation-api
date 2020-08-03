@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
@@ -11,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             int intervalWeeks, 
             int? nextDueWeeks,
             string requirementTypeCode,
+            RequirementTypeIcon requirementTypeIcon,
             string requirementTypeTitle,
             string requirementDefinitionTitle,
             DateTime? nextDueTimeUtc,
@@ -27,6 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             NextDueWeeks = nextDueWeeks;
             IntervalWeeks = intervalWeeks;
             RequirementTypeCode = requirementTypeCode;
+            RequirementTypeIcon = requirementTypeIcon;
             RequirementTypeTitle = requirementTypeTitle;
             RequirementDefinitionTitle = requirementDefinitionTitle;
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
@@ -42,6 +45,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         /// </summary>
         public int? NextDueWeeks { get; }
         public string RequirementTypeCode { get; }
+        public RequirementTypeIcon RequirementTypeIcon { get; }
         public string RequirementTypeTitle { get; }
         public string RequirementDefinitionTitle { get; }
         public DateTime? NextDueTimeUtc { get; }

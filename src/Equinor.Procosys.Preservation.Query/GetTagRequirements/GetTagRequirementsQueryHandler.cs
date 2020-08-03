@@ -48,6 +48,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                     select new
                     {
                         ReqTypeCode = requirementType.Code,
+                        ReqTypeIcon = requirementType.Icon,
                         ReqTypeTitle = requirementType.Title,
                         RequirementDefinition = requirementDefinition
                     }
@@ -77,6 +78,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                         requirement.IntervalWeeks,
                         requirement.GetNextDueInWeeks(),
                         requirementDto.ReqTypeCode,
+                        requirementDto.ReqTypeIcon,
                         requirementDto.ReqTypeTitle,
                         requirementDto.RequirementDefinition.Title,
                         requirement.NextDueTimeUtc,
