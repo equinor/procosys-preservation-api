@@ -310,8 +310,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<string>("Criteria")
                         .IsRequired()
-                        .HasColumnType("nvarchar(1024)")
-                        .HasMaxLength(1024);
+                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(8000);
+
+                    b.Property<int?>("PersonId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Plant")
                         .IsRequired()
@@ -331,6 +334,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("PersonId");
 
                     b.ToTable("SavedFilters");
                 });
@@ -1417,6 +1422,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasForeignKey("CreatedById")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany("SavedFilters")
+                        .HasForeignKey("PersonId");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action", b =>

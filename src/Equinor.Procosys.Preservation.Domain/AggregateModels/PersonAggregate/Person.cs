@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
@@ -7,6 +8,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
     {
         public const int FirstNameLengthMax = 64;
         public const int LastNameLengthMax = 64;
+
+        private readonly List<SavedFilter> _savedFilters = new List<SavedFilter>();
 
         protected Person() : base()
         {
@@ -19,6 +22,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
             LastName = lastName;
         }
 
+        public IReadOnlyCollection<SavedFilter> SavedFilters => _savedFilters.AsReadOnly();
         public Guid Oid { get; private set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -33,6 +37,16 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
                 throw new ArgumentNullException(nameof(modifiedBy));
             }
             ModifiedById = modifiedBy.Id;
+        }
+
+        public void AddSavedFilter(SavedFilter savedFilter)
+        {
+            if (savedFilter == null)
+            {
+                throw new ArgumentNullException(nameof(savedFilter));
+            }
+
+            _savedFilters.Add(savedFilter);
         }
     }
 }
