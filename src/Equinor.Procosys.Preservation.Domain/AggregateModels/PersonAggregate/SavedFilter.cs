@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
         public const int TitleLengthMax = 255;
         public const int CriteriaLengthMax = 8000;
 
-        public SavedFilter(string plant) : base(plant)
+        public SavedFilter() : base(null)
         {
         }
         public SavedFilter(string plant, string title, string criteria)
