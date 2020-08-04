@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Query.GetTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -30,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
             true,
             true,
             "PoNo",
-            new List<RequirementDto> {new RequirementDto(0, null, default, default, false)},
+            new List<RequirementDto> {new RequirementDto(0, null, RequirementTypeIcon.Other, default, default, false)},
             "Resp",
             "RespDescription",
             PreservationStatus.Active.GetDisplayValue(),

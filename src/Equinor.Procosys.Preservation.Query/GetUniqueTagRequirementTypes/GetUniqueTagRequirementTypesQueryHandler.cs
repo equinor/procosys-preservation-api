@@ -33,6 +33,7 @@ namespace Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes
                  select new RequirementTypeDto(
                      requirementType.Id,
                      requirementType.Code,
+                     requirementType.Icon,
                      requirementType.Title))
                 .Distinct()
                 .ToListAsync(cancellationToken);
