@@ -19,15 +19,15 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => NotBeAVoidedJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey is already voided! Journey={command.JourneyId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
             async Task<bool> NotBeAVoidedJourneyAsync(int journeyId, CancellationToken token)
                 => !await journeyValidator.IsVoidedAsync(journeyId, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

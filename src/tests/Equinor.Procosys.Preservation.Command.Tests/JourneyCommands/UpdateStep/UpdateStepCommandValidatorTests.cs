@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
 
@@ -170,7 +170,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             const string invalidRowVersion = "String";
 
             var command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

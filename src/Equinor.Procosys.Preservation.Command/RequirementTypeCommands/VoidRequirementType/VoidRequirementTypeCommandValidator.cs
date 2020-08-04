@@ -19,15 +19,15 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequ
                 .WithMessage(command => $"Requirement type doesn't exist! RequirementType={command.RequirementTypeId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementTypeAsync(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type is already voided! RequirementType={command.RequirementTypeId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
             async Task<bool> NotBeAVoidedRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => !await requirementTypeValidator.IsVoidedAsync(requirementTypeId, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

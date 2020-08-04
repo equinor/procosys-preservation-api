@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             _rdValidatorMock.Setup(r => r.ExistsAsync(_reqDefForAll2Id, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion)).Returns(true);
 
             _dut = new UpdateTagStepAndRequirementsCommandValidator(
                 _projectValidatorMock.Object,
@@ -293,7 +293,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new RequirementForCommand(_reqDefForAll2Id, 1)
                 },
                 invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

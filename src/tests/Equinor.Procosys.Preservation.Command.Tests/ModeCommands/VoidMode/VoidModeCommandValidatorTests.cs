@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
             _command = new VoidModeCommand(_modeId, _rowVersion);
             _dut = new VoidModeCommandValidator(_modeValidatorMock.Object, _rowVersionValidatorMock.Object);
@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
             const string invalidRowVersion = "String";
 
             var command = new VoidModeCommand(_modeId, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

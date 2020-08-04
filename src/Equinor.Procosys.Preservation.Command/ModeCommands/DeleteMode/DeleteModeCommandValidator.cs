@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
                 .WithMessage(command => $"Mode is not voided! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeUsedInAnyStep(command.ModeId, token))
                 .WithMessage(command => $"Mode is used in step(s)! Mode={command.ModeId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingMode(int modeId, CancellationToken token)
@@ -33,8 +33,8 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
             async Task<bool> NotBeUsedInAnyStep(int modeId, CancellationToken token)
                 => !await modeValidator.IsUsedInStepAsync(modeId, token);
 
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

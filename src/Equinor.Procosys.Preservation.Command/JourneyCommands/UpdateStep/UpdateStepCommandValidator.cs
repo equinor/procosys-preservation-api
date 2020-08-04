@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .WithMessage(command => $"Responsible is voided! ResponsibleCode={command.ResponsibleCode}")
                 .MustAsync((command, token) => BeFirstStepIfUpdatingToSupplierStep(command.JourneyId, command.ModeId, command.StepId, token))
                 .WithMessage(command => $"Only the first step can be supplier step! Mode={command.ModeId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
@@ -64,8 +64,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             async Task<bool> BeFirstStepIfUpdatingToSupplierStep(int journeyId, int modeId, int stepId, CancellationToken token)
                 => await stepValidator.IsFirstStepOrModeIsNotForSupplier(journeyId, modeId, stepId, token);
 
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

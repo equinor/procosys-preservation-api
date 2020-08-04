@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
             _reqDefinitionValidatorMock.Setup(r => r.ExistsAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
             _command = new VoidRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, _rowVersion);
             _dut = new VoidRequirementDefinitionCommandValidator(_reqTypeValidatorMock.Object, _reqDefinitionValidatorMock.Object, _rowVersionValidatorMock.Object);
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
             const string invalidRowVersion = "String";
 
             var command = new VoidRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney
                 .WithMessage(command => $"Journey is not voided! Journey={command.JourneyId}")
                 .MustAsync((command, token) => NotBeUsedAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey is used! Journey={command.JourneyId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
@@ -33,8 +33,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney
             async Task<bool> NotBeUsedAsync(int journeyId, CancellationToken token)
                 => !await journeyValidator.IsInUseAsync(journeyId, token);
 
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             _command = new UpdateJourneyCommand(_id, _title, _rowVersion);
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
             _dut = new UpdateJourneyCommandValidator(_journeyValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJour
             const string invalidRowVersion = "String";
             
             var command = new UpdateJourneyCommand(_id, _title, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

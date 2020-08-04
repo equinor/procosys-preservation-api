@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRe
                 .WithMessage(command => $"Requirement definition does not exist! RequirementDefinition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => BeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition is not voided! RequirementDefinition={command.RequirementDefinitionId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
@@ -33,8 +33,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRe
                 => await requirementDefinitionValidator.ExistsAsync(requirementDefinitionId, token);
             async Task<bool> BeAVoidedRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }
