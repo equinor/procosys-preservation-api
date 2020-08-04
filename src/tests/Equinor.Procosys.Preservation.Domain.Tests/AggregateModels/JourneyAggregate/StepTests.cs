@@ -89,5 +89,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
             Assert.AreEqual(responsibleId, _dut.ResponsibleId);
         }
+
+        [TestMethod]
+        public void SetTransferOnRfccSign_ShouldThrowException_WhenTransferOnRfocSignAlreadySet()
+        {
+            _dut.TransferOnRfocSign = true;
+            Assert.ThrowsException<Exception>(() => _dut.TransferOnRfccSign = true);
+        }
+
+        [TestMethod]
+        public void SetTransferOnRfocSign_ShouldThrowException_WhenTransferOnRfccSignAlreadySet()
+        {
+            _dut.TransferOnRfccSign = true;
+            Assert.ThrowsException<Exception>(() => _dut.TransferOnRfocSign = true);
+        }
     }
 }

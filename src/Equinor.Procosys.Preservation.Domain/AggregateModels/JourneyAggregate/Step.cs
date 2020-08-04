@@ -8,6 +8,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
     public class Step : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {
+        private bool _transferOnRfccSign;
+        private bool _transferOnRfocSign;
         public const int TitleLengthMin = 1;
         public const int TitleLengthMax = 64;
 
@@ -54,6 +56,33 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public string Title { get; set; }
         public int ModeId { get; private set; }
         public bool IsSupplierStep { get; private set; }
+
+        public bool TransferOnRfccSign
+        {
+            get => _transferOnRfccSign;
+            set
+            {
+                if (TransferOnRfocSign && value)
+                {
+                    throw new Exception("Both TransferOnRfccSign and TransferOnRfocSign can't be set");
+                }
+                _transferOnRfccSign = value;
+            }
+        }
+
+        public bool TransferOnRfocSign
+        {
+            get => _transferOnRfocSign;
+            set
+            {
+                if (TransferOnRfccSign && value)
+                {
+                    throw new Exception("Both TransferOnRfccSign and TransferOnRfocSign can't be set");
+                }
+                _transferOnRfocSign = value;
+            }
+        }
+
         public int ResponsibleId { get; private set; }
 
         public int SortKey { get; set; }
