@@ -172,6 +172,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
                 dto.ModeId,
                 dto.ResponsibleCode,
                 dto.Title,
+                dto.TransferOnRfccSign,
+                dto.TransferOnRfocSign,
                 dto.RowVersion);
             var result = await _mediator.Send(command);
             return this.FromResult(result);
