@@ -60,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                             command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                             command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
-                    .WithMessage(command => "Requirements can't include requirements just for suppliers!");
+                    .WithMessage(command => "Requirements can not include requirements just for suppliers!");
             });
 
             RuleFor(command => command)
