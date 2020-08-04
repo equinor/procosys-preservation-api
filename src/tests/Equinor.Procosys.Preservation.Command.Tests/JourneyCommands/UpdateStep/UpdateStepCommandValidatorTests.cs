@@ -178,5 +178,43 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid RowVersion!"));
         }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenSettingBothTransferOnRfccSignAndTransferOnRfocSign()
+        {
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, true, true, _rowVersion);
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Both 'Transfer on RFCC signing' and 'Transfer on RFOC signing' can not be set in same step!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenSettingTransferOnRfccSign_AndStepExistsWithTransferOnRfccSign()
+        {
+            _journeyValidatorMock.Setup(r => r.HasOtherStepWithTransferOnRfccSignAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
+            
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, true, false, _rowVersion);
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("'Transfer on RFCC signing' can not be set on multiple steps in a journey!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenSettingTransferOnRfocSign_AndStepExistsWithTransferOnRfocSign()
+        {
+            _journeyValidatorMock.Setup(r => r.HasOtherStepWithTransferOnRfocSignAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
+            
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, false, true, _rowVersion);
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("'Transfer on RFOC signing' can not be set on multiple steps in a journey!"));
+        }
     }
 }

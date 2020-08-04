@@ -177,7 +177,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("'Transfer on RFCC signing' can not be set in multiple steps in a journey!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("'Transfer on RFCC signing' can not be set on multiple steps in a journey!"));
         }
 
         [TestMethod]
@@ -190,7 +190,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("'Transfer on RFOC signing' can not be set in multiple steps in a journey!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("'Transfer on RFOC signing' can not be set on multiple steps in a journey!"));
         }
     }
 }

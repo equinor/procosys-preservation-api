@@ -302,5 +302,165 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfccSignAsync_NoSteps_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journeyWithoutStepId, 0, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfccSignAsync_NoStepsHasTransferOnRfccSign_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journeyWithStepId, _step.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfccSignAsync_UnknownJourney_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(1267, 0, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfccSignAsync_ReturnsTrue_WhenOtherStepHasTransferOnRfccSign()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var step = new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2"))
+                {
+                    TransferOnRfccSign = true
+                };
+                journey.AddStep(step);
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journeyWithStepId, _step.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfccSignAsync_ReturnsFalse_WhenSameStepHasTransferOnRfccSign()
+        {
+            int stepWithTransferOnRfccSignId;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var step = new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2"))
+                {
+                    TransferOnRfccSign = true
+                };
+                journey.AddStep(step);
+                context.SaveChangesAsync().Wait();
+
+                stepWithTransferOnRfccSignId = step.Id;
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journeyWithStepId, stepWithTransferOnRfccSignId, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfocSignAsync_NoSteps_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journeyWithoutStepId, 0, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfocSignAsync_NoStepsHasTransferOnRfocSign_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journeyWithStepId, _step.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfocSignAsync_UnknownJourney_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(1267, 0, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfocSignAsync_ReturnsTrue_WhenOtherStepHasTransferOnRfocSign()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var step = new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2"))
+                {
+                    TransferOnRfocSign = true
+                };
+                journey.AddStep(step);
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journeyWithStepId, _step.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HasOtherStepWithTransferOnRfocSignAsync_ReturnsFalse_WhenSameStepHasTransferOnRfocSign()
+        {
+            int stepWithTransferOnRfocSignId;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var step = new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2"))
+                {
+                    TransferOnRfocSign = true
+                };
+                journey.AddStep(step);
+                context.SaveChangesAsync().Wait();
+
+                stepWithTransferOnRfocSignId = step.Id;
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journeyWithStepId, stepWithTransferOnRfocSignId, default);
+                Assert.IsFalse(result);
+            }
+        }
     }
 }
