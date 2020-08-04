@@ -1,4 +1,5 @@
 ﻿using System;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Query.GetTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -11,10 +12,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         public void Constructor_WithNextDueDate_ShouldSetAllProperties()
         {
             var nextDueTimeUtc = new DateTime(2020, 6, 2, 14, 2, 16, DateTimeKind.Utc);
-            var dut = new RequirementDto(1, "R", nextDueTimeUtc, 3, true);
+            var dut = new RequirementDto(1, "R", RequirementTypeIcon.Battery, nextDueTimeUtc, 3, true);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("R", dut.RequirementTypeCode);
+            Assert.AreEqual(RequirementTypeIcon.Battery, dut.RequirementTypeIcon);
             Assert.IsTrue(dut.NextDueTimeUtc.HasValue);
             Assert.AreEqual(nextDueTimeUtc, dut.NextDueTimeUtc.Value);
             Assert.IsNotNull(dut.NextDueWeeks);
@@ -27,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestMethod]
         public void Constructor_WithoutNextDueDate_ShouldNotSetDueDateProperties()
         {
-            var dut = new RequirementDto(0, null, null, null, false);
+            var dut = new RequirementDto(0, null, RequirementTypeIcon.Other, null, null, false);
 
             Assert.IsFalse(dut.NextDueWeeks.HasValue);
             Assert.IsFalse(dut.NextDueTimeUtc.HasValue);

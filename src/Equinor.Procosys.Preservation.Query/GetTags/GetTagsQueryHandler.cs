@@ -89,7 +89,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                     select new ReqTypeDto
                     {
                         RequirementDefinitionId = rd.Id,
-                        RequirementTypeCode = rt.Code
+                        RequirementTypeCode = rt.Code,
+                        RequirementTypeIcon = rt.Icon
                     }
                 ).ToListAsync(cancellationToken);
 
@@ -124,6 +125,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
                             return new RequirementDto(
                                 r.Id,
                                 reqTypeDto.RequirementTypeCode,
+                                reqTypeDto.RequirementTypeIcon,
                                 r.NextDueTimeUtc,
                                 r.GetNextDueInWeeks(),
                                 r.IsReadyAndDueToBePreserved());
@@ -429,6 +431,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         {
             public int RequirementDefinitionId { get; set; }
             public string RequirementTypeCode { get; set; }
+            public RequirementTypeIcon RequirementTypeIcon { get; set; }
         }
     }
 }
