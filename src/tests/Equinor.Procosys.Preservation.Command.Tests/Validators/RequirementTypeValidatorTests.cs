@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -12,17 +13,30 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class RequirementTypeValidatorTests : ReadOnlyTestsBase
     {
-        private int _reqTypeId;
-        private const string Code = "Code";
-        private int _newReqTypeId;
+        private readonly string _reqTypeCode1 = "Code1";
+        private readonly string _reqDefTitle1_1 = "DefTitle1_1";
+        private readonly string _reqDefTitle1_2 = "DefTitle1_2";
+        private readonly string _reqTypeCode2 = "Code2";
+        private readonly string _reqDefTitle2 = "DefTitle2";
+        private int _reqTypeId1;
+        private int _reqDefId1_2;
+        private string _reqTypeTitle1;
+        private string _reqTypeTitle2;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var requirementType = AddRequirementTypeWith1DefWithoutField(context, Code, "D", RequirementTypeIcon.Other);
-                _reqTypeId = requirementType.Id;
-                _newReqTypeId = _reqTypeId + 1;
+                var requirementType = AddRequirementTypeWith1DefWithoutField(context, _reqTypeCode1, _reqDefTitle1_1, RequirementTypeIcon.Other);
+                _reqTypeId1 = requirementType.Id;
+                _reqTypeTitle1 = requirementType.Title;
+                
+                var requirementDefinition = new RequirementDefinition(TestPlant, _reqDefTitle1_2, 2, RequirementUsage.ForAll, 1);
+                requirementType.AddRequirementDefinition(requirementDefinition);
+                context.SaveChangesAsync().Wait();
+                _reqDefId1_2 = requirementDefinition.Id;
+
+                _reqTypeTitle2 = AddRequirementTypeWith1DefWithoutField(context, _reqTypeCode2, _reqDefTitle2, RequirementTypeIcon.Other).Title;
             }
         }
 
@@ -32,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.ExistsAsync(_reqTypeId, default);
+                var result = await dut.ExistsAsync(_reqTypeId1, default);
                 Assert.IsTrue(result);
             }
         }
@@ -53,14 +67,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqType = context.RequirementTypes.Single(rd => rd.Id == _reqTypeId);
+                var reqType = context.RequirementTypes.Single(rd => rd.Id == _reqTypeId1);
                 reqType.Void();
                 context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsVoidedAsync(_reqTypeId, default);
+                var result = await dut.IsVoidedAsync(_reqTypeId1, default);
                 Assert.IsTrue(result);
             }
         }
@@ -71,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsVoidedAsync(_reqTypeId, default);
+                var result = await dut.IsVoidedAsync(_reqTypeId1, default);
                 Assert.IsFalse(result);
             }
         }
@@ -88,111 +102,160 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsNotUniqueTitleAsync_SameTitleAsAnotherRequirementType_ReturnsTrue()
+        public async Task ExistsWithSameTitleAsync_KnownTitle_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueTitleAsync(_newReqTypeId, $"Title{Code}", default);
+                var result = await dut.ExistsWithSameTitleAsync(_reqTypeTitle1, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsNotUniqueTitleAsync_SameTitleAsAnotherRequirementType_ReturnsFalse()
+        public async Task ExistsWithSameTitleAsync_KnownTitle_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueTitleAsync(_newReqTypeId, "XXXXXX", default);
+                var result = await dut.ExistsWithSameTitleAsync("XXXXXX", default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task IsNotUniqueTitleAsync_NewTitleOnSameRequirementType_ReturnsFalse()
+        public async Task ExistsWithSameTitleInAnotherTypeAsync_SameTitleAsAnotherType_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueTitleAsync(_reqTypeId, $"Title{Code}", default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task IsNotUniqueCodeAsync_SameCodeAsAnotherRequirementType_ReturnsTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueCodeAsync(_newReqTypeId, Code, default);
+                var result = await dut.ExistsWithSameTitleInAnotherTypeAsync(_reqTypeId1, _reqTypeTitle2, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task IsNotUniqueCodeAsync_SameCodeAsAnotherRequirementType_ReturnsFalse()
+        public async Task ExistsWithSameTitleInAnotherTypeAsync_NewTitle_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueCodeAsync(_newReqTypeId, "XXXXXX", default);
+                var result = await dut.ExistsWithSameTitleInAnotherTypeAsync(_reqTypeId1, "XXXXXSD", default);
                 Assert.IsFalse(result);
             }
         }
-
         [TestMethod]
-        public async Task IsNotUniqueCodeAsync_NewCodeOnSameRequirementType_ReturnsFalse()
+        public async Task ExistsWithSameCodeAsync_KnownCode_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueCodeAsync(_reqTypeId, Code, default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task AddRequirementType_IsNotUniqueTitleAsync_SameTitleAsAnotherRequirementType_ReturnsTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueTitleAsync($"Title{Code}", default);
+                var result = await dut.ExistsWithSameCodeAsync(_reqTypeCode1, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task AddRequirementType_IsNotUniqueTitleAsync_SameTitleAsAnotherRequirementType_ReturnsFalse()
+        public async Task ExistsWithSameCodeAsync_KnownCode_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueTitleAsync("XXXXXX", default);
+                var result = await dut.ExistsWithSameCodeAsync("XXXXXX", default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task AddRequirementType_IsNotUniqueCodeAsync_SameCodeAsAnotherRequirementType_ReturnsTrue()
+        public async Task ExistsWithSameCodeInAnotherTypeAsync_SameCodeAsAnotherType_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueCodeAsync(Code, default);
+                var result = await dut.ExistsWithSameCodeInAnotherTypeAsync(_reqTypeId1, _reqTypeCode2, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task AddRequirementType_IsNotUniqueCodeAsync_SameCodeAsAnotherRequirementType_ReturnsFalse()
+        public async Task ExistsWithSameCodeInAnotherTypeAsync_NewCode_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementTypeValidator(context);
-                var result = await dut.IsNotUniqueCodeAsync("XXXXXX", default);
+                var result = await dut.ExistsWithSameCodeInAnotherTypeAsync(_reqTypeId1, "XXXXXSD", default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitle_AndNeedUserInputAreEqual_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var fieldTypes = new List<FieldType> { FieldType.Info };
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.AnyRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId1, _reqDefTitle1_1, fieldTypes, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitle_ButNeedUserInputDiffer_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var fieldTypes = new List<FieldType>{ FieldType.Attachment };
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.AnyRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId1, _reqDefTitle1_1, fieldTypes, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenNewTitle_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var fieldTypes = new List<FieldType>();
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.AnyRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId1, "XXXXXY", fieldTypes, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitleInOtherDefinition_AndNeedUserInputAreEqual_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var fieldTypes = new List<FieldType> { FieldType.Info };
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.OtherRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId1, _reqDefId1_2, _reqDefTitle1_1, fieldTypes, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitleInOtherDefinition_ButNeedUserInputDiffer_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var fieldTypes = new List<FieldType>{ FieldType.Attachment };
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.OtherRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId1, _reqDefId1_2, _reqDefTitle1_1, fieldTypes, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenNewTitle_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var fieldTypes = new List<FieldType>();
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.OtherRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId1, _reqDefId1_2, "XXXXXY", fieldTypes, default);
                 Assert.IsFalse(result);
             }
         }

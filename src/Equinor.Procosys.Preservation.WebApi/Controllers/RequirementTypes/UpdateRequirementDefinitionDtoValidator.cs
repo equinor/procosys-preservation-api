@@ -15,10 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
             RuleFor(x => x.SortKey)
                 .NotNull()
-                .Must(MustBePositive)
-                .WithMessage("Sort key cannot be null");
-
-            RuleFor(x => x.SortKey)
+                .WithMessage("Sort key cannot be null")
                 .Must(MustBePositive)
                 .WithMessage("Sort key must be positive");
 
@@ -32,11 +29,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
             RuleForEach(x => x.NewFields)
                 .Must(FieldLabelNotNullAndMaxLength)
-                .WithMessage($"Field label cannot be null and must be maximum {nameof(Field.LabelLengthMax)}");
+                .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}");
 
             RuleForEach(x => x.UpdatedFields)
                 .Must(FieldLabelNotNullAndMaxLength)
-                .WithMessage($"Field label cannot be null and must be maximum {nameof(Field.LabelLengthMax)}");
+                .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}");
 
             RuleFor(x => x)
                 .Must(NotBeDuplicates)
@@ -53,12 +50,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
         private bool MustBePositive(int arg) => arg > 0;
 
+        // TECH move to businessvalidation. Must consider existing fields too
         private bool NotBeDuplicates(UpdateRequirementDefinitionDto dto)
         {
             var allFields = dto.UpdatedFields.Select(f => f.Label.ToLower())
                 .Concat(dto.NewFields.Select(f => f.Label.ToLower())).ToList();
 
-            return allFields.Distinct().Count() == allFields.Count();
+            return allFields.Distinct().Count() == allFields.Count;
         }
 
         private bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;

@@ -16,9 +16,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
             RuleFor(x => x.SortKey)
                 .NotNull()
-                .WithMessage("Sort key cannot be null");
-
-            RuleFor(x => x.SortKey)
+                .WithMessage("Sort key cannot be null")
                 .Must(MustBePositive)
                 .WithMessage("Sort key must be positive");
 
@@ -49,7 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         {
             var lowerCaseField = fields.Select(f => f.Label.ToLower()).ToList();
 
-            return lowerCaseField.Distinct().Count() == lowerCaseField.Count();
+            return lowerCaseField.Distinct().Count() == lowerCaseField.Count;
         }
 
         private bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;

@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type doesn't exist! RequirementType={command.RequirementTypeId}")
-                .MustAsync((command, token) => BeAnExistingRequirementDefinitionAsync(command.RequirementDefinitionId, token))
+                .MustAsync((command, token) => BeAnExistingRequirementDefinitionAsync(command.RequirementTypeId, command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition doesn't exist! RequirementDefinition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementTypeAsync(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type is voided! RequirementType={command.RequirementTypeId}")
@@ -39,12 +39,16 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
-            async Task<bool> BeAnExistingRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
-                => await requirementDefinitionValidator.ExistsAsync(requirementDefinitionId, token);
+            
+            async Task<bool> BeAnExistingRequirementDefinitionAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token)
+                => await requirementTypeValidator.RequirementDefinitionExistsAsync(requirementTypeId, requirementDefinitionId, token);
+            
             async Task<bool> NotBeAVoidedRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => !await requirementTypeValidator.IsVoidedAsync(requirementTypeId, token);
+            
             async Task<bool> NotBeAVoidedRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
+            
             async Task<bool> RequirementDefinitionTitleMustBeUniqueOnType(
                 int reqTypeId, 
                 int reqDefId,
@@ -56,11 +60,11 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 var fieldTypesFromUpdated = updatedFields.Select(uf => uf.FieldType).ToList();
                 var fieldTypesFromNew = newFields.Select(nf => nf.FieldType).ToList();
 
-                return !await requirementDefinitionValidator.IsNotUniqueUpdatedTitleOnRequirementTypeAsync(
+                return !await requirementTypeValidator.OtherRequirementDefinitionExistsWithSameTitleAsync(
                     reqTypeId,
                     reqDefId,
                     title,
-                    fieldTypesFromUpdated.Concat(fieldTypesFromNew).ToList(), 
+                    fieldTypesFromUpdated.Concat(fieldTypesFromNew).Distinct().ToList(), 
                     token);
             }
 
@@ -68,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 => await fieldValidator.ExistsAsync(fieldId, token);
 
             async Task<bool> BeSameFieldTypeOnExistingFieldsAsync(UpdateFieldsForCommand field, CancellationToken token)
-                => await fieldValidator.FieldTypeIsNotChanged(field, token);
+                => await fieldValidator.VerifyFieldTypeAsync(field.Id, field.FieldType, token);
         }
     }
 }

@@ -28,7 +28,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _requirementType.AddRequirementDefinition(reqDefForSupplier);
                 var reqDefForOther = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 1);
                 _requirementType.AddRequirementDefinition(reqDefForOther);
-                reqDefForOther.AddField(new Field(TestPlant, "L1", FieldType.CheckBox, 10));
 
                 context.SaveChangesAsync().Wait();
 
@@ -322,30 +321,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var reqIds = new List<int>();
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversBothForSupplierAndOtherAsync(reqIds, default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task IsNotUniqueTitleOnRequirementTypeAsync_IsNotUnique_ReturnsTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var fieldTypes = new List<FieldType>{ FieldType.Attachment };
-                var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.IsNotUniqueTitleOnRequirementTypeAsync(_requirementType.Id, "D3", fieldTypes, default);
-                Assert.IsTrue(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task IsNotUniqueTitleOnRequirementTypeAsync_IsUnique_ReturnsFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var fieldTypes = new List<FieldType> { FieldType.Info };
-                var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.IsNotUniqueTitleOnRequirementTypeAsync(_requirementType.Id, "D3", fieldTypes, default);
                 Assert.IsFalse(result);
             }
         }

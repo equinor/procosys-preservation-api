@@ -43,11 +43,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public bool? ShowPrevious { get; set; }
         public int SortKey { get; set; }
         public FieldType FieldType { get; private set; }
-        public bool NeedsUserInput =>
-            FieldType == FieldType.Number ||
-            FieldType == FieldType.Attachment ||
-            FieldType == FieldType.CheckBox;
-
+        public bool NeedsUserInput => FieldType.NeedsUserInput();
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }

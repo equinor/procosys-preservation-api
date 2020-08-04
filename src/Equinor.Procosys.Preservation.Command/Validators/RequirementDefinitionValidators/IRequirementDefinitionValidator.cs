@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators
 {
@@ -12,16 +11,5 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         Task<bool> UsageCoversBothForSupplierAndOtherAsync(List<int> requirementDefinitionIds, CancellationToken token);
         Task<bool> UsageCoversForOtherThanSuppliersAsync(List<int> requirementDefinitionIds, CancellationToken token);
         Task<bool> HasAnyForSupplierOnlyUsageAsync(List<int> requirementDefinitionIds, CancellationToken token);
-        Task<bool> IsNotUniqueTitleOnRequirementTypeAsync(
-            int requirementTypeId, 
-            string reqDefTitle,
-            IList<FieldType> fieldTypes,
-            CancellationToken token);
-        Task<bool> IsNotUniqueUpdatedTitleOnRequirementTypeAsync(
-            int requirementTypeId,
-            int requirementDefinitionId,
-            string reqDefTitle,
-            IList<FieldType> fieldTypes,
-            CancellationToken token);
     }
 }

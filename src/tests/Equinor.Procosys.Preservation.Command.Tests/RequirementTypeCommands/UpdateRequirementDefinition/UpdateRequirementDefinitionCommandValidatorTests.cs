@@ -28,19 +28,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         private RequirementUsage _usage = RequirementUsage.ForAll;
         private int _defaultIntervalWeeks = 4;
         private string _rowVersion = "AAAAAAAAABA=";
-        private IList<UpdateFieldsForCommand> _updatedFields = new List<UpdateFieldsForCommand>();
-        private IList<FieldsForCommand> _newFields = new List<FieldsForCommand>();
-
+        private readonly IList<UpdateFieldsForCommand> _updatedFields = new List<UpdateFieldsForCommand>();
+        private readonly IList<FieldsForCommand> _newFields = new List<FieldsForCommand>();
 
         [TestInitialize]
         public void Setup_OkState()
         {
             _reqTypeValidatorMock = new Mock<IRequirementTypeValidator>();
             _reqTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
+            _reqTypeValidatorMock
+                .Setup(rd => rd.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
+                .Returns(Task.FromResult(true));
 
             _reqDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
-            _reqDefinitionValidatorMock.Setup(rd => rd.ExistsAsync(_requirementDefinitionId, default))
-                .Returns(Task.FromResult(true));
 
             _fieldValidatorMock = new Mock<IFieldValidator>();
 
@@ -83,8 +83,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDefinitionNotExists()
         {
-            _reqDefinitionValidatorMock.Setup(r => r.ExistsAsync(_requirementDefinitionId, default))
-                .Returns(Task.FromResult(false));
+            _reqTypeValidatorMock.Setup(rd => rd.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
@@ -124,8 +123,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             var fieldTypes2 = _newFields.Select(f => f.FieldType).ToList();
             var fieldTypesConcatenated = fieldTypes1.Concat(fieldTypes2).ToList();
 
-            _reqDefinitionValidatorMock
-                .Setup(r => r.IsNotUniqueUpdatedTitleOnRequirementTypeAsync(
+            _reqTypeValidatorMock
+                .Setup(r => r.OtherRequirementDefinitionExistsWithSameTitleAsync(
                     _requirementTypeId,
                     _requirementDefinitionId,
                     _title, 

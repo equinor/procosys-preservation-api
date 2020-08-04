@@ -62,44 +62,5 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             => await (from rd in _context.QuerySet<RequirementDefinition>()
                 where requirementDefinitionIds.Contains(rd.Id)
                 select rd).ToListAsync(token);
-
-        public async Task<bool> IsNotUniqueTitleOnRequirementTypeAsync(
-            int requirementTypeId,
-            string reqDefTitle,
-            IList<FieldType> fieldTypes,
-            CancellationToken token)
-        {
-            var needsUserInput = fieldTypes.Any(ft => ft == FieldType.Number ||
-                                                 ft == FieldType.Attachment ||
-                                                 ft == FieldType.CheckBox);
-            var reqType = await _context.QuerySet<RequirementType>()
-                .Include(rt => rt.RequirementDefinitions)
-                .ThenInclude(r => r.Fields)
-                .SingleOrDefaultAsync(rt => rt.Id == requirementTypeId, token);
-
-            var reqDefinitions = reqType.RequirementDefinitions;
-
-            return reqDefinitions.Any(rd => rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
-        }
-
-        public async Task<bool> IsNotUniqueUpdatedTitleOnRequirementTypeAsync(
-            int requirementTypeId,
-            int requirementDefinitionId,
-            string reqDefTitle,
-            IList<FieldType> fieldTypes,
-            CancellationToken token)
-        {
-            var needsUserInput = fieldTypes.Any(ft => ft == FieldType.Number ||
-                                                      ft == FieldType.Attachment ||
-                                                      ft == FieldType.CheckBox);
-            var reqType = await _context.QuerySet<RequirementType>()
-                .Include(rt => rt.RequirementDefinitions)
-                .ThenInclude(r => r.Fields)
-                .SingleOrDefaultAsync(rt => rt.Id == requirementTypeId, token);
-
-            var reqDefinitions = reqType.RequirementDefinitions;
-
-            return reqDefinitions.Any(rd => rd.Id != requirementDefinitionId && rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
-        }
     }
 }

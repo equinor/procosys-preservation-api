@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using FluentValidation;
 
@@ -10,9 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
 {
     public class CreateRequirementDefinitionCommandValidator : AbstractValidator<CreateRequirementDefinitionCommand>
     {
-        public CreateRequirementDefinitionCommandValidator(
-            IRequirementDefinitionValidator requirementDefinitionValidator,
-            IRequirementTypeValidator requirementTypeValidator)
+        public CreateRequirementDefinitionCommandValidator(IRequirementTypeValidator requirementTypeValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -36,10 +33,10 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
                 string title, 
                 IList<FieldsForCommand> fields, 
                 CancellationToken token)
-                => !await requirementDefinitionValidator.IsNotUniqueTitleOnRequirementTypeAsync(
+                => !await requirementTypeValidator.AnyRequirementDefinitionExistsWithSameTitleAsync(
                     reqTypeId, 
                     title, 
-                    fields.Select(f => f.FieldType).ToList(), 
+                    fields.Select(f => f.FieldType).Distinct().ToList(), 
                     token);
         }
     }

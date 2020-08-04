@@ -38,14 +38,20 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             foreach (var f in request.UpdateFields)
             {
                 var fieldToUpdate = requirementDefinition.Fields.Single(field => field.Id == f.Id);
+                if (fieldToUpdate.IsVoided && !f.IsVoided)
+                {
+                    fieldToUpdate.UnVoid();
+                }
+                else if (!fieldToUpdate.IsVoided && f.IsVoided)
+                {
+                    fieldToUpdate.Void();
+                }
                 fieldToUpdate.Label = f.Label;
                 fieldToUpdate.Unit = f.Unit;
                 fieldToUpdate.ShowPrevious = f.ShowPrevious;
                 fieldToUpdate.SortKey = f.SortKey;
                 fieldToUpdate.SetRowVersion(f.RowVersion);
             }
-
-            //TODO delete fields that are to be deleted. Need to agree on business logic 
 
             foreach (var f in request.NewFields)
             {

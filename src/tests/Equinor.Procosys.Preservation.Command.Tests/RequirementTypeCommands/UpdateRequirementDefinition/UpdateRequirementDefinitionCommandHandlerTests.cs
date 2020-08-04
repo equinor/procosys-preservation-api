@@ -23,7 +23,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         private readonly int _newDefaultWeeks = 2;
         private readonly string _rowVersion = "AAAAAAAAABA=";
 
-
         private UpdateRequirementDefinitionCommand _command;
         private UpdateRequirementDefinitionCommandHandler _dut;
         private RequirementType _requirementType;
@@ -47,7 +46,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
 
             requirementTypeRepositoryMock.Setup(j => j.GetByIdAsync(requirementTypeId))
                 .Returns(Task.FromResult(_requirementType));
-
 
             _command = new UpdateRequirementDefinitionCommand(
                 requirementTypeId,
@@ -109,5 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
+
+        // todo test updating and voiding of fields
     }
 }

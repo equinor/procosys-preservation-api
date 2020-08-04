@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

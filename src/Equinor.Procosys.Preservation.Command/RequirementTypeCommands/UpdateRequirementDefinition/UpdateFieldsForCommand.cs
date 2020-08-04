@@ -9,18 +9,18 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             string label,
             FieldType fieldType,
             int sortKey,
+            bool isVoided,
             string rowVersion,
             string unit = null,
-            bool? delete = false,
             bool? showPrevious = null)
         {
             Id = id;
             Label = label;
             SortKey = sortKey;
+            IsVoided = isVoided;
             FieldType = fieldType;
             ShowPrevious = showPrevious;
             Unit = unit;
-            Delete = delete;
             RowVersion = rowVersion;
         }
 
@@ -28,9 +28,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
         public string Label { get; }
         public string Unit { get; private set; }
         public bool? ShowPrevious { get; }
+        public bool IsVoided { get; }
         public int SortKey { get; }
         public FieldType FieldType { get; }
         public string RowVersion { get;  }
-        public bool? Delete { get; }
     }
 }
