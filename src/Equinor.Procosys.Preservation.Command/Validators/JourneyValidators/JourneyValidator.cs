@@ -21,9 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
         
         public async Task<bool> StepExistsAsync(int journeyId, int stepId, CancellationToken token)
         {
-            var journey = await _context.QuerySet<Journey>()
-                .Include(j => j.Steps)
-                .SingleOrDefaultAsync(j => j.Id == journeyId, token);
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
 
             return journey != null && journey.Steps.Any(s => s.Id == stepId);
         }
@@ -48,31 +46,31 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
 
         public async Task<bool> AreAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
         {
-            var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
-                where j.Id == journeyId
-                select j).SingleOrDefaultAsync(token);
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
 
             return journey != null && journey.AreAdjacentSteps(stepAId, stepBId);
         }
 
         public async Task<bool> HasAnyStepsAsync(int journeyId, CancellationToken token)
         {
-            var journey = await _context.QuerySet<Journey>()
-                .Include(j => j.Steps)
-                .SingleOrDefaultAsync(j => j.Id == journeyId, token);
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
 
             return journey != null && journey.Steps.Any();
         }
 
-        public async Task<bool> IsInUseAsync(long journeyId, CancellationToken cancellationToken)
+        public async Task<bool> IsInUseAsync(int journeyId, CancellationToken token)
         {
-            var stepIds = await (from step in _context.QuerySet<Step>()
-                where EF.Property<int>(step, "JourneyId") == journeyId
-                select step.Id).ToListAsync(cancellationToken: cancellationToken);
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
+            if (journey == null)
+            {
+                return false;
+            }
+
+            var stepIds = journey.Steps.Select(s => s.Id);
 
             var inUse = await (from tag in _context.QuerySet<Tag>()
                 where stepIds.Contains(tag.StepId)
-                select tag).AnyAsync(cancellationToken);
+                select tag).AnyAsync(token);
             return inUse;
         }
 
@@ -93,20 +91,38 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
 
         public async Task<bool> HasAnyStepWithTransferOnRfccSignAsync(int journeyId, CancellationToken token)
         {
-            var journey = await _context.QuerySet<Journey>()
-                .Include(j => j.Steps)
-                .SingleOrDefaultAsync(j => j.Id == journeyId, token);
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
 
             return journey != null && journey.Steps.Any(s => s.TransferOnRfccSign);
         }
 
         public async Task<bool> HasAnyStepWithTransferOnRfocSignAsync(int journeyId, CancellationToken token)
         {
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
+
+            return journey != null && journey.Steps.Any(s => s.TransferOnRfocSign);
+        }
+
+        public async Task<bool> HasOtherStepWithTransferOnRfccSignAsync(int journeyId, int stepId, CancellationToken token)
+        {
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
+
+            return journey != null && journey.Steps.Any(s => s.TransferOnRfccSign && s.Id != stepId);
+        }
+
+        public async Task<bool> HasOtherStepWithTransferOnRfocSignAsync(int journeyId, int stepId, CancellationToken token)
+        {
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
+
+            return journey != null && journey.Steps.Any(s => s.TransferOnRfocSign && s.Id != stepId);
+        }
+
+        private async Task<Journey> GetJourneyWithStepsAsync(int journeyId, CancellationToken token)
+        {
             var journey = await _context.QuerySet<Journey>()
                 .Include(j => j.Steps)
                 .SingleOrDefaultAsync(j => j.Id == journeyId, token);
-
-            return journey != null && journey.Steps.Any(s => s.TransferOnRfocSign);
+            return journey;
         }
     }
 }

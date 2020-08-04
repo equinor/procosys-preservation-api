@@ -36,10 +36,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 .Must(command => NotSetBothTransferOnRfocSignAndTransferOnRfccSign(command.TransferOnRfccSign, command.TransferOnRfocSign))
                 .WithMessage(command => $"Both 'Transfer on RFCC signing' and 'Transfer on RFOC signing' can not be set in same step! Step={command.Title}")
                 .MustAsync((command, token) => NotBeManyTransferOnRfccSignInSameJourneyAsync(command.JourneyId, command.TransferOnRfccSign, token))
-                .WithMessage(command => "'Transfer on RFCC signing' can not be set in multiple steps in a journey!")
+                .WithMessage(command => "'Transfer on RFCC signing' can not be set on multiple steps in a journey!")
                 .MustAsync((command, token) => NotBeManyTransferOnRfocSignInSameJourneyAsync(command.JourneyId, command.TransferOnRfocSign, token))
-                .WithMessage(command => "'Transfer on RFOC signing' can not be set in multiple steps in a journey!")
-                ;
+                .WithMessage(command => "'Transfer on RFOC signing' can not be set on multiple steps in a journey!");
 
             async Task<bool> HaveUniqueStepTitleAsync(int journeyId, string stepTitle, CancellationToken token)
                 => !await stepValidator.ExistsAsync(journeyId, stepTitle, token);
