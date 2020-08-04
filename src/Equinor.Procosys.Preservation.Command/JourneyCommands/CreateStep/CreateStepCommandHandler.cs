@@ -53,7 +53,13 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
             }
 
-            journey.AddStep(new Step(_plantProvider.Plant, request.Title, mode, responsible));
+            var step = new Step(_plantProvider.Plant, request.Title, mode, responsible)
+            {
+                TransferOnRfccSign = request.TransferOnRfccSign,
+                TransferOnRfocSign = request.TransferOnRfocSign
+            };
+
+            journey.AddStep(step);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<Unit>(Unit.Value);

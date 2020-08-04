@@ -14,5 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
         Task<bool> HasAnyStepsAsync(int journeyId, CancellationToken token);
         Task<bool> IsInUseAsync(long journeyId, CancellationToken cancellationToken);
         Task<bool> ExistsWithDuplicateTitleAsync(int journeyId, CancellationToken token);
+        Task<bool> HasAnyStepWithTransferOnRfccSignAsync(int journeyId, CancellationToken token);
+        Task<bool> HasAnyStepWithTransferOnRfocSignAsync(int journeyId, CancellationToken token);
     }
 }

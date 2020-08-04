@@ -9,17 +9,23 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
             int journeyId,
             string title,
             int modeId,
-            string responsibleCode)
+            string responsibleCode,
+            bool transferOnRfccSign,
+            bool transferOnRfocSign)
         {
             JourneyId = journeyId;
             Title = title;
             ModeId = modeId;
             ResponsibleCode = responsibleCode;
+            TransferOnRfccSign = transferOnRfccSign;
+            TransferOnRfocSign = transferOnRfocSign;
         }
 
         public int JourneyId { get; }
         public string Title { get; }
         public int ModeId { get; }
         public string ResponsibleCode { get; }
+        public bool TransferOnRfccSign { get; }
+        public bool TransferOnRfocSign { get; }
     }
 }

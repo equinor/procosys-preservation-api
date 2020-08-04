@@ -90,5 +90,23 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 where j.Title == $"{journey.Title}{Journey.DuplicatePrefix}"
                 select j).AnyAsync(token);
         }
+
+        public async Task<bool> HasAnyStepWithTransferOnRfccSignAsync(int journeyId, CancellationToken token)
+        {
+            var journey = await _context.QuerySet<Journey>()
+                .Include(j => j.Steps)
+                .SingleOrDefaultAsync(j => j.Id == journeyId, token);
+
+            return journey != null && journey.Steps.Any(s => s.TransferOnRfccSign);
+        }
+
+        public async Task<bool> HasAnyStepWithTransferOnRfocSignAsync(int journeyId, CancellationToken token)
+        {
+            var journey = await _context.QuerySet<Journey>()
+                .Include(j => j.Steps)
+                .SingleOrDefaultAsync(j => j.Id == journeyId, token);
+
+            return journey != null && journey.Steps.Any(s => s.TransferOnRfocSign);
+        }
     }
 }
