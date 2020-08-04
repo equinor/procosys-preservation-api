@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
         public PersonsController(IMediator mediator) => _mediator = mediator;
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
-        [HttpPost("{id}/SavedFilter")]
+        [HttpPost("/SavedFilter")]
         public async Task<ActionResult<int>> CreateSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
