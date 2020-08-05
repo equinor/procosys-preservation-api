@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
             _attachmentValidatorMock.Setup(r => r.ExistsAsync(_command.AttachmentId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
             _dut = new DeleteActionAttachmentCommandValidator(
                 _projectValidatorMock.Object,
@@ -138,7 +138,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
             const string invalidRowVersion = "String";
 
             var command = new DeleteActionAttachmentCommand(_tagId, _actionId, _attachmentId, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

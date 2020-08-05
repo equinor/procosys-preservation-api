@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
             _requirementDefinitionValidatorMock.Setup(r => r.IsVoidedAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
             _command = new DeleteRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, _rowVersion);
 
@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
             const string invalidRowVersion = "String";
 
             var command = new DeleteRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

@@ -27,9 +27,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
                 .WithMessage(command => $"StepA and StepB are not adjacent! StepA={command.StepAId}, StepB={command.StepBId}")
                 .MustAsync((command, token) => NotIncludeAnySupplierStep(command.StepAId, command.StepBId, token))
                 .WithMessage(command => $"Supplier steps cannot be swapped! StepA={command.StepAId}, StepB={command.StepBId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.StepARowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.StepARowVersion))
                 .WithMessage(command => $"Not a valid RowVersion for Step A! RowVersion={command.StepARowVersion}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.StepBRowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.StepBRowVersion))
                 .WithMessage(command => $"Not a valid RowVersion for Step B! RowVersion={command.StepBRowVersion}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
@@ -44,8 +44,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
             async Task<bool> NotIncludeAnySupplierStep(int stepAId, int stepBId, CancellationToken token)
                 => !await stepValidator.IsAnyStepForSupplier(stepAId, stepBId, token);
 
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

@@ -35,8 +35,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
             _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_stepARowVersion, default)).Returns(Task.FromResult(true));
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_stepBRowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_stepARowVersion)).Returns(true);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_stepBRowVersion)).Returns(true);
 
             _stepValidatorMock = new Mock<IStepValidator>();
 
@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         public void Validate_ShouldFail_WhenInvalidRowVersionForStepA()
         {
             var command = new SwapStepsCommand(_journeyId, _stepAId, _invalidRowVersion, _stepBId, _stepBRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         public void Validate_ShouldFail_WhenInvalidRowVersionForStepB()
         {
             var command = new SwapStepsCommand(_journeyId, _stepAId, _stepARowVersion, _stepBId, _invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

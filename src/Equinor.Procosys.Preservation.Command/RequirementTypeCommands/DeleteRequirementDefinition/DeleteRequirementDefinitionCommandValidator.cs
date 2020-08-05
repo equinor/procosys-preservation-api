@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
                 .WithMessage(command => $"Tag requirement with this requirement definition exists! RequirementDefinition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotHaveAnyTagFunctionRequirementsAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Tag function requirement with this requirement definition exists! RequirementDefinition={command.RequirementDefinitionId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
@@ -44,8 +44,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
                 => !await requirementDefinitionValidator.TagRequirementsExistAsync(requirementDefinitionId, token);
             async Task<bool> NotHaveAnyTagFunctionRequirementsAsync(int requirementDefinitionId, CancellationToken token)
                 => !await requirementDefinitionValidator.TagFunctionRequirementsExistAsync(requirementDefinitionId, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 .WithMessage(command => $"Another requirement type with this code already exists! Code={command.Code}")
                 .MustAsync((command, token) => BeAUniqueTitleAsync(command.RequirementTypeId, command.Title, token))
                 .WithMessage(command => $"Another requirement type with this title already exists! Title={command.Title}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
@@ -34,8 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 => !await requirementTypeValidator.IsNotUniqueCodeAsync(requirementTypeId, code, token);
             async Task<bool> BeAUniqueTitleAsync(int requirementTypeId, string title, CancellationToken token)
                 => !await requirementTypeValidator.IsNotUniqueTitleAsync(requirementTypeId, title, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

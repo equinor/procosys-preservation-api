@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
                 .WithMessage(command => $"Action doesn't exist! Action={command.ActionId}")
                 .MustAsync((command, token) => NotBeAClosedActionAsync(command.ActionId, token))
                 .WithMessage(command => $"Action is closed! Action={command.ActionId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
@@ -42,8 +42,8 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
                 => await actionValidator.ExistsAsync(actionId, token);
             async Task<bool> NotBeAClosedActionAsync(int actionId, CancellationToken token)
                 => !await actionValidator.IsClosedAsync(actionId, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }
