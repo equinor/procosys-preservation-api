@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
 {
@@ -9,5 +10,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
         Task<bool> IsVoidedAsync(int fieldId, CancellationToken token);
         Task<bool> IsValidForRecordingAsync(int fieldId, CancellationToken token);
         Task<bool> IsValidForAttachmentAsync(int fieldId, CancellationToken token);
+        Task<bool> VerifyFieldTypeAsync(int fieldId, FieldType fieldType, CancellationToken token);
     }
 }

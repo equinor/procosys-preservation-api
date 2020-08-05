@@ -41,5 +41,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
                 select f).SingleOrDefaultAsync(token);
             return field != null && (field.FieldType == FieldType.Attachment);
         }
+
+        public async Task<bool> VerifyFieldTypeAsync(int fieldId, FieldType fieldType, CancellationToken token)
+        {
+            var field = await (from f in _context.QuerySet<Field>()
+                where f.Id == fieldId
+                select f).SingleOrDefaultAsync(token);
+
+            return field != null && field.FieldType == fieldType;
+        }
     }
 }

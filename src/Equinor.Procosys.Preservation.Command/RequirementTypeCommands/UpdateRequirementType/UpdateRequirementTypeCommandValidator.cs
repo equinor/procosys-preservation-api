@@ -31,9 +31,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             async Task<bool> NotBeAVoidedRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => !await requirementTypeValidator.IsVoidedAsync(requirementTypeId, token);
             async Task<bool> BeAUniqueCodeAsync(int requirementTypeId, string code, CancellationToken token)
-                => !await requirementTypeValidator.IsNotUniqueCodeAsync(requirementTypeId, code, token);
+                => !await requirementTypeValidator.ExistsWithSameCodeInAnotherTypeAsync(requirementTypeId, code, token);
             async Task<bool> BeAUniqueTitleAsync(int requirementTypeId, string title, CancellationToken token)
-                => !await requirementTypeValidator.IsNotUniqueTitleAsync(requirementTypeId, title, token);
+                => !await requirementTypeValidator.ExistsWithSameTitleInAnotherTypeAsync(requirementTypeId, title, token);
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);
         }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using ServiceResult;
@@ -14,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
             RequirementUsage usage,
             string title,
             int defaultIntervalWeeks,
-            IEnumerable<Field> fields = null)
+            IList<FieldsForCommand> fields = null)
         {
             RequirementTypeId = id;
             SortKey = sortKey;
@@ -29,6 +28,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
         public RequirementUsage Usage { get; }
         public string Title { get; }
         public int DefaultIntervalWeeks { get; }
-        public IEnumerable<Field> Fields { get; }
+        public IList<FieldsForCommand> Fields { get; }
     }
 }

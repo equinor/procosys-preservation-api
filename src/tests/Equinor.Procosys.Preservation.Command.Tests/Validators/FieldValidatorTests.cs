@@ -156,5 +156,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
+
+        [TestMethod]
+        public async Task VerifyFieldTypeAsync_ForInfoField_ReturnsFalseForNumber()
+        { 
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.VerifyFieldTypeAsync(_infoFieldId, FieldType.Number, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task VerifyFieldTypeAsync_ForInfoField_ReturnsTrueForInfo()
+        { 
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new FieldValidator(context);
+                var result = await dut.VerifyFieldTypeAsync(_infoFieldId, FieldType.Info, default);
+                Assert.IsTrue(result);
+            }
+        }
     }
 }

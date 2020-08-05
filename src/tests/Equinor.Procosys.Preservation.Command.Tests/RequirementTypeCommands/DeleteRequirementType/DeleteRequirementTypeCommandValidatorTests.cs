@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementTypeHasDefinitions()
         {
-            _requirementTypeValidatorMock.Setup(r => r.RequirementDefinitionExistsAsync(_id, default)).Returns(Task.FromResult(true));
+            _requirementTypeValidatorMock.Setup(r => r.AnyRequirementDefinitionExistsAsync(_id, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 

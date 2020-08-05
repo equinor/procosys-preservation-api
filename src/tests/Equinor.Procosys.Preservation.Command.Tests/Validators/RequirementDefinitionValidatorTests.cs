@@ -28,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _requirementType.AddRequirementDefinition(reqDefForSupplier);
                 var reqDefForOther = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 1);
                 _requirementType.AddRequirementDefinition(reqDefForOther);
+
                 context.SaveChangesAsync().Wait();
 
                 _reqDefForSupplierId = reqDefForSupplier.Id;

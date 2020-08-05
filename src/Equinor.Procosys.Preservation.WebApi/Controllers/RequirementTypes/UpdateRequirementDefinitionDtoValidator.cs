@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 {
-    public class CreateRequirementDefinitionDtoValidator : AbstractValidator<CreateRequirementDefinitionDto>
+    public class UpdateRequirementDefinitionDtoValidator : AbstractValidator<UpdateRequirementDefinitionDto>
     {
-        public CreateRequirementDefinitionDtoValidator()
+        public UpdateRequirementDefinitionDtoValidator()
         {
             RuleFor(x => x).NotNull();
 
@@ -28,25 +27,34 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .Must(BePositive)
                 .WithMessage("Week interval must be positive");
 
-            RuleForEach(x => x.Fields)
+            RuleForEach(x => x.NewFields)
                 .Must(FieldLabelNotNullAndMaxLength)
-                .WithMessage($"Field label cannot be null and must be maximum {nameof(Field.LabelLengthMax)}");
+                .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}");
 
-            RuleFor(x => x.Fields)
+            RuleForEach(x => x.UpdatedFields)
+                .Must(FieldLabelNotNullAndMaxLength)
+                .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}");
+
+            RuleFor(x => x)
                 .Must(NotHaveDuplicateFieldLabels)
                 .WithMessage("Cannot have duplicate fields");
 
-            RuleForEach(x => x.Fields)
+            RuleForEach(x => x.NewFields)
+                .Must(FieldUnitMaxLength)
+                .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
+
+            RuleForEach(x => x.UpdatedFields)
                 .Must(FieldUnitMaxLength)
                 .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
 
             bool BePositive(int arg) => arg > 0;
 
-            bool NotHaveDuplicateFieldLabels(IList<FieldDto> fields)
+            bool NotHaveDuplicateFieldLabels(UpdateRequirementDefinitionDto dto)
             {
-                var lowerCaseFieldLabels = fields.Select(f => f.Label.ToLower()).ToList();
+                var allFieldLabelsLowercase = dto.UpdatedFields.Select(f => f.Label.ToLower())
+                    .Concat(dto.NewFields.Select(f => f.Label.ToLower())).ToList();
 
-                return lowerCaseFieldLabels.Distinct().Count() == lowerCaseFieldLabels.Count;
+                return allFieldLabelsLowercase.Distinct().Count() == allFieldLabelsLowercase.Count;
             }
 
             bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;

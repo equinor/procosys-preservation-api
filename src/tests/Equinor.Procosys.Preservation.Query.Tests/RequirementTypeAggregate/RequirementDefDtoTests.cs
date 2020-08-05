@@ -25,6 +25,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
             Assert.IsTrue(dut.IsVoided);
             Assert.IsFalse(dut.NeedsUserInput);
             Assert.AreEqual(0, dut.Fields.Count());
+            Assert.AreEqual(_rowVersion, dut.RowVersion);
+
         }
 
         [TestMethod]
@@ -38,15 +40,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         {
             var dut = new RequirementDefinitionDto(1, "TitleA", true, 4, RequirementUsage.ForAll, 10, true, new List<FieldDto>
             {
-                new FieldDto(1, "", true, FieldType.Info, 1, null, null),
-                new FieldDto(2, "", true, FieldType.Info, 90, null, null),
-                new FieldDto(3, "", true, FieldType.Info, 5, null, null),
-                new FieldDto(4, "", true, FieldType.Info, 10, null, null),
+                new FieldDto(1, "", true, FieldType.Info, 1, null, null, _rowVersion),
+                new FieldDto(2, "", true, FieldType.Info, 90, null, null, _rowVersion),
+                new FieldDto(3, "", true, FieldType.Info, 5, null, null, _rowVersion),
+                new FieldDto(4, "", true, FieldType.Info, 10, null, null, _rowVersion),
             }, _rowVersion);
 
             var dtos = dut.Fields.ToList();
             Assert.AreEqual(4, dtos.Count);
             Assert.AreEqual(1, dtos[0].Id);
+            Assert.AreEqual(_rowVersion, dtos[0].RowVersion);
             Assert.AreEqual(3, dtos[1].Id);
             Assert.AreEqual(4, dtos[2].Id);
             Assert.AreEqual(2, dtos[3].Id);

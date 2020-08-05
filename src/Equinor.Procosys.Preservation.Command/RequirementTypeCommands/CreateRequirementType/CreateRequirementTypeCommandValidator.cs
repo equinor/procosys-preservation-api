@@ -18,10 +18,10 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
                 .WithMessage("Requirement type with this title already exists!");
 
             async Task<bool> NotExistsARequirementTypeWithSameCode(string code, CancellationToken token)
-                => !await requirementTypeValidator.IsNotUniqueCodeAsync(code, token);
+                => !await requirementTypeValidator.ExistsWithSameCodeAsync(code, token);
 
             async Task<bool> NotExistsARequirementTypeWithSameTitle(string title, CancellationToken token)
-                => !await requirementTypeValidator.IsNotUniqueTitleAsync(title, token);
+                => !await requirementTypeValidator.ExistsWithSameTitleAsync(title, token);
         }
     }
 }
