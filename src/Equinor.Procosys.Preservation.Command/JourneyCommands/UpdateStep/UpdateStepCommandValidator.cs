@@ -37,6 +37,12 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .WithMessage(command => $"Responsible is voided! ResponsibleCode={command.ResponsibleCode}")
                 .MustAsync((command, token) => BeFirstStepIfUpdatingToSupplierStep(command.JourneyId, command.ModeId, command.StepId, token))
                 .WithMessage(command => $"Only the first step can be supplier step! Mode={command.ModeId}")
+                .Must(command => NotSetBothTransferOnRfocSignAndTransferOnRfccSign(command.TransferOnRfccSign, command.TransferOnRfocSign))
+                .WithMessage(command => $"Both 'Transfer on RFCC signing' and 'Transfer on RFOC signing' can not be set in same step! Step={command.Title}")
+                .MustAsync((command, token) => NotBeManyTransferOnRfccSignInSameJourneyAsync(command.JourneyId, command.StepId, command.TransferOnRfccSign, token))
+                .WithMessage(command => "'Transfer on RFCC signing' can not be set on multiple steps in a journey!")
+                .MustAsync((command, token) => NotBeManyTransferOnRfocSignInSameJourneyAsync(command.JourneyId, command.StepId, command.TransferOnRfocSign, token))
+                .WithMessage(command => "'Transfer on RFOC signing' can not be set on multiple steps in a journey!")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
@@ -66,6 +72,15 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);
+
+            bool NotSetBothTransferOnRfocSignAndTransferOnRfccSign(bool transferOnRfccSign, bool transferOnRfocSign)
+                => !transferOnRfccSign || !transferOnRfocSign;
+            
+            async Task<bool> NotBeManyTransferOnRfccSignInSameJourneyAsync(int journeyId, int stepId, bool transferOnRfccSign, CancellationToken token)
+                => !transferOnRfccSign && !await journeyValidator.HasOtherStepWithTransferOnRfccSignAsync(journeyId, stepId, token);
+            
+            async Task<bool> NotBeManyTransferOnRfocSignInSameJourneyAsync(int journeyId, int stepId, bool transferOnRfocSign, CancellationToken token)
+                => !transferOnRfocSign && !await journeyValidator.HasOtherStepWithTransferOnRfocSignAsync(journeyId, stepId, token);
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
                 => await actionValidator.ExistsAsync(actionId, token);
             async Task<bool> NotBeAClosedActionAsync(int actionId, CancellationToken token)
                 => !await actionValidator.IsClosedAsync(actionId, token);
-            bool HaveAValidRowVersion(string rowVersion)
+            bool HaveAValidRowVersion(string rowVersion) 
                 => rowVersionValidator.IsValid(rowVersion);
         }
     }

@@ -182,6 +182,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
+                    b.Property<bool>("TransferOnRfccSign")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("TransferOnRfocSign")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");

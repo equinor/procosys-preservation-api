@@ -223,7 +223,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements can't include requirements just for suppliers!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements can not include requirements just for suppliers!"));
         }
         
         [TestMethod]
