@@ -18,12 +18,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
 
         public PersonsController(IMediator mediator) => _mediator = mediator;
 
-        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
+        [Authorize(Roles = Permissions.PRESERVATION_CREATE)]
         [HttpPost("/SavedFilter")]
         public async Task<ActionResult<int>> CreateSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] CreateSavedFilterDto dto)
         {

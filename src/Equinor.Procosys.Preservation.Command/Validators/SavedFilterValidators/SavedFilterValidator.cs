@@ -23,14 +23,15 @@ namespace Equinor.Procosys.Preservation.Command.Validators.SavedFilterValidators
             _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<bool> ExistsWithSameTitleForPersonAsync(string title, CancellationToken cancellationToken)
+        public async Task<bool> ExistsWithSameTitleForPersonAsync(string title, CancellationToken token)
         {
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
 
-            return await (from p in _context.QuerySet<Person>()
+            var person = await (from p in _context.QuerySet<Person>()
                     .Include(p => p.SavedFilters)
-                where p.Id == currentUser.Id && p.SavedFilters.Any(sf => sf.Title == title)
-                select p).AnyAsync(cancellationToken);
+                where p.Id == currentUser.Id
+                select p).SingleOrDefaultAsync(token); 
+            return person.SavedFilters.Any(p => p.Title == title);
         }
     }
 }
