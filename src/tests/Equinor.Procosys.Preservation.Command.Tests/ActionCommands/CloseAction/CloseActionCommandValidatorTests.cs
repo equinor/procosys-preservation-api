@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
@@ -15,10 +16,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IActionValidator> _actionValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private CloseActionCommand _command;
 
         private readonly int _tagId = 2;
         private readonly int _actionId = 3;
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()
@@ -31,12 +34,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             _actionValidatorMock = new Mock<IActionValidator>();
             _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(true));
 
-            _command = new CloseActionCommand(_tagId, _actionId, null);
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+
+            _command = new CloseActionCommand(_tagId, _actionId, _rowVersion);
 
             _dut = new CloseActionCommandValidator(
                 _projectValidatorMock.Object,
                 _tagValidatorMock.Object,
-                _actionValidatorMock.Object
+                _actionValidatorMock.Object,
+                _rowVersionValidatorMock.Object
                 );
         }
 
@@ -106,6 +113,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Action doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            const string invalidRowVersion = "String";
+
+            var command = new CloseActionCommand(_tagId, _actionId, invalidRowVersion);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid RowVersion!"));
         }
     }
 }

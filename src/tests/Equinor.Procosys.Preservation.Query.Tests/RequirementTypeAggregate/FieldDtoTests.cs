@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new FieldDto(1, "LabelA", true, FieldType.CheckBox, 10, "UnitA", _rowVersion, true);
+            var dut = new FieldDto(1, "LabelA", true, FieldType.CheckBox, 10, "UnitA", true, _rowVersion);
 
             Assert.AreEqual(1, dut.Id);
             Assert.AreEqual("LabelA", dut.Label);

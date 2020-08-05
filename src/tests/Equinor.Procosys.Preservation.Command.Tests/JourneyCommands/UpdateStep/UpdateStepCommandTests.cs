@@ -9,13 +9,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var dut = new UpdateStepCommand(1, 2, 3, "CODE", "TitleNew", "AAAAAAAAABA=");
+            var dut = new UpdateStepCommand(1, 2, 3, "CODE", "TitleNew", true, true, "AAAAAAAAABA=");
 
             Assert.AreEqual(1, dut.JourneyId);
             Assert.AreEqual(2, dut.StepId);
             Assert.AreEqual(3, dut.ModeId);
             Assert.AreEqual("CODE", dut.ResponsibleCode);
             Assert.AreEqual("TitleNew", dut.Title);
+            Assert.IsTrue(dut.TransferOnRfccSign);
+            Assert.IsTrue(dut.TransferOnRfocSign);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
     }

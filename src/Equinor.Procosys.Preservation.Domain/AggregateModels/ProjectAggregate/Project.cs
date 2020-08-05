@@ -69,5 +69,20 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
             ModifiedById = modifiedBy.Id;
         }
+
+        public void RemoveTag(Tag tag)
+        {
+            if (tag == null)
+            {
+                throw new ArgumentNullException(nameof(tag));
+            }
+
+            if (tag.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't remove item in {tag.Plant} from item in {Plant}");
+            }
+
+            _tags.Remove(tag);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -12,9 +13,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
     {
         private UpdateRequirementsCommandValidator _dut;
         private Mock<IRequirementDefinitionValidator> _rdValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private UpdateRequirementsCommand _command;
         private int _rd1Id = 2;
         private int _rd2Id = 3;
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
         public void Setup_OkState()
@@ -24,15 +27,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             _rdValidatorMock.Setup(r => r.ExistsAsync(_rd2Id, default)).Returns(Task.FromResult(true));
             _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rd1Id, _rd2Id}, default)).Returns(Task.FromResult(true));
 
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+
             _command = new UpdateRequirementsCommand("", "",
                 new List<RequirementForCommand>
                 {
                     new RequirementForCommand(_rd1Id, 1),
                     new RequirementForCommand(_rd2Id, 1)
                 },
-                null);
+                _rowVersion);
 
-            _dut = new UpdateRequirementsCommandValidator(_rdValidatorMock.Object);
+            _dut = new UpdateRequirementsCommandValidator(_rdValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -46,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         [TestMethod]
         public void Validate_ShouldBeValid_WithoutRequirements()
         {
-            var command = new UpdateRequirementsCommand("", "", new List<RequirementForCommand>(), null);
+            var command = new UpdateRequirementsCommand("", "", new List<RequirementForCommand>(), _rowVersion);
             var result = _dut.Validate(command);
 
             Assert.IsTrue(result.IsValid);
@@ -100,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                     new RequirementForCommand(_rd1Id, 1),
                     new RequirementForCommand(_rd1Id, 1)
                 },
-                null);
+                _rowVersion);
             
             var result = _dut.Validate(command);
 
@@ -119,6 +125,30 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            const string invalidRowVersion = "String";
+
+            var command = new UpdateRequirementsCommand(
+                "",
+                "",
+                new List<RequirementForCommand>
+                {
+                    new RequirementForCommand(_rd1Id, 1),
+                    new RequirementForCommand(_rd2Id, 1)
+                },
+                invalidRowVersion);
+
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid RowVersion!"));
         }
     }
 }

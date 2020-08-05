@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using FluentValidation;
 
@@ -7,7 +8,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
 {
     public class UpdateRequirementTypeCommandValidator : AbstractValidator<UpdateRequirementTypeCommand>
     {
-        public UpdateRequirementTypeCommandValidator(IRequirementTypeValidator requirementTypeValidator)
+        public UpdateRequirementTypeCommandValidator(
+            IRequirementTypeValidator requirementTypeValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
@@ -19,7 +22,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 .MustAsync((command, token) => BeAUniqueCodeAsync(command.RequirementTypeId, command.Code, token))
                 .WithMessage(command => $"Another requirement type with this code already exists! Code={command.Code}")
                 .MustAsync((command, token) => BeAUniqueTitleAsync(command.RequirementTypeId, command.Title, token))
-                .WithMessage(command => $"Another requirement type with this title already exists! Title={command.Title}");
+                .WithMessage(command => $"Another requirement type with this title already exists! Title={command.Title}")
+                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
@@ -29,6 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 => !await requirementTypeValidator.ExistsWithSameCodeInAnotherTypeAsync(requirementTypeId, code, token);
             async Task<bool> BeAUniqueTitleAsync(int requirementTypeId, string title, CancellationToken token)
                 => !await requirementTypeValidator.ExistsWithSameTitleInAnotherTypeAsync(requirementTypeId, title, token);
+            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
+                => await rowVersionValidator.IsValid(rowVersion, token);
         }
     }
 }

@@ -416,7 +416,14 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             foreach (var requirement in GetUpComingRequirements())
             {
+                var nextDueInWeeks = requirement.GetNextDueInWeeks();
+                var activePeriod = requirement.ActivePeriod;
+                
                 requirement.Preserve(preservedBy, bulkPreserved);
+
+                var preservationRecordGuid = activePeriod.PreservationRecord.ObjectGuid;
+
+                AddDomainEvent(new RequirementPreservedEvent(Plant, ObjectGuid, requirement.RequirementDefinitionId, nextDueInWeeks, preservationRecordGuid));
             }
         
             UpdateNextDueTimeUtc();

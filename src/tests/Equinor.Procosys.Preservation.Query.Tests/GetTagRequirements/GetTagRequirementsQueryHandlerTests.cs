@@ -20,10 +20,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
     public class GetTagRequirementsQueryHandlerTests : ReadOnlyTestsBase
     {
         protected const string _unit = "unit";
-        RequirementTypeIcon _reqIconOther = RequirementTypeIcon.Other;
         const string _requirementType1Code = "Code1";
+        RequirementTypeIcon _requirementType1Icon = RequirementTypeIcon.Other;
         const string _requirementType1Title = "Title1";
         const string _requirementType2Code = "Code2";
+        RequirementTypeIcon _requirementType2Icon = RequirementTypeIcon.Battery;
         const string _requirementType2Title = "Title2";
         const string _requirementDefinitionWithoutFieldTitle = "Without fields";
         const string _requirementDefinitionWithOneInfoTitle = "With 1 info";
@@ -41,7 +42,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         private int _requirementWithTwoCheckBoxesId;
         private int _requirementWithThreeNumberShowPrevId;
         private int _requirementWithOneNumberNoPrevId;
-        private int _requirementThatIsVoidedId;
 
         private int _tagId;
         private int _requestTimeAfterPreservationStartedInWeeks = 1;
@@ -69,9 +69,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             {
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
 
-                var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, _reqIconOther,0);
+                var requirementType1 = new RequirementType(TestPlant, _requirementType1Code, _requirementType1Title, _requirementType1Icon,0);
                 context.RequirementTypes.Add(requirementType1);
-                var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, _reqIconOther,0);
+                var requirementType2 = new RequirementType(TestPlant, _requirementType2Code, _requirementType2Title, _requirementType2Icon,0);
                 context.RequirementTypes.Add(requirementType2);
                 context.SaveChangesAsync().Wait();
 
@@ -155,7 +155,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 _requirementWithTwoCheckBoxesId = requirementWithTwoCheckBoxes.Id;
                 _requirementWithThreeNumberShowPrevId = requirementWithThreeNumberShowPrev.Id;
                 _requirementWithOneNumberNoPrevId = requirementWithOneNumberNoPrev.Id;
-                _requirementThatIsVoidedId = requirementThatIsVoided.Id;
 
                 _attachmentFieldId = attachmentField.Id;
 
@@ -511,12 +510,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             Assert.AreEqual(0, requirementWithoutField.Fields.Count);
             Assert.AreEqual(_requirementDefinitionWithoutFieldTitle, requirementWithoutField.RequirementDefinitionTitle);
             Assert.AreEqual(_requirementType1Code, requirementWithoutField.RequirementTypeCode);
+            Assert.AreEqual(_requirementType1Icon, requirementWithoutField.RequirementTypeIcon);
             Assert.AreEqual(_requirementType1Title, requirementWithoutField.RequirementTypeTitle);
             
             Assert.AreEqual(1, requirementWithOneInfo.Fields.Count);
             AssertInfoField(requirementWithOneInfo.Fields.ElementAt(0));
             Assert.AreEqual(_requirementDefinitionWithOneInfoTitle, requirementWithOneInfo.RequirementDefinitionTitle);
             Assert.AreEqual(_requirementType1Code, requirementWithOneInfo.RequirementTypeCode);
+            Assert.AreEqual(_requirementType1Icon, requirementWithOneInfo.RequirementTypeIcon);
             Assert.AreEqual(_requirementType1Title, requirementWithOneInfo.RequirementTypeTitle);
 
             Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
@@ -524,6 +525,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(1));
             Assert.AreEqual(_requirementDefinitionWithTwoCheckBoxesTitle, requirementWithTwoCheckBoxes.RequirementDefinitionTitle);
             Assert.AreEqual(_requirementType2Code, requirementWithTwoCheckBoxes.RequirementTypeCode);
+            Assert.AreEqual(_requirementType2Icon, requirementWithTwoCheckBoxes.RequirementTypeIcon);
             Assert.AreEqual(_requirementType2Title, requirementWithTwoCheckBoxes.RequirementTypeTitle);
 
             Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
@@ -532,12 +534,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(2));
             Assert.AreEqual(_requirementDefinitionWithThreeNumberShowPrevTitle, requirementWithThreeNumberShowPrev.RequirementDefinitionTitle);
             Assert.AreEqual(_requirementType2Code, requirementWithThreeNumberShowPrev.RequirementTypeCode);
+            Assert.AreEqual(_requirementType2Icon, requirementWithThreeNumberShowPrev.RequirementTypeIcon);
             Assert.AreEqual(_requirementType2Title, requirementWithThreeNumberShowPrev.RequirementTypeTitle);
 
             Assert.AreEqual(1, requirementWithOneNumberNoPrev.Fields.Count);
             AssertNumberWithNoPreviewField(requirementWithOneNumberNoPrev.Fields.ElementAt(0));
             Assert.AreEqual(_requirementDefinitionWithOneNumberNoPrevTitle, requirementWithOneNumberNoPrev.RequirementDefinitionTitle);
             Assert.AreEqual(_requirementType2Code, requirementWithOneNumberNoPrev.RequirementTypeCode);
+            Assert.AreEqual(_requirementType2Icon, requirementWithOneNumberNoPrev.RequirementTypeIcon);
             Assert.AreEqual(_requirementType2Title, requirementWithOneNumberNoPrev.RequirementTypeTitle);
         }
 

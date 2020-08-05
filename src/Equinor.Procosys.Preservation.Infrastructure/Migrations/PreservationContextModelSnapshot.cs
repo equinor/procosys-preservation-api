@@ -182,6 +182,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(64)")
                         .HasMaxLength(64);
 
+                    b.Property<bool>("TransferOnRfccSign")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("TransferOnRfocSign")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
@@ -293,6 +299,51 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.SavedFilter", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Criteria")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(8000);
+
+                    b.Property<int?>("PersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Plant")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("rowversion");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasMaxLength(255);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("SavedFilters");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action", b =>
@@ -970,10 +1021,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.Property<string>("Icon")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(32)")
-                        .HasMaxLength(32)
-                        .HasDefaultValue("Other");
+                        .HasMaxLength(32);
 
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
@@ -1010,7 +1059,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("RequirementTypes");
 
-                    b.HasCheckConstraint("constraint_requirement_type_check_icon", "Icon in ('Area','Battery','Bearings','Electrical','Heating','Installation','Measure','Nitrogen','Other','Pressure','Rotate')");
+                    b.HasCheckConstraint("constraint_requirement_type_check_icon", "Icon in ('Other','Area','Battery','Bearings','Electrical','Heating','Installation','Measure','Nitrogen','Power','Pressure','Rotate')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate.Responsible", b =>
@@ -1370,6 +1419,19 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("ModifiedById")
                         .OnDelete(DeleteBehavior.NoAction);
+                });
+
+            modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.SavedFilter", b =>
+                {
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate.Person", null)
+                        .WithMany("SavedFilters")
+                        .HasForeignKey("PersonId");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action", b =>

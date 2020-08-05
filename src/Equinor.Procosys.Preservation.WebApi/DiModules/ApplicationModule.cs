@@ -1,5 +1,6 @@
 ﻿using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
@@ -135,6 +136,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IAttachmentValidator, AttachmentValidator>();
             services.AddScoped<IRequirementTypeValidator, RequirementTypeValidator>();
             services.AddScoped<ITagFunctionValidator, TagFunctionValidator>();
+            services.AddScoped<IRowVersionValidator, RowVersionValidator>();
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ICacheManager, CacheManager>();

@@ -291,5 +291,17 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
             return (tag, nonVoidedRequirementDefinitionIds);
         }
+
+        public async Task<bool> IsInUseAsync(long tagId, CancellationToken token)
+        {
+            var inUse = await (from t in _context.QuerySet<Tag>()
+                    .Include(t => t.Attachments)
+                    .Include(t => t.Actions)
+                where (t.Id == tagId) && t.Status != PreservationStatus.NotStarted ||
+                      t.Attachments.Any() || t.Actions.Any()
+                select t.Id).AnyAsync(token);
+
+            return inUse;
+        }
     }
 }

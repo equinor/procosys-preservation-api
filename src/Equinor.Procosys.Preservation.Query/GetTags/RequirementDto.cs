@@ -1,5 +1,6 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTags
 {
@@ -8,12 +9,14 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
         public RequirementDto(
             int id,
             string requirementTypeCode,
+            RequirementTypeIcon requirementTypeIcon,
             DateTime? nextDueTimeUtc,
             int? nextDueWeeks,
             bool readyToBePreserved)
         {
             Id = id;
             RequirementTypeCode = requirementTypeCode;
+            RequirementTypeIcon = requirementTypeIcon;
             NextDueTimeUtc = nextDueTimeUtc;
             NextDueWeeks = nextDueWeeks;            
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
@@ -22,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTags
 
         public int Id { get; }
         public string RequirementTypeCode { get; }
+        public RequirementTypeIcon RequirementTypeIcon { get; }
         public DateTime? NextDueTimeUtc { get; }
         public string NextDueAsYearAndWeek { get; }
 

@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,6 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
     public class UpdateRequirementTypeCommandValidatorTests
     {
         private Mock<IRequirementTypeValidator> _reqTypeValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
 
         private UpdateRequirementTypeCommand _command;
         private UpdateRequirementTypeCommandValidator _dut;
@@ -18,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         private readonly int _sortKey = 1;
         private readonly string _title = "Title test";
         private readonly string _code = "Code test";
+        private readonly string _rowVersion = "AAAAAAAAJ00=";
         private RequirementTypeIcon _icon = RequirementTypeIcon.Other;
 
         [TestInitialize]
@@ -26,8 +29,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             _reqTypeValidatorMock = new Mock<IRequirementTypeValidator>();
             _reqTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
 
-            _command = new UpdateRequirementTypeCommand(_requirementTypeId, null, _sortKey, _title, _code, _icon);
-            _dut = new UpdateRequirementTypeCommandValidator(_reqTypeValidatorMock.Object);
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+
+            _command = new UpdateRequirementTypeCommand(_requirementTypeId, _rowVersion, _sortKey, _title, _code, _icon);
+            _dut = new UpdateRequirementTypeCommandValidator(_reqTypeValidatorMock.Object, _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -84,6 +90,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Another requirement type with this code already exists!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            const string invalidRowVersion = "String";
+
+            var command = new UpdateRequirementTypeCommand(_requirementTypeId, invalidRowVersion, _sortKey, _title, _code, _icon);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid RowVersion!"));
         }
     }
 }

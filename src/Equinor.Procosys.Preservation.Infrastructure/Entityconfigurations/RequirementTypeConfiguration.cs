@@ -27,7 +27,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(f => f.Icon)
                 .HasConversion<string>()
                 .HasMaxLength(RequirementType.IconLengthMax)
-                .HasDefaultValue(RequirementTypeIcon.Other)
                 .IsRequired();
 
             builder.HasCheckConstraint("constraint_requirement_type_check_icon", $"{nameof(RequirementType.Icon)} in ({GetValidIcons()})");

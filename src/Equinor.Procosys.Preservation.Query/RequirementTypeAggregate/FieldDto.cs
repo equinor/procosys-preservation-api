@@ -11,8 +11,8 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             FieldType fieldType, 
             int sortKey, 
             string unit,
-            string rowVersion,
-            bool? showPrevious)
+            bool? showPrevious,
+            string rowVersion)
         {
             Id = id;
             Label = label;
@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public int SortKey { get; }
         public FieldType FieldType { get; }
         public string Unit { get; }
-        public string RowVersion { get; }
         public bool? ShowPrevious { get; }
+        public string RowVersion { get; }
     }
 }

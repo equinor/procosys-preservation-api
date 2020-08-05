@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                     .MustAsync((_, requirements, token) => RequirementUsageIsForJourneysWithoutSupplierAsync(requirements, token))
                     .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!")
                     .MustAsync((_, requirements, token) => RequirementUsageIsNotForSupplierStepOnlyAsync(requirements, token))
-                    .WithMessage(command => "Requirements can't include requirements just for suppliers!");
+                    .WithMessage(command => "Requirements can not include requirements just for suppliers!");
             });
 
             RuleForEach(command => command.TagNos)

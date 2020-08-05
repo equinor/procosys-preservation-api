@@ -47,11 +47,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
                 var result = await dut.Handle(_queryForProject1, default);
                 Assert.AreEqual(2, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.ReqType1.Code));
+                Assert.IsTrue(result.Data.Any(rt => rt.Icon == _testDataSet.ReqType1.Icon));
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.ReqType2.Code));
+                Assert.IsTrue(result.Data.Any(rt => rt.Icon == _testDataSet.ReqType2.Icon));
 
                 result = await dut.Handle(new GetUniqueTagRequirementTypesQuery(_testDataSet.Project2.Name), default);
                 Assert.AreEqual(1, result.Data.Count);
                 Assert.IsTrue(result.Data.Any(rt => rt.Code == _testDataSet.ReqType1.Code));
+                Assert.IsTrue(result.Data.Any(rt => rt.Icon == _testDataSet.ReqType1.Icon));
             }
         }
 

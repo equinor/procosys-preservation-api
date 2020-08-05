@@ -2,6 +2,7 @@
 {
     public enum RequirementTypeIcon
     {
+        Other,
         Area,
         Battery,
         Bearings,
@@ -10,7 +11,7 @@
         Installation,
         Measure,
         Nitrogen,
-        Other,
+        Power,
         Pressure,
         Rotate
     }
