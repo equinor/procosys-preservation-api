@@ -109,7 +109,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenStepExistsWithTitle()
         {
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_journeyId, _stepTitle, default)).Returns(Task.FromResult(true));
+            _stepValidatorMock.Setup(r => r.AnyStepExistsWithSameTitleAsync(_journeyId, _stepTitle, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 

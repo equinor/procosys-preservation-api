@@ -66,34 +66,34 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task Exists_KnownTitleInJourney_ReturnsTrue()
+        public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInJourney_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.ExistsAsync(_journey1.Id, _step1InJourney1ForSupplier.Title, default);
+                var result = await dut.AnyStepExistsWithSameTitleAsync(_journey1.Id, _step1InJourney1ForSupplier.Title, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task Exists_NewTitle_ReturnsFalse()
+        public async Task AnyStepExistsWithSameTitleAsync_NewTitle_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.ExistsAsync(_journey1.Id, "AnotherStep", default);
+                var result = await dut.AnyStepExistsWithSameTitleAsync(_journey1.Id, "AnotherStep", default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task Exists_KnownTitleInAnotherJourney_ReturnsFalse()
+        public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInAnotherJourney_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.ExistsAsync(_journey2.Id, _step1InJourney1ForSupplier.Title, default);
+                var result = await dut.AnyStepExistsWithSameTitleAsync(_journey2.Id, _step1InJourney1ForSupplier.Title, default);
                 Assert.IsFalse(result);
             }
         }
@@ -139,34 +139,34 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsInExistingJourney_SameTitleAsExisting_ReturnsFalse()
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsExisting_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.ExistsInExistingJourneyAsync(_step1InJourney1ForSupplier.Id, StepTitle1InJourney1, default);
+                var result = await dut.OtherStepExistsWithSameTitleAsync(_journey1.Id, _step1InJourney1ForSupplier.Id, StepTitle1InJourney1, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task ExistsInExistingJourney_SameTitleAsAnotherStepInSameJourney_ReturnsFalse()
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsAnotherStepInSameJourney_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.ExistsInExistingJourneyAsync(_step1InJourney1ForSupplier.Id, StepTitle2InJourney1, default);
+                var result = await dut.OtherStepExistsWithSameTitleAsync(_journey1.Id, _step1InJourney1ForSupplier.Id, StepTitle2InJourney1, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task ExistsInExistingJourney_SameTitleAsStepInAnotherJourney_ReturnsFalse()
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsStepInAnotherJourney_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.ExistsInExistingJourneyAsync(_step1InJourney1ForSupplier.Id, StepTitle1InJourney2, default);
+                var result = await dut.OtherStepExistsWithSameTitleAsync(_journey1.Id, _step1InJourney1ForSupplier.Id, StepTitle1InJourney2, default);
                 Assert.IsFalse(result);
             }
         }

@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 .WithMessage(command => "'Transfer on RFOC signing' can not be set on multiple steps in a journey!");
 
             async Task<bool> HaveUniqueStepTitleAsync(int journeyId, string stepTitle, CancellationToken token)
-                => !await stepValidator.ExistsAsync(journeyId, stepTitle, token);
+                => !await stepValidator.AnyStepExistsWithSameTitleAsync(journeyId, stepTitle, token);
 
             async Task<bool> BeAnExistingJourney(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
