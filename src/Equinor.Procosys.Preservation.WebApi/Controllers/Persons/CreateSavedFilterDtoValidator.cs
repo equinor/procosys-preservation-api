@@ -9,10 +9,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
         {
             RuleFor(x => x.Title)
                 .NotNull()
-                .MinimumLength(SavedFilter.TitleLengthMax);
+                .MaximumLength(SavedFilter.TitleLengthMax);
             RuleFor(x => x.Criteria)
                 .NotNull()
-                .MinimumLength(SavedFilter.CriteriaLengthMax);
+                .MaximumLength(SavedFilter.CriteriaLengthMax);
         }
     }
 }
