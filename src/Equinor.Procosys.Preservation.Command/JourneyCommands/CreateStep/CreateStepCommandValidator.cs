@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
-using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
@@ -12,7 +11,6 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
     {
         public CreateStepCommandValidator(
             IJourneyValidator journeyValidator,
-            IStepValidator stepValidator,
             IModeValidator modeValidator,
             IResponsibleValidator responsibleValidator)
         {
@@ -41,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 .WithMessage(command => "'Transfer on RFOC signing' can not be set on multiple steps in a journey!");
 
             async Task<bool> HaveUniqueStepTitleAsync(int journeyId, string stepTitle, CancellationToken token)
-                => !await stepValidator.AnyStepExistsWithSameTitleAsync(journeyId, stepTitle, token);
+                => !await journeyValidator.AnyStepExistsWithSameTitleAsync(journeyId, stepTitle, token);
 
             async Task<bool> BeAnExistingJourney(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);

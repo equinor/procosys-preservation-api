@@ -36,6 +36,21 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 where j.Id != journeyId && j.Title == journeyTitle
                 select j).AnyAsync(token);
 
+        
+        public async Task<bool> AnyStepExistsWithSameTitleAsync(int journeyId, string stepTitle, CancellationToken token)
+        {
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
+
+            return journey != null && journey.Steps.Any(s => s.Title == stepTitle);
+        }
+
+        public async Task<bool> OtherStepExistsWithSameTitleAsync(int journeyId, int stepId, string stepTitle, CancellationToken token)
+        {
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
+
+            return journey != null && journey.Steps.Any(s => s.Id != stepId && s.Title == stepTitle);
+        }
+
         public async Task<bool> IsVoidedAsync(int journeyId, CancellationToken token)
         {
             var journey = await (from j in _context.QuerySet<Journey>()

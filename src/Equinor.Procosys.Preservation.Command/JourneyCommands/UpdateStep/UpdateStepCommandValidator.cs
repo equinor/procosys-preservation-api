@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 => await journeyValidator.StepExistsAsync(journeyId, stepId, token);
             
             async Task<bool> HaveUniqueStepTitleInJourneyAsync(int journeyId, int stepId, string stepTitle, CancellationToken token) =>
-                !await stepValidator.OtherStepExistsWithSameTitleAsync(journeyId, stepId, stepTitle, token);
+                !await journeyValidator.OtherStepExistsWithSameTitleAsync(journeyId, stepId, stepTitle, token);
             
             async Task<bool> NotBeAVoidedStepAsync(int stepId, CancellationToken token)
                 => !await stepValidator.IsVoidedAsync(stepId, token);
