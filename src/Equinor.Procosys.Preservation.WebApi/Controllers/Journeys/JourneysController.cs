@@ -152,7 +152,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
                 dto.ModeId,
                 dto.ResponsibleCode,
                 dto.TransferOnRfccSign,
-                dto.TransferOnRfccSign));
+                dto.TransferOnRfocSign));
             return this.FromResult(result);
         }
 

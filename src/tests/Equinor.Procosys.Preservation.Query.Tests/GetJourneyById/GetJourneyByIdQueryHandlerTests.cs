@@ -12,6 +12,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
     public class GetJourneyByIdQueryHandlerTests : ReadOnlyTestsBase
     {
         private TestDataSet _testDataSet;
+        private int _step1Id;
+        private int _step2Id;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -19,7 +21,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
             {
                 _testDataSet = AddTestDataSet(context);
                 var step1 = _testDataSet.Journey1With2Steps.Steps.First();
+                step1.TransferOnRfccSign = true;
                 step1.Void();
+                _step1Id = step1.Id;
+                var step2 = _testDataSet.Journey1With2Steps.Steps.Last();
+                step2.TransferOnRfocSign = true;
+                _step2Id = step2.Id;
                 context.SaveChangesAsync().Wait();
             }
         }
@@ -38,11 +45,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
                 var steps = journey.Steps.ToList();
                 Assert.AreEqual(2, steps.Count);
 
-                var step = steps.First();
+                var step = steps.Single(s => s.Id == _step1Id);
                 Assert.IsNotNull(step.Mode);
                 Assert.IsNotNull(step.Responsible);
                 Assert.AreEqual(_testDataSet.Mode1.Id, step.Mode.Id);
                 Assert.AreEqual(_testDataSet.Responsible1.Id, step.Responsible.Id);
+                Assert.IsTrue(step.TransferOnRfccSign);
+                Assert.IsFalse(step.TransferOnRfocSign);
+
+                step = steps.Single(s => s.Id == _step2Id);
+                Assert.IsFalse(step.TransferOnRfccSign);
+                Assert.IsTrue(step.TransferOnRfocSign);
             }
         }
 
