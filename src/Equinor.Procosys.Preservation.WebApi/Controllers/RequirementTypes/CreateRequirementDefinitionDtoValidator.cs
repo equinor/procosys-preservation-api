@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             RuleFor(x => x.SortKey)
                 .NotNull()
                 .WithMessage("Sort key cannot be null")
-                .Must(MustBePositive)
+                .Must(BePositive)
                 .WithMessage("Sort key must be positive");
 
             RuleFor(x => x.Usage)
@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .WithMessage("Usage cannot be null");
 
             RuleFor(x => x.DefaultIntervalWeeks)
-                .Must(MustBePositive)
+                .Must(BePositive)
                 .WithMessage("Week interval must be positive");
 
             RuleForEach(x => x.Fields)
@@ -39,19 +39,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             RuleForEach(x => x.Fields)
                 .Must(FieldUnitMaxLength)
                 .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
+
+            bool BePositive(int arg) => arg > 0;
+
+            bool NotBeDuplicates(IList<FieldDto> fields)
+            {
+                var lowerCaseField = fields.Select(f => f.Label.ToLower()).ToList();
+
+                return lowerCaseField.Distinct().Count() == lowerCaseField.Count;
+            }
+
+            bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;
+
+            bool FieldUnitMaxLength(FieldDto arg) => arg.Unit.Length < Field.UnitLengthMax;
         }
-
-        private bool MustBePositive(int arg) => arg > 0;
-
-        private bool NotBeDuplicates(IList<FieldDto> fields)
-        {
-            var lowerCaseField = fields.Select(f => f.Label.ToLower()).ToList();
-
-            return lowerCaseField.Distinct().Count() == lowerCaseField.Count;
-        }
-
-        private bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;
-
-        private bool FieldUnitMaxLength(FieldDto arg) => arg.Unit.Length < Field.UnitLengthMax;
     }
 }
