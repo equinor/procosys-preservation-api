@@ -319,6 +319,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasMaxLength(8000);
 
+                    b.Property<bool>("DefaultFilter")
+                        .HasColumnType("bit");
+
                     b.Property<int?>("PersonId")
                         .HasColumnType("int");
 
