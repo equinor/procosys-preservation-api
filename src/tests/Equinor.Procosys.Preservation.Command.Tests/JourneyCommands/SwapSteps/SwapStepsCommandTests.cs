@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
+﻿using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
