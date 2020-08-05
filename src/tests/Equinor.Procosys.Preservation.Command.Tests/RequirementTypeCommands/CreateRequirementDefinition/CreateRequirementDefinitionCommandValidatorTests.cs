@@ -80,7 +80,5 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type doesn't exists!"));
         }
-
-        // todo test adding of fields
     }
 }
