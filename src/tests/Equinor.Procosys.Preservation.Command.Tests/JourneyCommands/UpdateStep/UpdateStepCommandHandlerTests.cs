@@ -15,6 +15,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
     [TestClass]
     public class UpdateStepCommandHandlerTests : CommandHandlerTestsBase
     {
+        private readonly int _journeyId = 1;
+        private readonly int _stepId = 2;
         private readonly int _modeId = 3;
         private readonly int _responsibleId = 4;
         private readonly int _responsibleId2 = 8;
@@ -44,16 +46,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         public void Setup()
         {
             // Arrange
-            var journeyId = 1;
-            var stepId = 2;
-
             _plantProviderMock = new Mock<IPlantProvider>();
             _plantProviderMock.Setup(p => p.Plant).Returns(TestPlant);
 
             var journeyRepositoryMock = new Mock<IJourneyRepository>();
 
             _journey = new Journey(TestPlant, "J");
-            _journey.SetProtectedIdForTesting(journeyId);
+            _journey.SetProtectedIdForTesting(_journeyId);
 
             _modeRepositoryMock = new Mock<IModeRepository>();
             _modeMock = new Mock<Mode>();
@@ -85,17 +84,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
                 .Returns(Task.FromResult(_pcsResponsibleMock.Object));
 
             _step = new Step(TestPlant, _oldTitle, _modeMock.Object, _responsible);
-            _step.SetProtectedIdForTesting(stepId);
+            _step.SetProtectedIdForTesting(_stepId);
             _journey.AddStep(_step);
 
             _responsibleApiServiceMock.Setup(s => s.TryGetResponsibleAsync(TestPlant, _responsibleCode))
                 .Returns(Task.FromResult(new ProcosysResponsible { Description = "ResponsibleTitle" }));
 
-            journeyRepositoryMock.Setup(s => s.GetByIdAsync(journeyId))
+            journeyRepositoryMock.Setup(s => s.GetByIdAsync(_journeyId))
                 .Returns(Task.FromResult(_journey));
 
-            _command = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode, _newTitle, _rowVersion);
-            _commandWithResponsible2 = new UpdateStepCommand(journeyId, stepId, _modeId, _responsibleCode2, _newTitle, _rowVersion);
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _newTitle, false, false, _rowVersion);
+            _commandWithResponsible2 = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode2, _newTitle, false, false, _rowVersion);
 
             _dut = new UpdateStepCommandHandler(
                 journeyRepositoryMock.Object,
@@ -193,6 +192,36 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Never);
             Assert.AreEqual(_responsibleId2, _journey.Steps.First().ResponsibleId);
             Assert.IsNull(_addedResponsible);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateStepCommand_ShouldUpdateStepWithTransferOnRfccSign()
+        {
+            // Arrange
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _newTitle, true, false, _rowVersion);
+            Assert.IsFalse(_step.TransferOnRfccSign);
+
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.IsTrue(_step.TransferOnRfccSign);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateStepCommand_ShouldUpdateStepWithTransferOnRfocSign()
+        {
+            // Arrange
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _newTitle, false, true, _rowVersion);
+            Assert.IsFalse(_step.TransferOnRfocSign);
+
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.IsTrue(_step.TransferOnRfocSign);
         }
     }
 }

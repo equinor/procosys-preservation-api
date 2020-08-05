@@ -5,13 +5,22 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
 {
     public class UpdateStepCommand : IRequest<Result<string>>
     {
-        public UpdateStepCommand(int journeyId, int stepId, int modeId, string responsibleCode, string title, string rowVersion)
+        public UpdateStepCommand(int journeyId,
+            int stepId,
+            int modeId,
+            string responsibleCode,
+            string title,
+            bool transferOnRfccSign,
+            bool transferOnRfocSign,
+            string rowVersion)
         {
             JourneyId = journeyId;
             StepId = stepId;
             ModeId = modeId;
             ResponsibleCode = responsibleCode;
             Title = title;
+            TransferOnRfccSign = transferOnRfccSign;
+            TransferOnRfocSign = transferOnRfocSign;
             RowVersion = rowVersion;
         }
 
@@ -20,6 +29,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
         public int ModeId { get; }
         public string ResponsibleCode { get; }
         public string Title { get; }
+        public bool TransferOnRfccSign { get; }
+        public bool TransferOnRfocSign { get; }
         public string RowVersion { get; }
     }
 }

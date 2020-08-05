@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleApiServiceMock.Setup(r => r.TryGetResponsibleAsync(TestPlant, ResponsibleCode))
                 .Returns(Task.FromResult(_pcsResponsibleMock.Object));
 
-            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode);
+            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode, false, false);
 
             _dut = new CreateStepCommandHandler(_journeyRepositoryMock.Object,
                 _modeRepositoryMock.Object,
@@ -146,6 +146,38 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Never);
             Assert.AreEqual(ResponsibleId, _journey.Steps.First().ResponsibleId);
             Assert.IsNull(_addedResponsible);
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateStepCommand_ShouldSetTransferOnRfccSign()
+        {
+            // Arrange
+            var command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode, true, false);
+            
+            // Act
+            await _dut.Handle(command, default);
+            
+            // Assert
+            Assert.AreEqual(1, _journey.Steps.Count);
+            var stepAdded = _journey.Steps.First();
+            Assert.IsTrue(stepAdded.TransferOnRfccSign);
+            Assert.IsFalse(stepAdded.TransferOnRfocSign);
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateStepCommand_ShouldSetTransferOnRfocSign()
+        {
+            // Arrange
+            var command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode, false, true);
+            
+            // Act
+            await _dut.Handle(command, default);
+            
+            // Assert
+            Assert.AreEqual(1, _journey.Steps.Count);
+            var stepAdded = _journey.Steps.First();
+            Assert.IsTrue(stepAdded.TransferOnRfocSign);
+            Assert.IsFalse(stepAdded.TransferOnRfccSign);
         }
     }
 }
