@@ -82,20 +82,5 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             => await (from tfr in _context.QuerySet<TagFunctionRequirement>()
                 where tfr.RequirementDefinitionId == requirementDefinitionId
                 select tfr).AnyAsync(token);
-
-        public async Task<bool> IsNotUniqueTitleOnRequirementTypeAsync(
-            int requirementTypeId,
-            string reqDefTitle,
-            IEnumerable<Field> fields,
-            CancellationToken token)
-        {
-            var needsUserInput = fields.Any(f => f.NeedsUserInput);
-            var reqType = await (from rt in _context.QuerySet<RequirementType>()
-                where rt.Id == requirementTypeId
-                select rt).SingleOrDefaultAsync(token);
-
-            var reqDefs = reqType.RequirementDefinitions;
-            return reqDefs.Any(rd => rd.Title == reqDefTitle && rd.NeedsUserInput == needsUserInput);
-        }
     }
 }

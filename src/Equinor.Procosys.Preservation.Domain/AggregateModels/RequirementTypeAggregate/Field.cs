@@ -13,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         {
         }
 
-        public Field(string plant,
+        public Field(
+            string plant,
             string label,
             FieldType fieldType,
             int sortKey,
@@ -36,17 +37,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             SortKey = sortKey;
         }
 
-        public string Label { get; private set; }
-        public string Unit { get; private set; }
+        public string Label { get; set; }
+        public string Unit { get; set; }
         public bool IsVoided { get; private set; }
-        public bool? ShowPrevious { get; private set; }
-        public int SortKey { get; private set; }
+        public bool? ShowPrevious { get; set; }
+        public int SortKey { get; set; }
         public FieldType FieldType { get; private set; }
-        public bool NeedsUserInput =>
-            FieldType == FieldType.Number ||
-            FieldType == FieldType.Attachment ||
-            FieldType == FieldType.CheckBox;
-
+        public bool NeedsUserInput => FieldType.NeedsUserInput();
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }

@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests
     [TestClass]
     public abstract class CommandHandlerTestsBase
     {
-        protected readonly Guid CurrentUserOid = new Guid("12345678-1234-1234-1234-123456789123"); // todo rename
+        protected readonly Guid CurrentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         protected Mock<ICurrentUserProvider> CurrentUserProviderMock;
         protected const string TestPlant = "TestPlant";
         protected Mock<IUnitOfWork> UnitOfWorkMock;

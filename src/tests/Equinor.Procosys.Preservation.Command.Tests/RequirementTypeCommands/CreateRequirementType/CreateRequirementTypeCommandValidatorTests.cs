@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementTypeWithSameTitleAlreadyExists()
         {
-            _requirementTypeValidatorMock.Setup(r => r.IsNotUniqueTitleAsync(_title, default)).Returns(Task.FromResult(true));
+            _requirementTypeValidatorMock.Setup(r => r.ExistsWithSameTitleAsync(_title, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 
@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementTypeWithSameCodeAlreadyExists()
         {
-            _requirementTypeValidatorMock.Setup(r => r.IsNotUniqueCodeAsync(_code, default)).Returns(Task.FromResult(true));
+            _requirementTypeValidatorMock.Setup(r => r.ExistsWithSameCodeAsync(_code, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 

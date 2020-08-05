@@ -2,17 +2,18 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
@@ -67,7 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}/Update")]
         public async Task<ActionResult<RequirementTypeDto>> UpdateRequirementType(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
@@ -134,7 +135,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromBody] CreateRequirementDefinitionDto dto)
         {
             var fields = dto.Fields?.Select(f =>
-                new Field(plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
+                new FieldsForCommand(f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious)).ToList();
             var result = await _mediator.Send(new CreateRequirementDefinitionCommand(id, dto.SortKey, dto.Usage,
                 dto.Title, dto.DefaultIntervalWeeks, fields));
             return this.FromResult(result);
@@ -191,6 +192,50 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         {
             var result = await _mediator.Send(new DeleteRequirementDefinitionCommand(id, requirementDefinitionId, dto.RowVersion));
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
+        [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Update")]
+        public async Task<ActionResult<RequirementDefinitionDto>> UpdateRequirementDefinition(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromRoute] int id,
+            [FromRoute] int requirementDefinitionId,
+            [FromBody] UpdateRequirementDefinitionDto dto)
+        {
+
+            var updatedFields = dto.UpdatedFields.Select(f =>
+                new UpdateFieldsForCommand(
+                    f.Id, 
+                    f.Label, 
+                    f.FieldType, 
+                    f.SortKey, 
+                    f.Void,
+                    f.RowVersion, 
+                    f.Unit, 
+                    f.ShowPrevious)).ToList();
+            var newFields = dto.NewFields.Select(f =>
+                new FieldsForCommand(
+                    f.Label, 
+                    f.FieldType, 
+                    f.SortKey, 
+                    f.Unit, 
+                    f.ShowPrevious)).ToList();
+
+            var command = new UpdateRequirementDefinitionCommand(
+                id,
+                requirementDefinitionId,
+                dto.SortKey,
+                dto.Usage,
+                dto.Title,
+                dto.DefaultIntervalWeeks,
+                dto.RowVersion,
+                updatedFields,
+                newFields);
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
     }
 }

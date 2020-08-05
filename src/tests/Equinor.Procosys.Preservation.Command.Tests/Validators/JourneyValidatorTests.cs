@@ -15,23 +15,38 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class JourneyValidatorTests : ReadOnlyTestsBase
     {
-        private const string JourneyWithStepTitle = "JourneyWithStep";
+        private const string Journey1WithStepTitle = "Journey1WithStep";
+        private const string Journey2WithStepTitle = "Journey2WithStep";
         private const string JourneyWithoutStepTitle = "JourneyWithoutStepTitle";
+        private const string StepTitle1InJourney1 = "Step1";
+        private const string StepTitle1InJourney2 = "Step2";
+        private const string StepTitle2InJourney1 = "Step3";
 
-        private int _journeyWithStepId;
+        private int _journey1WithStepId;
+        private int _journey2WithStepId;
         private int _journeyWithoutStepId;
         private int _journeyWithDuplicateId;
         private int _journeyWithoutDuplicateId;
-        private Step _step;
+        private Step _step1InJourney1;
+        private Step _step2InJourney1;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var journeyWithStep = AddJourneyWithStep(context, JourneyWithStepTitle, "S", AddMode(context, "M", false), AddResponsible(context, "R"));
-                _step = journeyWithStep.Steps.Single();
-                _journeyWithStepId = _journeyWithoutDuplicateId = journeyWithStep.Id;
+                var responsible = AddResponsible(context, "R1");
+                var mode = AddMode(context, "M1", false);
+                var journey1WithStep = AddJourneyWithStep(context, Journey1WithStepTitle, StepTitle1InJourney1, mode, responsible);
+                _step1InJourney1 = journey1WithStep.Steps.Single();
+                _step2InJourney1 = new Step(TestPlant, StepTitle2InJourney1, AddMode(context, "M2", false), AddResponsible(context, "R2"));
+                journey1WithStep.AddStep(_step2InJourney1);
+                context.SaveChangesAsync().Wait();
+
+                _journey1WithStepId = _journeyWithoutDuplicateId = journey1WithStep.Id;
                 _journeyWithoutStepId = _journeyWithDuplicateId = AddJourney(context, JourneyWithoutStepTitle).Id;
+                
+                _journey2WithStepId = AddJourneyWithStep(context, Journey2WithStepTitle, StepTitle1InJourney2, mode, responsible).Id;
+
                 AddJourney(context, $"{JourneyWithoutStepTitle}{Journey.DuplicatePrefix}");
             }
         }
@@ -42,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsAsync(_journeyWithStepId, default);
+                var result = await dut.ExistsAsync(_journey1WithStepId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -64,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.StepExistsAsync(_journeyWithStepId, _step.Id, default);
+                var result = await dut.StepExistsAsync(_journey1WithStepId, _step1InJourney1.Id, default);
                 Assert.IsTrue(result);
             }
         }
@@ -75,7 +90,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.StepExistsAsync(126234, _step.Id, default);
+                var result = await dut.StepExistsAsync(126234, _step1InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }
@@ -86,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.StepExistsAsync(_journeyWithStepId, 126234, default);
+                var result = await dut.StepExistsAsync(_journey1WithStepId, 126234, default);
                 Assert.IsFalse(result);
             }
         }
@@ -97,7 +112,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsWithSameTitleAsync(JourneyWithStepTitle, default);
+                var result = await dut.ExistsWithSameTitleAsync(Journey1WithStepTitle, default);
                 Assert.IsTrue(result);
             }
         }
@@ -119,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithStepId, JourneyWithoutStepTitle, default);
+                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journey1WithStepId, JourneyWithoutStepTitle, default);
                 Assert.IsTrue(result);
             }
         }
@@ -130,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithStepId, "XXXXXX", default);
+                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journey1WithStepId, "XXXXXX", default);
                 Assert.IsFalse(result);
             }
         }
@@ -141,7 +156,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journeyWithStepId, JourneyWithStepTitle, default);
+                var result = await dut.ExistsWithSameTitleInAnotherJourneyAsync(_journey1WithStepId, Journey1WithStepTitle, default);
                 Assert.IsFalse(result);
             }
         }
@@ -151,14 +166,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var journey = context.Journeys.Single(j => j.Id == _journey1WithStepId);
                 journey.Void();
                 context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsVoidedAsync(_journeyWithStepId, default);
+                var result = await dut.IsVoidedAsync(_journey1WithStepId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -169,7 +184,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsVoidedAsync(_journeyWithStepId, default);
+                var result = await dut.IsVoidedAsync(_journey1WithStepId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -213,7 +228,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasAnyStepsAsync(_journeyWithStepId, default);
+                var result = await dut.HasAnyStepsAsync(_journey1WithStepId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -235,7 +250,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsInUseAsync(_journeyWithStepId, default);
+                var result = await dut.IsInUseAsync(_journey1WithStepId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -258,14 +273,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var project = AddProject(context, "P", "Project description");
                 var rd = AddRequirementTypeWith1DefWithoutField(context, "Rot", "D", RequirementTypeIcon.Other).RequirementDefinitions.First();
-                AddTag(context, project, TagType.Standard, "TagNo", "Tag description", _step,
+                AddTag(context, project, TagType.Standard, "TagNo", "Tag description", _step1InJourney1,
                     new List<TagRequirement> {new TagRequirement(TestPlant, 2, rd)});
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsInUseAsync(_journeyWithStepId, default);
+                var result = await dut.IsInUseAsync(_journey1WithStepId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -320,7 +335,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journeyWithStepId, _step.Id, default);
+                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journey1WithStepId, _step1InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }
@@ -341,7 +356,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var journey = context.Journeys.Single(j => j.Id == _journey1WithStepId);
                 var step = new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2"))
                 {
                     TransferOnRfccSign = true
@@ -353,7 +368,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journeyWithStepId, _step.Id, default);
+                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journey1WithStepId, _step1InJourney1.Id, default);
                 Assert.IsTrue(result);
             }
         }
@@ -364,7 +379,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             int stepWithTransferOnRfccSignId;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var journey = context.Journeys.Single(j => j.Id == _journey1WithStepId);
                 var step = new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2"))
                 {
                     TransferOnRfccSign = true
@@ -378,7 +393,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journeyWithStepId, stepWithTransferOnRfccSignId, default);
+                var result = await dut.HasOtherStepWithTransferOnRfccSignAsync(_journey1WithStepId, stepWithTransferOnRfccSignId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -400,7 +415,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journeyWithStepId, _step.Id, default);
+                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journey1WithStepId, _step1InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }
@@ -421,7 +436,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var journey = context.Journeys.Single(j => j.Id == _journey1WithStepId);
                 var step = new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2"))
                 {
                     TransferOnRfocSign = true
@@ -433,7 +448,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journeyWithStepId, _step.Id, default);
+                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journey1WithStepId, _step1InJourney1.Id, default);
                 Assert.IsTrue(result);
             }
         }
@@ -444,7 +459,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             int stepWithTransferOnRfocSignId;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var journey = context.Journeys.Single(j => j.Id == _journeyWithStepId);
+                var journey = context.Journeys.Single(j => j.Id == _journey1WithStepId);
                 var step = new Step(TestPlant, "S2", AddMode(context, "M2", false), AddResponsible(context, "R2"))
                 {
                     TransferOnRfocSign = true
@@ -458,7 +473,73 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journeyWithStepId, stepWithTransferOnRfocSignId, default);
+                var result = await dut.HasOtherStepWithTransferOnRfocSignAsync(_journey1WithStepId, stepWithTransferOnRfocSignId, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInJourney_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.AnyStepExistsWithSameTitleAsync(_journey1WithStepId, _step1InJourney1.Title, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AnyStepExistsWithSameTitleAsync_NewTitle_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.AnyStepExistsWithSameTitleAsync(_journey1WithStepId, "AnotherStep", default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInAnotherJourney_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.AnyStepExistsWithSameTitleAsync(_journey2WithStepId, _step1InJourney1.Title, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsExisting_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.OtherStepExistsWithSameTitleAsync(_journey1WithStepId, _step1InJourney1.Id, StepTitle1InJourney1, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsAnotherStepInSameJourney_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.OtherStepExistsWithSameTitleAsync(_journey1WithStepId, _step1InJourney1.Id, StepTitle2InJourney1, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsStepInAnotherJourney_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.OtherStepExistsWithSameTitleAsync(_journey1WithStepId, _step1InJourney1.Id, StepTitle1InJourney2, default);
                 Assert.IsFalse(result);
             }
         }

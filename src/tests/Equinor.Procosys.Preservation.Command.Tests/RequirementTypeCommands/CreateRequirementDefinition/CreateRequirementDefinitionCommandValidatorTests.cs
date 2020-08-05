@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,26 +14,26 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
     public class CreateRequirementDefinitionCommandValidatorTests
     {
         private CreateRequirementDefinitionCommandValidator _dut;
-        private Mock<IRequirementDefinitionValidator> _requirementDefinitionValidatorMock;
         private Mock<IRequirementTypeValidator> _requirementTypeValidatorMock;
         private CreateRequirementDefinitionCommand _command;
 
-        private int ReqTypeId = 1;
-        private int SortKey = 10;
-        private string Title = "Title";
+        private readonly int _reqTypeId = 1;
+        private readonly int _sortKey = 10;
+        private readonly string _title = "Title";
         private RequirementUsage Usage = RequirementUsage.ForAll;
-        private IEnumerable<Field> Fields = new []{new Field("PCS$TEST_PLANT", "Label text", FieldType.Attachment, 10)};
+        private readonly IList<FieldsForCommand> _fields = new List<FieldsForCommand>
+        {
+            new FieldsForCommand("Label text", FieldType.Attachment, 10)
+        };
 
         [TestInitialize]
         public void Setup_OkState()
         {
             _requirementTypeValidatorMock = new Mock<IRequirementTypeValidator>();
-            _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(ReqTypeId, default)).Returns(Task.FromResult(true));
+            _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(_reqTypeId, default)).Returns(Task.FromResult(true));
 
-            _requirementDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
-
-            _command = new CreateRequirementDefinitionCommand(ReqTypeId, SortKey, Usage, Title, 4, Fields);
-            _dut = new CreateRequirementDefinitionCommandValidator(_requirementDefinitionValidatorMock.Object, _requirementTypeValidatorMock.Object);
+            _command = new CreateRequirementDefinitionCommand(_reqTypeId, _sortKey, Usage, _title, 4, _fields);
+            _dut = new CreateRequirementDefinitionCommandValidator(_requirementTypeValidatorMock.Object);
         }
 
         [TestMethod]
@@ -46,7 +47,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDefinitionWithSameTitleAlreadyExistsOnRequirementType()
         {
-            _requirementDefinitionValidatorMock.Setup(r => r.IsNotUniqueTitleOnRequirementTypeAsync(ReqTypeId, Title, Fields, default)).Returns(Task.FromResult(true));
+            var fieldTypes = _fields.Select(f => f.FieldType).ToList();
+            _requirementTypeValidatorMock.Setup(r => r.AnyRequirementDefinitionExistsWithSameTitleAsync(_reqTypeId, _title, fieldTypes, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 
@@ -58,7 +60,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementTypeIsVoided()
         {
-            _requirementTypeValidatorMock.Setup(r => r.IsVoidedAsync(ReqTypeId, default)).Returns(Task.FromResult(true));
+            _requirementTypeValidatorMock.Setup(r => r.IsVoidedAsync(_reqTypeId, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 
@@ -70,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementTypeDoesNotExist()
         {
-            _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(ReqTypeId, default)).Returns(Task.FromResult(false));
+            _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(_reqTypeId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
@@ -78,5 +80,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type doesn't exists!"));
         }
+
+        // todo test adding of fields
     }
 }

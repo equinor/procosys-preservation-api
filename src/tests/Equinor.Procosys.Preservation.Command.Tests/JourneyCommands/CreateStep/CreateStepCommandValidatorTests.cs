@@ -3,7 +3,6 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
-using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -14,7 +13,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
     {
         private CreateStepCommandValidator _dut;
         private Mock<IJourneyValidator> _journeyValidatorMock;
-        private Mock<IStepValidator> _stepValidatorMock;
         private Mock<IModeValidator> _modeValidatorMock;
         private Mock<IResponsibleValidator> _responsibleValidatorMock;
         private CreateStepCommand _command;
@@ -31,11 +29,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
-            _stepValidatorMock = new Mock<IStepValidator>();
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
             _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, false, false);
 
-            _dut = new CreateStepCommandValidator(_journeyValidatorMock.Object, _stepValidatorMock.Object, _modeValidatorMock.Object, _responsibleValidatorMock.Object);
+            _dut = new CreateStepCommandValidator(_journeyValidatorMock.Object, _modeValidatorMock.Object, _responsibleValidatorMock.Object);
         }
 
         [TestMethod]
@@ -109,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenStepExistsWithTitle()
         {
-            _stepValidatorMock.Setup(r => r.ExistsAsync(_journeyId, _stepTitle, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.AnyStepExistsWithSameTitleAsync(_journeyId, _stepTitle, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 

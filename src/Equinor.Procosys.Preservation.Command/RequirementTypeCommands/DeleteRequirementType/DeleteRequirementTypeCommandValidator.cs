@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
             async Task<bool> NotHaveAnyRequirementDefinitions(int requirementTypeId, CancellationToken token)
-                => !await requirementTypeValidator.RequirementDefinitionExistsAsync(requirementTypeId, token);
+                => !await requirementTypeValidator.AnyRequirementDefinitionExistsAsync(requirementTypeId, token);
             async Task<bool> BeAVoidedRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.IsVoidedAsync(requirementTypeId, token);
             bool HaveAValidRowVersion(string rowVersion)

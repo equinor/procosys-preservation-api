@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementTypeTitleIsNotUnique()
         {
-            _reqTypeValidatorMock.Setup(r => r.IsNotUniqueTitleAsync(_requirementTypeId, _title, default)).Returns(Task.FromResult(true));
+            _reqTypeValidatorMock.Setup(r => r.ExistsWithSameTitleInAnotherTypeAsync(_requirementTypeId, _title, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 
@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementTypeCodeIsNotUnique()
         {
-            _reqTypeValidatorMock.Setup(r => r.IsNotUniqueCodeAsync(_requirementTypeId, _code, default)).Returns(Task.FromResult(true));
+            _reqTypeValidatorMock.Setup(r => r.ExistsWithSameCodeInAnotherTypeAsync(_requirementTypeId, _code, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 

@@ -27,11 +27,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             SortKey = sortKey;
         }
 
-        public string Title { get; private set; }
+        public string Title { get; set; }
         public bool IsVoided { get; private set; }
-        public int DefaultIntervalWeeks { get; private set; }
-        public RequirementUsage Usage { get; private set; }
-        public int SortKey { get; private set; }
+        public int DefaultIntervalWeeks { get; set; }
+        public RequirementUsage Usage { get; set; }
+        public int SortKey { get; set; }
         public IReadOnlyCollection<Field> Fields => _fields.AsReadOnly();
         public bool NeedsUserInput => _fields.Any(f => f.NeedsUserInput);
 
@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
             _fields.Add(field);
         }
-        
+
         public IOrderedEnumerable<Field> OrderedFields(bool includeVoided)
             => Fields
                 .Where(f => includeVoided || !f.IsVoided)
