@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
             var dut = new CreateRequirementDefinitionCommand(1, 10, RequirementUsage.ForAll, "title", 4);
 
             Assert.AreEqual("title", dut.Title);
-            Assert.AreEqual(null, dut.Fields);
+            Assert.AreEqual(0, dut.Fields.Count);
             Assert.AreEqual(1, dut.RequirementTypeId);
             Assert.AreEqual(10, dut.SortKey);
             Assert.AreEqual(4, dut.DefaultIntervalWeeks);
