@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}");
 
             RuleFor(x => x)
-                .Must(NotBeDuplicates)
+                .Must(NotHaveDuplicateFieldLabels)
                 .WithMessage("Cannot have duplicate fields");
 
             RuleForEach(x => x.NewFields)
@@ -49,13 +49,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
             bool BePositive(int arg) => arg > 0;
 
-            // todo BUG move to businessvalidation. Must consider existing fields too
-            bool NotBeDuplicates(UpdateRequirementDefinitionDto dto)
+            bool NotHaveDuplicateFieldLabels(UpdateRequirementDefinitionDto dto)
             {
-                var allFields = dto.UpdatedFields.Select(f => f.Label.ToLower())
+                var allFieldLabelsLowercase = dto.UpdatedFields.Select(f => f.Label.ToLower())
                     .Concat(dto.NewFields.Select(f => f.Label.ToLower())).ToList();
 
-                return allFields.Distinct().Count() == allFields.Count;
+                return allFieldLabelsLowercase.Distinct().Count() == allFieldLabelsLowercase.Count;
             }
 
             bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;
