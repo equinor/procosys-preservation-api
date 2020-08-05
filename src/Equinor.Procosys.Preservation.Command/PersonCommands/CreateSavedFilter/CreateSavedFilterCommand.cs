@@ -7,13 +7,16 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
     {
         public CreateSavedFilterCommand(
             string title,
-            string criteria)
+            string criteria,
+            bool defaultFilter)
         {
             Title = title;
             Criteria = criteria;
+            DefaultFilter = defaultFilter;
         }
 
         public string Title { get; }
         public string Criteria { get; }
+        public bool DefaultFilter { get; }
     }
 }

@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreateSaved
             const string Criteria = "Criteria";
 
             _savedFilterValidatorMock = new Mock<ISavedFilterValidator>();
-            _command = new CreateSavedFilterCommand(_title, Criteria);
+            _command = new CreateSavedFilterCommand(_title, Criteria, false);
             _dut = new CreateSavedFilterCommandValidator(_savedFilterValidatorMock.Object);
         }
 

@@ -12,10 +12,10 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
             CascadeMode = CascadeMode.StopOnFirstFailure;
 
             RuleFor(command => command)
-                .MustAsync((command, token) => NotExistsASavedSearchWithSameTitleForPerson(command.Title, token))
+                .MustAsync((command, token) => NotExistsASavedFilterWithSameTitleForPerson(command.Title, token))
                 .WithMessage(command => $"A saved filter with this title already exists! Title={command.Title}");
 
-            async Task<bool> NotExistsASavedSearchWithSameTitleForPerson(string title, CancellationToken token)
+            async Task<bool> NotExistsASavedFilterWithSameTitleForPerson(string title, CancellationToken token)
                 => !await savedFilterValidator.ExistsWithSameTitleForPersonAsync(title, token);
         }
     }

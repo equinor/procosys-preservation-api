@@ -24,9 +24,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
-            [FromBody] CreateSavedFilterDto dto)
+            [FromBody] CreateSavedFilterDto dto,
+            [FromQuery] bool defaultFilter = false)
         {
-            var result = await _mediator.Send(new CreateSavedFilterCommand(dto.Title, dto.Criteria));
+            var result = await _mediator.Send(new CreateSavedFilterCommand(dto.Title, dto.Criteria, defaultFilter));
+            return this.FromResult(result);
+        }
             return this.FromResult(result);
         }
     }

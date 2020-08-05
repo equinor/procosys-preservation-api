@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var person = await _personRepository.GetByOidAsync(currentUserOid);
 
-            var savedFilter = new SavedFilter(_plantProvider.Plant, request.Title, request.Criteria);
+            var savedFilter = new SavedFilter(_plantProvider.Plant, request.Title, request.Criteria, request.DefaultFilter);
             person.AddSavedFilter(savedFilter);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

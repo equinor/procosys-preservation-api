@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Infrastructure.Migrations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -39,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreateSaved
                 .Setup(x => x.GetCurrentUserOid())
                 .Returns(CurrentUserOid);
 
-            _command = new CreateSavedFilterCommand(title, criteria);
+            _command = new CreateSavedFilterCommand(title, criteria, true);
 
             _dut = new CreateSavedFilterCommandHandler(
                 _personRepositoryMock.Object,
@@ -53,13 +54,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreateSaved
         {
             // Act
             var result = await _dut.Handle(_command, default);
-            var savedSearch = _person.SavedFilters.First();
+            var savedFilter = _person.SavedFilters.First();
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
-            Assert.AreEqual(title, savedSearch.Title);
-            Assert.AreEqual(criteria, savedSearch.Criteria);
+            Assert.AreEqual(true, savedFilter.DefaultFilter);
+            Assert.AreEqual(title, savedFilter.Title);
+            Assert.AreEqual(criteria, savedFilter.Criteria);
         }
 
         [TestMethod]
