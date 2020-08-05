@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag
                 .WithMessage(command => $"Tag is not voided! Tag={command.TagId}")
                 .MustAsync((command, token) => NotBeInUse(command.TagId, token))
                 .WithMessage(command => $"Tag is in use! Tag={command.TagId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
@@ -31,8 +31,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag
                 => await tagValidator.IsVoidedAsync(tagId, token);
             async Task<bool> NotBeInUse(int tagId, CancellationToken token)
                 => !await tagValidator.IsInUseAsync(tagId, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

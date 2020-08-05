@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
                 .Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
             _command = new UnvoidTagFunctionCommand(_tagFunctionCode, _registerCode, _rowVersion);
             _dut = new UnvoidTagFunctionCommandValidator(_tagFunctionValidatorMock.Object, _rowVersionValidatorMock.Object);
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
             const string invalidRowVersion = "String";
 
             var command = new UnvoidTagFunctionCommand(_tagFunctionCode, _registerCode, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 

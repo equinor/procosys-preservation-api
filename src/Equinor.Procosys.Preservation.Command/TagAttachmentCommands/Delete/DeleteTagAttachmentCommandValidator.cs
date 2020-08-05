@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .MustAsync((command, token) => BeAnExistingAttachmentAsync(command.AttachmentId, token))
                 .WithMessage(command => $"Attachment doesn't exist! Attachment={command.AttachmentId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
@@ -38,8 +38,8 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
                 => !await tagValidator.IsVoidedAsync(tagId, token);
             async Task<bool> BeAnExistingAttachmentAsync(int attachmentId, CancellationToken token)
                 => await attachmentValidator.ExistsAsync(attachmentId, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

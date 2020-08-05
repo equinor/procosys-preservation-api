@@ -19,15 +19,15 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode
                 .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
                 .MustAsync((command, token) => BeAVoidedModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode is not voided! Mode={command.ModeId}")
-                .MustAsync((command, token) => HaveAValidRowVersion(command.RowVersion, token))
+                .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
 
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);
             async Task<bool> BeAVoidedModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.IsVoidedAsync(modeId, token);
-            async Task<bool> HaveAValidRowVersion(string rowVersion, CancellationToken token)
-                => await rowVersionValidator.IsValid(rowVersion, token);
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
             _command = new VoidTagCommand(_tagId, _rowVersion);
             _dut = new VoidTagCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _rowVersionValidatorMock.Object);
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.VoidTag
             const string invalidRowVersion = "String";
 
             var command = new VoidTagCommand(_tagId, invalidRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion, default)).Returns(Task.FromResult(false));
+            _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
 
