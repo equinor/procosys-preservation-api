@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}/Update")]
         public async Task<ActionResult<RequirementTypeDto>> UpdateRequirementType(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
