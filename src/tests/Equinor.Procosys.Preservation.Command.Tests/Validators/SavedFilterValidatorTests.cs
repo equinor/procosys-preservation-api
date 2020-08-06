@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _personOid = new Guid();
 
                 var person = AddPerson(context, _personOid, "Current", "User");
-                var savedFilter = new SavedFilter(TestPlant, _title, Criteria);
+                var savedFilter = new SavedFilter(TestPlant, _title, Criteria, false);
                 
                 person.AddSavedFilter(savedFilter);
                 context.SaveChangesAsync().Wait();
