@@ -1,5 +1,4 @@
 ﻿using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
