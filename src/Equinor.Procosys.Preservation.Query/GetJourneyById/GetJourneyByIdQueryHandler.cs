@@ -62,6 +62,8 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
                             step.IsVoided,
                             modes.FirstOrDefault(x => x.Id == step.ModeId),
                             responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId),
+                            step.TransferOnRfccSign,
+                            step.TransferOnRfocSign,
                             step.RowVersion.ConvertToString()
                         )
                     ),
