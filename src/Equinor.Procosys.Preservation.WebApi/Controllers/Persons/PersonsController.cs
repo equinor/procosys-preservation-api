@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
-using Equinor.Procosys.Preservation.Query.GetSavedFilters;
+using Equinor.Procosys.Preservation.Query.GetAllSavedFilters;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -34,12 +34,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("/SavedFilters")]
-        public async Task<ActionResult<List<SavedFilterDto>>> GetSavedFilters(
+        public async Task<ActionResult<List<SavedFilterDto>>> GetAllSavedFilters(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant)
         {
-            var result = await _mediator.Send(new GetSavedFiltersQuery());
+            var result = await _mediator.Send(new GetAllSavedFiltersQuery());
             return this.FromResult(result);
         }
     }

@@ -11,16 +11,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
         public SavedFilter() : base(null)
         {
         }
-        public SavedFilter(string plant, string title, string criteria, bool defaultFilter)
+        public SavedFilter(string plant, string title, string criteria)
             : base(plant)
         {
             Title = title;
             Criteria = criteria;
-            DefaultFilter = defaultFilter;
         }
         public string Title { get; }
         public string Criteria { get; }
-        public bool DefaultFilter { get; private set; }
+        public bool DefaultFilter { get; set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
 

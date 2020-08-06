@@ -8,14 +8,14 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetSavedFilters
+namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
 {
-    public class GetSavedFiltersQueryHandler : IRequestHandler<GetSavedFiltersQuery, Result<List<SavedFilterDto>>>
+    public class GetAllSavedFiltersQueryHandler : IRequestHandler<GetAllSavedFiltersQuery, Result<List<SavedFilterDto>>>
     {
         private readonly IReadOnlyContext _context;
         private readonly ICurrentUserProvider _currentUserProvider;
 
-        public GetSavedFiltersQueryHandler(
+        public GetAllSavedFiltersQueryHandler(
             IReadOnlyContext context,
             ICurrentUserProvider currentUserProvider)
         {
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.GetSavedFilters
             _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<Result<List<SavedFilterDto>>> Handle(GetSavedFiltersQuery request,
+        public async Task<Result<List<SavedFilterDto>>> Handle(GetAllSavedFiltersQuery request,
             CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
@@ -42,6 +42,7 @@ namespace Equinor.Procosys.Preservation.Query.GetSavedFilters
                     savedFilter.DefaultFilter,
                     savedFilter.CreatedAtUtc,
                     savedFilter.RowVersion.ConvertToString())).ToList();
+
             return new SuccessResult<List<SavedFilterDto>>(savedFilters);
         }
     }

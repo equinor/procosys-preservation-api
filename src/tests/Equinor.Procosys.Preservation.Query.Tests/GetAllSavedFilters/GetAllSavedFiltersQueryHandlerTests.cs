@@ -4,19 +4,19 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.GetSavedFilters;
+using Equinor.Procosys.Preservation.Query.GetAllSavedFilters;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetSavedFilters
+namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
 {
     [TestClass]
-    public class GetSavedFiltersQueryHandlerTests : ReadOnlyTestsBase
+    public class GetAllSavedFiltersQueryHandlerTests : ReadOnlyTestsBase
     {
-        private GetSavedFiltersQuery _query;
+        private GetAllSavedFiltersQuery _query;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
 
         private const string _title = "title";
@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetSavedFilters
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                _query = new GetSavedFiltersQuery();
+                _query = new GetAllSavedFiltersQuery();
 
                 _savedFilter = new SavedFilter(TestPlant, _title, _criteria, _defaultFilter);
                 _person = AddPerson(context, Guid.NewGuid(), "FistName", "LastName");
@@ -46,12 +46,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetSavedFilters
         }
 
         [TestMethod]
-        public async Task HandleGetSavedFiltersQuery_ShouldReturnOkResult()
+        public async Task HandleGetAllSavedFiltersQuery_ShouldReturnOkResult()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                var dut = new GetSavedFiltersQueryHandler(context, _currentUserProviderMock.Object);
+                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProviderMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -59,30 +59,32 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetSavedFilters
         }
 
         [TestMethod]
-        public async Task HandleGetSavedFiltersQuery_ShouldReturnCorrectSavedFilters()
+        public async Task HandleGetAllSavedFiltersQuery_ShouldReturnCorrectSavedFilters()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                var dut = new GetSavedFiltersQueryHandler(context, _currentUserProviderMock.Object);
+                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProviderMock.Object);
 
                 var result = await dut.Handle(_query, default);
+                var savedFilter = result.Data.Single();
+
                 Assert.AreEqual(1, result.Data.Count);
-                Assert.IsTrue(result.Data.Any(sf => sf.Title == _title));
-                Assert.IsTrue(result.Data.Any(sf => sf.Criteria == _criteria));
-                Assert.IsTrue(result.Data.Any(sf => sf.DefaultFilter == _defaultFilter));
+                Assert.IsTrue(savedFilter.Title == _title);
+                Assert.IsTrue(savedFilter.Criteria == _criteria);
+                Assert.IsTrue(savedFilter.DefaultFilter == _defaultFilter);
             }
         }
 
         [TestMethod]
-        public async Task HandleGetSavedFiltersQuery_ShouldReturnEmptyListOfSavedFilters()
+        public async Task HandleGetAllSavedFiltersQuery_ShouldReturnEmptyListOfSavedFilters()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                var dut = new GetSavedFiltersQueryHandler(context, _currentUserProvider);
+                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProvider);
 
-                var result = await dut.Handle(new GetSavedFiltersQuery(), default);
+                var result = await dut.Handle(new GetAllSavedFiltersQuery(), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }

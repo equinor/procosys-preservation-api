@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
 using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Infrastructure.Migrations;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -59,7 +57,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreateSaved
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
-            Assert.AreEqual(true, savedFilter.DefaultFilter);
+            Assert.IsTrue(savedFilter.DefaultFilter);
             Assert.AreEqual(title, savedFilter.Title);
             Assert.AreEqual(criteria, savedFilter.Criteria);
         }
