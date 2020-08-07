@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -38,18 +40,46 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Cr
         }
 
         [TestMethod]
-        public async Task HandlingCreateReqDefinitionCommand_ShouldAddReqDefinitionToRepository()
+        public async Task HandlingCreateReqDefinitionCommand_ShouldAddReqDefinitionToRepositoryWithoutField()
         {
             // Act
             var result = await _dut.Handle(_command, default);
-            var reqDef = _reqTypeAdded.RequirementDefinitions.First();
 
             // Assert
+            var reqDef = _reqTypeAdded.RequirementDefinitions.First();
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(0, result.Data);
             Assert.AreEqual(RequirementDefinitionTitle, reqDef.Title);
             Assert.AreEqual(DefaultWeeks, reqDef.DefaultIntervalWeeks);
             Assert.AreEqual(Usage, reqDef.Usage);
+            Assert.AreEqual(0, reqDef.Fields.Count);
+        }
+
+        [TestMethod]
+        public async Task HandlingCreateReqDefinitionCommand_ShouldAddReqDefinitionToRepositoryWithFields()
+        {
+            // Arrange
+            _command = new CreateRequirementDefinitionCommand(1, 10, Usage, RequirementDefinitionTitle, DefaultWeeks, 
+                new List<FieldsForCommand>
+                {
+                    new FieldsForCommand("Label", FieldType.CheckBox, 99, "U", true)
+                });
+
+            // Act
+            var result = await _dut.Handle(_command, default);
+
+            // Assert
+            var reqDef = _reqTypeAdded.RequirementDefinitions.First();
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(1, reqDef.Fields.Count);
+
+            var field = reqDef.Fields.Single();
+            Assert.AreEqual("Label", field.Label);
+            Assert.AreEqual(FieldType.CheckBox, field.FieldType);
+            Assert.AreEqual(99, field.SortKey);
+            Assert.AreEqual("U", field.Unit);
+            Assert.IsTrue(field.ShowPrevious.HasValue);
+            Assert.IsTrue(field.ShowPrevious.Value);
         }
 
         [TestMethod]
