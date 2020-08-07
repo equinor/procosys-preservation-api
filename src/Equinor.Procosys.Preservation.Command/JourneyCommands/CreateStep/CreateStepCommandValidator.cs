@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
@@ -31,12 +32,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 .WithMessage(command => $"Step with title already exists in journey! Step={command.Title}")
                 .MustAsync((command, token) => BeFirstStepWhenSupplierModeAsync(command.JourneyId, command.ModeId, token))
                 .WithMessage(command => $"Supplier step can only be chosen as the first step! Step={command.Title}")
-                .Must(command => NotSetBothTransferOnRfocSignAndTransferOnRfccSign(command.TransferOnRfccSign, command.TransferOnRfocSign))
-                .WithMessage(command => $"Both 'Transfer on RFCC signing' and 'Transfer on RFOC signing' can not be set in same step! Step={command.Title}")
-                .MustAsync((command, token) => NotBeManyTransferOnRfccSignInSameJourneyAsync(command.JourneyId, command.TransferOnRfccSign, token))
-                .WithMessage(command => "'Transfer on RFCC signing' can not be set on multiple steps in a journey!")
-                .MustAsync((command, token) => NotBeManyTransferOnRfocSignInSameJourneyAsync(command.JourneyId, command.TransferOnRfocSign, token))
-                .WithMessage(command => "'Transfer on RFOC signing' can not be set on multiple steps in a journey!");
+                .MustAsync((command, token) => NotBeAnyStepWithSameAutoTransferMethodInJourneyAsync(command.JourneyId, command.AutoTransferMethod, token))
+                .WithMessage(command => $"Same auto transfer method can not be set on multiple steps in a journey! Method={command.AutoTransferMethod}");
 
             async Task<bool> HaveUniqueStepTitleAsync(int journeyId, string stepTitle, CancellationToken token)
                 => !await journeyValidator.AnyStepExistsWithSameTitleAsync(journeyId, stepTitle, token);
@@ -61,15 +58,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 var isFirstStep = !await journeyValidator.HasAnyStepsAsync(journeyId, token);
                 return isFirstStep || !await modeValidator.IsForSupplierAsync(modeId, token);
             }
-
-            bool NotSetBothTransferOnRfocSignAndTransferOnRfccSign(bool transferOnRfccSign, bool transferOnRfocSign)
-                => !transferOnRfccSign || !transferOnRfocSign;
             
-            async Task<bool> NotBeManyTransferOnRfccSignInSameJourneyAsync(int journeyId, bool transferOnRfccSign, CancellationToken token)
-                => !transferOnRfccSign && !await journeyValidator.HasAnyStepWithTransferOnRfccSignAsync(journeyId, token);
-            
-            async Task<bool> NotBeManyTransferOnRfocSignInSameJourneyAsync(int journeyId, bool transferOnRfocSign, CancellationToken token)
-                => !transferOnRfocSign && !await journeyValidator.HasAnyStepWithTransferOnRfocSignAsync(journeyId, token);
+            async Task<bool> NotBeAnyStepWithSameAutoTransferMethodInJourneyAsync(int journeyId, AutoTransferMethod autoTransferMethod, CancellationToken token)
+                => !await journeyValidator.HasAnyStepWithAutoTransferMethodAsync(journeyId, autoTransferMethod, token);
         }
     }
 }

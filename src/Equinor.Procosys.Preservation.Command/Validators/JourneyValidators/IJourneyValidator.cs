@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
 namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
 {
@@ -16,9 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
         Task<bool> HasAnyStepsAsync(int journeyId, CancellationToken token);
         Task<bool> IsInUseAsync(int journeyId, CancellationToken token);
         Task<bool> ExistsWithDuplicateTitleAsync(int journeyId, CancellationToken token);
-        Task<bool> HasAnyStepWithTransferOnRfccSignAsync(int journeyId, CancellationToken token);
-        Task<bool> HasAnyStepWithTransferOnRfocSignAsync(int journeyId, CancellationToken token);
-        Task<bool> HasOtherStepWithTransferOnRfccSignAsync(int journeyId, int stepId, CancellationToken token);
-        Task<bool> HasOtherStepWithTransferOnRfocSignAsync(int journeyId, int stepId, CancellationToken token);
+        Task<bool> HasAnyStepWithAutoTransferMethodAsync(int journeyId, AutoTransferMethod autoTransferMethod, CancellationToken token);
+        Task<bool> HasOtherStepWithAutoTransferMethodAsync(int journeyId, int stepId, AutoTransferMethod autoTransferMethod, CancellationToken token);
     }
 }
