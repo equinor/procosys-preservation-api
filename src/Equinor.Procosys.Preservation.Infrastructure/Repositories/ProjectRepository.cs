@@ -58,5 +58,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
             }
             _context.Tags.Remove(tag);
         }
+
+        // todo AutoTransfer unit test
+        public Task<List<Tag>> GetStandardTagsInProjectInStepsAsync(string projectName, IEnumerable<string> tagNos, IEnumerable<int> stepIds)
+        {
+            // todo AutoTransfer
+            return null;
+        }
     }
 }

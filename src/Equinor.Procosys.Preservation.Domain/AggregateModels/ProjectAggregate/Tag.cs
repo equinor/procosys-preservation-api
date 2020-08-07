@@ -324,13 +324,35 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new Exception($"{nameof(Tag)} {Id} can not be transferred");
             }
 
-            var fromStep = journey.Steps.Single(s => s.Id == StepId).Title;
+            var fromStep = journey.Steps.Single(s => s.Id == StepId);
 
             SetStep(journey.GetNextStep(StepId));
 
-            var toStep = journey.Steps.Single(s => s.Id == StepId).Title;
+            var toStep = journey.Steps.Single(s => s.Id == StepId);
 
-            AddDomainEvent(new TransferredManuallyEvent(Plant, ObjectGuid, fromStep, toStep));
+            AddDomainEvent(new TransferredManuallyEvent(Plant, ObjectGuid, fromStep.Title, toStep.Title));
+        }
+
+    // todo AutoTransfer unit test
+        public void AutoTransfer(Journey journey, AutoTransferMethod autoTransferMethod)
+        {
+            if (!IsReadyToBeTransferred(journey))
+            {
+                throw new Exception($"{nameof(Tag)} {Id} can not be transferred");
+            }
+
+            var fromStep = journey.Steps.Single(s => s.Id == StepId);
+
+            if (fromStep.AutoTransferMethod != autoTransferMethod)
+            {
+                throw new Exception($"{nameof(Tag)} {Id} can not be auto transferred with method {autoTransferMethod}. Current step {fromStep.Id} has method {fromStep.AutoTransferMethod}");
+            }
+
+            SetStep(journey.GetNextStep(StepId));
+
+            var toStep = journey.Steps.Single(s => s.Id == StepId);
+
+            AddDomainEvent(new TransferredAutomaticallyEvent(Plant, ObjectGuid, fromStep.Title, toStep.Title, autoTransferMethod));
         }
 
         public void SetCreated(Person createdBy)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command;
 using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
@@ -17,7 +18,6 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
-using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements;

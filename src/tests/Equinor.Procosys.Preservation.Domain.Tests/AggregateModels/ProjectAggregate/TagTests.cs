@@ -945,6 +945,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region AutoTransfer
+        // todo AutoTransfer unit test
+
+        #endregion
+
         #region CompletePreservation
 
         [TestMethod]
