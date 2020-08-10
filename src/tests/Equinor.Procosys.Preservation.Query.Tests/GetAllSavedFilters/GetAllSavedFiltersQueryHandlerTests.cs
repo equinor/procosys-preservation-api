@@ -22,6 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
         private const string _title = "title";
         private const string _criteria = "criteria in JSON";
         private bool _defaultFilter = true;
+
         private SavedFilter _savedFilter;
         private Person _person;
 
@@ -32,7 +33,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
             {
                 _query = new GetAllSavedFiltersQuery();
 
-                _savedFilter = new SavedFilter(TestPlant, _title, _criteria, _defaultFilter);
+                _savedFilter = new SavedFilter(TestPlant, 2, _title, _criteria)
+                    { DefaultFilter =  _defaultFilter };
                 _person = AddPerson(context, Guid.NewGuid(), "FistName", "LastName");
                 _person.AddSavedFilter(_savedFilter);
 
@@ -70,9 +72,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
                 var savedFilter = result.Data.Single();
 
                 Assert.AreEqual(1, result.Data.Count);
-                Assert.IsTrue(savedFilter.Title == _title);
-                Assert.IsTrue(savedFilter.Criteria == _criteria);
-                Assert.IsTrue(savedFilter.DefaultFilter == _defaultFilter);
+                Assert.AreEqual(_title, savedFilter.Title);
+                Assert.AreEqual(_criteria, savedFilter.Criteria);
+                Assert.AreEqual(_defaultFilter, savedFilter.DefaultFilter);
             }
         }
 
