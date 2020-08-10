@@ -212,7 +212,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                     f.Label, 
                     f.FieldType, 
                     f.SortKey, 
-                    f.Void,
+                    f.IsVoided,
                     f.RowVersion, 
                     f.Unit, 
                     f.ShowPrevious)).ToList();
