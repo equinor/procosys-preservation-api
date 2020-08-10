@@ -23,7 +23,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .Where(journey => journey.Steps.Any(s => stepIds.Contains(s.Id)))
                 .ToListAsync();
 
-        // todo AutoTransfer unit test
         public Task<List<Journey>> GetJourneysWithAutoTransferStepsAsync(AutoTransferMethod autoTransferMethod)
             => DefaultQuery
                 .Where(journey => journey.Steps.Any(s => s.AutoTransferMethod == autoTransferMethod))
