@@ -54,15 +54,23 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private Journey _journey;
         private int _reqDefNotNeedInputForSupplierId;
         private int _reqDefNotNeedInputForOtherId;
+        private int _nextStepId;
+        private Responsible _responsible;
+        private Mode _mode;
 
         [TestInitialize]
         public void Setup()
         {
-            var responsible = new Responsible(TestPlant, "RC", "RD");
-            _supplierStep = new Step(TestPlant, "SUP", new Mode(TestPlant, "SUP", true), responsible);
-            _supplierStep.SetProtectedIdForTesting(3);
-            _otherStep = new Step(TestPlant, "OTHER", new Mode(TestPlant, "O", false), responsible);
-            _otherStep.SetProtectedIdForTesting(4);
+            _responsible = new Responsible(TestPlant, "RC", "RD");
+            _supplierStep = new Step(TestPlant, "SUP", new Mode(TestPlant, "SUP", true), _responsible);
+            _nextStepId = 1;
+            _supplierStep.SetProtectedIdForTesting(++_nextStepId);
+            _mode = new Mode(TestPlant, "O", false);
+            _otherStep = new Step(TestPlant, "OTHER1", _mode, _responsible)
+            {
+                AutoTransferMethod = AutoTransferMethod.OnRfccSign
+            };
+            _otherStep.SetProtectedIdForTesting(++_nextStepId);
 
             _person = new Mock<Person>().Object;
 
@@ -946,7 +954,97 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #endregion
 
         #region AutoTransfer
-        // todo AutoTransfer unit test
+
+        [TestMethod]
+        public void AutoTransfer_ShouldTransferToNextStep_WhenTransferMethodMatch()
+        {
+            // Arrange
+            var otherStep2 = new Step(TestPlant, "OTHER2", _mode, _responsible);
+            otherStep2.SetProtectedIdForTesting(++_nextStepId);
+            _journey.AddStep(otherStep2);
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            
+            // Act
+            dut.AutoTransfer(_journey, AutoTransferMethod.OnRfccSign);
+
+            // Assert
+            Assert.AreEqual(otherStep2.Id, dut.StepId);
+        }
+
+        [TestMethod]
+        public void AutoTransfer_ShouldThrowException_WhenTransferMethodMismatch()
+        {
+            // Arrange
+            var otherStep2 = new Step(TestPlant, "OTHER2", _mode, _responsible);
+            otherStep2.SetProtectedIdForTesting(++_nextStepId);
+            _journey.AddStep(otherStep2);
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            // Act and assert
+            Assert.ThrowsException<Exception>(() => dut.AutoTransfer(_journey, AutoTransferMethod.OnRfocSign));
+        }
+                
+        [TestMethod]
+        public void AutoTransfer_ShouldThrowException_WhenJourneyIsNull()
+        {
+            // Arrange
+            var otherStep2 = new Step(TestPlant, "OTHER2", _mode, _responsible);
+            otherStep2.SetProtectedIdForTesting(++_nextStepId);
+            _journey.AddStep(otherStep2);
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            // Act and assert
+            Assert.ThrowsException<ArgumentNullException>(() => dut.AutoTransfer(null, AutoTransferMethod.OnRfccSign));
+        }
+                
+        [TestMethod]
+        public void AutoTransfer_ShouldThrowException_WhenTagIsSiteArea()
+        {
+            // Arrange
+            var otherStep2 = new Step(TestPlant, "OTHER2", _mode, _responsible);
+            otherStep2.SetProtectedIdForTesting(++_nextStepId);
+            _journey.AddStep(otherStep2);
+            var dut = new Tag(TestPlant, TagType.SiteArea, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            // Act and assert
+            Assert.ThrowsException<Exception>(() => dut.AutoTransfer(_journey, AutoTransferMethod.OnRfccSign));
+        }
+                
+        [TestMethod]
+        public void AutoTransfer_ShouldThrowException_WhenTagIsPoArea()
+        {
+            // Arrange
+            var otherStep2 = new Step(TestPlant, "OTHER2", _mode, _responsible);
+            otherStep2.SetProtectedIdForTesting(++_nextStepId);
+            _journey.AddStep(otherStep2);
+            var dut = new Tag(TestPlant, TagType.PoArea, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            // Act and assert
+            Assert.ThrowsException<Exception>(() => dut.AutoTransfer(_journey, AutoTransferMethod.OnRfccSign));
+        }
+
+        [TestMethod]
+        public void AutoTransfer_ShouldAddTransferredAutomaticallyEvent()
+        {
+            // Arrange
+            var otherStep2 = new Step(TestPlant, "OTHER2", _mode, _responsible);
+            otherStep2.SetProtectedIdForTesting(++_nextStepId);
+            _journey.AddStep(otherStep2);
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            // Act
+            dut.AutoTransfer(_journey, AutoTransferMethod.OnRfccSign);
+
+            // Assert
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(TransferredAutomaticallyEvent));
+        }
 
         #endregion
 
