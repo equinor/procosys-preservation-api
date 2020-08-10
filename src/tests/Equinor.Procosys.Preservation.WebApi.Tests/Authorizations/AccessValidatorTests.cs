@@ -17,6 +17,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
+using Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
@@ -655,6 +656,63 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
             var command = new UnvoidTagCommand(TagIdWithAccessToProject, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+        #endregion
+
+        #region DeleteTagCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new DeleteTagCommand(TagIdWithAccessToProject, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new DeleteTagCommand(TagIdWithoutAccessToProject, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteTagCommand_ShouldReturnFalse_WhenNoAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            var command = new DeleteTagCommand(TagIdWithAccessToProject, null, null);
+
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnDeleteTagCommand_ShouldReturnTrue_WhenExplicitAccessToContent()
+        {
+            // Arrange
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
+            _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
+            var command = new DeleteTagCommand(TagIdWithAccessToProject, null, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
