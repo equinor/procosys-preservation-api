@@ -333,7 +333,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             AddDomainEvent(new TransferredManuallyEvent(Plant, ObjectGuid, fromStep.Title, toStep.Title));
         }
 
-    // todo AutoTransfer unit test
         public void AutoTransfer(Journey journey, AutoTransferMethod autoTransferMethod)
         {
             if (!IsReadyToBeTransferred(journey))

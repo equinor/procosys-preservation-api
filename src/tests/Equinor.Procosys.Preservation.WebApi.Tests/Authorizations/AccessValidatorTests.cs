@@ -12,6 +12,7 @@ using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
 using Equinor.Procosys.Preservation.Command.RequirementCommands.Upload;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
+using Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
@@ -1233,6 +1234,35 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             Assert.IsTrue(result);
         }
         #endregion
+
+        #region AutoTransferCommand
+        [TestMethod]
+        public async Task ValidateAsync_OnAutoTransferCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
+        {
+            // Arrange
+            var command = new AutoTransferCommand(ProjectWithAccess, null, null);
+            
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnAutoTransferCommand_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            // Arrange
+            var command = new AutoTransferCommand(ProjectWithoutAccess, null, null);
+            
+            // act
+            var result = await _dut.ValidateAsync(command);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+        #endregion
+
         
         #endregion
 

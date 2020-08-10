@@ -12,7 +12,6 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer
 {
-    // todo AutoTransfer unit test
     public class AutoTransferCommandHandler : IRequestHandler<AutoTransferCommand, Result<Unit>>
     {
         private readonly IProjectRepository _projectRepository;
@@ -90,6 +89,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer
 
         private async Task AutoTransferTagsAsync(string projectName, IEnumerable<string> tagNos, AutoTransferMethod autoTransferMethod)
         {
+            _logger.LogDebug($"Start auto transfer of tags in project {projectName}");
             var journeys = await _journeyRepository.GetJourneysWithAutoTransferStepsAsync(autoTransferMethod);
 
             var autoTransferSteps = journeys.SelectMany(j => j.Steps).Where(s => s.AutoTransferMethod == autoTransferMethod);
@@ -103,8 +103,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer
                 var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
                 tag.AutoTransfer(journey, autoTransferMethod);
 
-                // todo AutoTransfer logging
+                _logger.LogDebug($"Tag {tag.TagNo} in project {projectName} auto transfer in journey {journey.Title}");
             }
+
+            _logger.LogDebug($"End auto transfer of {tagsToTransfer.Count} tag(s) in project {projectName}");
         }
 
         private AutoTransferMethod GetAutoTransferMethod(string certificateType)

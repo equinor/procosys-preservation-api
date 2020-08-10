@@ -9,23 +9,22 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     {
         readonly PreservationContext _context;
+
         public ProjectRepository(PreservationContext context)
-            : base(context.Projects, 
+            : base(context.Projects,
                 context.Projects
                     .Include(p => p.Tags)
-                        .ThenInclude(t => t.Requirements)
-                        .ThenInclude(r => r.PreservationPeriods)
-                        .ThenInclude(pp => pp.FieldValues)
-                        .ThenInclude(fv => fv.FieldValueAttachment)
+                    .ThenInclude(t => t.Requirements)
+                    .ThenInclude(r => r.PreservationPeriods)
+                    .ThenInclude(pp => pp.FieldValues)
+                    .ThenInclude(fv => fv.FieldValueAttachment)
                     .Include(p => p.Tags)
-                        .ThenInclude(t => t.Actions)
-                        .ThenInclude(a => a.Attachments)
+                    .ThenInclude(t => t.Actions)
+                    .ThenInclude(a => a.Attachments)
                     .Include(p => p.Tags)
-                        .ThenInclude(t => t.Attachments)
-                )
-        {
-            _context = context;
-        }
+                    .ThenInclude(t => t.Attachments)
+            )
+            => _context = context;
 
         public Task<Project> GetProjectOnlyByNameAsync(string projectName)
             => Set.SingleOrDefaultAsync(p => p.Name == projectName);
@@ -59,11 +58,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
             _context.Tags.Remove(tag);
         }
 
-        // todo AutoTransfer unit test
         public Task<List<Tag>> GetStandardTagsInProjectInStepsAsync(string projectName, IEnumerable<string> tagNos, IEnumerable<int> stepIds)
-        {
-            // todo AutoTransfer
-            return null;
-        }
+            => Set.Where(project => project.Name == projectName)
+                .SelectMany(project => project.Tags)
+                .Where(tag => tag.TagType == TagType.Standard && tagNos.Contains(tag.TagNo) && stepIds.Contains(tag.StepId))
+                .ToListAsync();
     }
 }

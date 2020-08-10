@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using Equinor.Procosys.Preservation.Domain;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer
 {
-    public class AutoTransferCommand : IRequest<Result<Unit>>
+    public class AutoTransferCommand : IRequest<Result<Unit>>, IProjectRequest
     {
         public AutoTransferCommand(string projectName, string certificateNo, string certificateType)
         {
