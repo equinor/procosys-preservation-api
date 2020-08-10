@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
@@ -13,25 +14,39 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IProjectRepository _projectRepository;
 
         public CreateSavedFilterCommandHandler(
             IPersonRepository personRepository,
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
-            ICurrentUserProvider currentUserProvider)
+            ICurrentUserProvider currentUserProvider,
+            IProjectRepository projectRepository)
         {
             _personRepository = personRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
             _currentUserProvider = currentUserProvider;
+            _projectRepository = projectRepository;
         }
 
         public async Task<Result<int>> Handle(CreateSavedFilterCommand request, CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             var person = await _personRepository.GetByOidAsync(currentUserOid);
+            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
 
-            var savedFilter = new SavedFilter(_plantProvider.Plant, request.Title, request.Criteria)
+            if (request.DefaultFilter)
+            {
+                var currentDefaultFilter = person.GetDefaultFilter(_plantProvider.Plant, project.Id);
+
+                if (currentDefaultFilter != null)
+                {
+                    currentDefaultFilter.DefaultFilter = false;
+                }
+            }
+
+            var savedFilter = new SavedFilter(_plantProvider.Plant, project.Id, request.Title, request.Criteria)
             {
                 DefaultFilter = request.DefaultFilter
             };

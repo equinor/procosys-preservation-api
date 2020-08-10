@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public class PersonRepository : RepositoryBase<Person>, IPersonRepository
     {
         public PersonRepository(PreservationContext context)
-            : base(context.Persons)
+            : base(context.Persons, context.Persons.Include(p => p.SavedFilters))
         {
         }
 

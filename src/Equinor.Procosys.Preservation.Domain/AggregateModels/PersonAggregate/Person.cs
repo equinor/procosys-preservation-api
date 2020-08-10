@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
@@ -47,6 +48,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
             }
 
             _savedFilters.Add(savedFilter);
+        }
+
+        public SavedFilter GetDefaultFilter(string plant, int projectId)
+        {
+            var savedFil = _savedFilters.SingleOrDefault(s => s.Plant == plant && s.ProjectId == projectId && s.DefaultFilter);
+            return savedFil;
         }
     }
 }
