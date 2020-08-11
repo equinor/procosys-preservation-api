@@ -9,7 +9,6 @@
         Electrical,
         Heating,
         Installation,
-        Measure,
         Nitrogen,
         Power,
         Pressure,
