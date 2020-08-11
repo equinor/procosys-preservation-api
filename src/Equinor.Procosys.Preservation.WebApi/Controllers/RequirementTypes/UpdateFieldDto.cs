@@ -4,6 +4,6 @@
     {
         public int Id { get; set; }
         public string RowVersion { get; set; }
-        public bool Void { get; set; }
+        public bool IsVoided { get; set; }
     }
 }

@@ -1,9 +1,10 @@
-﻿using MediatR;
+﻿using Equinor.Procosys.Preservation.Domain;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag
 {
-    public class DeleteTagCommand : IRequest<Result<Unit>>
+    public class DeleteTagCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {
         public DeleteTagCommand(int tagId, string projectName, string rowVersion)
         {

@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
-        [HttpPut("{id}/Update")]
+        [HttpPut("{id}")]
         public async Task<ActionResult<RequirementTypeDto>> UpdateRequirementType(
             [FromHeader( Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
@@ -195,7 +195,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
-        [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}/Update")]
+        [HttpPut("{id}/RequirementDefinitions/{requirementDefinitionId}")]
         public async Task<ActionResult<RequirementDefinitionDto>> UpdateRequirementDefinition(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
@@ -212,7 +212,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                     f.Label, 
                     f.FieldType, 
                     f.SortKey, 
-                    f.Void,
+                    f.IsVoided,
                     f.RowVersion, 
                     f.Unit, 
                     f.ShowPrevious)).ToList();
