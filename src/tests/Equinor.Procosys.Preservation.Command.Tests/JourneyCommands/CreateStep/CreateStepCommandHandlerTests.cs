@@ -18,6 +18,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         private const int ModeId = 2;
         private const string ResponsibleCode = "B";
         private const int ResponsibleId = 3;
+        private readonly string _title = "S";
+        private readonly AutoTransferMethod _autoTransferMethod = AutoTransferMethod.OnRfccSign;
 
         private Responsible _addedResponsible;
         private Journey _journey;
@@ -64,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleApiServiceMock.Setup(r => r.TryGetResponsibleAsync(TestPlant, ResponsibleCode))
                 .Returns(Task.FromResult(_pcsResponsibleMock.Object));
 
-            _command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode, false, false);
+            _command = new CreateStepCommand(JourneyId, _title, ModeId, ResponsibleCode, _autoTransferMethod);
 
             _dut = new CreateStepCommandHandler(_journeyRepositoryMock.Object,
                 _modeRepositoryMock.Object,
@@ -84,7 +86,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             // Assert
             Assert.AreEqual(1, _journey.Steps.Count);
             var stepAdded = _journey.Steps.First();
-            Assert.AreEqual("S", stepAdded.Title);
+            Assert.AreEqual(_title, stepAdded.Title);
+            Assert.AreEqual(_autoTransferMethod, stepAdded.AutoTransferMethod);
             Assert.AreEqual(ModeId, stepAdded.ModeId);
             Assert.AreEqual(ResponsibleId, stepAdded.ResponsibleId);
         }
@@ -146,38 +149,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Never);
             Assert.AreEqual(ResponsibleId, _journey.Steps.First().ResponsibleId);
             Assert.IsNull(_addedResponsible);
-        }
-
-        [TestMethod]
-        public async Task HandlingCreateStepCommand_ShouldSetTransferOnRfccSign()
-        {
-            // Arrange
-            var command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode, true, false);
-            
-            // Act
-            await _dut.Handle(command, default);
-            
-            // Assert
-            Assert.AreEqual(1, _journey.Steps.Count);
-            var stepAdded = _journey.Steps.First();
-            Assert.IsTrue(stepAdded.TransferOnRfccSign);
-            Assert.IsFalse(stepAdded.TransferOnRfocSign);
-        }
-
-        [TestMethod]
-        public async Task HandlingCreateStepCommand_ShouldSetTransferOnRfocSign()
-        {
-            // Arrange
-            var command = new CreateStepCommand(JourneyId, "S", ModeId, ResponsibleCode, false, true);
-            
-            // Act
-            await _dut.Handle(command, default);
-            
-            // Assert
-            Assert.AreEqual(1, _journey.Steps.Count);
-            var stepAdded = _journey.Steps.First();
-            Assert.IsTrue(stepAdded.TransferOnRfocSign);
-            Assert.IsFalse(stepAdded.TransferOnRfccSign);
         }
     }
 }

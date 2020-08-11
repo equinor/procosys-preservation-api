@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetJourneyById;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -12,6 +13,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
     public class GetJourneyByIdQueryHandlerTests : ReadOnlyTestsBase
     {
         private TestDataSet _testDataSet;
+        private int _step1Id;
+        private int _step2Id;
+        private readonly AutoTransferMethod _autoTransferMethodOnStep1 = AutoTransferMethod.OnRfccSign;
+        private readonly AutoTransferMethod _autoTransferMethodOnStep2 = AutoTransferMethod.OnRfocSign;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -19,7 +24,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
             {
                 _testDataSet = AddTestDataSet(context);
                 var step1 = _testDataSet.Journey1With2Steps.Steps.First();
+                step1.AutoTransferMethod = _autoTransferMethodOnStep1;
                 step1.Void();
+                _step1Id = step1.Id;
+                var step2 = _testDataSet.Journey1With2Steps.Steps.Last();
+                step2.AutoTransferMethod = _autoTransferMethodOnStep2;
+                _step2Id = step2.Id;
                 context.SaveChangesAsync().Wait();
             }
         }
@@ -38,11 +48,15 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
                 var steps = journey.Steps.ToList();
                 Assert.AreEqual(2, steps.Count);
 
-                var step = steps.First();
+                var step = steps.Single(s => s.Id == _step1Id);
                 Assert.IsNotNull(step.Mode);
                 Assert.IsNotNull(step.Responsible);
                 Assert.AreEqual(_testDataSet.Mode1.Id, step.Mode.Id);
                 Assert.AreEqual(_testDataSet.Responsible1.Id, step.Responsible.Id);
+                Assert.AreEqual(_autoTransferMethodOnStep1, step.AutoTransferMethod);
+
+                step = steps.Single(s => s.Id == _step2Id);
+                Assert.AreEqual(_autoTransferMethodOnStep2, step.AutoTransferMethod);
             }
         }
 

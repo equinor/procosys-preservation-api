@@ -3,6 +3,7 @@ using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -30,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
             _responsibleValidatorMock = new Mock<IResponsibleValidator>();
-            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, false, false);
+            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, AutoTransferMethod.None);
 
             _dut = new CreateStepCommandValidator(_journeyValidatorMock.Object, _modeValidatorMock.Object, _responsibleValidatorMock.Object);
         }
@@ -153,41 +154,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenSettingBothTransferOnRfccSignAndTransferOnRfocSign()
+        public void Validate_ShouldFail_WhenSettingSameAutoTransferMethod_AsAExistingStep()
         {
-            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, true, true);
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Both 'Transfer on RFCC signing' and 'Transfer on RFOC signing' can not be set in same step!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenSettingTransferOnRfccSign_AndStepExistsWithTransferOnRfccSign()
-        {
-            _journeyValidatorMock.Setup(r => r.HasAnyStepWithTransferOnRfccSignAsync(_journeyId, default)).Returns(Task.FromResult(true));
+            var autoTransferMethod = AutoTransferMethod.OnRfccSign;
+            _journeyValidatorMock.Setup(r => r.HasAnyStepWithAutoTransferMethodAsync(_journeyId, autoTransferMethod, default)).Returns(Task.FromResult(true));
             
-            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, true, false);
+            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, autoTransferMethod);
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("'Transfer on RFCC signing' can not be set on multiple steps in a journey!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenSettingTransferOnRfocSign_AndStepExistsWithTransferOnRfocSign()
-        {
-            _journeyValidatorMock.Setup(r => r.HasAnyStepWithTransferOnRfocSignAsync(_journeyId, default)).Returns(Task.FromResult(true));
-            
-            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, false, true);
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("'Transfer on RFOC signing' can not be set on multiple steps in a journey!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Same auto transfer method can not be set on multiple steps in a journey!"));
         }
     }
 }

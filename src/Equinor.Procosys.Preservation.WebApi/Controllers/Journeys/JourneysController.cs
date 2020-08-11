@@ -151,8 +151,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
                 dto.Title,
                 dto.ModeId,
                 dto.ResponsibleCode,
-                dto.TransferOnRfccSign,
-                dto.TransferOnRfccSign));
+                dto.AutoTransferMethod));
             return this.FromResult(result);
         }
 
@@ -172,8 +171,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
                 dto.ModeId,
                 dto.ResponsibleCode,
                 dto.Title,
-                dto.TransferOnRfccSign,
-                dto.TransferOnRfocSign,
+                dto.AutoTransferMethod,
                 dto.RowVersion);
             var result = await _mediator.Send(command);
             return this.FromResult(result);

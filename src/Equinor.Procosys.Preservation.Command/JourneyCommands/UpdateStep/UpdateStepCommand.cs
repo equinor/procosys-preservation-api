@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
@@ -10,8 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             int modeId,
             string responsibleCode,
             string title,
-            bool transferOnRfccSign,
-            bool transferOnRfocSign,
+            AutoTransferMethod autoTransferMethod,
             string rowVersion)
         {
             JourneyId = journeyId;
@@ -19,8 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             ModeId = modeId;
             ResponsibleCode = responsibleCode;
             Title = title;
-            TransferOnRfccSign = transferOnRfccSign;
-            TransferOnRfocSign = transferOnRfocSign;
+            AutoTransferMethod = autoTransferMethod;
             RowVersion = rowVersion;
         }
 
@@ -29,8 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
         public int ModeId { get; }
         public string ResponsibleCode { get; }
         public string Title { get; }
-        public bool TransferOnRfccSign { get; }
-        public bool TransferOnRfocSign { get; }
+        public AutoTransferMethod AutoTransferMethod { get; }
         public string RowVersion { get; }
     }
 }

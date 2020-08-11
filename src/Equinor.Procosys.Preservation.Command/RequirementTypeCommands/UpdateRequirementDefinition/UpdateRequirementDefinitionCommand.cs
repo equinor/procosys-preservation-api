@@ -25,8 +25,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             Usage = usage;
             RowVersion = rowVersion;
             DefaultIntervalWeeks = defaultIntervalWeeks;
-            UpdateFields = updatedFields;
-            NewFields = newFields;
+            UpdateFields = updatedFields ?? new List<UpdateFieldsForCommand>();
+            NewFields = newFields ?? new List<FieldsForCommand>();
         }
 
         public int RequirementTypeId { get; }
