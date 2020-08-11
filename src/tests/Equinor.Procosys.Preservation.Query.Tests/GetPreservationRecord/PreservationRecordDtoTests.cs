@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
             Assert.IsTrue(dut.BulkPreserved);
             Assert.AreEqual("Req Type Title", dut.RequirementTypeTitle);
             Assert.AreEqual("Req type code", dut.RequirementTypeCode);
-            Assert.AreEqual(RequirementTypeIcon.Area, dut.RequirementTypeIcon);
+            Assert.AreEqual(RequirementTypeIcon.Area, dut.Icon);
             Assert.AreEqual("Req Def Title", dut.RequirementDefinitionTitle);
             Assert.AreEqual(4, dut.IntervalWeeks);
             Assert.AreEqual("Comment", dut.Comment);
