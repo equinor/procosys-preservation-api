@@ -104,32 +104,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 select j).AnyAsync(token);
         }
 
-        public async Task<bool> HasAnyStepWithTransferOnRfccSignAsync(int journeyId, CancellationToken token)
+        public async Task<bool> HasAnyStepWithAutoTransferMethodAsync(int journeyId, AutoTransferMethod autoTransferMethod, CancellationToken token)
         {
             var journey = await GetJourneyWithStepsAsync(journeyId, token);
 
-            return journey != null && journey.Steps.Any(s => s.TransferOnRfccSign);
+            return journey != null && journey.Steps.Any(s => s.AutoTransferMethod == autoTransferMethod);
         }
 
-        public async Task<bool> HasAnyStepWithTransferOnRfocSignAsync(int journeyId, CancellationToken token)
+        public async Task<bool> HasOtherStepWithAutoTransferMethodAsync(int journeyId, int stepId, AutoTransferMethod autoTransferMethod, CancellationToken token)
         {
             var journey = await GetJourneyWithStepsAsync(journeyId, token);
 
-            return journey != null && journey.Steps.Any(s => s.TransferOnRfocSign);
-        }
-
-        public async Task<bool> HasOtherStepWithTransferOnRfccSignAsync(int journeyId, int stepId, CancellationToken token)
-        {
-            var journey = await GetJourneyWithStepsAsync(journeyId, token);
-
-            return journey != null && journey.Steps.Any(s => s.TransferOnRfccSign && s.Id != stepId);
-        }
-
-        public async Task<bool> HasOtherStepWithTransferOnRfocSignAsync(int journeyId, int stepId, CancellationToken token)
-        {
-            var journey = await GetJourneyWithStepsAsync(journeyId, token);
-
-            return journey != null && journey.Steps.Any(s => s.TransferOnRfocSign && s.Id != stepId);
+            return journey != null && journey.Steps.Any(s => s.AutoTransferMethod == autoTransferMethod && s.Id != stepId);
         }
 
         private async Task<Journey> GetJourneyWithStepsAsync(int journeyId, CancellationToken token)

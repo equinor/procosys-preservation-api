@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Query.ModeAggregate;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Query.ModeAggregate;
 using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetJourneyById
@@ -10,8 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
             bool isVoided,
             ModeDto mode,
             ResponsibleDto responsible,
-            bool transferOnRfccSign,
-            bool transferOnRfocSign,
+            AutoTransferMethod autoTransferMethod,
             string rowVersion)
         {
             Id = id;
@@ -19,8 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
             IsVoided = isVoided;
             Mode = mode;
             Responsible = responsible;
-            TransferOnRfccSign = transferOnRfccSign;
-            TransferOnRfocSign = transferOnRfocSign;
+            AutoTransferMethod = autoTransferMethod;
             RowVersion = rowVersion;
         }
 
@@ -29,8 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
         public bool IsVoided { get; }
         public ModeDto Mode { get; }
         public ResponsibleDto Responsible { get; }
-        public bool TransferOnRfccSign { get; }
-        public bool TransferOnRfocSign { get; }
+        public AutoTransferMethod AutoTransferMethod { get; }
         public string RowVersion { get; }
     }
 }

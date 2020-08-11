@@ -25,6 +25,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         private readonly string _rowVersion = "AAAAAAAAABA=";
         private readonly string _oldTitle = "StepTitleOld";
         private readonly string _newTitle = "StepTitleNew";
+        private readonly AutoTransferMethod _oldAutoTransferMethod = AutoTransferMethod.OnRfccSign;
+        private readonly AutoTransferMethod _newAutoTransferMethod = AutoTransferMethod.OnRfocSign;
 
         private Responsible _responsible;
         private Responsible _responsible2;
@@ -83,7 +85,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _responsibleApiServiceMock.Setup(r => r.TryGetResponsibleAsync(TestPlant, _responsibleCode))
                 .Returns(Task.FromResult(_pcsResponsibleMock.Object));
 
-            _step = new Step(TestPlant, _oldTitle, _modeMock.Object, _responsible);
+            _step = new Step(TestPlant, _oldTitle, _modeMock.Object, _responsible)
+            {
+                AutoTransferMethod = _oldAutoTransferMethod
+            };
             _step.SetProtectedIdForTesting(_stepId);
             _journey.AddStep(_step);
 
@@ -93,8 +98,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(_journeyId))
                 .Returns(Task.FromResult(_journey));
 
-            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _newTitle, false, false, _rowVersion);
-            _commandWithResponsible2 = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode2, _newTitle, false, false, _rowVersion);
+            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _newTitle, _newAutoTransferMethod, _rowVersion);
+            _commandWithResponsible2 = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode2, _newTitle, _newAutoTransferMethod, _rowVersion);
 
             _dut = new UpdateStepCommandHandler(
                 journeyRepositoryMock.Object,
@@ -110,6 +115,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         {
             // Arrange
             Assert.AreEqual(_oldTitle, _step.Title);
+            Assert.AreEqual(_oldAutoTransferMethod, _step.AutoTransferMethod);
 
             // Act
             var result = await _dut.Handle(_command, default);
@@ -118,6 +124,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(_newTitle, _step.Title);
             Assert.AreEqual(_modeId, _step.ModeId);
+            Assert.AreEqual(_newAutoTransferMethod, _step.AutoTransferMethod);
         }
 
         [TestMethod]
@@ -192,36 +199,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _responsibleRepositoryMock.Verify(r => r.Add(It.IsAny<Responsible>()), Times.Never);
             Assert.AreEqual(_responsibleId2, _journey.Steps.First().ResponsibleId);
             Assert.IsNull(_addedResponsible);
-        }
-
-        [TestMethod]
-        public async Task HandlingUpdateStepCommand_ShouldUpdateStepWithTransferOnRfccSign()
-        {
-            // Arrange
-            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _newTitle, true, false, _rowVersion);
-            Assert.IsFalse(_step.TransferOnRfccSign);
-
-            // Act
-            var result = await _dut.Handle(_command, default);
-
-            // Assert
-            Assert.AreEqual(0, result.Errors.Count);
-            Assert.IsTrue(_step.TransferOnRfccSign);
-        }
-
-        [TestMethod]
-        public async Task HandlingUpdateStepCommand_ShouldUpdateStepWithTransferOnRfocSign()
-        {
-            // Arrange
-            _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _newTitle, false, true, _rowVersion);
-            Assert.IsFalse(_step.TransferOnRfocSign);
-
-            // Act
-            var result = await _dut.Handle(_command, default);
-
-            // Assert
-            Assert.AreEqual(0, result.Errors.Count);
-            Assert.IsTrue(_step.TransferOnRfocSign);
         }
     }
 }

@@ -55,8 +55,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 
             var step = new Step(_plantProvider.Plant, request.Title, mode, responsible)
             {
-                TransferOnRfccSign = request.TransferOnRfccSign,
-                TransferOnRfocSign = request.TransferOnRfocSign
+                AutoTransferMethod = request.AutoTransferMethod
             };
 
             journey.AddStep(step);

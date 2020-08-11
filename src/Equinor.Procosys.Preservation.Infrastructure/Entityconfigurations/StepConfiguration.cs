@@ -1,4 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+﻿using System;
+using System.Linq;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
@@ -32,6 +34,19 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasIndex(x => x.Plant)
                 .HasName("IX_Steps_Plant_ASC")
                 .IncludeProperties(x => new {x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, x.SortKey, x.Title});
+
+            builder.Property(f => f.AutoTransferMethod)
+                .HasConversion<string>()
+                .HasDefaultValue(AutoTransferMethod.None)
+                .IsRequired();
+
+            builder.HasCheckConstraint("constraint_step_check_valid_auto_transfer", $"{nameof(Step.AutoTransferMethod)} in ({GetValidAutoTransferMethods()})");
+        }
+
+        private string GetValidAutoTransferMethods()
+        {
+            var names = Enum.GetNames(typeof(AutoTransferMethod)).Select(t => $"'{t}'");
+            return string.Join(',', names);
         }
     }
 }

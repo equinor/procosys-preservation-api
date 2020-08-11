@@ -58,8 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             step.SetMode(mode);
             step.SetResponsible(responsible);
             step.Title = request.Title;
-            step.TransferOnRfccSign = request.TransferOnRfccSign;
-            step.TransferOnRfocSign = request.TransferOnRfocSign;
+            step.AutoTransferMethod = request.AutoTransferMethod;
             step.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
