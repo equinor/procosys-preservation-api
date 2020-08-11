@@ -11,34 +11,28 @@ namespace Equinor.Procosys.Preservation.Command.Validators.SavedFilterValidators
     public class SavedFilterValidator : ISavedFilterValidator
     {
         private readonly IReadOnlyContext _context;
-        private readonly IPersonRepository _personRepository;
         private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IProjectRepository _projectRepository;
 
         public SavedFilterValidator(
             IReadOnlyContext context,
-            IPersonRepository personRepository,
-            ICurrentUserProvider currentUserProvider,
-            IProjectRepository projectRepository)
+            ICurrentUserProvider currentUserProvider)
         {
             _context = context;
-            _personRepository = personRepository;
             _currentUserProvider = currentUserProvider;
-            _projectRepository = projectRepository;
         }
 
-        public async Task<bool> ExistsWithSameTitleForPersonInProjectAsync(string title, string projectName, CancellationToken token)
+        public async Task<bool> ExistsWithSameTitleForPersonInProjectAsync(string title, string projectName,
+            CancellationToken token)
         {
-            var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
+            var currentUserOid = _currentUserProvider.GetCurrentUserOid();
 
-            var person = await (from p in _context.QuerySet<Person>()
-                    .Include(p => p.SavedFilters)
-                where p.Id == currentUser.Id
-                select p).SingleOrDefaultAsync(token);
-
-            var project = _projectRepository.GetProjectOnlyByNameAsync(projectName);
-
-            return person.SavedFilters.Any(p => p.Title == title && p.ProjectId == project.Id);
+            return await (from s in _context.QuerySet<SavedFilter>()
+                join p in _context.QuerySet<Person>() on EF.Property<int>(s, "PersonId") equals p.Id
+                join pr in _context.QuerySet<Project>() on s.ProjectId equals pr.Id
+                where pr.Name == projectName
+                      && p.Oid == currentUserOid
+                      && s.Title == title
+                select s).AnyAsync(token);
         }
     }
 }

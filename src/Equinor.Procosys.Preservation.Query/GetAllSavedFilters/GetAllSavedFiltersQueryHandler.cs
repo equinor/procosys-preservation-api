@@ -15,7 +15,6 @@ namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
     {
         private readonly IReadOnlyContext _context;
         private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IProjectRepository _projectRepository;
 
         public GetAllSavedFiltersQueryHandler(
             IReadOnlyContext context,
@@ -24,7 +23,6 @@ namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
         {
             _context = context;
             _currentUserProvider = currentUserProvider;
-            _projectRepository = projectRepository;
         }
 
         public async Task<Result<List<SavedFilterDto>>> Handle(GetAllSavedFiltersQuery request,
@@ -32,25 +30,22 @@ namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
 
-            var person = await
-                (from p in _context.QuerySet<Person>()
-                        .Include(p => p.SavedFilters)
-                    where p.Oid == currentUserOid
-                    select p).SingleOrDefaultAsync(cancellationToken);
+            var savedFilters = await (from s in _context.QuerySet<SavedFilter>()
+                join p in _context.QuerySet<Person>() on EF.Property<int>(s, "PersonId") equals p.Id
+                join pr in _context.QuerySet<Project>() on s.ProjectId equals pr.Id
+                where pr.Name == request.ProjectName
+                      && p.Oid == currentUserOid
+                select p.SavedFilters).SingleOrDefaultAsync(cancellationToken);
 
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-
-            var savedFilters = person
-                .SavedFilters
-                .Where(sf => sf.ProjectId == project.Id)
-                .Select(savedFilter => new SavedFilterDto(
+            var savedFilterDtos = savedFilters
+                    .Select(savedFilter => new SavedFilterDto(
                     savedFilter.Title,
                     savedFilter.Criteria,
                     savedFilter.DefaultFilter,
                     savedFilter.CreatedAtUtc,
                     savedFilter.RowVersion.ConvertToString())).ToList();
 
-            return new SuccessResult<List<SavedFilterDto>>(savedFilters);
+            return new SuccessResult<List<SavedFilterDto>>(savedFilterDtos);
         }
     }
 }
