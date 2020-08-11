@@ -1,4 +1,5 @@
 ﻿using System;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
@@ -11,10 +12,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
         public SavedFilter() : base(null)
         {
         }
-        public SavedFilter(string plant, int projectId, string title, string criteria)
+        public SavedFilter(string plant, Project project, string title, string criteria)
             : base(plant)
         {
-            ProjectId = projectId;
+            if (project.Plant != plant)
+            {
+                throw new ArgumentException($"Can't relate item in {project.Plant} to item in {plant}");
+            }
+
+            ProjectId = project.Id;
             Title = title;
             Criteria = criteria;
         }

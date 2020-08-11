@@ -33,12 +33,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
          
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("/SavedFilters")]
-        public async Task<ActionResult<List<SavedFilterDto>>> GetAllSavedFilters(
+        public async Task<ActionResult<List<SavedFilterDto>>> GetSavedFiltersInProject(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            string plant)
+            string plant,
+            [FromQuery] string projectName)
         {
-            var result = await _mediator.Send(new GetAllSavedFiltersQuery());
+            var result = await _mediator.Send(new GetAllSavedFiltersQuery(projectName));
             return this.FromResult(result);
         }
     }

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
@@ -14,13 +15,16 @@ namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
     {
         private readonly IReadOnlyContext _context;
         private readonly ICurrentUserProvider _currentUserProvider;
+        private readonly IProjectRepository _projectRepository;
 
         public GetAllSavedFiltersQueryHandler(
             IReadOnlyContext context,
-            ICurrentUserProvider currentUserProvider)
+            ICurrentUserProvider currentUserProvider,
+            IProjectRepository projectRepository)
         {
             _context = context;
             _currentUserProvider = currentUserProvider;
+            _projectRepository = projectRepository;
         }
 
         public async Task<Result<List<SavedFilterDto>>> Handle(GetAllSavedFiltersQuery request,
@@ -34,8 +38,11 @@ namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
                     where p.Oid == currentUserOid
                     select p).SingleOrDefaultAsync(cancellationToken);
 
+            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
+
             var savedFilters = person
                 .SavedFilters
+                .Where(sf => sf.ProjectId == project.Id)
                 .Select(savedFilter => new SavedFilterDto(
                     savedFilter.Title,
                     savedFilter.Criteria,

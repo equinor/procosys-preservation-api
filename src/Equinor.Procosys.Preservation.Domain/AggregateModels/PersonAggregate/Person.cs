@@ -50,10 +50,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
             _savedFilters.Add(savedFilter);
         }
 
-        public SavedFilter GetDefaultFilter(string plant, int projectId)
-        {
-            var savedFil = _savedFilters.SingleOrDefault(s => s.Plant == plant && s.ProjectId == projectId && s.DefaultFilter);
-            return savedFil;
-        }
+        public SavedFilter GetDefaultFilter(int projectId) =>
+            _savedFilters.SingleOrDefault(s => s.ProjectId == projectId && s.DefaultFilter);
     }
 }

@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Test.Common;
 using Moq;
 
@@ -16,10 +17,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     {
         private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
+        private Mock<IProjectRepository> _projectRepositoryMock;
         private Guid _personOid;
         private SavedFilterValidator _dut;
+        private Project _project;
 
         private readonly string _title = "title";
+        private readonly string _projectName = "projectName";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -29,9 +33,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 const string Criteria = "criteria";
                 _personOid = new Guid();
 
+                _project = new Project(TestPlant, _projectName, "");
+
                 var person = AddPerson(context, _personOid, "Current", "User");
-                var savedFilter = new SavedFilter(TestPlant, 2, _title, Criteria);
-                
+                var savedFilter = new SavedFilter(TestPlant, new Project(TestPlant, "", ""), _title, Criteria);//lykke
+
                 person.AddSavedFilter(savedFilter);
                 context.SaveChangesAsync().Wait();
 
@@ -44,6 +50,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _currentUserProviderMock
                     .Setup(x => x.GetCurrentUserOid())
                     .Returns(_personOid);
+
+                _projectRepositoryMock = new Mock<IProjectRepository>();
+                _projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(_projectName))
+                    .Returns(Task.FromResult(_project));
             }
         }
 
@@ -53,8 +63,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                _dut = new SavedFilterValidator(context, _personRepositoryMock.Object, _currentUserProviderMock.Object);
-                var result = await _dut.ExistsWithSameTitleForPersonAsync("xxx", default);
+                _dut = new SavedFilterValidator(context, _personRepositoryMock.Object, _currentUserProviderMock.Object, _projectRepositoryMock.Object);
+                var result = await _dut.ExistsWithSameTitleForPersonInProjectAsync("xxx", _projectName, default);
 
                 Assert.IsFalse(result);
             }
@@ -66,8 +76,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                _dut = new SavedFilterValidator(context, _personRepositoryMock.Object, _currentUserProviderMock.Object);
-                var result = await _dut.ExistsWithSameTitleForPersonAsync(_title, default);
+                _dut = new SavedFilterValidator(context, _personRepositoryMock.Object, _currentUserProviderMock.Object, _projectRepositoryMock.Object);
+                var result = await _dut.ExistsWithSameTitleForPersonInProjectAsync(_title, _projectName, default);
 
                 Assert.IsTrue(result);
             }

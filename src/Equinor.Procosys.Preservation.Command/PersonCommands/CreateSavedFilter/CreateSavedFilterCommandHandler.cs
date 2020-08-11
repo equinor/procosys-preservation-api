@@ -33,12 +33,12 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
         public async Task<Result<int>> Handle(CreateSavedFilterCommand request, CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var person = await _personRepository.GetByOidAsync(currentUserOid);
+            var person = await _personRepository.GetWithSavedFilterByOidAsync(currentUserOid);
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
 
             if (request.DefaultFilter)
             {
-                var currentDefaultFilter = person.GetDefaultFilter(_plantProvider.Plant, project.Id);
+                var currentDefaultFilter = person.GetDefaultFilter(project.Id);
 
                 if (currentDefaultFilter != null)
                 {
@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
                 }
             }
 
-            var savedFilter = new SavedFilter(_plantProvider.Plant, project.Id, request.Title, request.Criteria)
+            var savedFilter = new SavedFilter(_plantProvider.Plant, project, request.Title, request.Criteria)
             {
                 DefaultFilter = request.DefaultFilter
             };

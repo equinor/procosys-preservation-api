@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetAllSavedFilters;
 using Equinor.Procosys.Preservation.Test.Common;
@@ -18,22 +19,27 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
     {
         private GetAllSavedFiltersQuery _query;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
+        private Mock<IProjectRepository> _projectRepositoryMock;
 
         private const string _title = "title";
         private const string _criteria = "criteria in JSON";
+        private const string _projectName = "projectName";
         private bool _defaultFilter = true;
 
         private SavedFilter _savedFilter;
         private Person _person;
+        private Project _project;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                _query = new GetAllSavedFiltersQuery();
+                _query = new GetAllSavedFiltersQuery(_projectName);
 
-                _savedFilter = new SavedFilter(TestPlant, 2, _title, _criteria)
+                _project = new Project(TestPlant, _projectName, "");
+
+                _savedFilter = new SavedFilter(TestPlant, _project, _title, _criteria)
                     { DefaultFilter =  _defaultFilter };
                 _person = AddPerson(context, Guid.NewGuid(), "FistName", "LastName");
                 _person.AddSavedFilter(_savedFilter);
@@ -42,6 +48,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
                 _currentUserProviderMock
                     .Setup(x => x.GetCurrentUserOid())
                     .Returns(_person.Oid);
+
+                _projectRepositoryMock = new Mock<IProjectRepository>();
+                _projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(_projectName))
+                    .Returns(Task.FromResult(_project));
 
                 context.SaveChangesAsync().Wait();
             }
@@ -53,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProviderMock.Object);
+                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProviderMock.Object, _projectRepositoryMock.Object);
                 var result = await dut.Handle(_query, default);
 
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
@@ -66,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProviderMock.Object);
+                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProviderMock.Object, _projectRepositoryMock.Object);
 
                 var result = await dut.Handle(_query, default);
                 var savedFilter = result.Data.Single();
@@ -84,9 +94,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllSavedFilters
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProvider);
+                var dut = new GetAllSavedFiltersQueryHandler(context, _currentUserProvider, _projectRepositoryMock.Object);
 
-                var result = await dut.Handle(new GetAllSavedFiltersQuery(), default);
+                var result = await dut.Handle(new GetAllSavedFiltersQuery(_projectName), default);
                 Assert.AreEqual(0, result.Data.Count);
             }
         }
