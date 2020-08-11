@@ -30,6 +30,7 @@ using Equinor.Procosys.Preservation.Query.GetActionAttachment;
 using Equinor.Procosys.Preservation.Query.GetActionAttachments;
 using Equinor.Procosys.Preservation.Query.GetActionDetails;
 using Equinor.Procosys.Preservation.Query.GetActions;
+using Equinor.Procosys.Preservation.Query.GetProjectByName;
 using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
@@ -1771,6 +1772,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnSearchTagsByTagNoQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new SearchTagsByTagNoQuery(ProjectWithoutAccess, null);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetProjectByNameQuery_ShouldReturnTrue_WhenAccessToProject()
+        {
+            var query = new GetProjectByNameQuery(ProjectWithAccess);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetProjectByNameQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            var query = new GetProjectByNameQuery(ProjectWithoutAccess);
             // act
             var result = await _dut.ValidateAsync(query);
 
