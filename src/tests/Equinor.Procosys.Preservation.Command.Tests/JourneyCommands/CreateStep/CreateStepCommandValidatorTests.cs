@@ -143,7 +143,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldBeOk_WhenSupplierStepIsAddedToTop()
+        public void Validate_ShouldBeValid_WhenSupplierStepIsAddedToTop()
         {
             _journeyValidatorMock.Setup(r => r.HasAnyStepsAsync(_journeyId, default)).Returns(Task.FromResult(false));
             _modeValidatorMock.Setup(r => r.IsForSupplierAsync(_modeId, default)).Returns(Task.FromResult(true));
@@ -165,6 +165,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateStep
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Same auto transfer method can not be set on multiple steps in a journey!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldBeValid_WhenSettingNoneAutoTransferMethod_AndAExistingStepHasNone()
+        {
+            var autoTransferMethod = AutoTransferMethod.None;
+            _journeyValidatorMock.Setup(r => r.HasAnyStepWithAutoTransferMethodAsync(_journeyId, autoTransferMethod, default)).Returns(Task.FromResult(true));
+            
+            _command = new CreateStepCommand(_journeyId, _stepTitle, _modeId, _responsibleCode, autoTransferMethod);
+            var result = _dut.Validate(_command);
+
+            Assert.IsTrue(result.IsValid);
         }
     }
 }
