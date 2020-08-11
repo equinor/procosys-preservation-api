@@ -111,6 +111,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoTransfer
                 .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> {_testTagNo},
                     new List<int> {_step1OnJourneyId}))
                 .Returns(Task.FromResult(new List<Tag> {_tag}));
+            _projectRepoMock
+                .Setup(r => r.GetStandardTagsInProjectInStepsAsync(_testProjectName, new List<string> {_testTagNo},
+                    new List<int> {_step2OnJourneyId}))
+                .Returns(Task.FromResult(new List<Tag> {_tag}));
             
             _loggerMock = new Mock<ILogger<AutoTransferCommandHandler>>();
             
@@ -232,9 +236,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoTransfer
 
         [TestMethod]
         public async Task HandlingAutoTransferCommand_ShouldThrowException_WhenTransferFromLastStep()
-            => await Assert.ThrowsExceptionAsync<ArgumentNullException>(() =>
+        {
+            await _dut.Handle(_commandForRfcc, default);
+
+            await Assert.ThrowsExceptionAsync<Exception>(() =>
                 _dut.Handle(_commandForRfoc, default)
             );
+        }
 
         [TestMethod]
         public async Task HandlingAutoTransferCommand_ShouldSave()
