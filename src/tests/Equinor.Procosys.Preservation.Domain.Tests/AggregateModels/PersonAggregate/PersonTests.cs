@@ -1,5 +1,6 @@
 ﻿using System;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.PersonAggregate
@@ -7,16 +8,37 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.PersonAggre
     [TestClass]
     public class PersonTests
     {
+        private const string TestPlant = "PCS$PlantA";
+        private Guid Oid = Guid.NewGuid();
+
         [TestMethod]
         public void Constructor_ShouldSetProperties()
         {
-            var oid = Guid.NewGuid();
+            var dut = new Person(Oid, "Espen", "Askeladd");
 
-            var dut = new Person(oid, "Espen", "Askeladd");
-
-            Assert.AreEqual(oid, dut.Oid);
+            Assert.AreEqual(Oid, dut.Oid);
             Assert.AreEqual("Espen", dut.FirstName);
             Assert.AreEqual("Askeladd", dut.LastName);
+        }
+
+        [TestMethod]
+        public void GetDefaultFilter_ShouldGetDefaultFilterWhenExists()
+        {
+            var dut = new Person(Oid, "firstName", "lastName");
+
+            var project = new Project(TestPlant, "Project", "");
+            var savedFilter = new SavedFilter(TestPlant, project, "title", "criteria")
+            {
+                DefaultFilter = true
+            };
+
+            dut.AddSavedFilter(savedFilter);
+
+            // Act
+            var result = dut.GetDefaultFilter(project.Id);
+
+            // Arrange
+            Assert.AreEqual(savedFilter, result);
         }
     }
 }
