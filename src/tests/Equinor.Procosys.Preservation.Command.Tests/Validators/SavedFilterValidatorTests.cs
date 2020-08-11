@@ -15,9 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
     [TestClass]
     public class SavedFilterValidatorTests : ReadOnlyTestsBase
     {
-        private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
-        private Mock<IProjectRepository> _projectRepositoryMock;
         private Guid _personOid;
         private SavedFilterValidator _dut;
         private Project _project;
@@ -33,27 +31,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 const string Criteria = "criteria";
                 _personOid = new Guid();
 
-                _project = new Project(TestPlant, _projectName, "");
+                _project = AddProject(context, _projectName, "");
 
                 var person = AddPerson(context, _personOid, "Current", "User");
-                var savedFilter = new SavedFilter(TestPlant, new Project(TestPlant, "", ""), _title, Criteria);//lykke
+                var savedFilter = new SavedFilter(TestPlant, _project, _title, Criteria);
 
                 person.AddSavedFilter(savedFilter);
                 context.SaveChangesAsync().Wait();
-
-                _personRepositoryMock = new Mock<IPersonRepository>();
-                _personRepositoryMock
-                    .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == _personOid)))
-                    .Returns(Task.FromResult(person));
 
                 _currentUserProviderMock = new Mock<ICurrentUserProvider>();
                 _currentUserProviderMock
                     .Setup(x => x.GetCurrentUserOid())
                     .Returns(_personOid);
-
-                _projectRepositoryMock = new Mock<IProjectRepository>();
-                _projectRepositoryMock.Setup(p => p.GetProjectOnlyByNameAsync(_projectName))
-                    .Returns(Task.FromResult(_project));
             }
         }
 
@@ -63,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                _dut = new SavedFilterValidator(context, _personRepositoryMock.Object, _currentUserProviderMock.Object, _projectRepositoryMock.Object);
+                _dut = new SavedFilterValidator(context, _currentUserProviderMock.Object);
                 var result = await _dut.ExistsWithSameTitleForPersonInProjectAsync("xxx", _projectName, default);
 
                 Assert.IsFalse(result);
@@ -76,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
-                _dut = new SavedFilterValidator(context, _personRepositoryMock.Object, _currentUserProviderMock.Object, _projectRepositoryMock.Object);
+                _dut = new SavedFilterValidator(context, _currentUserProviderMock.Object);
                 var result = await _dut.ExistsWithSameTitleForPersonInProjectAsync(_title, _projectName, default);
 
                 Assert.IsTrue(result);
