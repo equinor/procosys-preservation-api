@@ -7,6 +7,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
     {
         public CreateSavedFilterDtoValidator()
         {
+            RuleFor(x => x.ProjectName)
+                .NotNull()
+                .NotEmpty();
             RuleFor(x => x.Title)
                 .NotNull()
                 .MaximumLength(SavedFilter.TitleLengthMax);
