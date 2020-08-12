@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetContentRestrictions_ReturnsThreePermissions_OnValidaPlant()
+        public async Task GetContentRestrictions_ReturnsThreePermissions_OnValidPlant()
         {
             // Arrange
             _mainApiClient

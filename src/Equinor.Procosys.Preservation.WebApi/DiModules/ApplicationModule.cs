@@ -48,7 +48,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Equinor.Procosys.Preservation.WebApi.Synchronization;
 using Equinor.Procosys.Preservation.WebApi.Authentication;
 using Equinor.Procosys.Preservation.WebApi.Telemetry;
-using Microsoft.AspNetCore.Hosting;
 
 namespace Equinor.Procosys.Preservation.WebApi.DIModules
 {

@@ -72,6 +72,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
 
         private class DummyClass
         {
+            // ReSharper disable once UnusedAutoPropertyAccessor.Local
             public int Id { get; set; }
         }
     }
