@@ -1,5 +1,4 @@
-﻿
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
@@ -45,7 +44,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
+        [Authorize(Roles = Permissions.PRESERVATION_DELETE)]
         [HttpDelete("/SavedFilters/{id}")]
         public async Task<ActionResult> DeleteSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]

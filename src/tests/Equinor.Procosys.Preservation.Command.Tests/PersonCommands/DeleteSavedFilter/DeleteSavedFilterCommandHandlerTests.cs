@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.DeleteSaved
     public class DeleteSavedFilterCommandHandlerTests : CommandHandlerTestsBase
     {
         private int _savedFilterId = 1;
-        private const string _rowVersion = "AAAAAAAAABA=";
+        
         private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
         private DeleteSavedFilterCommand _command;
@@ -22,6 +22,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.DeleteSaved
         [TestInitialize]
         public void Setup()
         {
+            const string RowVersion = "AAAAAAAAABA=";
+
             // Arrange
             _person = new Person(CurrentUserOid, "firstName", "lastName");
 
@@ -37,9 +39,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.DeleteSaved
             _savedFilterMock.SetupGet(s => s.Id).Returns(_savedFilterId);
 
             _person.AddSavedFilter(_savedFilterMock.Object);
-            _command = new DeleteSavedFilterCommand(_savedFilterId, _rowVersion);
+            _command = new DeleteSavedFilterCommand(_savedFilterId, RowVersion);
 
-            _dut = new DeleteSavedFilterCommandHandler(_personRepositoryMock.Object, UnitOfWorkMock.Object, _currentUserProviderMock.Object);
+            _dut = new DeleteSavedFilterCommandHandler(_personRepositoryMock.Object, UnitOfWorkMock.Object,
+                _currentUserProviderMock.Object);
         }
 
         [TestMethod]
