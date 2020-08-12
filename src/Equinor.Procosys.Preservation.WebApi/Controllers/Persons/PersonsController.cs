@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
+using Equinor.Procosys.Preservation.Command.PersonCommands.DeleteSavedFilter;
 using Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
@@ -40,6 +42,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
             [FromQuery] string projectName)
         {
             var result = await _mediator.Send(new GetSavedFiltersInProjectQuery(projectName));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
+        [HttpDelete("/SavedFilters/{id}")]
+        public async Task<ActionResult> DeleteSavedFilter(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromRoute] int id,
+            [FromBody] DeleteSavedFilterDto dto)
+        {
+            var result = await _mediator.Send(new DeleteSavedFilterCommand(id, dto.RowVersion));
             return this.FromResult(result);
         }
     }

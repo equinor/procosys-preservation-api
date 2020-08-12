@@ -7,5 +7,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
     {
         Task<Person> GetByOidAsync(Guid oid);
         Task<Person> GetWithSavedFilterByOidAsync(Guid oid);
+        void RemoveSavedFilter(SavedFilter savedFilter);
     }
 }
