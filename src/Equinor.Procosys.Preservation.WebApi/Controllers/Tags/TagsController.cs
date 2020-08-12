@@ -15,6 +15,7 @@ using Equinor.Procosys.Preservation.Command.RequirementCommands.Upload;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
 using Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags;
+using Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
@@ -157,7 +158,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> UpdateAction(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int actionId,
@@ -181,7 +181,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> CloseAction(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromRoute] int actionId,
@@ -287,7 +286,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> UpdateTag(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromBody] UpdateTagDto dto)
@@ -306,7 +304,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> UpdateTagStepAndRequirements(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromBody] UpdateTagStepAndRequirementsDto dto)
@@ -445,7 +442,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> StartPreservation(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -458,7 +454,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> StartPreservation(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] List<int> tagIds)
         {
@@ -471,7 +466,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> Preserve(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id)
         {
@@ -484,7 +478,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> BulkPreserve(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] List<int> tagIds)
         {
@@ -497,7 +490,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> Transfer(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
@@ -507,11 +499,22 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [HttpPut("AutoTransfer")]
+        public async Task<IActionResult> AutoTransfer(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromBody] AutoTransferDto dto)
+        {
+            var result = await _mediator.Send(new AutoTransferCommand(dto.ProjectName, dto.CertificateNo, dto.CertificateType));
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/CompletePreservation")]
         public async Task<IActionResult> CompletePreservation(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromBody] CompletePreservationDto dto)
@@ -527,7 +530,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> CompletePreservation(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
@@ -735,7 +737,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> VoidTag(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromBody] VoidTagDto dto)
@@ -750,7 +751,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         public async Task<IActionResult> UnvoidTag(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
-            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
             string plant,
             [FromRoute] int id,
             [FromBody] UnvoidTagDto dto)

@@ -18,7 +18,6 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreatePerson
             _unitOfWork = unitOfWork;
         }
 
-        // todo write unit test after review ok
         public async Task<Result<Unit>> Handle(CreatePersonCommand request, CancellationToken cancellationToken)
         {
             var person = await _personRepository.GetByOidAsync(request.Oid);

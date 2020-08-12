@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
         }
 
         [TestMethod]
-        public void Validate_ShouldBeOk_WhenAnotherModeForSupplierAlreadyExists_AndNotCreatingModeForSupplier()
+        public void Validate_ShouldBeValid_WhenAnotherModeForSupplierAlreadyExists_AndNotCreatingModeForSupplier()
         {
             _modeValidatorMock.Setup(r => r.ExistsModeForSupplierAsync(default)).Returns(Task.FromResult(false));
 

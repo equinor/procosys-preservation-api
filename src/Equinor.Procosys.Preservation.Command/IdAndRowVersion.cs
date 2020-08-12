@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
+﻿namespace Equinor.Procosys.Preservation.Command
 {
     public class IdAndRowVersion
     {

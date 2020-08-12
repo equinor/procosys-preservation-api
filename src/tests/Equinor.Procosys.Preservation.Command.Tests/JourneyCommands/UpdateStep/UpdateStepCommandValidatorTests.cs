@@ -181,17 +181,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenSettingSameAutoTransferMethod_AsOtherExistingStep()
+        public void Validate_ShouldBeValid_WhenSettingNoneAutoTransferMethod_AndAExistingStepHasNone()
         {
-            var autoTransferMethod = AutoTransferMethod.OnRfccSign;
+            var autoTransferMethod = AutoTransferMethod.None;
             _journeyValidatorMock.Setup(r => r.HasOtherStepWithAutoTransferMethodAsync(_journeyId, _stepId, autoTransferMethod, default)).Returns(Task.FromResult(true));
             
             _command = new UpdateStepCommand(_journeyId, _stepId, _modeId, _responsibleCode, _title, autoTransferMethod, _rowVersion);
             var result = _dut.Validate(_command);
 
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Same auto transfer method can not be set on multiple steps in a journey!"));
+            Assert.IsTrue(result.IsValid);
         }
     }
 }

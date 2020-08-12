@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 => rowVersionValidator.IsValid(rowVersion);
             
             async Task<bool> NotHaveOtherStepsWithSameAutoTransferMethodInJourneyAsync(int journeyId, int stepId, AutoTransferMethod autoTransferMethod, CancellationToken token)
-                => !await journeyValidator.HasOtherStepWithAutoTransferMethodAsync(journeyId, stepId, autoTransferMethod, token);
+                => autoTransferMethod == AutoTransferMethod.None || !await journeyValidator.HasOtherStepWithAutoTransferMethodAsync(journeyId, stepId, autoTransferMethod, token);
         }
     }
 }

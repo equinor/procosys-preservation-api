@@ -61,6 +61,7 @@ namespace Equinor.Procosys.Preservation.Query.GetAllJourneys
                                     s.IsVoided,
                                     modeDto, 
                                     responsibleDto,
+                                    s.AutoTransferMethod,
                                     s.RowVersion.ConvertToString());
                             }),
                         j.RowVersion.ConvertToString()));

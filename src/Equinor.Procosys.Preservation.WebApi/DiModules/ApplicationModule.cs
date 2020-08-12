@@ -30,6 +30,7 @@ using Equinor.Procosys.Preservation.Infrastructure.Caching;
 using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Equinor.Procosys.Preservation.MainApi;
 using Equinor.Procosys.Preservation.MainApi.Area;
+using Equinor.Procosys.Preservation.MainApi.Certificate;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Permission;
@@ -123,6 +124,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IResponsibleApiService, MainApiResponsibleService>();
             services.AddScoped<ITagFunctionApiService, MainApiTagFunctionService>();
             services.AddScoped<IPermissionApiService, MainApiPermissionService>();
+            services.AddScoped<ICertificateApiService, MainApiCertificateService>();
             services.AddScoped<IBlobStorage, AzureBlobService>();
 
             services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
