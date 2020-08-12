@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
+namespace Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject
 {
     public class SavedFilterDto
     {

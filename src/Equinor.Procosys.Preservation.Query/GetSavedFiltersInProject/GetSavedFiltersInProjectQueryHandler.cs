@@ -9,23 +9,22 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
+namespace Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject
 {
-    public class GetAllSavedFiltersQueryHandler : IRequestHandler<GetAllSavedFiltersQuery, Result<List<SavedFilterDto>>>
+    public class GetSavedFiltersInProjectQueryHandler : IRequestHandler<GetSavedFiltersInProjectQuery, Result<List<SavedFilterDto>>>
     {
         private readonly IReadOnlyContext _context;
         private readonly ICurrentUserProvider _currentUserProvider;
 
-        public GetAllSavedFiltersQueryHandler(
+        public GetSavedFiltersInProjectQueryHandler(
             IReadOnlyContext context,
-            ICurrentUserProvider currentUserProvider,
-            IProjectRepository projectRepository)
+            ICurrentUserProvider currentUserProvider)
         {
             _context = context;
             _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<Result<List<SavedFilterDto>>> Handle(GetAllSavedFiltersQuery request,
+        public async Task<Result<List<SavedFilterDto>>> Handle(GetSavedFiltersInProjectQuery request,
             CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
@@ -35,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.GetAllSavedFilters
                 join pr in _context.QuerySet<Project>() on s.ProjectId equals pr.Id
                 where pr.Name == request.ProjectName
                       && p.Oid == currentUserOid
-                select p.SavedFilters).SingleOrDefaultAsync(cancellationToken);
+                select s).ToListAsync(cancellationToken);
 
             var savedFilterDtos = savedFilters
                     .Select(savedFilter => new SavedFilterDto(

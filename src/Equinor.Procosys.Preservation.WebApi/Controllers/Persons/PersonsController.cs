@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
-using Equinor.Procosys.Preservation.Query.GetAllSavedFilters;
+using Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
             string plant,
             [FromQuery] string projectName)
         {
-            var result = await _mediator.Send(new GetAllSavedFiltersQuery(projectName));
+            var result = await _mediator.Send(new GetSavedFiltersInProjectQuery(projectName));
             return this.FromResult(result);
         }
     }
