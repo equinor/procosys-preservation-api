@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.DeleteSaved
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeNotExists()
+        public void Validate_ShouldFail_WhenSavedFilterNotExists()
         {
             _savedFilterValidatorMock.Setup(r => r.ExistsAsync(_savedFilterId, default)).Returns(Task.FromResult(false));
 
