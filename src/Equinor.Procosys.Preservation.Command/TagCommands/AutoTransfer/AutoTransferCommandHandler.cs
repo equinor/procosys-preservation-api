@@ -50,13 +50,13 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             if (project == null)
             {
-                _logger.LogInformation($"Early exit in AutoTransfer handling. Project {request.ProjectName} don't exists in Preservation module");
+                _logger.LogInformation($"Early exit in AutoTransfer handling. Project {request.ProjectName} does not exists in Preservation module");
                 return new SuccessResult<Unit>(Unit.Value);
             }
             
             if (project.IsClosed)
             {
-                _logger.LogInformation($"Early exit in AutoTransfer handling. Project {request.ProjectName} is closed inPreservation module");
+                _logger.LogInformation($"Early exit in AutoTransfer handling. Project {request.ProjectName} is closed in Preservation module");
                 return new SuccessResult<Unit>(Unit.Value);
             }
 

@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
         }
 
         [TestMethod]
-        public void Handle_ShouldAddTransferredManuallyHistoryRecord()
+        public void Handle__ShouldAddTransferredAutomaticallyHistoryRecord()
         {
             // Arrange
             Assert.IsNull(_historyAdded);
