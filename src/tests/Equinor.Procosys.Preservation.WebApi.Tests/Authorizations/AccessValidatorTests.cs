@@ -37,7 +37,7 @@ using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
-using Equinor.Procosys.Preservation.Query.GetTags;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagAreas;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagDisciplines;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagFunctions;

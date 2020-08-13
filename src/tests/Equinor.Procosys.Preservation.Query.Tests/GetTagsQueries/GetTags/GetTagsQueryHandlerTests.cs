@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.GetTags;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -14,7 +15,7 @@ using Moq;
 using ServiceResult;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
+namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
 {
     [TestClass]
     public class GetTagsQueryHandlerTests : ReadOnlyTestsBase

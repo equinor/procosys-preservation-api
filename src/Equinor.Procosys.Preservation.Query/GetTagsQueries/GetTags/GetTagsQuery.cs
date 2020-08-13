@@ -3,7 +3,7 @@ using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetTags
+namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
 {
     public class GetTagsQuery : IRequest<Result<TagsResult>>, IProjectRequest
     {

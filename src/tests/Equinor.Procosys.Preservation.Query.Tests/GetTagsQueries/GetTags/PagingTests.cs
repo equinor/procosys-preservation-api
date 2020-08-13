@@ -1,8 +1,8 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Query.GetTags;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
+namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
 {
     [TestClass]
     public class PagingTests
