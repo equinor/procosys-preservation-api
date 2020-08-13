@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
     public class HistoryRepository : RepositoryBase<History>, IHistoryRepository
     {
         public HistoryRepository(PreservationContext context)
-            : base(context.History, context)
+            : base(context, context.History)
         {
         }
     }

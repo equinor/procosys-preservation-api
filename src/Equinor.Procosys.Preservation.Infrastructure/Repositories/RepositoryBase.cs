@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         protected readonly DbSet<TEntity> Set;
         protected readonly IQueryable<TEntity> DefaultQuery;
 
-        protected RepositoryBase(DbSet<TEntity> set, PreservationContext context)
+        protected RepositoryBase(PreservationContext context, DbSet<TEntity> set)
             : this(context, set, set)
         {
         }
