@@ -8,16 +8,18 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
     public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase, IAggregateRoot
     {
+        protected readonly PreservationContext _context;
         protected readonly DbSet<TEntity> Set;
         protected readonly IQueryable<TEntity> DefaultQuery;
 
-        protected RepositoryBase(DbSet<TEntity> set)
-            : this(set, set)
+        protected RepositoryBase(PreservationContext context, DbSet<TEntity> set)
+            : this(context, set, set)
         {
         }
 
-        protected RepositoryBase(DbSet<TEntity> set, IQueryable<TEntity> defaultQuery)
+        protected RepositoryBase(PreservationContext context, DbSet<TEntity> set, IQueryable<TEntity> defaultQuery)
         {
+            _context = context;
             Set = set;
             DefaultQuery = defaultQuery;
         }

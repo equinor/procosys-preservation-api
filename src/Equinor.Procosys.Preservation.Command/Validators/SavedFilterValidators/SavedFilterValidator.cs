@@ -34,5 +34,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.SavedFilterValidators
                       && s.Title == title
                 select s).AnyAsync(token);
         }
+
+        public async Task<bool> ExistsAsync(int savedFilterId, CancellationToken token) =>
+            await (from sf in _context.QuerySet<SavedFilter>()
+                where sf.Id == savedFilterId
+                select sf).AnyAsync(token);
     }
 }
