@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
         public async Task<Result<int>> Handle(CreateSavedFilterCommand request, CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var person = await _personRepository.GetWithSavedFilterByOidAsync(currentUserOid);
+            var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
 
             if (request.DefaultFilter)
