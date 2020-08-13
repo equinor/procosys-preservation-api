@@ -45,6 +45,7 @@ using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel;
+using Equinor.Procosys.Preservation.WebApi.Excel;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -65,8 +66,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     public class TagsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IExcelConverter _excelConverter;
 
-        public TagsController(IMediator mediator) => _mediator = mediator;
+        public TagsController(IMediator mediator, IExcelConverter excelConverter)
+        {
+            _mediator = mediator;
+            _excelConverter = excelConverter;
+        }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet]
@@ -86,7 +92,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Excel")]
-        public async Task<ActionResult<IEnumerable<Query.GetTagsQueries.GetTagsForExcel.TagDto>>> GetExcel(
+        public async Task<ActionResult> GetExcel(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -96,7 +102,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             var query = CreateGetTagsForExcelQuery(filter, sorting);
 
             var result = await _mediator.Send(query);
-            return this.FromResult(result);
+
+            if (result.ResultType != ResultType.Ok)
+            {
+                return this.FromResult(result);
+            }
+
+            var excelMemoryStream = _excelConverter.Convert(query.Filter, result.Data);
+            excelMemoryStream.Position = 0;
+
+            return File(excelMemoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{_excelConverter.GetFileName()}.xlsx");  
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]

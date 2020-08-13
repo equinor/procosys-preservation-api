@@ -32,10 +32,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId);
 
-            // get tags again, including Requirements and PreservationPeriods. See comment in CreateQueryableWithFilter regarding Include and EF
+            // get tags again, including Requirements. See comment in CreateQueryableWithFilter regarding Include and EF
             var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements)
-// ??                        .ThenInclude(r => r.PreservationPeriods)
                     where tagsIds.Contains(tag.Id)
                     select tag)
                 .ToListAsync(cancellationToken);

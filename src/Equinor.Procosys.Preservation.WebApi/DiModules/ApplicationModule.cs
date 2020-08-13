@@ -48,6 +48,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Equinor.Procosys.Preservation.WebApi.Synchronization;
 using Equinor.Procosys.Preservation.WebApi.Authentication;
+using Equinor.Procosys.Preservation.WebApi.Excel;
 using Equinor.Procosys.Preservation.WebApi.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 
@@ -82,6 +83,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
 
 
             // Scoped - Created once per client request (connection)
+            services.AddScoped<IExcelConverter, ExcelConverter>();
             services.AddScoped<ITelemetryClient, ApplicationInsightsTelemetryClient>();
             services.AddScoped<IPlantCache, PlantCache>();
             services.AddScoped<IPermissionCache, PermissionCache>();

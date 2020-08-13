@@ -10,8 +10,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel
     {
         public const SortingDirection DefaultSortingDirection = SortingDirection.Asc;
         public const SortingProperty DefaultSortingProperty = SortingProperty.Due;
-        public const int DefaultPage = 0;
-        public const int DefaultPagingSize = 20;
 
         public GetTagsForExcelQuery(string projectName, Sorting sorting = null, Filter filter = null)
         {
