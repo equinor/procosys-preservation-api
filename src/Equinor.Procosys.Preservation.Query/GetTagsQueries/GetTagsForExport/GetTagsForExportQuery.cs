@@ -4,14 +4,14 @@ using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel
+namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
-    public class GetTagsForExcelQuery : IRequest<Result<IEnumerable<TagDto>>>, IProjectRequest
+    public class GetTagsForExportQuery : IRequest<Result<IEnumerable<ExportDto>>>, IProjectRequest
     {
         public const SortingDirection DefaultSortingDirection = SortingDirection.Asc;
         public const SortingProperty DefaultSortingProperty = SortingProperty.Due;
 
-        public GetTagsForExcelQuery(string projectName, Sorting sorting = null, Filter filter = null)
+        public GetTagsForExportQuery(string projectName, Sorting sorting = null, Filter filter = null)
         {
             if (string.IsNullOrEmpty(projectName))
             {

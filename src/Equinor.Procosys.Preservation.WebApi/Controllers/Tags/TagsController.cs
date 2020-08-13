@@ -44,7 +44,7 @@ using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
-using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 using Equinor.Procosys.Preservation.WebApi.Excel;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
@@ -54,7 +54,6 @@ using ServiceResult;
 using ServiceResult.ApiExtensions;
 using RequirementDto = Equinor.Procosys.Preservation.Query.GetTagRequirements.RequirementDto;
 using RequirementPreserveCommand = Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve.PreserveCommand;
-using TagDto = Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags.TagDto;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -90,6 +89,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        // todo unit test
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("Excel")]
         public async Task<ActionResult> GetExcel(
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromQuery] FilterDto filter,
             [FromQuery] SortingDto sorting)
         {
-            var query = CreateGetTagsForExcelQuery(filter, sorting);
+            var query = CreateGetTagsForExportQuery(filter, sorting);
 
             var result = await _mediator.Send(query);
 
@@ -873,9 +873,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return query;
         }
 
-        private static GetTagsForExcelQuery CreateGetTagsForExcelQuery(FilterDto filter, SortingDto sorting)
+        private static GetTagsForExportQuery CreateGetTagsForExportQuery(FilterDto filter, SortingDto sorting)
         {
-            var query = new GetTagsForExcelQuery(
+            var query = new GetTagsForExportQuery(
                 filter.ProjectName,
                 new Sorting(sorting.Direction, sorting.Property),
                 new Filter()

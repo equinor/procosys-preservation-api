@@ -9,15 +9,16 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel
+namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
-    public class GetTagsForExcelQueryHandler : GetTagsQueryBase, IRequestHandler<GetTagsForExcelQuery, Result<IEnumerable<TagDto>>>
+    public class GetTagsForExportQueryHandler : GetTagsQueryBase, IRequestHandler<GetTagsForExportQuery, Result<IEnumerable<ExportDto>>>
     {
         private readonly IReadOnlyContext _context;
 
-        public GetTagsForExcelQueryHandler(IReadOnlyContext context) => _context = context;
+        // todo unit test
+        public GetTagsForExportQueryHandler(IReadOnlyContext context) => _context = context;
 
-        public async Task<Result<IEnumerable<TagDto>>> Handle(GetTagsForExcelQuery request, CancellationToken cancellationToken)
+        public async Task<Result<IEnumerable<ExportDto>>> Handle(GetTagsForExportQuery request, CancellationToken cancellationToken)
         {
             var queryable = CreateQueryableWithFilter(_context, request.ProjectName, request.Filter);
 
@@ -27,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel
 
             if (!orderedDtos.Any())
             {
-                return new SuccessResult<IEnumerable<TagDto>>(new List<TagDto>());
+                return new SuccessResult<IEnumerable<ExportDto>>(new List<ExportDto>());
             }
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId);
@@ -55,10 +56,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel
                 tagsWithRequirements,
                 reqDefs);
 
-            return new SuccessResult<IEnumerable<TagDto>>(result);
+            return new SuccessResult<IEnumerable<ExportDto>>(result);
         }
 
-        private IEnumerable<TagDto> CreateResult(
+        private IEnumerable<ExportDto> CreateResult(
             List<TaqForQueryDto> orderedDtos,
             List<Tag> tagsWithRequirements,
             List<ReqDefDto> reqDefs)
@@ -74,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel
                         })
                     .ToList();
 
-                return new TagDto(
+                return new ExportDto(
                     dto.GetActionStatus(),
                     dto.AreaCode,
                     dto.Calloff,

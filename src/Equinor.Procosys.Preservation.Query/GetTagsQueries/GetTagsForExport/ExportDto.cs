@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel
+namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
-    public class TagDto
+    public class ExportDto
     {
-        public TagDto(
+        public ExportDto(
             ActionStatus? actionStatus,
             string areaCode,
             string calloffNo,

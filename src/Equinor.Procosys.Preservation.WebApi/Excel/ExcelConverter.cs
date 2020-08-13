@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using ClosedXML.Excel;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries;
-using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 
 namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
-        public MemoryStream Convert(Filter filter, IEnumerable<TagDto> dtos)
+        public MemoryStream Convert(Filter filter, IEnumerable<ExportDto> dtos)
         {
             var excelStream = new MemoryStream();
 

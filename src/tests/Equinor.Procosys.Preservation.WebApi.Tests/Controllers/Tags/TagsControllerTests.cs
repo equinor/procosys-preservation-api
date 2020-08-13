@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Equinor.Procosys.Preservation.WebApi.Excel;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
     public class TagsControllerTests
     {
         private readonly Mock<IMediator> _mediatorMock = new Mock<IMediator>();
+        private Mock<IExcelConverter> _excelConverterMock;
         private readonly CreateTagsDto _createTagsDto = new CreateTagsDto();
         private TagsController _dut;
 
@@ -25,7 +27,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<CreateTagsCommand>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.FromResult(new SuccessResult<List<int>>(new List<int>{5}) as Result<List<int>>));
-            _dut = new TagsController(_mediatorMock.Object);
+            _excelConverterMock = new Mock<IExcelConverter>();
+            _dut = new TagsController(_mediatorMock.Object, _excelConverterMock.Object);
         }
 
         [TestMethod]
