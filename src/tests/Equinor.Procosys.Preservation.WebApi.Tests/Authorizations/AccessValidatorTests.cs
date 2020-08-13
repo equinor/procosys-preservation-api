@@ -38,6 +38,7 @@ using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExcel;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagAreas;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagDisciplines;
 using Equinor.Procosys.Preservation.Query.GetUniqueTagFunctions;
@@ -1429,6 +1430,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnGetTagsQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new GetTagsQuery(ProjectWithoutAccess);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetTagsForExcelQuery_ShouldReturnTrue_WhenAccessToProject()
+        {
+            var query = new GetTagsForExcelQuery(ProjectWithAccess);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetTagsForExcelQuery_ShouldReturnFalse_WhenNoAccessToProject()
+        {
+            var query = new GetTagsForExcelQuery(ProjectWithoutAccess);
             // act
             var result = await _dut.ValidateAsync(query);
 

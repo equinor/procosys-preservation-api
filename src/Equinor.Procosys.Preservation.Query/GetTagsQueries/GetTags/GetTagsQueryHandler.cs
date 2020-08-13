@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
             var tagsIds = orderedDtos.Select(dto => dto.TagId);
             var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
 
-            // get tags again, including Requirements and PreservationPeriods. See comment in CreateQueryable regarding Include and EF
+            // get tags again, including Requirements and PreservationPeriods. See comment in CreateQueryableWithFilter regarding Include and EF
             var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements)
                         .ThenInclude(r => r.PreservationPeriods)
