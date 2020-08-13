@@ -8,10 +8,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
     public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     {
-        readonly PreservationContext _context;
-
         public ProjectRepository(PreservationContext context)
-            : base(context.Projects,
+            : base(context, context.Projects,
                 context.Projects
                     .Include(p => p.Tags)
                     .ThenInclude(t => t.Requirements)
@@ -24,7 +22,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                     .Include(p => p.Tags)
                     .ThenInclude(t => t.Attachments)
             )
-            => _context = context;
+        {
+
+        }
 
         public Task<Project> GetProjectOnlyByNameAsync(string projectName)
             => Set.SingleOrDefaultAsync(p => p.Name == projectName);

@@ -7,10 +7,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 {
     public class PersonRepository : RepositoryBase<Person>, IPersonRepository
     {
-        private readonly PreservationContext _context;
-
         public PersonRepository(PreservationContext context)
-            : base(context.Persons) => _context = context;
+            : base(context.Persons, context) { }
 
         public Task<Person> GetByOidAsync(Guid oid)
             => DefaultQuery.SingleOrDefaultAsync(p => p.Oid == oid);
@@ -22,6 +20,5 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 
         public void RemoveSavedFilter(SavedFilter savedFilter)
             => _context.SavedFilters.Remove(savedFilter);
-
     }
 }
