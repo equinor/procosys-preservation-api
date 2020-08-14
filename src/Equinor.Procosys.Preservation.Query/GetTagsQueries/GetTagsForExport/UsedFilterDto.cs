@@ -5,65 +5,65 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
     public class UsedFilterDto
     {
         public UsedFilterDto(
-            string projectName,
-            string voidedFilter,
-            IEnumerable<string> dueFilters, 
             string actionStatus,
-            string preservationStatus,
-            IEnumerable<string> requirementTypeTitles,
             IEnumerable<string> areaCodes,
-            IEnumerable<string> disciplineCodes,
-            IEnumerable<string> responsibleCodes,
-            IEnumerable<string> tagFunctionCodes,
-            IEnumerable<string> modeTitles,
-            IEnumerable<string> journeyTitles,
-            IEnumerable<string> stepTitles,
-            string tagNoStartsWith,
-            string commPkgNoStartsWith,
-            string mcPkgNoStartsWith,
             string callOffStartsWith,
+            string commPkgNoStartsWith,
+            IEnumerable<string> disciplineCodes,
+            IEnumerable<string> dueFilters,
+            IEnumerable<string> journeyTitles,
+            string mcPkgNoStartsWith,
+            IEnumerable<string> modeTitles,
+            string preservationStatus,
+            string projectDescription,
+            string projectName,
             string purchaseOrderNoStartsWith,
-            string storageAreaStartsWith)
+            IEnumerable<string> requirementTypeTitles,
+            IEnumerable<string> responsibleCodes,
+            string storageAreaStartsWith,
+            IEnumerable<string> tagFunctionCodes,
+            string tagNoStartsWith,
+            string voidedFilter)
         {
-            ProjectName = projectName;
-            VoidedFilter = voidedFilter;
-            DueFilters = dueFilters;
             ActionStatus = actionStatus;
-            PreservationStatus = preservationStatus;
-            RequirementTypeTitles = requirementTypeTitles;
             AreaCodes = areaCodes;
-            DisciplineCodes = disciplineCodes;
-            ResponsibleCodes = responsibleCodes;
-            TagFunctionCodes = tagFunctionCodes;
-            ModeTitles = modeTitles;
-            JourneyTitles = journeyTitles;
-            StepTitles = stepTitles;
-            TagNoStartsWith = tagNoStartsWith;
-            CommPkgNoStartsWith = commPkgNoStartsWith;
-            McPkgNoStartsWith = mcPkgNoStartsWith;
             CallOffStartsWith = callOffStartsWith;
+            CommPkgNoStartsWith = commPkgNoStartsWith;
+            DisciplineCodes = disciplineCodes;
+            DueFilters = dueFilters;
+            JourneyTitles = journeyTitles;
+            McPkgNoStartsWith = mcPkgNoStartsWith;
+            ModeTitles = modeTitles;
+            PreservationStatus = preservationStatus;
+            ProjectDescription = projectDescription;
+            ProjectName = projectName;
             PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith;
+            RequirementTypeTitles = requirementTypeTitles;
+            ResponsibleCodes = responsibleCodes;
             StorageAreaStartsWith = storageAreaStartsWith;
+            TagFunctionCodes = tagFunctionCodes;
+            TagNoStartsWith = tagNoStartsWith;
+            VoidedFilter = voidedFilter;
         }
 
-        public string ProjectName { get; }
-        public string VoidedFilter { get; }
-        public IEnumerable<string> DueFilters { get; }
         public string ActionStatus { get; }
-        public string PreservationStatus { get; }
-        public IEnumerable<string> RequirementTypeTitles { get; }
         public IEnumerable<string> AreaCodes { get; }
-        public IEnumerable<string> DisciplineCodes { get; }
-        public IEnumerable<string> ResponsibleCodes { get; }
-        public IEnumerable<string> TagFunctionCodes { get; }
-        public IEnumerable<string> ModeTitles { get; }
-        public IEnumerable<string> JourneyTitles { get; }
-        public IEnumerable<string> StepTitles { get; }
-        public string TagNoStartsWith { get; }
-        public string CommPkgNoStartsWith { get; }
-        public string McPkgNoStartsWith { get; }
         public string CallOffStartsWith { get; }
+        public string CommPkgNoStartsWith { get; }
+        public IEnumerable<string> DisciplineCodes { get; }
+        public IEnumerable<string> DueFilters { get; }
+        public IEnumerable<string> JourneyTitles { get; }
+        public string McPkgNoStartsWith { get; }
+        public IEnumerable<string> ModeTitles { get; }
+        public string PreservationStatus { get; }
+        public string ProjectDescription { get; }
+        public string ProjectName { get; }
         public string PurchaseOrderNoStartsWith { get; }
+        public IEnumerable<string> RequirementTypeTitles { get; }
+        public IEnumerable<string> ResponsibleCodes { get; }
         public string StorageAreaStartsWith { get; }
+        public IEnumerable<string> TagFunctionCodes { get; }
+        public string TagNoStartsWith { get; }
+        public string VoidedFilter { get; }
     }
 }

@@ -65,45 +65,38 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 
         private async Task<UsedFilterDto> CreateUsedFilterDtoAsync(string projectName, Filter filter)
         {
+            var projectDescription = await GetProjectDescriptionAsync(projectName);
             var requirementTypeTitles = await GetRequirementTypeTitlesAsync(filter.RequirementTypeIds);
             var responsibleCodes = await GetResponsibleCodesAsync(filter.ResponsibleIds);
             var modeTitles = await GetModeTitlesAsync(filter.ModeIds);
             var journeyTitles = await GetJourneyTitlesAsync(filter.JourneyIds);
-            var stepTitles = await GetStepTitlesAsync(filter.StepIds);
 
             return new UsedFilterDto(
-                projectName,
-                filter.VoidedFilter.ToString(),
-                filter.DueFilters.Select(v => v.ToString()), 
                 filter.ActionStatus.HasValue ? filter.ActionStatus.Value.ToString() : string.Empty,
-                filter.PreservationStatus.HasValue ? filter.PreservationStatus.Value.ToString() : string.Empty,
-                requirementTypeTitles,
                 filter.AreaCodes,
-                filter.DisciplineCodes,
-                responsibleCodes,
-                filter.TagFunctionCodes,
-                modeTitles,
-                journeyTitles,
-                stepTitles,
-                filter.TagNoStartsWith,
-                filter.CommPkgNoStartsWith,
-                filter.McPkgNoStartsWith,
                 filter.CallOffStartsWith,
+                filter.CommPkgNoStartsWith,
+                filter.DisciplineCodes,
+                filter.DueFilters.Select(v => v.ToString()), 
+                journeyTitles,
+                filter.McPkgNoStartsWith,
+                modeTitles,
+                filter.PreservationStatus.HasValue ? filter.PreservationStatus.Value.ToString() : string.Empty,
+                projectDescription,
+                projectName,
                 filter.PurchaseOrderNoStartsWith,
-                filter.StorageAreaStartsWith);
+                requirementTypeTitles,
+                responsibleCodes,
+                filter.StorageAreaStartsWith,
+                filter.TagFunctionCodes,
+                filter.TagNoStartsWith,
+                filter.VoidedFilter.ToString());
         }
 
-        private async Task<List<string>> GetStepTitlesAsync(IList<int> stepIds)
-        {
-            if (!stepIds.Any())
-            {
-                return new List<string>();
-            }
-
-            return await (from s in _context.QuerySet<Step>()
-                where stepIds.Contains(s.Id)
-                select s.Title).ToListAsync();
-        }
+        private async Task<string> GetProjectDescriptionAsync(string projectName) 
+            => await (from p in _context.QuerySet<Project>()
+                where p.Name == projectName
+                select p.Description).SingleOrDefaultAsync();
 
         private async Task<List<string>> GetJourneyTitlesAsync(IList<int> journeyIds)
         {

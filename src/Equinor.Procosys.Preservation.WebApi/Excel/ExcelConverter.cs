@@ -53,16 +53,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Style.Font.SetBold();
             row.Style.Font.SetFontSize(12);
             row.Cell(tagNoCol).Value = "Tag nr";
-            row.Cell(descriptionCol).Value = "Description";
-            row.Cell(nextCol).Value = "Next";
-            row.Cell(dueCol).Value = "Due";
+            row.Cell(descriptionCol).Value = "Tag description";
+            row.Cell(nextCol).Value = "Next preservation";
+            row.Cell(dueCol).Value = "Due (weeks)";
             row.Cell(modeCol).Value = "Mode";
             row.Cell(poCol).Value = "Purchase order";
             row.Cell(areaCol).Value = "Area";
             row.Cell(respCol).Value = "Responsible";
             row.Cell(discCol).Value = "Discipline";
             row.Cell(statusCol).Value = "Status";
-            row.Cell(reqTypeCol).Value = "Req. type";
+            row.Cell(reqTypeCol).Value = "Requirement type";
             row.Cell(actionCol).Value = "Action status";
             row.Cell(voidedCol).Value = "Is voided";
 
@@ -72,11 +72,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 
                 row.Cell(tagNoCol).Value = tag.TagNo;
                 row.Cell(descriptionCol).Value = tag.Description;
+                row.Cell(nextCol).Value = tag.NextDueAsYearAndWeek;
                 if (tag.NextDueWeeks.HasValue)
                 {
-                    row.Cell(nextCol).Value = tag.NextDueWeeks.Value;
+                    row.Cell(dueCol).Value = tag.NextDueWeeks.Value;
                 }
-                row.Cell(dueCol).Value = tag.NextDueAsYearAndWeek;
                 row.Cell(modeCol).Value = tag.Mode;
                 row.Cell(poCol).Value = tag.PurchaseOrderTitle;
                 row.Cell(areaCol).Value = tag.AreaCode;
@@ -87,18 +87,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(actionCol).Value = tag.ActionStatus;
                 row.Cell(voidedCol).Value = tag.IsVoided;
             }
+        
+            sheet.Columns(1, colIdx).AdjustToContents(1, 1);
         }
 
         private void CreateFrontSheet(XLWorkbook workbook, UsedFilterDto usedFilter)
         {
             var sheet = workbook.Worksheets.Add("Filters");
-            var rowIdx = 0;
+            var rowIdx = 1;
             var row = sheet.Row(++rowIdx);
             row.Style.Font.SetBold();
-            row.Style.Font.SetFontSize(12);
-            row.Cell(1).Value = $"Export of preserved tags from project {usedFilter.ProjectName} in plant {_plantProvider.Plant}";
+            row.Style.Font.SetFontSize(14);
+            row.Cell(1).Value = $"Export of preserved tags";
 
-            sheet.Row(++rowIdx).Cell(1).Value = "Used filter values:";
+            rowIdx++;
+            AddUsedFilter(sheet.Row(++rowIdx), "Plant", _plantProvider.Plant, true);
+            AddUsedFilter(sheet.Row(++rowIdx), "Project", usedFilter.ProjectName, true);
+            AddUsedFilter(sheet.Row(++rowIdx), "Project description", usedFilter.ProjectDescription, true);
+
+            rowIdx++;
+            AddUsedFilter(sheet.Row(++rowIdx), "Filter values:", "", true);
+
             AddUsedFilter(sheet.Row(++rowIdx), "Tag number starts with", usedFilter.TagNoStartsWith);
             AddUsedFilter(sheet.Row(++rowIdx), "Purchase order number starts with", usedFilter.PurchaseOrderNoStartsWith);
             AddUsedFilter(sheet.Row(++rowIdx), "Calloff number starts with", usedFilter.CallOffStartsWith);
@@ -110,7 +119,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             AddUsedFilter(sheet.Row(++rowIdx), "Voided/unvoided tags", usedFilter.VoidedFilter);
             AddUsedFilter(sheet.Row(++rowIdx), "Preservation dute date", usedFilter.DueFilters);
             AddUsedFilter(sheet.Row(++rowIdx), "Journeys", usedFilter.JourneyTitles);
-            AddUsedFilter(sheet.Row(++rowIdx), "Steps", usedFilter.StepTitles);
             AddUsedFilter(sheet.Row(++rowIdx), "Modes", usedFilter.ModeTitles);
             AddUsedFilter(sheet.Row(++rowIdx), "Requirements", usedFilter.RequirementTypeTitles);
             AddUsedFilter(sheet.Row(++rowIdx), "Requirements", usedFilter.RequirementTypeTitles);
@@ -118,15 +126,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             AddUsedFilter(sheet.Row(++rowIdx), "Disciplines", usedFilter.DisciplineCodes);
             AddUsedFilter(sheet.Row(++rowIdx), "Responsibles", usedFilter.ResponsibleCodes);
             AddUsedFilter(sheet.Row(++rowIdx), "Areas", usedFilter.AreaCodes);
+         
+            sheet.Columns(1, 2).AdjustToContents();
+            
         }
 
         private void AddUsedFilter(IXLRow row, string label, IEnumerable<string> values)
             => AddUsedFilter(row, label, string.Join(",", values));
 
-        private void AddUsedFilter(IXLRow row, string label, string value)
+        private void AddUsedFilter(IXLRow row, string label, string value, bool bold = false)
         {
             row.Cell(1).Value = label;
             row.Cell(2).Value = value;
+            row.Style.Font.SetBold(bold);
         }
 
         public string GetFileName()=> $"PreservedTags-{DateTime.Now:yyyyMMdd-hhmmss}";
