@@ -44,6 +44,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             var statusCol = ++colIdx;
             var reqTypeCol = ++colIdx;
             var actionCol = ++colIdx;
+            var voidedCol = ++colIdx;
 
             var sheet = workbook.Worksheets.Add("Tags");
 
@@ -63,6 +64,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(statusCol).Value = "Status";
             row.Cell(reqTypeCol).Value = "Req. type";
             row.Cell(actionCol).Value = "Action status";
+            row.Cell(voidedCol).Value = "Is voided";
 
             foreach (var tag in tags)
             {
@@ -70,8 +72,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 
                 row.Cell(tagNoCol).Value = tag.TagNo;
                 row.Cell(descriptionCol).Value = tag.Description;
-                row.Cell(nextCol).Value = "TODO"; // TODO EXPAND DTO W NEXT
-                row.Cell(dueCol).Value = "TODO";
+                if (tag.NextDueWeeks.HasValue)
+                {
+                    row.Cell(nextCol).Value = tag.NextDueWeeks.Value;
+                }
+                row.Cell(dueCol).Value = tag.NextDueAsYearAndWeek;
                 row.Cell(modeCol).Value = tag.Mode;
                 row.Cell(poCol).Value = tag.PurchaseOrderTitle;
                 row.Cell(areaCol).Value = tag.AreaCode;
@@ -80,6 +85,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(statusCol).Value = tag.Status;
                 row.Cell(reqTypeCol).Value = tag.RequirementTitles;
                 row.Cell(actionCol).Value = tag.ActionStatus;
+                row.Cell(voidedCol).Value = tag.IsVoided;
             }
         }
 

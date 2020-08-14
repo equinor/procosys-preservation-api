@@ -161,13 +161,24 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             var tags = orderedDtos.Select(dto =>
             {
                 var tagWithRequirements = tagsWithRequirements.Single(t => t.Id == dto.TagId);
-                var requirementTitles = tagWithRequirements.OrderedRequirements().Select(
+                var orderedRequirements = tagWithRequirements.OrderedRequirements().ToList();
+                var requirementTitles = orderedRequirements.Select(
                         r =>
                         {
                             var reqTypeDto = reqDefs.Single(innerDto => innerDto.RequirementDefinitionId == r.RequirementDefinitionId);
                             return reqTypeDto.RequirementDefinitionTitle;
                         })
                     .ToList();
+
+                int? nextDueWeeks = null;
+                string nextDueAsYearAndWeek = string.Empty;
+                
+                var firstUpcomingRequirement = orderedRequirements.FirstOrDefault();
+                if (firstUpcomingRequirement != null)
+                {
+                    nextDueWeeks = firstUpcomingRequirement.GetNextDueInWeeks();
+                    nextDueAsYearAndWeek = firstUpcomingRequirement.NextDueTimeUtc?.FormatAsYearAndWeekString();
+                }
 
                 string purchaseOrderTitle;
                 if (string.IsNullOrEmpty(dto.CalloffNo))
@@ -184,6 +195,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     dto.DisciplineCode,
                     dto.IsVoided,
                     dto.ModeTitle,
+                    nextDueAsYearAndWeek,
+                    nextDueWeeks,
                     purchaseOrderTitle,
                     requirementTitles,
                     dto.ResponsibleCode,
