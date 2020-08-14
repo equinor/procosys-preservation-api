@@ -108,7 +108,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 return this.FromResult(result);
             }
 
-            var excelMemoryStream = _excelConverter.Convert(query.Filter, result.Data);
+            var excelMemoryStream = _excelConverter.Convert(result.Data);
             excelMemoryStream.Position = 0;
 
             return File(excelMemoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{_excelConverter.GetFileName()}.xlsx");  
@@ -900,7 +900,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             if (source.DueFilters != null)
             {
-                target.DueFilters = source.DueFilters;
+                target.DueFilters = source.DueFilters.ToList();
             }
 
             if (source.PreservationStatus.HasValue)
@@ -910,42 +910,42 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             if (source.RequirementTypeIds != null)
             {
-                target.RequirementTypeIds = source.RequirementTypeIds;
+                target.RequirementTypeIds = source.RequirementTypeIds.ToList();
             }
 
             if (source.AreaCodes != null)
             {
-                target.AreaCodes = source.AreaCodes;
+                target.AreaCodes = source.AreaCodes.ToList();
             }
 
             if (source.DisciplineCodes != null)
             {
-                target.DisciplineCodes = source.DisciplineCodes;
+                target.DisciplineCodes = source.DisciplineCodes.ToList();
             }
 
             if (source.ResponsibleIds != null)
             {
-                target.ResponsibleIds = source.ResponsibleIds;
+                target.ResponsibleIds = source.ResponsibleIds.ToList();
             }
 
             if (source.TagFunctionCodes != null)
             {
-                target.TagFunctionCodes = source.TagFunctionCodes;
+                target.TagFunctionCodes = source.TagFunctionCodes.ToList();
             }
 
             if (source.ModeIds != null)
             {
-                target.ModeIds = source.ModeIds;
+                target.ModeIds = source.ModeIds.ToList();
             }
 
             if (source.JourneyIds != null)
             {
-                target.JourneyIds = source.JourneyIds;
+                target.JourneyIds = source.JourneyIds.ToList();
             }
 
             if (source.StepIds != null)
             {
-                target.StepIds = source.StepIds;
+                target.StepIds = source.StepIds.ToList();
             }
 
             if (source.TagNoStartsWith != null)

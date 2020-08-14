@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
-    public class GetTagsForExportQuery : IRequest<Result<IEnumerable<ExportDto>>>, IProjectRequest
+    public class GetTagsForExportQuery : IRequest<Result<ExportDto>>, IProjectRequest
     {
         public const SortingDirection DefaultSortingDirection = SortingDirection.Asc;
         public const SortingProperty DefaultSortingProperty = SortingProperty.Due;
