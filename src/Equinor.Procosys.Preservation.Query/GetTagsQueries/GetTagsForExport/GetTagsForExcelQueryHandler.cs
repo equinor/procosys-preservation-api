@@ -73,10 +73,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 
             return new UsedFilterDto(
                 projectName,
-                filter.VoidedFilter,
-                filter.DueFilters, 
-                filter.ActionStatus,
-                filter.PreservationStatus,
+                filter.VoidedFilter.ToString(),
+                filter.DueFilters.Select(v => v.ToString()), 
+                filter.ActionStatus.HasValue ? filter.ActionStatus.Value.ToString() : string.Empty,
+                filter.PreservationStatus.HasValue ? filter.PreservationStatus.Value.ToString() : string.Empty,
                 requirementTypeTitles,
                 filter.AreaCodes,
                 filter.DisciplineCodes,
@@ -169,14 +169,22 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                         })
                     .ToList();
 
+                string purchaseOrderTitle;
+                if (string.IsNullOrEmpty(dto.CalloffNo))
+                {
+                    purchaseOrderTitle = dto.PurchaseOrderNo;
+                }
+                else
+                {
+                    purchaseOrderTitle = $"{dto.PurchaseOrderNo}/{dto.CalloffNo}";
+                }
                 return new ExportTagDto(
-                    dto.GetActionStatus(),
+                    dto.GetActionStatus().GetDisplayValue(),
                     dto.AreaCode,
-                    dto.Calloff,
                     dto.DisciplineCode,
                     dto.IsVoided,
                     dto.ModeTitle,
-                    dto.PurchaseOrderNo,
+                    purchaseOrderTitle,
                     requirementTitles,
                     dto.ResponsibleCode,
                     dto.Status.GetDisplayValue(),

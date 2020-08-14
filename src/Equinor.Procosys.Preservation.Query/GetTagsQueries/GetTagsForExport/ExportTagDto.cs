@@ -6,13 +6,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
     public class ExportTagDto
     {
         public ExportTagDto(
-            ActionStatus? actionStatus,
+            string actionStatus,
             string areaCode,
-            string calloffNo,
             string disciplineCode,
             bool isVoided,
             string mode,
-            string purchaseOrderNo,
+            string purchaseOrderTitle,
             IEnumerable<string> requirementTitles,
             string responsibleCode,
             string status,
@@ -21,26 +20,24 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         {
             ActionStatus = actionStatus;
             AreaCode = areaCode;
-            CalloffNo = calloffNo;
             Description = tagDescription;
             DisciplineCode = disciplineCode;
             IsVoided = isVoided;
             Mode = mode;
-            PurchaseOrderNo = purchaseOrderNo;
+            PurchaseOrderTitle = purchaseOrderTitle;
             TagNo = tagNo;
             ResponsibleCode = responsibleCode;
             Status = status;
             RequirementTitles = requirementTitles ?? throw new ArgumentNullException(nameof(requirementTitles));
         }
 
-        public ActionStatus? ActionStatus { get; }
+        public string ActionStatus { get; }
         public string AreaCode { get; }
-        public string CalloffNo { get; }
         public string Description { get; }
         public string DisciplineCode { get; }
         public bool IsVoided { get; }
         public string Mode { get; }
-        public string PurchaseOrderNo { get; }
+        public string PurchaseOrderTitle { get; }
         public IEnumerable<string> RequirementTitles { get; }
         public string ResponsibleCode { get; }
         public string Status { get; }

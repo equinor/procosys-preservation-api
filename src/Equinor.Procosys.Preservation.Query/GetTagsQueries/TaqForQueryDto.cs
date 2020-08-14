@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
         public bool AnyOverDueActions { get; set; }
         public bool AnyOpenActions { get; set; }
         public bool AnyClosedActions { get; set; }
-        public string Calloff { get; set; }
+        public string CalloffNo { get; set; }
         public string CommPkgNo { get; set; }
         public string Description { get; set; }
         public string DisciplineCode { get; set; }

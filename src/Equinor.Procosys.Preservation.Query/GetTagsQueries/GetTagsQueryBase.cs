@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                     AnyOverDueActions = anyOverDueActions,
                     AnyOpenActions = anyOpenActions,
                     AnyClosedActions = anyClosedActions,
-                    Calloff = tag.Calloff,
+                    CalloffNo = tag.Calloff,
                     CommPkgNo = tag.CommPkgNo,
                     Description = tag.Description,
                     DisciplineCode = tag.DisciplineCode,
@@ -146,7 +146,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                             queryable = queryable.OrderBy(dto => dto.ModeTitle);
                             break;
                         case SortingProperty.PO:
-                            queryable = queryable.OrderBy(dto => dto.Calloff);
+                            queryable = queryable.OrderBy(dto => dto.CalloffNo);
                             break;
                         case SortingProperty.Area:
                             queryable = queryable.OrderBy(dto => dto.AreaCode);
@@ -182,7 +182,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                             queryable = queryable.OrderByDescending(dto => dto.ModeTitle);
                             break;
                         case SortingProperty.PO:
-                            queryable = queryable.OrderByDescending(dto => dto.Calloff);
+                            queryable = queryable.OrderByDescending(dto => dto.CalloffNo);
                             break;
                         case SortingProperty.Area:
                             queryable = queryable.OrderByDescending(dto => dto.AreaCode);

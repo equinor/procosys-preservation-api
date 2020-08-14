@@ -147,7 +147,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
                 return new TagDto(dto.TagId,
                     dto.GetActionStatus(),
                     dto.AreaCode,
-                    dto.Calloff,
+                    dto.CalloffNo,
                     dto.CommPkgNo,
                     dto.DisciplineCode,
                     isNew,

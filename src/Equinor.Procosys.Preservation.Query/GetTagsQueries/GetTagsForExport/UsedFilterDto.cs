@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
@@ -7,10 +6,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
     {
         public UsedFilterDto(
             string projectName,
-            VoidedFilterType? voidedFilter,
-            IEnumerable<DueFilterType> dueFilters, 
-            ActionStatus? actionStatus,
-            PreservationStatus? preservationStatus,
+            string voidedFilter,
+            IEnumerable<string> dueFilters, 
+            string actionStatus,
+            string preservationStatus,
             IEnumerable<string> requirementTypeTitles,
             IEnumerable<string> areaCodes,
             IEnumerable<string> disciplineCodes,
@@ -48,10 +47,10 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         }
 
         public string ProjectName { get; }
-        public VoidedFilterType? VoidedFilter { get; }
-        public IEnumerable<DueFilterType> DueFilters { get; }
-        public ActionStatus? ActionStatus { get; }
-        public PreservationStatus? PreservationStatus { get; }
+        public string VoidedFilter { get; }
+        public IEnumerable<string> DueFilters { get; }
+        public string ActionStatus { get; }
+        public string PreservationStatus { get; }
         public IEnumerable<string> RequirementTypeTitles { get; }
         public IEnumerable<string> AreaCodes { get; }
         public IEnumerable<string> DisciplineCodes { get; }
