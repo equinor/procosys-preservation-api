@@ -32,18 +32,19 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.UpdateSavedFilter
 
             if (request.DefaultFilter == true)
             {
-                foreach (var filter in person.SavedFilters)
+                var currentDefaultFiler = person.GetDefaultFilter(savedFilter.ProjectId);
+                if (currentDefaultFiler != null)
                 {
-                    if (filter.DefaultFilter)
-                    {
-                        filter.DefaultFilter = false;
-                    }
+                    currentDefaultFiler.DefaultFilter = false;
                 }
             }
 
             savedFilter.Title = request.Title;
             savedFilter.Criteria = request.Criteria;
-            savedFilter.DefaultFilter = request.DefaultFilter;
+            if (request.DefaultFilter.HasValue)
+            {
+                savedFilter.DefaultFilter = request.DefaultFilter.Value;
+            }
             savedFilter.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
