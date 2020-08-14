@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
+﻿namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
     public class ExportTagDto
     {
@@ -14,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             string nextDueAsYearAndWeek,
             int? nextDueWeeks,
             string purchaseOrderTitle,
-            IEnumerable<string> requirementTitles,
+            string requirements,
             string responsibleCode,
             string status,
             string tagDescription,
@@ -32,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             NextDueAsYearAndWeek = nextDueAsYearAndWeek;
             ResponsibleCode = responsibleCode;
             Status = status;
-            RequirementTitles = requirementTitles ?? throw new ArgumentNullException(nameof(requirementTitles));
+            Requirements = requirements;
         }
 
         public string ActionStatus { get; }
@@ -47,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         /// </summary>
         public int? NextDueWeeks { get; }
         public string PurchaseOrderTitle { get; }
-        public IEnumerable<string> RequirementTitles { get; }
+        public string Requirements { get; }
         public string ResponsibleCode { get; }
         public string Status { get; }
         public string TagNo { get; }

@@ -164,7 +164,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     .ToList();
 
                 int? nextDueWeeks = null;
-                string nextDueAsYearAndWeek = string.Empty;
+                var nextDueAsYearAndWeek = string.Empty;
                 
                 var firstUpcomingRequirement = orderedRequirements.FirstOrDefault();
                 if (firstUpcomingRequirement != null)
@@ -173,15 +173,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     nextDueAsYearAndWeek = firstUpcomingRequirement.NextDueTimeUtc?.FormatAsYearAndWeekString();
                 }
 
-                string purchaseOrderTitle;
-                if (string.IsNullOrEmpty(dto.CalloffNo))
-                {
-                    purchaseOrderTitle = dto.PurchaseOrderNo;
-                }
-                else
-                {
-                    purchaseOrderTitle = $"{dto.PurchaseOrderNo}/{dto.CalloffNo}";
-                }
                 return new ExportTagDto(
                     dto.GetActionStatus().GetDisplayValue(),
                     dto.AreaCode,
@@ -190,13 +181,14 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     dto.ModeTitle,
                     nextDueAsYearAndWeek,
                     nextDueWeeks,
-                    purchaseOrderTitle,
-                    requirementTitles,
+                    string.IsNullOrEmpty(dto.CalloffNo) ? dto.PurchaseOrderNo : $"{dto.PurchaseOrderNo}/{dto.CalloffNo}",
+                    string.Join(",", requirementTitles),
                     dto.ResponsibleCode,
                     dto.Status.GetDisplayValue(),
                     dto.Description,
                     dto.TagNo);
             });
+
             return tags;
         }
 

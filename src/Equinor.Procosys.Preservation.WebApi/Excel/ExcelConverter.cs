@@ -15,6 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 
         public MemoryStream Convert(ExportDto dto)
         {
+            // nice sample code at https://github.com/ClosedXML/ClosedXML
             var excelStream = new MemoryStream();
 
             using (var workbook = new XLWorkbook())
@@ -83,18 +84,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(respCol).Value = tag.ResponsibleCode;
                 row.Cell(discCol).Value = tag.DisciplineCode;
                 row.Cell(statusCol).Value = tag.Status;
-                row.Cell(reqTypeCol).Value = tag.RequirementTitles;
+                row.Cell(reqTypeCol).Value = tag.Requirements;
                 row.Cell(actionCol).Value = tag.ActionStatus;
                 row.Cell(voidedCol).Value = tag.IsVoided;
             }
-        
-            sheet.Columns(1, colIdx).AdjustToContents(1, 1);
+
+            const int minWidth = 10;
+            const int maxWidth = 100;
+            sheet.Columns(1, colIdx).AdjustToContents(1, rowIdx, minWidth, maxWidth);
         }
 
         private void CreateFrontSheet(XLWorkbook workbook, UsedFilterDto usedFilter)
         {
             var sheet = workbook.Worksheets.Add("Filters");
-            var rowIdx = 1;
+            var rowIdx = 0;
             var row = sheet.Row(++rowIdx);
             row.Style.Font.SetBold();
             row.Style.Font.SetFontSize(14);
@@ -138,6 +141,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         {
             row.Cell(1).Value = label;
             row.Cell(2).Value = value;
+            row.Cell(2).DataType = XLDataType.Text;
             row.Style.Font.SetBold(bold);
         }
 
