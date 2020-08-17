@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Authentication;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;

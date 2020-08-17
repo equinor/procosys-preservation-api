@@ -2,6 +2,7 @@
 using System.IO;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
+using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain
 {
@@ -28,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Domain
             }
 
             FileName = fileName;
-            BlobPath = Path.Combine(plant.Substring(4), parentType, blobStorageId.ToString()).Replace("\\", "/");;
+            BlobPath = Path.Combine(plant.Substring(4), parentType, blobStorageId.ToString()).Replace("\\", "/");
         }
 
         public string FileName { get; protected set; }

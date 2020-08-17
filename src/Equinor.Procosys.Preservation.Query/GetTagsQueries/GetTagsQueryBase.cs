@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Microsoft.EntityFrameworkCore;
 using PreservationAction = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
@@ -15,13 +16,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
     {
         protected IQueryable<TaqForQueryDto> CreateQueryableWithFilter(IReadOnlyContext _context, string projectName, Filter filter)
         {
-            var nowUtc = TimeService.UtcNow;
+            var utcNow = TimeService.UtcNow;
             var startOfThisWeekUtc = DateTime.MinValue;
             var startOfNextWeekUtc = DateTime.MinValue;
             var startOfTwoWeeksUtc = DateTime.MinValue;
             if (filter.DueFilters.Any())
             {
-                startOfThisWeekUtc = nowUtc.StartOfWeek();
+                startOfThisWeekUtc = utcNow.StartOfWeek();
                 startOfNextWeekUtc = startOfThisWeekUtc.AddWeeks(1);
                 startOfTwoWeeksUtc = startOfThisWeekUtc.AddWeeks(2);
 
@@ -40,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                     where EF.Property<int>(req, "TagId") == tag.Id && filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
                 let anyOverdueActions = (from a in _context.QuerySet<PreservationAction>()
-                    where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue && a.DueTimeUtc < nowUtc
+                    where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue && a.DueTimeUtc < utcNow
                     select a.Id).Any()
                 let anyOpenActions = (from a in _context.QuerySet<PreservationAction>()
                     where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue
