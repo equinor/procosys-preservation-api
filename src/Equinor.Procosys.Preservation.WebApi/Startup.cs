@@ -124,7 +124,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 
                 c.OperationFilter<AddRoleDocumentation>();
 
-                //c.AddFluentValidationRules();
+                c.AddFluentValidationRules();
             });
 
             services.ConfigureSwaggerGen(options =>
