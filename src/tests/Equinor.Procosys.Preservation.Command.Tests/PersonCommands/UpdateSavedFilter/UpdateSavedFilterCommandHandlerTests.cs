@@ -75,10 +75,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.UpdateSaved
         }
 
         [TestMethod]
-        public async Task HandlingUpdateSavedFilterCommand_ShouldNotUpdateDefaultFilter_IfNoChangeInDefaultFilter()
+        public async Task HandlingUpdateSavedFilterCommand_ShouldNotUpdateDefaultFilter_IfDefaultFilterIsNull()
         {
             // Arrange
-            // Setup data to have oldtitle, oldcriteria, and true defaultvalue
+            _command = new UpdateSavedFilterCommand(_savedFilter.Id, _newTitle, _newCriteria, null, _rowVersion);
 
             // Act
             await _dut.Handle(_command, default);
@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.UpdateSaved
             // Arrange
             Assert.AreEqual(_newTitle, _savedFilter.Title);
             Assert.AreEqual(_newCriteria, _savedFilter.Criteria);
-            Assert.AreEqual(_newDefaultFilter, _savedFilter.DefaultFilter);
+            Assert.AreEqual(false, _savedFilter.DefaultFilter);
         }
 
         [TestMethod]

@@ -30,8 +30,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.UpdateSaved
 
             _savedFilterValidatorMock = new Mock<ISavedFilterValidator>();
             _savedFilterValidatorMock.Setup(r => r.ExistsAsync(_savedFilterId, default)).Returns(Task.FromResult(true));
-            _savedFilterValidatorMock.Setup(r => r.ExistsWithSameTitleForPersonInProjectAsync(_savedFilterId, _title, default))
-                .Returns(Task.FromResult(false));
 
             _command = new UpdateSavedFilterCommand(_savedFilterId, _title, _criteria, false,  RowVersion);
 
