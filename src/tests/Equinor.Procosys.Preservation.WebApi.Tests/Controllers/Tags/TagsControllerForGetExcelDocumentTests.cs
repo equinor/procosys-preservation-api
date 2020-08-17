@@ -121,6 +121,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         {
             var result = await _dut.GetExcelDocument("", _filterDto, _sortingDto);
 
+            _excelConverterMock.Verify(x => x.Convert(_exportDto), Times.Once);
+            _excelConverterMock.Verify(x => x.GetFileName(), Times.Once);
+
             Assert.IsInstanceOfType(result, typeof(FileStreamResult));
         }
     }
