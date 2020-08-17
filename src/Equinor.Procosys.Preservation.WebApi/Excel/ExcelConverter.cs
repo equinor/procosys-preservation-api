@@ -2,20 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using ClosedXML.Excel;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 
 namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
-        private readonly IPlantProvider _plantProvider;
-
-        public ExcelConverter(IPlantProvider plantProvider) => _plantProvider = plantProvider;
-
         public MemoryStream Convert(ExportDto dto)
         {
-            // nice sample code at https://github.com/ClosedXML/ClosedXML
+            // see https://github.com/ClosedXML/ClosedXML for sample code
             var excelStream = new MemoryStream();
 
             using (var workbook = new XLWorkbook())
@@ -104,7 +99,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(1).Value = $"Export of preserved tags";
 
             rowIdx++;
-            AddUsedFilter(sheet.Row(++rowIdx), "Plant", _plantProvider.Plant, true);
+            AddUsedFilter(sheet.Row(++rowIdx), "Plant", usedFilter.Plant, true);
             AddUsedFilter(sheet.Row(++rowIdx), "Project", usedFilter.ProjectName, true);
             AddUsedFilter(sheet.Row(++rowIdx), "Project description", usedFilter.ProjectDescription, true);
 

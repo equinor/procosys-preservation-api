@@ -17,9 +17,14 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
     public class GetTagsForExportQueryHandler : GetTagsQueryBase, IRequestHandler<GetTagsForExportQuery, Result<ExportDto>>
     {
         private readonly IReadOnlyContext _context;
+        private readonly IPlantProvider _plantProvider;
 
         // todo unit test
-        public GetTagsForExportQueryHandler(IReadOnlyContext context) => _context = context;
+        public GetTagsForExportQueryHandler(IReadOnlyContext context, IPlantProvider plantProvider)
+        {
+            _context = context;
+            _plantProvider = plantProvider;
+        }
 
         public async Task<Result<ExportDto>> Handle(GetTagsForExportQuery request, CancellationToken cancellationToken)
         {
@@ -83,6 +88,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 modeTitles,
                 filter.PreservationStatus.HasValue ? filter.PreservationStatus.Value.ToString() : string.Empty,
                 projectDescription,
+                _plantProvider.Plant,
                 projectName,
                 filter.PurchaseOrderNoStartsWith,
                 requirementTypeTitles,

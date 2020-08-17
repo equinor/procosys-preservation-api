@@ -16,6 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             IEnumerable<string> modeTitles,
             string preservationStatus,
             string projectDescription,
+            string plant,
             string projectName,
             string purchaseOrderNoStartsWith,
             IEnumerable<string> requirementTypeTitles,
@@ -36,6 +37,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             ModeTitles = modeTitles;
             PreservationStatus = preservationStatus;
             ProjectDescription = projectDescription;
+            Plant = plant;
             ProjectName = projectName;
             PurchaseOrderNoStartsWith = purchaseOrderNoStartsWith;
             RequirementTypeTitles = requirementTypeTitles;
@@ -55,6 +57,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         public IEnumerable<string> JourneyTitles { get; }
         public string McPkgNoStartsWith { get; }
         public IEnumerable<string> ModeTitles { get; }
+        public string Plant { get; }
         public string PreservationStatus { get; }
         public string ProjectDescription { get; }
         public string ProjectName { get; }
