@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                     join reqType in _context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals reqType.Id
                     where EF.Property<int>(req, "TagId") == tag.Id && filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
-                let anyOverDueActions = (from a in _context.QuerySet<PreservationAction>()
+                let anyOverdueActions = (from a in _context.QuerySet<PreservationAction>()
                     where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue && a.DueTimeUtc < nowUtc
                     select a.Id).Any()
                 let anyOpenActions = (from a in _context.QuerySet<PreservationAction>()
@@ -53,13 +53,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                        (filter.VoidedFilter == VoidedFilterType.NotVoided && !tag.IsVoided) ||
                        (filter.VoidedFilter == VoidedFilterType.Voided && tag.IsVoided)) &&
                       (!filter.DueFilters.Any() || 
-                           (filter.DueFilters.Contains(DueFilterType.OverDue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
+                           (filter.DueFilters.Contains(DueFilterType.Overdue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
                            (filter.DueFilters.Contains(DueFilterType.ThisWeek) && tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) ||
                            (filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
                       (!filter.ActionStatus.HasValue || 
                            (filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
                            (filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
-                           (filter.ActionStatus == ActionStatus.HasOverDue && anyOverDueActions)) &&
+                           (filter.ActionStatus == ActionStatus.HasOverdue && anyOverdueActions)) &&
                       (!filter.PreservationStatus.HasValue || 
                             tag.Status == filter.PreservationStatus.Value) &&
                       (string.IsNullOrEmpty(filter.TagNoStartsWith) ||
@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                 select new TaqForQueryDto
                 {
                     AreaCode = tag.AreaCode,
-                    AnyOverDueActions = anyOverDueActions,
+                    AnyOverdueActions = anyOverdueActions,
                     AnyOpenActions = anyOpenActions,
                     AnyClosedActions = anyClosedActions,
                     CalloffNo = tag.Calloff,

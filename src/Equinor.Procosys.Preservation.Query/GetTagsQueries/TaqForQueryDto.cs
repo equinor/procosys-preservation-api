@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
     public class TaqForQueryDto
     {
         public string AreaCode { get; set; }
-        public bool AnyOverDueActions { get; set; }
+        public bool AnyOverdueActions { get; set; }
         public bool AnyOpenActions { get; set; }
         public bool AnyClosedActions { get; set; }
         public string CalloffNo { get; set; }
@@ -35,9 +35,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
 
         public ActionStatus? GetActionStatus()
         {
-            if (AnyOverDueActions)
+            if (AnyOverdueActions)
             {
-                return ActionStatus.HasOverDue;
+                return ActionStatus.HasOverdue;
             }
             if (AnyOpenActions)
             {

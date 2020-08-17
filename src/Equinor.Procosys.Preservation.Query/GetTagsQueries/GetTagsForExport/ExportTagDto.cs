@@ -11,7 +11,7 @@
             string nextDueAsYearAndWeek,
             int? nextDueWeeks,
             string purchaseOrderTitle,
-            string requirements,
+            string requirementTitles,
             string responsibleCode,
             string status,
             string tagDescription,
@@ -29,7 +29,7 @@
             NextDueAsYearAndWeek = nextDueAsYearAndWeek;
             ResponsibleCode = responsibleCode;
             Status = status;
-            Requirements = requirements;
+            RequirementTitles = requirementTitles;
         }
 
         public string ActionStatus { get; }
@@ -44,7 +44,7 @@
         /// </summary>
         public int? NextDueWeeks { get; }
         public string PurchaseOrderTitle { get; }
-        public string Requirements { get; }
+        public string RequirementTitles { get; }
         public string ResponsibleCode { get; }
         public string Status { get; }
         public string TagNo { get; }

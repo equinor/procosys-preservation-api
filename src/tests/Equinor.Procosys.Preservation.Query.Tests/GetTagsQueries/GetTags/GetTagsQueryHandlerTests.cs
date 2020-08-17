@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnOkResult()
+        public async Task HandleGetTagsQuery_ShouldReturnOkResult()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectCounts()
+        public async Task HandleGetTagsQuery_ShouldReturnCorrectCounts()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnPageSize()
+        public async Task HandleGetTagsQuery_ShouldReturnPageSize()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnEmptyPageButMaxAvailable_WhenGettingBehindLastPage()
+        public async Task HandleGetTagsQuery_ShouldReturnEmptyPageButMaxAvailable_WhenGettingBehindLastPage()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -91,7 +91,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectDto()
+        public async Task HandleGetTagsQuery_ShouldReturnCorrectDto()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnDueInfo_WhenPreservationNotStarted()
+        public async Task HandleGetTagsQuery_ShouldNotReturnDueInfo_WhenPreservationNotStarted()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -141,7 +141,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnDueInfo_WhenPreservationStarted()
+        public async Task HandleGetTagsQuery_ShouldReturnDueInfo_WhenPreservationStarted()
         {
             StartPreservationOnAllTags();
 
@@ -161,7 +161,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
         
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectStatuses_BeforePreservationStarted()
+        public async Task HandleGetTagsQuery_ShouldReturnCorrectStatuses_BeforePreservationStarted()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -175,7 +175,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnCorrectStatuses_WhenPreservationStarted()
+        public async Task HandleGetTagsQuery_ShouldReturnCorrectStatuses_WhenPreservationStarted()
         {
             StartPreservationOnAllTags();
 
@@ -195,7 +195,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnReadyToBeTransferredForStandardTags_WhenTransferredToLastStep()
+        public async Task HandleGetTagsQuery_ShouldNotReturnReadyToBeTransferredForStandardTags_WhenTransferredToLastStep()
         {
             StartPreservationOnAllTags();
             
@@ -213,7 +213,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnReadyToBePreserved_BeforeDue()
+        public async Task HandleGetTagsQuery_ShouldNotReturnReadyToBePreserved_BeforeDue()
         {
             StartPreservationOnAllTags();
 
@@ -229,7 +229,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnReadyToBePreserved_WhenDue()
+        public async Task HandleGetTagsQuery_ShouldReturnReadyToBePreserved_WhenDue()
         {
             StartPreservationOnAllTags();
             _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
@@ -246,7 +246,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldReturnNoElements_WhenThereIsNoTags()
+        public async Task HandleGetTagsQuery_ShouldReturnNoElements_WhenThereIsNoTags()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -258,7 +258,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnTagNo()
+        public async Task HandleGetTagsQuery_ShouldFilterOnTagNo()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -278,7 +278,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnCommPkg()
+        public async Task HandleGetTagsQuery_ShouldFilterOnCommPkg()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -296,7 +296,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnMcPkg()
+        public async Task HandleGetTagsQuery_ShouldFilterOnMcPkg()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -314,7 +314,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnPurchaseOrder()
+        public async Task HandleGetTagsQuery_ShouldFilterOnPurchaseOrder()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -332,7 +332,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnStorageArea()
+        public async Task HandleGetTagsQuery_ShouldFilterOnStorageArea()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -350,7 +350,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnCallOff()
+        public async Task HandleGetTagsQuery_ShouldFilterOnCallOff()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -368,7 +368,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnPreservationStatus()
+        public async Task HandleGetTagsQuery_ShouldFilterOnPreservationStatus()
         {
             var filter = new Filter {PreservationStatus = PreservationStatus.Active};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -397,7 +397,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnOpenActions()
+        public async Task HandleGetTagsQuery_ShouldFilterOnOpenActions()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -417,13 +417,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
                 AssertCount(result.Data, 0);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverDue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
                 AssertCount(result.Data, 0);
             }
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnClosedActions()
+        public async Task HandleGetTagsQuery_ShouldFilterOnClosedActions()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -445,13 +445,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 AssertCount(result.Data, 1);
                 AssertActionStatus(result.Data, ActionStatus.HasClosed);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverDue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
                 AssertCount(result.Data, 0);
             }
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnOverDueActions()
+        public async Task HandleGetTagsQuery_ShouldFilterOnOverdueActions()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -468,23 +468,23 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 // when filtering on tag which has Open actions, tags with overdue actions is included
                 var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOpen}), default);
                 AssertCount(result.Data, 1);
-                AssertActionStatus(result.Data, ActionStatus.HasOverDue);
-                var tagIdWithOpenAndOverDueAction = result.Data.Tags.Single().Id;
+                AssertActionStatus(result.Data, ActionStatus.HasOverdue);
+                var tagIdWithOpenAndOverdueAction = result.Data.Tags.Single().Id;
                 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasClosed}), default);
                 AssertCount(result.Data, 0);
                 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverDue}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {ActionStatus = ActionStatus.HasOverdue}), default);
                 AssertCount(result.Data, 1);
-                AssertActionStatus(result.Data, ActionStatus.HasOverDue);
-                Assert.AreEqual(tagIdWithOpenAndOverDueAction, result.Data.Tags.Single().Id);
+                AssertActionStatus(result.Data, ActionStatus.HasOverdue);
+                Assert.AreEqual(tagIdWithOpenAndOverdueAction, result.Data.Tags.Single().Id);
             }
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotGetAnyTags_WhenFilterOnDue_WhenPreservationNotStarted()
+        public async Task HandleGetTagsQuery_ShouldNotGetAnyTags_WhenFilterOnDue_WhenPreservationNotStarted()
         {
-            var filter = new Filter {DueFilters = new List<DueFilterType>{DueFilterType.OverDue, DueFilterType.ThisWeek, DueFilterType.NextWeek}};
+            var filter = new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek}};
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
@@ -505,7 +505,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldGetTagsDueNextWeek_WhenFilterOnDueNextWeek()
+        public async Task HandleGetTagsQuery_ShouldGetTagsDueNextWeek_WhenFilterOnDueNextWeek()
         {
             StartPreservationOnAllTags();
             _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-1);
@@ -520,7 +520,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.OverDue}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
                 AssertCount(result.Data, 0);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
@@ -528,7 +528,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                     {
                         DueFilters = new List<DueFilterType>
                         {
-                            DueFilterType.OverDue, DueFilterType.ThisWeek, DueFilterType.NextWeek
+                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek
                         }
                     }), default);
                 AssertCount(result.Data, 20);
@@ -536,7 +536,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldGetTagsDueThisWeek_WhenFilterOnDueThisWeek()
+        public async Task HandleGetTagsQuery_ShouldGetTagsDueThisWeek_WhenFilterOnDueThisWeek()
         {
             StartPreservationOnAllTags();
             _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
@@ -551,7 +551,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
                 AssertCount(result.Data, 20);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.OverDue}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
                 AssertCount(result.Data, 0);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
@@ -559,7 +559,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                     {
                         DueFilters = new List<DueFilterType>
                         {
-                            DueFilterType.OverDue, DueFilterType.ThisWeek, DueFilterType.NextWeek
+                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek
                         }
                     }), default);
                 AssertCount(result.Data, 20);
@@ -567,7 +567,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldGetTagsOverDue_WhenFilterOnOverDue()
+        public async Task HandleGetTagsQuery_ShouldGetTagsOverdue_WhenFilterOnOverdue()
         {
             StartPreservationOnAllTags();
             _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks+1);
@@ -582,7 +582,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
                 AssertCount(result.Data, 0);
 
-                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.OverDue}}), default);
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
                 AssertCount(result.Data, 20);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
@@ -590,7 +590,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                     {
                         DueFilters = new List<DueFilterType>
                         {
-                            DueFilterType.OverDue, DueFilterType.ThisWeek, DueFilterType.NextWeek
+                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek
                         }
                     }), default);
                 AssertCount(result.Data, 20);
@@ -598,7 +598,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnRequirementType()
+        public async Task HandleGetTagsQuery_ShouldFilterOnRequirementType()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -615,7 +615,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnAreaCode()
+        public async Task HandleGetTagsQuery_ShouldFilterOnAreaCode()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -633,7 +633,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnDisciplineCode()
+        public async Task HandleGetTagsQuery_ShouldFilterOnDisciplineCode()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -651,7 +651,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
         
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnResponsible()
+        public async Task HandleGetTagsQuery_ShouldFilterOnResponsible()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -668,7 +668,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnTagFunctionCode()
+        public async Task HandleGetTagsQuery_ShouldFilterOnTagFunctionCode()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -686,7 +686,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
         
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnMode()
+        public async Task HandleGetTagsQuery_ShouldFilterOnMode()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -703,7 +703,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
         
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnJourney()
+        public async Task HandleGetTagsQuery_ShouldFilterOnJourney()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -716,7 +716,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
         
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnStep()
+        public async Task HandleGetTagsQuery_ShouldFilterOnStep()
         {
             var filter = new Filter {StepIds = new List<int>{_testDataSet.Journey1With2Steps.Steps.First().Id}};
             IEnumerable<int> tagIdsToTransfer;
@@ -742,7 +742,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
         
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterOnVoided()
+        public async Task HandleGetTagsQuery_ShouldFilterOnVoided()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -766,7 +766,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldFilterWhenAllFiltersSet()
+        public async Task HandleGetTagsQuery_ShouldFilterWhenAllFiltersSet()
         {
             var filter = new Filter
             {
@@ -796,7 +796,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
                 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldSortOnTagNo()
+        public async Task HandleGetTagsQuery_ShouldSortOnTagNo()
         {
             // filter on specific journey. Will get 10 standard tags
             var filter = new Filter {JourneyIds = new List<int>{_testDataSet.Journey1With2Steps.Id}};
@@ -827,7 +827,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
                 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldSetIsNew_BeforeNewPeriodHasElapsed()
+        public async Task HandleGetTagsQuery_ShouldSetIsNew_BeforeNewPeriodHasElapsed()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -838,7 +838,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
                 
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotSetIsNew_AfterNewPeriodHasElapsed()
+        public async Task HandleGetTagsQuery_ShouldNotSetIsNew_AfterNewPeriodHasElapsed()
         {
             var timeSpan = new TimeSpan(_tagIsNewHours+1, 0, 0);
             _timeProvider.Elapse(timeSpan);
@@ -852,7 +852,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
         
         [TestMethod]
-        public async Task HandleGetAllTagsInProjectQuery_ShouldNotReturnNextModeOrResponsible_WhenTagCantBeTransferred()
+        public async Task HandleGetTagsQuery_ShouldNotReturnNextModeOrResponsible_WhenTagCantBeTransferred()
         {
             int tagId;
             var tagTitle = "D43CDE9C5568";

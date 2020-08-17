@@ -89,7 +89,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        // todo unit test
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("ExcelDocument")]
         public async Task<ActionResult> GetExcelDocument(

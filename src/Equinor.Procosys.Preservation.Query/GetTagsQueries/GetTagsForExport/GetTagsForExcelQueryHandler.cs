@@ -19,7 +19,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         private readonly IReadOnlyContext _context;
         private readonly IPlantProvider _plantProvider;
 
-        // todo unit test
         public GetTagsForExportQueryHandler(IReadOnlyContext context, IPlantProvider plantProvider)
         {
             _context = context;
@@ -77,16 +76,16 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             var journeyTitles = await GetJourneyTitlesAsync(filter.JourneyIds);
 
             return new UsedFilterDto(
-                filter.ActionStatus.HasValue ? filter.ActionStatus.Value.ToString() : string.Empty,
+                filter.ActionStatus.GetDisplayValue(),
                 filter.AreaCodes,
                 filter.CallOffStartsWith,
                 filter.CommPkgNoStartsWith,
                 filter.DisciplineCodes,
-                filter.DueFilters.Select(v => v.ToString()), 
+                filter.DueFilters.Select(v => v.GetDisplayValue()), 
                 journeyTitles,
                 filter.McPkgNoStartsWith,
                 modeTitles,
-                filter.PreservationStatus.HasValue ? filter.PreservationStatus.Value.ToString() : string.Empty,
+                filter.PreservationStatus.GetDisplayValue(),
                 projectDescription,
                 _plantProvider.Plant,
                 projectName,
@@ -96,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 filter.StorageAreaStartsWith,
                 filter.TagFunctionCodes,
                 filter.TagNoStartsWith,
-                filter.VoidedFilter.ToString());
+                filter.VoidedFilter.GetDisplayValue());
         }
 
         private async Task<string> GetProjectDescriptionAsync(string projectName) 

@@ -4,6 +4,6 @@
     {
         HasOpen,
         HasClosed,
-        HasOverDue
+        HasOverdue
     }
 }

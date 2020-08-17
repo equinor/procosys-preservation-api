@@ -2,7 +2,7 @@
 {
     public enum DueFilterType
     {
-        OverDue,
+        Overdue,
         ThisWeek,
         NextWeek
     }

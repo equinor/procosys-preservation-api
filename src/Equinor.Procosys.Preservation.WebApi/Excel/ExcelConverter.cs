@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             var respCol = ++colIdx;
             var discCol = ++colIdx;
             var statusCol = ++colIdx;
-            var reqTypeCol = ++colIdx;
+            var reqCol = ++colIdx;
             var actionCol = ++colIdx;
             var voidedCol = ++colIdx;
 
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(respCol).Value = "Responsible";
             row.Cell(discCol).Value = "Discipline";
             row.Cell(statusCol).Value = "Status";
-            row.Cell(reqTypeCol).Value = "Requirement type";
+            row.Cell(reqCol).Value = "Requirements";
             row.Cell(actionCol).Value = "Action status";
             row.Cell(voidedCol).Value = "Is voided";
 
@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(respCol).Value = tag.ResponsibleCode;
                 row.Cell(discCol).Value = tag.DisciplineCode;
                 row.Cell(statusCol).Value = tag.Status;
-                row.Cell(reqTypeCol).Value = tag.Requirements;
+                row.Cell(reqCol).Value = tag.RequirementTitles;
                 row.Cell(actionCol).Value = tag.ActionStatus;
                 row.Cell(voidedCol).Value = tag.IsVoided;
             }
