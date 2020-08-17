@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             var row = sheet.Row(++rowIdx);
             row.Style.Font.SetBold();
             row.Style.Font.SetFontSize(14);
-            row.Cell(1).Value = $"Export of preserved tags";
+            row.Cell(1).Value = "Export of preserved tags";
 
             rowIdx++;
             AddUsedFilter(sheet.Row(++rowIdx), "Plant", usedFilter.Plant, true);
@@ -126,7 +126,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             AddUsedFilter(sheet.Row(++rowIdx), "Areas", usedFilter.AreaCodes);
          
             sheet.Columns(1, 2).AdjustToContents();
-            
         }
 
         private void AddUsedFilter(IXLRow row, string label, IEnumerable<string> values)
