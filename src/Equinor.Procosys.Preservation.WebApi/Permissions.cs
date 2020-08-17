@@ -3,8 +3,6 @@
     public class Permissions
     {
         public const string TAG_READ = "TAG/READ";
-        
-        public const string LIBRARY_GENERAL_READ = "LIBRARY_GENERAL/READ";
 
         public const string LIBRARY_PRESERVATION_READ = "LIBRARY_PRESERVATION/READ";
         public const string LIBRARY_PRESERVATION_CREATE = "LIBRARY_PRESERVATION/CREATE";

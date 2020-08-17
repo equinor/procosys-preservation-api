@@ -140,7 +140,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         [TestMethod]
         public async Task IsValidPlantForUser_ShouldReturnPlantsFromCache()
         {
-            await _dut.IsValidPlantForCurrentUserAsync("XYZ");
             await _dut.IsValidPlantForUserAsync("ABC", _currentUserOid);
             // Act
             await _dut.IsValidPlantForUserAsync(Plant2, _currentUserOid);
