@@ -90,8 +90,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
-        [HttpGet("ExcelDocument")]
-        public async Task<ActionResult> GetExcelDocument(
+        [HttpGet("ExportTagsToExcel")]
+        public async Task<ActionResult> ExportTagsToExcel(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
