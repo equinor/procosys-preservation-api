@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.DeleteSavedFilter
         public async Task<Result<Unit>> Handle(DeleteSavedFilterCommand request, CancellationToken cancellationToken)
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var person = await _personRepository.GetWithSavedFilterByOidAsync(currentUserOid);
+            var person = await _personRepository.GetWithSavedFiltersByOidAsync(currentUserOid);
             var savedFilter = person.SavedFilters.Single(sf => sf.Id == request.SavedFilterId);
 
             savedFilter.SetRowVersion(request.RowVersion);

@@ -26,8 +26,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
         }
 
         public int ProjectId { get; }
-        public string Title { get; }
-        public string Criteria { get; }
+        public string Title { get; set; }
+        public string Criteria { get; set; }
         public bool DefaultFilter { get; set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
