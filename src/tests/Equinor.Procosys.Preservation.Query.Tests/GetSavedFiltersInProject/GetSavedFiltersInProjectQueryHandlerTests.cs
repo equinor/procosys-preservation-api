@@ -77,9 +77,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetSavedFiltersInProject
                 var savedFilter = result.Data.Single();
 
                 Assert.AreEqual(1, result.Data.Count);
-                Assert.AreEqual(_title, savedFilter.Title);
-                Assert.AreEqual(_criteria, savedFilter.Criteria);
-                Assert.AreEqual(_defaultFilter, savedFilter.DefaultFilter);
+                Assert.AreEqual(_savedFilter.Id, savedFilter.Id);
+                Assert.AreEqual(_savedFilter.Title, savedFilter.Title);
+                Assert.AreEqual(_savedFilter.Criteria, savedFilter.Criteria);
+                Assert.AreEqual(_savedFilter.DefaultFilter, savedFilter.DefaultFilter);
             }
         }
 
