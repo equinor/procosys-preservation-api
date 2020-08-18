@@ -58,6 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly);
         }
 
+        // todo write unit test
         public async Task<bool> FieldsExistAsync(int requirementDefinitionId, CancellationToken token)
         {
             var reqDef = await (from rd in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
@@ -78,7 +79,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 where tfr.RequirementDefinitionId == requirementDefinitionId
                 select tfr).AnyAsync(token);
 
-        // todo write unit test
         private async Task<List<RequirementDefinition>> GetRequirementDefinitions(
             List<int> requirementDefinitionIds,
             CancellationToken token)
