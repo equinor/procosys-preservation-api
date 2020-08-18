@@ -2,10 +2,11 @@
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Query.GetTags;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
+namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
 {
     [TestClass]
     public class TagDtoTests
@@ -15,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         [TestInitialize]
         public void Setup() => _dut = new TagDto(
             1,
-            ActionStatus.HasOverDue,
+            ActionStatus.HasOverdue,
             "AreaCode",
             "CallOffNo",
             "CommPkgNo",
@@ -46,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTags
         public void Constructor_SetsProperties()
         {
             Assert.AreEqual(1, _dut.Id);
-            Assert.AreEqual(ActionStatus.HasOverDue, _dut.ActionStatus);
+            Assert.AreEqual(ActionStatus.HasOverdue, _dut.ActionStatus);
             Assert.AreEqual("AreaCode", _dut.AreaCode);
             Assert.AreEqual("CallOffNo", _dut.CalloffNo);
             Assert.AreEqual("CommPkgNo", _dut.CommPkgNo);

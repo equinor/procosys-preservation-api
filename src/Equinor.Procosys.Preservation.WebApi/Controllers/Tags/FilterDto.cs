@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Query.GetTags;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {

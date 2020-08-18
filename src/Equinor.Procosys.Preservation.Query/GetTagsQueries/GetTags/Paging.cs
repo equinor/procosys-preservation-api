@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Query.GetTags
+namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
 {
     public class Paging
     {
