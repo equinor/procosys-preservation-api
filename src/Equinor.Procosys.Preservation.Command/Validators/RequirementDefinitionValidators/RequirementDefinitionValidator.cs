@@ -21,7 +21,9 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 where rd.Id == requirementDefinitionId
                 select rd).AnyAsync(token);
 
-        public async Task<bool> IsVoidedAsync(int requirementDefinitionId, CancellationToken token)
+        public async Task<bool> IsVoidedAsync(
+            int requirementDefinitionId,
+            CancellationToken token)
         {
             var reqDef = await (from rd in _context.QuerySet<RequirementDefinition>()
                 where rd.Id == requirementDefinitionId
@@ -64,16 +66,19 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return reqDef != null && reqDef.Fields.Count > 0;
         }
 
+        // todo write unit test
         public async Task<bool> TagRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
              => await (from tr in _context.QuerySet<TagRequirement>()
                     where tr.RequirementDefinitionId == requirementDefinitionId
                     select tr).AnyAsync(token);
 
+        // todo write unit test
         public async Task<bool> TagFunctionRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
             => await (from tfr in _context.QuerySet<TagFunctionRequirement>()
                 where tfr.RequirementDefinitionId == requirementDefinitionId
                 select tfr).AnyAsync(token);
 
+        // todo write unit test
         private async Task<List<RequirementDefinition>> GetRequirementDefinitions(
             List<int> requirementDefinitionIds,
             CancellationToken token)

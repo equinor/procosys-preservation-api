@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Query.GetAllRequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.RequirementTypeAggregate
+namespace Equinor.Procosys.Preservation.Query.Tests.GetAllRequirementTypes
 {
     [TestClass]
     public class RequirementDefDtoTests
