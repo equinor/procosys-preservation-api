@@ -3,18 +3,22 @@
     public static class PreservationStatusExtension
     {
         public static string GetDisplayValue(this PreservationStatus preservationStatus)
-        {
-            switch (preservationStatus)
+            => preservationStatus switch
             {
-                case PreservationStatus.NotStarted:
-                    return "Not started";
-                case PreservationStatus.Active:
-                    return "Active";
-                case PreservationStatus.Completed:
-                    return "Completed";
-                default:
-                    return string.Empty;
+                PreservationStatus.NotStarted => "Not started",
+                PreservationStatus.Active => "Active",
+                PreservationStatus.Completed => "Completed",
+                _ => string.Empty
+            };
+
+        public static string GetDisplayValue(this PreservationStatus? preservationStatus)
+        {
+            if (preservationStatus.HasValue)
+            {
+                return preservationStatus.Value.GetDisplayValue();
             }
+
+            return string.Empty;
         }
     }
 }

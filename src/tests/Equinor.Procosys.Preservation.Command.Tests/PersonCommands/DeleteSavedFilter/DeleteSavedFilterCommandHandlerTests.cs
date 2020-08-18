@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.DeleteSaved
             _person = new Person(CurrentUserOid, "firstName", "lastName");
 
             _personRepositoryMock = new Mock<IPersonRepository>();
-            _personRepositoryMock.Setup(p => p.GetWithSavedFilterByOidAsync(CurrentUserOid))
+            _personRepositoryMock.Setup(p => p.GetWithSavedFiltersByOidAsync(CurrentUserOid))
                 .Returns(Task.FromResult(_person));
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
             _currentUserProviderMock

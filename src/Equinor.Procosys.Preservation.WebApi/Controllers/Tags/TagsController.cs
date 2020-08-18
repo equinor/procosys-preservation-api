@@ -42,7 +42,10 @@ using Equinor.Procosys.Preservation.Query.GetTagAttachment;
 using Equinor.Procosys.Preservation.Query.GetTagAttachments;
 using Equinor.Procosys.Preservation.Query.GetTagDetails;
 using Equinor.Procosys.Preservation.Query.GetTagRequirements;
-using Equinor.Procosys.Preservation.Query.GetTags;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
+using Equinor.Procosys.Preservation.WebApi.Excel;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -62,8 +65,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     public class TagsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IExcelConverter _excelConverter;
 
-        public TagsController(IMediator mediator) => _mediator = mediator;
+        public TagsController(IMediator mediator, IExcelConverter excelConverter)
+        {
+            _mediator = mediator;
+            _excelConverter = excelConverter;
+        }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet]
@@ -79,6 +87,30 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
             var result = await _mediator.Send(query);
             return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [HttpGet("ExportTagsToExcel")]
+        public async Task<ActionResult> ExportTagsToExcel(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromQuery] FilterDto filter,
+            [FromQuery] SortingDto sorting)
+        {
+            var query = CreateGetTagsForExportQuery(filter, sorting);
+
+            var result = await _mediator.Send(query);
+
+            if (result.ResultType != ResultType.Ok)
+            {
+                return this.FromResult(result);
+            }
+
+            var excelMemoryStream = _excelConverter.Convert(result.Data);
+            excelMemoryStream.Position = 0;
+
+            return File(excelMemoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{_excelConverter.GetFileName()}.xlsx");  
         }
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
@@ -835,97 +867,115 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 new Paging(paging.Page, paging.Size)
             );
 
-            if (filter.VoidedFilter.HasValue)
-            {
-                query.Filter.VoidedFilter = filter.VoidedFilter.Value;
-            }
-
-            if (filter.ActionStatus.HasValue)
-            {
-                query.Filter.ActionStatus = filter.ActionStatus;
-            }
-
-            if (filter.DueFilters != null)
-            {
-                query.Filter.DueFilters = filter.DueFilters;
-            }
-
-            if (filter.PreservationStatus.HasValue)
-            {
-                query.Filter.PreservationStatus = filter.PreservationStatus;
-            }
-
-            if (filter.RequirementTypeIds != null)
-            {
-                query.Filter.RequirementTypeIds = filter.RequirementTypeIds;
-            }
-
-            if (filter.AreaCodes != null)
-            {
-                query.Filter.AreaCodes = filter.AreaCodes;
-            }
-
-            if (filter.DisciplineCodes != null)
-            {
-                query.Filter.DisciplineCodes = filter.DisciplineCodes;
-            }
-
-            if (filter.ResponsibleIds != null)
-            {
-                query.Filter.ResponsibleIds = filter.ResponsibleIds;
-            }
-
-            if (filter.TagFunctionCodes != null)
-            {
-                query.Filter.TagFunctionCodes = filter.TagFunctionCodes;
-            }
-
-            if (filter.ModeIds != null)
-            {
-                query.Filter.ModeIds = filter.ModeIds;
-            }
-
-            if (filter.JourneyIds != null)
-            {
-                query.Filter.JourneyIds = filter.JourneyIds;
-            }
-
-            if (filter.StepIds != null)
-            {
-                query.Filter.StepIds = filter.StepIds;
-            }
-
-            if (filter.TagNoStartsWith != null)
-            {
-                query.Filter.TagNoStartsWith = filter.TagNoStartsWith;
-            }
-
-            if (filter.CommPkgNoStartsWith != null)
-            {
-                query.Filter.CommPkgNoStartsWith = filter.CommPkgNoStartsWith;
-            }
-
-            if (filter.McPkgNoStartsWith != null)
-            {
-                query.Filter.McPkgNoStartsWith = filter.McPkgNoStartsWith;
-            }
-
-            if (filter.PurchaseOrderNoStartsWith != null)
-            {
-                query.Filter.PurchaseOrderNoStartsWith = filter.PurchaseOrderNoStartsWith;
-            }
-
-            if (filter.StorageAreaStartsWith != null)
-            {
-                query.Filter.StorageAreaStartsWith = filter.StorageAreaStartsWith;
-            }
-
-            if (filter.CallOffStartsWith != null)
-            {
-                query.Filter.CallOffStartsWith = filter.CallOffStartsWith;
-            }
+            FillFilterFromDto(filter, query.Filter);
 
             return query;
+        }
+
+        private static GetTagsForExportQuery CreateGetTagsForExportQuery(FilterDto filter, SortingDto sorting)
+        {
+            var query = new GetTagsForExportQuery(
+                filter.ProjectName,
+                new Sorting(sorting.Direction, sorting.Property),
+                new Filter()
+            );
+
+            FillFilterFromDto(filter, query.Filter);
+
+            return query;
+        }
+
+        private static void FillFilterFromDto(FilterDto source, Filter target)
+        {
+            if (source.VoidedFilter.HasValue)
+            {
+                target.VoidedFilter = source.VoidedFilter.Value;
+            }
+
+            if (source.ActionStatus.HasValue)
+            {
+                target.ActionStatus = source.ActionStatus;
+            }
+
+            if (source.DueFilters != null)
+            {
+                target.DueFilters = source.DueFilters.ToList();
+            }
+
+            if (source.PreservationStatus.HasValue)
+            {
+                target.PreservationStatus = source.PreservationStatus;
+            }
+
+            if (source.RequirementTypeIds != null)
+            {
+                target.RequirementTypeIds = source.RequirementTypeIds.ToList();
+            }
+
+            if (source.AreaCodes != null)
+            {
+                target.AreaCodes = source.AreaCodes.ToList();
+            }
+
+            if (source.DisciplineCodes != null)
+            {
+                target.DisciplineCodes = source.DisciplineCodes.ToList();
+            }
+
+            if (source.ResponsibleIds != null)
+            {
+                target.ResponsibleIds = source.ResponsibleIds.ToList();
+            }
+
+            if (source.TagFunctionCodes != null)
+            {
+                target.TagFunctionCodes = source.TagFunctionCodes.ToList();
+            }
+
+            if (source.ModeIds != null)
+            {
+                target.ModeIds = source.ModeIds.ToList();
+            }
+
+            if (source.JourneyIds != null)
+            {
+                target.JourneyIds = source.JourneyIds.ToList();
+            }
+
+            if (source.StepIds != null)
+            {
+                target.StepIds = source.StepIds.ToList();
+            }
+
+            if (source.TagNoStartsWith != null)
+            {
+                target.TagNoStartsWith = source.TagNoStartsWith;
+            }
+
+            if (source.CommPkgNoStartsWith != null)
+            {
+                target.CommPkgNoStartsWith = source.CommPkgNoStartsWith;
+            }
+
+            if (source.McPkgNoStartsWith != null)
+            {
+                target.McPkgNoStartsWith = source.McPkgNoStartsWith;
+            }
+
+            if (source.PurchaseOrderNoStartsWith != null)
+            {
+                target.PurchaseOrderNoStartsWith = source.PurchaseOrderNoStartsWith;
+            }
+
+            if (source.StorageAreaStartsWith != null)
+            {
+                target.StorageAreaStartsWith = source.StorageAreaStartsWith;
+            }
+
+            if (source.CallOffStartsWith != null)
+            {
+                target.CallOffStartsWith = source.CallOffStartsWith;
+            }
         }
     }
 }

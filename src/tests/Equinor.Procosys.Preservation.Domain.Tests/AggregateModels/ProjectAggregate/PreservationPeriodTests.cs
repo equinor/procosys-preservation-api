@@ -2,6 +2,7 @@
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;

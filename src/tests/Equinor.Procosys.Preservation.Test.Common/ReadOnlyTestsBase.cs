@@ -10,6 +10,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

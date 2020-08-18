@@ -8,6 +8,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Test.Common;
 using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -407,7 +408,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void Preserve_ShouldPreserve_WhenPreservingOverDue()
+        public void Preserve_ShouldPreserve_WhenPreservingOverdue()
         {
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
             Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
@@ -645,7 +646,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void BulkPreserve_ShouldPreserve_WhenPreservingOverDue()
+        public void BulkPreserve_ShouldPreserve_WhenPreservingOverdue()
         {
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
             Assert.AreEqual(1, _dutWithOneReqNotNeedInputTwoWeekInterval.Requirements.First().PreservationPeriods.Count);
@@ -738,7 +739,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void GetUpComingRequirements_ShouldReturnReadyRequirements_WhenOverDue()
+        public void GetUpComingRequirements_ShouldReturnReadyRequirements_WhenOverdue()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation();

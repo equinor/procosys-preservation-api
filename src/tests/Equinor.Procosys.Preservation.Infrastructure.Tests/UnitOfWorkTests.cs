@@ -4,6 +4,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

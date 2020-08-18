@@ -3,6 +3,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
+using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {

@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreateSaved
             _person = new Person(_currentUserOid, "Current", "User");
             _personRepositoryMock = new Mock<IPersonRepository>();
             _personRepositoryMock
-                .Setup(p => p.GetWithSavedFilterByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
+                .Setup(p => p.GetWithSavedFiltersByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
                 .Returns(Task.FromResult(_person));
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();

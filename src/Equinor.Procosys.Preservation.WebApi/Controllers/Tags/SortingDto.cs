@@ -1,4 +1,5 @@
-﻿using Equinor.Procosys.Preservation.Query.GetTags;
+﻿using Equinor.Procosys.Preservation.Query.GetTagsQueries;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
