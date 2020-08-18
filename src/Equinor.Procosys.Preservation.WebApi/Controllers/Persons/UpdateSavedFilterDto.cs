@@ -4,7 +4,7 @@
     {
         public string Title { get; set; }
         public string Criteria { get; set; }
-        public bool? DefaultValue { get; set; }
+        public bool? DefaultFilter { get; set; }
         public string RowVersion { get; set; }
     }
 }

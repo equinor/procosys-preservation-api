@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreateSaved
         }
 
         [TestMethod]
-        public async Task HandlingCreateSavedFilterCommand_ShouldOverrideDefaultValue()
+        public async Task HandlingCreateSavedFilterCommand_ShouldOverrideDefaultFilter()
         {
             await _dut.Handle(_command, default);
             Assert.AreEqual(1, _person.SavedFilters.Count);

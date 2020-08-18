@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
                 id,
                 dto.Title,
                 dto.Criteria,
-                dto.DefaultValue,
+                dto.DefaultFilter,
                 dto.RowVersion);
 
             var result = await _mediator.Send(command);
