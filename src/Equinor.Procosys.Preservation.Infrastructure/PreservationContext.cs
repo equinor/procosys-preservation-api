@@ -10,6 +10,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
 using Equinor.Procosys.Preservation.Domain.Events;
@@ -66,6 +67,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         public virtual DbSet<Attachment> Attachments { get; set; }
         public virtual DbSet<History> History { get; set; }
         public virtual DbSet<SavedFilter> SavedFilters { get; set; }
+        public virtual DbSet<Setting> Settings { get; set; }
 
         private void SetGlobalPlantFilter(ModelBuilder modelBuilder)
         {
