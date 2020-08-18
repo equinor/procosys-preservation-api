@@ -1,6 +1,6 @@
 ﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
+namespace Equinor.Procosys.Preservation.Query.GetAllRequirementTypes
 {
     public class FieldDto
     {

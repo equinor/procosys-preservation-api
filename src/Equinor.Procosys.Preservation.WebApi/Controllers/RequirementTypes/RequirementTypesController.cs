@@ -14,7 +14,8 @@ using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequir
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
 using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Query.GetAllRequirementTypes;
+using Equinor.Procosys.Preservation.Query.GetRequirementTypeById;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

@@ -58,29 +58,32 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly);
         }
 
+        // todo write unit test
+        public async Task<bool> FieldsExistAsync(int requirementDefinitionId, CancellationToken token)
+        {
+            var reqDef = await (from rd in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
+                where rd.Id == requirementDefinitionId
+                select rd).SingleOrDefaultAsync(token);
+            return reqDef != null && reqDef.Fields.Count > 0;
+        }
+
+        // todo write unit test
+        public async Task<bool> TagRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
+             => await (from tr in _context.QuerySet<TagRequirement>()
+                    where tr.RequirementDefinitionId == requirementDefinitionId
+                    select tr).AnyAsync(token);
+
+        // todo write unit test
+        public async Task<bool> TagFunctionRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
+            => await (from tfr in _context.QuerySet<TagFunctionRequirement>()
+                where tfr.RequirementDefinitionId == requirementDefinitionId
+                select tfr).AnyAsync(token);
+
         private async Task<List<RequirementDefinition>> GetRequirementDefinitions(
             List<int> requirementDefinitionIds,
             CancellationToken token)
             => await (from rd in _context.QuerySet<RequirementDefinition>()
                 where requirementDefinitionIds.Contains(rd.Id)
                 select rd).ToListAsync(token);
-
-        public async Task<bool> FieldsExistAsync(int requirementDefinitionId, CancellationToken token)
-        {
-            var reqDef = await (from rd in _context.QuerySet<RequirementDefinition>()
-                where rd.Id == requirementDefinitionId
-                select rd).SingleOrDefaultAsync(token);
-            return reqDef != null && reqDef.Fields.Count > 0;
-        }
-
-        public async Task<bool> TagRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
-             => await (from tr in _context.QuerySet<TagRequirement>()
-                    where tr.RequirementDefinitionId == requirementDefinitionId
-                    select tr).AnyAsync(token);
-
-        public async Task<bool> TagFunctionRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
-            => await (from tfr in _context.QuerySet<TagFunctionRequirement>()
-                where tfr.RequirementDefinitionId == requirementDefinitionId
-                select tfr).AnyAsync(token);
     }
 }
