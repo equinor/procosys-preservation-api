@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
+namespace Equinor.Procosys.Preservation.Query.GetAllRequirementTypes
 {
     public class GetAllRequirementTypesQuery : IRequest<Result<IEnumerable<RequirementTypeDto>>>
     {

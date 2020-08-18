@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
+namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
 {
-    public class RequirementDefinitionDto
+    public class RequirementDefinitionDetailDto
     {
-        public RequirementDefinitionDto(
+        public RequirementDefinitionDetailDto(
             int id,
             string title,
+            bool isInUse,
             bool isVoided,
             int defaultIntervalWeeks,
             RequirementUsage usage,
             int sortKey,
             bool needsUserInput,
-            IEnumerable<FieldDto> fields,
+            IEnumerable<FieldDetailsDto> fields,
             string rowVersion)
         {
             if (fields == null)
@@ -24,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             }
             Id = id;
             Title = title;
+            IsInUse = isInUse;
             IsVoided = isVoided;
             DefaultIntervalWeeks = defaultIntervalWeeks;
             Usage = usage;
@@ -35,12 +37,13 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
 
         public int Id { get; }
         public string Title { get; }
+        public bool IsInUse { get; }
         public bool IsVoided { get; }
         public int DefaultIntervalWeeks { get; }
         public RequirementUsage Usage { get; }
         public int SortKey { get; }
         public bool NeedsUserInput { get; }
-        public IEnumerable<FieldDto> Fields { get; }
+        public IEnumerable<FieldDetailsDto> Fields { get; }
         public string RowVersion { get; }
     }
 }

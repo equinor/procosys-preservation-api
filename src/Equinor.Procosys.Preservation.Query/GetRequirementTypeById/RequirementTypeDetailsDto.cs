@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
+namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
 {
-    public class RequirementTypeDto
+    public class RequirementTypeDetailsDto
     {
-        public RequirementTypeDto(
+        public RequirementTypeDetailsDto(
             int id,
             string code,
             string title,
             RequirementTypeIcon icon,
+            bool isInUse,
             bool isVoided,
             int sortKey,
-            IEnumerable<RequirementDefinitionDto> requirementDefinitions,
+            IEnumerable<RequirementDefinitionDetailDto> requirementDefinitions,
             string rowVersion)
         {
             if (requirementDefinitions == null)
@@ -25,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
             Code = code;
             Title = title;
             Icon = icon;
+            IsInUse = isInUse;
             IsVoided = isVoided;
             SortKey = sortKey;
             RowVersion = rowVersion;
@@ -35,9 +37,10 @@ namespace Equinor.Procosys.Preservation.Query.RequirementTypeAggregate
         public string Code { get; }
         public string Title { get; }
         public RequirementTypeIcon Icon { get; }
+        public bool IsInUse { get; }
         public bool IsVoided { get; }
         public int SortKey { get; }
         public string RowVersion { get; }
-        public IEnumerable<RequirementDefinitionDto> RequirementDefinitions { get; }
+        public IEnumerable<RequirementDefinitionDetailDto> RequirementDefinitions { get; }
     }
 }
