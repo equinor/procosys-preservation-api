@@ -4,8 +4,15 @@ namespace Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject
 {
     public class SavedFilterDto
     {
-        public SavedFilterDto(string title, string criteria, bool defaultFilter, DateTime createdAtUtc, string rowVersion)
+        public SavedFilterDto(
+            int id,
+            string title,
+            string criteria,
+            bool defaultFilter,
+            DateTime createdAtUtc,
+            string rowVersion)
         {
+            Id = id;
             Title = title;
             Criteria = criteria;
             DefaultFilter = defaultFilter;
@@ -13,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject
             RowVersion = rowVersion;
         }
 
+        public int Id { get; }
         public string Title { get; }
         public string Criteria { get; }
         public bool DefaultFilter { get; }

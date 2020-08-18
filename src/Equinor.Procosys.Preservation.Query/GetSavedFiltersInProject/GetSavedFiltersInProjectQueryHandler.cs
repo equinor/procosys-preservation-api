@@ -38,6 +38,7 @@ namespace Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject
 
             var savedFilterDtos = savedFilters
                     .Select(savedFilter => new SavedFilterDto(
+                    savedFilter.Id,
                     savedFilter.Title,
                     savedFilter.Criteria,
                     savedFilter.DefaultFilter,
