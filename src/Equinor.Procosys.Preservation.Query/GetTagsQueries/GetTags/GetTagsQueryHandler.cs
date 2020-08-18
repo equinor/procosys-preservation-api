@@ -106,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
 
         private TagsResult CreateResult(
             int maxAvailable,
-            List<TaqForQueryDto> orderedDtos,
+            List<TagForQueryDto> orderedDtos,
             List<Tag> tagsWithRequirements,
             List<ReqTypeDto> reqTypes,
             List<Mode> nextModes,
@@ -183,7 +183,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
             return TimeService.UtcNow < lastTimeIsNew;
         }
 
-        private IQueryable<TaqForQueryDto> AddPaging(Paging paging, IQueryable<TaqForQueryDto> queryable)
+        private IQueryable<TagForQueryDto> AddPaging(Paging paging, IQueryable<TagForQueryDto> queryable)
         {
             queryable = queryable
                 .Skip(paging.Page * paging.Size)

@@ -152,7 +152,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         }
 
         private IEnumerable<ExportTagDto> CreateTagDtos(
-            List<TaqForQueryDto> orderedDtos,
+            List<TagForQueryDto> orderedDtos,
             List<Tag> tagsWithRequirements,
             List<ReqDefDto> reqDefs)
         {

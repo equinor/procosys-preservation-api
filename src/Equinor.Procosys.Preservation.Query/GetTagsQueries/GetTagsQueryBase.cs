@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
 {
     public abstract class GetTagsQueryBase
     {
-        protected IQueryable<TaqForQueryDto> CreateQueryableWithFilter(IReadOnlyContext _context, string projectName, Filter filter)
+        protected IQueryable<TagForQueryDto> CreateQueryableWithFilter(IReadOnlyContext _context, string projectName, Filter filter)
         {
             var utcNow = TimeService.UtcNow;
             var startOfThisWeekUtc = DateTime.MinValue;
@@ -25,8 +25,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                 startOfThisWeekUtc = utcNow.StartOfWeek();
                 startOfNextWeekUtc = startOfThisWeekUtc.AddWeeks(1);
                 startOfTwoWeeksUtc = startOfThisWeekUtc.AddWeeks(2);
-
             }
+
             // No .Include() here. EF do not support .Include together with selecting a projection (dto).
             // If the select-statement select tag so queryable has been of type IQueryable<Tag>, .Include(t => t.Requirements) work fine
             var queryable = from tag in _context.QuerySet<Tag>()
@@ -91,7 +91,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                             filter.ModeIds.Contains(mode.Id)) &&
                       (!filter.StepIds.Any() || 
                             filter.StepIds.Contains(step.Id))
-                select new TaqForQueryDto
+                select new TagForQueryDto
                 {
                     AreaCode = tag.AreaCode,
                     AnyOverdueActions = anyOverdueActions,
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
             return queryable;
         }
 
-        protected IQueryable<TaqForQueryDto> AddSorting(Sorting sorting, IQueryable<TaqForQueryDto> queryable)
+        protected IQueryable<TagForQueryDto> AddSorting(Sorting sorting, IQueryable<TagForQueryDto> queryable)
         {
             switch (sorting.Direction)
             {

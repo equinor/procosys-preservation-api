@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public async Task GetExcelDocument_ShouldSendCommand()
         {
-            await _dut.GetExcelDocument("", _filterDto, _sortingDto);
+            await _dut.ExportTagsToExcel("", _filterDto, _sortingDto);
             _mediatorMock.Verify(x => x.Send(It.IsAny<GetTagsForExportQuery>(), It.IsAny<CancellationToken>()), Times.Once);
         }
 
@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             _sortingDto.Direction = SortingDirection.Desc;
             _sortingDto.Property = SortingProperty.Responsible;
 
-            await _dut.GetExcelDocument("", _filterDto, _sortingDto);
+            await _dut.ExportTagsToExcel("", _filterDto, _sortingDto);
 
             Assert.AreEqual(_filterDto.ProjectName, _createdQuery.ProjectName);
             Assert.IsNotNull(_createdQuery.Filter);
@@ -119,7 +119,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         [TestMethod]
         public async Task GetExcelDocument_ShouldReturnsFile_WhenResultIsSuccessful()
         {
-            var result = await _dut.GetExcelDocument("", _filterDto, _sortingDto);
+            var result = await _dut.ExportTagsToExcel("", _filterDto, _sortingDto);
 
             _excelConverterMock.Verify(x => x.Convert(_exportDto), Times.Once);
             _excelConverterMock.Verify(x => x.GetFileName(), Times.Once);

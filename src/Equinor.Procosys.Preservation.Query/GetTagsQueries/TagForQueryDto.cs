@@ -4,7 +4,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
 {
-    public class TaqForQueryDto
+    public class TagForQueryDto
     {
         public string AreaCode { get; set; }
         public bool AnyOverdueActions { get; set; }
