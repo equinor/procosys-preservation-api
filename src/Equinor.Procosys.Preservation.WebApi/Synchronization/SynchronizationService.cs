@@ -13,7 +13,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.MainApi.Certificate;
 using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.Query.GetSetting;
+using Equinor.Procosys.Preservation.Query.GetDateTimeSetting;
 using Equinor.Procosys.Preservation.WebApi.Authentication;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Misc;

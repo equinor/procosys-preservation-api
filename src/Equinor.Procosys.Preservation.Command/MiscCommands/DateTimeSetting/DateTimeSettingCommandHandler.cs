@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.DateTimeSetting
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
 
-        // ubit test
+        // todo unit test
         public DateTimeSettingCommandHandler(ISettingRepository settingRepository, IUnitOfWork unitOfWork, IPlantProvider plantProvider)
         {
             _settingRepository = settingRepository;
