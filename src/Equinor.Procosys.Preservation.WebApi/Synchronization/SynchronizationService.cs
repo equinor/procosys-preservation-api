@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions;
+using Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.Procosys.Preservation.MainApi.Certificate;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.Query.GetSetting;
 using Equinor.Procosys.Preservation.WebApi.Authentication;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Misc;
@@ -33,6 +38,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
         private readonly IClaimsTransformation _claimsTransformation;
         private readonly IApplicationAuthenticator _authenticator;
         private readonly IPlantCache _plantCache;
+        private readonly ICertificateApiService _certificateApiService;
 
         public SynchronizationService(
             ILogger<SynchronizationService> logger,
@@ -45,7 +51,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             IClaimsTransformation claimsTransformation,
             IApplicationAuthenticator authenticator,
             IPlantCache plantCache,
-            IOptionsMonitor<SynchronizationOptions> options)
+            IOptionsMonitor<SynchronizationOptions> options,
+            ICertificateApiService certificateApiService)
         {
             _logger = logger;
             _telemetryClient = telemetryClient;
@@ -57,6 +64,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             _authenticator = authenticator;
             _bearerTokenSetter = bearerTokenSetter;
             _plantCache = plantCache;
+            _certificateApiService = certificateApiService;
 
             _synchronizationUserOid = options.CurrentValue.UserOid;
         }
@@ -81,9 +89,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
                 await _claimsTransformation.TransformAsync(currentUser);
 
                 var startTime = TimeService.UtcNow;
-                await SynchronizeProjects(plant);
-                await SynchronizeResponsibles(plant);
-                await SynchronizeTagFunctions(plant);
+                await AutoTransferTagsAsync(plant);
+
+                await SynchronizeProjectsAsync(plant);
+                await SynchronizeResponsiblesAsync(plant);
+                await SynchronizeTagFunctionsAsync(plant);
+                
                 var endTime = TimeService.UtcNow;
 
                 _logger.LogInformation($"Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
@@ -91,57 +102,171 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             }
         }
 
-        private async Task SynchronizeProjects(string plant)
+        private async Task SynchronizeProjectsAsync(string plant)
         {
-            _logger.LogInformation($"Synchronizing projects");
+            _logger.LogInformation("Synchronizing projects");
 
             var result = await _mediator.Send(new SyncProjectsCommand());
 
             if (result.ResultType == ServiceResult.ResultType.Ok)
             {
-                _logger.LogWarning($"Synchronizing projects complete.");
-                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Succeeded" }, { "Plant", plant }, { "Type", "Projects" } });
+                _logger.LogInformation("Synchronizing projects complete.");
+                _telemetryClient.TrackEvent("Synchronization Status",
+                    new Dictionary<string, string>
+                    {
+                        {"Status", "Succeeded"}, 
+                        {"Plant", plant},
+                        {"Type", "Projects"}
+                    });
             }
             else
             {
-                _logger.LogWarning($"Synchronizing projects failed.");
-                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Failed" }, { "Plant", plant }, { "Type", "Projects" } });
+                _logger.LogWarning($"Synchronizing projects failed. ResultType {result.ResultType}");
+                _telemetryClient.TrackEvent("Synchronization Status",
+                    new Dictionary<string, string>
+                    {
+                        {"Status", "Failed"},
+                        {"Plant", plant},
+                        {"Type", "Projects"},
+                        {"ResultType", result.ResultType.ToString()}
+                    });
             }
         }
 
-        private async Task SynchronizeResponsibles(string plant)
+        private async Task SynchronizeResponsiblesAsync(string plant)
         {
-            _logger.LogInformation($"Synchronizing responsibles");
+            _logger.LogInformation("Synchronizing responsibles");
 
             var result = await _mediator.Send(new SyncResponsiblesCommand());
 
             if (result.ResultType == ServiceResult.ResultType.Ok)
             {
-                _logger.LogWarning($"Synchronizing responsibles complete.");
-                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Succeeded" }, { "Plant", plant }, { "Type", "Responsibles" } });
+                _logger.LogInformation("Synchronizing responsibles complete.");
+                _telemetryClient.TrackEvent("Synchronization Status",
+                    new Dictionary<string, string>
+                    {
+                        {"Status", "Succeeded"},
+                        {"Plant", plant},
+                        {"Type", "Responsibles"}
+                    });
             }
             else
             {
-                _logger.LogWarning($"Synchronizing responsibles failed.");
-                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Failed" }, { "Plant", plant }, { "Type", "Responsibles" } });
+                _logger.LogWarning($"Synchronizing responsibles failed. ResultType {result.ResultType}");
+                _telemetryClient.TrackEvent("Synchronization Status",
+                    new Dictionary<string, string>
+                    {
+                        {"Status", "Failed"}, 
+                        {"Plant", plant}, 
+                        {"Type", "Responsibles"},
+                        {"ResultType", result.ResultType.ToString()}
+                    });
             }
         }
 
-        private async Task SynchronizeTagFunctions(string plant)
+        private async Task SynchronizeTagFunctionsAsync(string plant)
         {
-            _logger.LogInformation($"Synchronizing tag functions");
+            _logger.LogInformation("Synchronizing tag functions");
 
             var result = await _mediator.Send(new SyncTagFunctionsCommand());
 
             if (result.ResultType == ServiceResult.ResultType.Ok)
             {
-                _logger.LogWarning($"Synchronizing tag functions complete.");
-                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Succeeded" }, { "Plant", plant }, { "Type", "Tag Functions" } });
+                _logger.LogInformation("Synchronizing tag functions complete.");
+                _telemetryClient.TrackEvent("Synchronization Status",
+                    new Dictionary<string, string>
+                    {
+                        {"Status", "Succeeded"},
+                        {"Plant", plant}, 
+                        {"Type", "Tag Functions"}
+                    });
             }
             else
             {
-                _logger.LogWarning($"Synchronizing tag functions failed.");
-                _telemetryClient.TrackEvent("Synchronization Status", new Dictionary<string, string> { { "Status", "Failed" }, { "Plant", plant }, { "Type", "Tag Functions" } });
+                _logger.LogWarning($"Synchronizing tag functions failed. ResultType {result.ResultType}");
+                _telemetryClient.TrackEvent("Synchronization Status",
+                    new Dictionary<string, string>
+                    {
+                        {"Status", "Failed"},
+                        {"Plant", plant},
+                        {"Type", "Tag Functions"},
+                        {"ResultType", result.ResultType.ToString()}
+                    });
+            }
+        }
+
+        private async Task AutoTransferTagsAsync(string plant)
+        {
+            _logger.LogInformation("Autotransfer tags");
+
+            DateTime lastAcceptedCertificatesRead;
+
+            var dateTimeResult = await _mediator.Send(new GetDateTimeSettingQuery(Setting.LastAcceptedCertificatesReadCode));
+            if (dateTimeResult.ResultType == ServiceResult.ResultType.Ok && dateTimeResult.Data.HasValue)
+            {
+                lastAcceptedCertificatesRead = dateTimeResult.Data.Value;
+            }
+            else if (dateTimeResult.ResultType == ServiceResult.ResultType.NotFound 
+                     || (dateTimeResult.ResultType == ServiceResult.ResultType.Ok && !dateTimeResult.Data.HasValue))
+            {
+                lastAcceptedCertificatesRead = TimeService.UtcNow;
+            }
+            else
+            {
+                _logger.LogWarning($"Autotransfer tags functions failed. Could not find {Setting.LastAcceptedCertificatesReadCode}. ResultType {dateTimeResult.ResultType}");
+                _telemetryClient.TrackEvent("Synchronization Status",
+                    new Dictionary<string, string>
+                    {
+                        {"Status", "Failed"}, 
+                        {"Plant", plant}, 
+                        {"Type", "Autotransfer tags"},
+                        {"ResultType", dateTimeResult.ResultType.ToString() }
+                    });
+                return;
+            }
+            
+            var acceptedCertificatesSinceLastTransfer = (await _certificateApiService.GetAcceptedCertificatesAsync(plant, lastAcceptedCertificatesRead)).ToList();
+
+            // RFCC must be handled before RFOC, since RFCC is Accepted before RFOC. It is possible the same tag should be transfered 2 steps 
+            await AutoTransferTagAffectedByCertificatesAsync(plant, acceptedCertificatesSinceLastTransfer.Where(c => c.CertificateType == "RFCC").ToList());
+            await AutoTransferTagAffectedByCertificatesAsync(plant, acceptedCertificatesSinceLastTransfer.Where(c => c.CertificateType == "RFOC").ToList());
+
+        }
+
+        private async Task AutoTransferTagAffectedByCertificatesAsync(string plant, List<ProcosysCertificateModel> certificates)
+        {
+            foreach (var certificate in certificates)
+            {
+                var result = await _mediator.Send(new AutoTransferCommand(certificate.ProjectName, certificate.CertificateNo, certificate.CertificateType));
+
+                if (result.ResultType == ServiceResult.ResultType.Ok)
+                {
+                    _logger.LogInformation("Autotransfer tags complete.");
+                    _telemetryClient.TrackEvent("Synchronization Status",
+                        new Dictionary<string, string>
+                        {
+                            {"Status", "Succeeded"}, 
+                            {"Plant", plant}, 
+                            {"Type", "Autotransfer tags"}, 
+                            {"ProjectName", certificate.ProjectName}, 
+                            {"CertificateNo", certificate.CertificateNo}, 
+                            {"CertificateType", certificate.CertificateType}
+                        });
+                }
+                else
+                {
+                    _logger.LogWarning($"Autotransfer tags functions failed.");
+                    _telemetryClient.TrackEvent("Synchronization Status",
+                        new Dictionary<string, string>
+                        {
+                            {"Status", "Failed"}, 
+                            {"Plant", plant}, 
+                            {"Type", "Autotransfer tags"}, 
+                            {"ProjectName", certificate.ProjectName}, 
+                            {"CertificateNo", certificate.CertificateNo}, 
+                            {"CertificateType", certificate.CertificateType}
+                        });
+                }
             }
         }
     }
