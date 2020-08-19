@@ -22,6 +22,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Domain.Time;
@@ -111,6 +112,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IPersonRepository, PersonRepository>();
             services.AddScoped<ITagFunctionRepository, TagFunctionRepository>();
             services.AddScoped<IHistoryRepository, HistoryRepository>();
+            services.AddScoped<ISettingRepository, SettingRepository>();
 
             services.AddScoped<Authenticator>();
             services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<Authenticator>());
