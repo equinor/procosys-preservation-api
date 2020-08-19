@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet("{id}")]
-        public async Task<ActionResult<RequirementTypeDto>> GetRequirementType(
+        public async Task<ActionResult<RequirementTypeDetailsDto>> GetRequirementType(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
