@@ -26,6 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep
 
             step.SetRowVersion(request.RowVersion);
             journey.RemoveStep(step);
+            _journeyRepository.RemoveStep(step);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return new SuccessResult<Unit>(Unit.Value);
