@@ -22,6 +22,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .HasIndex(x => x.Plant)
                 .HasName("IX_Journeys_Plant_ASC")
                 .IncludeProperties(x => new {x.CreatedAtUtc, x.IsVoided, x.ModifiedAtUtc, x.Title});
+
+            builder
+                .HasMany(x => x.Steps)
+                .WithOne()
+                .IsRequired()
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.5")
+                .HasAnnotation("ProductVersion", "3.1.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -155,7 +155,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.Property<bool>("IsVoided")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("JourneyId")
+                    b.Property<int>("JourneyId")
                         .HasColumnType("int");
 
                     b.Property<int>("ModeId")
@@ -1389,7 +1389,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", null)
                         .WithMany("Steps")
-                        .HasForeignKey("JourneyId");
+                        .HasForeignKey("JourneyId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.HasOne("Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate.Mode", null)
                         .WithMany()
