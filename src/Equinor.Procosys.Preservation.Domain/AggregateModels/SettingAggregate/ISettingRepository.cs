@@ -4,6 +4,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate
 {
     public interface ISettingRepository : IRepository<Setting>
     {
-        Task<Setting> GetByCodeAsync(string responsibleCode);
+        Task<Setting> GetByCodeAsync(string settingCode);
     }
 }

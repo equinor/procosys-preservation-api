@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         {
         }
         
-        public Task<Setting> GetByCodeAsync(string SettingCode) 
-            => DefaultQuery.SingleOrDefaultAsync(r => r.Code == SettingCode);
+        public Task<Setting> GetByCodeAsync(string settingCode) 
+            => DefaultQuery.SingleOrDefaultAsync(r => r.Code == settingCode);
     }
 }
