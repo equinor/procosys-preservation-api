@@ -62,7 +62,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.UpdateSaved
         public void Validate_ShouldFail_WhenSavedFilterExistsWithSameTitleForPersonInProject()
         {
             // Arrange
-            _savedFilterValidatorMock.Setup(r => r.ExistsWithSameTitleForPersonInProjectAsync(_savedFilterId, _title, default))
+            _savedFilterValidatorMock.Setup(r => r.ExistsAnotherWithSameTitleForPersonInProjectAsync(_savedFilterId, _title, default))
                 .Returns(Task.FromResult(true));
 
             // Act
