@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.MiscCommands.UpdateDateTimeSetting;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles;
 using Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions;
@@ -38,6 +39,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
         private readonly IClaimsTransformation _claimsTransformation;
         private readonly IApplicationAuthenticator _authenticator;
         private readonly IPlantCache _plantCache;
+        private readonly IOptionsMonitor<SynchronizationOptions> _options;
         private readonly ICertificateApiService _certificateApiService;
 
         public SynchronizationService(
@@ -64,8 +66,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             _authenticator = authenticator;
             _bearerTokenSetter = bearerTokenSetter;
             _plantCache = plantCache;
+            _options = options;
             _certificateApiService = certificateApiService;
-
             _synchronizationUserOid = options.CurrentValue.UserOid;
         }
 
@@ -89,11 +91,25 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
                 await _claimsTransformation.TransformAsync(currentUser);
 
                 var startTime = TimeService.UtcNow;
-                await AutoTransferTagsAsync(plant);
+                if (_options.CurrentValue.AutoTransferTags)
+                {
+                    await AutoTransferTagsAsync(plant);
+                }
 
-                await SynchronizeProjectsAsync(plant);
-                await SynchronizeResponsiblesAsync(plant);
-                await SynchronizeTagFunctionsAsync(plant);
+                if (_options.CurrentValue.SynchronizeProjects)
+                {
+                    await SynchronizeProjectsAsync(plant);
+                }
+
+                if (_options.CurrentValue.SynchronizeResponsibles)
+                {
+                    await SynchronizeResponsiblesAsync(plant);
+                }
+
+                if (_options.CurrentValue.SynchronizeTagFunctions)
+                {
+                    await SynchronizeTagFunctionsAsync(plant);
+                }
                 
                 var endTime = TimeService.UtcNow;
 
@@ -199,38 +215,66 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
         {
             _logger.LogInformation("Autotransfer tags");
 
-            DateTime lastAcceptedCertificatesRead;
-
-            var dateTimeResult = await _mediator.Send(new GetDateTimeSettingQuery(Setting.LastAcceptedCertificatesReadCode));
-            if (dateTimeResult.ResultType == ServiceResult.ResultType.Ok && dateTimeResult.Data.HasValue)
+            var lastAcceptedCertificatesRead = await GetLastAcceptedCertificatesRead(plant);
+            if (!lastAcceptedCertificatesRead.HasValue)
             {
-                lastAcceptedCertificatesRead = dateTimeResult.Data.Value;
-            }
-            else if (dateTimeResult.ResultType == ServiceResult.ResultType.NotFound 
-                     || (dateTimeResult.ResultType == ServiceResult.ResultType.Ok && !dateTimeResult.Data.HasValue))
-            {
-                lastAcceptedCertificatesRead = TimeService.UtcNow;
-            }
-            else
-            {
-                _logger.LogWarning($"Autotransfer tags functions failed. Could not find {Setting.LastAcceptedCertificatesReadCode}. ResultType {dateTimeResult.ResultType}");
-                _telemetryClient.TrackEvent("Synchronization Status",
-                    new Dictionary<string, string>
-                    {
-                        {"Status", "Failed"}, 
-                        {"Plant", plant}, 
-                        {"Type", "Autotransfer tags"},
-                        {"ResultType", dateTimeResult.ResultType.ToString() }
-                    });
                 return;
             }
-            
-            var acceptedCertificatesSinceLastTransfer = (await _certificateApiService.GetAcceptedCertificatesAsync(plant, lastAcceptedCertificatesRead)).ToList();
+
+            var acceptedCertificatesSinceLastTransfer = (await _certificateApiService.GetAcceptedCertificatesAsync(plant, lastAcceptedCertificatesRead.Value)).ToList();
 
             // RFCC must be handled before RFOC, since RFCC is Accepted before RFOC. It is possible the same tag should be transfered 2 steps 
             await AutoTransferTagAffectedByCertificatesAsync(plant, acceptedCertificatesSinceLastTransfer.Where(c => c.CertificateType == "RFCC").ToList());
             await AutoTransferTagAffectedByCertificatesAsync(plant, acceptedCertificatesSinceLastTransfer.Where(c => c.CertificateType == "RFOC").ToList());
 
+            await UpdateLastAcceptedCertificatesRead(plant);
+        }
+
+        private async Task UpdateLastAcceptedCertificatesRead(string plant)
+        {
+            var result = await _mediator.Send(new UpdateDateTimeSettingCommand(Setting.LastAcceptedCertificatesReadCode, TimeService.UtcNow));
+
+            if (result.ResultType != ServiceResult.ResultType.Ok)
+            {
+                _logger.LogWarning(
+                    $"Autotransfer tags functions failed. Could not update {Setting.LastAcceptedCertificatesReadCode}. ResultType {result.ResultType}");
+                _telemetryClient.TrackEvent("Synchronization Status",
+                    new Dictionary<string, string>
+                    {
+                        {"Status", "Failed"},
+                        {"Plant", plant},
+                        {"Type", "Autotransfer tags"},
+                        {"ResultType", result.ResultType.ToString()}
+                    });
+            }
+        }
+
+        private async Task<DateTime?> GetLastAcceptedCertificatesRead(string plant)
+        {
+            var dateTimeResult =
+                await _mediator.Send(new GetDateTimeSettingQuery(Setting.LastAcceptedCertificatesReadCode));
+            if (dateTimeResult.ResultType == ServiceResult.ResultType.Ok && dateTimeResult.Data.HasValue)
+            {
+                return dateTimeResult.Data.Value;
+            }
+
+            if (dateTimeResult.ResultType == ServiceResult.ResultType.NotFound
+                || (dateTimeResult.ResultType == ServiceResult.ResultType.Ok && !dateTimeResult.Data.HasValue))
+            {
+                return TimeService.UtcNow;
+            }
+
+            _logger.LogWarning(
+                $"Autotransfer tags functions failed. Could not get {Setting.LastAcceptedCertificatesReadCode}. ResultType {dateTimeResult.ResultType}");
+            _telemetryClient.TrackEvent("Synchronization Status",
+                new Dictionary<string, string>
+                {
+                    {"Status", "Failed"},
+                    {"Plant", plant},
+                    {"Type", "Autotransfer tags"},
+                    {"ResultType", dateTimeResult.ResultType.ToString()}
+                });
+            return null;
         }
 
         private async Task AutoTransferTagAffectedByCertificatesAsync(string plant, List<ProcosysCertificateModel> certificates)
