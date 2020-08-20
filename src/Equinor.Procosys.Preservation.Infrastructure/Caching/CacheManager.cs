@@ -1,5 +1,7 @@
 ﻿using System;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Internal;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Caching
 {
@@ -7,7 +9,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Caching
     {
         private readonly IMemoryCache _cache;
 
-        public CacheManager() => _cache = new MemoryCache(new MemoryCacheOptions());
+        public CacheManager() => _cache = new MemoryCache(new MemoryCacheOptions()
+        {
+            Clock = new CacheClock()
+        });
 
         public T Get<T>(string key) where T : class => _cache.Get(key) as T;
 
@@ -33,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Caching
                 return;
             }
 
-            _cache.Set(key, instance, DateTime.UtcNow.Add(GetExpirationTime(duration, expiration)));
+            _cache.Set(key, instance, TimeService.UtcNow.Add(GetExpirationTime(duration, expiration)));
         }
 
         private static TimeSpan GetExpirationTime(CacheDuration duration, long expiration)
@@ -44,5 +49,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Caching
                 CacheDuration.Seconds => TimeSpan.FromSeconds(expiration),
                 _ => throw new NotImplementedException($"Unknown {nameof(CacheDuration)}: {duration}"),
             };
+
+        private class CacheClock : ISystemClock
+        {
+            public DateTimeOffset UtcNow => TimeService.UtcNow;
+        }
     }
 }
