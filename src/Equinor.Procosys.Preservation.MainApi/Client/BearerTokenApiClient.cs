@@ -45,8 +45,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
 
             var httpClient = await CreateHttpClientAsync();
 
-            var response = await httpClient.GetAsync(url);
             var stopWatch = Stopwatch.StartNew();
+            var response = await httpClient.GetAsync(url);
             stopWatch.Stop();
 
             if (!response.IsSuccessStatusCode)
