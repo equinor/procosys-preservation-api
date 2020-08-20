@@ -9,13 +9,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Caching
     {
         private readonly IMemoryCache _cache;
 
-        public CacheManager()
+        public CacheManager() => _cache = new MemoryCache(new MemoryCacheOptions()
         {
-            _cache = new MemoryCache(new MemoryCacheOptions()
-            {
-                Clock = new CacheClock()
-            });
-        }
+            Clock = new CacheClock()
+        });
 
         public T Get<T>(string key) where T : class => _cache.Get(key) as T;
 
