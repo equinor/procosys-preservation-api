@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
             [FromBody] VoidTagFunctionDto dto)
         {
             var result = await _mediator.Send(new VoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion));
-            return Ok(result);
+            this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
@@ -82,7 +82,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
             [FromBody] UnvoidTagFunctionDto dto)
         {
             var result = await _mediator.Send(new UnvoidTagFunctionCommand(code, dto.RegisterCode, dto.RowVersion));
-            return Ok(result);
+            this.FromResult(result);
         }
     }
 }
