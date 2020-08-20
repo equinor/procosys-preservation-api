@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             var result = await _dut.TransformAsync(_principalWithOid);
 
-            AssertRoleClaims(result.Claims);
+            AssertRoleClaimsForPlant1(result.Claims);
         }
 
         [TestMethod]
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             await _dut.TransformAsync(_principalWithOid);
             var result = await _dut.TransformAsync(_principalWithOid);
 
-            AssertRoleClaims(result.Claims);
+            AssertRoleClaimsForPlant1(result.Claims);
         }
 
         [TestMethod]
@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             var result = await _dut.TransformAsync(_principalWithOid);
 
-            AssertProjectClaims(result.Claims);
+            AssertProjectClaimsForPlant1(result.Claims);
         }
 
         [TestMethod]
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             await _dut.TransformAsync(_principalWithOid);
             var result = await _dut.TransformAsync(_principalWithOid);
 
-            AssertProjectClaims(result.Claims);
+            AssertProjectClaimsForPlant1(result.Claims);
         }
 
         [TestMethod]
@@ -103,7 +103,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             var result = await _dut.TransformAsync(_principalWithOid);
 
-            AssertContentRestriction(result.Claims);
+            AssertContentRestrictionForPlant1(result.Claims);
         }
 
         [TestMethod]
@@ -112,7 +112,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             await _dut.TransformAsync(_principalWithOid);
             var result = await _dut.TransformAsync(_principalWithOid);
 
-            AssertContentRestriction(result.Claims);
+            AssertContentRestrictionForPlant1(result.Claims);
         }
 
         [TestMethod]
@@ -136,8 +136,32 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             Assert.AreEqual(0, GetRoleClaims(result.Claims).Count);
             Assert.AreEqual(0, GetContentRestrictionClaims(result.Claims).Count);
         }
+        
+        [TestMethod]
+        public async Task TransformAsync_OnSecondPlant_ShouldClearAllClaimsForFirstPlant()
+        {
+            var result = await _dut.TransformAsync(_principalWithOid);
+            AssertRoleClaimsForPlant1(result.Claims);
+            AssertProjectClaimsForPlant1(result.Claims);
+            AssertContentRestrictionForPlant1(result.Claims);
 
-        private void AssertRoleClaims(IEnumerable<Claim> claims)
+            _plantProviderMock.SetupGet(p => p.Plant).Returns(Plant2);
+            result = await _dut.TransformAsync(_principalWithOid);
+
+            var claims = GetRoleClaims(result.Claims);
+            Assert.AreEqual(1, claims.Count);
+            Assert.IsNotNull(claims.SingleOrDefault(r => r.Value == Permission1_Plant2));
+
+            claims = GetProjectClaims(result.Claims);
+            Assert.AreEqual(1, claims.Count);
+            Assert.IsNotNull(claims.SingleOrDefault(r => r.Value == ClaimsTransformation.GetProjectClaimValue(Project1_Plant2)));
+
+            claims = GetContentRestrictionClaims(result.Claims);
+            Assert.AreEqual(1, claims.Count);
+            Assert.IsNotNull(claims.SingleOrDefault(r => r.Value == ClaimsTransformation.GetContentRestrictionClaimValue(Restriction1_Plant2)));
+        }
+
+        private void AssertRoleClaimsForPlant1(IEnumerable<Claim> claims)
         {
             var roleClaims = GetRoleClaims(claims);
             Assert.AreEqual(2, roleClaims.Count);
@@ -145,7 +169,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             Assert.IsTrue(roleClaims.Any(r => r.Value == Permission2_Plant1));
         }
 
-        private void AssertProjectClaims(IEnumerable<Claim> claims)
+        private void AssertProjectClaimsForPlant1(IEnumerable<Claim> claims)
         {
             var projectClaims = GetProjectClaims(claims);
             Assert.AreEqual(2, projectClaims.Count);
@@ -153,7 +177,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             Assert.IsTrue(projectClaims.Any(r => r.Value == ClaimsTransformation.GetProjectClaimValue(Project2_Plant1)));
         }
 
-        private void AssertContentRestriction(IEnumerable<Claim> claims)
+        private void AssertContentRestrictionForPlant1(IEnumerable<Claim> claims)
         {
             var contentRestrictionClaims = GetContentRestrictionClaims(claims);
             Assert.AreEqual(2, contentRestrictionClaims.Count);
