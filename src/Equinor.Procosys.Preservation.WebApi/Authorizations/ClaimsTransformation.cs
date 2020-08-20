@@ -49,26 +49,40 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 return principal;
             }
 
-            ClearOldClaimsForThisIssuer(principal);
 
-            var claimsIdentity = new ClaimsIdentity();
+            var claimsIdentity = GetOrCreateClaimsIdentityForThisIssuer(principal);
+
             await AddRoleForAllPermissionsToIdentityAsync(claimsIdentity, plantId, userOid.Value);
             await AddUserDataClaimForAllProjectsToIdentityAsync(claimsIdentity, plantId, userOid.Value);
             await AddUserDataClaimForAllContentRestrictionsToIdentityAsync(claimsIdentity, plantId, userOid.Value);
-            principal.AddIdentity(claimsIdentity);
 
             return principal;
         }
-        
+
         public static string GetProjectClaimValue(string projectName) => $"{ProjectPrefix}{projectName}";
 
         public static string GetContentRestrictionClaimValue(string contentRestriction) => $"{ContentRestrictionPrefix}{contentRestriction}";
 
-        private void ClearOldClaimsForThisIssuer(ClaimsPrincipal principal)
+        private ClaimsIdentity GetOrCreateClaimsIdentityForThisIssuer(ClaimsPrincipal principal)
         {
-            var oldClaims = principal.Claims.Where(c => c.Issuer == ClaimsIssuer).ToList();
-            var identity = (ClaimsIdentity)principal.Identity;
-            oldClaims.ForEach(c => identity.RemoveClaim(c));
+            var identity = principal.Identities.SingleOrDefault(i => i.Label == ClaimsIssuer);
+            if (identity == null)
+            {
+                identity = new ClaimsIdentity {Label = ClaimsIssuer};
+                principal.AddIdentity(identity);
+            }
+            else
+            {
+                ClearOldClaims(identity);
+            }
+
+            return identity;
+        }
+
+        private void ClearOldClaims(ClaimsIdentity identity)
+        {
+            var oldClaims = identity.Claims.Where(c => c.Issuer == ClaimsIssuer).ToList();
+            oldClaims.ForEach(identity.RemoveClaim);
         }
 
         private async Task AddRoleForAllPermissionsToIdentityAsync(ClaimsIdentity claimsIdentity, string plantId, Guid userOid)
@@ -81,7 +95,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
         private async Task AddUserDataClaimForAllProjectsToIdentityAsync(ClaimsIdentity claimsIdentity, string plantId, Guid userOid)
         {
             var projectNames = await _permissionCache.GetProjectNamesForUserOidAsync(plantId, userOid);
-            projectNames?.ToList().ForEach(projectName => claimsIdentity.AddClaim(CreateClaim(ClaimTypes.UserData, projectName)));
+            projectNames?.ToList().ForEach(projectName => claimsIdentity.AddClaim(CreateClaim(ClaimTypes.UserData, GetProjectClaimValue(projectName))));
         }
 
         private async Task AddUserDataClaimForAllContentRestrictionsToIdentityAsync(ClaimsIdentity claimsIdentity, string plantId, Guid userOid)
@@ -91,7 +105,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 contentRestriction => claimsIdentity.AddClaim(CreateClaim(ClaimTypes.UserData, GetContentRestrictionClaimValue(contentRestriction))));
         }
 
-        private static Claim CreateClaim(string claimType, string projectName)
-            => new Claim(claimType, GetProjectClaimValue(projectName), ClaimsIssuer);
+        private static Claim CreateClaim(string claimType, string claimValue)
+            => new Claim(claimType, claimValue, null, ClaimsIssuer);
     }
 }
