@@ -1,5 +1,7 @@
-﻿using System.Threading;
+﻿using System;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Infrastructure.Caching;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Caching
@@ -8,9 +10,15 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Caching
     public class CacheManagerTests
     {
         private CacheManager _dut;
+        private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
-        public void Setup() => _dut = new CacheManager();
+        public void Setup()
+        {
+            _timeProvider = new ManualTimeProvider(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+            TimeService.SetProvider(_timeProvider);
+            _dut = new CacheManager();
+        }
 
         [TestMethod]
         public void GetOrCreate_ShouldReturnCachedValue()
@@ -42,9 +50,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Caching
         {
             // Arrange
             _dut.GetOrCreate("A", () => "C", CacheDuration.Seconds, 1);
-            var MillisecondsTimeout = 2000;
-            Thread.Sleep(MillisecondsTimeout);
-            
+            _timeProvider.Elapse(TimeSpan.FromSeconds(2));
+
             // Act
             var result = _dut.GetOrCreate("A", () => "B", CacheDuration.Minutes, 2);
             

@@ -6,6 +6,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.Sql("update RequirementTypes set Icon = 'Other' where Icon='Measure'");
+
             migrationBuilder.DropCheckConstraint(
                 name: "constraint_requirement_type_check_icon",
                 table: "RequirementTypes");

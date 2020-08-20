@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Infrastructure.Caching;
 using Equinor.Procosys.Preservation.MainApi.Permission;
+using Equinor.Procosys.Preservation.Test.Common;
 using Equinor.Procosys.Preservation.WebApi.Caches;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,6 +30,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         [TestInitialize]
         public void Setup()
         {
+            TimeService.SetProvider(new ManualTimeProvider(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
+
             _permissionApiServiceMock = new Mock<IPermissionApiService>();
             _permissionApiServiceMock.Setup(p => p.GetProjectsAsync(TestPlant))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Project1, Project2}));

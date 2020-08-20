@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Infrastructure.Caching;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.Test.Common;
 using Equinor.Procosys.Preservation.WebApi.Caches;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -26,6 +28,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         [TestInitialize]
         public void Setup()
         {
+            TimeService.SetProvider(new ManualTimeProvider(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
+
             var optionsMock = new Mock<IOptionsMonitor<CacheOptions>>();
             optionsMock
                 .Setup(x => x.CurrentValue)
