@@ -1,4 +1,5 @@
 ﻿using System;
+using Equinor.Procosys.Preservation.Domain.Time;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace Equinor.Procosys.Preservation.Infrastructure.Caching
@@ -33,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Caching
                 return;
             }
 
-            _cache.Set(key, instance, DateTime.UtcNow.Add(GetExpirationTime(duration, expiration)));
+            _cache.Set(key, instance, TimeService.UtcNow.Add(GetExpirationTime(duration, expiration)));
         }
 
         private static TimeSpan GetExpirationTime(CacheDuration duration, long expiration)
