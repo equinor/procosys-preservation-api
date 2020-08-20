@@ -19,6 +19,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private Guid _personOid;
         private SavedFilterValidator _dut;
         private Project _project;
+        private SavedFilter _savedFilter1;
+        private SavedFilter _savedFilter2;
 
         private readonly string _title = "title";
         private readonly string _projectName = "projectName";
@@ -34,9 +36,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _project = AddProject(context, _projectName, "");
 
                 var person = AddPerson(context, _personOid, "Current", "User");
-                var savedFilter = new SavedFilter(TestPlant, _project, _title, Criteria);
+                _savedFilter1 = new SavedFilter(TestPlant, _project, _title, Criteria);
+                _savedFilter2 = new SavedFilter(TestPlant, _project, _title, "C");
 
-                person.AddSavedFilter(savedFilter);
+                person.AddSavedFilter(_savedFilter1);
+                person.AddSavedFilter(_savedFilter2);
                 context.SaveChangesAsync().Wait();
 
                 _currentUserProviderMock = new Mock<ICurrentUserProvider>();
@@ -47,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValid_UnknownTitle_ReturnsFalse()
+        public async Task ExistsWithSameTitleForPersonInProjectAsync_UnknownTitle_ReturnsFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -60,13 +64,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValid_KnownTitle_ReturnsTrue()
+        public async Task ExistsWithSameTitleForPersonInProjectAsync_KnownTitle_ReturnsTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
             {
                 _dut = new SavedFilterValidator(context, _currentUserProviderMock.Object);
                 var result = await _dut.ExistsWithSameTitleForPersonInProjectAsync(_title, _projectName, default);
+
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAnotherWithSameTitleForPersonInProjectAsync_NewTitle_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
+            {
+                _dut = new SavedFilterValidator(context, _currentUserProviderMock.Object);
+                var result = await _dut.ExistsAnotherWithSameTitleForPersonInProjectAsync(2, "xxx", default);
+
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAnotherWithSameTitleForPersonInProjectAsync_SameTitleAsAnotherSavedFilter_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
+                _currentUserProvider))
+            {
+                _dut = new SavedFilterValidator(context, _currentUserProviderMock.Object);
+                var result = await _dut.ExistsAnotherWithSameTitleForPersonInProjectAsync(_savedFilter2.Id, _title, default);
 
                 Assert.IsTrue(result);
             }

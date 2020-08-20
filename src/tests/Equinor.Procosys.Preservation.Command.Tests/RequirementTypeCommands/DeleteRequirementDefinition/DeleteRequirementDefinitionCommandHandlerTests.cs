@@ -47,6 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
             await _dut.Handle(_command, default);
 
             // Assert
+            Assert.AreEqual(0, _requirementType.RequirementDefinitions.Count);
             _requirementTypeRepositoryMock.Verify(r => r.RemoveRequirementDefinition(_requirementDefinitionMock.Object), Times.Once);
         }
 

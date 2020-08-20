@@ -53,10 +53,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
             {
                 if (tryGet && response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning($"Request returned 'Not found' and took {stopWatch.Elapsed.TotalSeconds}s.");
+                    _logger.LogWarning($"Requesting '{url}' returned 'Not found' and took {stopWatch.Elapsed.TotalSeconds}s.");
                     return default;
                 }
-                _logger.LogError($"Request was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
+                _logger.LogError($"Requesting '{url}' was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
                 throw new Exception($"Requesting '{url}' was unsuccessful. Status={response.StatusCode}");
             }
 
@@ -84,7 +84,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
         private async ValueTask<HttpClient> CreateHttpClientAsync()
         {
             var httpClient = _httpClientFactory.CreateClient();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", await _bearerTokenProvider.GetBearerTokenOnBehalfOfCurrentUserAsync());
+            var bearerToken = await _bearerTokenProvider.GetBearerTokenOnBehalfOfCurrentUserAsync();
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
             return httpClient;
         }
     }

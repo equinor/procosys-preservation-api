@@ -47,6 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
             
             // Assert
             Assert.AreEqual(0, _journey.Steps.Count);
+            _journeyRepositoryMock.Verify(r => r.RemoveStep(_stepMock.Object), Times.Once);
         }
 
         [TestMethod]
