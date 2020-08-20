@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromQuery] bool includeVoided = false)
         {
             var result = await _mediator.Send(new GetAllRequirementTypesQuery(includeVoided));
-            return Ok(result);
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromRoute] int id)
         {
             var result = await _mediator.Send(new GetRequirementTypeByIdQuery(id));
-            return Ok(result);
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromBody] UpdateRequirementTypeDto dto)
         {
             var result = await _mediator.Send(new UpdateRequirementTypeCommand(id, dto.RowVersion, dto.SortKey, dto.Title, dto.Code, dto.Icon));
-            return Ok(result);
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
@@ -94,7 +94,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromBody] VoidRequirementTypeDto dto)
         {
             var result = await _mediator.Send(new VoidRequirementTypeCommand(id, dto.RowVersion));
-            return Ok(result);
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
@@ -108,7 +108,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromBody] UnvoidRequirementTypeDto dto)
         {
             var result = await _mediator.Send(new UnvoidRequirementTypeCommand(id, dto.RowVersion));
-            return Ok(result);
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
@@ -158,7 +158,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 requirementDefinitionId,
                 dto.RowVersion);
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
@@ -177,7 +177,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 requirementDefinitionId,
                 dto.RowVersion);
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return this.FromResult(result);
         }
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_DELETE)]
@@ -236,7 +236,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 updatedFields,
                 newFields);
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return this.FromResult(result);
         }
     }
 }
