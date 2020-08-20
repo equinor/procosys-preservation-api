@@ -55,6 +55,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.DeleteSaved
 
             // Assert
             Assert.AreEqual(0, _person.SavedFilters.Count);
+            _personRepositoryMock.Verify(r => r.RemoveSavedFilter(_savedFilterMock.Object), Times.Once);
         }
 
         [TestMethod]
