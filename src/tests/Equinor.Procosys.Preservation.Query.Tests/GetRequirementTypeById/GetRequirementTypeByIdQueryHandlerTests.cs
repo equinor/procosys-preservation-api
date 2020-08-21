@@ -72,7 +72,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetRequirementTypeById
                 Assert.AreEqual(_requirementType.Code, requirementType.Code);
                 Assert.AreEqual(_requirementType.Title, requirementType.Title);
                 Assert.AreEqual(_requirementType.SortKey, requirementType.SortKey);
-                Assert.IsTrue(requirementType.IsInUse);
                 Assert.IsFalse(requirementType.IsVoided);
 
                 var requirementDefinitions = requirementType.RequirementDefinitions.ToList();
@@ -160,7 +159,65 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetRequirementTypeById
         }
 
         [TestMethod]
-        public async Task HandleGetRequirementTypeByIdQuery_WithoutDefinition_ShouldNotBeInUse()
+        public async Task HandleGetRequirementTypeByIdQuery_AfterPreservationRecorded_ShouldSetFieldInUse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetRequirementTypeByIdQueryHandler(context);
+                var result = await dut.Handle(new GetRequirementTypeByIdQuery(_requirementType.Id), default);
+
+                var reqDef = result.Data.RequirementDefinitions.Single(rd => rd.Id == _requirementDefWithCheckbox.Id);
+                Assert.IsFalse(reqDef.Fields.Single().IsInUse);
+
+                var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
+                var tagRequirement = new TagRequirement(TestPlant, 2, _requirementDefWithCheckbox);
+                var tag = new Tag(TestPlant,
+                    TagType.Standard, 
+                    "TagNo",
+                    "Description",
+                    journey.Steps.ElementAt(0),
+                    new List<TagRequirement>
+                    {
+                        tagRequirement
+                    });
+                tag.StartPreservation();
+
+                context.Tags.Add(tag);
+                context.SaveChangesAsync().Wait();
+
+                tagRequirement.RecordCheckBoxValues(
+                    new Dictionary<int, bool>
+                    {
+                        {_checkboxField.Id, true}
+                    }, 
+                    _requirementDefWithCheckbox);
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetRequirementTypeByIdQueryHandler(context);
+                var result = await dut.Handle(new GetRequirementTypeByIdQuery(_requirementType.Id), default);
+
+                var reqDef = result.Data.RequirementDefinitions.Single(rd => rd.Id == _requirementDefWithCheckbox.Id);
+                Assert.IsTrue(reqDef.Fields.Single().IsInUse);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetRequirementTypeByIdQuery_WithAnyDefinition_ShouldSetRequirementTypeInUse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetRequirementTypeByIdQueryHandler(context);
+                var result = await dut.Handle(new GetRequirementTypeByIdQuery(_requirementType.Id), default);
+
+                Assert.IsTrue(result.Data.IsInUse);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetRequirementTypeByIdQuery_WithoutDefinition_ShouldNotSetRequirementTypeInUse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -199,6 +256,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetRequirementTypeById
                 Assert.AreEqual(field.ShowPrevious, fields[0].ShowPrevious);
                 Assert.AreEqual(field.SortKey, fields[0].SortKey);
                 Assert.IsFalse(fields[0].IsVoided);
+                Assert.IsFalse(fields[0].IsInUse);
             }
         }
     }
