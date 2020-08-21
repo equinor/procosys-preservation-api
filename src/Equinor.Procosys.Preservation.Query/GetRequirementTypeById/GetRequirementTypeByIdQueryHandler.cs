@@ -40,6 +40,11 @@ namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
                 where requirementDefinitionIds.Contains(tfr.RequirementDefinitionId)
                 select tfr).ToListAsync(cancellationToken);
 
+            var fieldIds = reqType.RequirementDefinitions.SelectMany(r => r.Fields).Select(f => f.Id);
+            var fieldValues = await (from fv in _context.QuerySet<FieldValue>()
+                where fieldIds.Contains(fv.Id)
+                select fv).ToListAsync(cancellationToken);
+
             var dto = new RequirementTypeDetailsDto(
                 reqType.Id,
                 reqType.Code,
@@ -50,27 +55,32 @@ namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
                 reqType.SortKey,
                 reqType.RequirementDefinitions.Select(rd =>
                 {
-                    var inUse = rd.Fields.Any()
+                    var definitionIsInUse = rd.Fields.Any()
                                 || tagRequirements.Any(tr => tr.RequirementDefinitionId == rd.Id)
                                 || tagFunctionRequirements.Any(tr => tr.RequirementDefinitionId == rd.Id);
                     return new RequirementDefinitionDetailDto(rd.Id,
                         rd.Title,
-                        inUse,
+                        definitionIsInUse,
                         rd.IsVoided,
                         rd.DefaultIntervalWeeks,
                         rd.Usage,
                         rd.SortKey,
                         rd.NeedsUserInput,
                         rd.OrderedFields(true)
-                            .Select(f => new FieldDetailsDto(
-                                f.Id,
-                                f.Label,
-                                f.IsVoided,
-                                f.FieldType,
-                                f.SortKey,
-                                f.Unit,
-                                f.ShowPrevious,
-                                f.RowVersion.ConvertToString())),
+                            .Select(f =>
+                            {
+                                var fieldIsInUse = fieldValues.Any(fv => fv.FieldId == f.Id);
+                                return new FieldDetailsDto(
+                                    f.Id,
+                                    f.Label,
+                                    fieldIsInUse,
+                                    f.IsVoided,
+                                    f.FieldType,
+                                    f.SortKey,
+                                    f.Unit,
+                                    f.ShowPrevious,
+                                    f.RowVersion.ConvertToString());
+                            }),
                         rd.RowVersion.ConvertToString());
                 }),
                 reqType.RowVersion.ConvertToString());
