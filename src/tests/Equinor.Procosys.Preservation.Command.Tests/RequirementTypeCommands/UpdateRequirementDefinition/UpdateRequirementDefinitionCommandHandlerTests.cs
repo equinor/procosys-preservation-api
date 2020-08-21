@@ -80,6 +80,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
                 {
                     new UpdateFieldsForCommand(_fieldId, _newLabel1, FieldType.Number, _newSortKey1, true, _rowVersion, _newUnit1, _newShowPrevious1)
                 },
+                new List<DeleteFieldsForCommand>(), // todo more tests
                 new List<FieldsForCommand>
                 {
                     new FieldsForCommand(_newLabel2, _newFieldType2, _newSortKey2, _newUnit2, _newShowPrevious2)

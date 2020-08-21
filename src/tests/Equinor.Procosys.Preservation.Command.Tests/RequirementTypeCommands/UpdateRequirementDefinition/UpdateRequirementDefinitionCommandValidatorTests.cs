@@ -30,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         private string _rowVersion = "AAAAAAAAABA=";
         private readonly IList<UpdateFieldsForCommand> _updatedFields = new List<UpdateFieldsForCommand>();
         private readonly IList<FieldsForCommand> _newFields = new List<FieldsForCommand>();
+        private IList<DeleteFieldsForCommand> _deletedFields = new List<DeleteFieldsForCommand>(); // todo more tests
 
         [TestInitialize]
         public void Setup_OkState()
@@ -53,6 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
                 _defaultIntervalWeeks, 
                 _rowVersion, 
                 _updatedFields, 
+                _deletedFields, 
                 _newFields);
             _dut = new UpdateRequirementDefinitionCommandValidator(
                 _reqTypeValidatorMock.Object, 
