@@ -206,7 +206,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromRoute] int requirementDefinitionId,
             [FromBody] UpdateRequirementDefinitionDto dto)
         {
-
             var updatedFields = dto.UpdatedFields.Select(f =>
                 new UpdateFieldsForCommand(
                     f.Id, 
@@ -217,6 +216,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                     f.RowVersion, 
                     f.Unit, 
                     f.ShowPrevious)).ToList();
+            var deletedFields = dto.DeleteFields.Select(f =>
+                new DeleteFieldsForCommand(
+                    f.Id, 
+                    f.RowVersion)).ToList();
             var newFields = dto.NewFields.Select(f =>
                 new FieldsForCommand(
                     f.Label, 
@@ -234,6 +237,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 dto.DefaultIntervalWeeks,
                 dto.RowVersion,
                 updatedFields,
+                deletedFields,
                 newFields);
             var result = await _mediator.Send(command);
             return this.FromResult(result);

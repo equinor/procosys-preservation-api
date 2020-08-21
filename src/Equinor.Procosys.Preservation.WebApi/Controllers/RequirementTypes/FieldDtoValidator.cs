@@ -15,15 +15,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .MaximumLength(Field.UnitLengthMax);
 
             RuleFor(x => x.SortKey)
-                .NotNull()
-                .WithMessage("Sort key for field cannot be null");
-
-            RuleFor(x => x.SortKey)
                 .Must(BePositive)
                 .WithMessage("Sort key must be positive");
-
-            RuleFor(x => x.FieldType)
-                .NotNull();
 
             bool BePositive(int arg) => arg > 0;
         }

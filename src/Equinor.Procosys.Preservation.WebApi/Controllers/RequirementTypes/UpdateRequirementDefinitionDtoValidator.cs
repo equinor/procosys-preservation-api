@@ -14,14 +14,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .MaximumLength(RequirementDefinition.TitleLengthMax);
 
             RuleFor(x => x.SortKey)
-                .NotNull()
-                .WithMessage("Sort key cannot be null")
                 .Must(BePositive)
                 .WithMessage("Sort key must be positive");
-
-            RuleFor(x => x.Usage)
-                .NotNull()
-                .WithMessage("Usage cannot be null");
 
             RuleFor(x => x.DefaultIntervalWeeks)
                 .Must(BePositive)
@@ -37,29 +31,40 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
             RuleFor(x => x)
                 .Must(NotHaveDuplicateFieldLabels)
-                .WithMessage("Cannot have duplicate fields");
+                .WithMessage("Cannot have duplicate field labels");
 
             RuleForEach(x => x.NewFields)
-                .Must(FieldUnitMaxLength)
+                .Must(FieldMaxLength)
                 .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
 
             RuleForEach(x => x.UpdatedFields)
-                .Must(FieldUnitMaxLength)
+                .Must(FieldMaxLength)
                 .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
+            
+            RuleFor(x => x)
+                .Must(BeUniqueFieldIds)
+                .WithMessage("Fields to update or delete must be unique");
+                        
+            bool BeUniqueFieldIds(UpdateRequirementDefinitionDto dto)
+            {
+                var fieldIds = dto.UpdatedFields.Select(u => u.Id).ToList();
+                fieldIds.AddRange(dto.DeleteFields.Select(u => u.Id));
+                return fieldIds.Distinct().Count() == fieldIds.Count;
+            }
 
             bool BePositive(int arg) => arg > 0;
 
             bool NotHaveDuplicateFieldLabels(UpdateRequirementDefinitionDto dto)
             {
-                var allFieldLabelsLowercase = dto.UpdatedFields.Select(f => f.Label.ToLower())
-                    .Concat(dto.NewFields.Select(f => f.Label.ToLower())).ToList();
+                var allFieldLabelsLowercase = dto.UpdatedFields.Where(f => !string.IsNullOrEmpty(f.Label)).Select(f => f.Label.ToLower())
+                    .Concat(dto.NewFields.Where(f => !string.IsNullOrEmpty(f.Label)).Select(f => f.Label.ToLower())).ToList();
 
                 return allFieldLabelsLowercase.Distinct().Count() == allFieldLabelsLowercase.Count;
             }
 
             bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;
 
-            bool FieldUnitMaxLength(FieldDto arg) => arg.Unit.Length < Field.UnitLengthMax;
+            bool FieldMaxLength(FieldDto arg) => arg.Unit == null || arg.Unit.Length < Field.UnitLengthMax;
         }
     }
 }
