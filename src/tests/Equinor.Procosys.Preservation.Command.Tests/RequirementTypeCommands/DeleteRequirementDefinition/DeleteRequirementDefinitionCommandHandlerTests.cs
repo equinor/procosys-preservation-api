@@ -27,6 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
             _requirementDefinitionMock = new Mock<RequirementDefinition>();
             _requirementDefinitionMock.SetupGet(s => s.Plant).Returns(TestPlant);
             _requirementDefinitionMock.SetupGet(s => s.Id).Returns(_requirementDefinitionId);
+            _requirementDefinitionMock.Object.Void();
             _requirementType.AddRequirementDefinition(_requirementDefinitionMock.Object);
 
             _requirementTypeRepositoryMock

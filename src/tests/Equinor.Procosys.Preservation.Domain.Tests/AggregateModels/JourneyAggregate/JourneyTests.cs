@@ -85,6 +85,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         {
             // Arrange
             Assert.AreEqual(3, _dutWith3Steps.Steps.Count);
+            _stepA.Void();
 
             // Act
             _dutWith3Steps.RemoveStep(_stepA);
@@ -93,6 +94,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(2, _dutWith3Steps.Steps.Count);
             Assert.IsFalse(_dutWith3Steps.Steps.Contains(_stepA));
         }
+
+        [TestMethod]
+        public void RemoveStep_ShouldThrowExceptionIfStepNotVoided()
+            => Assert.ThrowsException<Exception>(() => _dutWithNoSteps.RemoveStep(_stepA));
 
         [TestMethod]
         public void AddStep_ShouldSetIncreasedSortKey()
@@ -193,7 +198,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             var stepToUnvoid = _dutWith3Steps.Steps.First();
             stepToUnvoid.Void();
 
-            Assert.IsTrue(stepToUnvoid.IsVoided == true);
+            Assert.IsTrue(stepToUnvoid.IsVoided);
 
             _dutWith3Steps.UnvoidStep(stepToUnvoid.Id, "AAAAAAAAABA=");
 

@@ -27,6 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
             _stepMock = new Mock<Step>();
             _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             _stepMock.SetupGet(s => s.Id).Returns(_stepId);
+            _stepMock.Object.Void();
             _journey.AddStep(_stepMock.Object);
 
             _journeyRepositoryMock
@@ -47,6 +48,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
             
             // Assert
             Assert.AreEqual(0, _journey.Steps.Count);
+        }
+
+        [TestMethod]
+        public async Task HandlingDeleteStepCommand_ShouldDeleteStepFromRepo()
+        {
+            // Act
+            await _dut.Handle(_command, default);
+            
+            // Assert
             _journeyRepositoryMock.Verify(r => r.RemoveStep(_stepMock.Object), Times.Once);
         }
 
