@@ -16,7 +16,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             int defaultIntervalWeeks,
             string rowVersion,
             IList<UpdateFieldsForCommand> updatedFields,
-            IList<DeleteFieldsForCommand> deletedFields,
             IList<FieldsForCommand> newFields)
         {
             RequirementTypeId = requirementTypeId;
@@ -25,7 +24,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             SortKey = sortKey;
             Usage = usage;
             RowVersion = rowVersion;
-            DeletedFields = deletedFields ?? new List<DeleteFieldsForCommand>();
             DefaultIntervalWeeks = defaultIntervalWeeks;
             UpdateFields = updatedFields ?? new List<UpdateFieldsForCommand>();
             NewFields = newFields ?? new List<FieldsForCommand>();
@@ -39,7 +37,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
         public RequirementUsage Usage { get; }
         public string RowVersion { get; }
         public IList<UpdateFieldsForCommand> UpdateFields { get; }
-        public IList<DeleteFieldsForCommand> DeletedFields { get; }
         public IList<FieldsForCommand> NewFields { get; }
     }
 }

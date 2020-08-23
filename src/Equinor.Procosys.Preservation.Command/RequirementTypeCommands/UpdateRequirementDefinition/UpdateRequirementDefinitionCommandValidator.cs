@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             IRequirementDefinitionValidator requirementDefinitionValidator,
             IFieldValidator fieldValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 .WithMessage(command => $"A requirement definition with this title already exists on the requirement type! RequirementType={command.RequirementTypeId}");
 
             RuleForEach(command => command.UpdateFields)
-                .MustAsync((command, field, __, token) => BeAnExistingFieldToUpdate(field.Id, token))
+                .MustAsync((command, field, __, token) => BeAnExistingField(field.Id, token))
                 .WithMessage((_, field) => $"Field doesn't exist'! Field={field.Id}")
                 .MustAsync((command, field, __, token) => BeSameFieldTypeOnExistingFieldsAsync(field, token))
                 .WithMessage((_, field) => $"Cannot change field type on existing fields! Field={field.Id}");
@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                     token);
             }
 
-            async Task<bool> BeAnExistingFieldToUpdate(int fieldId, CancellationToken token)
+            async Task<bool> BeAnExistingField(int fieldId, CancellationToken token)
                 => await fieldValidator.ExistsAsync(fieldId, token);
 
             async Task<bool> BeSameFieldTypeOnExistingFieldsAsync(UpdateFieldsForCommand field, CancellationToken token)

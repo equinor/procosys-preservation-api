@@ -18,7 +18,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
                 4, 
                 "AAAAAAAAABA=", 
                 null, 
-                null, 
                 null);
 
             Assert.AreEqual(1, dut.RequirementTypeId);
@@ -28,7 +27,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             Assert.AreEqual(4, dut.DefaultIntervalWeeks);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
             Assert.AreEqual(0, dut.UpdateFields.Count);
-            Assert.AreEqual(0, dut.DeletedFields.Count);
             Assert.AreEqual(0, dut.NewFields.Count);
         }
     }

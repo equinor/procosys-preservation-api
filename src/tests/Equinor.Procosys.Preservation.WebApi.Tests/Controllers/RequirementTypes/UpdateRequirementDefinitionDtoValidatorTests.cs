@@ -11,21 +11,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.RequirementType
     {
         private UpdateRequirementDefinitionDtoValidator _dut;
         private UpdateRequirementDefinitionDto _dto;
-        private DeleteFieldDto _deleteField;
         private FieldDto _newField;
         private UpdateFieldDto _updateField;
 
         [TestInitialize]
         public void Setup()
         {
-            _deleteField = new DeleteFieldDto {Id = 1};
             _newField = new FieldDto {Label = "New", Unit = "U"};
             _updateField = new UpdateFieldDto {Label = "Upd", Id = 2, Unit = "U"};
             _dut = new UpdateRequirementDefinitionDtoValidator();
             _dto = new UpdateRequirementDefinitionDto
             {
                 DefaultIntervalWeeks = 1,
-                DeleteFields = new List<DeleteFieldDto>{_deleteField},
                 NewFields = new List<FieldDto>{_newField},
                 Title = "T",
                 SortKey = 2,
@@ -169,21 +166,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.RequirementType
             Assert.IsFalse(result.IsValid);
             Assert.IsTrue(result.Errors.Single().ErrorMessage == "Cannot have duplicate field labels");
         }
-        
-        [TestMethod]
-        public void Fail_WhenDeleteFieldIdsNotUnique()
-        {
-            var secondField = new DeleteFieldDto
-            {
-                Id = _deleteField.Id
-            };
-            _dto.DeleteFields.Add(secondField);
-            
-            var result = _dut.Validate(_dto);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.IsTrue(result.Errors.Single().ErrorMessage == "Fields to update or delete must be unique");
-        }
 
         [TestMethod]
         public void Fail_WhenUpdateFieldIdsNotUnique()
@@ -194,28 +176,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.RequirementType
                 Id = _updateField.Id
             };
             _dto.UpdatedFields.Add(secondField);
-            
-            var result = _dut.Validate(_dto);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.IsTrue(result.Errors.Single().ErrorMessage == "Fields to update or delete must be unique");
-        }
-
-        [TestMethod]
-        public void Fail_WhenUpdateFieldIdMatchDeleteFieldId()
-        {
-            _updateField.Id = _deleteField.Id;
-            
-            var result = _dut.Validate(_dto);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.IsTrue(result.Errors.Single().ErrorMessage == "Fields to update or delete must be unique");
-        }
-
-        [TestMethod]
-        public void Fail_WhenDeleteFieldIdMatchUpdateFieldId()
-        {
-            _deleteField.Id = _updateField.Id;
             
             var result = _dut.Validate(_dto);
 

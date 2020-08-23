@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using FluentValidation;
 
@@ -41,14 +42,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .Must(FieldMaxLength)
                 .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
             
-            RuleFor(x => x)
+            RuleFor(x => x.UpdatedFields)
                 .Must(BeUniqueFieldIds)
                 .WithMessage("Fields to update or delete must be unique");
                         
-            bool BeUniqueFieldIds(UpdateRequirementDefinitionDto dto)
+            bool BeUniqueFieldIds(IList<UpdateFieldDto> updatedFields)
             {
-                var fieldIds = dto.UpdatedFields.Select(u => u.Id).ToList();
-                fieldIds.AddRange(dto.DeleteFields.Select(u => u.Id));
+                var fieldIds = updatedFields.Select(u => u.Id).ToList();
                 return fieldIds.Distinct().Count() == fieldIds.Count;
             }
 
@@ -62,9 +62,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 return allFieldLabelsLowercase.Distinct().Count() == allFieldLabelsLowercase.Count;
             }
 
-            bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;
+            bool FieldLabelNotNullAndMaxLength(FieldDto fieldDto) => fieldDto.Label != null && fieldDto.Label.Length < Field.LabelLengthMax;
 
-            bool FieldMaxLength(FieldDto arg) => arg.Unit == null || arg.Unit.Length < Field.UnitLengthMax;
+            bool FieldMaxLength(FieldDto fieldDto) => fieldDto.Unit == null || fieldDto.Unit.Length < Field.UnitLengthMax;
         }
     }
 }
