@@ -8,7 +8,7 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class TagRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class TagRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
     {
         public const int InitialPreservationPeriodStatusMax = 64;
 
@@ -47,16 +47,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public int IntervalWeeks { get; private set; }
         public RequirementUsage Usage { get; private set; }
         public DateTime? NextDueTimeUtc { get; private set; }
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
         public int RequirementDefinitionId { get; private set; }
         public IReadOnlyCollection<PreservationPeriod> PreservationPeriods => _preservationPeriods.AsReadOnly();
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
 
         public bool ReadyToBePreserved => PeriodReadyToBePreserved != null;
 

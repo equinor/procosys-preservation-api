@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -39,7 +40,16 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         public Task<List<TEntity>> GetByIdsAsync(IEnumerable<int> ids) =>
             DefaultQuery.Where(x => ids.Contains(x.Id)).ToListAsync();
 
-        public virtual void Remove(TEntity entity) =>
+        public virtual void Remove(TEntity entity)
+        {
+            if (entity is IVoidable voidable)
+            {
+                if (!voidable.IsVoided)
+                {
+                    throw new Exception($"{nameof(entity)} must be voided before delete");
+                }
+            }
             Set.Remove(entity);
+        }
     }
 }

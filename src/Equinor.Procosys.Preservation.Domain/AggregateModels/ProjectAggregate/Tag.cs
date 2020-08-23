@@ -10,11 +10,12 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
-    public class Tag : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class Tag : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
     {
         private readonly List<TagRequirement> _requirements = new List<TagRequirement>();
         private readonly List<Action> _actions = new List<Action>();
         private readonly List<TagAttachment> _attachments = new List<TagAttachment>();
+        private bool _isVoided;
 
         public const int TagNoLengthMax = 255;
         public const int TagFunctionCodeLengthMax = 255;
@@ -101,25 +102,31 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public IReadOnlyCollection<TagRequirement> Requirements => _requirements.AsReadOnly();
         public IReadOnlyCollection<Action> Actions => _actions.AsReadOnly();
         public IReadOnlyCollection<TagAttachment> Attachments => _attachments.AsReadOnly();
-        public bool IsVoided { get; private set; }
+
+        public bool IsVoided
+        {
+            get => _isVoided;
+            set
+            {
+                _isVoided = value;
+                if (_isVoided)
+                {
+                    AddDomainEvent(new TagVoidedEvent(Plant, ObjectGuid));
+
+                }
+                else
+                {
+                    AddDomainEvent(new TagUnvoidedEvent(Plant, ObjectGuid));
+                }
+            }
+        }
+
         public DateTime? NextDueTimeUtc { get; private set;  }
 
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
-        public void Void()
-        {
-            IsVoided = true;
-            AddDomainEvent(new TagVoidedEvent(Plant, ObjectGuid));
-        }
-
-        public void UnVoid()
-        {
-            IsVoided = false;
-            AddDomainEvent(new TagUnvoidedEvent(Plant, ObjectGuid));
-        }
 
         public void SetArea(string code, string description)
         {
@@ -397,12 +404,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 if (isVoided)
                 {
-                    tagRequirement.Void();
+                    tagRequirement.IsVoided = true;
                     AddDomainEvent(new RequirementVoidedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId));
                 }
                 else
                 {
-                    tagRequirement.UnVoid();
+                    tagRequirement.IsVoided = false;
                     AddDomainEvent(new RequirementUnvoidedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId));
                 }
             }

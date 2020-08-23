@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
-    public class Journey : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class Journey : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
     {
         public const string DuplicatePrefix = " - Copy";
         public const int TitleLengthMin = 3;
@@ -33,15 +33,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public IReadOnlyCollection<Step> Steps => _steps.AsReadOnly();
         public string Title { get; set; }
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
 
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
         
         public override string ToString() => Title;
 
@@ -109,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentException($"Can't relate item in {step.Plant} to item in {Plant}");
             }
 
-            step.Void();
+            step.IsVoided = true;
             step.SetRowVersion(stepRowVersion);
         }
 
@@ -127,7 +124,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
                 throw new ArgumentException($"Can't relate item in {step.Plant} to item in {Plant}");
             }
 
-            step.UnVoid();
+            step.IsVoided = false;
             step.SetRowVersion(stepRowVersion);
         }
 
