@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         {
             // Arrange
             Assert.AreEqual(3, _dutWith3Steps.Steps.Count);
-            _stepA.Void();
+            _stepA.IsVoided = true;
 
             // Act
             _dutWith3Steps.RemoveStep(_stepA);
@@ -112,18 +112,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
             Assert.AreEqual(1, step1.Object.SortKey);
             Assert.AreEqual(2, step2.Object.SortKey);
-        }
-
-        [TestMethod]
-        public void VoidUnVoid_ShouldToggleIsVoided()
-        {
-            Assert.IsFalse(_dutWithNoSteps.IsVoided);
-
-            _dutWithNoSteps.Void();
-            Assert.IsTrue(_dutWithNoSteps.IsVoided);
-
-            _dutWithNoSteps.UnVoid();
-            Assert.IsFalse(_dutWithNoSteps.IsVoided);
         }
 
         [TestMethod]
@@ -196,7 +184,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         public void UnvoidStep_ShouldUnvoidStep()
         {
             var stepToUnvoid = _dutWith3Steps.Steps.First();
-            stepToUnvoid.Void();
+            stepToUnvoid.IsVoided = true;
 
             Assert.IsTrue(stepToUnvoid.IsVoided);
 

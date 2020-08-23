@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
             var reqTypeRepositoryMock = new Mock<IRequirementTypeRepository>();
 
             _requirementType = new RequirementType(TestPlant, "TestCode", "RequirementTypeTitle", RequirementTypeIcon.Other, 10);
-            _requirementType.Void();
+            _requirementType.IsVoided = true;
 
             reqTypeRepositoryMock
                 .Setup(r => r.GetByIdAsync(requirementTypeId))

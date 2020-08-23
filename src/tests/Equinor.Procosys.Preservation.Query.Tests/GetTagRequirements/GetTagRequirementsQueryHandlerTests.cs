@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var requirementWithOneNumberNoPrev = new TagRequirement(TestPlant, _interval, requirementDefinitionWithOneNumberNoPrev);
                 var requirementWithThreeNumberShowPrev = new TagRequirement(TestPlant, _interval, requirementDefinitionWithThreeNumberShowPrev);
                 var requirementThatIsVoided = new TagRequirement(TestPlant, _interval, requirementDefinitionForVoidedTest);
-                requirementThatIsVoided.Void();
+                requirementThatIsVoided.IsVoided = true;
 
                 var tag = new Tag(TestPlant,
                     TagType.Standard, 

@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
                 _testDataSet = AddTestDataSet(context);
                 var step1 = _testDataSet.Journey1With2Steps.Steps.First();
                 step1.AutoTransferMethod = _autoTransferMethodOnStep1;
-                step1.Void();
+                step1.IsVoided = true;
                 _step1Id = step1.Id;
                 var step2 = _testDataSet.Journey1With2Steps.Steps.Last();
                 step2.AutoTransferMethod = _autoTransferMethodOnStep2;

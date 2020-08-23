@@ -39,12 +39,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             var tagFunction = new TagFunction(TestPlant, TagFunctionCode1, TagFunctionDesc1, RegisterCode);
             var tagFunctionWithRequirements = new TagFunction(TestPlant, TagFunctionCode2, TagFunctionDesc2, RegisterCode);
             var voidedRagFunctionWithRequirement = new TagFunction(TestPlant, TagFunctionCode3, TagFunctionDesc3, RegisterCode);
-            voidedRagFunctionWithRequirement.Void();
+            voidedRagFunctionWithRequirement.IsVoided = true;
 
             var tagFunctionRequirement1 = new TagFunctionRequirement(TestPlant, 1, rdMock1.Object);
             var tagFunctionRequirement2 = new TagFunctionRequirement(TestPlant, 1, rdMock2.Object);
             var tagFunctionRequirement3 = new TagFunctionRequirement(TestPlant, 1, rdMock3.Object);
-            tagFunctionRequirement2.Void();
+            tagFunctionRequirement2.IsVoided = true;
             tagFunctionWithRequirements.AddRequirement(tagFunctionRequirement1);
             tagFunctionWithRequirements.AddRequirement(tagFunctionRequirement2);
             voidedRagFunctionWithRequirement.AddRequirement(tagFunctionRequirement3);

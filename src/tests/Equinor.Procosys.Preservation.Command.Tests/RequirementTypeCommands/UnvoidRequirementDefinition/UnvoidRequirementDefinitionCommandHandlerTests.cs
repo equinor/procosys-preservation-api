@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
 
             _requirementDefinition = new RequirementDefinition(TestPlant, "ReqDefinitionTitle", 4, RequirementUsage.ForAll, 88);
             _requirementDefinition.SetProtectedIdForTesting(requirementDefinitionId);
-            _requirementDefinition.Void();
+            _requirementDefinition.IsVoided = true;
 
             requirementType.AddRequirementDefinition(_requirementDefinition);
             reqTypeRepositoryMock.Setup(m => m.GetByIdAsync(requirementTypeId))

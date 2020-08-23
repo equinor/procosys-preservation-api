@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Unvoid
             const string RegisterCode = "RC";
 
             _tagFunction = new TagFunction(TestPlant, "ReqDefinitionTitle", "TagFunctionDescription", "MAIN_EQUIP");
-            _tagFunction.Void();
+            _tagFunction.IsVoided = true;
 
             tagFunctionRepositoryMock.Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));

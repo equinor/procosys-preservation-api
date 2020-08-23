@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidStep
 
             _step = new Step(TestPlant, "S", _modeMock.Object, new Responsible(TestPlant, "RC", "RD"));
             _step.SetProtectedIdForTesting(StepId);
-            _step.Void();
+            _step.IsVoided = true;
 
             _journey.AddStep(_step);
 

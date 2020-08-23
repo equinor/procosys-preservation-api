@@ -33,17 +33,5 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagFunction
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenRequirementDefinitionNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() => new TagFunctionRequirement(TestPlant, 4, null));
-
-        [TestMethod]
-        public void VoidUnVoid_ShouldToggleIsVoided()
-        {
-            Assert.IsFalse(_dut.IsVoided);
-
-            _dut.Void();
-            Assert.IsTrue(_dut.IsVoided);
-
-            _dut.UnVoid();
-            Assert.IsFalse(_dut.IsVoided);
-        }
     }
 }

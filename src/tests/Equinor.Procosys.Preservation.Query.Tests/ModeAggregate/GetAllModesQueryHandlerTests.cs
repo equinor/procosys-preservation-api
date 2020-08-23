@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.ModeAggregate
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var mode = AddMode(context, _mode1Title, true);
-                mode.Void();
+                mode.IsVoided = true;
                 AddMode(context, _mode2Title, false);
                 context.SaveChangesAsync().Wait();
             }

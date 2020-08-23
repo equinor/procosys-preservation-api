@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllRequirementTypes
 
                 _reqDefForAll = _reqType1.RequirementDefinitions.First();
                 _reqDefVoided = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForAll, 2);
-                _reqDefVoided.Void();
+                _reqDefVoided.IsVoided = true;
                 _reqDefForOther = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 3);
                 _reqDefForSupplier = new RequirementDefinition(TestPlant, "D4", 2, RequirementUsage.ForSuppliersOnly, 4);
                 _reqType1.AddRequirementDefinition(_reqDefVoided);
@@ -39,11 +39,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllRequirementTypes
 
                 AddNumberField(context, _reqDefForAll, _numberLabel, _numberUnit, true);
                 var f = AddNumberField(context, _reqDefForAll, "NUMBER", "mm", true);
-                f.Void();
+                f.IsVoided = true;
                 context.SaveChangesAsync().Wait();
 
                 var reqType2 = AddRequirementTypeWith1DefWithoutField(context, "T2", "D2", _reqIconOther, 7);
-                reqType2.Void();
+                reqType2.IsVoided = true;
                 context.SaveChangesAsync().Wait();
                 AddRequirementTypeWith1DefWithoutField(context, "T3", "D3", _reqIconOther, 10000);
                 AddRequirementTypeWith1DefWithoutField(context, "T4", "D4", _reqIconOther, 1);

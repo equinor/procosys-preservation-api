@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
             _stepMock = new Mock<Step>();
             _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             _stepMock.SetupGet(s => s.Id).Returns(_stepId);
-            _stepMock.Object.Void();
+            _stepMock.Object.IsVoided = true;
             _journey.AddStep(_stepMock.Object);
 
             _journeyRepositoryMock

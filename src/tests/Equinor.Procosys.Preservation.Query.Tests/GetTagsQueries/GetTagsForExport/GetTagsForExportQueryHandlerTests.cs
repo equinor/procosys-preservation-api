@@ -648,7 +648,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.First();
-                tag.Void();
+                tag.IsVoided = true;
                 context.SaveChangesAsync().Wait();
             }
 
