@@ -48,6 +48,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
 
             // Assert
             Assert.AreEqual(0, _requirementType.RequirementDefinitions.Count);
+        }
+
+        [TestMethod]
+        public async Task HandlingDeleteRequirementDefinitionCommand_ShouldDeleteRequirementDefinitionFromRepo()
+        {
+            // Arrange
+            Assert.AreEqual(1, _requirementType.RequirementDefinitions.Count);
+
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
             _requirementTypeRepositoryMock.Verify(r => r.RemoveRequirementDefinition(_requirementDefinitionMock.Object), Times.Once);
         }
 
