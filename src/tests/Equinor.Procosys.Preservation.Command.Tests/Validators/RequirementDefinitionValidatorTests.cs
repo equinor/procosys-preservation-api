@@ -2,37 +2,43 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
 {
     [TestClass]
     public class RequirementDefinitionValidatorTests : ReadOnlyTestsBase
     {
-        private int _reqDefForAllId;
         private RequirementType _requirementType;
-        private int _reqDefForSupplierId;
-        private int _reqDefForOtherId;
+        private int _numberFieldId;
+        private int _cbFieldId;
+        private RequirementDefinition _reqDefForSupplier;
+        private RequirementDefinition _reqDefForOther;
+        private RequirementDefinition _reqDefWithoutField;
+        private RequirementDefinition _reqDefForAll;
+        private RequirementDefinition _reqDefWithField;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _requirementType = AddRequirementTypeWith1DefWithoutField(context, "R", "D1", RequirementTypeIcon.Other);
-                _reqDefForAllId = _requirementType.RequirementDefinitions.First().Id;
-                var reqDefForSupplier = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
-                _requirementType.AddRequirementDefinition(reqDefForSupplier);
-                var reqDefForOther = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 1);
-                _requirementType.AddRequirementDefinition(reqDefForOther);
+                _reqDefForAll = _reqDefWithoutField = _requirementType.RequirementDefinitions.First();
+                _reqDefForSupplier = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
+                _requirementType.AddRequirementDefinition(_reqDefForSupplier);
+                _reqDefForOther = _reqDefWithField = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 1);
+                _requirementType.AddRequirementDefinition(_reqDefForOther);
+                _numberFieldId = AddNumberField(context, _reqDefForOther, "N", "mm", true).Id;
+                _cbFieldId = AddCheckBoxField(context, _reqDefForOther, "CB").Id;
 
                 context.SaveChangesAsync().Wait();
-
-                _reqDefForSupplierId = reqDefForSupplier.Id;
-                _reqDefForOtherId = reqDefForOther.Id;
             }
         }
 
@@ -42,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.ExistsAsync(_reqDefForAllId, default);
+                var result = await dut.ExistsAsync(_reqDefForAll.Id, default);
                 Assert.IsTrue(result);
             }
         }
@@ -63,14 +69,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqDef = context.RequirementDefinitions.Single(rd => rd.Id == _reqDefForAllId);
+                var reqDef = context.RequirementDefinitions.Single(rd => rd.Id == _reqDefForAll.Id);
                 reqDef.Void();
                 context.SaveChangesAsync().Wait();
             }
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.IsVoidedAsync(_reqDefForAllId, default);
+                var result = await dut.IsVoidedAsync(_reqDefForAll.Id, default);
                 Assert.IsTrue(result);
             }
         }
@@ -81,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.IsVoidedAsync(_reqDefForAllId, default);
+                var result = await dut.IsVoidedAsync(_reqDefForAll.Id, default);
                 Assert.IsFalse(result);
             }
         }
@@ -102,7 +108,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForAllId};
+                var reqIds = new List<int> {_reqDefForAll.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsFalse(result);
@@ -114,7 +120,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForOtherId};
+                var reqIds = new List<int> {_reqDefForOther.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsFalse(result);
@@ -126,7 +132,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForSupplierId};
+                var reqIds = new List<int> {_reqDefForSupplier.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsTrue(result);
@@ -138,7 +144,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForSupplierId, _reqDefForOtherId, _reqDefForAllId};
+                var reqIds = new List<int> {_reqDefForSupplier.Id, _reqDefForOther.Id, _reqDefForAll.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.HasAnyForSupplierOnlyUsageAsync(reqIds, default);
                 Assert.IsTrue(result);
@@ -174,7 +180,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForAllId};
+                var reqIds = new List<int> {_reqDefForAll.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversForOtherThanSuppliersAsync(reqIds, default);
                 Assert.IsTrue(result);
@@ -186,7 +192,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForOtherId};
+                var reqIds = new List<int> {_reqDefForOther.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversForOtherThanSuppliersAsync(reqIds, default);
                 Assert.IsTrue(result);
@@ -198,7 +204,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForSupplierId};
+                var reqIds = new List<int> {_reqDefForSupplier.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversForOtherThanSuppliersAsync(reqIds, default);
                 Assert.IsFalse(result);
@@ -210,7 +216,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForSupplierId, _reqDefForOtherId, _reqDefForAllId};
+                var reqIds = new List<int> {_reqDefForSupplier.Id, _reqDefForOther.Id, _reqDefForAll.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversForOtherThanSuppliersAsync(reqIds, default);
                 Assert.IsTrue(result);
@@ -246,7 +252,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForAllId};
+                var reqIds = new List<int> {_reqDefForAll.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversBothForSupplierAndOtherAsync(reqIds, default);
                 Assert.IsTrue(result);
@@ -258,7 +264,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForOtherId};
+                var reqIds = new List<int> {_reqDefForOther.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversBothForSupplierAndOtherAsync(reqIds, default);
                 Assert.IsFalse(result);
@@ -270,7 +276,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForSupplierId};
+                var reqIds = new List<int> {_reqDefForSupplier.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversBothForSupplierAndOtherAsync(reqIds, default);
                 Assert.IsFalse(result);
@@ -282,7 +288,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForSupplierId, _reqDefForOtherId, _reqDefForAllId};
+                var reqIds = new List<int> {_reqDefForSupplier.Id, _reqDefForOther.Id, _reqDefForAll.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversBothForSupplierAndOtherAsync(reqIds, default);
                 Assert.IsTrue(result);
@@ -294,7 +300,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var reqIds = new List<int> {_reqDefForSupplierId, _reqDefForOtherId};
+                var reqIds = new List<int> {_reqDefForSupplier.Id, _reqDefForOther.Id};
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversBothForSupplierAndOtherAsync(reqIds, default);
                 Assert.IsTrue(result);
@@ -322,6 +328,62 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.UsageCoversBothForSupplierAndOtherAsync(reqIds, default);
                 Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasAnyFieldsAsync_NoFields_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.HasAnyFieldsAsync(_reqDefWithoutField.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasAnyFieldsAsync_FieldsExist_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.HasAnyFieldsAsync(_reqDefWithField.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task TagRequirementsExistAsync_NoTagRequirements_ReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.TagRequirementsExistAsync(_reqDefWithoutField.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task TagRequirementsExistAsync_TagRequirementsExists_ReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var stepMock = new Mock<Step>();
+                stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+                var project = AddProject(context, "P", "D");
+                var tag = new Tag(TestPlant, TagType.Standard, "TagNo", "Desc", stepMock.Object, new List<TagRequirement>
+                {
+                    new TagRequirement(TestPlant, 4, _reqDefWithoutField)
+                });
+                project.AddTag(tag);
+                context.SaveChangesAsync().Wait();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.TagRequirementsExistAsync(_reqDefWithoutField.Id, default);
+                Assert.IsTrue(result);
             }
         }
     }
