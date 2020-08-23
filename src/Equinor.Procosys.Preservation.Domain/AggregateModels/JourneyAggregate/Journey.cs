@@ -67,6 +67,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             {
                 throw new ArgumentNullException(nameof(step));
             }
+
+            if (!step.IsVoided)
+            {
+                throw new Exception($"{nameof(step)} must be voided before delete");
+            }
             
             if (step.Plant != Plant)
             {

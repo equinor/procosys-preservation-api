@@ -80,11 +80,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             ModifiedById = modifiedBy.Id;
         }
 
+        // todo add unit tests. See RemoveStep
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition)
         {
             if (requirementDefinition == null)
             {
                 throw new ArgumentNullException(nameof(requirementDefinition));
+            }
+            
+            if (!requirementDefinition.IsVoided)
+            {
+                throw new Exception($"{nameof(requirementDefinition)} must be voided before delete");
             }
 
             if (requirementDefinition.Plant != Plant)
