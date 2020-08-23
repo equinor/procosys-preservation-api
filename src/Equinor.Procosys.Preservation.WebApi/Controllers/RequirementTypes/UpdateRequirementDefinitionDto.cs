@@ -10,6 +10,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         public string Title { get; set; }
         public int DefaultIntervalWeeks { get; set; }
         public string RowVersion { get; set; }
+        // Existing fields not included in UpdatedFields will be deleted. These must be Voided in advance, and they can't be in use
         public IList<UpdateFieldDto> UpdatedFields { get; set; } = new List<UpdateFieldDto>();
         public IList<FieldDto> NewFields { get; set; } = new List<FieldDto>();
     }

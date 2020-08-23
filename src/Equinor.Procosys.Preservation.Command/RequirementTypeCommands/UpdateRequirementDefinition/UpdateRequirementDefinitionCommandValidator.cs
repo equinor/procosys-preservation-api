@@ -26,14 +26,17 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 .MustAsync((command, token) => NotBeAVoidedRequirementTypeAsync(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type is voided! RequirementType={command.RequirementTypeId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Requirement definition is voided! RequirementDefinition={command.RequirementDefinitionId}")
-                .MustAsync((command, token) 
-                    => RequirementDefinitionTitleMustBeUniqueOnType(command.RequirementTypeId, command.RequirementDefinitionId, command.Title, command.UpdateFields, command.NewFields, token))
-                .WithMessage(command => $"A requirement definition with this title already exists on the requirement type! RequirementType={command.RequirementTypeId}");
+                .WithMessage(command => $"Requirement definition is voided! RequirementDefinition={command.Title}")
+                .MustAsync(RequirementDefinitionTitleMustBeUniqueOnType)
+                .WithMessage(command => $"A requirement definition with this title already exists on the requirement type! RequirementType={command.Title}")
+                .MustAsync((command, token) => AllFieldsToBeDeletedIsVoidedAsync(command.RequirementDefinitionId, command.UpdateFields, token))
+                .WithMessage(command => $"Fields to be deleted must be voided! RequirementDefinition={command.Title}")
+                .MustAsync((command, token) => NoFieldsToBeDeletedShouldBeInUseAsync(command.RequirementDefinitionId, command.UpdateFields, token))
+                .WithMessage(command => $"Fields to be deleted can not be in use! RequirementDefinition={command.Title}");
 
             RuleForEach(command => command.UpdateFields)
                 .MustAsync((command, field, __, token) => BeAnExistingField(field.Id, token))
-                .WithMessage((_, field) => $"Field doesn't exist'! Field={field.Id}")
+                .WithMessage((_, field) => $"Field doesn't exist! Field={field.Id}")
                 .MustAsync((command, field, __, token) => BeSameFieldTypeOnExistingFieldsAsync(field, token))
                 .WithMessage((_, field) => $"Cannot change field type on existing fields! Field={field.Id}");
 
@@ -50,20 +53,16 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
             
             async Task<bool> RequirementDefinitionTitleMustBeUniqueOnType(
-                int reqTypeId, 
-                int reqDefId,
-                string title, 
-                IList<UpdateFieldsForCommand> updatedFields, 
-                IList<FieldsForCommand> newFields, 
+                UpdateRequirementDefinitionCommand command, 
                 CancellationToken token)
             {
-                var fieldTypesFromUpdated = updatedFields.Select(uf => uf.FieldType).ToList();
-                var fieldTypesFromNew = newFields.Select(nf => nf.FieldType).ToList();
+                var fieldTypesFromUpdated = command.UpdateFields.Select(uf => uf.FieldType).ToList();
+                var fieldTypesFromNew = command.NewFields.Select(nf => nf.FieldType).ToList();
 
                 return !await requirementTypeValidator.OtherRequirementDefinitionExistsWithSameTitleAsync(
-                    reqTypeId,
-                    reqDefId,
-                    title,
+                    command.RequirementTypeId,
+                    command.RequirementDefinitionId,
+                    command.Title,
                     fieldTypesFromUpdated.Concat(fieldTypesFromNew).Distinct().ToList(), 
                     token);
             }
@@ -73,6 +72,18 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
 
             async Task<bool> BeSameFieldTypeOnExistingFieldsAsync(UpdateFieldsForCommand field, CancellationToken token)
                 => await fieldValidator.VerifyFieldTypeAsync(field.Id, field.FieldType, token);
+
+            async Task<bool> AllFieldsToBeDeletedIsVoidedAsync(int requirementDefinitionId, IList<UpdateFieldsForCommand> updateFields, CancellationToken token)
+            {
+                var updateFieldIds = updateFields.Select(u => u.Id).ToList();
+                return await requirementDefinitionValidator.AllExcludedFieldsIsVoidedAsync(requirementDefinitionId, updateFieldIds, token);
+            }
+
+            async Task<bool> NoFieldsToBeDeletedShouldBeInUseAsync(int requirementDefinitionId, IList<UpdateFieldsForCommand> updateFields, CancellationToken token)
+            {
+                var updateFieldIds = updateFields.Select(u => u.Id).ToList();
+                return !await requirementDefinitionValidator.AnyExcludedFieldsIsInUseAsync(requirementDefinitionId, updateFieldIds, token);
+            }
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidStep
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
-                .WithMessage(command => $"Step does not exist! Step={command.StepId}")
+                .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
                 .MustAsync((command, token) => BeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is not voided! Step={command.StepId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))

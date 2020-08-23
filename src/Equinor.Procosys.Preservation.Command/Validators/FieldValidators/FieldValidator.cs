@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,11 +50,5 @@ namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
 
             return field != null && field.FieldType == fieldType;
         }
-
-        // todo write unit tests
-        public async Task<bool> FieldValuesExistsAsync(int fieldId, CancellationToken token) =>
-            await (from f in _context.QuerySet<FieldValue>()
-                where f.FieldId == fieldId
-                select f).AnyAsync(token);
     }
 }

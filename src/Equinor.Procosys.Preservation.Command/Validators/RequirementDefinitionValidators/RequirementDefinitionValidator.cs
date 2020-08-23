@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             List<int> requirementDefinitionIds,
             CancellationToken token)
         {
-            var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
+            var reqDefs = await GetRequirementDefinitionsAsync(requirementDefinitionIds, token);
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll)
                    || (reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly) &&
                        reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers));
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             List<int> requirementDefinitionIds,
             CancellationToken token)
         {
-            var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
+            var reqDefs = await GetRequirementDefinitionsAsync(requirementDefinitionIds, token);
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll) ||
                    reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers);
         }
@@ -54,16 +54,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             List<int> requirementDefinitionIds,
             CancellationToken token)
         {
-            var reqDefs = await GetRequirementDefinitions(requirementDefinitionIds, token);
+            var reqDefs = await GetRequirementDefinitionsAsync(requirementDefinitionIds, token);
             return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly);
         }
 
         // todo write unit test
-        public async Task<bool> FieldsExistAsync(int requirementDefinitionId, CancellationToken token)
+        public async Task<bool> HasAnyFieldsAsync(int requirementDefinitionId, CancellationToken token)
         {
-            var reqDef = await (from rd in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
-                where rd.Id == requirementDefinitionId
-                select rd).SingleOrDefaultAsync(token);
+            var reqDef = await GetRequirementDefinitionWithFieldsAsync(requirementDefinitionId, token);
             return reqDef != null && reqDef.Fields.Count > 0;
         }
 
@@ -79,9 +77,48 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 where tfr.RequirementDefinitionId == requirementDefinitionId
                 select tfr).AnyAsync(token);
 
-        private async Task<List<RequirementDefinition>> GetRequirementDefinitions(
-            List<int> requirementDefinitionIds,
-            CancellationToken token)
+        // todo write unit test
+        public async Task<bool> AllExcludedFieldsIsVoidedAsync(int requirementDefinitionId, List<int> updateFieldIds, CancellationToken token)
+        {
+            var reqDef = await GetRequirementDefinitionWithFieldsAsync(requirementDefinitionId, token);
+            if (reqDef == null || !reqDef.Fields.Any())
+            {
+                return true;
+            }
+
+            var excludedFields = reqDef.Fields.Where(f => updateFieldIds.Contains(f.Id)).ToList();
+
+            return excludedFields.All(f => f.IsVoided);
+        }
+
+        // todo write unit test
+        public async Task<bool> AnyExcludedFieldsIsInUseAsync(int requirementDefinitionId, List<int> updateFieldIds, CancellationToken token)
+        {
+            var reqDef = await GetRequirementDefinitionWithFieldsAsync(requirementDefinitionId, token);
+            if (reqDef == null || !reqDef.Fields.Any())
+            {
+                return false;
+            }
+
+            var excludedFieldIds = reqDef.Fields.Where(f => updateFieldIds.Contains(f.Id)).Select(f => f.Id).ToList();
+
+            if (!excludedFieldIds.Any())
+            {
+                return false;
+            }
+
+            return await (from fv in _context.QuerySet<FieldValue>()
+                where excludedFieldIds.Contains(fv.FieldId)
+                select fv).AnyAsync(token);
+        }
+
+        private async Task<RequirementDefinition> GetRequirementDefinitionWithFieldsAsync(int requirementDefinitionId, CancellationToken token)
+            => await (from rd in _context.QuerySet<RequirementDefinition>()
+                    .Include(rd => rd.Fields)
+                where rd.Id == requirementDefinitionId
+                select rd).SingleOrDefaultAsync(token);
+
+        private async Task<List<RequirementDefinition>> GetRequirementDefinitionsAsync(List<int> requirementDefinitionIds, CancellationToken token)
             => await (from rd in _context.QuerySet<RequirementDefinition>()
                 where requirementDefinitionIds.Contains(rd.Id)
                 select rd).ToListAsync(token);

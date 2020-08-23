@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
             async Task<bool> BeAVoidedRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
             async Task<bool> NotHaveAnyFieldsAsync(int requirementDefinitionId, CancellationToken token)
-                => !await requirementDefinitionValidator.FieldsExistAsync(requirementDefinitionId, token);
+                => !await requirementDefinitionValidator.HasAnyFieldsAsync(requirementDefinitionId, token);
             async Task<bool> NotHaveAnyTagRequirementsAsync(int requirementDefinitionId, CancellationToken token)
                 => !await requirementDefinitionValidator.TagRequirementsExistAsync(requirementDefinitionId, token);
             async Task<bool> NotHaveAnyTagFunctionRequirementsAsync(int requirementDefinitionId, CancellationToken token)
