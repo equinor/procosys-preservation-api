@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             IRequirementDefinitionValidator requirementDefinitionValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             When(command => command.Requirements.Any(), () =>
             {

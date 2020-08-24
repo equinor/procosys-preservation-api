@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag
             ITagValidator tagValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))

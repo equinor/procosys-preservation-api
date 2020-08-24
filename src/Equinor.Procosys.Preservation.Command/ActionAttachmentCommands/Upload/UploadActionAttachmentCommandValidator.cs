@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload
             ITagValidator tagValidator,
             IActionValidator actionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))

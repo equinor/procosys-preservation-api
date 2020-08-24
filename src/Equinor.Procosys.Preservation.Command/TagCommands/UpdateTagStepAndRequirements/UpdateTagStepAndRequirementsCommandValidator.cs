@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
              IRequirementDefinitionValidator requirementDefinitionValidator,
              IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {

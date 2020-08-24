@@ -11,7 +11,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
     {
         public CreateRequirementDefinitionCommandValidator(IRequirementTypeValidator requirementTypeValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => RequirementTypeMustExists(command.RequirementTypeId, token))
