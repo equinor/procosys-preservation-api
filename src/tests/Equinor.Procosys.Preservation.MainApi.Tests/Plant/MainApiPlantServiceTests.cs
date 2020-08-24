@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
         }
 
         [TestMethod]
-        public async Task GetPlants_ShouldReturnsCorrectNumberOfPlants()
+        public async Task GetPlants_ShouldReturnCorrectNumberOfPlants()
         {
             // Act
             var result = await _dut.GetPlantsAsync();

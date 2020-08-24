@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void GetTagNo_ShouldReturnSiteTagNo_WithDiscipline()
+        public void GetTagNo_ShouldReturniteTagNo_WithDiscipline()
         {
             var dut = new TestAreaTag(
                 TagType.SiteArea,
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void GetTagNo_ShouldReturnSiteTagNo_WithDisciplineAndSuffix()
+        public void GetTagNo_ShouldReturniteTagNo_WithDisciplineAndSuffix()
         {
             var dut = new TestAreaTag(
                 TagType.SiteArea,
@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void GetTagNo_ShouldReturnSiteTagNo_WithDisciplineAndArea()
+        public void GetTagNo_ShouldReturniteTagNo_WithDisciplineAndArea()
         {
             var dut = new TestAreaTag(
                 TagType.SiteArea,
@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void GetTagNo_ShouldReturnSiteTagNo_WithDisciplineAndAreaAndSuffix()
+        public void GetTagNo_ShouldReturniteTagNo_WithDisciplineAndAreaAndSuffix()
         {
             var dut = new TestAreaTag(
                 TagType.SiteArea,

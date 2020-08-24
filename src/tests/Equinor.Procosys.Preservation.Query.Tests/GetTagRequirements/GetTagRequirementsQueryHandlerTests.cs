@@ -168,7 +168,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirements_NoDueDates_BeforePreservationStarted()
+        public async Task Handler_ShouldReturnTagRequirements_NoDueDates_BeforePreservationStarted()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -194,7 +194,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirements_Voided()
+        public async Task Handler_ShouldReturnTagRequirements_Voided()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -216,7 +216,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirements_Voided_and_Unvoided()
+        public async Task Handler_ShouldReturnTagRequirements_Voided_and_Unvoided()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -235,7 +235,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirements_AfterPreservationStarted()
+        public async Task Handler_ShouldReturnTagRequirements_AfterPreservationStarted()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -270,7 +270,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirementsWithCheckBoxFieldAndComment_AfterRecordingCheckBoxFieldAndComment()
+        public async Task Handler_ShouldReturnTagRequirementsWithCheckBoxFieldAndComment_AfterRecordingCheckBoxFieldAndComment()
         {
             var cbFieldId = _firstCbFieldId;
 
@@ -312,7 +312,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirementsWithNumbers_AfterRecordingNumberFields()
+        public async Task Handler_ShouldReturnTagRequirementsWithNumbers_AfterRecordingNumberFields()
         {
             var numberFieldWithNaId = _thirdNumberFieldId;
             var numberFieldWithDoubleId = _secondNumberFieldId;
@@ -365,7 +365,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirementsWithAttachment_AfterRecordingAttachment()
+        public async Task Handler_ShouldReturnTagRequirementsWithAttachment_AfterRecordingAttachment()
         {
             var attachmentField = _attachmentFieldId;
             var fieldValueAttachment = new FieldValueAttachment(TestPlant, Guid.Empty, "FilA.txt");
@@ -406,7 +406,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnsTagRequirementsWithOrderedFields()
+        public async Task Handler_ShouldReturnTagRequirementsWithOrderedFields()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProviderMock.Object, _eventDispatcher, _currentUserProvider))
             {
@@ -434,7 +434,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
         
         [TestMethod]
-        public async Task Handler_ShouldReturnsPreviousValues_AfterRecordingNumberFieldsAndPreserving()
+        public async Task Handler_ShouldReturnPreviousValues_AfterRecordingNumberFieldsAndPreserving()
         {
             var number = 1.91;
 

@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void GetNextStep_ShouldReturnStepWithNextSortKey()
+        public void GetNextStep_ShouldReturntepWithNextSortKey()
         {
             Assert.AreEqual(_stepB, _dutWith3Steps.GetNextStep(_stepAId));
             Assert.AreEqual(_stepC, _dutWith3Steps.GetNextStep(_stepBId));
@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void OrderedSteps_ShouldReturnStepOrderedBySortKey()
+        public void OrderedSteps_ShouldReturntepOrderedBySortKey()
         {
             var steps = _dutWith3Steps.OrderedSteps().ToList();
 
