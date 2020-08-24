@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
     [TestClass]
     public class TagFunctionRepositoryTests : RepositoryTestBase
     {
+        // todo write more unit tests. See ModeRepositoryTests
         private TagFunctionRepository _dut;
         private readonly string TagFunctionCode1 = "TFC1";
         private readonly string TagFunctionDesc1 = "TFDesc1";

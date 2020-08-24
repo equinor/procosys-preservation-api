@@ -20,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         private const string ProjectNameWithoutTags = "ProjectName2";
         private const int TestTagId = 71;
 
+        // todo write more unit tests. See ModeRepositoryTests
         private ProjectRepository _dut;
 
         [TestInitialize]

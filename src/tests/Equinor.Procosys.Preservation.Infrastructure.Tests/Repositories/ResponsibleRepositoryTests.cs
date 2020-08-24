@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
     {
         private const string ResponsibleCode = "A";
 
+        // todo write more unit tests. See ModeRepositoryTests
         private ResponsibleRepository _dut;
 
         [TestInitialize]

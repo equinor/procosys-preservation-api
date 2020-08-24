@@ -17,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         private List<RequirementType> _requirementTypes;
         private Mock<DbSet<RequirementType>> _dbSetMock;
 
+        // todo write more unit tests. See ModeRepositoryTests
         private RequirementTypeRepository _dut;
         RequirementTypeIcon _reqIconOther = RequirementTypeIcon.Other;
 
