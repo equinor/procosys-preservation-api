@@ -42,7 +42,7 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
 
 # Install System.Drawing native dependencies (added because of Excel export (ClosedXML library) support).
 RUN apt-get update
-RUN apt-get install -y libc6-dev libgdiplus
+RUN apt-get install -y libc6 libgdiplus
 RUN rm -rf /var/lib/apt/lists/*
 
 # Create non-root user. Set ui to 9999 to avoid conflicts with host OS just in case
