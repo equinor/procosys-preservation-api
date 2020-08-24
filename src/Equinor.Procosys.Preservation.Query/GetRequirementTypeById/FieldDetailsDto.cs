@@ -7,6 +7,7 @@ namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
         public FieldDetailsDto(
             int id, 
             string label, 
+            bool isInUse,
             bool isVoided, 
             FieldType fieldType, 
             int sortKey, 
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
         {
             Id = id;
             Label = label;
+            IsInUse = isInUse;
             IsVoided = isVoided;
             FieldType = fieldType;
             SortKey = sortKey;
@@ -26,6 +28,7 @@ namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
 
         public int Id { get; }
         public string Label { get; }
+        public bool IsInUse { get; }
         public bool IsVoided { get; }
         public int SortKey { get; }
         public FieldType FieldType { get; }
