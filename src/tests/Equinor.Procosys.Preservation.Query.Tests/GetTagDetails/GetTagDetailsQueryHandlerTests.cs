@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsTagDetails()
+        public async Task Handler_ShouldReturnTagDetails()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -68,7 +68,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
+        public async Task Handler_ShouldReturnNotFound_IfTagIsNotFound()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

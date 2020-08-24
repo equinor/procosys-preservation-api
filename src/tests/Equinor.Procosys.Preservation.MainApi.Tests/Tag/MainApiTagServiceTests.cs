@@ -188,7 +188,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                 await _dut.GetTagDetailsAsync("INVALIDPLANT", "TestProject", new List<string> {"TagNo1"}));
 
         [TestMethod]
-        public async Task GetTagDetails_ReturnsEmptyList_WhenResultIsEmptyList()
+        public async Task GetTagDetails_ShouldReturnEmptyList_WhenResultIsEmptyList()
         {
             // Arrange
             _mainApiClient

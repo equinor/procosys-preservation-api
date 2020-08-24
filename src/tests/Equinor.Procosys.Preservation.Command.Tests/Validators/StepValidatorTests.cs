@@ -39,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task Exists_KnownId_ReturnsTrue()
+        public async Task Exists_KnownId_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task Exists_UnknownId_ReturnsFalse()
+        public async Task Exists_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoided_KnownVoided_ReturnsTrue()
+        public async Task IsVoided_KnownVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoided_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoided_KnownNotVoided_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -90,7 +90,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoided_UnknownId_ReturnsFalse()
+        public async Task IsVoided_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsAnyStepForSupplier_IncludesSupplierStep_ReturnsTrue()
+        public async Task IsAnyStepForSupplier_IncludesSupplierStep_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -112,7 +112,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsAnyStepForSupplier_NotIncludesSupplierStep_ReturnsFalse()
+        public async Task IsAnyStepForSupplier_NotIncludesSupplierStep_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -123,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsFirstStepOrModeIsNotForSupplier_UpdatingFirstStepToSupplierStep_ReturnsTrue()
+        public async Task IsFirstStepOrModeIsNotForSupplier_UpdatingFirstStepToSupplierStep_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -134,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsFirstStepOrModeIsNotForSupplier_UpdatingNotFirstStepToSupplierStep_ReturnsFalse()
+        public async Task IsFirstStepOrModeIsNotForSupplier_UpdatingNotFirstStepToSupplierStep_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsForSupplier_KnownForSupplier_ReturnsTrue()
+        public async Task IsForSupplier_KnownForSupplier_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -156,7 +156,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsForSupplier_KnownNotForSupplier_ReturnsFalse()
+        public async Task IsForSupplier_KnownNotForSupplier_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -167,7 +167,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsForSupplier_UnknownId_ReturnsFalse()
+        public async Task IsForSupplier_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

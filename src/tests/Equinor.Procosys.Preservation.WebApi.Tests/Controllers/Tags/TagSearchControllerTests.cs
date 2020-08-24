@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         }
 
         [TestMethod]
-        public async Task SearchTags_ReturnsCorrectNumberOfElements()
+        public async Task SearchTags_ShouldReturnCorrectNumberOfElements()
         {
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))

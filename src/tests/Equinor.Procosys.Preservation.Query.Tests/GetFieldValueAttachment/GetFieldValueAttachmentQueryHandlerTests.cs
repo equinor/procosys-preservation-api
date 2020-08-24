@@ -81,7 +81,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetFieldValueAttachment
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsAttachmentUri()
+        public async Task Handler_ShouldReturnAttachmentUri()
         {
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetFieldValueAttachment
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
+        public async Task Handler_ShouldReturnNotFound_IfTagIsNotFound()
         {
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 

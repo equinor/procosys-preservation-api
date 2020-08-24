@@ -37,7 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownId_ReturnsTrue()
+        public async Task ExistsAsync_KnownId_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
+        public async Task IsVoidedAsync_KnownVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoidedAsync_KnownNotVoided_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
+        public async Task IsVoidedAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -98,7 +98,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForAllRequirement_ReturnsFalse()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForAllRequirement_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForOtherRequirement_ReturnsFalse()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForOtherRequirement_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -122,7 +122,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForSupplierRequirement_ReturnsTrue()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForSupplierRequirement_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -134,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForSupplierAndOtherAndForAllRequirement_ReturnsTrue()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UsageForSupplierAndOtherAndForAllRequirement_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -146,7 +146,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyForSupplierOnlyUsageAsync_UnknownRequirement_ReturnsFalse()
+        public async Task HasAnyForSupplierOnlyUsageAsync_UnknownRequirement_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -158,7 +158,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyForSupplierOnlyUsageAsync_NoRequirements_ReturnsFalse()
+        public async Task HasAnyForSupplierOnlyUsageAsync_NoRequirements_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -170,7 +170,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversForOtherThanSuppliersAsync_UsageForAllRequirement_ReturnsTrue()
+        public async Task UsageCoversForOtherThanSuppliersAsync_UsageForAllRequirement_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -182,7 +182,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversForOtherThanSuppliersAsync_UsageForOtherRequirement_ReturnsTrue()
+        public async Task UsageCoversForOtherThanSuppliersAsync_UsageForOtherRequirement_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -194,7 +194,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversForOtherThanSuppliersAsync_UsageForSupplierRequirement_ReturnsFalse()
+        public async Task UsageCoversForOtherThanSuppliersAsync_UsageForSupplierRequirement_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -206,7 +206,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversForOtherThanSuppliersAsync_UsageForSupplierAndOtherAndForAllRequirement_ReturnsTrue()
+        public async Task UsageCoversForOtherThanSuppliersAsync_UsageForSupplierAndOtherAndForAllRequirement_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -218,7 +218,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversForOtherThanSuppliersAsync_UnknownRequirement_ReturnsFalse()
+        public async Task UsageCoversForOtherThanSuppliersAsync_UnknownRequirement_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -230,7 +230,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversForOtherThanSuppliersAsync_NoRequirements_ReturnsFalse()
+        public async Task UsageCoversForOtherThanSuppliersAsync_NoRequirements_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -242,7 +242,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForAllRequirement_ReturnsTrue()
+        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForAllRequirement_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -254,7 +254,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForOtherRequirement_ReturnsFalse()
+        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForOtherRequirement_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -266,7 +266,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForSupplierRequirement_ReturnsFalse()
+        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForSupplierRequirement_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -278,7 +278,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForSupplierAndOtherAndForAllRequirement_ReturnsTrue()
+        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForSupplierAndOtherAndForAllRequirement_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -290,7 +290,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForSupplierAndOtherRequirement_ReturnsTrue()
+        public async Task UsageCoversBothForSupplierAndOtherAsync_UsageForSupplierAndOtherRequirement_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -302,7 +302,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversBothForSupplierAndOtherAsync_UnknownRequirement_ReturnsFalse()
+        public async Task UsageCoversBothForSupplierAndOtherAsync_UnknownRequirement_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -314,7 +314,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task UsageCoversBothForSupplierAndOtherAsync_NoRequirements_ReturnsFalse()
+        public async Task UsageCoversBothForSupplierAndOtherAsync_NoRequirements_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

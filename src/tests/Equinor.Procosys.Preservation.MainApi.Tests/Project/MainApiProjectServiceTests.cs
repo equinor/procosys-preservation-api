@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
         }
 
         [TestMethod]
-        public async Task TryGetProject_ReturnsProject()
+        public async Task TryGetProject_ShouldReturnProject()
         {
             // Arrange
             _mainApiClient

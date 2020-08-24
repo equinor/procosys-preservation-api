@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownId_ReturnsTrue()
+        public async Task ExistsAsync_KnownId_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
+        public async Task IsVoidedAsync_KnownVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoidedAsync_KnownNotVoided_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -91,7 +91,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
+        public async Task IsVoidedAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -102,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleAsync_KnownTitle_ReturnsTrue()
+        public async Task ExistsWithSameTitleAsync_KnownTitle_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleAsync_KnownTitle_ReturnsFalse()
+        public async Task ExistsWithSameTitleAsync_KnownTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -124,7 +124,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleInAnotherTypeAsync_SameTitleAsAnotherType_ReturnsTrue()
+        public async Task ExistsWithSameTitleInAnotherTypeAsync_SameTitleAsAnotherType_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -135,7 +135,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleInAnotherTypeAsync_NewTitle_ReturnsFalse()
+        public async Task ExistsWithSameTitleInAnotherTypeAsync_NewTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             }
         }
         [TestMethod]
-        public async Task ExistsWithSameCodeAsync_KnownCode_ReturnsTrue()
+        public async Task ExistsWithSameCodeAsync_KnownCode_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -156,7 +156,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameCodeAsync_KnownCode_ReturnsFalse()
+        public async Task ExistsWithSameCodeAsync_KnownCode_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -167,7 +167,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameCodeInAnotherTypeAsync_SameCodeAsAnotherType_ReturnsTrue()
+        public async Task ExistsWithSameCodeInAnotherTypeAsync_SameCodeAsAnotherType_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -178,7 +178,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameCodeInAnotherTypeAsync_NewCode_ReturnsFalse()
+        public async Task ExistsWithSameCodeInAnotherTypeAsync_NewCode_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -189,7 +189,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitle_AndNeedUserInputAreEqual_ReturnsTrue()
+        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitle_AndNeedUserInputAreEqual_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -201,7 +201,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitle_ButNeedUserInputDiffer_ReturnsFalse()
+        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitle_ButNeedUserInputDiffer_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -213,7 +213,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenNewTitle_ReturnsFalse()
+        public async Task AnyRequirementDefinitionExistsWithSameTitleAsync_WhenNewTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -225,7 +225,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitleInOtherDefinition_AndNeedUserInputAreEqual_ReturnsTrue()
+        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitleInOtherDefinition_AndNeedUserInputAreEqual_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -237,7 +237,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitleInOtherDefinition_ButNeedUserInputDiffer_ReturnsFalse()
+        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenSameTitleInOtherDefinition_ButNeedUserInputDiffer_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -249,7 +249,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenNewTitle_ReturnsFalse()
+        public async Task OtherRequirementDefinitionExistsWithSameTitleAsync_WhenNewTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

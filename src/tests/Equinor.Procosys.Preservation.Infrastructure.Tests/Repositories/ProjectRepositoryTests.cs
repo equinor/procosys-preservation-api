@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetTagByTagId_ReturnsTag()
+        public async Task GetTagByTagId_ShouldReturnTag()
         {
             var result = await _dut.GetTagByTagIdAsync(TestTagId);
 
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetTagByTagIds_ReturnsTag()
+        public async Task GetTagByTagIds_ShouldReturnTag()
         {
             var result = await _dut.GetTagsByTagIdsAsync(new List<int>{ TestTagId });
 

@@ -44,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownIds_ReturnsTrue()
+        public async Task ExistsAsync_KnownIds_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownActionId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownActionId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsClosedAsync_KnownId_ReturnsFalse_WhenNotClosed()
+        public async Task IsClosedAsync_KnownId_ShouldReturnFalse_WhenNotClosed()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsClosedAsync_KnownId_ReturnsTrue_WhenClosed()
+        public async Task IsClosedAsync_KnownId_ShouldReturnTrue_WhenClosed()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsClosedAsync_UnknownActionId_ReturnsFalse()
+        public async Task IsClosedAsync_UnknownActionId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -106,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AttachmentWithFilenameExistsAsync_KnownFile_ReturnsTrue()
+        public async Task AttachmentWithFilenameExistsAsync_KnownFile_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -117,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AttachmentWithFilenameExistsAsync_UnknownFile_ReturnsFalse()
+        public async Task AttachmentWithFilenameExistsAsync_UnknownFile_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AttachmentWithFilenameExistsAsync_UnknownActionId_ReturnsFalse()
+        public async Task AttachmentWithFilenameExistsAsync_UnknownActionId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

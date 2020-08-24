@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsClosedAction()
+        public async Task Handler_ShouldReturnClosedAction()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsModifiedAction()
+        public async Task Handler_ShouldReturnModifiedAction()
         {
             DateTime? modifiedTime;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsOpenAction()
+        public async Task Handler_ShouldReturnOpenAction()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -118,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
+        public async Task Handler_ShouldReturnNotFound_IfTagIsNotFound()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -134,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsNotFound_IfActionIsNotFound()
+        public async Task Handler_ShouldReturnNotFound_IfActionIsNotFound()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

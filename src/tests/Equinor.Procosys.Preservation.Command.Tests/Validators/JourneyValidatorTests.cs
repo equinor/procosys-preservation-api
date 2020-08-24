@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownId_ReturnsTrue()
+        public async Task ExistsAsync_KnownId_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task StepExistsAsync_KnownIds_ReturnsTrue()
+        public async Task StepExistsAsync_KnownIds_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task StepExistsAsync_UnknownJourneyId_ReturnsFalse()
+        public async Task StepExistsAsync_UnknownJourneyId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task StepExistsAsync_UnknownStepId_ReturnsFalse()
+        public async Task StepExistsAsync_UnknownStepId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleAsync_KnownTitle_ReturnsTrue()
+        public async Task ExistsWithSameTitleAsync_KnownTitle_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -118,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleAsync_UnknownTitle_ReturnsFalse()
+        public async Task ExistsWithSameTitleAsync_UnknownTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -129,7 +129,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleInAnotherJourneyAsync_SameTitleAsAnotherJourney_ReturnsTrue()
+        public async Task ExistsWithSameTitleInAnotherJourneyAsync_SameTitleAsAnotherJourney_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -140,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleInAnotherJourneyAsync_NewTitle_ReturnsFalse()
+        public async Task ExistsWithSameTitleInAnotherJourneyAsync_NewTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -151,7 +151,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleInAnotherJourneyAsync_SameTitle_ReturnsFalse()
+        public async Task ExistsWithSameTitleInAnotherJourneyAsync_SameTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -162,7 +162,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
+        public async Task IsVoidedAsync_KnownVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -179,7 +179,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoidedAsync_KnownNotVoided_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -190,7 +190,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
+        public async Task IsVoidedAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -201,7 +201,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyStepsAsync_JorneyWithNoSteps_ReturnsFalse()
+        public async Task HasAnyStepsAsync_JorneyWithNoSteps_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -212,7 +212,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyStepsAsync_UnknownId_ReturnsFalse()
+        public async Task HasAnyStepsAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -223,7 +223,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyStepsAsync_JorneyWithSteps_ReturnsTrue()
+        public async Task HasAnyStepsAsync_JorneyWithSteps_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -234,7 +234,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsInUseAsync_NoSteps_ReturnsFalse()
+        public async Task IsInUseAsync_NoSteps_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -245,7 +245,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsInUseAsync_NoTagsUsesAnySteps_ReturnsFalse()
+        public async Task IsInUseAsync_NoTagsUsesAnySteps_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -256,7 +256,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsInUseAsync_UnknownJourney_ReturnsFalse()
+        public async Task IsInUseAsync_UnknownJourney_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -267,7 +267,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsInUseAsync_ReturnsTrue_AfterTagAddedToAStep()
+        public async Task IsInUseAsync_ShouldReturnTrue_AfterTagAddedToAStep()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -286,7 +286,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithDuplicateTitleAsync_KnownDuplicate_ReturnsTrue()
+        public async Task ExistsWithDuplicateTitleAsync_KnownDuplicate_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -297,7 +297,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithDuplicateTitleAsync_KnownNotDuplicate_ReturnsFalse()
+        public async Task ExistsWithDuplicateTitleAsync_KnownNotDuplicate_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -308,7 +308,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithDuplicateTitleAsync_UnknownKnownId_ReturnsFalse()
+        public async Task ExistsWithDuplicateTitleAsync_UnknownKnownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -319,7 +319,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task HasOtherStepWithAutoTransferMethodAsync_NoSteps_ReturnsFalse()
+        public async Task HasOtherStepWithAutoTransferMethodAsync_NoSteps_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -330,7 +330,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task HasOtherStepWithAutoTransferMethodAsync_NoStepsHasSameAutoTransferMethodSign_ReturnsFalse()
+        public async Task HasOtherStepWithAutoTransferMethodAsync_NoStepsHasSameAutoTransferMethodSign_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -341,7 +341,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task HasOtherStepWithAutoTransferMethodAsync_UnknownJourney_ReturnsFalse()
+        public async Task HasOtherStepWithAutoTransferMethodAsync_UnknownJourney_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -352,7 +352,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task HasOtherStepWithAutoTransferMethodAsync_ReturnsTrue_WhenOtherStepHasSameAutoTransferMethod()
+        public async Task HasOtherStepWithAutoTransferMethodAsync_ShouldReturnTrue_WhenOtherStepHasSameAutoTransferMethod()
         {
             var autoTransferMethod = AutoTransferMethod.OnRfccSign;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -375,7 +375,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task HasOtherStepWithAutoTransferMethodAsync_ReturnsFalse_WhenSameStepHasSameAutoTransferMethod()
+        public async Task HasOtherStepWithAutoTransferMethodAsync_ShouldReturnFalse_WhenSameStepHasSameAutoTransferMethod()
         {
             int stepId;
             var autoTransferMethod = AutoTransferMethod.OnRfccSign;
@@ -401,7 +401,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInJourney_ReturnsTrue()
+        public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInJourney_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -412,7 +412,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AnyStepExistsWithSameTitleAsync_NewTitle_ReturnsFalse()
+        public async Task AnyStepExistsWithSameTitleAsync_NewTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -423,7 +423,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInAnotherJourney_ReturnsFalse()
+        public async Task AnyStepExistsWithSameTitleAsync_KnownTitleInAnotherJourney_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -434,7 +434,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsExisting_ReturnsFalse()
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsExisting_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -445,7 +445,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsAnotherStepInSameJourney_ReturnsFalse()
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsAnotherStepInSameJourney_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -456,7 +456,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsStepInAnotherJourney_ReturnsFalse()
+        public async Task OtherStepExistsWithSameTitleAsync_SameTitleAsStepInAnotherJourney_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

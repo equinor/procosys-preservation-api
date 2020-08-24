@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsOkResult()
+        public async Task Handle_ShouldReturnOkResult()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsNotFound_WhenNoTagFunctionWithRequirement()
+        public async Task Handle_ShouldReturnNotFound_WhenNoTagFunctionWithRequirement()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -117,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         }
         
         [TestMethod]
-        public async Task Handle_ReturnsNotFound_WhenNoTagFunctionWithRequirement_BecauseOfVoidedTagFunction()
+        public async Task Handle_ShouldReturnNotFound_WhenNoTagFunctionWithRequirement_BecauseOfVoidedTagFunction()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsCorrectItems()
+        public async Task Handle_ShouldReturnCorrectItems()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -168,7 +168,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsEmptyList_WhenTagApiReturnsNull()
+        public async Task Handle_ShouldReturnEmptyList_WhenTagApiReturnsNull()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -185,7 +185,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
         }
 
         [TestMethod]
-        public async Task Handle_ReturnsApiTags_WhenProjectRepositoryReturnsNull()
+        public async Task Handle_ShouldReturnApiTags_WhenProjectRepositoryReturnsNull()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

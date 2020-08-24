@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByCode_ReturnsResponsible_WhenResponsibleExists()
+        public async Task GetByCode_ShouldReturnResponsible_WhenResponsibleExists()
         {
             var result = await _dut.GetByCodeAsync(ResponsibleCode);
 
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByCode_ReturnsNull_WhenResponsibleNotExists()
+        public async Task GetByCode_ShouldReturnNull_WhenResponsibleNotExists()
         {
             var result = await _dut.GetByCodeAsync("XYZ");
 

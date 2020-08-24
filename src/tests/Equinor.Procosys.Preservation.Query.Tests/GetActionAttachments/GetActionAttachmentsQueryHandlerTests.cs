@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsAttachments()
+        public async Task Handler_ShouldReturnAttachments()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsNotFound_IfTagIsNotFound()
+        public async Task Handler_ShouldReturnNotFound_IfTagIsNotFound()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -81,7 +81,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachments
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsNotFound_IfActionIsNotFound()
+        public async Task Handler_ShouldReturnNotFound_IfActionIsNotFound()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

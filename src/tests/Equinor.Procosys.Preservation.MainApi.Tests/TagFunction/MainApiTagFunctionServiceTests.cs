@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.TagFunction
         }
 
         [TestMethod]
-        public async Task TryGetTagFunction_ReturnsTagFunction()
+        public async Task TryGetTagFunction_ShouldReturnTagFunction()
         {
             // Arrange
             _mainApiClient

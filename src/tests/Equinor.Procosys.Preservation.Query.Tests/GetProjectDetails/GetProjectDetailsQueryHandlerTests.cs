@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetProjectDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsProjectDetails()
+        public async Task Handler_ShouldReturnProjectDetails()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetProjectDetails
         }
 
         [TestMethod]
-        public async Task Handler_ReturnsNotFound_IfProjectIsNotFound()
+        public async Task Handler_ShouldReturnNotFound_IfProjectIsNotFound()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

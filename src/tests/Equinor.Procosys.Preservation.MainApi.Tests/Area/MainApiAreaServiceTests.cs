@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
             => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.TryGetAreaAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
-        public async Task TryGetAreaCode_ReturnsAreaCode()
+        public async Task TryGetAreaCode_ShouldReturnAreaCode()
         {
             // Arrange
             _mainApiClient
