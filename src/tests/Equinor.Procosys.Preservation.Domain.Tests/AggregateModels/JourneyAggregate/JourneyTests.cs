@@ -96,8 +96,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void RemoveStep_ShouldThrowExceptionIfStepNotVoided()
-            => Assert.ThrowsException<Exception>(() => _dutWithNoSteps.RemoveStep(_stepA));
+        public void RemoveStep_ShouldThrowExceptionWhenStepIsNotVoided()
+        {
+            Assert.ThrowsException<Exception>(() => _dutWithNoSteps.RemoveStep(_stepA));
+            Assert.AreEqual(3, _dutWith3Steps.Steps.Count);
+        }
 
         [TestMethod]
         public void AddStep_ShouldSetIncreasedSortKey()

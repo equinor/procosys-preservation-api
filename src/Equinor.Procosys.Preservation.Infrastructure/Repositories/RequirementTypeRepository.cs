@@ -28,5 +28,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
 
         public void RemoveRequirementDefinition(RequirementDefinition requirementDefinition) 
             => _context.RequirementDefinitions.Remove(requirementDefinition);
+
+        public void RemoveField(Field field)
+            => _context.Fields.Remove(field);
     }
 }

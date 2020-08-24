@@ -58,6 +58,14 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 requirementDefinition.AddField(new Field(_plantProvider.Plant, f.Label, f.FieldType, f.SortKey, f.Unit, f.ShowPrevious));
             }
 
+            var updateFieldIds = request.UpdateFields.Select(u => u.Id);
+            var excludedFields = requirementDefinition.Fields.Where(f => !updateFieldIds.Contains(f.Id)).ToList();
+            foreach (var fieldToDelete in excludedFields)
+            {
+                requirementDefinition.RemoveField(fieldToDelete);
+                _requirementTypeRepository.RemoveField(fieldToDelete);
+            }
+
             requirementDefinition.SetRowVersion(request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

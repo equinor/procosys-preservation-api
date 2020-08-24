@@ -87,7 +87,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
             return excludedFields.All(f => f.IsVoided);
         }
 
-        // todo write unit test
         public async Task<bool> AnyExcludedFieldsIsInUseAsync(int requirementDefinitionId, List<int> updateFieldIds, CancellationToken token)
         {
             var reqDef = await GetRequirementDefinitionWithFieldsAsync(requirementDefinitionId, token);

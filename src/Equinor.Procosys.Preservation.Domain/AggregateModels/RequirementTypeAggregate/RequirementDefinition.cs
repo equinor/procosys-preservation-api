@@ -56,6 +56,26 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             _fields.Add(field);
         }
 
+        public void RemoveField(Field field)
+        {
+            if (field == null)
+            {
+                throw new ArgumentNullException(nameof(field));
+            }
+
+            if (!field.IsVoided)
+            {
+                throw new Exception($"{nameof(field)} must be voided before delete");
+            }
+            
+            if (field.Plant != Plant)
+            {
+                throw new ArgumentException($"Can't remove item in {field.Plant} from item in {Plant}");
+            }
+
+            _fields.Remove(field);
+        }
+
         public IOrderedEnumerable<Field> OrderedFields(bool includeVoided)
             => Fields
                 .Where(f => includeVoided || !f.IsVoided)
