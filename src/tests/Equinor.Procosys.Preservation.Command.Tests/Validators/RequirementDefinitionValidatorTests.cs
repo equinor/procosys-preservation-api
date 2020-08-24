@@ -5,6 +5,7 @@ using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionVali
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -383,6 +384,35 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new RequirementDefinitionValidator(context);
                 var result = await dut.TagRequirementsExistAsync(_reqDefWithoutField.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task TagFunctionRequirementsExistAsync_NoTagFunctionRequirements_ReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.TagFunctionRequirementsExistAsync(_reqDefWithoutField.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task TagFunctionRequirementsExistAsync_TagFunctionRequirementsExists_ReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tf = AddTagFunction(context, "M", "R");
+                tf.AddRequirement(new TagFunctionRequirement(TestPlant, 4, _reqDefWithoutField));
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.TagFunctionRequirementsExistAsync(_reqDefWithoutField.Id, default);
                 Assert.IsTrue(result);
             }
         }

@@ -69,7 +69,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                     where tr.RequirementDefinitionId == requirementDefinitionId
                     select tr).AnyAsync(token);
 
-        // todo write unit test
         public async Task<bool> TagFunctionRequirementsExistAsync(int requirementDefinitionId, CancellationToken token)
             => await (from tfr in _context.QuerySet<TagFunctionRequirement>()
                 where tfr.RequirementDefinitionId == requirementDefinitionId
