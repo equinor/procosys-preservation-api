@@ -74,8 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 where tfr.RequirementDefinitionId == requirementDefinitionId
                 select tfr).AnyAsync(token);
 
-        // todo write unit test
-        public async Task<bool> AllExcludedFieldsIsVoidedAsync(int requirementDefinitionId, List<int> updateFieldIds, CancellationToken token)
+        public async Task<bool> AllExcludedFieldsAreVoidedAsync(int requirementDefinitionId, List<int> updateFieldIds, CancellationToken token)
         {
             var reqDef = await GetRequirementDefinitionWithFieldsAsync(requirementDefinitionId, token);
             if (reqDef == null || !reqDef.Fields.Any())
@@ -83,7 +82,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 return true;
             }
 
-            var excludedFields = reqDef.Fields.Where(f => updateFieldIds.Contains(f.Id)).ToList();
+            var excludedFields = reqDef.Fields.Where(f => !updateFieldIds.Contains(f.Id)).ToList();
 
             return excludedFields.All(f => f.IsVoided);
         }
@@ -97,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 return false;
             }
 
-            var excludedFieldIds = reqDef.Fields.Where(f => updateFieldIds.Contains(f.Id)).Select(f => f.Id).ToList();
+            var excludedFieldIds = reqDef.Fields.Where(f => !updateFieldIds.Contains(f.Id)).Select(f => f.Id).ToList();
 
             if (!excludedFieldIds.Any())
             {

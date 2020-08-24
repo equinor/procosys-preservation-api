@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             async Task<bool> AllFieldsToBeDeletedIsVoidedAsync(int requirementDefinitionId, IList<UpdateFieldsForCommand> updateFields, CancellationToken token)
             {
                 var updateFieldIds = updateFields.Select(u => u.Id).ToList();
-                return await requirementDefinitionValidator.AllExcludedFieldsIsVoidedAsync(requirementDefinitionId, updateFieldIds, token);
+                return await requirementDefinitionValidator.AllExcludedFieldsAreVoidedAsync(requirementDefinitionId, updateFieldIds, token);
             }
 
             async Task<bool> NoFieldsToBeDeletedShouldBeInUseAsync(int requirementDefinitionId, IList<UpdateFieldsForCommand> updateFields, CancellationToken token)

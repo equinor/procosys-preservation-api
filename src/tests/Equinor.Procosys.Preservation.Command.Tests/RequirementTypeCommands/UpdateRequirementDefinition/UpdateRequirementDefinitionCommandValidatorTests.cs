@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
 
             _reqDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _reqDefinitionValidatorMock
-                .Setup(r => r.AllExcludedFieldsIsVoidedAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
+                .Setup(r => r.AllExcludedFieldsAreVoidedAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
                 .Returns(Task.FromResult(true));
 
             _fieldValidatorMock = new Mock<IFieldValidator>();
@@ -179,7 +179,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         public void Validate_ShouldFail_WhenFieldToDeleteIsNotVoided()
         {
             _reqDefinitionValidatorMock
-                .Setup(r => r.AllExcludedFieldsIsVoidedAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
+                .Setup(r => r.AllExcludedFieldsAreVoidedAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
                 .Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
