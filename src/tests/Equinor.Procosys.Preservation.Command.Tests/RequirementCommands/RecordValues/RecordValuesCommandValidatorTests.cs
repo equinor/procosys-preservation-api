@@ -174,7 +174,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         }
  
         [TestMethod]
-        public void Validate_ShouldFailWith3Errors_WhenErrorsInDifferentRules()
+        public void Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock.Setup(v => v.ExistsAsync(NumberFieldId, default)).Returns(Task.FromResult(false));
@@ -183,7 +183,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             var result = _dut.Validate(_recordValuesCommand);
             
             Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(3, result.Errors.Count);
+            Assert.AreEqual(1, result.Errors.Count);
         }
     }
 }
