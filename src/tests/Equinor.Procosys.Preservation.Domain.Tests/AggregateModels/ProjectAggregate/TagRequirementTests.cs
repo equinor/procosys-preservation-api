@@ -1060,11 +1060,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             AssertNumber(null, dut.GetCurrentFieldValue(_numberField1Mock.Object));
             AssertNumber(null, dut.GetPreviousFieldValue(_numberField1Mock.Object));
 
-            RecordAndPreseve(dut, 7, null);
+            RecordAndPreserve(dut, 7, null);
 
-            RecordAndPreseve(dut, 14.1, 7);
+            RecordAndPreserve(dut, 14.1, 7);
 
-            RecordAndPreseve(dut, 200, 14.1);
+            RecordAndPreserve(dut, 200, 14.1);
         }
         [TestMethod]
         public void GetPreviousFieldValue_ShouldReturnNull_ForUnknownField()
@@ -1304,7 +1304,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #region privates
 
-        private void RecordAndPreseve(
+        private void RecordAndPreserve(
         TagRequirement dut,
         double numberToRecord,
         double? expectedPreviousRecorded)
