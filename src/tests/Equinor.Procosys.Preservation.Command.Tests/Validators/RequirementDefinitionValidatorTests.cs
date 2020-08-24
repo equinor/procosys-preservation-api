@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private RequirementDefinition _reqDefForOther;
         private RequirementDefinition _reqDefWithoutField;
         private RequirementDefinition _reqDefForAll;
-        private RequirementDefinition _reqDefWithField;
+        private RequirementDefinition _reqDefWithTwoFields;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _reqDefForAll = _reqDefWithoutField = _requirementType.RequirementDefinitions.First();
                 _reqDefForSupplier = new RequirementDefinition(TestPlant, "D2", 2, RequirementUsage.ForSuppliersOnly, 1);
                 _requirementType.AddRequirementDefinition(_reqDefForSupplier);
-                _reqDefForOther = _reqDefWithField = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 1);
+                _reqDefForOther = _reqDefWithTwoFields = new RequirementDefinition(TestPlant, "D3", 2, RequirementUsage.ForOtherThanSuppliers, 1);
                 _requirementType.AddRequirementDefinition(_reqDefForOther);
                 _numberFieldId = AddNumberField(context, _reqDefForOther, "N", "mm", true).Id;
                 _cbFieldId = AddCheckBoxField(context, _reqDefForOther, "CB").Id;
@@ -349,7 +349,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.HasAnyFieldsAsync(_reqDefWithField.Id, default);
+                var result = await dut.HasAnyFieldsAsync(_reqDefWithTwoFields.Id, default);
                 Assert.IsTrue(result);
             }
         }
@@ -418,18 +418,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AllExcludedFieldsIsVoidedAsync_NoExcludedFieldsInUpdateList_ShouldReturnTrue()
+        public async Task AllExcludedFieldsAreVoidedAsync_NoExcludedFieldsInUpdateList_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.AllExcludedFieldsAreVoidedAsync(_reqDefWithField.Id, new List<int>{_cbFieldId, _numberFieldId},  default);
+                var result = await dut.AllExcludedFieldsAreVoidedAsync(_reqDefWithTwoFields.Id, new List<int>{_cbFieldId, _numberFieldId},  default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task AllExcludedFieldsIsVoidedAsync_ReqDefHasNoFields_ShouldReturnTrue()
+        public async Task AllExcludedFieldsAreVoidedAsync_ReqDefHasNoFields_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -440,18 +440,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AllExcludedFieldsIsVoidedAsync_TheExcludedFieldIsNotVoided_ShouldReturnFalse()
+        public async Task AllExcludedFieldsAreVoidedAsync_TheExcludedFieldIsNotVoided_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.AllExcludedFieldsAreVoidedAsync(_reqDefWithField.Id, new List<int>{_numberFieldId},  default);
+                var result = await dut.AllExcludedFieldsAreVoidedAsync(_reqDefWithTwoFields.Id, new List<int>{_numberFieldId},  default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task AllExcludedFieldsIsVoidedAsync_TheExcludedFieldIsVoided_ShouldReturnTrue()
+        public async Task AllExcludedFieldsAreVoidedAsync_TheExcludedFieldIsVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -463,13 +463,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.AllExcludedFieldsAreVoidedAsync(_reqDefWithField.Id, new List<int>{_numberFieldId},  default);
+                var result = await dut.AllExcludedFieldsAreVoidedAsync(_reqDefWithTwoFields.Id, new List<int>{_numberFieldId},  default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task AllExcludedFieldsIsVoidedAsync_AllExcludedFieldAreVoided_ShouldReturnTrue()
+        public async Task AllExcludedFieldsAreVoidedAsync_AllExcludedFieldAreVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -483,7 +483,51 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new RequirementDefinitionValidator(context);
-                var result = await dut.AllExcludedFieldsAreVoidedAsync(_reqDefWithField.Id, new List<int>(),  default);
+                var result = await dut.AllExcludedFieldsAreVoidedAsync(_reqDefWithTwoFields.Id, new List<int>(),  default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AnyExcludedFieldsIsInUseAsync_TheExcludedFieldIsNotInUse_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.AnyExcludedFieldsIsInUseAsync(_reqDefWithTwoFields.Id, new List<int>{_numberFieldId},  default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task AnyExcludedFieldsIsInUseAsync_TheExcludedFieldHasRecordedPreservation_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var stepMock = new Mock<Step>();
+                stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+                var project = AddProject(context, "P", "D");
+                var tagRequirement = new TagRequirement(TestPlant, 4, _reqDefWithTwoFields);
+                var tag = new Tag(TestPlant, TagType.Standard, "TagNo", "Desc", stepMock.Object, new List<TagRequirement>
+                {
+                    tagRequirement
+                });
+                tag.StartPreservation();
+                project.AddTag(tag);
+                context.SaveChangesAsync().Wait();
+
+                var requirementDefinition = context.RequirementDefinitions.Include(rd => rd.Fields)
+                    .Single(rd => rd.Id == _reqDefWithTwoFields.Id);
+                tagRequirement.RecordCheckBoxValues(
+                    new Dictionary<int, bool> {{_cbFieldId, true}},
+                    requirementDefinition);
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.AnyExcludedFieldsIsInUseAsync(_reqDefWithTwoFields.Id, new List<int>{_numberFieldId},  default);
                 Assert.IsTrue(result);
             }
         }
