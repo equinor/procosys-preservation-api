@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -45,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetAll_Returns3()
+        public async Task GetAll_ShouldReturns3()
         {
             var result = await _dut.GetAllAsync();
 
@@ -53,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByIds_KnownId_ReturnsMode()
+        public async Task GetByIds_KnownId_ShouldReturnsMode()
         {
             var result = await _dut.GetByIdsAsync(new List<int>{ModeId});
 
@@ -62,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByIds_UnknownId_ReturnsEmptyList()
+        public async Task GetByIds_UnknownId_ShouldReturnsEmptyList()
         {
             var result = await _dut.GetByIdsAsync(new List<int>{12672});
 
@@ -70,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task Exists_KnownId_ReturnsTrue()
+        public async Task Exists_KnownId_ShouldReturnsTrue()
         {
             var result = await _dut.Exists(ModeId);
 
@@ -78,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task Exists_UnknownId_ReturnsFalse()
+        public async Task Exists_UnknownId_ShouldReturnsFalse()
         {
             var result = await _dut.Exists(416);
 
@@ -86,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetById_KnownId_ReturnsMode()
+        public async Task GetById_KnownId_ShouldReturnsMode()
         {
             var result = await _dut.GetByIdAsync(ModeId);
 
@@ -94,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetById_UnknownId_ReturnsNull()
+        public async Task GetById_UnknownId_ShouldReturnsNull()
         {
             var result = await _dut.GetByIdAsync(2423);
 
@@ -102,7 +103,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public void Add_Mode_CallAddForMode()
+        public void Add_Mode_ShouldCallAddForMode()
         {
             _dut.Add(_mode);
 
@@ -110,11 +111,20 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public void Remove_Mode_CallRemoveForMode()
+        public void Remove_WhenModeIsVoided_ShouldCallRemoveForMode()
         {
+            // Arrange
+            _mode.IsVoided = true;
+
+            // Act
             _dut.Remove(_mode);
 
+            // Arrange
             _dbSetMock.Verify(s => s.Remove(_mode), Times.Once);
         }
+
+        [TestMethod]
+        public void Remove_WhenModeIsNotVoided_ShouldThrowException()
+            => Assert.ThrowsException<Exception>(() => _dut.Remove(_mode));
     }
 }
