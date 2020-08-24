@@ -4,6 +4,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate
 {
     public class Setting : PlantEntityBase, IAggregateRoot
     {
+        public static string LastAcceptedCertificatesReadCode => "LastAcceptedCertificatesRead";
         public const int CodeLengthMax = 64;
 
         protected Setting()

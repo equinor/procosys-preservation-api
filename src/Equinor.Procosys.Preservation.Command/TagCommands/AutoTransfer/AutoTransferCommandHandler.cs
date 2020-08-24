@@ -47,6 +47,13 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer
                 return new SuccessResult<Unit>(Unit.Value);
             }
 
+            var journeysWithAutoTransferSteps = await _journeyRepository.GetJourneysWithAutoTransferStepsAsync(autoTransferMethod);
+            if (journeysWithAutoTransferSteps == null)
+            {
+                _logger.LogInformation("Early exit in AutoTransfer handling. No Journeys configured with auto transfer method in Preservation module");
+                return new SuccessResult<Unit>(Unit.Value);
+            }
+
             var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
             if (project == null)
             {
@@ -80,27 +87,28 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer
             }
 
             var tagNos = certificateTagModel.Tags.Select(t => t.TagNo);
-            await AutoTransferTagsAsync(request.ProjectName, tagNos, autoTransferMethod);
+            await AutoTransferTagsAsync(request.ProjectName, tagNos, autoTransferMethod, journeysWithAutoTransferSteps);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
             return new SuccessResult<Unit>(Unit.Value);
         }
 
-        private async Task AutoTransferTagsAsync(string projectName, IEnumerable<string> tagNos, AutoTransferMethod autoTransferMethod)
+        private async Task AutoTransferTagsAsync(string projectName,
+            IEnumerable<string> tagNos,
+            AutoTransferMethod autoTransferMethod,
+            IList<Journey> journeysWithAutoTransferSteps)
         {
             _logger.LogDebug($"Start auto transfer of tags in project {projectName}");
-            var journeys = await _journeyRepository.GetJourneysWithAutoTransferStepsAsync(autoTransferMethod);
 
-            var autoTransferSteps = journeys.SelectMany(j => j.Steps).Where(s => s.AutoTransferMethod == autoTransferMethod);
-
+            var autoTransferSteps = journeysWithAutoTransferSteps.SelectMany(j => j.Steps).Where(s => s.AutoTransferMethod == autoTransferMethod).ToList();
             var autoTransferStepIds = autoTransferSteps.Select(s => s.Id);
 
             var tagsToTransfer = await _projectRepository.GetStandardTagsInProjectInStepsAsync(projectName, tagNos, autoTransferStepIds);
 
             foreach (var tag in tagsToTransfer)
             {
-                var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
+                var journey = journeysWithAutoTransferSteps.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
                 tag.AutoTransfer(journey, autoTransferMethod);
 
                 _logger.LogDebug($"Tag {tag.TagNo} in project {projectName} auto transfer in journey {journey.Title}");

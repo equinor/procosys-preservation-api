@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
@@ -39,6 +40,21 @@ namespace Equinor.Procosys.Preservation.MainApi.Certificate
                       $"&api-version={_apiVersion}";
 
             return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysCertificateTagsModel>(url);
+        }
+
+        public async Task<IEnumerable<ProcosysCertificateModel>> GetAcceptedCertificatesAsync(string plant, DateTime cutoffAcceptedTime)
+        {
+            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
+            {
+                throw new ArgumentException($"Invalid plant: {plant}");
+            }
+
+            var url = $"{_baseAddress}Certificate/Accepted" +
+                      $"?plantId={plant}" +
+                      $"&cutoffAcceptedTime={cutoffAcceptedTime:O}" +
+                      $"&api-version={_apiVersion}";
+
+            return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysCertificateModel>>(url);
         }
     }
 }
