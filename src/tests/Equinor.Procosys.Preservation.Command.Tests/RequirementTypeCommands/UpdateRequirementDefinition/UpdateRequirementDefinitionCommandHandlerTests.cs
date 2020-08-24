@@ -25,7 +25,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         private readonly int _newDefaultWeeks = 2;
         private readonly string _rowVersion = "AAAAAAAAABA=";
 
-        private UpdateRequirementDefinitionCommand _command;
+        private UpdateRequirementDefinitionCommand _updateCommandWithUpdateField;
+        private UpdateRequirementDefinitionCommand _updateCommandWithDeleteField;
+        private UpdateRequirementDefinitionCommand _updateCommandWithUpdateAndAddField;
         private UpdateRequirementDefinitionCommandHandler _dut;
         private RequirementType _requirementType;
         private RequirementDefinition _requirementDefinition;
@@ -68,7 +70,32 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             requirementTypeRepositoryMock.Setup(j => j.GetByIdAsync(requirementTypeId))
                 .Returns(Task.FromResult(_requirementType));
 
-            _command = new UpdateRequirementDefinitionCommand(
+            _updateCommandWithUpdateField = new UpdateRequirementDefinitionCommand(
+                requirementTypeId,
+                requirementDefinitionId,
+                _newSortKey1,
+                _newUsage,
+                _newTitle,
+                _newDefaultWeeks,
+                _rowVersion,
+                new List<UpdateFieldsForCommand>
+                {
+                    new UpdateFieldsForCommand(_fieldId, _newLabel1, FieldType.Number, _newSortKey1, true, _rowVersion, _newUnit1, _newShowPrevious1)
+                },
+                new List<FieldsForCommand>()
+            );
+            _updateCommandWithDeleteField = new UpdateRequirementDefinitionCommand(
+                requirementTypeId,
+                requirementDefinitionId,
+                _newSortKey1,
+                _newUsage,
+                _newTitle,
+                _newDefaultWeeks,
+                _rowVersion,
+                new List<UpdateFieldsForCommand>(),
+                new List<FieldsForCommand>()
+            );
+            _updateCommandWithUpdateAndAddField = new UpdateRequirementDefinitionCommand(
                 requirementTypeId,
                 requirementDefinitionId,
                 _newSortKey1,
@@ -84,7 +111,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
                 {
                     new FieldsForCommand(_newLabel2, _newFieldType2, _newSortKey2, _newUnit2, _newShowPrevious2)
                 }
-                );
+            );
 
             _dut = new UpdateRequirementDefinitionCommandHandler(
                 requirementTypeRepositoryMock.Object,
@@ -102,7 +129,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             Assert.AreEqual(_oldDefaultWeeks, _requirementDefinition.DefaultIntervalWeeks);
 
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_updateCommandWithUpdateField, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
@@ -113,11 +140,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public async Task HandlingUpdateRequirementDefinitionCommand_ShouldUpdateFieldOnRequirementDefinition()
+        public async Task HandlingUpdateRequirementDefinitionCommand_ShouldUpdateExistingFieldOnRequirementDefinition()
         {
             // Arrange
-            Assert.AreEqual(1, _requirementDefinition.Fields.Count);
-            var field = _requirementDefinition.Fields.Single(f => f.Id == _fieldId);
+            var requirementDefinitionFields = _requirementDefinition.Fields;
+            Assert.AreEqual(1, requirementDefinitionFields.Count);
+            var field = requirementDefinitionFields.Single();
             Assert.AreEqual(_oldLabel, field.Label);
             Assert.AreEqual(_oldFieldType, field.FieldType); // FieldType can't be changed
             Assert.AreEqual(_oldSortKey, field.SortKey);
@@ -126,13 +154,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             Assert.IsFalse(field.IsVoided);
 
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_updateCommandWithUpdateField, default);
 
             // Assert
+            requirementDefinitionFields = _requirementDefinition.Fields;
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(2, _requirementDefinition.Fields.Count);
+            Assert.AreEqual(1, requirementDefinitionFields.Count);
 
-            field = _requirementDefinition.Fields.Single(f => f.Id == _fieldId);
+            field = requirementDefinitionFields.Single();
             Assert.AreEqual(_newLabel1, field.Label);
             Assert.AreEqual(_oldFieldType, field.FieldType); // FieldType can't be changed
             Assert.AreEqual(_newSortKey1, field.SortKey);
@@ -142,13 +171,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public async Task HandlingUpdateRequirementDefinitionCommand_ShouldAddFieldToRequirementDefinition()
+        public async Task HandlingUpdateRequirementDefinitionCommand_ShouldAddNewFieldToRequirementDefinition()
         {
             // Arrange
             Assert.AreEqual(1, _requirementDefinition.Fields.Count);
 
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_updateCommandWithUpdateAndAddField, default);
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
@@ -164,10 +193,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
+        public async Task HandlingUpdateRequirementDefinitionCommand_ShouldRemoveFieldFromRequirementDefinition()
+        {
+            // Arrange
+            var requirementDefinitionFields = _requirementDefinition.Fields;
+            Assert.AreEqual(1, requirementDefinitionFields.Count);
+            var field = requirementDefinitionFields.Single();
+            field.IsVoided = true;
+
+            // Act
+            var result = await _dut.Handle(_updateCommandWithDeleteField, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(0, requirementDefinitionFields.Count);
+        }
+
+        [TestMethod]
         public async Task HandlingUpdateRequirementDefinitionCommand_ShouldSetAndReturnRowVersion()
         {
             // Act
-            var result = await _dut.Handle(_command, default);
+            var result = await _dut.Handle(_updateCommandWithUpdateAndAddField, default);
 
             // Assert
             // In real life EF Core will create a new RowVersion when save.
@@ -180,7 +226,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         public async Task HandlingUpdateRequirementDefinitionCommand_ShouldSave()
         {
             // Act
-            await _dut.Handle(_command, default);
+            await _dut.Handle(_updateCommandWithUpdateAndAddField, default);
 
             // Assert
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
