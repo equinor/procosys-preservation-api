@@ -35,11 +35,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .WithMessage("Cannot have duplicate field labels");
 
             RuleForEach(x => x.NewFields)
-                .Must(FieldMaxLength)
+                .Must(FieldUnitMaxLength)
                 .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
 
             RuleForEach(x => x.UpdatedFields)
-                .Must(FieldMaxLength)
+                .Must(FieldUnitMaxLength)
                 .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
             
             RuleFor(x => x.UpdatedFields)
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
             bool FieldLabelNotNullAndMaxLength(FieldDto fieldDto) => fieldDto.Label != null && fieldDto.Label.Length < Field.LabelLengthMax;
 
-            bool FieldMaxLength(FieldDto fieldDto) => fieldDto.Unit == null || fieldDto.Unit.Length < Field.UnitLengthMax;
+            bool FieldUnitMaxLength(FieldDto fieldDto) => fieldDto.Unit == null || fieldDto.Unit.Length < Field.UnitLengthMax;
         }
     }
 }
