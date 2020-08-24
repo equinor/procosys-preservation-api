@@ -75,8 +75,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllJourneys
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var journey = context.Journeys.Include(j => j.Steps).First();
-                journey.Void();
-                journey.Steps.ToList().ForEach(s => s.Void());
+                journey.IsVoided = true;
+                journey.Steps.ToList().ForEach(s => s.IsVoided = true);
                 context.SaveChangesAsync().Wait();
             }
 

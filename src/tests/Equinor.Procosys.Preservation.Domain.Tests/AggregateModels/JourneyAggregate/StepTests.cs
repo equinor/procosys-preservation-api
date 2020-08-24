@@ -56,18 +56,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             );
 
         [TestMethod]
-        public void VoidUnVoid_ShouldToggleIsVoided()
-        {
-            Assert.IsFalse(_dut.IsVoided);
-
-            _dut.Void();
-            Assert.IsTrue(_dut.IsVoided);
-
-            _dut.UnVoid();
-            Assert.IsFalse(_dut.IsVoided);
-        }
-
-        [TestMethod]
         public void SetMode_ShouldSetMode()
         {
             var modeId = 1;

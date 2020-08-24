@@ -6,7 +6,7 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {
-    public class TagFunctionRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class TagFunctionRequirement : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
     {
         protected TagFunctionRequirement()
             : base(null)
@@ -31,16 +31,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
         }
 
         public int IntervalWeeks { get; private set; }
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
         public int RequirementDefinitionId { get; private set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
 
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
 
         public void SetCreated(Person createdBy)
         {

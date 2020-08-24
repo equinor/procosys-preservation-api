@@ -49,7 +49,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
         public async Task HandlingUnvoidTagCommand_ShouldUnvoidTag()
         {
             // Arrange
-            _tag.Void();
+            _tag.IsVoided = true;
             Assert.IsTrue(_tag.IsVoided);
 
             // Act

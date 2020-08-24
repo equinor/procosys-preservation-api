@@ -85,6 +85,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         {
             // Arrange
             Assert.AreEqual(3, _dutWith3Steps.Steps.Count);
+            _stepA.IsVoided = true;
 
             // Act
             _dutWith3Steps.RemoveStep(_stepA);
@@ -93,6 +94,10 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             Assert.AreEqual(2, _dutWith3Steps.Steps.Count);
             Assert.IsFalse(_dutWith3Steps.Steps.Contains(_stepA));
         }
+
+        [TestMethod]
+        public void RemoveStep_ShouldThrowExceptionIfStepNotVoided()
+            => Assert.ThrowsException<Exception>(() => _dutWithNoSteps.RemoveStep(_stepA));
 
         [TestMethod]
         public void AddStep_ShouldSetIncreasedSortKey()
@@ -110,19 +115,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void VoidUnVoid_ShouldToggleIsVoided()
-        {
-            Assert.IsFalse(_dutWithNoSteps.IsVoided);
-
-            _dutWithNoSteps.Void();
-            Assert.IsTrue(_dutWithNoSteps.IsVoided);
-
-            _dutWithNoSteps.UnVoid();
-            Assert.IsFalse(_dutWithNoSteps.IsVoided);
-        }
-
-        [TestMethod]
-        public void GetNextStep_ShouldReturnStepWithNextSortKey()
+        public void GetNextStep_ShouldReturntepWithNextSortKey()
         {
             Assert.AreEqual(_stepB, _dutWith3Steps.GetNextStep(_stepAId));
             Assert.AreEqual(_stepC, _dutWith3Steps.GetNextStep(_stepBId));
@@ -130,7 +123,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void OrderedSteps_ShouldReturnStepOrderedBySortKey()
+        public void OrderedSteps_ShouldReturntepOrderedBySortKey()
         {
             var steps = _dutWith3Steps.OrderedSteps().ToList();
 
@@ -191,9 +184,9 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         public void UnvoidStep_ShouldUnvoidStep()
         {
             var stepToUnvoid = _dutWith3Steps.Steps.First();
-            stepToUnvoid.Void();
+            stepToUnvoid.IsVoided = true;
 
-            Assert.IsTrue(stepToUnvoid.IsVoided == true);
+            Assert.IsTrue(stepToUnvoid.IsVoided);
 
             _dutWith3Steps.UnvoidStep(stepToUnvoid.Id, "AAAAAAAAABA=");
 

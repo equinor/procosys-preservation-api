@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunct
         {
             var tagFunction = await _tagFunctionRepository.GetByCodesAsync(request.TagFunctionCode, request.RegisterCode);
 
-            tagFunction.Void();
+            tagFunction.IsVoided = true;
             tagFunction.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

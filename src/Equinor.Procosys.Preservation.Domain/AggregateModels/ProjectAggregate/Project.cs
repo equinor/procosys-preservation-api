@@ -71,11 +71,17 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             ModifiedById = modifiedBy.Id;
         }
 
+        // todo add unit tests. See RemoveStep
         public void RemoveTag(Tag tag)
         {
             if (tag == null)
             {
                 throw new ArgumentNullException(nameof(tag));
+            }
+            
+            if (!tag.IsVoided)
+            {
+                throw new Exception($"{nameof(tag)} must be voided before delete");
             }
 
             if (tag.Plant != Plant)

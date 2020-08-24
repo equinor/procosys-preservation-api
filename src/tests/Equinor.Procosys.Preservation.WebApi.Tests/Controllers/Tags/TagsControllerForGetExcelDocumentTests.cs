@@ -117,7 +117,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         }
 
         [TestMethod]
-        public async Task GetExcelDocument_ShouldReturnsFile_WhenResultIsSuccessful()
+        public async Task GetExcelDocument_ShouldReturnFile_WhenResultIsSuccessful()
         {
             var result = await _dut.ExportTagsToExcel("", _filterDto, _sortingDto);
 

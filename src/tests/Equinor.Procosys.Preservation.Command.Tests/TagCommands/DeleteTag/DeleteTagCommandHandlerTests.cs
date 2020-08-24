@@ -8,7 +8,7 @@ using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteTag
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.DeleteTag
 {
     [TestClass]
     public class DeleteTagCommandHandlerTests : CommandHandlerTestsBase
@@ -38,6 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteTag
             var requirement = new TagRequirement(TestPlant, 2, _rdMock.Object);
             _tag = new Tag(TestPlant, TagType.Standard, "", "", _stepMock.Object, new List<TagRequirement> { requirement });
             _tag.SetProtectedIdForTesting(2);
+            _tag.IsVoided = true;
 
             _project = new Project(TestPlant, _projectName, "");
             _project.AddTag(_tag);

@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
             var modeRepositoryMock = new Mock<IModeRepository>();
 
             _mode = new Mode(TestPlant, "ModeTitle", false);
-            _mode.Void();
+            _mode.IsVoided = true;
             modeRepositoryMock
                 .Setup(r => r.GetByIdAsync(modeId))
                 .Returns(Task.FromResult(_mode));

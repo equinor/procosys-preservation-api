@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequ
             var requirementDefinition =
                 requirementType.RequirementDefinitions.Single(rd => rd.Id == request.RequirementDefinitionId);
 
-            requirementDefinition.Void();
+            requirementDefinition.IsVoided = true;
             requirementDefinition.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

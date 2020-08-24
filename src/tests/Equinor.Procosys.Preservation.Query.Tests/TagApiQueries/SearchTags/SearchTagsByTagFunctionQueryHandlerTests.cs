@@ -122,7 +122,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tagFunction = context.TagFunctions.Include(tf => tf.Requirements).Single();
-                tagFunction.Void();
+                tagFunction.IsVoided = true;
                 context.SaveChangesAsync().Wait();
             }
 

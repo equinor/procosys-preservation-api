@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
 
-            journey.Void();
+            journey.IsVoided = true;
             journey.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
