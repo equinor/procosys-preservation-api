@@ -95,18 +95,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
-        public void VoidUnVoid_ShouldToggleIsVoided()
-        {
-            Assert.IsFalse(_dut.IsVoided);
-
-            _dut.Void();
-            Assert.IsTrue(_dut.IsVoided);
-
-            _dut.UnVoid();
-            Assert.IsFalse(_dut.IsVoided);
-        }
-
-        [TestMethod]
         public void OrderedFields_ShouldReturnAllFieldsOrdered()
         {
             var f1 = new Field(TestPlant, "First", FieldType.Info, 10);
@@ -128,7 +116,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             _dut.AddField(f1);
             _dut.AddField(f2);
-            f2.Void();
+            f2.IsVoided = true;
 
             Assert.AreEqual(1, _dut.OrderedFields(false).Count());
         }
@@ -141,7 +129,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
 
             _dut.AddField(f1);
             _dut.AddField(f2);
-            f2.Void();
+            f2.IsVoided = true;
 
             Assert.AreEqual(_dut.Fields.Count, _dut.OrderedFields(true).Count());
         }

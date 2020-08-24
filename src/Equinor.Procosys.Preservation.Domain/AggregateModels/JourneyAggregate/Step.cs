@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
-    public class Step : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class Step : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
     {
         public const int TitleLengthMin = 1;
         public const int TitleLengthMax = 64;
@@ -61,13 +61,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
         public int ResponsibleId { get; private set; }
 
         public int SortKey { get; set; }
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
         
         public override string ToString() => $"{Title} ({SortKey})";
 

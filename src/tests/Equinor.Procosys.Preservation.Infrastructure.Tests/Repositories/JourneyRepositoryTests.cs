@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         private List<Journey> _journeys;
         private Mock<DbSet<Journey>> _dbSetMock;
 
+        // todo write more unit tests. See ModeRepositoryTests
         private JourneyRepository _dut;
 
         [TestInitialize]

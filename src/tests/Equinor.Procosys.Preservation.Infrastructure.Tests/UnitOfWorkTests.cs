@@ -86,7 +86,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests
 
             await dut.SaveChangesAsync();
 
-            newMode.Void();
+            newMode.IsVoided = true;
             await dut.SaveChangesAsync();
 
             Assert.AreEqual(_currentTime, newMode.ModifiedAtUtc);

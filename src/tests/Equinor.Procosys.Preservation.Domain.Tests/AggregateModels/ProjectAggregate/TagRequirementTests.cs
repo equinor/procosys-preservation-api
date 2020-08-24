@@ -1077,22 +1077,6 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
-        #region Void / Unvoid
-        [TestMethod]
-        public void VoidUnVoid_ShouldToggleIsVoided()
-        {
-            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            Assert.IsFalse(dut.IsVoided);
-
-            dut.Void();
-            Assert.IsTrue(dut.IsVoided);
-
-            dut.UnVoid();
-            Assert.IsFalse(dut.IsVoided);
-        }
-        
-        #endregion
-
         #region RecordAttachment
 
         [TestMethod]

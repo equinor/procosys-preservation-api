@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate
 {
-    public class TagFunction : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class TagFunction : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
     {
         public const int CodeLengthMax = 255;
         public const int DescriptionLengthMax = 255;
@@ -42,15 +42,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggreg
         public string Code { get; private set; }
         public string Description { get; set; }
         public string RegisterCode { get; private set; }
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
 
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
 
         public void AddRequirement(TagFunctionRequirement requirement)
         {

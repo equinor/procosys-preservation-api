@@ -5,7 +5,7 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class Field : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class Field : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
     {
         public const int LabelLengthMax = 255;
         public const int UnitLengthMax = 32;
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
 
         public string Label { get; set; }
         public string Unit { get; set; }
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
         public bool? ShowPrevious { get; set; }
         public int SortKey { get; set; }
         public FieldType FieldType { get; private set; }
@@ -49,9 +49,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
 
         public override string ToString() => Label;
 

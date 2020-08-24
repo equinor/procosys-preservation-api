@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode
         {
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
 
-            mode.UnVoid();
+            mode.IsVoided = false;
             mode.SetRowVersion(request.RowVersion);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

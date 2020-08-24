@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         }
 
         [TestMethod]
-        public async Task CreateTags_ShouldReturnsOk_WhenResultIsSuccessful()
+        public async Task CreateTags_ShouldReturnOk_WhenResultIsSuccessful()
         {
             var result = await _dut.CreateTags("", _createTagsDto);
 

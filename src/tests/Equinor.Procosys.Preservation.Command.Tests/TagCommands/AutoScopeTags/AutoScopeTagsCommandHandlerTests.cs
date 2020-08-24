@@ -100,7 +100,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             var tf2 = new TagFunction(TestPlant, tagFunctionCode2, "TF2", registerCode2);
             tf2.AddRequirement(new TagFunctionRequirement(TestPlant, Interval2, rdMock2a.Object));
             var voidedTFRequirement = new TagFunctionRequirement(TestPlant, Interval2, rdMock2b.Object);
-            voidedTFRequirement.Void();
+            voidedTFRequirement.IsVoided = true;
             tf2.AddRequirement(voidedTFRequirement);
 
             var rdMock3 = new Mock<RequirementDefinition>();

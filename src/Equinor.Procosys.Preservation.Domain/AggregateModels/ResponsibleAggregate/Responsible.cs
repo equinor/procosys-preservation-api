@@ -5,7 +5,7 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate
 {
-    public class Responsible : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
+    public class Responsible : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
     {
         public const int CodeLengthMax = 255;
         public const int DescriptionLengthMax = 255;
@@ -24,15 +24,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggreg
 
         public string Code { get; private set; }
         public string Description { get; set; }
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
 
         public DateTime CreatedAtUtc { get; private set; }
         public int CreatedById { get; private set; }
         public DateTime? ModifiedAtUtc { get; private set; }
         public int? ModifiedById { get; private set; }
-
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
 
         public void SetCreated(Person createdBy)
         {

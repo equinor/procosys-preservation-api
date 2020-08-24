@@ -7,7 +7,7 @@ using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
-    public class RequirementDefinition : PlantEntityBase, ICreationAuditable, IModificationAuditable
+    public class RequirementDefinition : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
     {
         private readonly List<Field> _fields = new List<Field>();
         
@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
         }
 
         public string Title { get; set; }
-        public bool IsVoided { get; private set; }
+        public bool IsVoided { get; set; }
         public int DefaultIntervalWeeks { get; set; }
         public RequirementUsage Usage { get; set; }
         public int SortKey { get; set; }
@@ -60,9 +60,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAg
             => Fields
                 .Where(f => includeVoided || !f.IsVoided)
                 .OrderBy(f => f.SortKey);
-
-        public void Void() => IsVoided = true;
-        public void UnVoid() => IsVoided = false;
 
         public override string ToString() => $"{Title} - {Usage}";
 

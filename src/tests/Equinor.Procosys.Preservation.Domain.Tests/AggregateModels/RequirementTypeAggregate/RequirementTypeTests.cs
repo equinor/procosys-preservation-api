@@ -40,17 +40,5 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
             Assert.AreEqual(1, _dut.RequirementDefinitions.Count);
             Assert.IsTrue(_dut.RequirementDefinitions.Contains(rd));
         }
- 
-        [TestMethod]
-        public void VoidUnVoid_ShouldToggleIsVoided()
-        {
-            Assert.IsFalse(_dut.IsVoided);
-
-            _dut.Void();
-            Assert.IsTrue(_dut.IsVoided);
-
-            _dut.UnVoid();
-            Assert.IsFalse(_dut.IsVoided);
-        }
     }
 }

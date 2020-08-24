@@ -40,11 +40,11 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 var fieldToUpdate = requirementDefinition.Fields.Single(field => field.Id == f.Id);
                 if (fieldToUpdate.IsVoided && !f.IsVoided)
                 {
-                    fieldToUpdate.UnVoid();
+                    fieldToUpdate.IsVoided = false;
                 }
                 else if (!fieldToUpdate.IsVoided && f.IsVoided)
                 {
-                    fieldToUpdate.Void();
+                    fieldToUpdate.IsVoided = true;
                 }
                 fieldToUpdate.Label = f.Label;
                 fieldToUpdate.Unit = f.Unit;

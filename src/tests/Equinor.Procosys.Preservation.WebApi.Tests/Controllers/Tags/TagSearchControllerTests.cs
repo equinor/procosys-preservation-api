@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         }
 
         [TestMethod]
-        public async Task SearchTags_ShouldReturnsNotFound_IfResultIsNotFound()
+        public async Task SearchTags_ShouldReturnNotFound_IfResultIsNotFound()
         {
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
