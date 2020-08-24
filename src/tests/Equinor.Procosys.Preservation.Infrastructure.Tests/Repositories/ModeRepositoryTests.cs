@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetAll_ShouldReturns3()
+        public async Task GetAll_ShouldReturnAllItems()
         {
             var result = await _dut.GetAllAsync();
 
@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByIds_KnownId_ShouldReturnsMode()
+        public async Task GetByIds_KnownId_ShouldReturnMode()
         {
             var result = await _dut.GetByIdsAsync(new List<int>{ModeId});
 
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByIds_UnknownId_ShouldReturnsEmptyList()
+        public async Task GetByIds_UnknownId_ShouldReturnEmptyList()
         {
             var result = await _dut.GetByIdsAsync(new List<int>{12672});
 
@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task Exists_KnownId_ShouldReturnsTrue()
+        public async Task Exists_KnownId_ShouldReturnTrue()
         {
             var result = await _dut.Exists(ModeId);
 
@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task Exists_UnknownId_ShouldReturnsFalse()
+        public async Task Exists_UnknownId_ShouldReturnFalse()
         {
             var result = await _dut.Exists(416);
 
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetById_KnownId_ShouldReturnsMode()
+        public async Task GetById_KnownId_ShouldReturnMode()
         {
             var result = await _dut.GetByIdAsync(ModeId);
 
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetById_UnknownId_ShouldReturnsNull()
+        public async Task GetById_UnknownId_ShouldReturnNull()
         {
             var result = await _dut.GetByIdAsync(2423);
 
