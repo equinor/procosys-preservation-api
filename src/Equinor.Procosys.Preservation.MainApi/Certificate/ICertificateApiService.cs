@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Equinor.Procosys.Preservation.MainApi.Certificate
 {
@@ -9,5 +11,9 @@ namespace Equinor.Procosys.Preservation.MainApi.Certificate
             string projectName,
             string certificateNo,
             string certificateType);
+        
+        Task<IEnumerable<ProcosysCertificateModel>> GetAcceptedCertificatesAsync(
+            string plant, 
+            DateTime cutoffAcceptedTime);
     }
 }

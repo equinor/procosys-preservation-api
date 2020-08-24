@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
                     return default;
                 }
                 _logger.LogError($"Requesting '{url}' was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
-                throw new Exception($"Requesting '{url}'  was unsuccessful. Status={response.StatusCode}");
+                throw new Exception($"Requesting '{url}' was unsuccessful. Status={response.StatusCode}");
             }
 
             _logger.LogDebug($"Request was successful and took {stopWatch.Elapsed.TotalSeconds}s.");
