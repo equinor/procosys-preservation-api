@@ -119,7 +119,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             AddUsedFilter(sheet.Row(++rowIdx), "Journeys", usedFilter.JourneyTitles);
             AddUsedFilter(sheet.Row(++rowIdx), "Modes", usedFilter.ModeTitles);
             AddUsedFilter(sheet.Row(++rowIdx), "Requirements", usedFilter.RequirementTypeTitles);
-            AddUsedFilter(sheet.Row(++rowIdx), "Requirements", usedFilter.RequirementTypeTitles);
             AddUsedFilter(sheet.Row(++rowIdx), "Tag functions", usedFilter.TagFunctionCodes);
             AddUsedFilter(sheet.Row(++rowIdx), "Disciplines", usedFilter.DisciplineCodes);
             AddUsedFilter(sheet.Row(++rowIdx), "Responsibles", usedFilter.ResponsibleCodes);
