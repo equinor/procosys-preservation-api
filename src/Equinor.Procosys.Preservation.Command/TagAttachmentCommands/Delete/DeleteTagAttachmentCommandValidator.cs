@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
             IAttachmentValidator attachmentValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))

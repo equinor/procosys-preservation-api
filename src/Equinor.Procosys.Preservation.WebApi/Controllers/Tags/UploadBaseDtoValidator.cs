@@ -10,7 +10,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     {
         public UploadBaseDtoValidator(IOptionsMonitor<AttachmentOptions> options)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x)
                 .NotNull();

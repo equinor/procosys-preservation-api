@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
             IRequirementTypeValidator requirementTypeValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))

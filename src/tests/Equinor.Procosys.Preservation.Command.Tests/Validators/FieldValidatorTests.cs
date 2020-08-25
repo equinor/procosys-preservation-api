@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownId_ReturnsTrue()
+        public async Task ExistsAsync_KnownId_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownId_ReturnsFalse()
+        public async Task ExistsAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownVoided_ReturnsTrue()
+        public async Task IsVoidedAsync_KnownVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_KnownNotVoided_ReturnsFalse()
+        public async Task IsVoidedAsync_KnownNotVoided_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -81,7 +81,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsVoidedAsync_UnknownId_ReturnsFalse()
+        public async Task IsVoidedAsync_UnknownId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -92,7 +92,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValidForRecordingAsync_ForInfoField_ReturnsFalse()
+        public async Task IsValidForRecordingAsync_ForInfoField_ShouldReturnFalse()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -103,7 +103,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValidForRecordingAsync_ForCheckBoxField_ReturnsTrue()
+        public async Task IsValidForRecordingAsync_ForCheckBoxField_ShouldReturnTrue()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -114,7 +114,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValidForRecordingAsync_ForNumberField_ReturnsTrue()
+        public async Task IsValidForRecordingAsync_ForNumberField_ShouldReturnTrue()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -125,7 +125,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValidForAttachmentAsync_ForAttachmentField_ReturnsTrue()
+        public async Task IsValidForAttachmentAsync_ForAttachmentField_ShouldReturnTrue()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValidForAttachmentAsync_ForInfoField_ReturnsFalse()
+        public async Task IsValidForAttachmentAsync_ForInfoField_ShouldReturnFalse()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -147,7 +147,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsValidForAttachmentAsync_ForNumberField_ReturnsFalse()
+        public async Task IsValidForAttachmentAsync_ForNumberField_ShouldReturnFalse()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -158,7 +158,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task VerifyFieldTypeAsync_ForInfoField_ReturnsFalseForNumber()
+        public async Task VerifyFieldTypeAsync_ForInfoField_ShouldReturnFalseForNumber()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -169,7 +169,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task VerifyFieldTypeAsync_ForInfoField_ReturnsTrueForInfo()
+        public async Task VerifyFieldTypeAsync_ForInfoField_ShouldReturnTrueForInfo()
         { 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

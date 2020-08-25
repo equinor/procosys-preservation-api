@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Client
         }
 
         [TestMethod]
-        public async Task QueryAndDeserialize_ReturnsDeserialized_Object_TestAsync()
+        public async Task QueryAndDeserialize_ShouldReturnDeserialized_Object_TestAsync()
         {
             var httpClientFactory = HttpHelper.GetHttpClientFactory(HttpStatusCode.OK, "{\"Id\": 123}");
             var dut = new BearerTokenApiClient(httpClientFactory, _bearerTokenProvider.Object, _logger.Object);

@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
             ISavedFilterValidator savedFilterValidator,
             IProjectValidator projectValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotExistsASavedFilterWithSameTitleForPerson(command.Title, command.ProjectName, token))

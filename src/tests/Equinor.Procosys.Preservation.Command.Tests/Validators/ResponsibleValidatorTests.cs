@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAndIsVoidedAsync_KnownCode_Voided_ReturnsTrue()
+        public async Task ExistsAndIsVoidedAsync_KnownCode_Voided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAndIsVoidedAsync_KnownCode_NotVoided_ReturnsFalse()
+        public async Task ExistsAndIsVoidedAsync_KnownCode_NotVoided_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAndIsVoidedAsync_UnknownCode_ReturnsFalse()
+        public async Task ExistsAndIsVoidedAsync_UnknownCode_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))

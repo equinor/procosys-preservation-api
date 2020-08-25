@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
             IProjectValidator projectValidator,
             ITagValidator tagValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
                         
             RuleFor(command => command.Tags)
                 .Must(ids => ids != null && ids.Any())

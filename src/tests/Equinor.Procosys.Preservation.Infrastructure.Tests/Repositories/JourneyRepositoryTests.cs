@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetStepByStepId_KnownId_ReturnsStep()
+        public async Task GetStepByStepId_KnownId_ShouldReturnStep()
         {
             var result = await _dut.GetStepByStepIdAsync(StepId);
 
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetStepByStepId_UnknownId_ReturnsNull()
+        public async Task GetStepByStepId_UnknownId_ShouldReturnNull()
         {
             var result = await _dut.GetStepByStepIdAsync(99);
 

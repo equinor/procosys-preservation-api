@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByCode_ReturnsSetting_WhenSettingExists()
+        public async Task GetByCode_ShouldReturnSetting_WhenSettingExists()
         {
             var result = await _dut.GetByCodeAsync(_settingCode);
 
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByCode_ReturnsNull_WhenSettingNotExists()
+        public async Task GetByCode_ShouldReturnNull_WhenSettingNotExists()
         {
             var result = await _dut.GetByCodeAsync("XYZ");
 

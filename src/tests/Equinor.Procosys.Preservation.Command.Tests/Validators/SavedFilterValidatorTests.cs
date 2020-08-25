@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleForPersonInProjectAsync_UnknownTitle_ReturnsFalse()
+        public async Task ExistsWithSameTitleForPersonInProjectAsync_UnknownTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsWithSameTitleForPersonInProjectAsync_KnownTitle_ReturnsTrue()
+        public async Task ExistsWithSameTitleForPersonInProjectAsync_KnownTitle_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAnotherWithSameTitleForPersonInProjectAsync_NewTitle_ReturnsFalse()
+        public async Task ExistsAnotherWithSameTitleForPersonInProjectAsync_NewTitle_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))
@@ -90,7 +90,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAnotherWithSameTitleForPersonInProjectAsync_SameTitleAsAnotherSavedFilter_ReturnsTrue()
+        public async Task ExistsAnotherWithSameTitleForPersonInProjectAsync_SameTitleAsAnotherSavedFilter_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher,
                 _currentUserProvider))

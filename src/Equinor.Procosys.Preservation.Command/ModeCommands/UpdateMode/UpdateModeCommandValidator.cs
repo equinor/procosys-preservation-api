@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
             IModeValidator modeValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingModeAsync(command.ModeId, token))

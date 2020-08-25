@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownName_ReturnsTrue()
+        public async Task ExistsAsync_KnownName_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownName_ReturnsFalse()
+        public async Task ExistsAsync_UnknownName_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsExistingAndClosedAsync_KnownClosed_ReturnsTrue()
+        public async Task IsExistingAndClosedAsync_KnownClosed_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsExistingAndClosedAsync_KnownNotClosed_ReturnsFalse()
+        public async Task IsExistingAndClosedAsync_KnownNotClosed_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsExistingAndClosedAsync_UnknownName_ReturnsFalse()
+        public async Task IsExistingAndClosedAsync_UnknownName_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsClosedForTagAsync_KnownTag_ReturnsFalse()
+        public async Task IsClosedForTagAsync_KnownTag_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -107,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsClosedForTagAsync_KnownTag_ReturnsTrue()
+        public async Task IsClosedForTagAsync_KnownTag_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -118,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsClosedForTagAsync_UnknownTag_ReturnsFalse()
+        public async Task IsClosedForTagAsync_UnknownTag_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -129,7 +129,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AllTagsInSameProjectAsync_TagsInSameProject_ReturnsTrue()
+        public async Task AllTagsInSameProjectAsync_TagsInSameProject_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -140,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AllTagsInSameProjectAsync_TagsNotInSameProject_ReturnsFalse()
+        public async Task AllTagsInSameProjectAsync_TagsNotInSameProject_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -151,7 +151,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AllTagsInSameProjectAsync_KnownAndUnknownTag_ReturnsFalse()
+        public async Task AllTagsInSameProjectAsync_KnownAndUnknownTag_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -162,7 +162,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task AllTagsInSameProjectAsync_UnknownTag_ReturnsFalse()
+        public async Task AllTagsInSameProjectAsync_UnknownTag_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

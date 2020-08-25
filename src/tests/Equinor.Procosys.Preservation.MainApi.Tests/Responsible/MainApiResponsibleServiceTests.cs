@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Responsible
             => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.TryGetResponsibleAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
-        public async Task TryGetResponsibleCode_ReturnsResponsibleCode()
+        public async Task TryGetResponsibleCode_ShouldReturnResponsibleCode()
         {
             // Arrange
             var procosysResponsible = new ProcosysResponsible

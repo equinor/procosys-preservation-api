@@ -160,7 +160,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
+        public void Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(false));
@@ -168,7 +168,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(2, result.Errors.Count);
+            Assert.AreEqual(1, result.Errors.Count);
         }
     }
 }

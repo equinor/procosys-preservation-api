@@ -149,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         }
 
         [TestMethod]
-        public void Validate_ShouldFailWith2Errors_WhenErrorsInDifferentRules()
+        public void Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_tagNo2, _projectName, default)).Returns(Task.FromResult(true));
             
@@ -163,7 +163,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             var result = _dut.Validate(command);
 
             Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(2, result.Errors.Count);
+            Assert.AreEqual(1, result.Errors.Count);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetPermissions_ReturnsThreePermissions_OnValidPlant()
+        public async Task GetPermissions_ShouldReturnThreePermissions_OnValidPlant()
         {
             // Arrange
             _mainApiClient
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetPermissions_ReturnsNoPermissions_OnValidPlant()
+        public async Task GetPermissions_ShouldReturnNoPermissions_OnValidPlant()
         {
             // Arrange
             _mainApiClient
@@ -57,7 +57,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetPermissions_ReturnsNoPermissions_OnInValidPlant()
+        public async Task GetPermissions_ShouldReturnNoPermissions_OnInValidPlant()
         {
             // Act
             var result = await _dut.GetPermissionsAsync("INVALIDPLANT");
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetContentRestrictions_ReturnsThreePermissions_OnValidPlant()
+        public async Task GetContentRestrictions_ShouldReturnThreePermissions_OnValidPlant()
         {
             // Arrange
             _mainApiClient
@@ -81,7 +81,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetContentRestrictions_ReturnsNoPermissions_OnValidPlant()
+        public async Task GetContentRestrictions_ShouldReturnNoPermissions_OnValidPlant()
         {
             // Arrange
             _mainApiClient
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetContentRestrictions_ReturnsNoPermissions_OnInValidPlant()
+        public async Task GetContentRestrictions_ShouldReturnNoPermissions_OnInValidPlant()
         {
             // Act
             var result = await _dut.GetContentRestrictionsAsync("INVALIDPLANT");

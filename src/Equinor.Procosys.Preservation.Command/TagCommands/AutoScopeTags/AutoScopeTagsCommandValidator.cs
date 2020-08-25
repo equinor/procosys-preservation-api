@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
             IStepValidator stepValidator,
             IProjectValidator projectValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command.TagNos)
                 .Must(r => r.Any())

@@ -8,7 +8,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
     public class CurrentUserProviderTests
     {
         [TestMethod]
-        public void GetCurrentUserOid_ReturnsOid_WhenOidExists()
+        public void GetCurrentUserOid_ShouldReturnOid_WhenOidExists()
         {
             var okOid = new Guid("7DFC890F-F82B-4E2D-B81B-41D6C103F83B");
             var dut = new CurrentUserProvider();

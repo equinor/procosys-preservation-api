@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         public void SetUp() => _dut = new RowVersionValidator();
 
         [TestMethod]
-        public void IsValid_ValidRowVersion_ReturnsTrue()
+        public void IsValid_ValidRowVersion_ShouldReturnTrue()
         { 
             const string validRowVersion = "AAAAAAAAABA=";
 
@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public void IsValid_InvalidRowVersion_ReturnsFalse()
+        public void IsValid_InvalidRowVersion_ShouldReturnFalse()
         {
             const string invalidRowVersion = "String";
 
@@ -30,14 +30,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public void IsValid_EmptyString_ReturnsFalse()
+        public void IsValid_EmptyString_ShouldReturnFalse()
         {
             var result = _dut.IsValid(string.Empty);
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public void IsValid_Null_ReturnsFalse()
+        public void IsValid_Null_ShouldReturnFalse()
         {
             var result = _dut.IsValid(null);
             Assert.IsFalse(result);

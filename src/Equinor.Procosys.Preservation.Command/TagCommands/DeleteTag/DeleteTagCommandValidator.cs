@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag
             ITagValidator tagValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))

@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep
             IStepValidator stepValidator,
             IRowVersionValidator rowVersionValidator)
         {
-            CascadeMode = CascadeMode.StopOnFirstFailure;
+            CascadeMode = CascadeMode.Stop;
             
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
