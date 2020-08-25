@@ -98,7 +98,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDefinitionHasFields()
         {
-            _requirementDefinitionValidatorMock.Setup(r => r.FieldsExistAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
+            _requirementDefinitionValidatorMock.Setup(r => r.HasAnyFieldsAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
 

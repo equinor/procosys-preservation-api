@@ -35,6 +35,14 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             requirementDefinition.Usage = request.Usage;
             requirementDefinition.DefaultIntervalWeeks = request.DefaultIntervalWeeks;
 
+            var updateFieldIds = request.UpdateFields.Select(u => u.Id);
+            var excludedFields = requirementDefinition.Fields.Where(f => !updateFieldIds.Contains(f.Id)).ToList();
+            foreach (var fieldToDelete in excludedFields)
+            {
+                requirementDefinition.RemoveField(fieldToDelete);
+                _requirementTypeRepository.RemoveField(fieldToDelete);
+            }
+
             foreach (var f in request.UpdateFields)
             {
                 var fieldToUpdate = requirementDefinition.Fields.Single(field => field.Id == f.Id);

@@ -36,6 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
         public int DefaultIntervalWeeks { get; }
         public RequirementUsage Usage { get; }
         public string RowVersion { get; }
+        // Existing fields not included in UpdatedFields will be deleted. These must be Voided in advance, and they can't be in use
         public IList<UpdateFieldsForCommand> UpdateFields { get; }
         public IList<FieldsForCommand> NewFields { get; }
     }

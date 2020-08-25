@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type does not exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type doesn't exist!"));
         }
 
         [TestMethod]
@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition does not exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist!"));
         }
 
         [TestMethod]

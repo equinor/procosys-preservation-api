@@ -19,9 +19,9 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequ
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type does not exist! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type doesn't exist! RequirementType={command.RequirementTypeId}")
                 .MustAsync((command, token) => BeAnExistingRequirementDefinitionAsync(command.RequirementTypeId, command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Requirement definition does not exist! RequirementDefinition={command.RequirementDefinitionId}")
+                .WithMessage(command => $"Requirement definition doesn't exist! RequirementDefinition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition is already voided! RequirementDefinition={command.RequirementDefinitionId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))

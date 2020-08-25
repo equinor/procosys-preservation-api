@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
+﻿using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -19,8 +17,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
                 "Title", 
                 4, 
                 "AAAAAAAAABA=", 
-                new List<UpdateFieldsForCommand>(), 
-                new List<FieldsForCommand>());
+                null, 
+                null);
 
             Assert.AreEqual(1, dut.RequirementTypeId);
             Assert.AreEqual(2, dut.RequirementDefinitionId);
@@ -28,8 +26,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             Assert.AreEqual("Title", dut.Title);
             Assert.AreEqual(4, dut.DefaultIntervalWeeks);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
-            Assert.AreEqual(new List<UpdateFieldsForCommand>().Count, dut.UpdateFields.Count);
-            Assert.AreEqual(new List<FieldsForCommand>().Count, dut.NewFields.Count);
+            Assert.AreEqual(0, dut.UpdateFields.Count);
+            Assert.AreEqual(0, dut.NewFields.Count);
         }
     }
 }

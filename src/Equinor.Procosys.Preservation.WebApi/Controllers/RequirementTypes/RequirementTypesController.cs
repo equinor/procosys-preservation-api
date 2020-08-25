@@ -206,7 +206,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromRoute] int requirementDefinitionId,
             [FromBody] UpdateRequirementDefinitionDto dto)
         {
-
             var updatedFields = dto.UpdatedFields.Select(f =>
                 new UpdateFieldsForCommand(
                     f.Id, 

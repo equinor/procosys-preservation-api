@@ -49,6 +49,37 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.Requirement
         }
 
         [TestMethod]
+        public void RemoveField_ShouldRemoveFieldFromFieldsList()
+        {
+            var f = new Field(TestPlant, "", FieldType.Info, 1);
+            _dut.AddField(f);
+            f.IsVoided = true;
+
+            Assert.AreEqual(1, _dut.Fields.Count);
+            Assert.IsTrue(_dut.Fields.Contains(f));
+
+            // Act
+            _dut.RemoveField(f);
+       
+            // Assert
+            Assert.AreEqual(0, _dut.Fields.Count);
+        }
+
+        [TestMethod]
+        public void RemoveField_ShouldThrowExceptionWhenFieldIsNotVoided()
+        {
+            var f = new Field(TestPlant, "", FieldType.Info, 1);
+            _dut.AddField(f);
+
+            Assert.AreEqual(1, _dut.Fields.Count);
+            Assert.IsTrue(_dut.Fields.Contains(f));
+
+            // Act and Assert
+            Assert.ThrowsException<Exception>(() => _dut.RemoveField(f));
+            Assert.AreEqual(1, _dut.Fields.Count);
+        }
+
+        [TestMethod]
         public void AddInfoField_ShouldNotCauseRequirementDefinitionNeedingInput()
         {
             var f = new Field(TestPlant, "", FieldType.Info, 1);

@@ -9,20 +9,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
     {
         public CreateRequirementDefinitionDtoValidator()
         {
-            RuleFor(x => x).NotNull();
+            RuleFor(x => x)
+                .NotNull();
 
             RuleFor(x => x.Title)
                 .MaximumLength(RequirementDefinition.TitleLengthMax);
 
             RuleFor(x => x.SortKey)
-                .NotNull()
-                .WithMessage("Sort key cannot be null")
                 .Must(BePositive)
                 .WithMessage("Sort key must be positive");
-
-            RuleFor(x => x.Usage)
-                .NotNull()
-                .WithMessage("Usage cannot be null");
 
             RuleFor(x => x.DefaultIntervalWeeks)
                 .Must(BePositive)
