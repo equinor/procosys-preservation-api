@@ -73,15 +73,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyIsInUse()
+        public void Validate_ShouldFail_WhenAnyStepInJourneyIsInUse()
         {
-            _journeyValidatorMock.Setup(r => r.IsInUseAsync(_journeyId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.IsAnyStepInJourneyInUseAsync(_journeyId, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey owning step is used and no steps can be deleted!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("No steps can be deleted from journey when preservation tags exists in journey!"));
         }
 
         [TestMethod]
