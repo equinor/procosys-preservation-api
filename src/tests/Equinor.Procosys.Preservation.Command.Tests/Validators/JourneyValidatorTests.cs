@@ -245,13 +245,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsInUseAsync_NoTagsUsesAnySteps_ShouldReturnFalse()
+        public async Task IsInUseAsync_HaveSteps_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
                 var result = await dut.IsInUseAsync(_journey1WithStepId, default);
-                Assert.IsFalse(result);
+                Assert.IsTrue(result);
             }
         }
         
@@ -267,7 +267,29 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsInUseAsync_ShouldReturnTrue_AfterTagAddedToAStep()
+        public async Task IsAnyStepInJourneyInUseAsync_ShouldReturnFalse_WhenNoSteps()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsAnyStepInJourneyInUseAsync(_journeyWithoutStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task IsAnyStepInJourneyInUseAsync_ShouldReturnFalse_BeforeTagAddedToAStep()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new JourneyValidator(context);
+                var result = await dut.IsAnyStepInJourneyInUseAsync(_journey1WithStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task IsAnyStepInJourneyInUseAsync_ShouldReturnTrue_AfterTagAddedToAStep()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -280,7 +302,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.IsInUseAsync(_journey1WithStepId, default);
+                var result = await dut.IsAnyStepInJourneyInUseAsync(_journey1WithStepId, default);
                 Assert.IsTrue(result);
             }
         }

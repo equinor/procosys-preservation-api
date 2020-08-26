@@ -81,8 +81,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 return false;
             }
 
-            var stepIds = journey.Steps.Select(s => s.Id);
+            return journey.Steps.Any();
+        }
 
+        public async Task<bool> IsAnyStepInJourneyInUseAsync(int journeyId, CancellationToken token)
+        {
+            var journey = await GetJourneyWithStepsAsync(journeyId, token);
+            if (journey == null || !journey.Steps.Any())
+            {
+                return false;
+            }
+
+            var stepIds = journey.Steps.Select(s => s.Id);
             var inUse = await (from tag in _context.QuerySet<Tag>()
                 where stepIds.Contains(tag.StepId)
                 select tag).AnyAsync(token);

@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
         }
 
         [TestMethod]
-        public async Task HandleGetJourneyByIdQueryHandler_KnownId_ShouldReturnJourneyInUse()
+        public async Task HandleGetJourneyByIdQueryHandler_JourneyWithSteps_ShouldReturnJourneyInUse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
         }
 
         [TestMethod]
-        public async Task HandleGetJourneyByIdQueryHandler_JourneyBeforeTagsAdded_ShouldReturnJourneyNotInUse()
+        public async Task HandleGetJourneyByIdQueryHandler_BeforeTagsAddedToStep_ShouldReturnNoStepsInUse()
         {
             int journeyId;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -90,7 +90,20 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetJourneyById
                 var result = await dut.Handle(new GetJourneyByIdQuery(journeyId, true), default);
 
                 var journey = result.Data;
-                Assert.IsFalse(journey.IsInUse);
+                Assert.IsFalse(journey.Steps.Any(s => s.IsInUse));
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetJourneyByIdQueryHandler_AfterTagsAddedToAStep_ShouldReturnAllStepsInUse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetJourneyByIdQueryHandler(context);
+                var result = await dut.Handle(new GetJourneyByIdQuery(_testDataSet.Journey1With2Steps.Id, true), default);
+
+                var journey = result.Data;
+                Assert.IsTrue(journey.Steps.All(s => s.IsInUse));
             }
         }
 
