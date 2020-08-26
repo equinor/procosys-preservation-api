@@ -36,11 +36,11 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
             switch (fieldType)
             {
                 case FieldType.Number:
-                    return new NumberDto(fieldValue as NumberValue);
+                    return new NumberDetailsDto(fieldValue as NumberValue);
                 case FieldType.CheckBox:
-                    return new CheckBoxDto();
+                    return new CheckBoxDetailsDto();
                 case FieldType.Attachment:
-                    return new AttachmentDto(fieldValue as AttachmentValue);
+                    return new AttachmentDetailsDto(fieldValue as AttachmentValue);
                 default:
                     return null;
             }

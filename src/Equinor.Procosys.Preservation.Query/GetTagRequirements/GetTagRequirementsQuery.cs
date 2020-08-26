@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
-    public class GetTagRequirementsQuery : IRequest<Result<List<RequirementDto>>>, ITagQueryRequest
+    public class GetTagRequirementsQuery : IRequest<Result<List<RequirementDetailsDto>>>, ITagQueryRequest
     {
         public GetTagRequirementsQuery(int tagId, bool includeVoided, bool includeAllUsages)
         {

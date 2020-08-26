@@ -19,12 +19,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             var field = new Field(_testPlant, "", FieldType.CheckBox, 0);
 
-            var dut = new FieldDto(
+            var dut = new FieldDetailsDto(
                 field, 
                 new CheckBoxChecked(_testPlant, field),
                 null);
 
-            var dto = dut.CurrentValue as CheckBoxDto;
+            var dto = dut.CurrentValue as CheckBoxDetailsDto;
             Assert.IsNotNull(dto);
             Assert.IsTrue(dto.IsChecked);
         }
@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             var fieldMock = new Mock<Field>(_testPlant, "Label", FieldType.Number, 0, "mm", true);
             fieldMock.SetupGet(f => f.Id).Returns(12);
 
-            var dut = new FieldDto(fieldMock.Object, null, null);
+            var dut = new FieldDetailsDto(fieldMock.Object, null, null);
 
             Assert.AreEqual(12, dut.Id);
             Assert.AreEqual(FieldType.Number, dut.FieldType);
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             var field = new Field(_testPlant, "", FieldType.Number, 0, "mm", false);
 
-            var dut = new FieldDto(
+            var dut = new FieldDetailsDto(
                 field, 
                 new NumberValue(_testPlant, field, _number), 
                 new NumberValue(_testPlant, field, _number));
@@ -67,7 +67,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         {
             var field = new Field(_testPlant, "", FieldType.Number, 0, "mm", true);
 
-            var dut = new FieldDto(
+            var dut = new FieldDetailsDto(
                 field, 
                 new NumberValue(_testPlant, field, _number), 
                 new NumberValue(_testPlant, field, _number));
@@ -88,12 +88,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             var attachment = new FieldValueAttachment(_testPlant, Guid.Empty, fileName);
             attachment.SetProtectedIdForTesting(11);
 
-            var dut = new FieldDto(
+            var dut = new FieldDetailsDto(
                 field, 
                 new AttachmentValue(_testPlant, field, attachment), 
                 null);
 
-            var dto = dut.CurrentValue as AttachmentDto;
+            var dto = dut.CurrentValue as AttachmentDetailsDto;
             Assert.IsNotNull(dto);
             Assert.AreEqual(11, dto.Id);
             Assert.AreEqual(fileName, dto.FileName);
@@ -101,9 +101,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
 
         private void AssertNumberDto(object dto)
         {
-            Assert.IsInstanceOfType(dto, typeof(NumberDto));
+            Assert.IsInstanceOfType(dto, typeof(NumberDetailsDto));
 
-            var numberDto = dto as NumberDto;
+            var numberDto = dto as NumberDetailsDto;
             Assert.IsNotNull(numberDto);
             Assert.IsNotNull(numberDto);
             Assert.IsFalse(numberDto.IsNA);

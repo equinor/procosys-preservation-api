@@ -3,9 +3,9 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
-    public class NumberDto
+    public class NumberDetailsDto
     {
-        public NumberDto(NumberValue fieldValue)
+        public NumberDetailsDto(NumberValue fieldValue)
         {
             if (fieldValue == null)
             {

@@ -1,8 +1,8 @@
 ﻿namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
-    public class CheckBoxDto
+    public class CheckBoxDetailsDto
     {
-        public CheckBoxDto() => IsChecked = true;
+        public CheckBoxDetailsDto() => IsChecked = true;
 
         public bool IsChecked { get; }
     }

@@ -5,9 +5,9 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
-    public class RequirementDto
+    public class RequirementDetailsDto
     {
-        public RequirementDto(
+        public RequirementDetailsDto(
             int id, 
             int intervalWeeks, 
             int? nextDueWeeks,
@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             string requirementDefinitionTitle,
             DateTime? nextDueTimeUtc,
             bool readyToBePreserved,
-            List<FieldDto> fields,
+            List<FieldDetailsDto> fields,
             string comment,
             bool isVoided,
             string rowVersion)
@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             Id = id;
             NextDueTimeUtc = nextDueTimeUtc;
             ReadyToBePreserved = readyToBePreserved;
-            Fields = fields ?? new List<FieldDto>();
+            Fields = fields ?? new List<FieldDetailsDto>();
             NextDueWeeks = nextDueWeeks;
             IntervalWeeks = intervalWeeks;
             RequirementTypeCode = requirementTypeCode;
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         public DateTime? NextDueTimeUtc { get; }
         public string NextDueAsYearAndWeek { get; }
         public bool ReadyToBePreserved { get; }
-        public List<FieldDto> Fields { get; }
+        public List<FieldDetailsDto> Fields { get; }
         public string Comment { get; }
         public bool IsVoided { get;  }
         public string RowVersion { get; }

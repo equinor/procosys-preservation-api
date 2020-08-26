@@ -3,9 +3,9 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
-    public class FieldDto
+    public class FieldDetailsDto
     {
-        public FieldDto(Field field, FieldValue currentValue, FieldValue previousValue)
+        public FieldDetailsDto(Field field, FieldValue currentValue, FieldValue previousValue)
         {
             Id = field.Id;
             Label = field.Label;
@@ -36,11 +36,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             switch (fieldType)
             {
                 case FieldType.Number:
-                    return new NumberDto(fieldValue as NumberValue);
+                    return new NumberDetailsDto(fieldValue as NumberValue);
                 case FieldType.CheckBox:
-                    return new CheckBoxDto();
+                    return new CheckBoxDetailsDto();
                 case FieldType.Attachment:
-                    return new AttachmentDto(fieldValue as AttachmentValue);
+                    return new AttachmentDetailsDto(fieldValue as AttachmentValue);
                 default:
                     return null;
             }

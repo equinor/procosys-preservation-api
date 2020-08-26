@@ -11,13 +11,13 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
-    public class GetTagRequirementsQueryHandler : IRequestHandler<GetTagRequirementsQuery, Result<List<RequirementDto>>>
+    public class GetTagRequirementsQueryHandler : IRequestHandler<GetTagRequirementsQuery, Result<List<RequirementDetailsDto>>>
     {
         private readonly IReadOnlyContext _context;
 
         public GetTagRequirementsQueryHandler(IReadOnlyContext context) => _context = context;
 
-        public async Task<Result<List<RequirementDto>>> Handle(GetTagRequirementsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<RequirementDetailsDto>>> Handle(GetTagRequirementsQuery request, CancellationToken cancellationToken)
         {
             // Get tag with all requirements and all previous preservation
             var tag = await
@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 
             if (tag == null)
             {
-                return new NotFoundResult<List<RequirementDto>>($"{nameof(Tag)} with ID {request.TagId} not found");
+                return new NotFoundResult<List<RequirementDetailsDto>>($"{nameof(Tag)} with ID {request.TagId} not found");
             }
 
             var requirementDefinitionIds = tag.Requirements.Select(r => r.RequirementDefinitionId).ToList();
@@ -69,11 +69,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                         {
                             var currentValue = requirement.GetCurrentFieldValue(f);
                             var previousValue = requirement.GetPreviousFieldValue(f);
-                            return new FieldDto(f, currentValue, previousValue);
+                            return new FieldDetailsDto(f, currentValue, previousValue);
                         })
                         .ToList();
 
-                    return new RequirementDto(
+                    return new RequirementDetailsDto(
                         requirement.Id,
                         requirement.IntervalWeeks,
                         requirement.GetNextDueInWeeks(),
@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                         requirement.RowVersion.ConvertToString());
                 }).ToList();
 
-            return new SuccessResult<List<RequirementDto>>(requirements);
+            return new SuccessResult<List<RequirementDetailsDto>>(requirements);
         }
     }
 
