@@ -10,7 +10,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
             string description, 
             string status, 
             JourneyDetailsDto journey, 
-            StepDetailsDto step, 
+            StepDetailsDto step,
+            ModeDetailsDto mode,
+            ResponsibleDetailsDto responsible, 
             string commPkgNo, 
             string mcPkgNo, 
             string calloffNo, 
@@ -29,6 +31,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
             Status = status;
             Journey = journey;
             Step = step;
+            Mode = mode;
+            Responsible = responsible;
             CommPkgNo = commPkgNo;
             McPkgNo = mcPkgNo;
             CalloffNo = calloffNo;
@@ -48,6 +52,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
         public string Status { get; }
         public JourneyDetailsDto Journey { get; }
         public StepDetailsDto Step { get; }
+        public ModeDetailsDto Mode { get; }
+        public ResponsibleDetailsDto Responsible { get; }
         public string CommPkgNo { get; }
         public string McPkgNo { get; }
         public string CalloffNo { get; }

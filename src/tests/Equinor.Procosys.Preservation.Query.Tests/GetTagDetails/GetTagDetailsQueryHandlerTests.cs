@@ -62,10 +62,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(journey.Title, dto.Journey.Title);
                 Assert.IsNotNull(dto.Step);
                 Assert.AreEqual(step.Title, dto.Step.Title);
-                Assert.IsNotNull(dto.Step.Mode);
-                Assert.AreEqual(mode.Title, dto.Step.Mode.Title);
-                Assert.IsNotNull(dto.Step.Responsible);
-                Assert.AreEqual(resp.Code, dto.Step.Responsible.Code);
+                Assert.IsNotNull(dto.Mode);
+                Assert.AreEqual(mode.Title, dto.Mode.Title);
+                Assert.IsNotNull(dto.Responsible);
+                Assert.AreEqual(resp.Code, dto.Responsible.Code);
             }
         }
 

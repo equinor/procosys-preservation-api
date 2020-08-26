@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
 {
@@ -11,10 +10,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             int id, 
             int intervalWeeks, 
             int? nextDueWeeks,
-            string requirementTypeCode,
-            RequirementTypeIcon requirementTypeIcon,
-            string requirementTypeTitle,
-            string requirementDefinitionTitle,
+            RequirementTypeDetailsDto requirementType,
+            RequirementDefinitionDetailDto requirementDefinition,
             DateTime? nextDueTimeUtc,
             bool readyToBePreserved,
             List<FieldDetailsDto> fields,
@@ -28,10 +25,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             Fields = fields ?? new List<FieldDetailsDto>();
             NextDueWeeks = nextDueWeeks;
             IntervalWeeks = intervalWeeks;
-            RequirementTypeCode = requirementTypeCode;
-            RequirementTypeIcon = requirementTypeIcon;
-            RequirementTypeTitle = requirementTypeTitle;
-            RequirementDefinitionTitle = requirementDefinitionTitle;
+            RequirementType = requirementType;
+            RequirementDefinition = requirementDefinition;
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
             Comment = comment;
             IsVoided = isVoided;
@@ -44,10 +39,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         /// NextDueWeeks shifts at Monday night regardless of where in week the NextDueTimeUtc / current time is
         /// </summary>
         public int? NextDueWeeks { get; }
-        public string RequirementTypeCode { get; }
-        public RequirementTypeIcon RequirementTypeIcon { get; }
-        public string RequirementTypeTitle { get; }
-        public string RequirementDefinitionTitle { get; }
+        public RequirementTypeDetailsDto RequirementType { get; }
+        public RequirementDefinitionDetailDto RequirementDefinition { get; }
         public DateTime? NextDueTimeUtc { get; }
         public string NextDueAsYearAndWeek { get; }
         public bool ReadyToBePreserved { get; }

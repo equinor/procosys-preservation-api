@@ -508,41 +508,41 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             var requirementWithOneNumberNoPrev = requirements.Single(r => r.Id == _requirementWithOneNumberNoPrevId);
 
             Assert.AreEqual(0, requirementWithoutField.Fields.Count);
-            Assert.AreEqual(_requirementDefinitionWithoutFieldTitle, requirementWithoutField.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType1Code, requirementWithoutField.RequirementTypeCode);
-            Assert.AreEqual(_requirementType1Icon, requirementWithoutField.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType1Title, requirementWithoutField.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithoutFieldTitle, requirementWithoutField.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType1Code, requirementWithoutField.RequirementType.Code);
+            Assert.AreEqual(_requirementType1Icon, requirementWithoutField.RequirementType.Icon);
+            Assert.AreEqual(_requirementType1Title, requirementWithoutField.RequirementType.Title);
             
             Assert.AreEqual(1, requirementWithOneInfo.Fields.Count);
             AssertInfoField(requirementWithOneInfo.Fields.ElementAt(0));
-            Assert.AreEqual(_requirementDefinitionWithOneInfoTitle, requirementWithOneInfo.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType1Code, requirementWithOneInfo.RequirementTypeCode);
-            Assert.AreEqual(_requirementType1Icon, requirementWithOneInfo.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType1Title, requirementWithOneInfo.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithOneInfoTitle, requirementWithOneInfo.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType1Code, requirementWithOneInfo.RequirementType.Code);
+            Assert.AreEqual(_requirementType1Icon, requirementWithOneInfo.RequirementType.Icon);
+            Assert.AreEqual(_requirementType1Title, requirementWithOneInfo.RequirementType.Title);
 
             Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
             AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(0));
             AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(1));
-            Assert.AreEqual(_requirementDefinitionWithTwoCheckBoxesTitle, requirementWithTwoCheckBoxes.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType2Code, requirementWithTwoCheckBoxes.RequirementTypeCode);
-            Assert.AreEqual(_requirementType2Icon, requirementWithTwoCheckBoxes.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType2Title, requirementWithTwoCheckBoxes.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithTwoCheckBoxesTitle, requirementWithTwoCheckBoxes.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType2Code, requirementWithTwoCheckBoxes.RequirementType.Code);
+            Assert.AreEqual(_requirementType2Icon, requirementWithTwoCheckBoxes.RequirementType.Icon);
+            Assert.AreEqual(_requirementType2Title, requirementWithTwoCheckBoxes.RequirementType.Title);
 
             Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(0));
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(1));
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(2));
-            Assert.AreEqual(_requirementDefinitionWithThreeNumberShowPrevTitle, requirementWithThreeNumberShowPrev.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType2Code, requirementWithThreeNumberShowPrev.RequirementTypeCode);
-            Assert.AreEqual(_requirementType2Icon, requirementWithThreeNumberShowPrev.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType2Title, requirementWithThreeNumberShowPrev.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithThreeNumberShowPrevTitle, requirementWithThreeNumberShowPrev.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType2Code, requirementWithThreeNumberShowPrev.RequirementType.Code);
+            Assert.AreEqual(_requirementType2Icon, requirementWithThreeNumberShowPrev.RequirementType.Icon);
+            Assert.AreEqual(_requirementType2Title, requirementWithThreeNumberShowPrev.RequirementType.Title);
 
             Assert.AreEqual(1, requirementWithOneNumberNoPrev.Fields.Count);
             AssertNumberWithNoPreviewField(requirementWithOneNumberNoPrev.Fields.ElementAt(0));
-            Assert.AreEqual(_requirementDefinitionWithOneNumberNoPrevTitle, requirementWithOneNumberNoPrev.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType2Code, requirementWithOneNumberNoPrev.RequirementTypeCode);
-            Assert.AreEqual(_requirementType2Icon, requirementWithOneNumberNoPrev.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType2Title, requirementWithOneNumberNoPrev.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithOneNumberNoPrevTitle, requirementWithOneNumberNoPrev.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType2Code, requirementWithOneNumberNoPrev.RequirementType.Code);
+            Assert.AreEqual(_requirementType2Icon, requirementWithOneNumberNoPrev.RequirementType.Icon);
+            Assert.AreEqual(_requirementType2Title, requirementWithOneNumberNoPrev.RequirementType.Title);
         }
 
         private void AssertInfoField(FieldDetailsDto f)

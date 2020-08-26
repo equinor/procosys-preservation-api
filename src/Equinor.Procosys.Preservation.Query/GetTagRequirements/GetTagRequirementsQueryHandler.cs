@@ -47,9 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                     where requirementDefinitionIds.Contains(requirementDefinition.Id)
                     select new
                     {
-                        ReqTypeCode = requirementType.Code,
-                        ReqTypeIcon = requirementType.Icon,
-                        ReqTypeTitle = requirementType.Title,
+                        RequirementType = requirementType,
                         RequirementDefinition = requirementDefinition
                     }
                 ).ToListAsync(cancellationToken);
@@ -77,10 +75,14 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
                         requirement.Id,
                         requirement.IntervalWeeks,
                         requirement.GetNextDueInWeeks(),
-                        requirementDto.ReqTypeCode,
-                        requirementDto.ReqTypeIcon,
-                        requirementDto.ReqTypeTitle,
-                        requirementDto.RequirementDefinition.Title,
+                        new RequirementTypeDetailsDto(
+                            requirementDto.RequirementType.Id,
+                            requirementDto.RequirementType.Code,
+                            requirementDto.RequirementType.Icon,
+                            requirementDto.RequirementType.Title), 
+                        new RequirementDefinitionDetailDto(
+                            requirementDto.RequirementDefinition.Id,
+                            requirementDto.RequirementDefinition.Title), 
                         requirement.NextDueTimeUtc,
                         requirement.ReadyToBePreserved,
                         fields,

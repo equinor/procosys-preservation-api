@@ -2,17 +2,13 @@
 {
     public class StepDetailsDto
     {
-        public StepDetailsDto(int id, string title, ModeDetailsDto mode, ResponsibleDetailsDto responsible)
+        public StepDetailsDto(int id, string title)
         {
             Id = id;
             Title = title;
-            Mode = mode;
-            Responsible = responsible;
         }
 
         public int Id { get; }
         public string Title { get; }
-        public ModeDetailsDto Mode { get; }
-        public ResponsibleDetailsDto Responsible { get; }
     }
 }
