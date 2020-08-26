@@ -27,27 +27,28 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                     join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
                                     join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
                                     where tag.Id == request.TagId
-                                    select new TagDetailsDto
-                                    {
-                                        AreaCode = tag.AreaCode,
-                                        CalloffNo = tag.Calloff,
-                                        CommPkgNo = tag.CommPkgNo,
-                                        Description = tag.Description,
-                                        Id = tag.Id,
-                                        IsVoided = tag.IsVoided,
-                                        JourneyTitle = journey.Title,
-                                        McPkgNo = tag.McPkgNo,
-                                        Mode = mode.Title,
-                                        PurchaseOrderNo = tag.PurchaseOrderNo,
-                                        Remark = tag.Remark,
-                                        ResponsibleName = responsible.Code,
-                                        Status = tag.Status.GetDisplayValue(),
-                                        StorageArea = tag.StorageArea,
-                                        TagNo = tag.TagNo,
-                                        TagType = tag.TagType,
-                                        ReadyToBePreserved = tag.IsReadyToBePreserved(),
-                                        RowVersion = tag.RowVersion.ConvertToString()
-                                    }).SingleOrDefaultAsync(cancellationToken);
+                                    select new TagDetailsDto(
+                                        tag.Id,
+                                        tag.TagNo,
+                                        tag.IsVoided,
+                                        tag.Description,
+                                        tag.Status.GetDisplayValue(),
+                                        new JourneyDetailsDto(journey.Id, journey.Title),
+                                        new StepDetailsDto(
+                                            step.Id, 
+                                            step.Title, 
+                                            new ModeDetailsDto(mode.Id, mode.Title),
+                                            new ResponsibleDetailsDto(responsible.Id, responsible.Code, responsible.Description)),
+                                        tag.CommPkgNo,
+                                        tag.McPkgNo,
+                                        tag.Calloff,
+                                        tag.PurchaseOrderNo,
+                                        tag.AreaCode, 
+                                        tag.TagType,
+                                        tag.IsReadyToBePreserved(),
+                                        tag.Remark,
+                                        tag.StorageArea,
+                                        tag.RowVersion.ConvertToString())).SingleOrDefaultAsync(cancellationToken);
 
             if (tagDetails == null)
             {
