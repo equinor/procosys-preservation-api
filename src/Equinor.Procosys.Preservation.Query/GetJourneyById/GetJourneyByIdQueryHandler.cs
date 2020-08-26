@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
 
             var stepIds = journey.Steps.Select(s => s.Id).ToList();
 
-            var journeyInUse = await (from tag in _context.QuerySet<Tag>()
+            var anyStepInUse = await (from tag in _context.QuerySet<Tag>()
                 where stepIds.Contains(tag.StepId)
                 select tag).AnyAsync(cancellationToken);
 
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
             var journeyDto = new JourneyDetailsDto(
                 journey.Id,
                 journey.Title,
-                journeyInUse,
+                journey.Steps.Any(),
                 journey.IsVoided,
                 journey.OrderedSteps()
                     .Where(s => !s.IsVoided || request.IncludeVoided)
@@ -59,6 +59,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
                         new StepDetailsDto(
                             step.Id,
                             step.Title,
+                            anyStepInUse,
                             step.IsVoided,
                             modes.FirstOrDefault(x => x.Id == step.ModeId),
                             responsibles.FirstOrDefault(x => x.Id == step.ResponsibleId),

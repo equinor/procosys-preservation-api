@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
     {
         public StepDetailsDto(int id,
             string title,
+            bool isInUse,
             bool isVoided,
             ModeDto mode,
             ResponsibleDto responsible,
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
         {
             Id = id;
             Title = title;
+            IsInUse = isInUse;
             IsVoided = isVoided;
             Mode = mode;
             Responsible = responsible;
@@ -25,6 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.GetJourneyById
 
         public int Id { get; }
         public string Title { get; }
+        public bool IsInUse { get; }
         public bool IsVoided { get; }
         public ModeDto Mode { get; }
         public ResponsibleDto Responsible { get; }
