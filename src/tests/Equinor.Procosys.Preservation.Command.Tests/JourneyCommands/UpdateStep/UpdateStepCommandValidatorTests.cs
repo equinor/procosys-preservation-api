@@ -38,7 +38,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
 
             _stepValidatorMock = new Mock<IStepValidator>();
-            _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplier(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(true));
+            _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplierAsync(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(true));
+            _stepValidatorMock.Setup(r => r.HasModeAsync(_modeId, _stepId, default)).Returns(Task.FromResult(true));
 
             _modeValidatorMock = new Mock<IModeValidator>();
             _modeValidatorMock.Setup(r => r.ExistsAsync(_modeId, default)).Returns(Task.FromResult(true));
@@ -130,8 +131,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenModeIsVoided()
+        public void Validate_ShouldFail_WhenChangeToAVoidedMode()
         {
+            _stepValidatorMock.Setup(r => r.HasModeAsync(_modeId, _stepId, default)).Returns(Task.FromResult(false));
             _modeValidatorMock.Setup(r => r.IsVoidedAsync(_modeId, default)).Returns(Task.FromResult(true));
 
             var result = _dut.Validate(_command);
@@ -156,7 +158,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         [TestMethod]
         public void Validate_ShouldFail_WhenUpdatingToSupplierStepAndTheStepIsNotTheFirstInTheList()
         {
-            _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplier(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(false));
+            _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplierAsync(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 

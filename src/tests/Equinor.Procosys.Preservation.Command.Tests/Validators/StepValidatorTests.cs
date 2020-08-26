@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private Step _step1InJourney1ForSupplier;
         private Step _step2InJourney1;
         private Step _step3InJourney1;
+        private Mode _supplierMode;
         private const string StepTitle1InJourney1 = "Step1";
         private const string StepTitle2InJourney1 = "Step3";
         private const string StepTitle3InJourney1 = "Step4";
@@ -24,9 +26,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var supplierMode = AddMode(context, "M", true);
-
-                _journey1 = AddJourneyWithStep(context, "J1", StepTitle1InJourney1, supplierMode, AddResponsible(context, "R1"));
+                _supplierMode = AddMode(context, "M", true);
+                _journey1 = AddJourneyWithStep(context, "J1", StepTitle1InJourney1, _supplierMode, AddResponsible(context, "R1"));
                 _step1InJourney1ForSupplier = _journey1.Steps.Single();
                 _step2InJourney1 = new Step(TestPlant, StepTitle2InJourney1, AddMode(context, "M2", false), AddResponsible(context, "R2"));
                 _step3InJourney1 = new Step(TestPlant, StepTitle3InJourney1, AddMode(context, "M3", false), AddResponsible(context, "R3"));
@@ -106,7 +107,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsAnyStepForSupplier(_step2InJourney1.Id, _step1InJourney1ForSupplier.Id, default);
+                var result = await dut.IsAnyStepForSupplierAsync(_step2InJourney1.Id, _step1InJourney1ForSupplier.Id, default);
                 Assert.IsTrue(result);
             }
         }
@@ -117,7 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsAnyStepForSupplier(_step2InJourney1.Id, _step3InJourney1.Id, default);
+                var result = await dut.IsAnyStepForSupplierAsync(_step2InJourney1.Id, _step3InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }
@@ -128,7 +129,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsFirstStepOrModeIsNotForSupplier(_journey1.Id, _step1InJourney1ForSupplier.ModeId, _step1InJourney1ForSupplier.Id, default);
+                var result = await dut.IsFirstStepOrModeIsNotForSupplierAsync(_journey1.Id, _step1InJourney1ForSupplier.ModeId, _step1InJourney1ForSupplier.Id, default);
                 Assert.IsTrue(result);
             }
         }
@@ -139,7 +140,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new StepValidator(context);
-                var result = await dut.IsFirstStepOrModeIsNotForSupplier(_journey1.Id, _step1InJourney1ForSupplier.ModeId, _step3InJourney1.Id, default);
+                var result = await dut.IsFirstStepOrModeIsNotForSupplierAsync(_journey1.Id, _step1InJourney1ForSupplier.ModeId, _step3InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }
@@ -174,6 +175,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var dut = new StepValidator(context);
                 var result = await dut.IsForSupplierAsync(126234, default);
                 Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasModeAsync_UnknownStepId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new StepValidator(context);
+                var result = await dut.HasModeAsync(_supplierMode.Id, 126234, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasModeAsync_UnknownModeId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new StepValidator(context);
+                var result = await dut.HasModeAsync(126234, _step1InJourney1ForSupplier.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasModeAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new StepValidator(context);
+                var result = await dut.HasModeAsync(_supplierMode.Id, _step1InJourney1ForSupplier.Id, default);
+                Assert.IsTrue(result);
             }
         }
     }

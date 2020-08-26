@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .WithMessage(command => $"Step is voided! Step={command.StepId}")
                 .MustAsync((command, token) => BeAnExistingModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
-                .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
+                .MustAsync((command, token) => NotChangedToAVoidedModeAsync(command.ModeId, command.StepId, token))
                 .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAnExistingAndVoidedResponsibleAsync(command.ResponsibleCode, token))
                 .WithMessage(command => $"Responsible is voided! ResponsibleCode={command.ResponsibleCode}")
@@ -57,15 +57,16 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);
-            
-            async Task<bool> NotBeAVoidedModeAsync(int modeId, CancellationToken token)
-                => !await modeValidator.IsVoidedAsync(modeId, token);
+
+            async Task<bool> NotChangedToAVoidedModeAsync(int modeId, int stepId, CancellationToken token)
+                => await stepValidator.HasModeAsync(modeId, stepId, token) ||
+                   !await modeValidator.IsVoidedAsync(modeId, token);
             
             async Task<bool> NotBeAnExistingAndVoidedResponsibleAsync(string responsibleCode, CancellationToken token)
                 => !await responsibleValidator.ExistsAndIsVoidedAsync(responsibleCode, token);
             
             async Task<bool> BeFirstStepIfUpdatingToSupplierStep(int journeyId, int modeId, int stepId, CancellationToken token)
-                => await stepValidator.IsFirstStepOrModeIsNotForSupplier(journeyId, modeId, stepId, token);
+                => await stepValidator.IsFirstStepOrModeIsNotForSupplierAsync(journeyId, modeId, stepId, token);
 
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);

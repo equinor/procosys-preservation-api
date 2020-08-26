@@ -27,13 +27,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
             return step != null && step.IsVoided;
         }
 
-        public async Task<bool> IsAnyStepForSupplier(int stepAId, int stepBId, CancellationToken token)
+        public async Task<bool> IsAnyStepForSupplierAsync(int stepAId, int stepBId, CancellationToken token)
             => await (from s in _context.QuerySet<Step>()
                 join mode in _context.QuerySet<Mode>() on s.ModeId equals mode.Id
                 where (s.Id == stepAId || s.Id == stepBId) && mode.ForSupplier
                 select mode).AnyAsync(token);
 
-        public async Task<bool> IsFirstStepOrModeIsNotForSupplier(int journeyId, int modeId,
+        public async Task<bool> IsFirstStepOrModeIsNotForSupplierAsync(int journeyId, int modeId,
             int stepId,
             CancellationToken token)
         {
@@ -57,6 +57,14 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 where s.Id == stepId
                 select m).SingleOrDefaultAsync(token);
             return mode != null && mode.ForSupplier;
+        }
+
+        public async Task<bool> HasModeAsync(int modeId, int stepId, CancellationToken token)
+        {
+            var step = await (from s in _context.QuerySet<Step>()
+                where s.Id == stepId
+                select s).SingleOrDefaultAsync(token);
+            return step != null && step.ModeId == modeId;
         }
     }
 }
