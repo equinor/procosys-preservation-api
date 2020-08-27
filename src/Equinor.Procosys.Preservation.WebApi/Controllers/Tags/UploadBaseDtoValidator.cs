@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .When(x => x.File != null);
             
             RuleFor(x => x.File.Length)
-                .Must(NotBeTooBigFile)
+                .Must(BeSmallerThanMaxSize)
                 .When(x => x.File != null)
                 .WithMessage($"Maximum file size is {options.CurrentValue.MaxSizeMb}MB!");
 
@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 return suffix != null && options.CurrentValue.ValidFileSuffixes.Contains(suffix) && fileName?.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
             }
             
-            bool NotBeTooBigFile(long fileSizeInBytes)
+            bool BeSmallerThanMaxSize(long fileSizeInBytes)
             {
                 var maxSizeInBytes = options.CurrentValue.MaxSizeMb * 1024 * 1024;
                 return fileSizeInBytes < maxSizeInBytes;
