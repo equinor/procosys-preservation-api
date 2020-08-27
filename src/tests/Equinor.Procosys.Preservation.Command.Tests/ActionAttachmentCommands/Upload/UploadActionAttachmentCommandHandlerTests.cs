@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             var attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
             var options = new AttachmentOptions
             {
-                MaxSizeKb = 2,
+                MaxSizeMb = 2,
                 BlobContainer = _blobContainer,
                 ValidFileSuffixes = new[] {".gif", ".jpg"}
             };

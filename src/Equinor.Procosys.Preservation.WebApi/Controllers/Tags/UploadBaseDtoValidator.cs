@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             RuleFor(x => x.File.Length)
                 .Must(NotBeTooBigFile)
                 .When(x => x.File != null)
-                .WithMessage($"Maximum file size is {options.CurrentValue.MaxSizeKb}kB!");
+                .WithMessage($"Maximum file size is {options.CurrentValue.MaxSizeMb}MB!");
 
             bool BeAValidFile(string fileName)
             {
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             
             bool NotBeTooBigFile(long fileSizeInBytes)
             {
-                var maxSizeInBytes = options.CurrentValue.MaxSizeKb * 1024;
+                var maxSizeInBytes = options.CurrentValue.MaxSizeMb * 1024 * 1024;
                 return fileSizeInBytes < maxSizeInBytes;
             }
         }
