@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
             var attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
             _options = new AttachmentOptions
             {
-                MaxSizeKb = 2,
+                MaxSizeMb = 2,
                 BlobContainer = "bc",
                 ValidFileSuffixes = new[] {".gif", ".jpg"}
             };
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Filename to long! Max"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Filename to long! Max"));
         }
 
         [TestMethod]
@@ -92,14 +92,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
         {
             var uploadAttachmentDto = new UploadAttachmentForceOverwriteDto
             {
-                File = new TestFile("picture.gif", 2500)
+                File = new TestFile("picture.gif", (_options.MaxSizeMb * 1024 * 1024) + 1)
             };
 
             var result = _dut.Validate(uploadAttachmentDto);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.AreEqual(result.Errors[0].ErrorMessage, $"Maximum file size is {_options.MaxSizeKb}kB!");
+            Assert.AreEqual(result.Errors[0].ErrorMessage, $"Maximum file size is {_options.MaxSizeMb}MB!");
         }
 
         [TestMethod]
@@ -119,13 +119,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
 
         class TestFile : IFormFile
         {
-            public TestFile(string fileName, long length)
+            public TestFile(string fileName, long lengthInBytes)
             {
                 ContentDisposition = null;
                 ContentType = null;
                 FileName = fileName;
                 Headers = null;
-                Length = length;
+                Length = lengthInBytes;
                 Name = null;
             }
 
