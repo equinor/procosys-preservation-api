@@ -142,6 +142,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Mode is voided!"));
         }
+        
+        [TestMethod]
+        public void Validate_ShouldBeValid_WhenExistingModeIsVoided()
+        {
+            _modeValidatorMock.Setup(r => r.IsVoidedAsync(_modeId, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsTrue(result.IsValid);
+        }
 
         [TestMethod]
         public void Validate_ShouldFail_WhenResponsibleExistsAndIsVoided()
