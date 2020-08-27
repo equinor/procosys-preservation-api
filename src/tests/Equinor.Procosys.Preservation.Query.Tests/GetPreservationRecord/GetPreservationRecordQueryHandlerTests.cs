@@ -21,6 +21,9 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
         private int _requirementWithoutFieldId;
         private Guid _preservationRecordGuid;
         private int _preservationRecordId;
+        private RequirementType _requirementType;
+        private RequirementDefinition _requirementDefinitionWithoutOneField;
+        private Field _infoField;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -28,10 +31,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 _currentUserProvider))
             {
                 var journey = AddJourneyWithStep(context, "J1", "S", AddMode(context, "M1", false), AddResponsible(context, "R1"));
-                var requirementDefinitionWithoutField =
-                    AddRequirementTypeWith1DefWithoutField(context, "RT", "", RequirementTypeIcon.Other, 1).RequirementDefinitions.Single();
+                _requirementType = AddRequirementTypeWith1DefWithoutField(context, "RT", "RD", RequirementTypeIcon.Other, 1);
+                _requirementDefinitionWithoutOneField =
+                    _requirementType.RequirementDefinitions.Single();
+                _infoField = AddInfoField(context, _requirementDefinitionWithoutOneField, "I");
 
-                var requirementWithoutField = new TagRequirement(TestPlant, 1, requirementDefinitionWithoutField);
+                var requirementWithoutField = new TagRequirement(TestPlant, 1, _requirementDefinitionWithoutOneField);
 
                 var tag = new Tag(TestPlant,
                     TagType.Standard, 
@@ -77,7 +82,21 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 var result = await dut.Handle(query, default);
 
                 Assert.IsNotNull(result);
-                Assert.AreEqual(result.Data.Id, _preservationRecordId);
+                var dto = result.Data;
+                Assert.AreEqual(dto.Id, _preservationRecordId);
+                Assert.IsNotNull(dto.RequirementType);
+                Assert.AreEqual(_requirementType.Id, dto.RequirementType.Id);
+                Assert.AreEqual(_requirementType.Code, dto.RequirementType.Code);
+                Assert.AreEqual(_requirementType.Icon, dto.RequirementType.Icon);
+                Assert.AreEqual(_requirementType.Title, dto.RequirementType.Title);
+                Assert.IsNotNull(dto.RequirementDefinition);
+                Assert.AreEqual(_requirementDefinitionWithoutOneField.Id, dto.RequirementDefinition.Id);
+                Assert.AreEqual(_requirementDefinitionWithoutOneField.Title, dto.RequirementDefinition.Title);
+                Assert.IsTrue(dto.Fields.Count == 1);
+                var field = dto.Fields.ElementAt(0);
+                Assert.AreEqual(_infoField.Id, field.Id);
+                Assert.AreEqual(_infoField.FieldType, field.FieldType);
+                Assert.AreEqual(_infoField.Label, field.Label);
             }
         }
 
