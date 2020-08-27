@@ -16,13 +16,13 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type doesn't exist! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type doesn't exist! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) => NotHaveAnyRequirementDefinitions(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type has requirement definitions! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type has requirement definitions! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) => BeAVoidedRequirementTypeAsync(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type is not voided! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type is not voided! Requirement type={command.RequirementTypeId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);

@@ -16,11 +16,11 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunct
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingTagFunctionAsync(command.TagFunctionCode, token))
-                .WithMessage(command => $"Tag function doesn't exist! TagFunction={command.TagFunctionCode}")
+                .WithMessage(command => $"Tag function doesn't exist! Tag function={command.TagFunctionCode}")
                 .MustAsync((command, token) => NotBeAVoidedTagFunctionAsync(command.TagFunctionCode, token))
-                .WithMessage(command => $"Tag function is already voided! TagFunction={command.TagFunctionCode}")
+                .WithMessage(command => $"Tag function is already voided! Tag function={command.TagFunctionCode}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingTagFunctionAsync(string tagFunctionCode, CancellationToken token)
                 => await tagFunctionValidator.ExistsAsync(tagFunctionCode, token);

@@ -27,15 +27,15 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                 RuleForEach(command => command.Requirements)
                     .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
                     .WithMessage((_, req) =>
-                        $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}")
+                        $"Requirement definition doesn't exists! Requirement definition={req.RequirementDefinitionId}")
                     .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                     .WithMessage((_, req) =>
-                        $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
+                        $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
             });
 
             RuleFor(command => command)
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementDefinitionAsync(RequirementForCommand requirement, CancellationToken token)
                 => await requirementDefinitionValidator.ExistsAsync(requirement.RequirementDefinitionId, token);

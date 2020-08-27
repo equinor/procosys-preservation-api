@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete
                 .MustAsync((command, token) => BeAnExistingAttachmentAsync(command.AttachmentId, token))
                 .WithMessage(command => $"Attachment doesn't exist! Attachment={command.AttachmentId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);

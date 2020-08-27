@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.UpdateSavedFilter
                 .MustAsync((command, token) => HaveAUniqueTitleForPerson(command.Title, command.SavedFilterId, token))
                 .WithMessage(command => $"A saved filter with this title already exists! Title={command.Title}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingSavedFilterAsync(int savedFilterId, CancellationToken token)
                 => await savedFilterValidator.ExistsAsync(savedFilterId, token);

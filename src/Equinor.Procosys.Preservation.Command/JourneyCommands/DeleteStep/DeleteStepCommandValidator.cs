@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep
                 .MustAsync((command, token) => JourneyForStepNotBeUsedAsync(command.JourneyId, token))
                 .WithMessage(command => $"No steps can be deleted from journey when preservation tags exists in journey! Journey={command.JourneyId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);

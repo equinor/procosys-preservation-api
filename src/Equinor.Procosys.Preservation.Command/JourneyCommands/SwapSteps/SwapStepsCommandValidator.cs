@@ -20,17 +20,17 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepAId, token))
-                .WithMessage(command => $"StepA doesn't exist! StepA={command.StepAId}")
+                .WithMessage(command => $"Step doesn't exist! Step={command.StepAId}")
                 .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepBId, token))
-                .WithMessage(command => $"StepB doesn't exist! StepB={command.StepBId}")
+                .WithMessage(command => $"Step doesn't exist! Step={command.StepBId}")
                 .MustAsync((command, token) => BeAdjacentStepsInAJourneyAsync(command.JourneyId, command.StepAId, command.StepBId, token))
-                .WithMessage(command => $"StepA and StepB are not adjacent! StepA={command.StepAId}, StepB={command.StepBId}")
+                .WithMessage(command => $"Steps are not adjacent! Steps={command.StepAId} and {command.StepBId}")
                 .MustAsync((command, token) => NotIncludeAnySupplierStep(command.StepAId, command.StepBId, token))
-                .WithMessage(command => $"Supplier steps cannot be swapped! StepA={command.StepAId}, StepB={command.StepBId}")
+                .WithMessage(command => $"Supplier steps cannot be swapped! Steps={command.StepAId} and {command.StepBId}")
                 .Must(command => HaveAValidRowVersion(command.StepARowVersion))
-                .WithMessage(command => $"Not a valid RowVersion for Step A! RowVersion={command.StepARowVersion}")
+                .WithMessage(command => $"Not a valid row version! Row version{command.StepARowVersion}")
                 .Must(command => HaveAValidRowVersion(command.StepBRowVersion))
-                .WithMessage(command => $"Not a valid RowVersion for Step B! RowVersion={command.StepBRowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.StepBRowVersion}");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);

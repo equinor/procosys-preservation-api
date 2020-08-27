@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag
                 .MustAsync((command, token) => NotBeInUse(command.TagId, token))
                 .WithMessage(command => $"Tag is in use! Tag={command.TagId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);

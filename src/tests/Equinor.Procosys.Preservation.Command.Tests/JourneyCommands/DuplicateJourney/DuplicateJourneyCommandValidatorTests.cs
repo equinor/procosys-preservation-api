@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DuplicateJ
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey with title for Copy already exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey with title for the copy already exists!"));
         }
     }
 }

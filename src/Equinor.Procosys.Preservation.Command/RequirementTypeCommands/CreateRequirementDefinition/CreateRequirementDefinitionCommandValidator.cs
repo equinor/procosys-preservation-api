@@ -15,12 +15,12 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
 
             RuleFor(command => command)
                 .MustAsync((command, token) => RequirementTypeMustExists(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type doesn't exists! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type doesn't exists! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) => RequirementTypeMustNotBeVoided(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type is voided! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type is voided! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) =>
                     RequirementDefinitionTitleMustBeUniqueOnType(command.RequirementTypeId, command.Title, command.Fields, token))
-                .WithMessage(command => $"A requirement definition with this title already exists on the requirement type! RequirementType={command.RequirementTypeId}");
+                .WithMessage(command => $"A requirement definition with this title already exists on the requirement type! Requirement type={command.RequirementTypeId}");
 
             async Task<bool> RequirementTypeMustExists(int reqTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(reqTypeId, token);
