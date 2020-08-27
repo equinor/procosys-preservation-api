@@ -179,7 +179,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("TagNos must be unique!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tags must be unique!"));
         }
         
         [TestMethod]

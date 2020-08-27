@@ -20,19 +20,19 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type doesn't exist! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type doesn't exist! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) => BeAnExistingRequirementDefinitionAsync(command.RequirementTypeId, command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Requirement definition doesn't exist! RequirementDefinition={command.RequirementDefinitionId}")
+                .WithMessage(command => $"Requirement definition doesn't exist! Requirement definition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementTypeAsync(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type is voided! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type is voided! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Requirement definition is voided! RequirementDefinition={command.Title}")
+                .WithMessage(command => $"Requirement definition is voided! Requirement definition={command.Title}")
                 .MustAsync(RequirementDefinitionTitleMustBeUniqueOnType)
-                .WithMessage(command => $"A requirement definition with this title already exists on the requirement type! RequirementType={command.Title}")
+                .WithMessage(command => $"A requirement definition with this title already exists on the requirement type! Requirement type={command.Title}")
                 .MustAsync((command, token) => AllFieldsToBeDeletedAreVoidedAsync(command.RequirementDefinitionId, command.UpdateFields, token))
-                .WithMessage(command => $"Fields to be deleted must be voided! RequirementDefinition={command.Title}")
+                .WithMessage(command => $"Fields to be deleted must be voided! Requirement definition={command.Title}")
                 .MustAsync((command, token) => NoFieldsToBeDeletedShouldBeInUseAsync(command.RequirementDefinitionId, command.UpdateFields, token))
-                .WithMessage(command => $"Fields to be deleted can not be in use! RequirementDefinition={command.Title}");
+                .WithMessage(command => $"Fields to be deleted can not be in use! Requirement definition={command.Title}");
 
             RuleForEach(command => command.UpdateFields)
                 .MustAsync((command, field, __, token) => BeAnExistingField(field.Id, token))

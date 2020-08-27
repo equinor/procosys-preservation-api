@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
                 .WithMessage(command => $"Another mode for supplier already exists! Mode={command.Title}")
                 .When(command => command.ForSupplier, ApplyConditionTo.CurrentValidator)
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingModeAsync(int modeId, CancellationToken token)
                 => await modeValidator.ExistsAsync(modeId, token);

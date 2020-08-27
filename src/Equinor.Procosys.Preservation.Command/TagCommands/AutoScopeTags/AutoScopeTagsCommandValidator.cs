@@ -20,9 +20,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
 
             RuleFor(command => command.TagNos)
                 .Must(r => r.Any())
-                .WithMessage("At least 1 TagNo must be given!")
+                .WithMessage("At least 1 tag must be given!")
                 .Must(BeUniqueTagNos)
-                .WithMessage("TagNos must be unique!");
+                .WithMessage("Tags must be unique!");
 
             RuleForEach(command => command.TagNos)
                 .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProjectAsync(tagNo, command.ProjectName, token))

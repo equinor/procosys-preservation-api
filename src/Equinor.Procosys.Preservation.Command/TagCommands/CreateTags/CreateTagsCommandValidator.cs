@@ -24,7 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 .Must(r => r.Any())
                 .WithMessage("At least 1 TagNo must be given!")
                 .Must(BeUniqueTagNos)
-                .WithMessage("TagNos must be unique!");
+                .WithMessage("Tags must be unique!");
             
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {
@@ -59,10 +59,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             RuleForEach(command => command.Requirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) =>
-                    $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}")
+                    $"Requirement definition doesn't exists! Requirement definition={req.RequirementDefinitionId}")
                 .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) =>
-                    $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
+                    $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
                         
             bool BeUniqueTagNos(IEnumerable<string> tagNos)
             {

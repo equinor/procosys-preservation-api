@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 .MustAsync((command, token) => NotChangedToAVoidedStepAsync(command.TagId, command.StepId, token))
                 .WithMessage(command => $"Step is voided! Step={command.StepId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             RuleForEach(command => command.UpdatedRequirements)
                 .MustAsync((command, req, __, token) => BeAnExistingTagRequirementAsync(command.TagId, req.TagRequirementId, token))
@@ -82,10 +82,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             RuleForEach(command => command.NewRequirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req.RequirementDefinitionId, token))
                 .WithMessage((_, req) =>
-                    $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}")
+                    $"Requirement definition doesn't exists! Requirement definition={req.RequirementDefinitionId}")
                 .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req.RequirementDefinitionId, token))
                 .WithMessage((_, req) =>
-                    $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
+                    $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
 
             async Task<bool> RequirementsMustBeUniqueAfterUpdateAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token)
                 => requirementDefinitionIdsToBeAdded.Count == 0 || 

@@ -54,9 +54,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
             RuleForEach(command => command.Requirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
-                .WithMessage((_, req) => $"Requirement definition doesn't exists! Requirement={req.RequirementDefinitionId}")
+                .WithMessage((_, req) => $"Requirement definition doesn't exists! Requirement definition={req.RequirementDefinitionId}")
                 .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
-                .WithMessage((_, req) => $"Requirement definition is voided! Requirement={req.RequirementDefinitionId}");
+                .WithMessage((_, req) => $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
 
             bool BeUniqueRequirements(IEnumerable<RequirementForCommand> requirements)
             {

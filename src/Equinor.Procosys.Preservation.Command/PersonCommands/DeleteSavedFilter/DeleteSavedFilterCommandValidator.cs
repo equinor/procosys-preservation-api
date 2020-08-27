@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.PersonCommands.DeleteSavedFilter
                 .MustAsync((command, token) => BeAnExistingSavedFilterAsync(command.SavedFilterId, token))
                 .WithMessage(command => $"Saved filter doesn't exist! Saved filter={command.SavedFilterId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingSavedFilterAsync(int savedFilterId, CancellationToken token)
                 => await savedFilterValidator.ExistsAsync(savedFilterId, token);

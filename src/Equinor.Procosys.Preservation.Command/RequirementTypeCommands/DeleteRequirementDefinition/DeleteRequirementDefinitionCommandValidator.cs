@@ -18,19 +18,19 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type doesn't exist! RequirementType={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type doesn't exist! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) => BeAnExistingRequirementDefinitionAsync(command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Requirement definition doesn't exist! RequirementDefinition={command.RequirementDefinitionId}")
+                .WithMessage(command => $"Requirement definition doesn't exist! Requirement definition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => BeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Requirement definition is not voided! RequirementDefinition={command.RequirementDefinitionId}")
+                .WithMessage(command => $"Requirement definition is not voided! Requirement definition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotHaveAnyFieldsAsync(command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Requirement definition has fields! RequirementDefinition={command.RequirementDefinitionId}")
+                .WithMessage(command => $"Requirement definition has fields! Requirement definition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotHaveAnyTagRequirementsAsync(command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Tag requirement with this requirement definition exists! RequirementDefinition={command.RequirementDefinitionId}")
+                .WithMessage(command => $"Tag requirement with this requirement definition exists! Requirement definition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotHaveAnyTagFunctionRequirementsAsync(command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Tag function requirement with this requirement definition exists! RequirementDefinition={command.RequirementDefinitionId}")
+                .WithMessage(command => $"Tag function requirement with this requirement definition exists! Requirement definition={command.RequirementDefinitionId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid RowVersion! RowVersion={command.RowVersion}");
+                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
