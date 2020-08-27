@@ -4,9 +4,9 @@ using Equinor.Procosys.Preservation.Query.GetTagRequirements;
 
 namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
 {
-    public class FieldDto
+    public class FieldDetailsDto
     {
-        public FieldDto(Field field, FieldValue currentValue, FieldValue previousValue)
+        public FieldDetailsDto(Field field, FieldValue currentValue, FieldValue previousValue)
         {
             Id = field.Id;
             Label = field.Label;
