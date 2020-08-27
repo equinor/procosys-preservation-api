@@ -307,7 +307,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 var field = requirementWithTwoCheckBoxes.Fields.Single(f => f.Id == cbFieldId);
                 Assert.IsNotNull(field);
                 Assert.IsNotNull(field.CurrentValue);
-                Assert.IsInstanceOfType(field.CurrentValue, typeof(CheckBoxDto));
+                Assert.IsInstanceOfType(field.CurrentValue, typeof(CheckBoxDetailsDto));
             }
         }
 
@@ -499,7 +499,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             }
         }
 
-        private void AssertRequirements(List<RequirementDto> requirements)
+        private void AssertRequirements(List<RequirementDetailsDto> requirements)
         {
             var requirementWithoutField = requirements.Single(r => r.Id == _requirementWithoutFieldId);
             var requirementWithOneInfo = requirements.Single(r => r.Id == _requirementWithOneInfoId);
@@ -508,115 +508,115 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
             var requirementWithOneNumberNoPrev = requirements.Single(r => r.Id == _requirementWithOneNumberNoPrevId);
 
             Assert.AreEqual(0, requirementWithoutField.Fields.Count);
-            Assert.AreEqual(_requirementDefinitionWithoutFieldTitle, requirementWithoutField.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType1Code, requirementWithoutField.RequirementTypeCode);
-            Assert.AreEqual(_requirementType1Icon, requirementWithoutField.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType1Title, requirementWithoutField.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithoutFieldTitle, requirementWithoutField.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType1Code, requirementWithoutField.RequirementType.Code);
+            Assert.AreEqual(_requirementType1Icon, requirementWithoutField.RequirementType.Icon);
+            Assert.AreEqual(_requirementType1Title, requirementWithoutField.RequirementType.Title);
             
             Assert.AreEqual(1, requirementWithOneInfo.Fields.Count);
             AssertInfoField(requirementWithOneInfo.Fields.ElementAt(0));
-            Assert.AreEqual(_requirementDefinitionWithOneInfoTitle, requirementWithOneInfo.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType1Code, requirementWithOneInfo.RequirementTypeCode);
-            Assert.AreEqual(_requirementType1Icon, requirementWithOneInfo.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType1Title, requirementWithOneInfo.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithOneInfoTitle, requirementWithOneInfo.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType1Code, requirementWithOneInfo.RequirementType.Code);
+            Assert.AreEqual(_requirementType1Icon, requirementWithOneInfo.RequirementType.Icon);
+            Assert.AreEqual(_requirementType1Title, requirementWithOneInfo.RequirementType.Title);
 
             Assert.AreEqual(2, requirementWithTwoCheckBoxes.Fields.Count);
             AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(0));
             AssertCheckBoxField(requirementWithTwoCheckBoxes.Fields.ElementAt(1));
-            Assert.AreEqual(_requirementDefinitionWithTwoCheckBoxesTitle, requirementWithTwoCheckBoxes.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType2Code, requirementWithTwoCheckBoxes.RequirementTypeCode);
-            Assert.AreEqual(_requirementType2Icon, requirementWithTwoCheckBoxes.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType2Title, requirementWithTwoCheckBoxes.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithTwoCheckBoxesTitle, requirementWithTwoCheckBoxes.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType2Code, requirementWithTwoCheckBoxes.RequirementType.Code);
+            Assert.AreEqual(_requirementType2Icon, requirementWithTwoCheckBoxes.RequirementType.Icon);
+            Assert.AreEqual(_requirementType2Title, requirementWithTwoCheckBoxes.RequirementType.Title);
 
             Assert.AreEqual(3, requirementWithThreeNumberShowPrev.Fields.Count);
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(0));
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(1));
             AssertNumberWithPreviewField(requirementWithThreeNumberShowPrev.Fields.ElementAt(2));
-            Assert.AreEqual(_requirementDefinitionWithThreeNumberShowPrevTitle, requirementWithThreeNumberShowPrev.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType2Code, requirementWithThreeNumberShowPrev.RequirementTypeCode);
-            Assert.AreEqual(_requirementType2Icon, requirementWithThreeNumberShowPrev.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType2Title, requirementWithThreeNumberShowPrev.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithThreeNumberShowPrevTitle, requirementWithThreeNumberShowPrev.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType2Code, requirementWithThreeNumberShowPrev.RequirementType.Code);
+            Assert.AreEqual(_requirementType2Icon, requirementWithThreeNumberShowPrev.RequirementType.Icon);
+            Assert.AreEqual(_requirementType2Title, requirementWithThreeNumberShowPrev.RequirementType.Title);
 
             Assert.AreEqual(1, requirementWithOneNumberNoPrev.Fields.Count);
             AssertNumberWithNoPreviewField(requirementWithOneNumberNoPrev.Fields.ElementAt(0));
-            Assert.AreEqual(_requirementDefinitionWithOneNumberNoPrevTitle, requirementWithOneNumberNoPrev.RequirementDefinitionTitle);
-            Assert.AreEqual(_requirementType2Code, requirementWithOneNumberNoPrev.RequirementTypeCode);
-            Assert.AreEqual(_requirementType2Icon, requirementWithOneNumberNoPrev.RequirementTypeIcon);
-            Assert.AreEqual(_requirementType2Title, requirementWithOneNumberNoPrev.RequirementTypeTitle);
+            Assert.AreEqual(_requirementDefinitionWithOneNumberNoPrevTitle, requirementWithOneNumberNoPrev.RequirementDefinition.Title);
+            Assert.AreEqual(_requirementType2Code, requirementWithOneNumberNoPrev.RequirementType.Code);
+            Assert.AreEqual(_requirementType2Icon, requirementWithOneNumberNoPrev.RequirementType.Icon);
+            Assert.AreEqual(_requirementType2Title, requirementWithOneNumberNoPrev.RequirementType.Title);
         }
 
-        private void AssertInfoField(FieldDto f)
+        private void AssertInfoField(FieldDetailsDto f)
         {
             Assert.AreEqual(FieldType.Info, f.FieldType);
             Assert.IsFalse(f.ShowPrevious);
             Assert.IsNull(f.Unit);
         }
 
-        private void AssertCheckBoxField(FieldDto f)
+        private void AssertCheckBoxField(FieldDetailsDto f)
         {
             Assert.AreEqual(FieldType.CheckBox, f.FieldType);
             Assert.IsFalse(f.ShowPrevious);
             Assert.IsNull(f.Unit);
         }
 
-        private void AssertNumberWithPreviewField(FieldDto f)
+        private void AssertNumberWithPreviewField(FieldDetailsDto f)
         {
             Assert.AreEqual(FieldType.Number, f.FieldType);
             Assert.IsTrue(f.ShowPrevious);
             Assert.AreEqual(_unit, f.Unit);
         }
 
-        private void AssertNumberWithNoPreviewField(FieldDto f)
+        private void AssertNumberWithNoPreviewField(FieldDetailsDto f)
         {
             Assert.AreEqual(FieldType.Number, f.FieldType);
             Assert.IsFalse(f.ShowPrevious);
             Assert.AreEqual(_unit, f.Unit);
         }
 
-        private static void AssertNaNumberInCurrentValue(FieldDto f)
+        private static void AssertNaNumberInCurrentValue(FieldDetailsDto f)
         {
             var numberValue = AssertIsNumberDto(f.CurrentValue);
             Assert.IsTrue(numberValue.IsNA);
             Assert.IsFalse(numberValue.Value.HasValue);
         }
 
-        private static void AssertNumberInCurrentValue(FieldDto f, double expectedValue)
+        private static void AssertNumberInCurrentValue(FieldDetailsDto f, double expectedValue)
         {
             var numberValue = AssertIsNumberDto(f.CurrentValue);
             AssertNumberDto(numberValue, expectedValue);
         }
 
-        private static void AssertNumberInPreviousValue(FieldDto f, double expectedValue)
+        private static void AssertNumberInPreviousValue(FieldDetailsDto f, double expectedValue)
         {
             var numberValue = AssertIsNumberDto(f.PreviousValue);
             AssertNumberDto(numberValue, expectedValue);
         }
 
-        private static NumberDto AssertIsNumberDto(object numberDto)
+        private static NumberDetailsDto AssertIsNumberDto(object numberDto)
         {
-            Assert.IsInstanceOfType(numberDto, typeof(NumberDto));
-            var numberValue = numberDto as NumberDto;
+            Assert.IsInstanceOfType(numberDto, typeof(NumberDetailsDto));
+            var numberValue = numberDto as NumberDetailsDto;
             Assert.IsNotNull(numberDto);
 
             Assert.IsNotNull(numberValue);
             return numberValue;
         }
 
-        private static void AssertNumberDto(NumberDto numberValue, double expectedValue)
+        private static void AssertNumberDto(NumberDetailsDto numberValue, double expectedValue)
         {
             Assert.IsFalse(numberValue.IsNA);
             Assert.IsTrue(numberValue.Value.HasValue);
             Assert.AreEqual(expectedValue, numberValue.Value.Value);
         }
 
-        private void AssertAttachmentField(FieldDto f, FieldValueAttachment expectedValue)
+        private void AssertAttachmentField(FieldDetailsDto f, FieldValueAttachment expectedValue)
         {
             Assert.AreEqual(FieldType.Attachment, f.FieldType);
             Assert.IsFalse(f.ShowPrevious);
             Assert.IsNull(f.Unit);
 
-            Assert.IsInstanceOfType(f.CurrentValue, typeof(AttachmentDto));
-            var attachmentDto = f.CurrentValue as AttachmentDto;
+            Assert.IsInstanceOfType(f.CurrentValue, typeof(AttachmentDetailsDto));
+            var attachmentDto = f.CurrentValue as AttachmentDetailsDto;
             Assert.IsNotNull(attachmentDto);
             Assert.AreEqual(expectedValue.Id, attachmentDto.Id);
             Assert.AreEqual(expectedValue.FileName, attachmentDto.FileName);

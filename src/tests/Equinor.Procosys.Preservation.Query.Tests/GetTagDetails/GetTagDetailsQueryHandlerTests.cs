@@ -21,9 +21,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _testDataSet = AddTestDataSet(context);
-
                 _testTag = _testDataSet.Project1.Tags.First();
-
                 _testTag.StartPreservation();
                 context.SaveChangesAsync().Wait();
             }
@@ -47,6 +45,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 var dto = result.Data;
                 var step = context.Steps.Single(s => s.Id == _testTag.StepId);
                 var mode = context.Modes.Single(m => m.Id == step.ModeId);
+                var resp = context.Responsibles.Single(r => r.Id == step.ResponsibleId);
+                var journey = context.Journeys.Single(j => j.Steps.Any(s => s.Id == step.Id));
                 Assert.AreEqual(_testTag.AreaCode, dto.AreaCode);
                 Assert.AreEqual(_testTag.Calloff, dto.CalloffNo);
                 Assert.AreEqual(_testTag.CommPkgNo, dto.CommPkgNo);
@@ -58,12 +58,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(_testTag.TagNo, dto.TagNo);
                 Assert.AreEqual(_testTag.TagType, dto.TagType);
                 Assert.AreEqual(_testTag.IsReadyToBePreserved(), dto.ReadyToBePreserved);
-
-                var resp = context.Responsibles.Single(r => r.Id == step.ResponsibleId);
-                var journey = context.Journeys.Single(j => j.Steps.Any(s => s.Id == step.Id));
-                Assert.AreEqual(journey.Title, dto.JourneyTitle);
-                Assert.AreEqual(mode.Title, dto.Mode);
-                Assert.AreEqual(resp.Code, dto.ResponsibleName);
+                Assert.IsNotNull(dto.Journey.Title);
+                Assert.AreEqual(journey.Title, dto.Journey.Title);
+                Assert.IsNotNull(dto.Step);
+                Assert.AreEqual(step.Title, dto.Step.Title);
+                Assert.IsNotNull(dto.Mode);
+                Assert.AreEqual(mode.Title, dto.Mode.Title);
+                Assert.IsNotNull(dto.Responsible);
+                Assert.AreEqual(resp.Code, dto.Responsible.Code);
             }
         }
 
