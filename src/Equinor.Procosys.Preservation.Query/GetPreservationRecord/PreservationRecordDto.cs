@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
 namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
 {
@@ -8,20 +7,16 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
         public PreservationRecordDto(
             int id,
             bool bulkPreserved,
-            string requirementTypeTitle,
-            string requirementTypeCode,
-            RequirementTypeIcon requirementTypeIcon,
-            string requirementDefinitionTitle,
+            RequirementTypeDetailsDto requirementType,
+            RequirementDefinitionDetailDto requirementDefinition,
             int intervalWeeks,
             string comment,
-            List<FieldDto> fields)
+            List<FieldDetailsDto> fields)
         {
             Id = id;
             BulkPreserved = bulkPreserved;
-            RequirementTypeTitle = requirementTypeTitle;
-            RequirementTypeCode = requirementTypeCode;
-            RequirementTypeIcon = requirementTypeIcon;
-            RequirementDefinitionTitle = requirementDefinitionTitle;
+            RequirementType = requirementType;
+            RequirementDefinition = requirementDefinition;
             IntervalWeeks = intervalWeeks;
             Comment = comment;
             Fields = fields;
@@ -29,12 +24,10 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
 
         public int Id { get; }
         public bool BulkPreserved { get; }
-        public string RequirementTypeTitle { get; }
-        public string RequirementTypeCode { get; }
-        public RequirementTypeIcon RequirementTypeIcon { get; }
-        public string RequirementDefinitionTitle { get; }
+        public RequirementTypeDetailsDto RequirementType { get; }
+        public RequirementDefinitionDetailDto RequirementDefinition { get; }
         public int IntervalWeeks { get; }
         public string Comment { get; }
-        public List<FieldDto> Fields { get; }
+        public List<FieldDetailsDto> Fields { get; }
     }
 }

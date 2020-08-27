@@ -55,9 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
                     where requirementDefinitionId == requirementDefinition.Id
                     select new
                     {
-                        ReqTypeIcon = requirementType.Icon,
-                        ReqTypeTitle = requirementType.Title,
-                        ReqTypeCode = requirementType.Code,
+                        RequirementType = requirementType,
                         RequirementDefinition = requirementDefinition,
                     }
                 ).SingleOrDefaultAsync(cancellationToken);
@@ -92,16 +90,20 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
             {
                 var currentValue = preservationPeriod.GetFieldValue(f.Id);
                 var previousValue = previousPreservedPeriod?.GetFieldValue(f.Id);
-                return new FieldDto(f, currentValue, previousValue);
+                return new FieldDetailsDto(f, currentValue, previousValue);
             }).ToList();
 
             var preservationRecordDto = new PreservationRecordDto(
                 preservationPeriod.PreservationRecord.Id,
                 preservationPeriod.PreservationRecord.BulkPreserved,
-                requirementDto.ReqTypeTitle,
-                requirementDto.ReqTypeCode,
-                requirementDto.ReqTypeIcon,
-                requirementDto.RequirementDefinition.Title,
+                new RequirementTypeDetailsDto(
+                    requirementDto.RequirementType.Id,
+                    requirementDto.RequirementType.Code,
+                    requirementDto.RequirementType.Icon,
+                    requirementDto.RequirementType.Title), 
+                new RequirementDefinitionDetailDto(
+                    requirementDto.RequirementDefinition.Id,
+                    requirementDto.RequirementDefinition.Title), 
                 requirementDto.RequirementDefinition.DefaultIntervalWeeks,
                 preservationPeriod.Comment, 
                 fields);
