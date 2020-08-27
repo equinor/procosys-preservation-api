@@ -27,8 +27,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 .WithMessage(x => $"File {x.File.FileName} is not a valid file for upload!")
                 .When(x => x.File != null);
             
-            RuleFor(x => x.File.Length/1000)
-                .LessThan(options.CurrentValue.MaxSizeKb)
+            RuleFor(x => x.File.Length)
+                .Must(NotBeTooBigFile)
                 .When(x => x.File != null)
                 .WithMessage($"Maximum file size is {options.CurrentValue.MaxSizeKb}kB!");
 
@@ -36,6 +36,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             {
                 var suffix = Path.GetExtension(fileName?.ToLower());
                 return suffix != null && options.CurrentValue.ValidFileSuffixes.Contains(suffix) && fileName?.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
+            }
+            
+            bool NotBeTooBigFile(long fileSizeInBytes)
+            {
+                var maxSizeInBytes = options.CurrentValue.MaxSizeKb * 1024;
+                return fileSizeInBytes < maxSizeInBytes;
             }
         }
     }
