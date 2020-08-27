@@ -37,6 +37,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private int _tagReqForAll1Id;
         private int _tagReqForSupplierId;
         private int _tagReqForOtherId;
+        private int _firstStepId;
         private const int IntervalWeeks = 4;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -56,8 +57,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 requirementType.AddRequirementDefinition(reqDefForOther);
                 context.SaveChangesAsync().Wait();
 
+                var firstStep = journey.Steps.First();
+                _firstStepId = firstStep.Id;
                 var standardTagNotStartedInFirstStep = AddTag(context, project, TagType.Standard, TagNo1,
-                    "Tag description", journey.Steps.First(), new List<TagRequirement>
+                    "Tag description", firstStep, new List<TagRequirement>
                     {
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1), 
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier), 
@@ -73,19 +76,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 standardTagStartedInLastStep.StartPreservation();
 
                 var preAreaTagNotStartedInFirstStep = AddTag(context, project, TagType.PreArea, "#PRE-E-A1", "Tag description",
-                    journey.Steps.First(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                    firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 var preAreaTagStartedInFirstStep = AddTag(context, project, TagType.PreArea, "#PRE-E-A2", "Tag description",
-                    journey.Steps.First(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                    firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 preAreaTagStartedInFirstStep.StartPreservation();
                 var siteAreaTagNotStarted = AddTag(context, project, TagType.SiteArea, "#SITE-E-A1", "Tag description", 
-                    journey.Steps.First(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                    firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 var siteAreaTagStarted = AddTag(context, project, TagType.SiteArea, "#SITE-E-A2", "Tag description", 
-                    journey.Steps.First(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                    firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 siteAreaTagStarted.StartPreservation();
                 var poAreaTagNotStarted = AddTag(context, project, TagType.PoArea, "#PO-E-A1", "Tag description",
-                    journey.Steps.First(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                    firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 var poAreaTagStarted = AddTag(context, project, TagType.PoArea, "#PO-E-A2", "Tag description",
-                    journey.Steps.First(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                    firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 poAreaTagStarted.StartPreservation();
                 
                 context.SaveChangesAsync().Wait();
@@ -869,6 +872,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var dut = new TagValidator(context, null);
                 var result = await dut.IsInUseAsync(0, default);
                 Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasStepAsync_UnknownTagId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.HasStepAsync(126234, _firstStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasStepAsync_UnknownStepId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.HasStepAsync(_standardTagNotStartedInFirstStepId, 123456, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasStepAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.HasStepAsync(_standardTagNotStartedInFirstStepId, _firstStepId, default);
+                Assert.IsTrue(result);
             }
         }
     }
