@@ -26,7 +26,11 @@ namespace Equinor.Procosys.Preservation.WebApi
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseKestrel(options => options.AddServerHeader = false);
+                    webBuilder.UseKestrel(options =>
+                    {
+                        options.AddServerHeader = false;
+                        options.Limits.MaxRequestBodySize = null;
+                    });
                     webBuilder.UseStartup<Startup>();
                 });
     }
