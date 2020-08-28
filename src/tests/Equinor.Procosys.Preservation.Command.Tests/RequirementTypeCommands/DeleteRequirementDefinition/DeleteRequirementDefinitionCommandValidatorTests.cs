@@ -26,9 +26,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
         {
             _requirementTypeValidatorMock = new Mock<IRequirementTypeValidator>();
             _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
+            _requirementTypeValidatorMock.Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
             _requirementDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
-            _requirementDefinitionValidatorMock.Setup(r => r.ExistsAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
             _requirementDefinitionValidatorMock.Setup(r => r.IsVoidedAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
@@ -57,6 +57,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenRequirementDefinitionNotExists()
+        {
+            _requirementTypeValidatorMock.Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default)).Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist within given requirement type!"));
         }
 
         [TestMethod]

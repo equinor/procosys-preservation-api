@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Un
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist within given requirement type"));
         }
 
         [TestMethod]
