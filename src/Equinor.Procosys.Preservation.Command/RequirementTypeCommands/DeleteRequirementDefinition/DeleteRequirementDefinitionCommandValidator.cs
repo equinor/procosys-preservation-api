@@ -19,8 +19,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type doesn't exist! Requirement type={command.RequirementTypeId}")
-                .MustAsync((command, token) => BeAnExistingRequirementDefinitionAsync(command.RequirementDefinitionId, token))
-                .WithMessage(command => $"Requirement definition doesn't exist! Requirement definition={command.RequirementDefinitionId}")
+                .MustAsync((command, token) => BeAnExistingRequirementDefinitionInTypeAsync(command.RequirementTypeId, command.RequirementDefinitionId, token))
+                .WithMessage(command => $"Requirement definition doesn't exist within given requirement type! Requirement definition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => BeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition is not voided! Requirement definition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotHaveAnyFieldsAsync(command.RequirementDefinitionId, token))
@@ -34,8 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRe
 
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
-            async Task<bool> BeAnExistingRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
-                => await requirementDefinitionValidator.ExistsAsync(requirementDefinitionId, token);
+            async Task<bool> BeAnExistingRequirementDefinitionInTypeAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token)
+                => await requirementTypeValidator.RequirementDefinitionExistsAsync(requirementTypeId, requirementDefinitionId, token);
             async Task<bool> BeAVoidedRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
             async Task<bool> NotHaveAnyFieldsAsync(int requirementDefinitionId, CancellationToken token)

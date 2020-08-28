@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepId, token))
-                .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
+                .WithMessage(command => $"Step doesn't exist within given journey! Step={command.StepId}")
                 .MustAsync((command, token) => HaveUniqueStepTitleInJourneyAsync(command.JourneyId, command.StepId, command.Title, token))
                 .WithMessage(command => $"Another step with title already exists in a journey! Step={command.Title}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
