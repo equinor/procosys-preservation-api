@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValida
             return reqType != null && reqType.RequirementDefinitions.Any();
         }
 
-        public async Task<bool> RequirementDefinitionExistsAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token)
+        public async Task<bool> HasRequirementDefinitionAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token)
         {
             var reqType = await GetRequirementTypeWithDefinitionsAsync(requirementTypeId, token);
 
