@@ -52,14 +52,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
                 .WithMessage(command => $"Project is closed! Project={command.ProjectName}")
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
-                .WithMessage(command => $"Step doesn't exists! Step={command.StepId}")
+                .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is voided! Step={command.StepId}");
 
             RuleForEach(command => command.Requirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) =>
-                    $"Requirement definition doesn't exists! Requirement definition={req.RequirementDefinitionId}")
+                    $"Requirement definition doesn't exist! Requirement definition={req.RequirementDefinitionId}")
                 .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) =>
                     $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");

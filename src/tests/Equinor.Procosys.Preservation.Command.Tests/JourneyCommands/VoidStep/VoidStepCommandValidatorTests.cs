@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidStep
         public void Setup_OkState()
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
-            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
 
             _stepValidatorMock = new Mock<IStepValidator>();
 
@@ -45,16 +45,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepNotExists()
+        public void Validate_ShouldFail_WhenJourneyDontHaveStep()
         {
-            // Arrange
-            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
-
-            // Act
+            _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
+            
             var result = _dut.Validate(_command);
 
-            // Arrange
             Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exist within given journey!"));
         }
 
         [TestMethod]

@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DuplicateJourney
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey doesn't exists! Journey={command.JourneyId}")
+                .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => HaveUniqueJourneyTitleForDuplicateAsync(command.JourneyId, token))
                 .WithMessage(command => "Journey with title for the copy already exists!");
 

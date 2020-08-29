@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepId, token))
-                .WithMessage(command => $"Step doesn't exists within given journey! Step={command.StepId}")
+                .WithMessage(command => $"Step doesn't exist within given journey! Step={command.StepId}")
                 .MustAsync((command, token) => BeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is not voided! Step={command.StepId}")
                 .MustAsync((command, token) => JourneyForStepNotBeUsedAsync(command.JourneyId, token))
@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep
                 => await journeyValidator.ExistsAsync(journeyId, token);
             
             async Task<bool> BeAnExistingStepInJourneyAsync(int journeyId, int stepId, CancellationToken token)
-                => await journeyValidator.StepExistsAsync(journeyId, stepId, token);
+                => await journeyValidator.HasStepAsync(journeyId, stepId, token);
             
             async Task<bool> BeAVoidedStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsVoidedAsync(stepId, token);

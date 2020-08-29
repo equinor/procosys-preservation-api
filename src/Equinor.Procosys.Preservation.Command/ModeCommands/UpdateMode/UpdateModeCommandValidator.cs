@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingModeAsync(command.ModeId, token))
-                .WithMessage(command => $"Mode doesn't exists! Mode={command.ModeId}")
+                .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
                 .MustAsync((command, token) => HaveUniqueModeTitleAsync(command.ModeId, command.Title, token))
                 .WithMessage(command => $"Mode with title already exists! Mode={command.Title}")
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))

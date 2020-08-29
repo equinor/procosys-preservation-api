@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey doesn't exists! Journey={command.JourneyId}")
+                .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => HaveUniqueJourneyTitleAsync(command.JourneyId, command.Title, token))
                 .WithMessage(command => $"Another journey with this title already exists! Journey={command.Title}")
                 .MustAsync((command, token) => NotBeAVoidedJourneyAsync(command.JourneyId, token))

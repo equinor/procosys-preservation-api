@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
                 => await journeyValidator.ExistsAsync(journeyId, token);
             
             async Task<bool> BeAnExistingStepInJourneyAsync(int journeyId, int stepId, CancellationToken token)
-                => await journeyValidator.StepExistsAsync(journeyId, stepId, token);
+                => await journeyValidator.HasStepAsync(journeyId, stepId, token);
             
             async Task<bool> BeAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
                 => await journeyValidator.AreAdjacentStepsInAJourneyAsync(journeyId, stepAId, stepBId, token);

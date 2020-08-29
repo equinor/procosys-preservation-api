@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
                     .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => BeAnExistingFieldAsync(fv.FieldId, token))
-                    .WithMessage((_, fv) => $"Field doesn't exists! Field={fv.FieldId}")
+                    .WithMessage((_, fv) => $"Field doesn't exist! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field is voided! Field={fv.FieldId}");
             });
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
                     .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => BeAnExistingFieldAsync(fv.FieldId, token))
-                    .WithMessage((_, fv) => $"Field doesn't exists! Field={fv.FieldId}")
+                    .WithMessage((_, fv) => $"Field doesn't exist! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field is voided! Field={fv.FieldId}");
             });

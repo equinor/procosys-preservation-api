@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidStep
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
             async Task<bool> BeAnExistingStepInJourneyAsync(int journeyId, int stepId, CancellationToken token)
-                => await journeyValidator.StepExistsAsync(journeyId, stepId, token);
+                => await journeyValidator.HasStepAsync(journeyId, stepId, token);
             async Task<bool> BeAVoidedStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsVoidedAsync(stepId, token);
             bool HaveAValidRowVersion(string rowVersion)

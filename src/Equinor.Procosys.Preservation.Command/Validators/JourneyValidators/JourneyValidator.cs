@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
                 where j.Id == journeyId
                 select j).AnyAsync(token);
         
-        public async Task<bool> StepExistsAsync(int journeyId, int stepId, CancellationToken token)
+        public async Task<bool> HasStepAsync(int journeyId, int stepId, CancellationToken token)
         {
             var journey = await GetJourneyWithStepsAsync(journeyId, token);
 
