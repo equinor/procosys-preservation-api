@@ -44,13 +44,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
 
             _reqTypeValidatorMock = new Mock<IRequirementTypeValidator>();
             _reqTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
-            _reqTypeValidatorMock
-                .Setup(rd => rd.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
-                .Returns(Task.FromResult(true));
 
             _reqDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
+            _reqDefinitionValidatorMock.Setup(r => r.ExistsAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
             _reqDefinitionValidatorMock
                 .Setup(r => r.AllExcludedFieldsAreVoidedAsync(_requirementDefinitionId, new List<int> {_updateFieldId}, default))
+                .Returns(Task.FromResult(true));
+            _reqDefinitionValidatorMock
+                .Setup(rd => rd.RequirementDefinitionHasRequirementTypeAsParentAsync(_requirementTypeId, _requirementDefinitionId, default))
                 .Returns(Task.FromResult(true));
 
             _fieldValidatorMock = new Mock<IFieldValidator>();
@@ -96,13 +97,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDefinitionNotExists()
         {
-            _reqTypeValidatorMock.Setup(rd => rd.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default)).Returns(Task.FromResult(false));
+            _reqDefinitionValidatorMock.Setup(r => r.ExistsAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist within given requirement type"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenBothRequirementTypeAndRequirementDefinitionExists_ButRequirementDefinitionHasOtherParent()
+        {
+            _reqDefinitionValidatorMock
+                .Setup(rd => rd.RequirementDefinitionHasRequirementTypeAsParentAsync(_requirementTypeId, _requirementDefinitionId, default))
+                .Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Can not move a requirement definition to another requirement type!"));
         }
 
         [TestMethod]

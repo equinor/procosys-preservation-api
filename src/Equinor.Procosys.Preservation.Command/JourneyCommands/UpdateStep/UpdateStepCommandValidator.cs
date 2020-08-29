@@ -24,8 +24,12 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
-                .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepId, token))
-                .WithMessage(command => $"Step doesn't exist within given journey! Step={command.StepId}")
+                .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
+                .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
+                .MustAsync((command, token) => StepHasJourneyAsParentAsync(command.JourneyId, command.StepId, token))
+                // this check must come after checking if both journey and step exists.
+                // If both exists, but step has another journey as parent, this is a change of parent, i.e a "move"
+                .WithMessage(command => $"Can not move a step to another journey! Step={command.StepId}")
                 .MustAsync((command, token) => HaveUniqueStepTitleInJourneyAsync(command.JourneyId, command.StepId, command.Title, token))
                 .WithMessage(command => $"Another step with title already exists in a journey! Step={command.Title}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
@@ -46,8 +50,11 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);
             
-            async Task<bool> BeAnExistingStepInJourneyAsync(int journeyId, int stepId, CancellationToken token)
-                => await journeyValidator.StepExistsAsync(journeyId, stepId, token);
+            async Task<bool> BeAnExistingStepAsync(int stepId, CancellationToken token)
+                => await stepValidator.ExistsAsync(stepId, token);
+            
+            async Task<bool> StepHasJourneyAsParentAsync(int journeyId, int stepId, CancellationToken token)
+                => await stepValidator.StepHasJourneyAsParentAsync(journeyId, stepId, token);
             
             async Task<bool> HaveUniqueStepTitleInJourneyAsync(int journeyId, int stepId, string stepTitle, CancellationToken token) =>
                 !await journeyValidator.OtherStepExistsWithSameTitleAsync(journeyId, stepId, stepTitle, token);
