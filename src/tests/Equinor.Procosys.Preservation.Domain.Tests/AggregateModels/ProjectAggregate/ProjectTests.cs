@@ -12,11 +12,21 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
     public class ProjectTests
     {
         private const string TestPlant = "PlantA";
-        private readonly Project _dut = new Project(TestPlant, "ProjectNameA", "DescA");
+        private Project _dut;
+        private Mock<Step> _stepMock;
+        private Mock<TagRequirement> _reqMock;
+        private Tag _tag;
 
         [TestInitialize]
         public void Setup()
         {
+            _stepMock = new Mock<Step>();
+            _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
+            _reqMock = new Mock<TagRequirement>();
+            _reqMock.SetupGet(r => r.Plant).Returns(TestPlant);
+            _tag = new Tag(TestPlant, TagType.Standard, "", "", _stepMock.Object, new List<TagRequirement>{_reqMock.Object});
+            _dut = new Project(TestPlant, "ProjectNameA", "DescA");
+            _dut.AddTag(_tag);
         }
 
         [TestMethod]
@@ -29,25 +39,40 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void AddTag_ShouldThrowExceptionTest_ForNullTag()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => _dut.AddTag(null));
-            Assert.AreEqual(0, _dut.Tags.Count);
-        }
+        public void AddTag_ShouldThrowExceptionTest_WhenTagNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dut.AddTag(null));
 
         [TestMethod]
         public void AddTag_ShouldAddTagToTagsList()
         {
-            var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
-            var reqMock = new Mock<TagRequirement>();
-            reqMock.SetupGet(r => r.Plant).Returns(TestPlant);
-            var tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement>{reqMock.Object});
+            var newTag = new Tag(TestPlant, TagType.Standard, "", "", _stepMock.Object, new List<TagRequirement>{_reqMock.Object});
 
-            _dut.AddTag(tag);
+            _dut.AddTag(newTag);
 
+            Assert.AreEqual(2, _dut.Tags.Count);
+            Assert.IsTrue(_dut.Tags.Contains(newTag));
+        }
+
+        [TestMethod]
+        public void RemoveTag_ShouldThrowExceptionTest_WhenTagNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveTag(null));
+
+        [TestMethod]
+        public void RemoveTag_ShouldThrowExceptionTest_WhenTagIsNotVoided()
+            => Assert.ThrowsException<Exception>(() => _dut.RemoveTag(_tag));
+
+        [TestMethod]
+        public void RemoveTag_ShouldRemoveTagFromTagsList()
+        {
+            // Arrange
             Assert.AreEqual(1, _dut.Tags.Count);
-            Assert.IsTrue(_dut.Tags.Contains(tag));
+            _tag.IsVoided = true;
+
+            // Act
+            _dut.RemoveTag(_tag);
+
+            // Assert
+            Assert.AreEqual(0, _dut.Tags.Count);
         }
 
         [TestMethod]

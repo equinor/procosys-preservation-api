@@ -63,10 +63,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
 
         [TestMethod]
         public void AddStep_ShouldThrowException_WhenStepNotGiven()
-        {
-            Assert.ThrowsException<ArgumentNullException>(() => _dutWithNoSteps.AddStep(null));
-            Assert.AreEqual(0, _dutWithNoSteps.Steps.Count);
-        }
+            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithNoSteps.AddStep(null));
 
         [TestMethod]
         public void AddStep_ShouldAddStepToStepsList()
@@ -96,11 +93,12 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
+        public void RemoveStep_ShouldThrowException_WhenStepNotGiven()
+            => Assert.ThrowsException<ArgumentNullException>(() => _dutWithNoSteps.RemoveStep(null));
+
+        [TestMethod]
         public void RemoveStep_ShouldThrowExceptionWhenStepIsNotVoided()
-        {
-            Assert.ThrowsException<Exception>(() => _dutWithNoSteps.RemoveStep(_stepA));
-            Assert.AreEqual(3, _dutWith3Steps.Steps.Count);
-        }
+            => Assert.ThrowsException<Exception>(() => _dutWithNoSteps.RemoveStep(_stepA));
 
         [TestMethod]
         public void AddStep_ShouldSetIncreasedSortKey()
