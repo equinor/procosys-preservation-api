@@ -47,6 +47,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 var mode = context.Modes.Single(m => m.Id == step.ModeId);
                 var resp = context.Responsibles.Single(r => r.Id == step.ResponsibleId);
                 var journey = context.Journeys.Single(j => j.Steps.Any(s => s.Id == step.Id));
+                // todo write more unit tests on IsUnUse is true
+                Assert.IsFalse(dto.IsInUse);
                 Assert.AreEqual(_testTag.AreaCode, dto.AreaCode);
                 Assert.AreEqual(_testTag.Calloff, dto.CalloffNo);
                 Assert.AreEqual(_testTag.CommPkgNo, dto.CommPkgNo);
