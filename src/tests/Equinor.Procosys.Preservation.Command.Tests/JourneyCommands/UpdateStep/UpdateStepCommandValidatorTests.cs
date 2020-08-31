@@ -35,9 +35,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
             _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
-            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
 
             _stepValidatorMock = new Mock<IStepValidator>();
+            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(true));
+            _stepValidatorMock.Setup(r => r.StepHasJourneyAsParentAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
             _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplierAsync(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(true));
             _stepValidatorMock.Setup(r => r.HasModeAsync(_modeId, _stepId, default)).Returns(Task.FromResult(true));
 
@@ -80,16 +81,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepNotExistsInJourney()
+        public void Validate_ShouldFail_WhenStepNotExists()
         {
-            // Arrange
-            _journeyValidatorMock.Setup(r => r.StepExistsAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
+            _stepValidatorMock.Setup(r => r.ExistsAsync(_stepId, default)).Returns(Task.FromResult(false));
 
-            // Act
             var result = _dut.Validate(_command);
 
-            // Arrange
             Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenBothJourneyAndStepExists_ButStepHasOtherParent()
+        {
+            _stepValidatorMock.Setup(r => r.StepHasJourneyAsParentAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Can not move a step to another journey!"));
         }
 
         [TestMethod]

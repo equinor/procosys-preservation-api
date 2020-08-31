@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                 RuleForEach(command => command.Requirements)
                     .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
                     .WithMessage((_, req) =>
-                        $"Requirement definition doesn't exists! Requirement definition={req.RequirementDefinitionId}")
+                        $"Requirement definition doesn't exist! Requirement definition={req.RequirementDefinitionId}")
                     .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                     .WithMessage((_, req) =>
                         $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");

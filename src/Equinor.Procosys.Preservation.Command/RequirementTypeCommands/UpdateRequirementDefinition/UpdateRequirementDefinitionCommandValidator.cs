@@ -21,8 +21,12 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingRequirementTypeAsync(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type doesn't exist! Requirement type={command.RequirementTypeId}")
-                .MustAsync((command, token) => BeAnExistingRequirementDefinitionAsync(command.RequirementTypeId, command.RequirementDefinitionId, token))
+                .MustAsync((command, token) => BeAnExistingRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition doesn't exist! Requirement definition={command.RequirementDefinitionId}")
+                .MustAsync((command, token) => RequirementDefinitionHasRequirementTypeAsParentAsync(command.RequirementTypeId, command.RequirementDefinitionId, token))
+                // this check must come after checking if both type and def exists.
+                // If both exists, but def has another type as parent, this is a change of parent, i.e a "move"
+                .WithMessage(command => $"Can not move a requirement definition to another requirement type! Requirement definition={command.RequirementDefinitionId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition is voided! Requirement definition={command.Title}")
                 .MustAsync(RequirementDefinitionTitleMustBeUniqueOnType)
@@ -41,8 +45,11 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             async Task<bool> BeAnExistingRequirementTypeAsync(int requirementTypeId, CancellationToken token)
                 => await requirementTypeValidator.ExistsAsync(requirementTypeId, token);
             
-            async Task<bool> BeAnExistingRequirementDefinitionAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token)
-                => await requirementTypeValidator.RequirementDefinitionExistsAsync(requirementTypeId, requirementDefinitionId, token);
+            async Task<bool> BeAnExistingRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
+                => await requirementDefinitionValidator.ExistsAsync(requirementDefinitionId, token);
+            
+            async Task<bool> RequirementDefinitionHasRequirementTypeAsParentAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token)
+                => await requirementDefinitionValidator.RequirementDefinitionHasRequirementTypeAsParentAsync(requirementTypeId, requirementDefinitionId, token);
             
             async Task<bool> NotBeAVoidedRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);

@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 .MustAsync((command, token) => NotBeAnExistingTagWithinProjectAsync(command.GetTagNo(), command.ProjectName, token))
                 .WithMessage(command => $"Tag already exists in scope for project! Tag={command.GetTagNo()} Project={command.ProjectName}")
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
-                .WithMessage(command => $"Step doesn't exists! Step={command.StepId}")
+                .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is voided! Step={command.StepId}")
                 .MustAsync((command, token) => BeASupplierStepAsync(command.StepId, token))
@@ -54,7 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
 
             RuleForEach(command => command.Requirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
-                .WithMessage((_, req) => $"Requirement definition doesn't exists! Requirement definition={req.RequirementDefinitionId}")
+                .WithMessage((_, req) => $"Requirement definition doesn't exist! Requirement definition={req.RequirementDefinitionId}")
                 .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) => $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
 

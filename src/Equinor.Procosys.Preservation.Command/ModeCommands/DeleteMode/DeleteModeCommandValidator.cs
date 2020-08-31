@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
             
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingMode(command.ModeId, token))
-                .WithMessage(command => $"Mode doesn't exists! Mode={command.ModeId}")
+                .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
                 .MustAsync((command, token) => BeAVoidedMode(command.ModeId, token))
                 .WithMessage(command => $"Mode is not voided! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeUsedInAnyStep(command.ModeId, token))

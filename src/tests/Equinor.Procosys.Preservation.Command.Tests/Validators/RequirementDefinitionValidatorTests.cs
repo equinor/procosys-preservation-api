@@ -531,5 +531,38 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 Assert.IsTrue(result);
             }
         }
+
+        [TestMethod]
+        public async Task RequirementDefinitionHasRequirementTypeAsParentAsync_UnknownRequirementDefinitionId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.RequirementDefinitionHasRequirementTypeAsParentAsync(_requirementType.Id, 126234, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task RequirementDefinitionHasRequirementTypeAsParentAsync_UnknownRequirementTypeId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.RequirementDefinitionHasRequirementTypeAsParentAsync(126234, _reqDefForOther.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task RequirementDefinitionHasRequirementTypeAsParentAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.RequirementDefinitionHasRequirementTypeAsParentAsync(_requirementType.Id, _reqDefForOther.Id, default);
+                Assert.IsTrue(result);
+            }
+        }
     }
 }

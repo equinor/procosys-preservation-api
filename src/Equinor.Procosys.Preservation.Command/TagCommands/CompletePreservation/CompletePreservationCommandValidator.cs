@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
             {
                 RuleForEach(command => command.Tags)
                     .MustAsync((_, tag, __, token) => BeAnExistingTagAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag doesn't exists! Tag={id}")
+                    .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
                     .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tag, __, token) => IsReadyToBeCompletedAsync(tag.Id, token))

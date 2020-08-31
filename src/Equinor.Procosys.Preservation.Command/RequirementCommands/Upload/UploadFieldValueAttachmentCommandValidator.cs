@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Upload
                 .MustAsync((command, token) => BeAFieldForAttachmentAsync(command.FieldId, token))
                 .WithMessage(command => $"Field values can not be recorded for field type! Field={command.FieldId}")
                 .MustAsync((command, token) => BeAnExistingFieldAsync(command.FieldId, token))
-                .WithMessage(command => $"Field doesn't exists! Field={command.FieldId}")
+                .WithMessage(command => $"Field doesn't exist! Field={command.FieldId}")
                 .MustAsync((command, token) => NotBeAVoidedFieldAsync(command.FieldId, token))
                 .WithMessage(command => $"Field is voided! Field={command.FieldId}");
                         

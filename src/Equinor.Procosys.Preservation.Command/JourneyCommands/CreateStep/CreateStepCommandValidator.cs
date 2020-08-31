@@ -19,11 +19,11 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingJourney(command.JourneyId, token))
-                .WithMessage(command => $"Journey doesn't exists! Journey={command.JourneyId}")
+                .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => NotBeAVoidedJourney(command.JourneyId, token))
                 .WithMessage(command => $"Journey is voided! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAnExistingModeAsync(command.ModeId, token))
-                .WithMessage(command => $"Mode doesn't exists! Mode={command.ModeId}")
+                .WithMessage(command => $"Mode doesn't exist! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAVoidedModeAsync(command.ModeId, token))
                 .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAnExistingAndVoidedResponsibleAsync(command.ResponsibleCode, token))

@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
         }
 
         [TestMethod]
@@ -150,7 +150,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
         }
 
         [TestMethod]

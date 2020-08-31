@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
                 .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
                 .WithMessage(command => $"Project is closed! Project={command.ProjectName}")
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
-                .WithMessage(command => $"Step doesn't exists! Step={command.StepId}")
+                .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is voided! Step={command.StepId}");
                         

@@ -77,12 +77,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
 
             RuleForEach(command => command.UpdatedRequirements)
                 .MustAsync((command, req, __, token) => BeAnExistingTagRequirementAsync(command.TagId, req.TagRequirementId, token))
-                .WithMessage((_, req) => $"Requirement doesn't exists! Requirement={req.TagRequirementId}");
+                .WithMessage((_, req) => $"Requirement doesn't exist! Requirement={req.TagRequirementId}");
             
             RuleForEach(command => command.NewRequirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req.RequirementDefinitionId, token))
                 .WithMessage((_, req) =>
-                    $"Requirement definition doesn't exists! Requirement definition={req.RequirementDefinitionId}")
+                    $"Requirement definition doesn't exist! Requirement definition={req.RequirementDefinitionId}")
                 .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req.RequirementDefinitionId, token))
                 .WithMessage((_, req) =>
                     $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");

@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.AutoScopeTags
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exists!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exist!"));
         }
 
         [TestMethod]

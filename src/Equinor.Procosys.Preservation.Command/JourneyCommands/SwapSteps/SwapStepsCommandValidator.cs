@@ -20,9 +20,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepAId, token))
-                .WithMessage(command => $"Step doesn't exist! Step={command.StepAId}")
+                .WithMessage(command => $"Step doesn't exist within given journey! Step={command.StepAId}")
                 .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepBId, token))
-                .WithMessage(command => $"Step doesn't exist! Step={command.StepBId}")
+                .WithMessage(command => $"Step doesn't exist within given journey! Step={command.StepBId}")
                 .MustAsync((command, token) => BeAdjacentStepsInAJourneyAsync(command.JourneyId, command.StepAId, command.StepBId, token))
                 .WithMessage(command => $"Steps are not adjacent! Steps={command.StepAId} and {command.StepBId}")
                 .MustAsync((command, token) => NotIncludeAnySupplierStep(command.StepAId, command.StepBId, token))
@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
                 => await journeyValidator.ExistsAsync(journeyId, token);
             
             async Task<bool> BeAnExistingStepInJourneyAsync(int journeyId, int stepId, CancellationToken token)
-                => await journeyValidator.StepExistsAsync(journeyId, stepId, token);
+                => await journeyValidator.HasStepAsync(journeyId, stepId, token);
             
             async Task<bool> BeAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
                 => await journeyValidator.AreAdjacentStepsInAJourneyAsync(journeyId, stepAId, stepBId, token);

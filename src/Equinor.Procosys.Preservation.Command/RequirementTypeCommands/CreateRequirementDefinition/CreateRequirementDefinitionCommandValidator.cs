@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRe
 
             RuleFor(command => command)
                 .MustAsync((command, token) => RequirementTypeMustExists(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type doesn't exists! Requirement type={command.RequirementTypeId}")
+                .WithMessage(command => $"Requirement type doesn't exist! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) => RequirementTypeMustNotBeVoided(command.RequirementTypeId, token))
                 .WithMessage(command => $"Requirement type is voided! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) =>
