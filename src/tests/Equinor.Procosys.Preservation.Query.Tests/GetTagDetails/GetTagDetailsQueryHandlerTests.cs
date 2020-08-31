@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -7,13 +8,14 @@ using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
+using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
 {
     [TestClass]
     public class GetTagDetailsQueryHandlerTests : ReadOnlyTestsBase
     {
-        private Tag _testTag;
+        private int _testTagId;
         private TestDataSet _testDataSet;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -21,20 +23,26 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _testDataSet = AddTestDataSet(context);
-                _testTag = _testDataSet.Project1.Tags.First();
-                _testTag.StartPreservation();
-                context.SaveChangesAsync().Wait();
+                _testTagId = _testDataSet.Project1.Tags.First().Id;
             }
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnTagDetails()
+        public async Task Handler_ShouldReturnCorrectTagDetails_AfterPreservationStarted()
         {
+            Tag tag;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _testTagId);
+                tag.StartPreservation();
+                context.SaveChangesAsync().Wait();
+            }
+            
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
 
-                var query = new GetTagDetailsQuery(_testTag.Id);
+                var query = new GetTagDetailsQuery(_testTagId);
                 var dut = new GetTagDetailsQueryHandler(context);
 
                 var result = await dut.Handle(query, default);
@@ -43,23 +51,22 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(ResultType.Ok, result.ResultType);
                 
                 var dto = result.Data;
-                var step = context.Steps.Single(s => s.Id == _testTag.StepId);
+                var step = context.Steps.Single(s => s.Id == tag.StepId);
                 var mode = context.Modes.Single(m => m.Id == step.ModeId);
                 var resp = context.Responsibles.Single(r => r.Id == step.ResponsibleId);
                 var journey = context.Journeys.Single(j => j.Steps.Any(s => s.Id == step.Id));
-                // todo write more unit tests on IsUnUse is true
-                Assert.IsFalse(dto.IsInUse);
-                Assert.AreEqual(_testTag.AreaCode, dto.AreaCode);
-                Assert.AreEqual(_testTag.Calloff, dto.CalloffNo);
-                Assert.AreEqual(_testTag.CommPkgNo, dto.CommPkgNo);
-                Assert.AreEqual(_testTag.Description, dto.Description);
-                Assert.AreEqual(_testTag.Id, dto.Id);
-                Assert.AreEqual(_testTag.McPkgNo, dto.McPkgNo);
-                Assert.AreEqual(_testTag.PurchaseOrderNo, dto.PurchaseOrderNo);
+                Assert.IsTrue(dto.IsInUse);
+                Assert.AreEqual(tag.AreaCode, dto.AreaCode);
+                Assert.AreEqual(tag.Calloff, dto.CalloffNo);
+                Assert.AreEqual(tag.CommPkgNo, dto.CommPkgNo);
+                Assert.AreEqual(tag.Description, dto.Description);
+                Assert.AreEqual(tag.Id, dto.Id);
+                Assert.AreEqual(tag.McPkgNo, dto.McPkgNo);
+                Assert.AreEqual(tag.PurchaseOrderNo, dto.PurchaseOrderNo);
                 Assert.AreEqual(PreservationStatus.Active.GetDisplayValue(), dto.Status);
-                Assert.AreEqual(_testTag.TagNo, dto.TagNo);
-                Assert.AreEqual(_testTag.TagType, dto.TagType);
-                Assert.AreEqual(_testTag.IsReadyToBePreserved(), dto.ReadyToBePreserved);
+                Assert.AreEqual(tag.TagNo, dto.TagNo);
+                Assert.AreEqual(tag.TagType, dto.TagType);
+                Assert.AreEqual(tag.IsReadyToBePreserved(), dto.ReadyToBePreserved);
                 Assert.IsNotNull(dto.Journey.Title);
                 Assert.AreEqual(journey.Title, dto.Journey.Title);
                 Assert.IsNotNull(dto.Step);
@@ -68,6 +75,72 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 Assert.AreEqual(mode.Title, dto.Mode.Title);
                 Assert.IsNotNull(dto.Responsible);
                 Assert.AreEqual(resp.Code, dto.Responsible.Code);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnIsUnUseFalse_BeforePreservationStartedAndNoAttachmentsOrActions()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagDetailsQuery(_testTagId);
+                var dut = new GetTagDetailsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+                
+                var dto = result.Data;
+                Assert.IsFalse(dto.IsInUse);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnIsUnUseTrue_BeforePreservationStartedButAttachmentExist()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _testTagId);
+                tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, "File"));
+                context.SaveChangesAsync().Wait();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagDetailsQuery(_testTagId);
+                var dut = new GetTagDetailsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+                
+                var dto = result.Data;
+                Assert.IsTrue(dto.IsInUse);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnIsUnUseTrue_BeforePreservationStartedButActionExist()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _testTagId);
+                tag.AddAction(new Action(TestPlant, "A", "D", null));
+                context.SaveChangesAsync().Wait();
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagDetailsQuery(_testTagId);
+                var dut = new GetTagDetailsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+                
+                var dto = result.Data;
+                Assert.IsTrue(dto.IsInUse);
             }
         }
 
