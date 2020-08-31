@@ -6,6 +6,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
     {
         public TagDetailsDto(int id,
             string tagNo,
+            bool isInUse, 
             bool isVoided, 
             string description, 
             string status, 
@@ -26,6 +27,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
         {
             Id = id;
             TagNo = tagNo;
+            IsInUse = isInUse;
             IsVoided = isVoided;
             Description = description;
             Status = status;
@@ -47,6 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
 
         public int Id { get; }
         public string TagNo { get; }
+        public bool IsInUse { get; }
         public bool IsVoided { get; }
         public string Description { get; }
         public string Status { get; }
