@@ -79,7 +79,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnIsUnUseFalse_BeforePreservationStartedAndNoAttachmentsOrActions()
+        public async Task Handler_ShouldReturnIsInUseFalse_BeforePreservationStartedAndNoAttachmentsOrActions()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnIsUnUseTrue_BeforePreservationStartedButAttachmentExist()
+        public async Task Handler_ShouldReturnIsInUseTrue_BeforePreservationStartedButAttachmentExists()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
         }
 
         [TestMethod]
-        public async Task Handler_ShouldReturnIsUnUseTrue_BeforePreservationStartedButActionExist()
+        public async Task Handler_ShouldReturnIsInUseTrue_BeforePreservationStartedButActionExists()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
