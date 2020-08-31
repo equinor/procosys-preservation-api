@@ -17,7 +17,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
         private readonly string TagFunctionCode = "TFC";
         private readonly string RegisterCode = "RC";
         private readonly string ProcosysDescription = "ProcosysDescription";
-        private readonly string RowVersion = "AAAAAAAAABA=";
         private RequirementDefinition _reqDef1;
         private RequirementDefinition _reqDef2;
         private const int ReqDefId1 = 99;
@@ -66,9 +65,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
                 {
                     new RequirementForCommand(ReqDefId1, Interval1),
                     new RequirementForCommand(ReqDefId2, Interval2),
-                },
-                RowVersion);
-            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null, RowVersion);
+                });
+            _commandWithoutRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode, null);
             
             _tfRepositoryMock = new Mock<ITagFunctionRepository>();
             _tfRepositoryMock
@@ -212,25 +210,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.Update
             var req = requirements.SingleOrDefault(r => r.RequirementDefinitionId == reqDefId);
             Assert.IsNotNull(req);
             Assert.AreEqual(interval, req.IntervalWeeks);
-        }
-
-        [TestMethod]
-        public async Task HandlingUpdateRequirementsCommand_ShouldSetAndReturnRowVersion_WhenTagFunctionAlreadyExist()
-        {
-            // Arrange
-            var tagFunction = new TagFunction(TestPlant, TagFunctionCode, "", RegisterCode);
-            _tfRepositoryMock
-                .Setup(r => r.GetByCodesAsync(TagFunctionCode, RegisterCode)).Returns(Task.FromResult(tagFunction));
-
-            // Act
-            var result = await _dut.Handle(_commandWithoutRequirements, default);
-
-            // Assert
-            Assert.AreEqual(0, result.Errors.Count);
-            // In real life EF Core will create a new RowVersion when save.
-            // Since UnitOfWorkMock is a Mock this will not happen here, so we assert that RowVersion is set from command
-            Assert.AreEqual(RowVersion, result.Data);
-            Assert.AreEqual(RowVersion, tagFunction.RowVersion.ConvertToString());
         }
 
         [TestMethod]

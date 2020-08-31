@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using FluentValidation;
 
@@ -10,9 +9,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
 {
     public class UpdateRequirementsCommandValidator : AbstractValidator<UpdateRequirementsCommand>
     {
-        public UpdateRequirementsCommandValidator(
-            IRequirementDefinitionValidator requirementDefinitionValidator,
-            IRowVersionValidator rowVersionValidator)
+        public UpdateRequirementsCommandValidator(IRequirementDefinitionValidator requirementDefinitionValidator)
         {
             CascadeMode = CascadeMode.Stop;
 
@@ -33,10 +30,6 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                         $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
             });
 
-            RuleFor(command => command)
-                .Must(command => HaveAValidRowVersion(command.RowVersion))
-                .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
-
             async Task<bool> BeAnExistingRequirementDefinitionAsync(RequirementForCommand requirement, CancellationToken token)
                 => await requirementDefinitionValidator.ExistsAsync(requirement.RequirementDefinitionId, token);
 
@@ -54,9 +47,6 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(reqIds, token);
             }
-
-            bool HaveAValidRowVersion(string rowVersion)
-                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

@@ -48,7 +48,6 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             }
             else
             {
-                tagFunction.SetRowVersion(request.RowVersion);
                 RemoveChangedOrRemovedRequirementsFromTagFunction(tagFunction, requirements);
             }
 
@@ -87,9 +86,9 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
             }
         }
 
-        private void RemoveChangedOrRemovedRequirementsFromTagFunction(TagFunction existingTagFunction, IList<RequirementForCommand> updatedRequirements)
+        private void RemoveChangedOrRemovedRequirementsFromTagFunction(TagFunction tagFunction, IList<RequirementForCommand> updatedRequirements)
         {
-            var tagFunctionRequirements = existingTagFunction.Requirements;
+            var tagFunctionRequirements = tagFunction.Requirements;
             var requirementsToBeRemoved = new List<TagFunctionRequirement>();
 
             foreach (var existingRequirement in tagFunctionRequirements)
@@ -103,7 +102,7 @@ namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequir
                 }
             }
 
-            requirementsToBeRemoved.ForEach(existingTagFunction.RemoveRequirement);
+            requirementsToBeRemoved.ForEach(tagFunction.RemoveRequirement);
         }
     }
 }
