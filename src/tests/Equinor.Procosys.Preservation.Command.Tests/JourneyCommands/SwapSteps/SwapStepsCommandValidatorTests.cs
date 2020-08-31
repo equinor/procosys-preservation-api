@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyDontHaveStepA()
+        public void Validate_ShouldFail_WhenJourneyDoesNotHaveStepA()
         {
             _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(false));
             
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyDontHaveStepB()
+        public void Validate_ShouldFail_WhenJourneyDoesNotHaveStepB()
         {
             _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(false));
             

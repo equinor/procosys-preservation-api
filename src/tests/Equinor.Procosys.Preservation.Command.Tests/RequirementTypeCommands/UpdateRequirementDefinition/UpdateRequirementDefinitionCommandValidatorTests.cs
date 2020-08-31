@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementDefinitionNotExists()
+        public void Validate_ShouldFail_WhenRequirementDefinitionDoesNotExists()
         {
             _reqDefinitionValidatorMock.Setup(r => r.ExistsAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(false));
 

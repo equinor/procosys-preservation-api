@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyDontHaveStep()
+        public void Validate_ShouldFail_WhenJourneyDoesNotHaveStep()
         {
             _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
             
