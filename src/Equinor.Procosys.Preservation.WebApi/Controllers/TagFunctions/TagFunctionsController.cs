@@ -49,7 +49,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
                 .Select(r =>
                     new RequirementForCommand(r.RequirementDefinitionId, r.IntervalWeeks));
             // No need for RowVersion handling here even this is a PUT. This because Handler creates TagFunction first time, and never update it after that
-
             var result = await _mediator.Send(
                 new UpdateRequirementsCommand(
                     dto.TagFunctionCode,
