@@ -121,18 +121,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeIsVoided()
-        {
-            _reqTypeValidatorMock.Setup(r => r.IsVoidedAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type is voided!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDefinitionIsVoided()
         {
             _reqDefinitionValidatorMock.Setup(r => r.IsVoidedAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));

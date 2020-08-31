@@ -27,8 +27,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 // this check must come after checking if both type and def exists.
                 // If both exists, but def has another type as parent, this is a change of parent, i.e a "move"
                 .WithMessage(command => $"Can not move a requirement definition to another requirement type! Requirement definition={command.RequirementDefinitionId}")
-                .MustAsync((command, token) => NotBeAVoidedRequirementTypeAsync(command.RequirementTypeId, token))
-                .WithMessage(command => $"Requirement type is voided! Requirement type={command.RequirementTypeId}")
                 .MustAsync((command, token) => NotBeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition is voided! Requirement definition={command.Title}")
                 .MustAsync(RequirementDefinitionTitleMustBeUniqueOnType)
@@ -52,9 +50,6 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
             
             async Task<bool> RequirementDefinitionHasRequirementTypeAsParentAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token)
                 => await requirementDefinitionValidator.RequirementDefinitionHasRequirementTypeAsParentAsync(requirementTypeId, requirementDefinitionId, token);
-            
-            async Task<bool> NotBeAVoidedRequirementTypeAsync(int requirementTypeId, CancellationToken token)
-                => !await requirementTypeValidator.IsVoidedAsync(requirementTypeId, token);
             
             async Task<bool> NotBeAVoidedRequirementDefinitionAsync(int requirementDefinitionId, CancellationToken token)
                 => !await requirementDefinitionValidator.IsVoidedAsync(requirementDefinitionId, token);
