@@ -30,6 +30,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         private readonly int _tf2WithReqId = 3;
         private TagFunctionRequirement _tfReq1_1;
         private TagFunctionRequirement _tfReq1_2;
+        private TagFunctionRequirement _tfReq2_1;
         private readonly int _tfReq1_1Id = 11;
         private readonly int _tfReq1_2Id = 12;
 
@@ -61,8 +62,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             _tf1WithReq.AddRequirement(_tfReq1_1);
             _tf1WithReq.AddRequirement(_tfReq1_2);
 
-            var tfReq2_1 = new TagFunctionRequirement(TestPlant, 1, rdMock3.Object);
-            _tf2WithReq.AddRequirement(tfReq2_1);
+            _tfReq2_1 = new TagFunctionRequirement(TestPlant, 1, rdMock3.Object);
+            _tf2WithReq.AddRequirement(_tfReq2_1);
             
             var tagFunctions = new List<TagFunction> {_tfWithoutReq, _tf1WithReq, _tf2WithReq};
             
@@ -77,7 +78,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByCodesAsync_KnownCode_ReturnTagFunction()
+        public async Task GetByCodesAsync_ShouldReturnTagFunction_WhenKnownCode()
         {
             var result = await _dut.GetByCodesAsync(_tfWithoutReqCode, _registerCode);
 
@@ -87,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetByCodesAsync_UnKnownCode_ReturnNull()
+        public async Task GetByCodesAsync_ShouldReturnNull_WhenUnknownCode()
         {
             var result = await _dut.GetByCodesAsync(_tfWithoutReqCode, "X");
 
@@ -95,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetAllNonVoidedWithRequirementsAsync_ReturnTagFunctionsWithRequirementsOnly()
+        public async Task GetAllNonVoidedWithRequirementsAsync_ShouldReturnTagFunctionsWithRequirementsOnly()
         {
             var result = await _dut.GetAllNonVoidedWithRequirementsAsync();
 
@@ -116,7 +117,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetAllNonVoidedWithRequirementsAsync_DoNotReturnVoidedTagFunctions()
+        public async Task GetAllNonVoidedWithRequirementsAsync_ShouldNotReturnVoidedTagFunctions()
         {
             _tf1WithReq.IsVoided = true;
             var result = await _dut.GetAllNonVoidedWithRequirementsAsync();
@@ -127,7 +128,28 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetAllNonVoidedWithRequirementsAsync_ReturnBothVoidedAndNonVoidedTagFunctionRequirements()
+        public async Task GetAllNonVoidedWithRequirementsAsync_ShouldReturnEmptyList_WhenAllAreVoided()
+        {
+            _tf1WithReq.IsVoided = true;
+            _tf2WithReq.IsVoided = true;
+            var result = await _dut.GetAllNonVoidedWithRequirementsAsync();
+
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetAllNonVoidedWithRequirementsAsync_ShouldReturnEmptyList_WhenAllRequirementsAreVoided()
+        {
+            _tfReq1_1.IsVoided = true;
+            _tfReq1_2.IsVoided = true;
+            _tfReq2_1.IsVoided = true;
+            var result = await _dut.GetAllNonVoidedWithRequirementsAsync();
+
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetAllNonVoidedWithRequirementsAsync_ShouldReturnBothVoidedAndNonVoidedTagFunctionRequirements()
         {
             _tfReq1_1.IsVoided = true;
             var result = await _dut.GetAllNonVoidedWithRequirementsAsync();
