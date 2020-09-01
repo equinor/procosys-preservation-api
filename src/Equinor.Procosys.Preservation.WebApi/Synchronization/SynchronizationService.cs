@@ -87,34 +87,41 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             {
                 _logger.LogInformation($"Synchronizing plant {plant}...");
 
-                _plantSetter.SetPlant(plant);
-                await _claimsTransformation.TransformAsync(currentUser);
-
-                var startTime = TimeService.UtcNow;
-                if (_options.CurrentValue.AutoTransferTags)
+                try
                 {
-                    await AutoTransferTagsAsync(plant);
-                }
+                    _plantSetter.SetPlant(plant);
+                    await _claimsTransformation.TransformAsync(currentUser);
 
-                if (_options.CurrentValue.SynchronizeProjects)
-                {
-                    await SynchronizeProjectsAsync(plant);
-                }
+                    var startTime = TimeService.UtcNow;
+                    if (_options.CurrentValue.AutoTransferTags)
+                    {
+                        await AutoTransferTagsAsync(plant);
+                    }
 
-                if (_options.CurrentValue.SynchronizeResponsibles)
-                {
-                    await SynchronizeResponsiblesAsync(plant);
-                }
+                    if (_options.CurrentValue.SynchronizeProjects)
+                    {
+                        await SynchronizeProjectsAsync(plant);
+                    }
 
-                if (_options.CurrentValue.SynchronizeTagFunctions)
-                {
-                    await SynchronizeTagFunctionsAsync(plant);
-                }
+                    if (_options.CurrentValue.SynchronizeResponsibles)
+                    {
+                        await SynchronizeResponsiblesAsync(plant);
+                    }
+
+                    if (_options.CurrentValue.SynchronizeTagFunctions)
+                    {
+                        await SynchronizeTagFunctionsAsync(plant);
+                    }
                 
-                var endTime = TimeService.UtcNow;
+                    var endTime = TimeService.UtcNow;
 
-                _logger.LogInformation($"Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
-                _telemetryClient.TrackMetric("Synchronization Time", (endTime - startTime).TotalSeconds, "Plant", plant);
+                    _logger.LogInformation($"Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
+                    _telemetryClient.TrackMetric("Synchronization Time", (endTime - startTime).TotalSeconds, "Plant", plant);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, $"Error synchronizing plant {plant}...");
+                }
             }
         }
 
