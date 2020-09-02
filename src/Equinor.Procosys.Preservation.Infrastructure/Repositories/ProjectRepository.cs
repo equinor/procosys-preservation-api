@@ -23,7 +23,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                     .ThenInclude(t => t.Attachments)
             )
         {
-
         }
 
         public Task<Project> GetProjectOnlyByNameAsync(string projectName)
