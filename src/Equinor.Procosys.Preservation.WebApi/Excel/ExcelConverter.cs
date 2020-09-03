@@ -133,8 +133,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         private void AddUsedFilter(IXLRow row, string label, string value, bool bold = false)
         {
             row.Cell(1).Value = label;
-            row.Cell(2).Value = value;
             row.Cell(2).DataType = XLDataType.Text;
+            // Force texts which can be interpreted as number to be text. Code line above do not do the trick
+            // Sample: 002
+            row.Cell(2).Value = $"'{value}";
             row.Style.Font.SetBold(bold);
         }
 
