@@ -71,6 +71,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(nextCol).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
                 if (tag.NextDueWeeks.HasValue)
                 {
+                    // The only number cell: NextDueWeeks
                     row.Cell(dueCol).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
                 }
                 row.Cell(modeCol).SetValue(tag.Mode).SetDataType(XLDataType.Text);
