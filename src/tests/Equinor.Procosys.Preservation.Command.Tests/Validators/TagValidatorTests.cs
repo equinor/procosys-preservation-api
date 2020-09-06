@@ -772,13 +772,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _standardTagStartedAndInLastStepId);
+                // Assert setup
+                var tag = context.Tags
+                    .Include(t => t.Actions)
+                    .Include(t => t.Attachments)
+                    .Single(t => t.Id == _standardTagStartedAndInLastStepId);
 
                 Assert.AreEqual(0, tag.Attachments.Count);
                 Assert.AreEqual(0, tag.Actions.Count);
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
 
                 var dut = new TagValidator(context, null);
-                var result = await dut.IsInUseAsync(tag.Id, default);
+                var result = await dut.IsInUseAsync(_standardTagStartedAndInLastStepId, default);
 
                 Assert.IsTrue(result);
             }
@@ -789,13 +796,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _standardTagCompletedId);
+                // Assert setup
+                var tag = context.Tags
+                    .Include(t => t.Actions)
+                    .Include(t => t.Attachments)
+                    .Single(t => t.Id == _standardTagCompletedId);
 
                 Assert.AreEqual(0, tag.Attachments.Count);
                 Assert.AreEqual(0, tag.Actions.Count);
-
+            }
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
                 var dut = new TagValidator(context, null);
-                var result = await dut.IsInUseAsync(tag.Id, default);
+                var result = await dut.IsInUseAsync(_standardTagCompletedId, default);
 
                 Assert.IsTrue(result);
             }
@@ -804,17 +817,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsInUseAsync_HasAction_ShouldReturnTrue()
         {
-            var dueTimeUtc = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
+                var tag = context.Tags
+                    .Include(t => t.Actions)
+                    .Include(t => t.Attachments)
+                    .Single(t => t.Id == _standardTagNotStartedInFirstStepId);
 
                 Assert.AreEqual(0, tag.Attachments.Count);
                 Assert.AreEqual(PreservationStatus.NotStarted, tag.Status);
 
-                tag.AddAction(new Action(TestPlant, "", "", dueTimeUtc));
+                tag.AddAction(new Action(TestPlant, "", "", null));
                 context.SaveChangesAsync().Wait();
+                Assert.AreEqual(1, tag.Actions.Count);
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -828,16 +843,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         [TestMethod]
         public async Task IsInUseAsync_HasAttachment_ShouldReturnTrue()
         {
-            var fileName = "A.txt";
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
+                var tag = context.Tags
+                    .Include(t => t.Actions)
+                    .Include(t => t.Attachments)
+                    .Single(t => t.Id == _standardTagNotStartedInFirstStepId);
 
                 Assert.AreEqual(0, tag.Actions.Count);
                 Assert.AreEqual(PreservationStatus.NotStarted, tag.Status);
 
-                tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, fileName));
+                tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, "A.txt"));
                 context.SaveChangesAsync().Wait();
+                Assert.AreEqual(1, tag.Attachments.Count);
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -853,13 +871,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tag = context.Tags.Single(t => t.Id == _standardTagNotStartedInFirstStepId);
-
-                Assert.AreEqual(0, tag.Attachments.Count);
-                Assert.AreEqual(0, tag.Actions.Count);
-
                 var dut = new TagValidator(context, null);
-                var result = await dut.IsInUseAsync(tag.Id, default);
+                var result = await dut.IsInUseAsync(_standardTagNotStartedInFirstStepId, default);
                 Assert.IsFalse(result);
             }
         }
