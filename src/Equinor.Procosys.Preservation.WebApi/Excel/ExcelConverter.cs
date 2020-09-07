@@ -66,22 +66,23 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             {
                 row = sheet.Row(++rowIdx);
 
-                row.Cell(tagNoCol).Value = tag.TagNo;
-                row.Cell(descriptionCol).Value = tag.Description;
-                row.Cell(nextCol).Value = tag.NextDueAsYearAndWeek;
+                row.Cell(tagNoCol).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
+                row.Cell(descriptionCol).SetValue(tag.Description).SetDataType(XLDataType.Text);
+                row.Cell(nextCol).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
                 if (tag.NextDueWeeks.HasValue)
                 {
-                    row.Cell(dueCol).Value = tag.NextDueWeeks.Value;
+                    // The only number cell: NextDueWeeks
+                    row.Cell(dueCol).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
                 }
-                row.Cell(modeCol).Value = tag.Mode;
-                row.Cell(poCol).Value = tag.PurchaseOrderTitle;
-                row.Cell(areaCol).Value = tag.AreaCode;
-                row.Cell(respCol).Value = tag.ResponsibleCode;
-                row.Cell(discCol).Value = tag.DisciplineCode;
-                row.Cell(statusCol).Value = tag.Status;
-                row.Cell(reqCol).Value = tag.RequirementTitles;
-                row.Cell(actionCol).Value = tag.ActionStatus;
-                row.Cell(voidedCol).Value = tag.IsVoided;
+                row.Cell(modeCol).SetValue(tag.Mode).SetDataType(XLDataType.Text);
+                row.Cell(poCol).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
+                row.Cell(areaCol).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
+                row.Cell(respCol).SetValue(tag.ResponsibleCode).SetDataType(XLDataType.Text);
+                row.Cell(discCol).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
+                row.Cell(statusCol).SetValue(tag.Status).SetDataType(XLDataType.Text);
+                row.Cell(reqCol).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
+                row.Cell(actionCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
+                row.Cell(voidedCol).SetValue(tag.IsVoided).SetDataType(XLDataType.Text);
             }
 
             const int minWidth = 10;
@@ -132,11 +133,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 
         private void AddUsedFilter(IXLRow row, string label, string value, bool bold = false)
         {
-            row.Cell(1).Value = label;
-            row.Cell(2).DataType = XLDataType.Text;
-            // Force texts which can be interpreted as number to be text. Code line above do not do the trick
-            // Sample: 002
-            row.Cell(2).Value = $"'{value}";
+            row.Cell(1).SetValue(label).SetDataType(XLDataType.Text);
+            row.Cell(2).SetValue(value).SetDataType(XLDataType.Text);
             row.Style.Font.SetBold(bold);
         }
 
