@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                     .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
                     .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsyncAsync(tag.Id, token))
+                    .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}");
             });
 
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => ! await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> IsReadyToBeTransferredAsyncAsync(int tagId, CancellationToken token)
+            async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToBeTransferredAsync(tagId, token);
         }
     }
