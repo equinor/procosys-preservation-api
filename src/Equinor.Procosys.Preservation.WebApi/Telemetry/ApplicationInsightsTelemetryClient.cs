@@ -11,9 +11,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Telemetry
 
         public ApplicationInsightsTelemetryClient(TelemetryConfiguration telemetryConfiguration)
         {
-            _ai = new TelemetryClient(telemetryConfiguration) ?? throw new ArgumentNullException(nameof(telemetryConfiguration));
-            // The InstrumentationKey isn't set through the configuration object. Setting it explicitly works.
-            _ai.InstrumentationKey = telemetryConfiguration.InstrumentationKey;
+            if (telemetryConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(telemetryConfiguration));
+            }
+
+            _ai = new TelemetryClient(telemetryConfiguration)
+            {
+                // The InstrumentationKey isn't set through the configuration object. Setting it explicitly works.
+                InstrumentationKey = telemetryConfiguration.InstrumentationKey
+            };
         }
 
         public void TrackEvent(string name, Dictionary<string, string> properties) =>
