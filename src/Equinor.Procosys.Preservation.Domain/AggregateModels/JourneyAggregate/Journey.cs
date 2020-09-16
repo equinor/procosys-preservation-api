@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
             }
 
             _steps.Add(step);
-            step.SortKey = _steps.Count;
+            step.SortKey = _steps.Select(s => s.SortKey).Max() + 1;
         }
 
         public void RemoveStep(Step step)

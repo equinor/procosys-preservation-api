@@ -20,6 +20,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         private int _stepAId;
         private int _stepBId;
         private int _stepCId;
+        private Mode _mode;
+        private Responsible _responsible;
         private const string TestPlant = "PlantA";
 
         [TestInitialize]
@@ -31,14 +33,14 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             _stepBId = 3;
             _stepCId = 967;
 
-            var m = new Mode(TestPlant, "M", false);
-            var r = new Responsible(TestPlant, "RC", "RD");
+            _mode = new Mode(TestPlant, "M", false);
+            _responsible = new Responsible(TestPlant, "RC", "RD");
             
-            _stepA = new Step(TestPlant, "SA", m, r);
+            _stepA = new Step(TestPlant, "SA", _mode, _responsible);
             _stepA.SetProtectedIdForTesting(_stepAId);
-            _stepB = new Step(TestPlant, "SB", m, r);
+            _stepB = new Step(TestPlant, "SB", _mode, _responsible);
             _stepB.SetProtectedIdForTesting(_stepBId);
-            _stepC = new Step(TestPlant, "SC", m, r);
+            _stepC = new Step(TestPlant, "SC", _mode, _responsible);
             _stepC.SetProtectedIdForTesting(_stepCId);
             
             _dutWith3Steps.AddStep(_stepA);
@@ -101,7 +103,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
             => Assert.ThrowsException<Exception>(() => _dutWithNoSteps.RemoveStep(_stepA));
 
         [TestMethod]
-        public void AddStep_ShouldSetIncreasedSortKey()
+        public void AddStep_ShouldSetNextAvailableSortKey()
         {
             var step1 = new Mock<Step>();
             step1.SetupGet(s => s.Plant).Returns(TestPlant);
@@ -116,7 +118,30 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void GetNextStep_ShouldReturntepWithNextSortKey()
+        public void AddStep_ShouldSetNextAvailableSortKey_AfterDeletingSteps()
+        {
+            // Arrange
+            var stepA = _dutWith3Steps.Steps.ElementAt(0);
+            Assert.AreEqual(1, stepA.SortKey);
+            var stepB = _dutWith3Steps.Steps.ElementAt(1);
+            Assert.AreEqual(2, stepB.SortKey);
+            var stepC = _dutWith3Steps.Steps.ElementAt(2);
+            Assert.AreEqual(3, stepC.SortKey);
+
+            stepA.IsVoided = true;
+            _dutWith3Steps.RemoveStep(stepA);
+
+            var stepD = new Step(TestPlant, "SD", _mode, _responsible);
+
+            // Act
+            _dutWith3Steps.AddStep(stepD);
+
+            // Arrange
+            Assert.AreEqual(4, stepD.SortKey);
+        }
+
+        [TestMethod]
+        public void GetNextStep_ShouldReturnedWithNextSortKey()
         {
             Assert.AreEqual(_stepB, _dutWith3Steps.GetNextStep(_stepAId));
             Assert.AreEqual(_stepC, _dutWith3Steps.GetNextStep(_stepBId));
@@ -124,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggr
         }
 
         [TestMethod]
-        public void OrderedSteps_ShouldReturntepOrderedBySortKey()
+        public void OrderedSteps_ShouldReturnedOrderedBySortKey()
         {
             var steps = _dutWith3Steps.OrderedSteps().ToList();
 
