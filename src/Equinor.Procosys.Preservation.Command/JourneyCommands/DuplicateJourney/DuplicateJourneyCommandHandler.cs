@@ -36,8 +36,8 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DuplicateJourney
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
             
-            var responsibleIds = journey.Steps.Select(s => s.ResponsibleId);
-            var modeIds = journey.Steps.Select(s => s.ModeId);
+            var responsibleIds = journey.Steps.Select(s => s.ResponsibleId).Distinct();
+            var modeIds = journey.Steps.Select(s => s.ModeId).Distinct();
             
             var responsibles = await  _responsibleRepository.GetByIdsAsync(responsibleIds);
             var modes = await _modeRepository.GetByIdsAsync(modeIds);
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DuplicateJourney
             var plant = _plantProvider.Plant;
             var newJourney = new Journey(plant, $"{journey.Title}{Journey.DuplicatePrefix}");
 
-            foreach (var step in journey.Steps)
+            foreach (var step in journey.OrderedSteps())
             {
                 var responsible = responsibles.Single(r => r.Id == step.ResponsibleId);
                 var mode = modes.Single(m => m.Id == step.ModeId);
