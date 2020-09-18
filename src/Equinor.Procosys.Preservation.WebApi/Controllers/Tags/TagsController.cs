@@ -266,6 +266,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return Redirect(result.Data.ToString());
         }
 
+        [DisableRequestSizeLimit]
         [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
         [HttpPost("{id}/Actions/{actionId}/Attachments")]
         public async Task<ActionResult<int>> UploadActionAttachment(
@@ -598,6 +599,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [DisableRequestSizeLimit]
         [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
         [HttpPost("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> AddFieldValueAttachment(
@@ -696,6 +698,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
+        [DisableRequestSizeLimit]
         [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
         [HttpPost("{id}/Attachments")]
         public async Task<ActionResult<int>> UploadTagAttachment(
