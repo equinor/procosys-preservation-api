@@ -193,31 +193,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             // Assert
             Assert.IsTrue(result.IsValid);
         }
-        
-        [TestMethod]
-        public void Validate_ShouldFail_ForOtherStep_WhenAddingRequirementForSupplierOnly()
-        {
-            // Arrange
-            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
-            _rdValidatorMock.Setup(r => r.ExistsAsync(_reqDef3Id, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.UsageCoversForOtherThanSuppliersAsync(_tagId, new List<int>(), new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.HasAnyForSupplierOnlyUsageAsync(_tagId, new List<int>(), new List<int>{_reqDef3Id}, default)).Returns(Task.FromResult(true));
-            var command = new UpdateTagStepAndRequirementsCommand(
-                _tagId,
-                _stepId,
-                new List<UpdateRequirementForCommand>(), 
-                new List<RequirementForCommand> {new RequirementForCommand(_reqDef3Id, 1)},
-                RowVersion);
-
-            // Act
-            var result = _dut.Validate(command);
-
-            // Assert
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements can not include requirements just for suppliers!"));
-        }
 
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyRequirementAlreadyExists()
