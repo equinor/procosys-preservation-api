@@ -53,14 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                             command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                             command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
-                    .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!")
-                    .MustAsync((_, command, token) =>
-                        RequirementUsageIsNotForSupplierStepOnlyAsync(
-                            command.TagId,
-                            command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
-                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
-                            token))
-                    .WithMessage(command => "Requirements can not include requirements just for suppliers!");
+                    .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!");
             });
 
             RuleFor(command => command)
@@ -104,13 +97,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
                 => await tagValidator.UsageCoversForOtherThanSuppliersAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
-            
-            async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(
-                int tagId, 
-                List<int> tagRequirementIdsToBeVoided,
-                List<int> requirementDefinitionIdsToBeAdded,
-                CancellationToken token)
-                => !await tagValidator.HasAnyForSupplierOnlyUsageAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
             
             async Task<bool> BeASupplierStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsForSupplierAsync(stepId, token);

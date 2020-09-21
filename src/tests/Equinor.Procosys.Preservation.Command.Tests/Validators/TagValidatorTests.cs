@@ -744,30 +744,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasAnyForSupplierOnlyUsageAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
-                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.HasAnyForSupplierOnlyUsageAsync(tag.Id, new List<int>(), new List<int>(), default);
-                Assert.IsTrue(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task HasAnyForSupplierOnlyUsageAsync_ShouldReturnFalse_WhenVoidingRequirementsForSupplierOnly()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
-                var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.HasAnyForSupplierOnlyUsageAsync(tag.Id, new List<int>{_tagReqForSupplierId}, new List<int>(), default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
         public async Task IsInUseAsync_StatusActive_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
