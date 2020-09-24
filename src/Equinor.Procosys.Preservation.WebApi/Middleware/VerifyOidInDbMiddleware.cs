@@ -27,6 +27,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 var givenName = httpContextUser.Claims.TryGetGivenName();
                 var surName = httpContextUser.Claims.TryGetSurName();
 
+                if (string.IsNullOrEmpty(givenName) && string.IsNullOrEmpty(surName))
+                {
+                    var fullName = httpContextUser.Claims.TryGetFullName();
+                    // Last name will be set to the last part of the name, regardless of any middle-name variants (best effort).
+                    var indexOfLastSpace = fullName.LastIndexOf(" ", StringComparison.InvariantCulture);
+                    givenName = fullName.Substring(0, indexOfLastSpace);
+                    surName = fullName.Substring(indexOfLastSpace + 1);
+                }
+
                 var command = new CreatePersonCommand(oid.Value, givenName, surName);
                 try
                 {

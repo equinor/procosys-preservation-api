@@ -10,6 +10,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
         public const string OidType = "http://schemas.microsoft.com/identity/claims/objectidentifier";
         public const string GivenNameType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname";
         public const string SurNameType = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname";
+        public const string FullName = "name";
 
         public static Guid? TryGetOid(this IEnumerable<Claim> claims)
         {
@@ -34,6 +35,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
             var surName = claims.SingleOrDefault(c => c.Type == SurNameType);
 
             return surName?.Value;
+        }
+
+        public static string TryGetFullName(this IEnumerable<Claim> claims)
+        {
+            var fullName = claims.SingleOrDefault(c => c.Type == FullName);
+
+            return fullName?.Value;
         }
     }
 }
