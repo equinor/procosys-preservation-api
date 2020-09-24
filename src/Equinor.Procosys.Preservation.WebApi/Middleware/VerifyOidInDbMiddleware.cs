@@ -30,10 +30,25 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 if (string.IsNullOrEmpty(givenName) && string.IsNullOrEmpty(surName))
                 {
                     var fullName = httpContextUser.Claims.TryGetFullName();
-                    // Last name will be set to the last part of the name, regardless of any middle-name variants (best effort).
-                    var indexOfLastSpace = fullName.LastIndexOf(" ", StringComparison.InvariantCulture);
-                    givenName = fullName.Substring(0, indexOfLastSpace);
-                    surName = fullName.Substring(indexOfLastSpace + 1);
+
+                    if (fullName.Contains(","))
+                    {
+                        // A naming error in Azure sometimes cause DisplayName to be formatted "Lastname, Firstname".
+                        // The following is a best effort fix this.
+                        surName = fullName.Substring(0, fullName.IndexOf(",", StringComparison.InvariantCulture));
+                        var nameToFix = fullName.Remove(0, surName.Length);
+                        nameToFix = nameToFix.Replace(",", string.Empty);
+                        nameToFix = nameToFix.TrimStart();
+                        givenName = nameToFix;
+                    }
+                    else
+                    {
+                        // Last name will be set to the last part of the name, regardless of any middle-name variants (best effort).
+                        var indexOfLastSpace = fullName.LastIndexOf(" ", StringComparison.InvariantCulture);
+
+                        givenName = fullName.Substring(0, indexOfLastSpace);
+                        surName = fullName.Substring(indexOfLastSpace + 1);
+                    }
                 }
 
                 var command = new CreatePersonCommand(oid.Value, givenName, surName);
