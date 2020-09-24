@@ -31,6 +31,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                 {
                     var fullName = httpContextUser.Claims.TryGetFullName();
 
+                    if (string.IsNullOrEmpty(fullName))
+                    {
+                        throw new Exception("Not able to resolve user info for " + oid);
+                    }
+
                     if (fullName.Contains(","))
                     {
                         // A naming error in Azure sometimes cause DisplayName to be formatted "Lastname, Firstname".
