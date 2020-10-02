@@ -853,7 +853,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromRoute] int id,
             [FromBody] DeleteTagDto dto)
         {
-            var result = await _mediator.Send(new DeleteTagCommand(id, dto.ProjectName, dto.RowVersion));
+            var result = await _mediator.Send(new DeleteTagCommand(id, dto.RowVersion));
             return this.FromResult(result);
         }
 

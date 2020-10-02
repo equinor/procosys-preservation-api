@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -20,8 +21,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag
 
         public async Task<Result<Unit>> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(request.ProjectName);
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var project = await _projectRepository.GetProjectByTagIdAsync(request.TagId);
+            var tag = project.Tags.Single(t => t.Id == request.TagId);
             
             tag.SetRowVersion(request.RowVersion);
             project.RemoveTag(tag);
