@@ -44,12 +44,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.DeleteTag
             _project.AddTag(_tag);
             
             _projectRepositoryMock
-                .Setup(x => x.GetProjectOnlyByNameAsync(_projectName))
+                .Setup(x => x.GetProjectByTagIdAsync(_tag.Id))
                 .Returns(Task.FromResult(_project));
-            _projectRepositoryMock
-                .Setup(x => x.GetTagByTagIdAsync(_tag.Id))
-                .Returns(Task.FromResult(_tag));
-            _command = new DeleteTagCommand(_tagId, _project.Name, _rowVersion);
+            _command = new DeleteTagCommand(_tagId, _rowVersion);
 
             _dut = new DeleteTagCommandHandler(_projectRepositoryMock.Object, UnitOfWorkMock.Object);
         }

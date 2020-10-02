@@ -16,7 +16,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.DeleteTag
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
 
         private int _tagId = 1;
-        private readonly string _projectName = "ProjectName";
         private readonly string _rowVersion = "AAAAAAAAJ00=";
 
         [TestInitialize]
@@ -29,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.DeleteTag
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
 
-            _command = new DeleteTagCommand(_tagId, _projectName, _rowVersion);
+            _command = new DeleteTagCommand(_tagId, _rowVersion);
 
             _dut = new DeleteTagCommandValidator(
                 _tagValidatorMock.Object,
@@ -85,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.DeleteTag
         {
             const string invalidRowVersion = "String";
 
-            var command = new DeleteTagCommand(_tagId, _projectName, invalidRowVersion);
+            var command = new DeleteTagCommand(_tagId, invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
             var result = _dut.Validate(command);
