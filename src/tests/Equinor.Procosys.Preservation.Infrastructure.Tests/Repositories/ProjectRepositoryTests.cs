@@ -170,17 +170,42 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
             Assert.AreEqual(StandardTagNo, result.Single().TagNo);
             // Not able to test that Tags don't have children. BuildMockDbSet seem to build Set as a graph with all children
         }
+
         [TestMethod]
         public void RemoveTag_ShouldRemoveTagAndRequirementsFromContext()
         {
             // Act
             _dut.RemoveTag(_standardTagWith3Reqs);
 
-            // Arrange
+            // Assert
             _tagsSetMock.Verify(s => s.Remove(_standardTagWith3Reqs), Times.Once);
             _reqsSetMock.Verify(s => s.Remove(_standardTagWith3Reqs.Requirements.ElementAt(0)), Times.Once);
             _reqsSetMock.Verify(s => s.Remove(_standardTagWith3Reqs.Requirements.ElementAt(1)), Times.Once);
             _reqsSetMock.Verify(s => s.Remove(_standardTagWith3Reqs.Requirements.ElementAt(2)), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetProjectByTagIdAsync_KnownTag_ShouldReturnProjectIncludingTheTag()
+        {
+            // Act
+            var project = await _dut.GetProjectByTagIdAsync(StandardTagId);
+
+            // Assert
+            Assert.IsNotNull(project);
+            Assert.AreEqual(ProjectNameWithTags, project.Name);
+            Assert.IsNotNull(project.Tags);
+            var tag = project.Tags.Single(t => t.Id == StandardTagId);
+            Assert.IsNotNull(tag);
+        }
+
+        [TestMethod]
+        public async Task GetProjectByTagIdAsync_UnknownTag_ShouldReturnNull()
+        {
+            // Act
+            var project = await _dut.GetProjectByTagIdAsync(234234);
+
+            // Assert
+            Assert.IsNull(project);
         }
     }
 }

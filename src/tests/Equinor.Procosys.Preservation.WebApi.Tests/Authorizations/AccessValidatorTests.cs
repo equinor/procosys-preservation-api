@@ -760,7 +760,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteTagCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new DeleteTagCommand(TagIdWithAccessToProject, null, null);
+            var command = new DeleteTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -773,7 +773,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnDeleteTagCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new DeleteTagCommand(TagIdWithoutAccessToProject, null, null);
+            var command = new DeleteTagCommand(TagIdWithoutAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -787,7 +787,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new DeleteTagCommand(TagIdWithAccessToProject, null, null);
+            var command = new DeleteTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -802,7 +802,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new DeleteTagCommand(TagIdWithAccessToProject, null, null);
+            var command = new DeleteTagCommand(TagIdWithAccessToProject, null);
 
             // act
             var result = await _dut.ValidateAsync(command);

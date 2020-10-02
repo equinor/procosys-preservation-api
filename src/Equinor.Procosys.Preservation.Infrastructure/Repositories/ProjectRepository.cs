@@ -62,5 +62,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
                 .SelectMany(project => project.Tags)
                 .Where(tag => tag.TagType == TagType.Standard && tagNos.Contains(tag.TagNo) && stepIds.Contains(tag.StepId))
                 .ToListAsync();
+
+        public Task<Project> GetProjectByTagIdAsync(int tagId)
+            => DefaultQuery
+                .Where(project => project.Tags.Any(tag => tag.Id == tagId))
+                .SingleOrDefaultAsync();
     }
 }
