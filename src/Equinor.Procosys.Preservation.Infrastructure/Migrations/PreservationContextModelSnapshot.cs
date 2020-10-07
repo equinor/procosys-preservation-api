@@ -790,6 +790,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                         .HasName("IX_Tags_TagNo_ASC")
                         .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagType" });
 
+                    b.HasIndex("Plant", "TagNo", "ProjectId")
+                        .IsUnique();
+
                     b.ToTable("Tags");
 
                     b.HasCheckConstraint("constraint_tag_check_valid_statusenum", "Status in (0,1,2)");
