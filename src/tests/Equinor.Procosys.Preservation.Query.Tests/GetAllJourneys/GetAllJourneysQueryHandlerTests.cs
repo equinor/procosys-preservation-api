@@ -19,8 +19,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllJourneys
         private readonly string _mode2Title = "M2";
         private readonly string _responsible1Code = "R1";
         private readonly string _responsible2Code = "R2";
-        private int _mode1Id;
-        private int _mode2Id;
+        private int _supplierModeId;
+        private int _otherModeId;
         private int _responsible1Id;
         private int _responsible2Id;
 
@@ -28,17 +28,17 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllJourneys
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var mode1 = AddMode(context, _mode1Title, false);
+                var supplierMode = AddMode(context, _mode1Title, true);
                 var responsible1 = AddResponsible(context, _responsible1Code);
-                var journey = AddJourneyWithStep(context, _journeyTitle, _step1Title, mode1, responsible1);
+                var journey = AddJourneyWithStep(context, _journeyTitle, _step1Title, supplierMode, responsible1);
 
-                var mode2 = AddMode(context, _mode2Title, false);
+                var otherMode = AddMode(context, _mode2Title, false);
                 var responsible2 = AddResponsible(context, _responsible2Code);
-                journey.AddStep(new Step(TestPlant, _step2Title, mode2, responsible2));
+                journey.AddStep(new Step(TestPlant, _step2Title, otherMode, responsible2));
                 context.SaveChangesAsync().Wait();
 
-                _mode1Id = mode1.Id;
-                _mode2Id = mode2.Id;
+                _supplierModeId = supplierMode.Id;
+                _otherModeId = otherMode.Id;
                 _responsible1Id = responsible1.Id;
                 _responsible2Id = responsible2.Id;
             }
@@ -64,8 +64,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllJourneys
                 var steps = journey.Steps.ToList();
                 Assert.AreEqual(2, steps.Count);
 
-                AssertStep(steps.ElementAt(0), _step1Title, _mode1Id, _responsible1Id, _mode1Title, _responsible1Code, false);
-                AssertStep(steps.ElementAt(1), _step2Title, _mode2Id, _responsible2Id, _mode2Title, _responsible2Code, false);
+                AssertStep(steps.ElementAt(0), _step1Title, _supplierModeId, _responsible1Id, _mode1Title, _responsible1Code, false, true);
+                AssertStep(steps.ElementAt(1), _step2Title, _otherModeId, _responsible2Id, _mode2Title, _responsible2Code, false, false);
             }
         }
 
@@ -93,9 +93,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetAllJourneys
             }
         }
 
-        private void AssertStep(StepDto step, string title, int modeId, int responsibleId, string modeTitle, string responsibleCode, bool isVoided)
+        private void AssertStep(StepDto step, string title, int modeId, int responsibleId, string modeTitle, string responsibleCode, bool isVoided, bool forSupplier)
         {
             Assert.IsNotNull(step.Mode);
+            Assert.AreEqual(forSupplier, step.Mode.ForSupplier);
             Assert.IsNotNull(step.Responsible);
             Assert.AreEqual(title, step.Title);
             Assert.AreEqual(isVoided, step.IsVoided);
