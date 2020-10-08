@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Query.GetTagFunctionDetails;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
 {
@@ -70,13 +71,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
         }
 
         [TestMethod]
-        public async Task HandleGetTagFunctionDetailsQuery_UnknownTagFunction_ShouldReturnNull()
+        public async Task HandleGetTagFunctionDetailsQuery_UnknownTagFunction_ShouldReturnNullWithSuccess()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new GetTagFunctionDetailsQueryHandler(context);
                 var result = await dut.Handle(new GetTagFunctionDetailsQuery("XX", _tfWithRequirement.RegisterCode), default);
                 Assert.IsNull(result.Data);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
             }
         }
     }

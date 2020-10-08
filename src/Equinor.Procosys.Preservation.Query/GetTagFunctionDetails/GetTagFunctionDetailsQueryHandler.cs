@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
             
             if (tagFunctionDto == null)
             {
-                return new NotFoundResult<TagFunctionDetailsDto>($"{nameof(TagFunction)} with Code {request.TagFunctionCode} not found in register {request.RegisterCode}");
+                return new SuccessResult<TagFunctionDetailsDto>(null);
             }
 
             return new SuccessResult<TagFunctionDetailsDto>(tagFunctionDto);
