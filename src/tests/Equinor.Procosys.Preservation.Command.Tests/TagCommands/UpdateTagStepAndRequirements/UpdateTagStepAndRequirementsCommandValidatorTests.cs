@@ -6,6 +6,7 @@ using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -275,6 +276,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_ForPoAreaTag_WhenTargetStepNotForSupplier()
+        {
+            // Arrange
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
+
+            // Act
+            var result = _dut.Validate(_addTwoReqsCommand);
+
+            // Assert
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!"));
         }
 
         [TestMethod]

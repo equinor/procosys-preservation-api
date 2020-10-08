@@ -3,7 +3,6 @@ using Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -45,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             _dut.Handle(new IntervalChangedEvent(plant, objectGuid, fromInterval, toInterval), default);
 
             // Assert
-            var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - From {fromInterval} To {toInterval}";
+            var expectedDescription = $"{EventType.IntervalChanged.GetDescription()} - From {fromInterval} to {toInterval}";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);

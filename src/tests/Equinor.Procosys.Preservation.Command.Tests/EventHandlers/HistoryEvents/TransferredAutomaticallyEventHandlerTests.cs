@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Assert
             var expectedDescription =
-                $"{_historyAdded?.EventType.GetDescription()} - From '{fromStep}' To '{toStep}'. Transfer method was {autoTransferMethod.CovertToString()}";
+                $"{EventType.TransferredAutomatically.GetDescription()} - From '{fromStep}' to '{toStep}'. Transfer method was {autoTransferMethod.CovertToString()}";
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
             Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
