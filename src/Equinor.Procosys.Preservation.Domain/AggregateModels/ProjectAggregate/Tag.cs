@@ -324,6 +324,25 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return Status == PreservationStatus.Active && 
                    (!FollowsAJourney || FollowsAJourney && journey.GetNextStep(StepId) == null);
         }
+        
+        public void UpdateStep(Step step)
+        {
+            if (step == null)
+            {
+                throw new ArgumentNullException(nameof(step));
+            }
+
+            if (TagType == TagType.PoArea && !step.IsSupplierStep)
+            {
+                throw new Exception($"Step for {TagType.PoArea} tags need to be a step for supplier");
+            }
+
+            var fromStepId = StepId;
+        
+            SetStep(step);
+            
+            AddDomainEvent(new StepChangedEvent(Plant, ObjectGuid, fromStepId, step.Id));
+        }
 
         public void Transfer(Journey journey)
         {
