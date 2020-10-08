@@ -353,6 +353,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId");
 
+                    b.HasIndex("Plant", "ProjectId", "PersonId");
+
                     b.ToTable("SavedFilters");
                 });
 
