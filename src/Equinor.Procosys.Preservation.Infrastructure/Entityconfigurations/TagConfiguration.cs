@@ -93,7 +93,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.HasCheckConstraint("constraint_tag_check_valid_statusenum", $"{nameof(Tag.Status)} in ({GetValidStatusEnums()})");
 
             builder.HasCheckConstraint("constraint_tag_check_valid_tag_type", $"{nameof(Tag.TagType)} in ({GetValidTagTypes()})");
-
+            
+            builder
+                .HasIndex(nameof(Tag.Plant), nameof(Tag.TagNo), "ProjectId") // ProjectId is a shadow property
+                .IsUnique();
+            
             builder
                 .HasIndex(x => x.Plant)
                 .HasName("IX_Tags_Plant_ASC")
