@@ -7,6 +7,7 @@ using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
@@ -22,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
         {
             CascadeMode = CascadeMode.Stop;
 
-            WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
+            WhenAsync((command, token) => IsASupplierStepAsync(command.StepId, token), () =>
             {
                 RuleFor(command => command)
                     .MustAsync((_, command, token) =>
@@ -41,6 +42,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             }).Otherwise(() =>
             {
                 RuleFor(command => command)
+                    .MustAsync((command, token) => NotBeAPoAreaTagAsync(command.TagId, token))
+                    .WithMessage(command => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!")
                     .MustAsync((_, command, token) =>
                         RequirementsMustBeUniqueAfterUpdateAsync(
                             command.TagId,
@@ -98,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 CancellationToken token)
                 => await tagValidator.UsageCoversForOtherThanSuppliersAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
             
-            async Task<bool> BeASupplierStepAsync(int stepId, CancellationToken token)
+            async Task<bool> IsASupplierStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsForSupplierAsync(stepId, token);
             
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
@@ -109,6 +112,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
+            
+            async Task<bool> NotBeAPoAreaTagAsync(int tagId, CancellationToken token)
+                => !await tagValidator.VerifyTagTypeAsync(tagId, TagType.PoArea, token);
 
             async Task<bool> NotChangedToAVoidedStepAsync(int tagId, int stepId, CancellationToken token)
                 => await tagValidator.HasStepAsync(tagId, stepId, token) ||
