@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
         public Task Handle(IntervalChangedEvent notification, CancellationToken cancellationToken)
         {
             var eventType = EventType.IntervalChanged;
-            var description = $"{eventType.GetDescription()} - From {notification.FromInterval} To {notification.ToInterval}";
+            var description = $"{eventType.GetDescription()} - From {notification.FromInterval} to {notification.ToInterval}";
             var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;

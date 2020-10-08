@@ -26,9 +26,11 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
 
             var eventType = EventType.RequirementPreserved;
             var description = $"{eventType.GetDescription()} - '{requirementDefinition.Result.Title}'";
-            var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
-            history.DueInWeeks = notification.DueInWeeks;
-            history.PreservationRecordGuid = notification.PreservationRecordGuid;
+            var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType)
+            {
+                DueInWeeks = notification.DueInWeeks,
+                PreservationRecordGuid = notification.PreservationRecordGuid
+            };
 
             _historyRepository.Add(history);
 
