@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
         public SavedFilter() : base(null)
         {
         }
+
         public SavedFilter(string plant, Project project, string title, string criteria)
             : base(plant)
         {
