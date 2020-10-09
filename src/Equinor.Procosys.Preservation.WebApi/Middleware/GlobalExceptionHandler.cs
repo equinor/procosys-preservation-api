@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.Exceptions;
+using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -38,8 +39,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
             }
             catch (FluentValidation.ValidationException ve)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                context.Response.ContentType = "application/problem+json";
                 var errors = new Dictionary<string, string[]>();
                 foreach (var error in ve.Errors)
                 {
@@ -54,15 +53,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
                         errors[error.PropertyName] = errorsForProperty.ToArray();
                     }
                 }
-                var problems = new ValidationProblemDetails(errors)
-                {
-                    Status = context.Response.StatusCode,
-                    Title = $"One or more business validation errors occurred. ({ve.Errors.Count()})"
-                };
-                var json = JsonSerializer.Serialize(problems);
-                _logger.LogInformation(json);
 
-                await context.Response.WriteAsync(json);
+                await context.WriteBadRequestAsync(errors, _logger);
+            }
+            catch (InValidProjectException ipe)
+            {
+                var errors = new Dictionary<string, string[]> {{"ProjectName", new[] {ipe.Message}}};
+                await context.WriteBadRequestAsync(errors, _logger);
             }
             catch (ConcurrencyException)
             {
