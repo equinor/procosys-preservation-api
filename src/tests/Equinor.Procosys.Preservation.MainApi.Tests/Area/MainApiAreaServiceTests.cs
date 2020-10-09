@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,7 +13,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
-        private Mock<IPlantCache> _plantCache;
         private MainApiAreaService _dut;
         private ProcosysArea _procosysArea;
 
@@ -27,10 +24,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
                 .Setup(x => x.CurrentValue)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
-            _plantCache = new Mock<IPlantCache>();
-            _plantCache
-                .Setup(x => x.IsValidPlantForCurrentUserAsync(_plant))
-                .Returns(Task.FromResult(true));
 
             _procosysArea = new ProcosysArea
             {
@@ -39,12 +32,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Area
                 Description = "Description1",
             };
            
-            _dut = new MainApiAreaService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
+            _dut = new MainApiAreaService(_mainApiClient.Object, _mainApiOptions.Object);
         }
-
-        [TestMethod]
-        public async Task TryGetAreaCode_ThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.TryGetAreaAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
         public async Task TryGetAreaCode_ShouldReturnAreaCode()

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.MainApi.Tag;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,7 +16,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         private Mock<ILogger<MainApiTagService>> _logger;
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
-        private Mock<IPlantCache> _plantCache;
         private ProcosysTagSearchResult _searchPage1WithThreeItems;
         private ProcosysTagSearchResult _searchPage2WithOneItem;
         private List<ProcosysTagDetails> _tagDetails;
@@ -33,10 +30,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                 .Setup(x => x.CurrentValue)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com", TagSearchPageSize = 3 });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
-            _plantCache = new Mock<IPlantCache>();
-            _plantCache
-                .Setup(x => x.IsValidPlantForCurrentUserAsync("PCS$TESTPLANT"))
-                .Returns(Task.FromResult(true));
 
             _searchPage2WithOneItem = new ProcosysTagSearchResult
             {
@@ -100,7 +93,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
                 .Returns(Task.FromResult(_searchPage1WithThreeItems))
                 .Returns(Task.FromResult(_searchPage2WithOneItem));
 
-            _dut = new MainApiTagService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object, _logger.Object);
+            _dut = new MainApiTagService(_mainApiClient.Object, _mainApiOptions.Object, _logger.Object);
         }
 
         [TestMethod]
@@ -112,11 +105,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             // Assert
             Assert.AreEqual(4, result.Count);
         }
-
-        [TestMethod]
-        public async Task SearchTagsByTagNo_ShouldThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async ()
-                => await _dut.SearchTagsByTagNoAsync("INVALIDPLANT", "TestProject", "A"));
 
         [TestMethod]
         public async Task SearchTagsByTagNo_ShouldReturnEmptyList_WhenResultIsInvalid()
@@ -154,10 +142,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
         }
 
         [TestMethod]
-        public async Task SearchTagsByTagFunctions_ShouldThrowsException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.SearchTagsByTagFunctionsAsync("INVALIDPLANT", "TestProject", new List<string>{"M"}));
-
-        [TestMethod]
         public async Task SearchTagsByTagFunctions_ShouldReturnEmptyList_WhenResultIsInvalid()
         {
             _mainApiClient
@@ -181,11 +165,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
             Assert.AreEqual(111111111, tag.Id);
             Assert.AreEqual("TagNo1", tag.TagNo);
         }
-
-        [TestMethod]
-        public async Task GetTagDetails_ThrowsException_IfPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () =>
-                await _dut.GetTagDetailsAsync("INVALIDPLANT", "TestProject", new List<string> {"TagNo1"}));
 
         [TestMethod]
         public async Task GetTagDetails_ShouldReturnEmptyList_WhenResultIsEmptyList()
