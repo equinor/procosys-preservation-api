@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Plant
         Task<IList<string>> GetPlantWithAccessForUserAsync(Guid userOid);
         Task<bool> HasUserAccessToPlantAsync(string plantId, Guid userOid);
         Task<bool> HasCurrentUserAccessToPlantAsync(string plantId);
-        Task<bool> IsAValidPlant(string plantId);
+        Task<bool> IsAValidPlantAsync(string plantId);
         void Clear(Guid userOid);
     }
 }

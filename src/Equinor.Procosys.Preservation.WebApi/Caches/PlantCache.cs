@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
             return await HasUserAccessToPlantAsync(plantId, userOid);
         }
 
-        public async Task<bool> IsAValidPlant(string plantId)
+        public async Task<bool> IsAValidPlantAsync(string plantId)
         {
             var userOid = _currentUserProvider.GetCurrentUserOid();
             var allPlants = await GetAllPlantsForUserAsync(userOid);

@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.MainApi.Plant
 {
-    [DebuggerDisplay("{Title} ({Id} {HasAccess)")]
+    [DebuggerDisplay("{Title} {Id} {HasAccess}")]
     public class ProcosysPlant
     {
         public string Id { get; set; }
