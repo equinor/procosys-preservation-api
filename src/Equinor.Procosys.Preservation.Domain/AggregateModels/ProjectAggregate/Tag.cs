@@ -452,7 +452,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             var toInterval = tagRequirement.IntervalWeeks;
 
             UpdateNextDueTimeUtc();
-            AddDomainEvent(new IntervalChangedEvent(Plant, ObjectGuid, fromInterval, toInterval));
+            AddDomainEvent(new IntervalChangedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId, fromInterval, toInterval));
         }
 
         private void Preserve(Person preservedBy, bool bulkPreserved)
