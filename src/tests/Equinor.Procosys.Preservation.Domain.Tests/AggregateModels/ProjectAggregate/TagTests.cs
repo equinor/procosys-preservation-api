@@ -902,6 +902,49 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region UpdateStep
+
+        [TestMethod]
+        public void UpdateStep_ShouldChangeStep()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.UpdateStep(_otherStep);
+
+            Assert.AreEqual(_otherStep.Id, dut.StepId);
+        }
+                
+        [TestMethod]
+        public void UpdateStep_ShouldThrowException_WhenStepIsNull()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.ThrowsException<ArgumentNullException>(() => dut.UpdateStep(null));
+        }
+                
+        [TestMethod]
+        public void UpdateStep_ShouldThrowException_WhenTagIsPoAreaAndStepIsNotSupplierStep()
+        {
+            var dut = new Tag(TestPlant, TagType.PoArea, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            Assert.ThrowsException<Exception>(() => dut.UpdateStep(_otherStep));
+        }
+
+        [TestMethod]
+        public void UpdateStep_ShouldAddStepChangedEvent()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+            dut.UpdateStep(_otherStep);
+
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(StepChangedEvent));
+        }
+
+        #endregion
+
         #region Transfer
 
        [TestMethod]
