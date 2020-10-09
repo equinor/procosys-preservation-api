@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Infrastructure.Caching;
@@ -31,14 +32,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
 
-        public async Task<IList<string>> GetProjectNamesForUserOidAsync(string plantId, Guid userOid)
-            => await _cacheManager.GetOrCreate(
-                ProjectsCacheKey(plantId, userOid),
-                async () => await _permissionApiService.GetProjectsAsync(plantId),
-                CacheDuration.Minutes,
-                _options.CurrentValue.PermissionCacheMinutes);
+        public async Task<IList<string>> GetProjectsForUserAsync(string plantId, Guid userOid)
+        {
+            var allProjects = await GetAllProjectsForUserAsync(plantId, userOid);
+            return allProjects?.Where(p => p.HasAccess).Select(p => p.Name).ToList();
+        }
 
-        public async Task<IList<string>> GetContentRestrictionsForUserOidAsync(string plantId, Guid userOid)
+        public async Task<IList<string>> GetContentRestrictionsForUserAsync(string plantId, Guid userOid)
             => await _cacheManager.GetOrCreate(
                 ContentRestrictionsCacheKey(plantId, userOid),
                 async () => await _permissionApiService.GetContentRestrictionsAsync(plantId),
@@ -51,6 +51,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
             _cacheManager.Remove(PermissionsCacheKey(plantId, userOid));
             _cacheManager.Remove(ContentRestrictionsCacheKey(plantId, userOid));
         }
+
+        private async Task<IList<ProcosysProject>> GetAllProjectsForUserAsync(string plantId, Guid userOid)
+            => await _cacheManager.GetOrCreate(
+                ProjectsCacheKey(plantId, userOid),
+                async () => await _permissionApiService.GetAllProjectsAsync(plantId),
+                CacheDuration.Minutes,
+                _options.CurrentValue.PermissionCacheMinutes);
 
         private string ProjectsCacheKey(string plantId, Guid userOid)
         {

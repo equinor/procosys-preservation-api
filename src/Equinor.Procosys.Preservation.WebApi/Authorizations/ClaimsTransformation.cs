@@ -93,13 +93,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
         private async Task AddUserDataClaimForAllProjectsToIdentityAsync(ClaimsIdentity claimsIdentity, string plantId, Guid userOid)
         {
-            var projectNames = await _permissionCache.GetProjectNamesForUserOidAsync(plantId, userOid);
+            var projectNames = await _permissionCache.GetProjectsForUserAsync(plantId, userOid);
             projectNames?.ToList().ForEach(projectName => claimsIdentity.AddClaim(CreateClaim(ClaimTypes.UserData, GetProjectClaimValue(projectName))));
         }
 
         private async Task AddUserDataClaimForAllContentRestrictionsToIdentityAsync(ClaimsIdentity claimsIdentity, string plantId, Guid userOid)
         {
-            var contentRestrictions = await _permissionCache.GetContentRestrictionsForUserOidAsync(plantId, userOid);
+            var contentRestrictions = await _permissionCache.GetContentRestrictionsForUserAsync(plantId, userOid);
             contentRestrictions?.ToList().ForEach(
                 contentRestriction => claimsIdentity.AddClaim(CreateClaim(ClaimTypes.UserData, GetContentRestrictionClaimValue(contentRestriction))));
         }

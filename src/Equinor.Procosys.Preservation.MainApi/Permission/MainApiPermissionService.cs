@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Project;
 using Microsoft.Extensions.Options;
 
 namespace Equinor.Procosys.Preservation.MainApi.Permission
@@ -22,15 +20,16 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
         
-        public async Task<IList<string>> GetProjectsAsync(string plantId)
+        public async Task<IList<ProcosysProject>> GetAllProjectsAsync(string plantId)
         {
             var url = $"{_baseAddress}Projects" +
                       $"?plantId={plantId}" +
                       "&withCommPkgsOnly=false" +
+                      "&includeClosedProjects=true" +
+                      "&includeProjectsWithoutAccess=true" +
                       $"&api-version={_apiVersion}";
 
-            var projects = await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysProject>>(url);
-            return projects != null ? projects.Select(p => p.Name).ToList() : new List<string>();
+            return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysProject>>(url);
         }
 
         public async Task<IList<string>> GetPermissionsAsync(string plantId)
