@@ -6,9 +6,10 @@ namespace Equinor.Procosys.Preservation.MainApi.Plant
 {
     public interface IPlantCache
     {
-        Task<IList<string>> GetPlantIdsForUserOidAsync(Guid userOid);
-        Task<bool> IsValidPlantForUserAsync(string plantId, Guid userOid);
-        Task<bool> IsValidPlantForCurrentUserAsync(string plantId);
+        Task<IList<string>> GetPlantWithAccessForUserAsync(Guid userOid);
+        Task<bool> HasUserAccessToPlantAsync(string plantId, Guid userOid);
+        Task<bool> HasCurrentUserAccessToPlantAsync(string plantId);
+        Task<bool> IsAValidPlant(string plantId);
         void Clear(Guid userOid);
     }
 }

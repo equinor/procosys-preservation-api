@@ -28,31 +28,44 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
             _options = options;
         }
 
-        public async Task<IList<string>> GetPlantIdsForUserOidAsync(Guid userOid)
+        public async Task<IList<string>> GetPlantWithAccessForUserAsync(Guid userOid)
+        {
+            var allPlants = await GetAllPlantsForUserAsync(userOid);
+            return allPlants?.Where(p => p.HasAccess).Select(p => p.Id).ToList();
+        }
+
+        public async Task<bool> HasUserAccessToPlantAsync(string plantId, Guid userOid)
+        {
+            var plantIds = await GetPlantWithAccessForUserAsync(userOid);
+            return plantIds.Contains(plantId);
+        }
+
+        public async Task<bool> HasCurrentUserAccessToPlantAsync(string plantId)
+        {
+            var userOid = _currentUserProvider.GetCurrentUserOid();
+
+            return await HasUserAccessToPlantAsync(plantId, userOid);
+        }
+
+        public async Task<bool> IsAValidPlant(string plantId)
+        {
+            var userOid = _currentUserProvider.GetCurrentUserOid();
+            var allPlants = await GetAllPlantsForUserAsync(userOid);
+            return allPlants != null && allPlants.Any(p => p.Id == plantId);
+        }
+
+        public void Clear(Guid userOid) => _cacheManager.Remove(PlantsCacheKey(userOid));
+
+        private async Task<IList<ProcosysPlant>> GetAllPlantsForUserAsync(Guid userOid)
             => await _cacheManager.GetOrCreate(
                 PlantsCacheKey(userOid),
                 async () =>
                 {
-                    var plants = await _plantApiService.GetPlantsAsync();
-                    return plants?.Select(p => p.Id).ToList();
+                    var plants = await _plantApiService.GetAllPlantsAsync();
+                    return plants;
                 },
                 CacheDuration.Minutes,
                 _options.CurrentValue.PlantCacheMinutes);
-
-        public async Task<bool> IsValidPlantForUserAsync(string plantId, Guid userOid)
-        {
-            var plantIds = await GetPlantIdsForUserOidAsync(userOid);
-            return plantIds.Contains(plantId);
-        }
-
-        public async Task<bool> IsValidPlantForCurrentUserAsync(string plantId)
-        {
-            var userOid = _currentUserProvider.GetCurrentUserOid();
-
-            return await IsValidPlantForUserAsync(plantId, userOid);
-        }
-
-        public void Clear(Guid userOid) => _cacheManager.Remove(PlantsCacheKey(userOid));
 
         private string PlantsCacheKey(Guid userOid)
             => $"PLANTS_{userOid.ToString().ToUpper()}";
