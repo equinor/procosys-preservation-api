@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<string>> GetPlants()
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var plants = await _plantCache.GetPlantIdsForUserOidAsync(currentUserOid);
+            var plants = await _plantCache.GetPlantWithAccessForUserAsync(currentUserOid);
             return plants;
         }
     }

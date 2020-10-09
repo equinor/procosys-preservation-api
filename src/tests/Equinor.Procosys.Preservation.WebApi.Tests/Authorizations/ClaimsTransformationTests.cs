@@ -38,8 +38,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             _plantProviderMock.SetupGet(p => p.Plant).Returns(Plant1);
 
             _plantCacheMock = new Mock<IPlantCache>();
-            _plantCacheMock.Setup(p => p.IsValidPlantForUserAsync(Plant1, Oid)).Returns(Task.FromResult(true));
-            _plantCacheMock.Setup(p => p.IsValidPlantForUserAsync(Plant2, Oid)).Returns(Task.FromResult(true));
+            _plantCacheMock.Setup(p => p.HasUserAccessToPlantAsync(Plant1, Oid)).Returns(Task.FromResult(true));
+            _plantCacheMock.Setup(p => p.HasUserAccessToPlantAsync(Plant2, Oid)).Returns(Task.FromResult(true));
 
             var permissionCacheMock = new Mock<IPermissionCache>();
             permissionCacheMock.Setup(p => p.GetPermissionsForUserAsync(Plant1, Oid))

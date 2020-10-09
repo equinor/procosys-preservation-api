@@ -20,8 +20,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IPlantApiService> _plantApiServiceMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
-        private readonly string Plant1 = "P1";
-        private readonly string Plant2 = "P2";
+        private readonly string Plant1WithAccess = "P1";
+        private readonly string Plant2WithAccess = "P2";
+        private readonly string PlantWithoutAccess = "P3";
 
         private PlantCache _dut;
 
@@ -39,141 +40,176 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
             _currentUserProviderMock.Setup(c => c.GetCurrentUserOid()).Returns(_currentUserOid);
 
             _plantApiServiceMock = new Mock<IPlantApiService>();
-            _plantApiServiceMock.Setup(p => p.GetPlantsAsync()).Returns(Task.FromResult(
-                new List<ProcosysPlant> {new ProcosysPlant {Id = Plant1}, new ProcosysPlant {Id = Plant2}}));
+            _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(
+                new List<ProcosysPlant>
+                {
+                    new ProcosysPlant {Id = Plant1WithAccess, HasAccess = true}, 
+                    new ProcosysPlant {Id = Plant2WithAccess, HasAccess = true},
+                    new ProcosysPlant {Id = PlantWithoutAccess}
+                }));
 
             _dut = new PlantCache(new CacheManager(), _currentUserProviderMock.Object, _plantApiServiceMock.Object, optionsMock.Object);
         }
 
         [TestMethod]
-        public async Task GetPlantIdsForUserOid_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
+        public async Task GetPlantWithAccessForUserAsync_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
         {
             // Act
-            var result = await _dut.GetPlantIdsForUserOidAsync(_currentUserOid);
+            var result = await _dut.GetPlantWithAccessForUserAsync(_currentUserOid);
 
             // Assert
             AssertPlants(result);
-            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+            _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
         }
 
         [TestMethod]
-        public async Task GetPlantsForUserOid_ShouldReturnPlantsFromCacheSecondTime()
+        public async Task GetAllPlantsForUserOid_ShouldReturnPlantsFromCacheSecondTime()
         {
-            await _dut.GetPlantIdsForUserOidAsync(_currentUserOid);
+            await _dut.GetPlantWithAccessForUserAsync(_currentUserOid);
 
             // Act
-            var result = await _dut.GetPlantIdsForUserOidAsync(_currentUserOid);
+            var result = await _dut.GetPlantWithAccessForUserAsync(_currentUserOid);
 
             // Assert
             AssertPlants(result);
-            // since GetPlantIdsForUserOidAsync has been called twice, but GetPlantsAsync has been called once, the second Get uses cache
-            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+            // since GetPlantWithAccessForUserAsyncAsync has been called twice, but GetAllPlantsAsync has been called once, the second Get uses cache
+            _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
         }
 
         [TestMethod]
-        public async Task IsValidPlantForCurrentUser_ShouldReturnTrue_WhenKnownPlant()
+        public async Task HasCurrentUserAccessToPlant_ShouldReturnTrue_WhenKnownPlant()
         {
             // Act
-            var result = await _dut.IsValidPlantForCurrentUserAsync(Plant2);
+            var result = await _dut.HasCurrentUserAccessToPlantAsync(Plant2WithAccess);
 
             // Assert
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public async Task IsValidPlantForCurrentUser_ShouldReturnFalse_WhenUnknownPlant()
+        public async Task HasCurrentUserAccessToPlant_ShouldReturnFalse_WhenUnknownPlant()
         {
             // Act
-            var result = await _dut.IsValidPlantForCurrentUserAsync("XYZ");
+            var result = await _dut.HasCurrentUserAccessToPlantAsync("XYZ");
 
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public async Task IsValidPlantForCurrentUser_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
+        public async Task HasCurrentUserAccessToPlant_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
         {
             // Act
-            await _dut.IsValidPlantForCurrentUserAsync(Plant2);
+            await _dut.HasCurrentUserAccessToPlantAsync(Plant2WithAccess);
 
             // Assert
-            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+            _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
         }
 
         [TestMethod]
-        public async Task IsValidPlantForCurrentUser_ShouldReturnPlantsFromCacheSecondTime()
+        public async Task HasCurrentUserAccessToPlant_ShouldReturnPlantsFromCacheSecondTime()
         {
-            await _dut.IsValidPlantForCurrentUserAsync("XYZ");
+            await _dut.HasCurrentUserAccessToPlantAsync("XYZ");
             // Act
-            await _dut.IsValidPlantForCurrentUserAsync(Plant2);
+            await _dut.HasCurrentUserAccessToPlantAsync(Plant2WithAccess);
 
             // Assert
-            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+            _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
         }
 
         [TestMethod]
-        public async Task IsValidPlantForUser_ShouldReturnTrue_WhenKnownPlant()
+        public async Task HasUserAccessToPlant_ShouldReturnTrue_WhenKnownPlant()
         {
             // Act
-            var result = await _dut.IsValidPlantForUserAsync(Plant2, _currentUserOid);
+            var result = await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
 
             // Assert
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public async Task IsValidPlantForUser_ShouldReturnFalse_WhenUnknownPlant()
+        public async Task HasUserAccessToPlant_ShouldReturnFalse_WhenUnknownPlant()
         {
             // Act
-            var result = await _dut.IsValidPlantForUserAsync("XYZ", _currentUserOid);
+            var result = await _dut.HasUserAccessToPlantAsync("XYZ", _currentUserOid);
 
             // Assert
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public async Task IsValidPlantForUser_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
+        public async Task HasUserAccessToPlant_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
         {
             // Act
-            await _dut.IsValidPlantForUserAsync(Plant2, _currentUserOid);
+            await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
 
             // Assert
-            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+            _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
         }
 
         [TestMethod]
-        public async Task IsValidPlantForUser_ShouldReturnPlantsFromCache()
+        public async Task HasUserAccessToPlant_ShouldReturnPlantsFromCache()
         {
-            await _dut.IsValidPlantForUserAsync("ABC", _currentUserOid);
+            await _dut.HasUserAccessToPlantAsync("ABC", _currentUserOid);
             // Act
-            await _dut.IsValidPlantForUserAsync(Plant2, _currentUserOid);
+            await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
 
             // Assert
-            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+            _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task IsAValidPlant_ShouldReturnTrue_WhenKnownPlantWithAccess()
+        {
+            // Act
+            var result = await _dut.IsAValidPlantAsync(Plant2WithAccess);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task IsAValidPlant_ShouldReturnTrue_WhenKnownPlantWithoutAccess()
+        {
+            // Act
+            var result = await _dut.IsAValidPlantAsync(PlantWithoutAccess);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task IsAValidPlant_ShouldReturnFalse_WhenUnknownPlant()
+        {
+            // Act
+            var result = await _dut.IsAValidPlantAsync("XYZ");
+
+            // Assert
+            Assert.IsFalse(result);
         }
 
         [TestMethod]
         public async Task Clear_ShouldForceGettingPlantsFromApiServiceAgain()
         {
             // Arrange
-            var result = await _dut.IsValidPlantForUserAsync(Plant2, _currentUserOid);
+            var result = await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
             Assert.IsTrue(result);
-            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Once);
+            _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
 
             // Act
             _dut.Clear(_currentUserOid);
 
             // Assert
-            result = await _dut.IsValidPlantForUserAsync(Plant2, _currentUserOid);
+            result = await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
             Assert.IsTrue(result);
-            _plantApiServiceMock.Verify(p => p.GetPlantsAsync(), Times.Exactly(2));
+            _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Exactly(2));
         }
 
         private void AssertPlants(IList<string> result)
         {
             Assert.AreEqual(2, result.Count);
-            Assert.AreEqual(Plant1, result.First());
-            Assert.AreEqual(Plant2, result.Last());
+            Assert.AreEqual(Plant1WithAccess, result.First());
+            Assert.AreEqual(Plant2WithAccess, result.Last());
         }
     }
 }

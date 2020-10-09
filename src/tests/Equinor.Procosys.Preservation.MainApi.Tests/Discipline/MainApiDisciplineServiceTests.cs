@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
-using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -15,7 +13,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
-        private Mock<IPlantCache> _plantCache;
         private ProcosysDiscipline _procosysDiscipline;
         private MainApiDisciplineService _dut;
 
@@ -27,10 +24,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
                 .Setup(x => x.CurrentValue)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
-            _plantCache = new Mock<IPlantCache>();
-            _plantCache
-                .Setup(x => x.IsValidPlantForCurrentUserAsync(_plant))
-                .Returns(Task.FromResult(true));
 
             _procosysDiscipline = new ProcosysDiscipline
             {
@@ -39,12 +32,8 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
                 Description = "Description1",
             };
            
-            _dut = new MainApiDisciplineService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
+            _dut = new MainApiDisciplineService(_mainApiClient.Object, _mainApiOptions.Object);
         }
-
-        [TestMethod]
-        public async Task TryGetDiscipline_ShouldThrowException_WhenPlantIsInvalid()
-            => await Assert.ThrowsExceptionAsync<ArgumentException>(async () => await _dut.TryGetDisciplineAsync("INVALIDPLANT", "C"));
 
         [TestMethod]
         public async Task TryGetDiscipline_ShouldReturnDiscipline()

@@ -43,12 +43,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 return principal;
             }
 
-            if (!await _plantCache.IsValidPlantForUserAsync(plantId, userOid.Value))
+            if (!await _plantCache.HasUserAccessToPlantAsync(plantId, userOid.Value))
             {
                 // not add plant specific claims if plant not among plants for user
                 return principal;
             }
-
 
             var claimsIdentity = GetOrCreateClaimsIdentityForThisIssuer(principal);
 
