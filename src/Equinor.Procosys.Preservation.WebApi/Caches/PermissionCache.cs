@@ -38,6 +38,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
             return allProjects?.Where(p => p.HasAccess).Select(p => p.Name).ToList();
         }
 
+        public async Task<bool> IsAValidProjectAsync(string plantId, Guid userOid, string projectName)
+        {
+            var allProjects = await GetAllProjectsForUserAsync(plantId, userOid);
+            return allProjects != null && allProjects.Any(p => p.Name == projectName);
+        }
+
         public async Task<IList<string>> GetContentRestrictionsForUserAsync(string plantId, Guid userOid)
             => await _cacheManager.GetOrCreate(
                 ContentRestrictionsCacheKey(plantId, userOid),
