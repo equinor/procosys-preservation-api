@@ -7,7 +7,6 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -18,17 +17,14 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
         private readonly string _apiVersion;
         private readonly Uri _baseAddress;
         private readonly IBearerTokenApiClient _mainApiClient;
-        private readonly IPlantCache _plantCache;
         private readonly int _tagSearchPageSize;
 
         public MainApiTagService(
             IBearerTokenApiClient mainApiClient,
-            IPlantCache plantCache,
             IOptionsMonitor<MainApiOptions> options,
             ILogger<MainApiTagService> logger)
         {
             _mainApiClient = mainApiClient;
-            _plantCache = plantCache;
             _apiVersion = options.CurrentValue.ApiVersion;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
             if (options.CurrentValue.TagSearchPageSize < 1)
@@ -52,10 +48,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
             {
                 throw new ArgumentNullException(nameof(allTagNos));
 
-            }
-            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
-            {
-                throw new ArgumentException($"Invalid plant: {plant}");
             }
 
             var baseUrl = $"{_baseAddress}Tag/ByTagNos" +
@@ -92,11 +84,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
         public async Task<IList<ProcosysPreservedTag>> GetPreservedTagsAsync(string plant, string projectName)
         {
-            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
-            {
-                throw new ArgumentException($"Invalid plant: {plant}");
-            }
-
             var url = $"{_baseAddress}PreservationTags" +
                       $"?plantId={plant}" +
                       $"&projectName={WebUtility.UrlEncode(projectName)}" +
@@ -106,11 +93,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
         public async Task<IList<ProcosysTagOverview>> SearchTagsByTagNoAsync(string plant, string projectName, string startsWithTagNo)
         {
-            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
-            {
-                throw new ArgumentException($"Invalid plant: {plant}");
-            }
-
             var items = new List<ProcosysTagOverview>();
             var currentPage = 0;
             ProcosysTagSearchResult tagSearchResult;
@@ -134,11 +116,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
         public async Task<IList<ProcosysTagOverview>> SearchTagsByTagFunctionsAsync(string plant, string projectName, IList<string> tagFunctionCodeRegisterCodePairs)
         {
-            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
-            {
-                throw new ArgumentException($"Invalid plant: {plant}");
-            }
-
             var items = new List<ProcosysTagOverview>();
             var currentPage = 0;
             ProcosysTagSearchResult tagSearchResult;
@@ -166,11 +143,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tag
 
         public async Task MarkTagsAsMigratedAsync(string plant, IEnumerable<long> tagIds)
         {
-            if (!await _plantCache.IsValidPlantForCurrentUserAsync(plant))
-            {
-                throw new ArgumentException($"Invalid plant: {plant}");
-            }
-
             var url = $"{_baseAddress}PreservationTags" +
                       $"?plantId={plant}" +
                       $"&api-version={_apiVersion}";

@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             _dut.Handle(new ActionAddedEvent(plant, objectGuid, title), default);
 
             // Assert
-            var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - '{title}'";
+            var expectedDescription = $"{EventType.ActionAdded.GetDescription()} - '{title}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);

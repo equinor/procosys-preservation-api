@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -14,7 +13,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
-        private Mock<IPlantCache> _plantCache;
         private ProcosysProject _result;
         private string _name = "NameA";
         private string _description = "Description1";
@@ -28,13 +26,9 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Project
                 .Setup(x => x.CurrentValue)
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
-            _plantCache = new Mock<IPlantCache>();
-            _plantCache
-                .Setup(x => x.IsValidPlantForCurrentUserAsync(_plant))
-                .Returns(Task.FromResult(true));
 
             _result = new ProcosysProject {Id = 1, Name = _name, Description = _description};
-            _dut = new MainApiProjectService(_mainApiClient.Object, _plantCache.Object, _mainApiOptions.Object);
+            _dut = new MainApiProjectService(_mainApiClient.Object, _mainApiOptions.Object);
         }
 
         [TestMethod]

@@ -36,7 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
             
-            tag.SetStep(step);
+            tag.UpdateStep(step);
 
             foreach (var update in request.UpdatedRequirements)
             {

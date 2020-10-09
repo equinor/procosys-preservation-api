@@ -28,6 +28,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
         PreservationCompleted,
         [Description("Interval changed")]
         IntervalChanged,
+        [Description("Journey changed")]
+        JourneyChanged,
+        [Description("Step changed")]
+        StepChanged,
         [Description("Transferred manually")]
         TransferredManually,
         [Description("Transferred automatically")]

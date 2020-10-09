@@ -77,7 +77,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.ToTable("History");
 
-                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','TagDeleted','PreservationStarted','PreservationCompleted','IntervalChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed')");
+                    b.HasCheckConstraint("constraint_history_check_valid_event_type", "EventType in ('RequirementAdded','RequirementDeleted','RequirementVoided','RequirementUnvoided','RequirementPreserved','TagVoided','TagUnvoided','TagCreated','TagDeleted','PreservationStarted','PreservationCompleted','IntervalChanged','JourneyChanged','StepChanged','TransferredManually','TransferredAutomatically','ActionAdded','ActionClosed')");
                 });
 
             modelBuilder.Entity("Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate.Journey", b =>
@@ -352,6 +352,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("PersonId");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("Plant", "ProjectId", "PersonId");
 
                     b.ToTable("SavedFilters");
                 });
@@ -789,6 +791,9 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("TagNo")
                         .HasName("IX_Tags_TagNo_ASC")
                         .HasAnnotation("SqlServer:Include", new[] { "AreaCode", "Calloff", "CommPkgNo", "Description", "CreatedAtUtc", "DisciplineCode", "IsVoided", "McPkgNo", "NextDueTimeUtc", "PurchaseOrderNo", "Status", "StorageArea", "TagFunctionCode", "TagType" });
+
+                    b.HasIndex("Plant", "TagNo", "ProjectId")
+                        .IsUnique();
 
                     b.ToTable("Tags");
 

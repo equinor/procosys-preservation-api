@@ -14,17 +14,17 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command.SourcePlant)
-                .MustAsync((_, sourcePlant, token) => BeAValidPlantAsync(sourcePlant.ToUpperInvariant()))
-                .WithMessage(command => $"Source plant is not valid! Plant={command.SourcePlant}");
+                .MustAsync((_, sourcePlant, token) => UserHaveAccessToPlantAsync(sourcePlant.ToUpperInvariant()))
+                .WithMessage(command => $"Source plant is not valid or access missing! Plant={command.SourcePlant}");
 
             RuleFor(command => command.TargetPlant)
-                .MustAsync((_, targetPlant, token) => BeAValidPlantAsync(targetPlant.ToUpperInvariant()))
-                .WithMessage(command => $"Target plant is not valid! Plant={command.TargetPlant}")
+                .MustAsync((_, targetPlant, token) => UserHaveAccessToPlantAsync(targetPlant.ToUpperInvariant()))
+                .WithMessage(command => $"Target plant is not valid or access missing! Plant={command.TargetPlant}")
                 .Must((_, targetPlant, token) => NotBeABasisPlant(targetPlant.ToUpperInvariant()))
                 .WithMessage(command => $"Target plant can not be a basis plant! Plant={command.TargetPlant}");
 
-            async Task<bool> BeAValidPlantAsync(string plantId)
-                => await plantCache.IsValidPlantForCurrentUserAsync(plantId);
+            async Task<bool> UserHaveAccessToPlantAsync(string plantId)
+                => await plantCache.HasCurrentUserAccessToPlantAsync(plantId);
             
             bool NotBeABasisPlant(string plantId) => !BasisPlants.Contains(plantId);
         }

@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             _dut.Handle(new IntervalChangedEvent(plant, objectGuid, _requirementDefinitionId, fromInterval, toInterval), default);
 
             // Assert
-            var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - From {fromInterval} To {toInterval} in '{_reqTitle}'";
+            var expectedDescription = $"{_historyAdded?.EventType.GetDescription()} - From {fromInterval} to {toInterval} in '{_reqTitle}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);

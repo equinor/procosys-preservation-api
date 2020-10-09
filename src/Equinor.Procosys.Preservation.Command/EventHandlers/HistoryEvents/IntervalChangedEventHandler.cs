@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
                 _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.RequirementDefinitionId);
 
             var eventType = EventType.IntervalChanged;
-            var description = $"{eventType.GetDescription()} - From {notification.FromInterval} To {notification.ToInterval} in '{requirementDefinition.Result.Title}'";
+            var description = $"{eventType.GetDescription()} - From {notification.FromInterval} to {notification.ToInterval} in '{requirementDefinition.Result.Title}'";
             var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;

@@ -83,7 +83,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.OidType, _synchronizationUserOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);
 
-            foreach (var plant in await _plantCache.GetPlantIdsForUserOidAsync(_synchronizationUserOid))
+            foreach (var plant in await _plantCache.GetPlantWithAccessForUserAsync(_synchronizationUserOid))
             {
                 _logger.LogInformation($"Synchronizing plant {plant}...");
 
