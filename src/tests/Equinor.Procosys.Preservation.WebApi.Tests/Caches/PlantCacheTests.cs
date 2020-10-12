@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         }
 
         [TestMethod]
-        public async Task GetAllPlantsForUserOid_ShouldReturnPlantsFromCacheSecondTime()
+        public async Task GetPlantWithAccessForUserAsync_ShouldReturnPlantsFromCacheSecondTime()
         {
             await _dut.GetPlantWithAccessForUserAsync(_currentUserOid);
 

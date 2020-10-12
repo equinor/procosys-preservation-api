@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
             var result = await _dut.GetAllPlantsAsync();
 
             // Assert
-            Assert.AreEqual(4, result.Count());
+            Assert.AreEqual(4, result.Count);
         }
 
         [TestMethod]

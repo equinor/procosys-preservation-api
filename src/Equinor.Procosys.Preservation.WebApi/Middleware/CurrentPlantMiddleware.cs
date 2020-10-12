@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.WebApi.Middleware
 {
@@ -16,18 +16,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
         public async Task InvokeAsync(
             HttpContext context,
             IHttpContextAccessor httpContextAccessor,
-            IPlantSetter plantSetter,
-            ILogger<CurrentPlantMiddleware> logger)
+            IPlantSetter plantSetter)
         {
             var headers = httpContextAccessor?.HttpContext?.Request?.Headers;
             if (headers == null)
             {
-                var error = "Could not determine request headers";
-                logger.LogError(error);
-                context.Response.StatusCode = 400;
-                context.Response.ContentType = "application/text";
-                await context.Response.WriteAsync(error);
-                return;
+                throw new Exception("Could not determine request headers");
             }
 
             if (headers.Keys.Contains(PlantHeader))
