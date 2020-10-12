@@ -10,8 +10,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
 {
     public class PlantValidatorMiddleware
     {
-        public const string PlantHeader = "x-plant";
-
         private readonly RequestDelegate _next;
 
         public PlantValidatorMiddleware(RequestDelegate next) => _next = next;
