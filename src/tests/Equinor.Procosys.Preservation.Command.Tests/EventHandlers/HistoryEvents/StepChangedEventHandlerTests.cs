@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             await _dut.Handle(new StepChangedEvent(TestPlant, objectGuid, FromStepId, ToStepIdInJourney2), default);
 
             // Assert
-            var expectedDescription = $"{EventType.JourneyChanged.GetDescription()} - From '{FromStep}' in journey '{Journey1}' to '{ToStepInJourney2}' in journey '{Journey2}'";
+            var expectedDescription = $"{EventType.JourneyChanged.GetDescription()} - From journey '{Journey1}' / step '{FromStep}' to journey '{Journey2}' / step '{ToStepInJourney2}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(TestPlant, _historyAdded.Plant);

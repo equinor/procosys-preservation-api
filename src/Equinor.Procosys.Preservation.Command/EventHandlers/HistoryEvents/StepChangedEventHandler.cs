@@ -21,13 +21,14 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
             _journeyRepository = journeyRepository;
         }
 
-        public async Task Handle(StepChangedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(StepChangedEvent notification, CancellationToken cancellationToken)
         {
-            var journeys = await 
+            var journeys = 
                 _journeyRepository.GetJourneysByStepIdsAsync(new List<int>
                 {
                     notification.FromStepId, notification.ToStepId
-                });
+                }).Result;
+
             var fromJourney = journeys.First(j => j.Steps.Any(s => s.Id == notification.FromStepId));
             var toJourney = journeys.First(j => j.Steps.Any(s => s.Id == notification.ToStepId));
             var fromStep = fromJourney.Steps.Single(s => s.Id == notification.FromStepId);
@@ -43,11 +44,12 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
             else
             {
                 eventType = EventType.JourneyChanged;
-                description = $"{eventType.GetDescription()} - From '{fromStep.Title}' in journey '{fromJourney.Title}' to '{toStep.Title}' in journey '{toJourney.Title}'";
+                description = $"{eventType.GetDescription()} - From journey '{fromJourney.Title}' / step '{fromStep.Title}' to journey '{toJourney.Title}' / step '{toStep.Title}'";
             }
             
             var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
+            return Task.CompletedTask;
         }
     }
 }
