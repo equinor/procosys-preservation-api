@@ -67,6 +67,44 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
+        public async Task GetAllProjectsAsync_ShouldReturnThreeProjects_OnValidPlant()
+        {
+            // Arrange
+            _mainApiClient
+                .SetupSequence(x => x.QueryAndDeserializeAsync<List<ProcosysProject>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<ProcosysProject>{ new ProcosysProject(), new ProcosysProject() }));
+            // Act
+            var result = await _dut.GetAllProjectsAsync(_plant);
+
+            // Assert
+            Assert.AreEqual(2, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetAllProjectsAsync_ShouldReturnNoProjects_OnValidPlant()
+        {
+            // Arrange
+            _mainApiClient
+                .SetupSequence(x => x.QueryAndDeserializeAsync<List<ProcosysProject>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<ProcosysProject>()));
+            // Act
+            var result = await _dut.GetAllProjectsAsync(_plant);
+
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
+        public async Task GetAllProjectsAsync_ShouldReturnNoProjects_OnInValidPlant()
+        {
+            // Act
+            var result = await _dut.GetAllProjectsAsync("INVALIDPLANT");
+
+            // Assert
+            Assert.AreEqual(0, result.Count);
+        }
+
+        [TestMethod]
         public async Task GetContentRestrictions_ShouldReturnThreePermissions_OnValidPlant()
         {
             // Arrange
