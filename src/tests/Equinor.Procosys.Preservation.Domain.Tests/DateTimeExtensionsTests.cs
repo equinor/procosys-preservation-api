@@ -144,5 +144,13 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
 
             Assert.AreEqual("2020w53", dut.FormatAsYearAndWeekString());
         }
+
+        [TestMethod]
+        public void StartOfPreservationWeek_ForMonday_ShouldGetMonday()
+            => Assert.AreEqual(DayOfWeek.Monday, _mondayInWeek6.StartOfPreservationWeek().DayOfWeek);
+
+        [TestMethod]
+        public void StartOfPreservationWeek_ForSunday_ShouldGetMonday()
+            => Assert.AreEqual(DayOfWeek.Monday, _sundayInWeek6.StartOfPreservationWeek().DayOfWeek);
     }
 }

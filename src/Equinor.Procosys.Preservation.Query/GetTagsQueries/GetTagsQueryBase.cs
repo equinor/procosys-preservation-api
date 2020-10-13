@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
             var startOfTwoWeeksUtc = DateTime.MinValue;
             if (filter.DueFilters.Any())
             {
-                startOfThisWeekUtc = utcNow.StartOfWeek();
+                startOfThisWeekUtc = utcNow.StartOfPreservationWeek();
                 startOfNextWeekUtc = startOfThisWeekUtc.AddWeeks(1);
                 startOfTwoWeeksUtc = startOfThisWeekUtc.AddWeeks(2);
             }
