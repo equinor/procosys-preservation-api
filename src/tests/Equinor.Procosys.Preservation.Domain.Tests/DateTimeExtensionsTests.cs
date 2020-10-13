@@ -146,11 +146,11 @@ namespace Equinor.Procosys.Preservation.Domain.Tests
         }
 
         [TestMethod]
-        public void StartOfWeek_ForMonday_ShouldGetMonday()
-            => Assert.AreEqual(DayOfWeek.Monday, _mondayInWeek6.StartOfWeek().DayOfWeek);
+        public void StartOfPreservationWeek_ForMonday_ShouldGetMonday()
+            => Assert.AreEqual(DayOfWeek.Monday, _mondayInWeek6.StartOfPreservationWeek().DayOfWeek);
 
         [TestMethod]
-        public void StartOfWeek_ForSunday_ShouldGetMonday()
-            => Assert.AreEqual(DayOfWeek.Monday, _sundayInWeek6.StartOfWeek().DayOfWeek);
+        public void StartOfPreservationWeek_ForSunday_ShouldGetMonday()
+            => Assert.AreEqual(DayOfWeek.Monday, _sundayInWeek6.StartOfPreservationWeek().DayOfWeek);
     }
 }
