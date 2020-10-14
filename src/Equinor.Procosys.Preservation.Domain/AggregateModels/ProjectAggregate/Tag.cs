@@ -332,6 +332,11 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(step));
             }
 
+            if (step.Id == StepId)
+            {
+                return;
+            }
+
             if (TagType == TagType.PoArea && !step.IsSupplierStep)
             {
                 throw new Exception($"Step for {TagType.PoArea} tags need to be a step for supplier");
@@ -433,10 +438,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 }
             }
 
-            if (tagRequirement.IntervalWeeks != intervalWeeks)
-            {
-                ChangeInterval(tagRequirement.Id, intervalWeeks);
-            }
+            ChangeInterval(tagRequirement.Id, intervalWeeks);
 
             tagRequirement.SetRowVersion(requirementRowVersion);
         }
@@ -444,6 +446,10 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public void ChangeInterval(int requirementId, int intervalWeeks)
         {
             var tagRequirement = Requirements.Single(r => r.Id == requirementId);
+            if (tagRequirement.IntervalWeeks == intervalWeeks)
+            {
+                return;
+            }
 
             var fromInterval = tagRequirement.IntervalWeeks;
 
