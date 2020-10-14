@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         }
 
         [TestMethod]
-        public async Task GetAllProjectsAsync_ShouldReturnNoProjects_OnInvalidPlant()
+        public async Task GetAllProjectsAsync_ShouldReturnNoProjects_OnInValidPlant()
         {
             // Act
             var result = await _dut.GetAllProjectsAsync("INVALIDPLANT");
