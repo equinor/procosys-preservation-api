@@ -195,7 +195,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             var _resp2 = "R2";
             var _reqType1Code = "ROT";
             var _reqType2Code = "AREA";
-            RequirementTypeIcon _reqIconOther = RequirementTypeIcon.Other;
+            var _reqIconOther = RequirementTypeIcon.Other;
 
             var testDataSet = new TestDataSet
             {
