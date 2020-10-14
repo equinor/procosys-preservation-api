@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.7")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -352,8 +352,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
                     b.HasIndex("PersonId");
 
                     b.HasIndex("ProjectId");
-
-                    b.HasIndex("Plant", "ProjectId", "PersonId");
 
                     b.ToTable("SavedFilters");
                 });
