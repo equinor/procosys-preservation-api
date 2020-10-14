@@ -26,9 +26,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .WithMany()
                 .HasForeignKey(x => x.ProjectId)
                 .OnDelete(DeleteBehavior.NoAction);
-            
-            builder
-                .HasIndex(nameof(SavedFilter.Plant), nameof(SavedFilter.ProjectId), "PersonId"); // PersonId is a shadow property
         }
     }
 }
