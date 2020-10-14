@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Query.GetProjectByName
             
             if (project == null)
             {
-                return new NotFoundResult<ProjectDetailsDto>(Strings.EntityNotFound(nameof(Journey), request.ProjectName));
+                return new NotFoundResult<ProjectDetailsDto>(Strings.EntityNotFound(nameof(Project), request.ProjectName));
             }
 
             var projectDto = new ProjectDetailsDto(
