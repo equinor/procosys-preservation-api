@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
                       "&includeProjectsWithoutAccess=true" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysProject>>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysProject>>(url) ?? new List<ProcosysProject>();
         }
 
         public async Task<IList<string>> GetPermissionsAsync(string plantId)
