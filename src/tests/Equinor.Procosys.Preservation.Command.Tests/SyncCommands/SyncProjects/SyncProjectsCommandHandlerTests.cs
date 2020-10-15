@@ -159,7 +159,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncProjects
             
             // Assert other interfaces and device in test (dut)
             _permissionCacheMock = new Mock<IPermissionCache>();
-            _permissionCacheMock.Setup(p => p.GetProjectsForUserAsync(TestPlant, CurrentUserOid))
+            _permissionCacheMock.Setup(p => p.GetOpenProjectsForUserAsync(TestPlant, CurrentUserOid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {ProjectName1, ProjectName2}));
 
             _command = new SyncProjectsCommand();

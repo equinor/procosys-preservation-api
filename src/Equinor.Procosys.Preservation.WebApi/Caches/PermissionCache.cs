@@ -32,10 +32,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Caches
                 CacheDuration.Minutes,
                 _options.CurrentValue.PermissionCacheMinutes);
 
-        public async Task<IList<string>> GetProjectsForUserAsync(string plantId, Guid userOid)
+        public async Task<IList<string>> GetOpenProjectsForUserAsync(string plantId, Guid userOid)
         {
             var allProjects = await GetAllProjectsForUserAsync(plantId, userOid);
-            return allProjects?.Where(p => p.HasAccess).Select(p => p.Name).ToList();
+            return allProjects?.Where(p => p.HasAccess && !p.IsClosed).Select(p => p.Name).ToList();
         }
 
         public async Task<bool> IsAValidProjectAsync(string plantId, Guid userOid, string projectName)

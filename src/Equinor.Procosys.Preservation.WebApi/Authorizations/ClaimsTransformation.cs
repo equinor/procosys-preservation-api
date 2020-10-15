@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 {
@@ -18,20 +19,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
         private readonly IPlantProvider _plantProvider;
         private readonly IPlantCache _plantCache;
         private readonly IPermissionCache _permissionCache;
+        private readonly ILogger<ClaimsTransformation> _logger;
 
-        public ClaimsTransformation(IPlantProvider plantProvider, IPlantCache plantCache, IPermissionCache permissionCache)
+        public ClaimsTransformation(
+            IPlantProvider plantProvider,
+            IPlantCache plantCache,
+            IPermissionCache permissionCache,
+            ILogger<ClaimsTransformation> logger)
         {
             _plantProvider = plantProvider;
             _plantCache = plantCache;
             _permissionCache = permissionCache;
+            _logger = logger;
         }
 
         public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
+            _logger.LogInformation($"----- {GetType().Name} start");
             var userOid = principal.Claims.TryGetOid();
             if (!userOid.HasValue)
             {
-                // not add claims if no oid found (I.e user not authenticated yet)
+                _logger.LogInformation($"----- {GetType().Name} early exit, not authenticated yet");
                 return principal;
             }
 
@@ -39,22 +47,23 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
             if (string.IsNullOrEmpty(plantId))
             {
-                // not add plant specific claims if no plant given in request
+                _logger.LogInformation($"----- {GetType().Name} early exit, not a plant request");
                 return principal;
             }
 
             if (!await _plantCache.HasUserAccessToPlantAsync(plantId, userOid.Value))
             {
-                // not add plant specific claims if plant not among plants for user
+                _logger.LogInformation($"----- {GetType().Name} early exit, not a valid plant for user");
                 return principal;
             }
 
             var claimsIdentity = GetOrCreateClaimsIdentityForThisIssuer(principal);
 
             await AddRoleForAllPermissionsToIdentityAsync(claimsIdentity, plantId, userOid.Value);
-            await AddUserDataClaimForAllProjectsToIdentityAsync(claimsIdentity, plantId, userOid.Value);
+            await AddUserDataClaimForAllOpenProjectsToIdentityAsync(claimsIdentity, plantId, userOid.Value);
             await AddUserDataClaimForAllContentRestrictionsToIdentityAsync(claimsIdentity, plantId, userOid.Value);
 
+            _logger.LogInformation($"----- {GetType().Name} completed");
             return principal;
         }
 
@@ -91,9 +100,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
                 permission => claimsIdentity.AddClaim(CreateClaim(ClaimTypes.Role, permission)));
         }
 
-        private async Task AddUserDataClaimForAllProjectsToIdentityAsync(ClaimsIdentity claimsIdentity, string plantId, Guid userOid)
+        private async Task AddUserDataClaimForAllOpenProjectsToIdentityAsync(ClaimsIdentity claimsIdentity, string plantId, Guid userOid)
         {
-            var projectNames = await _permissionCache.GetProjectsForUserAsync(plantId, userOid);
+            var projectNames = await _permissionCache.GetOpenProjectsForUserAsync(plantId, userOid);
             projectNames?.ToList().ForEach(projectName => claimsIdentity.AddClaim(CreateClaim(ClaimTypes.UserData, GetProjectClaimValue(projectName))));
         }
 

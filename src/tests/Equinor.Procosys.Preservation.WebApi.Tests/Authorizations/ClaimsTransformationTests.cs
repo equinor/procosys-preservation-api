@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -44,24 +45,30 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             var permissionCacheMock = new Mock<IPermissionCache>();
             permissionCacheMock.Setup(p => p.GetPermissionsForUserAsync(Plant1, Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Permission1_Plant1, Permission2_Plant1}));
-            permissionCacheMock.Setup(p => p.GetProjectsForUserAsync(Plant1, Oid))
+            permissionCacheMock.Setup(p => p.GetOpenProjectsForUserAsync(Plant1, Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Project1_Plant1, Project2_Plant1}));
             permissionCacheMock.Setup(p => p.GetContentRestrictionsForUserAsync(Plant1, Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Restriction1_Plant1, Restriction2_Plant1}));
 
             permissionCacheMock.Setup(p => p.GetPermissionsForUserAsync(Plant2, Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Permission1_Plant2}));
-            permissionCacheMock.Setup(p => p.GetProjectsForUserAsync(Plant2, Oid))
+            permissionCacheMock.Setup(p => p.GetOpenProjectsForUserAsync(Plant2, Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Project1_Plant2}));
             permissionCacheMock.Setup(p => p.GetContentRestrictionsForUserAsync(Plant2, Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Restriction1_Plant2}));
+
+            var loggerMock = new Mock<ILogger<ClaimsTransformation>>();
 
             _principalWithOid = new ClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.OidType, Oid.ToString()));
             _principalWithOid.AddIdentity(claimsIdentity);
             
-            _dut = new ClaimsTransformation(_plantProviderMock.Object, _plantCacheMock.Object, permissionCacheMock.Object);
+            _dut = new ClaimsTransformation(
+                _plantProviderMock.Object,
+                _plantCacheMock.Object,
+                permissionCacheMock.Object,
+                loggerMock.Object);
         }
 
         [TestMethod]
