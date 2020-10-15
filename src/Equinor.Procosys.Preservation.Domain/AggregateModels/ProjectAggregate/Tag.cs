@@ -460,6 +460,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             UpdateNextDueTimeUtc();
             AddDomainEvent(new IntervalChangedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId, fromInterval, toInterval));
         }
+        
+        public bool IsAreaTag()
+        {
+            var areaTagTypes = new List<TagType> {TagType.PoArea, TagType.PreArea, TagType.SiteArea};
+            return areaTagTypes.Contains(TagType);
+        }
 
         private void Preserve(Person preservedBy, bool bulkPreserved)
         {

@@ -14,8 +14,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
     [TestClass]
     public class UpdateTagStepAndRequirementsCommandHandlerTests : CommandHandlerTestsBase
     {
-        private const int TagId1 = 123;
-        private const int TagId2 = 124;
+        private const int StandardTagId1 = 123;
+        private const int StandardTagId2 = 124;
+        private const int AreaTagId = 125;
         private const int StepId1 = 11;
         private const int StepId2 = 12;
         private const int ReqDefId1 = 99;
@@ -23,19 +24,22 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         private const int TwoWeekInterval = 2;
         private const int ThreeWeekInterval = 3;
         private const string RowVersion = "AAAAAAAAD6U=";
+        private const string Description = "Desc";
 
         private Mock<Step> _stepMock1;
         private Mock<Step> _stepMock2;
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
-        private Tag _tagWithOneRequirement;
-        private Tag _tagWithTwoRequirements;
+        private Tag _areaTagWithOneRequirement;
+        private Tag _standardTagWithOneRequirement;
+        private Tag _standardTagWithTwoRequirements;
 
         private UpdateTagStepAndRequirementsCommandHandler _dut;
-        private TagRequirement _tagRequirement1OnTag1;
-        private TagRequirement _tagRequirement1OnTag2;
-        private TagRequirement _tagRequirement2OnTag2;
+        private TagRequirement _tagRequirement1OnStandardTag1;
+        private TagRequirement _tagRequirement1OnAreaTag;
+        private TagRequirement _tagRequirement1OnStandardTag2;
+        private TagRequirement _tagRequirement2OnStandardTag2;
 
         [TestInitialize]
         public void Setup()
@@ -59,20 +63,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(ReqDefId2))
                 .Returns(Task.FromResult(rdMock2.Object));
 
-            _tagRequirement1OnTag1 = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock1.Object);
-            _tagRequirement1OnTag1.SetProtectedIdForTesting(111);
-            _tagWithOneRequirement = new Tag(TestPlant, TagType.Standard, "T1", "D", _stepMock1.Object, new List<TagRequirement>
+            var reqId = 111;
+            _tagRequirement1OnStandardTag1 = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock1.Object);
+            _tagRequirement1OnStandardTag1.SetProtectedIdForTesting(++reqId);
+            _standardTagWithOneRequirement = new Tag(TestPlant, TagType.Standard, "T1", Description, _stepMock1.Object, new List<TagRequirement>
             {
-                _tagRequirement1OnTag1
+                _tagRequirement1OnStandardTag1
             });
-            _tagRequirement1OnTag2 = new TagRequirement(TestPlant, TwoWeekInterval, rdMock1.Object);
-            _tagRequirement1OnTag2.SetProtectedIdForTesting(112);
-            _tagRequirement2OnTag2 = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock2.Object);
-            _tagRequirement2OnTag2.SetProtectedIdForTesting(113);
-            _tagWithTwoRequirements = new Tag(TestPlant, TagType.Standard, "T2", "D", _stepMock1.Object, new List<TagRequirement>
+            _tagRequirement1OnStandardTag2 = new TagRequirement(TestPlant, TwoWeekInterval, rdMock1.Object);
+            _tagRequirement1OnStandardTag2.SetProtectedIdForTesting(++reqId);
+            _tagRequirement2OnStandardTag2 = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock2.Object);
+            _tagRequirement2OnStandardTag2.SetProtectedIdForTesting(++reqId);
+            _standardTagWithTwoRequirements = new Tag(TestPlant, TagType.Standard, "T2", "D", _stepMock1.Object, new List<TagRequirement>
             {
-                _tagRequirement1OnTag2,
-                _tagRequirement2OnTag2
+                _tagRequirement1OnStandardTag2,
+                _tagRequirement2OnStandardTag2
+            });
+            _tagRequirement1OnAreaTag = new TagRequirement(TestPlant, ThreeWeekInterval, rdMock1.Object);
+            _tagRequirement1OnAreaTag.SetProtectedIdForTesting(++reqId);
+            _areaTagWithOneRequirement = new Tag(TestPlant, TagType.PoArea, "T3", Description, _stepMock1.Object, new List<TagRequirement>
+            {
+                _tagRequirement1OnAreaTag
             });
 
             _journeyRepositoryMock = new Mock<IJourneyRepository>();
@@ -84,8 +95,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 .Returns(Task.FromResult(_stepMock2.Object));
 
             _projectRepositoryMock = new Mock<IProjectRepository>();
-            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(TagId1)).Returns(Task.FromResult(_tagWithOneRequirement));
-            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(TagId2)).Returns(Task.FromResult(_tagWithTwoRequirements));
+            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(StandardTagId1)).Returns(Task.FromResult(_standardTagWithOneRequirement));
+            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(StandardTagId2)).Returns(Task.FromResult(_standardTagWithTwoRequirements));
+            _projectRepositoryMock.Setup(p => p.GetTagByTagIdAsync(AreaTagId)).Returns(Task.FromResult(_areaTagWithOneRequirement));
 
             _dut = new UpdateTagStepAndRequirementsCommandHandler(
                 _projectRepositoryMock.Object,
@@ -94,7 +106,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object);
 
-            Assert.AreEqual(1, _tagWithOneRequirement.Requirements.Count);
+            Assert.AreEqual(1, _standardTagWithOneRequirement.Requirements.Count);
         }
 
         [TestMethod]
@@ -107,7 +119,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 new RequirementForCommand(ReqDefId2, ThreeWeekInterval)
             };
             var command = new UpdateTagStepAndRequirementsCommand(
-                TagId1,
+                StandardTagId1,
+                null,
                 StepId1,
                 updatedRequirements,
                 newRequirements, 
@@ -118,22 +131,23 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(StepId1, _tagWithOneRequirement.StepId);
-            Assert.AreEqual(2, _tagWithOneRequirement.Requirements.Count);
+            Assert.AreEqual(StepId1, _standardTagWithOneRequirement.StepId);
+            Assert.AreEqual(2, _standardTagWithOneRequirement.Requirements.Count);
         }
 
         [TestMethod]
         public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldUpdateExistingRequirement()
         {
             // Arrange
-            var tagRequirement = _tagWithOneRequirement.Requirements.First();
+            var tagRequirement = _standardTagWithOneRequirement.Requirements.First();
             Assert.AreEqual(ThreeWeekInterval, tagRequirement.IntervalWeeks);
             var updatedRequirements = new List<UpdateRequirementForCommand>
             {
                 new UpdateRequirementForCommand(tagRequirement.Id, TwoWeekInterval, false, RowVersion)
             };
             var command = new UpdateTagStepAndRequirementsCommand(
-                TagId1,
+                StandardTagId1,
+                null,
                 StepId2,
                 updatedRequirements,
                 new List<RequirementForCommand>(),
@@ -144,8 +158,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(StepId2, _tagWithOneRequirement.StepId);
-            Assert.AreEqual(1, _tagWithOneRequirement.Requirements.Count);
+            Assert.AreEqual(StepId2, _standardTagWithOneRequirement.StepId);
+            Assert.AreEqual(1, _standardTagWithOneRequirement.Requirements.Count);
             Assert.AreEqual(TwoWeekInterval, tagRequirement.IntervalWeeks);
         }
 
@@ -159,7 +173,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 new RequirementForCommand(ReqDefId2, ThreeWeekInterval)
             };
             var command = new UpdateTagStepAndRequirementsCommand(
-                TagId1,
+                StandardTagId1,
+                null,
                 StepId1,
                 updatedRequirements,
                 newRequirements, 
@@ -170,7 +185,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            var newReq = _tagWithOneRequirement.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
+            var newReq = _standardTagWithOneRequirement.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
             Assert.IsNull(newReq.ActivePeriod);
             Assert.IsNull(newReq.NextDueTimeUtc);
         }
@@ -179,9 +194,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldStartPreservationOnNewRequirements_WhenPreservationActive()
         {
             // Arrange
-            Assert.IsNull(_tagWithOneRequirement.NextDueTimeUtc);
-            _tagWithOneRequirement.StartPreservation();
-            Assert.IsNotNull(_tagWithOneRequirement.NextDueTimeUtc);
+            Assert.IsNull(_standardTagWithOneRequirement.NextDueTimeUtc);
+            _standardTagWithOneRequirement.StartPreservation();
+            Assert.IsNotNull(_standardTagWithOneRequirement.NextDueTimeUtc);
 
             var updatedRequirements = new List<UpdateRequirementForCommand>();
             var newRequirements = new List<RequirementForCommand>
@@ -189,7 +204,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 new RequirementForCommand(ReqDefId2, ThreeWeekInterval)
             };
             var command = new UpdateTagStepAndRequirementsCommand(
-                TagId1,
+                StandardTagId1,
+                null,
                 StepId1,
                 updatedRequirements,
                 newRequirements, 
@@ -200,7 +216,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            var newReq = _tagWithOneRequirement.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
+            var newReq = _standardTagWithOneRequirement.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
             Assert.IsNotNull(newReq.ActivePeriod);
             Assert.IsNotNull(newReq.NextDueTimeUtc);
         }
@@ -209,8 +225,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldBeAbleToVoidRequirement_WhenNonVoidingRequirementExistsAfter()
         {
             // Arrange
-            var tagRequirement1 = _tagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId1);
-            var tagRequirement2 = _tagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
+            var tagRequirement1 = _standardTagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId1);
+            var tagRequirement2 = _standardTagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
 
             Assert.IsFalse(tagRequirement1.IsVoided);
             Assert.IsFalse(tagRequirement2.IsVoided);
@@ -220,7 +236,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 new UpdateRequirementForCommand(tagRequirement1.Id, ThreeWeekInterval, true, RowVersion)
             };
             var command = new UpdateTagStepAndRequirementsCommand(
-                TagId2,
+                StandardTagId2,
+                null,
                 StepId2,
                 updatedRequirements,
                 new List<RequirementForCommand>(),
@@ -239,18 +256,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldUpdateNextDueOnActiveTag_WhenUpdatingExistingWithShorterInterval()
         {
             // Arrange
-            _tagWithOneRequirement.StartPreservation();
+            _standardTagWithOneRequirement.StartPreservation();
 
-            var tagRequirement = _tagWithOneRequirement.Requirements.First();
+            var tagRequirement = _standardTagWithOneRequirement.Requirements.First();
             Assert.AreEqual(ThreeWeekInterval, tagRequirement.IntervalWeeks);
-            var oldNextDueTimeOnTag = _tagWithOneRequirement.NextDueTimeUtc;
+            var oldNextDueTimeOnTag = _standardTagWithOneRequirement.NextDueTimeUtc;
             Assert.IsNotNull(oldNextDueTimeOnTag);
             var updatedRequirements = new List<UpdateRequirementForCommand>
             {
                 new UpdateRequirementForCommand(tagRequirement.Id, TwoWeekInterval, false, RowVersion)
             };
             var command = new UpdateTagStepAndRequirementsCommand(
-                TagId1,
+                StandardTagId1,
+                null,
                 StepId2,
                 updatedRequirements,
                 new List<RequirementForCommand>(),
@@ -261,8 +279,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(1, _tagWithOneRequirement.Requirements.Count);
-            var newNextDueTimeOnTag = _tagWithOneRequirement.NextDueTimeUtc;
+            Assert.AreEqual(1, _standardTagWithOneRequirement.Requirements.Count);
+            var newNextDueTimeOnTag = _standardTagWithOneRequirement.NextDueTimeUtc;
             Assert.IsNotNull(newNextDueTimeOnTag);
             Assert.IsTrue(newNextDueTimeOnTag.Value < oldNextDueTimeOnTag.Value);
             var nextDueTimeUtcOnRequirement = tagRequirement.NextDueTimeUtc;
@@ -274,10 +292,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldUpdateNextDueOnActiveTag_WhenAddingNewRequirementWithShorterIntervalThanExisting()
         {
             // Arrange
-            _tagWithOneRequirement.StartPreservation();
+            _standardTagWithOneRequirement.StartPreservation();
 
-            Assert.AreEqual(ThreeWeekInterval, _tagWithOneRequirement.Requirements.First().IntervalWeeks);
-            var oldNextDueTimeOnTag = _tagWithOneRequirement.NextDueTimeUtc;
+            Assert.AreEqual(ThreeWeekInterval, _standardTagWithOneRequirement.Requirements.First().IntervalWeeks);
+            var oldNextDueTimeOnTag = _standardTagWithOneRequirement.NextDueTimeUtc;
             Assert.IsNotNull(oldNextDueTimeOnTag);
 
             var updatedRequirements = new List<UpdateRequirementForCommand>();
@@ -286,7 +304,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 new RequirementForCommand(ReqDefId2, TwoWeekInterval)
             };
             var command = new UpdateTagStepAndRequirementsCommand(
-                TagId1,
+                StandardTagId1,
+                null,
                 StepId1,
                 updatedRequirements,
                 newRequirements, 
@@ -297,15 +316,80 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
 
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
-            Assert.AreEqual(2, _tagWithOneRequirement.Requirements.Count);
-            var newNextDueTimeOnTag = _tagWithOneRequirement.NextDueTimeUtc;
+            Assert.AreEqual(2, _standardTagWithOneRequirement.Requirements.Count);
+            var newNextDueTimeOnTag = _standardTagWithOneRequirement.NextDueTimeUtc;
             Assert.IsNotNull(newNextDueTimeOnTag);
             Assert.IsTrue(newNextDueTimeOnTag.Value < oldNextDueTimeOnTag.Value);
-            var nearestRequirement = _tagWithOneRequirement.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
+            var nearestRequirement = _standardTagWithOneRequirement.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId2);
             Assert.AreEqual(TwoWeekInterval, nearestRequirement.IntervalWeeks);
             var nextDueTimeUtcOnRequirement = nearestRequirement.NextDueTimeUtc;
             Assert.IsNotNull(nextDueTimeUtcOnRequirement);
             Assert.AreEqual(newNextDueTimeOnTag.Value, nextDueTimeUtcOnRequirement.Value);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldKeepDescription_WhenDescriptionNotGiven()
+        {
+            // Arrange
+            Assert.AreEqual(Description, _areaTagWithOneRequirement.Description);
+
+            var command = new UpdateTagStepAndRequirementsCommand(
+                AreaTagId,
+                null,
+                StepId1,
+                new List<UpdateRequirementForCommand>(),
+                new List<RequirementForCommand>(), 
+                RowVersion);
+
+            // Act
+            var result = await _dut.Handle(command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(Description, _areaTagWithOneRequirement.Description);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldChangeDescription_ForAreaTag()
+        {
+            // Arrange
+            Assert.AreEqual(Description, _areaTagWithOneRequirement.Description);
+
+            var newDescription = "NewDescription";
+            var command = new UpdateTagStepAndRequirementsCommand(
+                AreaTagId,
+                newDescription,
+                StepId1,
+                new List<UpdateRequirementForCommand>(),
+                new List<RequirementForCommand>(), 
+                RowVersion);
+
+            // Act
+            var result = await _dut.Handle(command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(newDescription, _areaTagWithOneRequirement.Description);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldKeepDescription_ForStandardTag()
+        {
+            // Act
+            var command = new UpdateTagStepAndRequirementsCommand(
+                StandardTagId1,
+                "NewDescription",
+                StepId1,
+                new List<UpdateRequirementForCommand>(),
+                new List<RequirementForCommand>(), 
+                RowVersion);
+
+            // Act
+            var result = await _dut.Handle(command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(Description, _areaTagWithOneRequirement.Description);
         }
     }
 }
