@@ -466,6 +466,13 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             var areaTagTypes = new List<TagType> {TagType.PoArea, TagType.PreArea, TagType.SiteArea};
             return areaTagTypes.Contains(TagType);
         }
+        
+        public void Reschedule(int weeks, RescheduledDirection direction)
+        {
+            // todo add tests
+            AddDomainEvent(new RescheduledEvent(Plant, ObjectGuid, weeks, direction));
+            throw new NotImplementedException();
+        }
 
         private void Preserve(Person preservedBy, bool bulkPreserved)
         {
