@@ -59,6 +59,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                     .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!");
             });
 
+            When(command => command.Description != null, () =>
+            {
+                RuleFor(command => command)
+                    .Must(command => !string.IsNullOrEmpty(command.Description))
+                    .WithMessage(command => "Description can not be blank!")
+                    .MustAsync((command, token) => BeAnAreaTagAsync(command.TagId, token))
+                    .WithMessage(command => "Tag must be an area tag!");
+            });
+
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
@@ -106,6 +115,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
+            
+            async Task<bool> BeAnAreaTagAsync(int tagId, CancellationToken token)
+                => await tagValidator.VerifyTagIsAreaTagAsync(tagId, token);
             
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
