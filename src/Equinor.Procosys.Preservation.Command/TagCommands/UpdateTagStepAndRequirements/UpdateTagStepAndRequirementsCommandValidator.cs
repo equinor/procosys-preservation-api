@@ -65,7 +65,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                     .Must(command => !string.IsNullOrEmpty(command.Description))
                     .WithMessage(command => "Description can not be blank!")
                     .MustAsync((command, token) => BeAnAreaTagAsync(command.TagId, token))
-                    .WithMessage(command => "Tag must be an area tag!");
+                    .WithMessage(command => "Tag must be an area tag to update description!");
             });
 
             RuleFor(command => command)

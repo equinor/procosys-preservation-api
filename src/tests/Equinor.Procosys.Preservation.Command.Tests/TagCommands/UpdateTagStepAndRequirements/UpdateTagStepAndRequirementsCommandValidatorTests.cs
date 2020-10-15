@@ -386,7 +386,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag must be an area tag!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag must be an area tag to update description!"));
         }
     }
 }

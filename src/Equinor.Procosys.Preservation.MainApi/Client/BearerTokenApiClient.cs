@@ -49,18 +49,19 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
             var response = await httpClient.GetAsync(url);
             stopWatch.Stop();
 
+            var msg = $"{stopWatch.Elapsed.TotalSeconds}s elapsed when requesting '{url}'. Status: {response.StatusCode}";
             if (!response.IsSuccessStatusCode)
             {
                 if (tryGet && response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning($"Requesting '{url}' returned 'Not found' and took {stopWatch.Elapsed.TotalSeconds}s.");
+                    _logger.LogWarning(msg);
                     return default;
                 }
-                _logger.LogError($"Requesting '{url}' was unsuccessful and took {stopWatch.Elapsed.TotalSeconds}s.");
+                _logger.LogError(msg);
                 throw new Exception($"Requesting '{url}' was unsuccessful. Status={response.StatusCode}");
             }
 
-            _logger.LogDebug($"Request was successful and took {stopWatch.Elapsed.TotalSeconds}s.");
+            _logger.LogInformation(msg);
             var jsonResult = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<T>(jsonResult);
             return result;
