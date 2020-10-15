@@ -20,13 +20,15 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                 .Must(ids => ids != null && ids.Any())
                 .WithMessage("At least 1 tag must be given!")
                 .Must(BeUniqueTags)
-                .WithMessage("Tags must be unique!");
+                .WithMessage("Tags must be unique!")
+                .MustAsync(BeInSameProjectAsync)
+                .WithMessage("Tags must be in same project!")
+                .MustAsync(NotBeAClosedProjectForTagAsync)
+                .WithMessage("Project is closed!");
 
             When(command => command.Tags.Any() && BeUniqueTags(command.Tags), () =>
             {
                 RuleForEach(command => command.Tags)
-                    .MustAsync((_, tag, __, token) => NotBeAClosedProjectForTagAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Project for tag is closed! Tag={id}")
                     .MustAsync((_, tag, __, token) => BeAnExistingTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
                     .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
@@ -40,9 +42,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                 var ids = tags.Select(x => x.Id).ToList();
                 return ids.Distinct().Count() == ids.Count;
             }
+                        
+            async Task<bool> BeInSameProjectAsync(IEnumerable<IdAndRowVersion> tags, CancellationToken token)
+                => await projectValidator.AllTagsInSameProjectAsync(tags.Select(t => t.Id), token);
             
-            async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
-                => !await projectValidator.IsClosedForTagAsync(tagId, token);
+            async Task<bool> NotBeAClosedProjectForTagAsync(IEnumerable<IdAndRowVersion> tags, CancellationToken token)
+                => !await projectValidator.IsClosedForTagAsync(tags.First().Id, token);
 
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);

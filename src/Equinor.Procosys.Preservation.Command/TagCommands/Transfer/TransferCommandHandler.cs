@@ -40,6 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                 var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
                 tag.SetRowVersion(request.Tags.Single(x => x.Id == tag.Id).RowVersion);
                 tag.Transfer(journey);
+                // todo check if this is correct! I guess that RowVersion is set when saving
                 tagsWithUpdatedRowVersion.Add(new IdAndRowVersion(tag.Id, tag.RowVersion.ConvertToString()));
             }
             

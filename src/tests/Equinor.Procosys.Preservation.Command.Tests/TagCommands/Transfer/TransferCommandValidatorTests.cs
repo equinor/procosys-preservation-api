@@ -20,17 +20,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         private Mock<ITagValidator> _tagValidatorMock;
         private TransferCommand _command;
 
+        private List<int> _tagIds;
         private List<IdAndRowVersion> _tagIdsWithRowVersion;
 
         [TestInitialize]
         public void Setup_OkState()
         {
+            _tagIds = new List<int> {TagId1, TagId2};
             _tagIdsWithRowVersion = new List<IdAndRowVersion>
             {
                 new IdAndRowVersion(TagId1, RowVersion1),
                 new IdAndRowVersion(TagId2, RowVersion2)
             };
             _projectValidatorMock = new Mock<IProjectValidator>();
+            _projectValidatorMock.Setup(p => p.AllTagsInSameProjectAsync(_tagIds, default)).Returns(Task.FromResult(true));
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
@@ -106,7 +109,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
         }
 
         [TestMethod]
@@ -131,7 +134,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
         }
     }
 }
