@@ -39,6 +39,8 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
         [Description("Action added")]
         ActionAdded,
         [Description("Action closed")]
-        ActionClosed
+        ActionClosed,
+        [Description("Rescheduled")]
+        Rescheduled
     }
 }
