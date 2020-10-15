@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
             TimeService.SetProvider(new ManualTimeProvider(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
 
             _permissionApiServiceMock = new Mock<IPermissionApiService>();
-            _permissionApiServiceMock.Setup(p => p.GetAllProjectsAsync(TestPlant))
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(TestPlant))
                 .Returns(Task.FromResult<IList<ProcosysProject>>(new List<ProcosysProject>
                 {
                     new ProcosysProject {Name = Project1WithAccess, HasAccess = true},
@@ -79,18 +79,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         }
 
         [TestMethod]
-        public async Task GetProjectsForUser_ShouldReturnProjectsFromPermissionApiServiceFirstTime()
+        public async Task GetProjectsForUserAsync_ShouldReturnProjectsFromPermissionApiServiceFirstTime()
         {
             // Act
             var result = await _dut.GetProjectsForUserAsync(TestPlant, Oid);
 
             // Assert
             AssertProjects(result);
-            _permissionApiServiceMock.Verify(p => p.GetAllProjectsAsync(TestPlant), Times.Once);
+            _permissionApiServiceMock.Verify(p => p.GetAllOpenProjectsAsync(TestPlant), Times.Once);
         }
 
         [TestMethod]
-        public async Task GetProjectsForUser_ShouldReturnProjectsFromCacheSecondTime()
+        public async Task GetProjectsForUserAsync_ShouldReturnProjectsFromCacheSecondTime()
         {
             await _dut.GetProjectsForUserAsync(TestPlant, Oid);
             // Act
@@ -98,8 +98,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
 
             // Assert
             AssertProjects(result);
-            // since GetProjectsForUserAsync has been called twice, but GetAllProjectsAsync has been called once, the second Get uses cache
-            _permissionApiServiceMock.Verify(p => p.GetAllProjectsAsync(TestPlant), Times.Once);
+            // since GetProjectsForUserAsyncAsync has been called twice, but GetAllProjectsAsync has been called once, the second Get uses cache
+            _permissionApiServiceMock.Verify(p => p.GetAllOpenProjectsAsync(TestPlant), Times.Once);
         }
 
         [TestMethod]
@@ -127,15 +127,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         }
 
         [TestMethod]
-        public async Task GetPermissionsForUser_ShouldThrowExceptionWhenOidIsEmty()
+        public async Task GetPermissionsForUser_ShouldThrowExceptionWhenOidIsEmpty()
             => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetPermissionsForUserAsync(TestPlant, Guid.Empty));
 
         [TestMethod]
-        public async Task GetProjectNamesForUserOid_ShouldThrowExceptionWhenOidIsEmty()
+        public async Task GetProjectsForUserAsync_ShouldThrowExceptionWhenOidIsEmpty()
             => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetProjectsForUserAsync(TestPlant, Guid.Empty));
 
         [TestMethod]
-        public async Task GetContentRestrictionsForUser_ShouldThrowExceptionWhenOidIsEmty()
+        public async Task GetContentRestrictionsForUser_ShouldThrowExceptionWhenOidIsEmpty()
             => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetContentRestrictionsForUserAsync(TestPlant, Guid.Empty));
 
         [TestMethod]

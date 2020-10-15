@@ -74,7 +74,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
                 .SetupSequence(x => x.QueryAndDeserializeAsync<List<ProcosysProject>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<ProcosysProject>{ new ProcosysProject(), new ProcosysProject() }));
             // Act
-            var result = await _dut.GetAllProjectsAsync(_plant);
+            var result = await _dut.GetAllOpenProjectsAsync(_plant);
 
             // Assert
             Assert.AreEqual(2, result.Count);
@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
                 .SetupSequence(x => x.QueryAndDeserializeAsync<List<ProcosysProject>>(It.IsAny<string>()))
                 .Returns(Task.FromResult(new List<ProcosysProject>()));
             // Act
-            var result = await _dut.GetAllProjectsAsync(_plant);
+            var result = await _dut.GetAllOpenProjectsAsync(_plant);
 
             // Assert
             Assert.AreEqual(0, result.Count);
@@ -98,7 +98,7 @@ namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
         public async Task GetAllProjectsAsync_ShouldReturnNoProjects_OnInValidPlant()
         {
             // Act
-            var result = await _dut.GetAllProjectsAsync("INVALIDPLANT");
+            var result = await _dut.GetAllOpenProjectsAsync("INVALIDPLANT");
 
             // Assert
             Assert.AreEqual(0, result.Count);

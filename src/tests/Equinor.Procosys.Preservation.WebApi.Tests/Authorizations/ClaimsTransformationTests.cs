@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
+using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -56,12 +57,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             permissionCacheMock.Setup(p => p.GetContentRestrictionsForUserAsync(Plant2, Oid))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Restriction1_Plant2}));
 
+            var loggerMock = new Mock<ILogger<ClaimsTransformation>>();
+
             _principalWithOid = new ClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
             claimsIdentity.AddClaim(new Claim(ClaimsExtensions.OidType, Oid.ToString()));
             _principalWithOid.AddIdentity(claimsIdentity);
             
-            _dut = new ClaimsTransformation(_plantProviderMock.Object, _plantCacheMock.Object, permissionCacheMock.Object);
+            _dut = new ClaimsTransformation(
+                _plantProviderMock.Object,
+                _plantCacheMock.Object,
+                permissionCacheMock.Object,
+                loggerMock.Object);
         }
 
         [TestMethod]
