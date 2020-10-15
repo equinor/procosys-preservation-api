@@ -35,6 +35,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
+
+            if (tag.IsAreaTag() && request.Description != null)
+            {
+                tag.Description = request.Description;
+            }
             
             tag.UpdateStep(step);
 

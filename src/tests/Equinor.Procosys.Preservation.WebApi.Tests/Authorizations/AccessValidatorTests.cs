@@ -874,7 +874,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnTrue_WhenAccessToBothProjectAndContent()
         {
             // Arrange
-            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, 0, null, null, null);
+            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, null, 0, null, null, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -887,7 +887,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnUpdateTagStepAndRequirementsCommand_ShouldReturnFalse_WhenNoAccessToProject()
         {
             // Arrange
-            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithoutAccessToProject, 0, null, null, null);
+            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithoutAccessToProject, null, 0, null, null, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -901,7 +901,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
-            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, 0, null, null, null);
+            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, null, 0, null, null, null);
 
             // act
             var result = await _dut.ValidateAsync(command);
@@ -916,7 +916,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
             // Arrange
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitNoRestrictions()).Returns(false);
             _contentRestrictionsCheckerMock.Setup(c => c.HasCurrentUserExplicitAccessToContent(RestrictedToContent)).Returns(true);
-            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, 0, null, null, null);
+            var command = new UpdateTagStepAndRequirementsCommand(TagIdWithAccessToProject, null, 0, null, null, null);
 
             // act
             var result = await _dut.ValidateAsync(command);

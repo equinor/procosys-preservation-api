@@ -1564,5 +1564,52 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+
+        #region IsAreaTag
+
+        [TestMethod]
+        public void IsAreaTag_ShouldReturnFalse_ForStandardTag()
+            => Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsAreaTag());
+
+        [TestMethod]
+        public void IsAreaTag_ShouldReturnTrue_ForPoTag()
+        {
+            var dut = new Tag(
+                TestPlant,
+                TagType.PoArea,
+                "TagNoA",
+                "DescA", 
+                _supplierStep,
+                _oneReq_NotNeedInputTwoWeekInterval);
+            Assert.IsTrue(dut.IsAreaTag());
+        }
+
+        [TestMethod]
+        public void IsAreaTag_ShouldReturnTrue_ForPreTag()
+        {
+            var dut = new Tag(
+                TestPlant,
+                TagType.PreArea,
+                "TagNoA",
+                "DescA", 
+                _supplierStep,
+                _oneReq_NotNeedInputTwoWeekInterval);
+            Assert.IsTrue(dut.IsAreaTag());
+        }
+
+        [TestMethod]
+        public void IsAreaTag_ShouldReturnTrue_ForSiteTag()
+        {
+            var dut = new Tag(
+                TestPlant,
+                TagType.SiteArea,
+                "TagNoA",
+                "DescA", 
+                _supplierStep,
+                _oneReq_NotNeedInputTwoWeekInterval);
+            Assert.IsTrue(dut.IsAreaTag());
+        }
+
+        #endregion
     }
 }

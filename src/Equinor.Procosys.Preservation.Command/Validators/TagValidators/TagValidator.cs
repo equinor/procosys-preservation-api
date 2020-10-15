@@ -50,6 +50,12 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag != null && tag.TagType == tagType;
         }
 
+        public async Task<bool> VerifyTagIsAreaTagAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludes(tagId, token);
+            return tag != null && tag.IsAreaTag();
+        }
+
         public async Task<bool> HasANonVoidedRequirementAsync(int tagId, CancellationToken token)
         {
             var tag = await GetTagWithRequirements(tagId, token);

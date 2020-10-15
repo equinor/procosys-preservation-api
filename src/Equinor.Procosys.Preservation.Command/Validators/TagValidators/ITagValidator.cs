@@ -17,6 +17,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         
         Task<bool> VerifyTagTypeAsync(int tagId, TagType tagType, CancellationToken token);
         
+        Task<bool> VerifyTagIsAreaTagAsync(int tagId, CancellationToken token);
+        
         Task<bool> HasANonVoidedRequirementAsync(int tagId, CancellationToken token);
 
         Task<bool> ReadyToBePreservedAsync(int tagId, CancellationToken token);
