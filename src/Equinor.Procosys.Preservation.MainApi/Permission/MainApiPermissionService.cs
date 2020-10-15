@@ -25,7 +25,6 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
             var url = $"{_baseAddress}Projects" +
                       $"?plantId={plantId}" +
                       "&withCommPkgsOnly=false" +
-                      "&includeProjectsWithoutAccess=true" +
                       $"&api-version={_apiVersion}";
 
             return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysProject>>(url) ?? new List<ProcosysProject>();
