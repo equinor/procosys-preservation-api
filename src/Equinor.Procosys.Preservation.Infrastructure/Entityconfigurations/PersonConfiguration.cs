@@ -22,6 +22,11 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.Property(x => x.LastName)
                 .HasMaxLength(Person.LastNameLengthMax)
                 .IsRequired();
+
+            builder
+                .HasMany(x => x.SavedFilters)
+                .WithOne()
+                .IsRequired();
         }
     }
 }
