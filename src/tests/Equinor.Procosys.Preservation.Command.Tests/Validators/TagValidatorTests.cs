@@ -233,6 +233,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
+        public async Task VerifyAnyOfTagTypeAsync_StandardTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.VerifyTagIsAreaTagAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task VerifyAnyOfTagTypeAsync_UnknownTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.VerifyTagIsAreaTagAsync(1283, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task VerifyAnyOfTagTypeAsync_KnownPoAreaTag_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.VerifyTagIsAreaTagAsync(_poAreaTagNotStartedId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
         public async Task VerifyPreservationStatusAsync_KnownTag_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
