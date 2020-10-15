@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
             var projects = await _projectRepository.GetAllProjectsOnlyAsync();
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
             
-            var projectsWhichUserCanAccess = await _permissionCache.GetOpenProjectsForUserAsync(plant, currentUserOid);
+            var projectsWhichUserCanAccess = await _permissionCache.GetProjectsForUserAsync(plant, currentUserOid);
             
             foreach (var project in projects)
             {

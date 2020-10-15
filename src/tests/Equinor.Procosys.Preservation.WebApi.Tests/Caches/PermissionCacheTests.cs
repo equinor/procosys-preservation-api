@@ -25,7 +25,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         private readonly string Project1WithAccess = "P1";
         private readonly string Project2WithAccess = "P2";
         private readonly string ProjectWithoutAccess = "P3";
-        private readonly string ProjectWithAccessButClosed = "P4";
         private readonly string Restriction1 = "R1";
         private readonly string Restriction2 = "R2";
 
@@ -35,13 +34,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
             TimeService.SetProvider(new ManualTimeProvider(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
 
             _permissionApiServiceMock = new Mock<IPermissionApiService>();
-            _permissionApiServiceMock.Setup(p => p.GetAllProjectsAsync(TestPlant))
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(TestPlant))
                 .Returns(Task.FromResult<IList<ProcosysProject>>(new List<ProcosysProject>
                 {
                     new ProcosysProject {Name = Project1WithAccess, HasAccess = true},
                     new ProcosysProject {Name = Project2WithAccess, HasAccess = true},
-                    new ProcosysProject {Name = ProjectWithoutAccess},
-                    new ProcosysProject {Name = ProjectWithAccessButClosed, HasAccess = true, IsClosed = true}
+                    new ProcosysProject {Name = ProjectWithoutAccess}
                 }));
             _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(TestPlant))
                 .Returns(Task.FromResult<IList<string>>(new List<string> {Permission1, Permission2}));
@@ -81,27 +79,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
         }
 
         [TestMethod]
-        public async Task GetOpenProjectsForUserAsync_ShouldReturnProjectsFromPermissionApiServiceFirstTime()
+        public async Task GetProjectsForUserAsync_ShouldReturnProjectsFromPermissionApiServiceFirstTime()
         {
             // Act
-            var result = await _dut.GetOpenProjectsForUserAsync(TestPlant, Oid);
+            var result = await _dut.GetProjectsForUserAsync(TestPlant, Oid);
 
             // Assert
             AssertProjects(result);
-            _permissionApiServiceMock.Verify(p => p.GetAllProjectsAsync(TestPlant), Times.Once);
+            _permissionApiServiceMock.Verify(p => p.GetAllOpenProjectsAsync(TestPlant), Times.Once);
         }
 
         [TestMethod]
-        public async Task GetOpenProjectsForUserAsync_ShouldReturnProjectsFromCacheSecondTime()
+        public async Task GetProjectsForUserAsync_ShouldReturnProjectsFromCacheSecondTime()
         {
-            await _dut.GetOpenProjectsForUserAsync(TestPlant, Oid);
+            await _dut.GetProjectsForUserAsync(TestPlant, Oid);
             // Act
-            var result = await _dut.GetOpenProjectsForUserAsync(TestPlant, Oid);
+            var result = await _dut.GetProjectsForUserAsync(TestPlant, Oid);
 
             // Assert
             AssertProjects(result);
-            // since GetOpenProjectsForUserAsyncAsync has been called twice, but GetAllProjectsAsync has been called once, the second Get uses cache
-            _permissionApiServiceMock.Verify(p => p.GetAllProjectsAsync(TestPlant), Times.Once);
+            // since GetProjectsForUserAsyncAsync has been called twice, but GetAllProjectsAsync has been called once, the second Get uses cache
+            _permissionApiServiceMock.Verify(p => p.GetAllOpenProjectsAsync(TestPlant), Times.Once);
         }
 
         [TestMethod]
@@ -133,8 +131,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
             => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetPermissionsForUserAsync(TestPlant, Guid.Empty));
 
         [TestMethod]
-        public async Task GetProjectNamesForUserOid_ShouldThrowExceptionWhenOidIsEmpty()
-            => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetOpenProjectsForUserAsync(TestPlant, Guid.Empty));
+        public async Task GetProjectsForUserAsync_ShouldThrowExceptionWhenOidIsEmpty()
+            => await Assert.ThrowsExceptionAsync<Exception>(() => _dut.GetProjectsForUserAsync(TestPlant, Guid.Empty));
 
         [TestMethod]
         public async Task GetContentRestrictionsForUser_ShouldThrowExceptionWhenOidIsEmpty()

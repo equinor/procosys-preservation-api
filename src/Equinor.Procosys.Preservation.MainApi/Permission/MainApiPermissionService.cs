@@ -20,12 +20,11 @@ namespace Equinor.Procosys.Preservation.MainApi.Permission
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
         
-        public async Task<IList<ProcosysProject>> GetAllProjectsAsync(string plantId)
+        public async Task<IList<ProcosysProject>> GetAllOpenProjectsAsync(string plantId)
         {
             var url = $"{_baseAddress}Projects" +
                       $"?plantId={plantId}" +
                       "&withCommPkgsOnly=false" +
-                      "&includeClosedProjects=true" +
                       "&includeProjectsWithoutAccess=true" +
                       $"&api-version={_apiVersion}";
 
