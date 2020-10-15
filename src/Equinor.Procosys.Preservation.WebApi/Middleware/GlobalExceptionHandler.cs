@@ -6,9 +6,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.Exceptions;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace Equinor.Procosys.Preservation.WebApi.Middleware
 {
