@@ -49,15 +49,15 @@ namespace Equinor.Procosys.Preservation.MainApi.Client
             var response = await httpClient.GetAsync(url);
             stopWatch.Stop();
 
-            var msg = $"{stopWatch.Elapsed.TotalSeconds}s elapsed when requesting '{url}'";
+            var msg = $"{stopWatch.Elapsed.TotalSeconds}s elapsed when requesting '{url}'. Status: {response.StatusCode}";
             if (!response.IsSuccessStatusCode)
             {
                 if (tryGet && response.StatusCode == HttpStatusCode.NotFound)
                 {
-                    _logger.LogWarning($"{msg}. Got {response.StatusCode}.");
+                    _logger.LogWarning(msg);
                     return default;
                 }
-                _logger.LogError($"{msg}. Got {response.StatusCode}.");
+                _logger.LogError(msg);
                 throw new Exception($"Requesting '{url}' was unsuccessful. Status={response.StatusCode}");
             }
 
