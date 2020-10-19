@@ -31,19 +31,16 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
             var stepIds = tags.Select(t => t.StepId).Distinct();
             var journeys = await _journeyRepository.GetJourneysByStepIdsAsync(stepIds);
 
-            var tagsWithUpdatedRowVersion = new List<IdAndRowVersion>();
-
             foreach (var tag in tags)
             {
                 var journey = journeys.Single(j => j.Steps.Any(s => s.Id == tag.StepId));
                 tag.SetRowVersion(request.Tags.Single(x => x.Id == tag.Id).RowVersion);
                 tag.CompletePreservation(journey);
-                tagsWithUpdatedRowVersion.Add(new IdAndRowVersion(tag.Id, tag.RowVersion.ConvertToString()));
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             
-            return new SuccessResult<IEnumerable<IdAndRowVersion>>(tagsWithUpdatedRowVersion);
+            return new SuccessResult<IEnumerable<IdAndRowVersion>>(tags.CreateIdAndRowVersionList());
         }
     }
 }
