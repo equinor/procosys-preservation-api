@@ -35,6 +35,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             
         Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token);
         
+        Task<bool> IsReadyToBeRescheduledAsync(int tagId, CancellationToken token);
+
         Task<bool> HasRequirementAsync(int tagId, int tagRequirementId, CancellationToken token);
         
         Task<bool> AllRequirementsWillBeUniqueAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);

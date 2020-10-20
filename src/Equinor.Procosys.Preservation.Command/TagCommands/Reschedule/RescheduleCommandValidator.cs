@@ -6,11 +6,11 @@ using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
+namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
 {
-    public class TransferCommandValidator : AbstractValidator<TransferCommand>
+    public class RescheduleCommandValidator : AbstractValidator<RescheduleCommand>
     {
-        public TransferCommandValidator(
+        public RescheduleCommandValidator(
             IProjectValidator projectValidator,
             ITagValidator tagValidator)
         {
@@ -25,6 +25,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                 .WithMessage("Tags must be in same project!")
                 .MustAsync(NotBeAClosedProjectForTagAsync)
                 .WithMessage("Project is closed!");
+            
+            RuleFor(command => command.Weeks)
+                .InclusiveBetween(1,4)
+                .WithMessage("Rescheduling must be in range of 1 to 4 week(s)!");
 
             When(command => command.Tags.Any() && BeUniqueTags(command.Tags), () =>
             {
@@ -33,8 +37,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                     .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
                     .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}");
+                    .MustAsync((_, tag, __, token) => IsReadyToBeRescheduledAsync(tag.Id, token))
+                    .WithMessage((_, id) => $"Tag can not be rescheduled! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
@@ -55,8 +59,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => ! await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token)
-                => await tagValidator.IsReadyToBeTransferredAsync(tagId, token);
+            async Task<bool> IsReadyToBeRescheduledAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeRescheduledAsync(tagId, token);
         }
     }
 }

@@ -139,6 +139,17 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
             return tag.IsReadyToBeTransferred(journey);
         }
+        
+        public async Task<bool> IsReadyToBeRescheduledAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludes(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            return tag.IsReadyToBeRescheduled();
+        }
 
         public async Task<bool> AttachmentWithFilenameExistsAsync(int tagId, string fileName, CancellationToken token)
         {

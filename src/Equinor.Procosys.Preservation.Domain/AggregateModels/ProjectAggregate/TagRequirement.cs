@@ -4,6 +4,7 @@ using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
+using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
@@ -275,14 +276,23 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
         }
 
-        public void SetUpdatedInterval(int intervalWeeks)
+        public void UpdateInterval(int intervalWeeks)
         {
             IntervalWeeks = intervalWeeks;
             if (ActivePeriod != null)
             {
-                NextDueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);
-                ActivePeriod.UpdateDueTimeUtc(NextDueTimeUtc.Value);
+                NextDueTimeUtc = ActivePeriod.SetNewDueTimeUtc(intervalWeeks);
             }
+        }
+
+        public void Reschedule(int weeks, RescheduledDirection direction)
+        {
+            if (!HasActivePeriod)
+            {
+                throw new Exception($"{nameof(TagRequirement)} {Id} don't have an active {nameof(PreservationPeriod)}. Can't reschedule");
+            }
+
+            NextDueTimeUtc = ActivePeriod.Reschedule(weeks, direction);
         }
     }
 }

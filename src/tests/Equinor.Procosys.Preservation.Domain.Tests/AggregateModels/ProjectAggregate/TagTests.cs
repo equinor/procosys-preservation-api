@@ -203,6 +203,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _timeProvider.ElapseWeeks(ThreeWeeksInterval);
             Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBePreserved());
         }
+        
+        [TestMethod]
+        public void Constructor_ShouldNotSetReadyToBeBeRescheduled_AtAnyTime()
+        {
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBeRescheduled());
+            
+            _timeProvider.ElapseWeeks(TwoWeeksInterval);
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBeRescheduled());
+
+            _timeProvider.SetTime(_utcNow);
+            _timeProvider.ElapseWeeks(ThreeWeeksInterval);
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBeRescheduled());
+        }
 
         [TestMethod]
         public void Constructor_ShouldThrowException_WhenStepNotGiven()
@@ -340,6 +353,49 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region Reschedule
+        
+        [TestMethod]
+        public void Reschedule_ShouldThrowException_IfNotStarted()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
+
+            // Act and Assert
+            Assert.ThrowsException<Exception>(() => dut.Reschedule(1, RescheduledDirection.Later));
+        }
+
+        [TestMethod]
+        public void Reschedule_ShouldSetCorrectNextDueDateOnTagAndEachRequirement()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNeedInputThreeWeekInterval);
+            dut.StartPreservation();
+            
+            var expectedNextDueTimeFirstUtc = dut.Requirements.ElementAt(0).ActivePeriod.DueTimeUtc.AddWeeks(1);
+            var expectedNextDueTimeLaterUtc = dut.Requirements.ElementAt(1).ActivePeriod.DueTimeUtc.AddWeeks(1);
+
+            // Act
+            dut.Reschedule(1, RescheduledDirection.Later);
+
+            // Assert
+            Assert.AreEqual(expectedNextDueTimeFirstUtc, dut.Requirements.ElementAt(0).NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeLaterUtc, dut.Requirements.ElementAt(1).NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeFirstUtc, dut.NextDueTimeUtc);
+        }
+
+        [TestMethod]
+        public void Reschedule_ShouldAddRescheduledEvent()
+        {
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+            _dutWithOneReqNotNeedInputTwoWeekInterval.Reschedule(1, RescheduledDirection.Later);
+
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RescheduledEvent));
+        }
+
+        #endregion
+
         #region IsReadyToBePreserved
 
         [TestMethod]
@@ -381,6 +437,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             _timeProvider.ElapseWeeks(TwoWeeksInterval + TwoWeeksInterval);
             Assert.IsFalse(dut.IsReadyToBePreserved());
+        }
+
+        #endregion
+
+        #region IsReadyToBeRescheduled
+        
+        [TestMethod]
+        public void IsReadyToBeRescheduled_ShouldBeTrue_WhenStarted()
+        {
+            Assert.AreEqual(PreservationStatus.NotStarted, _dutWithOneReqNotNeedInputTwoWeekInterval.Status);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsReadyToBeRescheduled());
         }
 
         #endregion

@@ -169,6 +169,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 var result = await dut.Handle(_query, default);
                 var tagNotStartedDto = result.Data.Tags.First(t => t.Status == PreservationStatus.NotStarted.GetDisplayValue());
                 Assert.IsFalse(tagNotStartedDto.ReadyToBePreserved);
+                Assert.IsFalse(tagNotStartedDto.ReadyToBeRescheduled);
                 Assert.IsTrue(tagNotStartedDto.ReadyToBeStarted);
                 Assert.IsFalse(tagNotStartedDto.ReadyToBeTransferred);
             }
@@ -188,6 +189,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 var siteTagActiveDto = result.Data.Tags.First(t => t.Status == PreservationStatus.Active.GetDisplayValue() && t.TagType == TagType.SiteArea);
 
                 Assert.IsTrue(stdTagActiveDto.ReadyToBeTransferred);
+                Assert.IsTrue(stdTagActiveDto.ReadyToBeRescheduled);
                 Assert.IsFalse(stdTagActiveDto.ReadyToBeStarted);
                 Assert.IsFalse(siteTagActiveDto.ReadyToBeTransferred);
                 Assert.IsFalse(siteTagActiveDto.ReadyToBeStarted);

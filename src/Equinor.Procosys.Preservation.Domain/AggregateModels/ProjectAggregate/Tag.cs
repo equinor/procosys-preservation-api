@@ -273,6 +273,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             => Status == PreservationStatus.Active && 
                FirstUpcomingRequirement() != null;
 
+        public bool IsReadyToBeRescheduled()
+            => Status == PreservationStatus.Active;
+
         public void Preserve(Person preservedBy)
             => Preserve(preservedBy, false);
                 
@@ -453,7 +456,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             var fromInterval = tagRequirement.IntervalWeeks;
 
-            tagRequirement.SetUpdatedInterval(intervalWeeks);
+            tagRequirement.UpdateInterval(intervalWeeks);
 
             var toInterval = tagRequirement.IntervalWeeks;
 
@@ -465,6 +468,22 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             var areaTagTypes = new List<TagType> {TagType.PoArea, TagType.PreArea, TagType.SiteArea};
             return areaTagTypes.Contains(TagType);
+        }
+        
+        public void Reschedule(int weeks, RescheduledDirection direction)
+        {
+            if (!IsReadyToBeRescheduled())
+            {
+                throw new Exception($"{nameof(Tag)} {Id} is not ready to be rescheduled");
+            }
+            foreach (var requirement in Requirements.Where(r => !r.IsVoided))
+            {
+                requirement.Reschedule(weeks, direction);
+            }
+        
+            UpdateNextDueTimeUtc();
+
+            AddDomainEvent(new RescheduledEvent(Plant, ObjectGuid, weeks, direction));
         }
 
         private void Preserve(Person preservedBy, bool bulkPreserved)

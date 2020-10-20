@@ -2,6 +2,7 @@
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Domain.Time;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -209,6 +210,48 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
 
             Assert.IsNull(dut.GetFieldValue(12));
+        }
+
+        [TestMethod]
+        public void SetNewDueTimeUtc_ShouldUpdateDueTime()
+        {
+            // Arrange
+            var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
+            Assert.AreEqual(_dueUtc, dut.DueTimeUtc);
+
+            // Act
+            dut.SetNewDueTimeUtc(2);
+
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(2);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.DueTimeUtc);
+        }
+
+        [TestMethod]
+        public void Reschedule_Earlier_ShouldUpdateDueTimeToEarlier()
+        {
+            // Arrange
+            var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
+            Assert.AreEqual(_dueUtc, dut.DueTimeUtc);
+            var expectedNextDueTimeUtc = dut.DueTimeUtc.AddWeeks(-2);
+
+            // Act
+            dut.Reschedule(2, RescheduledDirection.Earlier);
+
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.DueTimeUtc);
+        }
+
+        [TestMethod]
+        public void Reschedule_Later_ShouldUpdateDueTimeToLater()
+        {
+            // Arrange
+            var dut = new PreservationPeriod(TestPlant, _dueUtc, PreservationPeriodStatus.ReadyToBePreserved);
+            Assert.AreEqual(_dueUtc, dut.DueTimeUtc);
+            var expectedNextDueTimeUtc = dut.DueTimeUtc.AddWeeks(4);
+
+            // Act
+            dut.Reschedule(4, RescheduledDirection.Later);
+
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.DueTimeUtc);
         }
     }
 }

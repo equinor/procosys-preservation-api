@@ -1,24 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Command.TagCommands.Reschedule;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.Procosys.Preservation.Domain.Events;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
 {
     [TestClass]
-    public class TransferCommandValidatorTests
+    public class RescheduleCommandValidatorTests
     {
         private const int TagId1 = 7;
         private const int TagId2 = 8;
         private const string RowVersion1 = "AAAAAAAAABA=";
         private const string RowVersion2 = "AAAAAAAABBA=";
-        private TransferCommandValidator _dut;
+        private RescheduleCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
-        private TransferCommand _command;
+        private RescheduleCommand _command;
 
         private List<int> _tagIds;
         private List<IdAndRowVersion> _tagIdsWithRowVersion;
@@ -37,11 +38,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _command = new TransferCommand(_tagIdsWithRowVersion);
+            _tagValidatorMock.Setup(r => r.IsReadyToBeRescheduledAsync(TagId1, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeRescheduledAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _command = new RescheduleCommand(_tagIdsWithRowVersion, 1, RescheduledDirection.Later);
 
-            _dut = new TransferCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
+            _dut = new RescheduleCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
         }
 
         [TestMethod]
@@ -53,9 +54,33 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         }
         
         [TestMethod]
+        public void Validate_ShouldFail_WhenWeeksToLow()
+        {
+            var command = new RescheduleCommand(_tagIdsWithRowVersion, 0, RescheduledDirection.Later);
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Rescheduling must be in range of 1 to 4 week(s)!"));
+        }
+        
+        [TestMethod]
+        public void Validate_ShouldFail_WhenWeeksToHigh()
+        {
+            var command = new RescheduleCommand(_tagIdsWithRowVersion, 5, RescheduledDirection.Later);
+            
+            var result = _dut.Validate(command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Rescheduling must be in range of 1 to 4 week(s)!"));
+        }
+        
+        [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new TransferCommand(new List<IdAndRowVersion>());
+            var command = new RescheduleCommand(new List<IdAndRowVersion>(), 1, RescheduledDirection.Later);
             
             var result = _dut.Validate(command);
 
@@ -67,7 +92,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         [TestMethod]
         public void Validate_ShouldFail_WhenTagsNotUnique()
         {
-            var command = new TransferCommand(new List<IdAndRowVersion>{new IdAndRowVersion(1, null), new IdAndRowVersion(1, null)});
+            var command = new RescheduleCommand(
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion(1, null), new IdAndRowVersion(1, null)
+                },1, RescheduledDirection.Later);
             
             var result = _dut.Validate(command);
 
@@ -113,15 +142,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenNotReadyToBeTransferred()
+        public void Validate_ShouldFail_WhenNotReadyToBeRescheduled()
         {
-            _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeRescheduledAsync(TagId1, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag can not be transferred!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag can not be rescheduled!"));
         }
 
         [TestMethod]
