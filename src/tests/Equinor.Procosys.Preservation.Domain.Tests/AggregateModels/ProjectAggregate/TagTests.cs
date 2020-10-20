@@ -266,6 +266,33 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
+        public void AddRequirement_ShouldStartPreservation_OnAddedRequirement_WhenPreservationStarted()
+        {
+            // Arrange
+            Assert.IsFalse(_reqNeedInputThreeWeekInterval.HasActivePeriod);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
+            
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_reqNeedInputThreeWeekInterval);
+
+            // Assert
+            Assert.IsTrue(_reqNeedInputThreeWeekInterval.HasActivePeriod);
+        }
+
+        [TestMethod]
+        public void AddRequirement_ShouldNotStartPreservation_OnAddedRequirement_WhenPreservationNotStarted()
+        {
+            // Arrange
+            Assert.IsFalse(_reqNeedInputThreeWeekInterval.HasActivePeriod);
+            
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_reqNeedInputThreeWeekInterval);
+
+            // Assert
+            Assert.IsFalse(_reqNeedInputThreeWeekInterval.HasActivePeriod);
+        }
+
+        [TestMethod]
         public void AddRequirement_ShouldThrowException_WhenRequirementNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(null));
 
@@ -1555,34 +1582,70 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void UpdateRequirement_ShouldUpdateRequirement()
         {
+            // Arrange
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             var requirement = dut.Requirements.First();
 
             Assert.IsFalse(requirement.IsVoided);
             Assert.AreEqual(requirement.IntervalWeeks, 2);
 
+            // Act
             dut.UpdateRequirement(requirement.Id, true, 1, "AAAAAAAAABA=");
 
+            // Assert
             Assert.IsTrue(requirement.IsVoided);
             Assert.AreEqual(requirement.IntervalWeeks, 1);
         }
 
         [TestMethod]
-        public void UpdateRequirement_Void_ShouldAddRequirementVoidedEvent()
+        public void UpdateRequirement_Void_ShouldVoidRequirement()
         {
+            // Arrange
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             var requirement = dut.Requirements.First();
             
             // Act
             dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
+            // Assert
+            Assert.IsTrue(requirement.IsVoided);
+        }
+
+        [TestMethod]
+        public void UpdateRequirement_Void_ShouldAddRequirementVoidedEvent()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.First();
+            
+            // Act
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            // Assert
             Assert.AreEqual(2, dut.DomainEvents.Count);
             Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementVoidedEvent));
         }
 
         [TestMethod]
+        public void UpdateRequirement_Unvoid_ShouldUnvoidRequirement()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.First();
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+            Assert.IsTrue(requirement.IsVoided);
+
+            // Act
+            dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            // Assert
+            Assert.IsFalse(requirement.IsVoided);
+        }
+
+        [TestMethod]
         public void UpdateRequirement_Unvoid_ShouldAddRequirementUnvoidedEvent()
         {
+            // Arrange
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             var requirement = dut.Requirements.First();
             dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
@@ -1590,8 +1653,45 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act
             dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
+            // Assert
             Assert.AreEqual(3, dut.DomainEvents.Count);
             Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementUnvoidedEvent));
+        }
+
+        [TestMethod]
+        public void UpdateRequirement_Unvoid_ShouldStartPreservation_OnUnvoidedRequirement_WhenPreservationStarted()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.First();
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+            dut.StartPreservation();
+            Assert.IsFalse(requirement.HasActivePeriod);
+            Assert.IsTrue(requirement.IsVoided);
+
+            // Act
+            dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            // Assert
+            Assert.IsTrue(requirement.HasActivePeriod);
+            Assert.IsFalse(requirement.IsVoided);
+        }
+
+        [TestMethod]
+        public void UpdateRequirement_Unvoid_ShouldNotStartPreservation_OnUnvoidedRequirement_WhenPreservationNotStarted()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.First();
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+            Assert.IsFalse(requirement.HasActivePeriod);
+            
+            // Act
+            dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            // Assert
+            Assert.IsFalse(requirement.HasActivePeriod);
+            Assert.IsFalse(requirement.IsVoided);
         }
 
         #endregion
