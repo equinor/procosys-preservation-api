@@ -4,6 +4,8 @@
     {
         Overdue,
         ThisWeek,
-        NextWeek
+        NextWeek,
+        WeekPlusTwo,
+        WeekPlusThree
     }
 }
