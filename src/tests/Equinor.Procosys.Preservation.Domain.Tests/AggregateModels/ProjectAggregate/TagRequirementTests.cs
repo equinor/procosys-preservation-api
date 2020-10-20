@@ -4,6 +4,7 @@ using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Domain.Time;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -463,6 +464,82 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             }
             
             Assert.AreEqual(preserveCount+1, dut.PreservationPeriods.Count);
+        }
+
+        #endregion
+
+        #region Reschedule
+
+        [TestMethod]
+        public void Reschedule_ShouldThrowException_WhenPreservationNotStarted()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+
+            // Act and Arrange
+            Assert.ThrowsException<Exception>(() =>
+                dut.Reschedule(1, RescheduledDirection.Earlier)
+            );
+        }
+                
+        [TestMethod]
+        public void Reschedule_ShouldUpdateEarlierNextDueDate()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+            var expectedNextDueTimeUtc = dut.ActivePeriod.DueTimeUtc.AddWeeks(-1);
+
+            // Act
+            dut.Reschedule(1, RescheduledDirection.Earlier);
+            
+            // Arrange
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
+        }
+                
+        [TestMethod]
+        public void Reschedule_ShouldUpdateEarlierNextDueDate_OnActivePeriod()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+            var expectedNextDueTimeUtc = dut.ActivePeriod.DueTimeUtc.AddWeeks(-1);
+
+            // Act
+            dut.Reschedule(1, RescheduledDirection.Earlier);
+            
+            // Arrange
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.ActivePeriod.DueTimeUtc);
+        }
+
+        [TestMethod]
+        public void Reschedule_ShouldUpdateLaterNextDueDate()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+            var expectedNextDueTimeUtc = dut.ActivePeriod.DueTimeUtc.AddWeeks(6);
+
+            // Act
+            dut.Reschedule(6, RescheduledDirection.Later);
+            
+            // Arrange
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc);
+        }
+                
+        [TestMethod]
+        public void Reschedule_ShouldUpdateLaterNextDueDate_OnActivePeriod()
+        {
+            // Arrange
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+            dut.StartPreservation();
+            var expectedNextDueTimeUtc = dut.ActivePeriod.DueTimeUtc.AddWeeks(6);
+
+            // Act
+            dut.Reschedule(6, RescheduledDirection.Later);
+            
+            // Arrange
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.ActivePeriod.DueTimeUtc);
         }
 
         #endregion
@@ -1263,41 +1340,48 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
-        #region SetUpdatedInterval
+        #region UpdateInterval
 
         [TestMethod]
-        public void SetUpdatedInterval_ShouldOnlySetIntervalIfNoActivePeriods()
+        public void UpdateInterval_ShouldOnlySetIntervalIfNoActivePeriods()
         {
             // Arrange
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
-            Assert.AreEqual(null, dut.ActivePeriod);
+            Assert.IsNull(dut.ActivePeriod);
+            Assert.IsNull(dut.NextDueTimeUtc);
             Assert.AreEqual(TwoWeeksInterval, dut.IntervalWeeks);
 
             // Act
-            dut.SetUpdatedInterval(34);
+            dut.UpdateInterval(34);
 
             // Assert
             Assert.AreEqual(34, dut.IntervalWeeks);
-
+            Assert.IsNull(dut.ActivePeriod);
+            Assert.IsNull(dut.NextDueTimeUtc);
         }
 
         [TestMethod]
-        public void SetUpdatedInterval_ShouldUpdateActivePeriodOnSetInterval()
+        public void UpdateInterval_ShouldUpdateActivePeriodOnSetInterval()
         {
             // Arrange
             var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithCheckBoxFieldMock.Object);
             dut.StartPreservation();
             Assert.IsNotNull(dut.ActivePeriod);
             Assert.AreEqual(TwoWeeksInterval, dut.IntervalWeeks);
-            var next = dut.ActivePeriod.DueTimeUtc;
-            int newWeekInterval = 34;
+            var expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(TwoWeeksInterval);
+            Assert.IsNotNull(dut.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc.Value);
+            var newWeekInterval = 6;
 
             // Act
-            dut.SetUpdatedInterval(newWeekInterval);
+            dut.UpdateInterval(newWeekInterval);
 
             // Assert
             Assert.AreEqual(newWeekInterval, dut.IntervalWeeks);
-            Assert.AreEqual(next.AddWeeks(newWeekInterval - TwoWeeksInterval), dut.ActivePeriod.DueTimeUtc);
+            expectedNextDueTimeUtc = _timeProvider.UtcNow.AddWeeks(newWeekInterval);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.ActivePeriod.DueTimeUtc);
+            Assert.IsNotNull(dut.NextDueTimeUtc);
+            Assert.AreEqual(expectedNextDueTimeUtc, dut.NextDueTimeUtc.Value);
         }
 
         #endregion

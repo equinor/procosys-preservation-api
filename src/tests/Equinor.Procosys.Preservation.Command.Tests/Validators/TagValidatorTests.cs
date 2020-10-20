@@ -658,6 +658,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 Assert.IsFalse(result);
             }
         }
+     
+        [TestMethod]
+        public async Task IsReadyToBeRescheduledAsync_TagNotStarted_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeRescheduledAsync(_standardTagNotStartedInFirstStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeRescheduledAsync_TagStarted_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeRescheduledAsync(_standardTagStartedAndInLastStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeRescheduledAsync_UnknownTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeRescheduledAsync(0, default);
+                Assert.IsFalse(result);
+            }
+        }
 
         [TestMethod]
         public async Task AttachmentWithFilenameExistsAsync_UnknownTag_ShouldReturnFalse()
