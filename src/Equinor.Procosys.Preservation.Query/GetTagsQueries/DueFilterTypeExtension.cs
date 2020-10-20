@@ -8,6 +8,8 @@
                 DueFilterType.Overdue => "Overdue",
                 DueFilterType.ThisWeek => "This week",
                 DueFilterType.NextWeek => "Next week",
+                DueFilterType.WeekPlusTwo => "Week +2",
+                DueFilterType.WeekPlusThree => "Week +3",
                 _ => string.Empty
             };
     }

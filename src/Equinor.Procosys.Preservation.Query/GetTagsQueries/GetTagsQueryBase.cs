@@ -20,11 +20,15 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
             var startOfThisWeekUtc = DateTime.MinValue;
             var startOfNextWeekUtc = DateTime.MinValue;
             var startOfTwoWeeksUtc = DateTime.MinValue;
+            var startOfThreeWeeksUtc = DateTime.MinValue;
+            var startOfFourWeeksUtc = DateTime.MinValue;
             if (filter.DueFilters.Any())
             {
                 startOfThisWeekUtc = utcNow.StartOfPreservationWeek();
                 startOfNextWeekUtc = startOfThisWeekUtc.AddWeeks(1);
                 startOfTwoWeeksUtc = startOfThisWeekUtc.AddWeeks(2);
+                startOfThreeWeeksUtc = startOfThisWeekUtc.AddWeeks(3);
+                startOfFourWeeksUtc = startOfThisWeekUtc.AddWeeks(4);
             }
 
             // No .Include() here. EF do not support .Include together with selecting a projection (dto).
@@ -56,7 +60,9 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                       (!filter.DueFilters.Any() || 
                            (filter.DueFilters.Contains(DueFilterType.Overdue) && tag.NextDueTimeUtc < startOfThisWeekUtc) ||
                            (filter.DueFilters.Contains(DueFilterType.ThisWeek) && tag.NextDueTimeUtc >= startOfThisWeekUtc && tag.NextDueTimeUtc < startOfNextWeekUtc) ||
-                           (filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc)) &&
+                           (filter.DueFilters.Contains(DueFilterType.NextWeek) && tag.NextDueTimeUtc >= startOfNextWeekUtc && tag.NextDueTimeUtc < startOfTwoWeeksUtc) ||
+                           (filter.DueFilters.Contains(DueFilterType.WeekPlusTwo) && tag.NextDueTimeUtc >= startOfTwoWeeksUtc && tag.NextDueTimeUtc < startOfThreeWeeksUtc) ||
+                           (filter.DueFilters.Contains(DueFilterType.WeekPlusThree) && tag.NextDueTimeUtc >= startOfThreeWeeksUtc && tag.NextDueTimeUtc < startOfFourWeeksUtc)) &&
                       (!filter.ActionStatus.HasValue || 
                            (filter.ActionStatus == ActionStatus.HasOpen && anyOpenActions) ||
                            (filter.ActionStatus == ActionStatus.HasClosed && anyClosedActions) ||
