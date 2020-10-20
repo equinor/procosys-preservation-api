@@ -437,6 +437,12 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
                 else
                 {
                     tagRequirement.IsVoided = false;
+                    if (Status == PreservationStatus.Active && !tagRequirement.HasActivePeriod)
+                    {
+                        tagRequirement.StartPreservation();
+                        UpdateNextDueTimeUtc();
+                    }
+
                     AddDomainEvent(new RequirementUnvoidedEvent(Plant, ObjectGuid, tagRequirement.RequirementDefinitionId));
                 }
             }
