@@ -4,6 +4,7 @@ using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.Audit;
+using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Domain.Time;
 
 namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
@@ -22,7 +23,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public PreservationPeriod(string plant, DateTime dueTimeUtc, PreservationPeriodStatus status)
             : base(plant)
         {
-
             if (status != PreservationPeriodStatus.NeedsUserInput && status != PreservationPeriodStatus.ReadyToBePreserved)
             {
                 throw new ArgumentException($"{status} is an illegal initial status for a {nameof(PreservationPeriod)}");
@@ -181,6 +181,23 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public FieldValue GetFieldValue(int fieldId)
             => FieldValues.SingleOrDefault(fv => fv.FieldId == fieldId);
+        
+        public DateTime SetNewDueTimeUtc(int intervalWeeks)
+        {
+            DueTimeUtc = TimeService.UtcNow.AddWeeks(intervalWeeks);
+            return DueTimeUtc;
+        }
+
+        public DateTime Reschedule(int weeks, RescheduledDirection direction)
+        {
+            var rescheduleWeeks = weeks;
+            if (direction == RescheduledDirection.Earlier)
+            {
+                rescheduleWeeks *= -1;
+            }
+            DueTimeUtc = DueTimeUtc.AddWeeks(rescheduleWeeks);
+            return DueTimeUtc;
+        }
 
         public void SetCreated(Person createdBy)
         {
@@ -237,7 +254,5 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
             RemoveAnyOldFieldValue(field.Id);
         }
-
-        public void UpdateDueTimeUtc(DateTime nextDueTimeUtc) => DueTimeUtc = nextDueTimeUtc;
     }
 }

@@ -10,7 +10,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
 {
     public class RescheduleCommandValidator : AbstractValidator<RescheduleCommand>
     {
-        // todo unit tests
         public RescheduleCommandValidator(
             IProjectValidator projectValidator,
             ITagValidator tagValidator)
@@ -38,8 +37,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
                     .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
                     .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}");
+                    .MustAsync((_, tag, __, token) => IsReadyToBeRescheduledAsync(tag.Id, token))
+                    .WithMessage((_, id) => $"Tag can not be rescheduled! Tag={id}");
             });
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
@@ -60,8 +59,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => ! await tagValidator.IsVoidedAsync(tagId, token);
 
-            async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token)
-                => await tagValidator.IsReadyToBeTransferredAsync(tagId, token);
+            async Task<bool> IsReadyToBeRescheduledAsync(int tagId, CancellationToken token)
+                => await tagValidator.IsReadyToBeRescheduledAsync(tagId, token);
         }
     }
 }
