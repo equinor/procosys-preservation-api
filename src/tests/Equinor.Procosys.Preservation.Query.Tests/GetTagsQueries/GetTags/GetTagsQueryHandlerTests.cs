@@ -505,6 +505,80 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
         }
 
         [TestMethod]
+        public async Task HandleGetTagsQuery_ShouldGetTagsDueInThreeWeeks_WhenFilterOnDueWeekPlusThree()
+        {
+            StartPreservationOnAllTags();
+            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-3);
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                AssertCount(result.Data, 20);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
+                    filter: new Filter
+                    {
+                        DueFilters = new List<DueFilterType>
+                        {
+                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek, DueFilterType.WeekPlusTwo, DueFilterType.WeekPlusThree
+                        }
+                    }), default);
+                AssertCount(result.Data, 20);
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetTagsQuery_ShouldGetTagsDueInTwoWeeks_WhenFilterOnDueWeekPlusTwo()
+        {
+            StartPreservationOnAllTags();
+            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-2);
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
+
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                AssertCount(result.Data, 20);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.Overdue}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name,
+                    filter: new Filter
+                    {
+                        DueFilters = new List<DueFilterType>
+                        {
+                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek, DueFilterType.WeekPlusTwo, DueFilterType.WeekPlusThree
+                        }
+                    }), default);
+                AssertCount(result.Data, 20);
+            }
+        }
+
+        [TestMethod]
         public async Task HandleGetTagsQuery_ShouldGetTagsDueNextWeek_WhenFilterOnDueNextWeek()
         {
             StartPreservationOnAllTags();
@@ -514,7 +588,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
                 AssertCount(result.Data, 20);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
@@ -528,7 +608,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                     {
                         DueFilters = new List<DueFilterType>
                         {
-                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek
+                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek, DueFilterType.WeekPlusTwo, DueFilterType.WeekPlusThree
                         }
                     }), default);
                 AssertCount(result.Data, 20);
@@ -545,7 +625,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
                 AssertCount(result.Data, 0);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
@@ -559,7 +645,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                     {
                         DueFilters = new List<DueFilterType>
                         {
-                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek
+                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek, DueFilterType.WeekPlusTwo, DueFilterType.WeekPlusThree
                         }
                     }), default);
                 AssertCount(result.Data, 20);
@@ -576,7 +662,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var dut = new GetTagsQueryHandler(context, _apiOptionsMock.Object);
 
-                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
+                var result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusTwo}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.WeekPlusThree}}), default);
+                AssertCount(result.Data, 0);
+
+                result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.NextWeek}}), default);
                 AssertCount(result.Data, 0);
 
                 result = await dut.Handle(new GetTagsQuery(_testDataSet.Project1.Name, filter: new Filter {DueFilters = new List<DueFilterType>{DueFilterType.ThisWeek}}), default);
@@ -590,7 +682,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
                     {
                         DueFilters = new List<DueFilterType>
                         {
-                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek
+                            DueFilterType.Overdue, DueFilterType.ThisWeek, DueFilterType.NextWeek, DueFilterType.WeekPlusTwo, DueFilterType.WeekPlusThree
                         }
                     }), default);
                 AssertCount(result.Data, 20);
