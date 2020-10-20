@@ -1592,7 +1592,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act
             dut.UpdateRequirement(requirement.Id, true, 1, "AAAAAAAAABA=");
 
-            // Arrange
+            // Assert
             Assert.IsTrue(requirement.IsVoided);
             Assert.AreEqual(requirement.IntervalWeeks, 1);
         }
@@ -1607,7 +1607,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act
             dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            // Arrange
+            // Assert
             Assert.IsTrue(requirement.IsVoided);
         }
 
@@ -1621,7 +1621,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act
             dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            // Arrange
+            // Assert
             Assert.AreEqual(2, dut.DomainEvents.Count);
             Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementVoidedEvent));
         }
@@ -1638,7 +1638,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act
             dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            // Arrange
+            // Assert
             Assert.IsFalse(requirement.IsVoided);
         }
 
@@ -1653,7 +1653,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act
             dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            // Arrange
+            // Assert
             Assert.AreEqual(3, dut.DomainEvents.Count);
             Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementUnvoidedEvent));
         }
@@ -1672,7 +1672,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act
             dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            // Arrange
+            // Assert
             Assert.IsTrue(requirement.HasActivePeriod);
             Assert.IsFalse(requirement.IsVoided);
         }
@@ -1689,7 +1689,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             // Act
             dut.UpdateRequirement(requirement.Id, false, requirement.IntervalWeeks, "AAAAAAAAABA=");
 
-            // Arrange
+            // Assert
             Assert.IsFalse(requirement.HasActivePeriod);
             Assert.IsFalse(requirement.IsVoided);
         }
