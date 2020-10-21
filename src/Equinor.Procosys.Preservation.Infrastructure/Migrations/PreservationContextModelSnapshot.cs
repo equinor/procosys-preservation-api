@@ -1212,9 +1212,8 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
 
                     b.HasIndex("ModifiedById");
 
-                    b.HasIndex("Plant")
-                        .HasName("IX_TagFunctions_Plant_ASC")
-                        .HasAnnotation("SqlServer:Include", new[] { "Code", "RegisterCode" });
+                    b.HasIndex("Plant", "Code", "RegisterCode")
+                        .IsUnique();
 
                     b.ToTable("TagFunctions");
                 });
