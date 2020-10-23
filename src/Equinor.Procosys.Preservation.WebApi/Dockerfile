@@ -30,7 +30,8 @@ RUN dotnet build -c Release --no-restore
 # Test runner target
 FROM build AS testrunner
 WORKDIR /src
-RUN dotnet test -c Release --no-build --no-restore
+RUN dotnet test -c Release --no-build --no-restore --filter FullyQualifiedName\!~e2eTests
+RUN dotnet test -c Release --no-build --no-restore --filter FullyQualifiedName~e2eTests
 
 # Publish the application
 FROM build AS publish
