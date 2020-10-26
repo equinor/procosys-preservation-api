@@ -70,7 +70,8 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
 
             services.AddDbContext<PreservationContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("PreservationContext"));
+                var connectionString = configuration.GetConnectionString("PreservationContext");
+                options.UseSqlServer(connectionString);
             });
 
             services.AddHttpContextAccessor();
