@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.Reschedule;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain.Events;
@@ -19,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
         private RescheduleCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private RescheduleCommand _command;
 
         private List<int> _tagIds;
@@ -41,8 +43,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
             _tagValidatorMock.Setup(r => r.IsReadyToBeRescheduledAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeRescheduledAsync(TagId2, default)).Returns(Task.FromResult(true));
             _command = new RescheduleCommand(_tagIdsWithRowVersion, 1, RescheduledDirection.Later);
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion1)).Returns(true);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(true);
 
-            _dut = new RescheduleCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
+            _dut = new RescheduleCommandValidator(
+                _projectValidatorMock.Object,
+                _tagValidatorMock.Object,
+                _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -164,6 +172,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(false);
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid row version!"));
         }
     }
 }
