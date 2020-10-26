@@ -6,11 +6,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
     {
         public RescheduleTagsDtoValidator()
         {
-            RuleFor(x => x).NotNull().WithMessage($"{nameof(RescheduleTagsDto)} can't be null");
+            RuleFor(x => x).NotNull();
 
             RuleFor(x => x.TagDtos)
-                .NotNull()
-                .WithMessage($"{nameof(RescheduleTagsDto.TagDtos)} can't be null");
+                .NotNull();
         }
     }
 }

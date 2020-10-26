@@ -36,6 +36,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tag, __, token) => IsReadyToBeCompletedAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Preservation on tag can not be completed! Tag={id}");
+                // todo add validation of valid RowVersion. See Reschedule
             });
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)

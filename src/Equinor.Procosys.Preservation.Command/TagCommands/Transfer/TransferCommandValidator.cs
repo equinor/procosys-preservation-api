@@ -35,6 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}");
+                // todo add validation of valid RowVersion. See Reschedule
             });
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
