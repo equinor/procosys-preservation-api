@@ -1,5 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Http;
+using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,29 +13,26 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
     public abstract class TestBase
     {
         protected static TestFactory testFactory;
-        protected static HttpClient adminClient;
         protected static HttpClient anonymousClient;
+        protected static HttpClient adminClient;
+        protected static HttpClient plannerClient;
+        protected static HttpClient preserverClient;
+        protected static HttpClient readerClient;
+        protected static HttpClient hackerClient;
 
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext testContext)
         {
             if (testFactory == null)
             {
-                var projectDir = Directory.GetCurrentDirectory();
-                var configPath = Path.Combine(projectDir, "appsettings.json");
                 testFactory = new TestFactory();
-                
-                anonymousClient = testFactory.WithWebHostBuilder(builder =>
-                {
-                    builder.UseEnvironment(Startup.IntegrationTestEnvironment);
-                    builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(configPath));
-                }).CreateClient();
-                
-                adminClient = testFactory.WithWebHostBuilder(builder =>
-                {
-                    builder.UseEnvironment(Startup.IntegrationTestEnvironment);
-                    builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(configPath));
-                }).CreateClient();
+
+                anonymousClient = testFactory.CreateTestClient(null);
+                adminClient = testFactory.CreateTestClient(AdminClient.Tokens);
+                plannerClient = testFactory.CreateTestClient(PlannerClient.Tokens);
+                preserverClient = testFactory.CreateTestClient(PreserverClient.Tokens);
+                readerClient = testFactory.CreateTestClient(ReaderClient.Tokens);
+                hackerClient = testFactory.CreateTestClient(HackerClient.Tokens);
             }
         }
 

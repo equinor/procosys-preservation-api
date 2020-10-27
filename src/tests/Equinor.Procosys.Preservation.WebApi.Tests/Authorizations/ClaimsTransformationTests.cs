@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
 
             _principalWithOid = new ClaimsPrincipal();
             var claimsIdentity = new ClaimsIdentity();
-            claimsIdentity.AddClaim(new Claim(ClaimsExtensions.OidType, Oid.ToString()));
+            claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, Oid.ToString()));
             _principalWithOid.AddIdentity(claimsIdentity);
             
             _dut = new ClaimsTransformation(

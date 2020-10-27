@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Authorizations
         {
             // Arrange
             var oid = "50e2322b-1990-42f4-86ac-179c7c075574";
-            var claims = new List<Claim> {new Claim(ClaimsExtensions.OidType, oid)};
+            var claims = new List<Claim> {new Claim(ClaimsExtensions.Oid, oid)};
             
             // Act
             var guid = claims.TryGetOid();

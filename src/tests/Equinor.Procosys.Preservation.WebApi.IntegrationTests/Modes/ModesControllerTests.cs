@@ -22,6 +22,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         }
 
         [TestMethod]
+        public async Task Get_AllModes_AsHacker_ShouldReturnForbidden()
+        {
+            // Act
+            var response = await hackerClient.GetAsync($"{ModesPath}");
+
+            // Assert
+            Assert.AreEqual(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [TestMethod]
         public async Task Get_AllModes_AsAdmin_ShouldReturnOk()
         {
             // Act
