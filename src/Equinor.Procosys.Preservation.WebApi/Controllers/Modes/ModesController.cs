@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
 using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
@@ -25,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_READ)]
         [HttpGet]
-        public async Task<ActionResult<ModeDto>> GetModes(
+        public async Task<ActionResult<List<ModeDto>>> GetModes(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
