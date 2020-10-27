@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
-namespace Equinor.Procosys.Preservation.WebApi.E2ETests.Misc
+namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
 {
     [TestClass]
-    public class HeartbeatControllerTests : E2ETestBase
+    public class HeartbeatControllerTests : TestBase
     {
         private const string HeartbeatPath = "Heartbeat";
 

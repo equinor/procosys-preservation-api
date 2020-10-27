@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
-namespace Equinor.Procosys.Preservation.WebApi.E2ETests.Modes
+namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
 {
     [TestClass]
-    public class ModesControllerTests : E2ETestBase
+    public class ModesControllerTests : TestBase
     {
         private const string ModesPath = "Modes";
 

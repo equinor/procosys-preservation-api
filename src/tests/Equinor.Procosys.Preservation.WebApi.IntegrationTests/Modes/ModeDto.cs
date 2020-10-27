@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.E2ETests.Modes
+﻿namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
 {
     public class ModeDto
     {

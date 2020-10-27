@@ -4,7 +4,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 {
     public static class IWebHostEnvironmentExtension
     {
-        public static bool IsE2ETestEnvironment(this IWebHostEnvironment environment)
-            => environment.EnvironmentName == Startup.E2ETestEnvironment;
+        public static bool IsIntegrationTestEnvironment(this IWebHostEnvironment environment)
+            => environment.EnvironmentName == Startup.IntegrationTestEnvironment;
     }
 }

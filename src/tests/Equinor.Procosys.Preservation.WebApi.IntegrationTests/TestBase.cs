@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.E2ETests
+namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
+
 {
     [TestClass]
-    public abstract class E2ETestBase
+    public abstract class TestBase
     {
         protected static TestFactory testFactory;
         protected static HttpClient adminClient;
@@ -24,13 +25,13 @@ namespace Equinor.Procosys.Preservation.WebApi.E2ETests
                 
                 anonymousClient = testFactory.WithWebHostBuilder(builder =>
                 {
-                    builder.UseEnvironment(Startup.E2ETestEnvironment);
+                    builder.UseEnvironment(Startup.IntegrationTestEnvironment);
                     builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(configPath));
                 }).CreateClient();
                 
                 adminClient = testFactory.WithWebHostBuilder(builder =>
                 {
-                    builder.UseEnvironment(Startup.E2ETestEnvironment);
+                    builder.UseEnvironment(Startup.IntegrationTestEnvironment);
                     builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(configPath));
                 }).CreateClient();
             }

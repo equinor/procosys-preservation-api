@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 {
     public class Startup
     {
-        public const string E2ETestEnvironment = "E2ETests";
+        public const string IntegrationTestEnvironment = "IntegrationTests";
 
         private const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
         private readonly IWebHostEnvironment _environment;
@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            if (_environment.IsDevelopment() || _environment.IsE2ETestEnvironment())
+            if (_environment.IsDevelopment() || _environment.IsIntegrationTestEnvironment())
             {
                 if (Configuration.GetValue<bool>("MigrateDatabase"))
                 {
