@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
@@ -12,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
     {
         public RescheduleCommandValidator(
             IProjectValidator projectValidator,
-            ITagValidator tagValidator)
+            ITagValidator tagValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.Stop;
                         
@@ -34,11 +36,13 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
             {
                 RuleForEach(command => command.Tags)
                     .MustAsync((_, tag, __, token) => BeAnExistingTagAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
+                    .WithMessage((_, tag) => $"Tag doesn't exist! Tag={tag.Id}")
                     .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag is voided! Tag={id}")
+                    .WithMessage((_, tag) => $"Tag is voided! Tag={tag.Id}")
                     .MustAsync((_, tag, __, token) => IsReadyToBeRescheduledAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag can not be rescheduled! Tag={id}");
+                    .WithMessage((_, tag) => $"Tag can not be rescheduled! Tag={tag.Id}")
+                    .Must(tag => HaveAValidRowVersion(tag.RowVersion))
+                    .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
@@ -61,6 +65,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
 
             async Task<bool> IsReadyToBeRescheduledAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToBeRescheduledAsync(tagId, token);
+
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

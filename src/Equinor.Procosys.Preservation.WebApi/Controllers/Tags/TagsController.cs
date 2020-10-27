@@ -22,6 +22,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
+using Equinor.Procosys.Preservation.Command.TagCommands.Reschedule;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
@@ -854,6 +855,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromBody] DeleteTagDto dto)
         {
             var result = await _mediator.Send(new DeleteTagCommand(id, dto.RowVersion));
+            return this.FromResult(result);
+        }
+        
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
+        [HttpPut("Reschedule")]
+        public async Task<IActionResult> Reschedule (
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            string plant,
+            [FromBody] RescheduleTagsDto dto)
+        {
+            var tags = dto.TagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var result = await _mediator.Send(new RescheduleCommand(tags, dto.Weeks, dto.Direction));
             return this.FromResult(result);
         }
 
