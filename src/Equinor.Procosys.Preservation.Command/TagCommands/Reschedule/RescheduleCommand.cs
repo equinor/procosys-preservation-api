@@ -9,11 +9,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
 {
     public class RescheduleCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
     {
-        public RescheduleCommand(IEnumerable<IdAndRowVersion> tagIds, int weeks, RescheduledDirection direction)
+        public RescheduleCommand(IEnumerable<IdAndRowVersion> tagIds, int weeks, RescheduledDirection direction, string comment)
         {
+            Tags = tagIds ?? new List<IdAndRowVersion>();
             Weeks = weeks;
             Direction = direction;
-            Tags = tagIds ?? new List<IdAndRowVersion>();
+            Comment = comment;
         }
 
         public IEnumerable<IdAndRowVersion> Tags { get; }
@@ -33,5 +34,6 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
 
         public int Weeks { get; }
         public RescheduledDirection Direction { get; }
+        public string Comment { get; }
     }
 }
