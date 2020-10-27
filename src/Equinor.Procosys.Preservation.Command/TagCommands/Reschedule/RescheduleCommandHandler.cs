@@ -28,7 +28,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
             {
                 tag.SetRowVersion(request.Tags.Single(x => x.Id == tag.Id).RowVersion);
                 
-                tag.Reschedule(request.Weeks, request.Direction);
+                tag.Reschedule(request.Weeks, request.Direction, request.Comment);
             }
             
             await _unitOfWork.SaveChangesAsync(cancellationToken);

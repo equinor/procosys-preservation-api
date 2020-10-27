@@ -476,7 +476,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             return areaTagTypes.Contains(TagType);
         }
         
-        public void Reschedule(int weeks, RescheduledDirection direction)
+        public void Reschedule(int weeks, RescheduledDirection direction, string comment)
         {
             if (!IsReadyToBeRescheduled())
             {
@@ -489,7 +489,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         
             UpdateNextDueTimeUtc();
 
-            AddDomainEvent(new RescheduledEvent(Plant, ObjectGuid, weeks, direction));
+            AddDomainEvent(new RescheduledEvent(Plant, ObjectGuid, weeks, direction, comment));
         }
 
         private void Preserve(Person preservedBy, bool bulkPreserved)

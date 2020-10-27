@@ -8,8 +8,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             RuleFor(x => x).NotNull();
 
-            RuleFor(x => x.TagDtos)
+            RuleFor(x => x.Tags)
                 .NotNull();
+
+            RuleFor(x => x.Comment)
+                .NotNull()
+                .NotEmpty();
         }
     }
 }

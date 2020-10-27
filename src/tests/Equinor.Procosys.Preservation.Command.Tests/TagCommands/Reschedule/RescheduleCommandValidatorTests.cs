@@ -42,7 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeRescheduledAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeRescheduledAsync(TagId2, default)).Returns(Task.FromResult(true));
-            _command = new RescheduleCommand(_tagIdsWithRowVersion, 1, RescheduledDirection.Later);
+            _command = new RescheduleCommand(_tagIdsWithRowVersion, 1, RescheduledDirection.Later, "Comment");
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion1)).Returns(true);
             _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(true);
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
         [TestMethod]
         public void Validate_ShouldFail_WhenWeeksToLow()
         {
-            var command = new RescheduleCommand(_tagIdsWithRowVersion, 0, RescheduledDirection.Later);
+            var command = new RescheduleCommand(_tagIdsWithRowVersion, 0, RescheduledDirection.Later, "Comment");
             
             var result = _dut.Validate(command);
 
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
         [TestMethod]
         public void Validate_ShouldFail_WhenWeeksToHigh()
         {
-            var command = new RescheduleCommand(_tagIdsWithRowVersion, 5, RescheduledDirection.Later);
+            var command = new RescheduleCommand(_tagIdsWithRowVersion, 5, RescheduledDirection.Later, "Comment");
             
             var result = _dut.Validate(command);
 
@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
         [TestMethod]
         public void Validate_ShouldFail_WhenNoTagsGiven()
         {
-            var command = new RescheduleCommand(new List<IdAndRowVersion>(), 1, RescheduledDirection.Later);
+            var command = new RescheduleCommand(new List<IdAndRowVersion>(), 1, RescheduledDirection.Later, "Comment");
             
             var result = _dut.Validate(command);
 
@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
                 new List<IdAndRowVersion>
                 {
                     new IdAndRowVersion(1, null), new IdAndRowVersion(1, null)
-                },1, RescheduledDirection.Later);
+                },1, RescheduledDirection.Later, "Comment");
             
             var result = _dut.Validate(command);
 

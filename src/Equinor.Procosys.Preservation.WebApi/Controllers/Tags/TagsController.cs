@@ -866,8 +866,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             string plant,
             [FromBody] RescheduleTagsDto dto)
         {
-            var tags = dto.TagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
-            var result = await _mediator.Send(new RescheduleCommand(tags, dto.Weeks, dto.Direction));
+            var tags = dto.Tags.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var result = await _mediator.Send(new RescheduleCommand(tags, dto.Weeks, dto.Direction, dto.Comment));
             return this.FromResult(result);
         }
 

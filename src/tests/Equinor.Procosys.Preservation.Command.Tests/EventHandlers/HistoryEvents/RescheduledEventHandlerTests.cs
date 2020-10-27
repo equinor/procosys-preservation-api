@@ -41,10 +41,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             var plant = "TestPlant";
             var direction = RescheduledDirection.Earlier;
             var weeks = 2;
-            _dut.Handle(new RescheduledEvent(plant, objectGuid, weeks, direction), default);
+            var comment = "TestComment";
+            _dut.Handle(new RescheduledEvent(plant, objectGuid, weeks, direction, comment), default);
 
             // Assert
-            var expectedDescription = $"{EventType.Rescheduled.GetDescription()} - {weeks}(s) {direction.ToString().ToLower()}";
+            var expectedDescription = $"{EventType.Rescheduled.GetDescription()} - {weeks}(s) {direction.ToString().ToLower()}. {comment}";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(plant, _historyAdded.Plant);
