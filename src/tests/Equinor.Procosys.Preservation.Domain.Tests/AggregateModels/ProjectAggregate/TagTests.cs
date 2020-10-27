@@ -389,7 +389,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _fourReqs_NoneNeedInput_DifferentIntervals_OneForSupplier_OneForOther);
 
             // Act and Assert
-            Assert.ThrowsException<Exception>(() => dut.Reschedule(1, RescheduledDirection.Later));
+            Assert.ThrowsException<Exception>(() => dut.Reschedule(1, RescheduledDirection.Later, "Comment"));
         }
 
         [TestMethod]
@@ -403,7 +403,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var expectedNextDueTimeLaterUtc = dut.Requirements.ElementAt(1).ActivePeriod.DueTimeUtc.AddWeeks(1);
 
             // Act
-            dut.Reschedule(1, RescheduledDirection.Later);
+            dut.Reschedule(1, RescheduledDirection.Later, "Comment");
 
             // Assert
             Assert.AreEqual(expectedNextDueTimeFirstUtc, dut.Requirements.ElementAt(0).NextDueTimeUtc);
@@ -415,7 +415,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void Reschedule_ShouldAddRescheduledEvent()
         {
             _dutWithOneReqNotNeedInputTwoWeekInterval.StartPreservation();
-            _dutWithOneReqNotNeedInputTwoWeekInterval.Reschedule(1, RescheduledDirection.Later);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.Reschedule(1, RescheduledDirection.Later, "Comment");
 
             Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RescheduledEvent));

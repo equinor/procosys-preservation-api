@@ -73,8 +73,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
             };
             _tagRepoMock = new Mock<IProjectRepository>();
             _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
-            _rescheduleOneWeekLaterCommand = new RescheduleCommand(tagIdsWithRowVersion, 1, RescheduledDirection.Later);
-            _rescheduleFourWeeksEarlierCommand = new RescheduleCommand(tagIdsWithRowVersion, 4, RescheduledDirection.Earlier);
+            _rescheduleOneWeekLaterCommand = new RescheduleCommand(tagIdsWithRowVersion, 1, RescheduledDirection.Later, "Comment");
+            _rescheduleFourWeeksEarlierCommand = new RescheduleCommand(tagIdsWithRowVersion, 4, RescheduledDirection.Earlier, "Comment");
 
             _dut = new RescheduleCommandHandler(_tagRepoMock.Object, UnitOfWorkMock.Object);
         }
