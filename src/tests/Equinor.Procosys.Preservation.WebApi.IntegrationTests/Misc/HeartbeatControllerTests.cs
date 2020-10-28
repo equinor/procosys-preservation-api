@@ -20,9 +20,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
             var content = await response.Content.ReadAsStringAsync();
             Assert.IsNotNull(content);
-            var isAlive = JsonConvert.DeserializeObject(content);
-            // todo Assert on Json-object
-            Assert.IsNotNull(isAlive);
+            var dto = JsonConvert.DeserializeObject<HeartbeatDto>(content);
+            Assert.IsNotNull(dto);
+            Assert.IsTrue(dto.IsAlive);
+            Assert.IsNotNull(dto.TimeStamp);
         }
     }
 }
