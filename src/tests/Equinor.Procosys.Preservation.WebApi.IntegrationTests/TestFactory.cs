@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -18,15 +17,28 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
     public class TestFactory : WebApplicationFactory<Startup>
     {
+        private readonly Mock<IPlantApiService> _plantApiServiceMock;
+        private readonly Mock<IPermissionApiService> _permissionApiServiceMock;
         private readonly string _configPath;
         private HttpClient _anonymousClient;
         private HttpClient _libraryAdminClient;
         private HttpClient _plannerClient;
         private HttpClient _preserverClient;
         private HttpClient _hackerClient;
+        private List<ProcosysPlant> _normalPlantAccess = new List<ProcosysPlant>
+        {
+            new ProcosysPlant {Id = PlantWithAccess, HasAccess = true}, 
+            new ProcosysPlant {Id = PlantWithoutAccess}
+        };
+        private List<ProcosysPlant> _noPlantAccess = new List<ProcosysPlant>()
+        {
+            new ProcosysPlant {Id = PlantWithAccess}, 
+            new ProcosysPlant {Id = PlantWithoutAccess}
+        };
 
-        public string PlantWithAccess => "PLANT1";
-        public string PlantWithoutAccess => "PLANT999";
+        public static string PlantWithAccess => "PLANT1";
+        public static string PlantWithoutAccess => "PLANT999";
+        public string UnknownPlant => "UNKNOWN_PLANT";
         public string ProjectWithAccess => "Project1";
         public string ProjectWithoutAccess => "Project999";
 
@@ -35,69 +47,50 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var projectDir = Directory.GetCurrentDirectory();
             _configPath = Path.Combine(projectDir, "appsettings.json");
 
-            PlantApiServiceMock = new Mock<IPlantApiService>();
-            PlantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(
-                new List<ProcosysPlant>
-                {
-                    new ProcosysPlant {Id = PlantWithAccess, HasAccess = true}, 
-                    new ProcosysPlant {Id = PlantWithoutAccess}
-                }));
+            _plantApiServiceMock = new Mock<IPlantApiService>();
 
-            PermissionApiServiceMock = new Mock<IPermissionApiService>();
-            PermissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<ProcosysProject>>(new List<ProcosysProject>
-                {
-                    new ProcosysProject {Name = ProjectWithAccess, HasAccess = true},
-                    new ProcosysProject {Name = ProjectWithoutAccess}
-                }));
-
-            PermissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<string>>(new List<string>()));
+            _permissionApiServiceMock = new Mock<IPermissionApiService>();
 
             _anonymousClient = CreateTestClient(null);
-            _libraryAdminClient = CreateTestClient(LibraryAdminClient.Tokens);
-            _plannerClient = CreateTestClient(PlannerClient.Tokens);
-            _preserverClient = CreateTestClient(PreserverClient.Tokens);
-            _hackerClient = CreateTestClient(HackerClient.Tokens);
+            _libraryAdminClient = CreateTestClient(LibraryAdminProfile.Tokens);
+            _plannerClient = CreateTestClient(PlannerProfile.Tokens);
+            _preserverClient = CreateTestClient(PreserverProfile.Tokens);
+            _hackerClient = CreateTestClient(HackerProfile.Tokens);
         }
 
         public HttpClient GetAnonymousClient()
         {
-            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<string>>(null));
+            ClearPlants();
+            ClearPermissions();
             return _anonymousClient;
         }
 
         public HttpClient GetLibraryAdminClient()
         {
-            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult(LibraryAdminClient.ProCoSysPermissions));
+            SetupPlants(_normalPlantAccess);
+            SetupPermissionApiService(LibraryAdminProfile.ProCoSysPermissions);
             return _libraryAdminClient;
         }
-
         public HttpClient GetPlannerClient()
         {
-            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult(PlannerClient.ProCoSysPermissions));
+            SetupPlants(_normalPlantAccess);
+            SetupPermissionApiService(PlannerProfile.ProCoSysPermissions);
             return _plannerClient;
         }
 
         public HttpClient GetPreserverClient()
         {
-            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult(PreserverClient.ProCoSysPermissions));
+            SetupPlants(_normalPlantAccess);
+            SetupPermissionApiService(PreserverProfile.ProCoSysPermissions);
             return _preserverClient;
         }
 
-        public HttpClient GetHackerClient()
+        public HttpClient GetAuthenticatedHackerClient()
         {
-            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<string>>(new List<string>()));
+            SetupPlants(_noPlantAccess);
+            SetupPermissionApiService(new List<string>());
             return _hackerClient;
         }
-
-        public Mock<IPlantApiService> PlantApiServiceMock { get; }
-        public Mock<IPermissionApiService> PermissionApiServiceMock { get; }
 
         public new void Dispose()
         {
@@ -129,13 +122,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             base.Dispose();
         }
-        
-        protected override void ConfigureClient(HttpClient client)
-        {
-            client.DefaultRequestHeaders.Add(CurrentPlantMiddleware.PlantHeader, new List<string> {PlantWithAccess});
-        
-            base.ConfigureClient(client);
-        }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
             => builder.ConfigureTestServices(services =>
@@ -147,11 +133,45 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 services.PostConfigureAll<JwtBearerOptions>(jwtBearerOptions =>
                     jwtBearerOptions.ForwardAuthenticate = IntegrationTestAuthHandler.TestAuthenticationScheme);
                 
-                services.AddScoped(serviceProvider => PlantApiServiceMock.Object);
-                services.AddScoped(serviceProvider => PermissionApiServiceMock.Object);
+                services.AddScoped(serviceProvider => _plantApiServiceMock.Object);
+                services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
             });
 
-        private HttpClient CreateTestClient(TestTokens tokens)
+        private void SetupPlants(List<ProcosysPlant> plants)
+            => _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(plants));
+
+        private void ClearPlants() =>
+            _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult<List<ProcosysPlant>>(null));
+        
+        private void SetupPermissionApiService(IList<string> proCoSysPermissions)
+        {
+            _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult(proCoSysPermissions));
+
+            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult<IList<string>>(new List<string>()));
+                        
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(PlantWithAccess))
+                .Returns(Task.FromResult<IList<ProcosysProject>>(new List<ProcosysProject>
+                {
+                    new ProcosysProject {Name = ProjectWithAccess, HasAccess = true},
+                    new ProcosysProject {Name = ProjectWithoutAccess}
+                }));
+        }
+
+        private void ClearPermissions()
+        {
+            _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult<IList<string>>(null));
+
+            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult<IList<string>>(null));
+                        
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(PlantWithAccess))
+                .Returns(Task.FromResult<IList<ProcosysProject>>(null));
+        }
+
+        private HttpClient CreateTestClient(Profile profile)
         {
             var client = WithWebHostBuilder(builder =>
             {
@@ -160,9 +180,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             }).CreateClient();
 
-            if (tokens != null)
+            if (profile != null)
             {
-                client.DefaultRequestHeaders.Add("Authorization", BearerTokenUtilility.WrapAuthToken(tokens));
+                client.DefaultRequestHeaders.Add("Authorization", BearerTokenUtility.WrapAuthToken(profile));
             }
             return client;
         }

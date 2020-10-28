@@ -2,7 +2,7 @@
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients
 {
-    public class TestTokens
+    public class Profile
     {
         public string Oid { get; set; }
         public string FullName { get; set; }

@@ -3,10 +3,10 @@
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients
 {
     // Authenticated client with necessary roles to Create and Update in Scope
-    public static class PlannerClient
+    public static class PlannerProfile
     {
-        public static TestTokens Tokens
-            => new TestTokens
+        public static Profile Tokens
+            => new Profile
             {
                 Oid = "00000000-0000-0000-0000-000000000002", 
                 FullName = "Pernilla Planner"
@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients
                     Permissions.PRESERVATION_PLAN_VOIDUNVOID,
                     Permissions.PRESERVATION_PLAN_WRITE
                 };
-                proCoSysPermissions.AddRange(PreserverClient.ProCoSysPermissions);
+                proCoSysPermissions.AddRange(PreserverProfile.ProCoSysPermissions);
                 return proCoSysPermissions;
             }
         }

@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
@@ -11,8 +12,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
     {
         private const string ModesPath = "Modes";
 
-        public static async Task<List<ModeDto>> GetAllModesAsync(HttpClient client, HttpStatusCode expectedStatusCode = HttpStatusCode.OK)
+        public static async Task<List<ModeDto>> GetAllModesAsync(
+            HttpClient client,
+            string requestingPlant,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK)
         {
+            client.UpdatePlantInHeader(requestingPlant);
+            
             // Act
             var response = await client.GetAsync($"{ModesPath}");
 
