@@ -12,9 +12,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Middleware
         private readonly IServiceScopeFactory _serviceProvider;
 
         public DatabaseMigrator(IServiceScopeFactory serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-        }
+            => _serviceProvider = serviceProvider;
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {

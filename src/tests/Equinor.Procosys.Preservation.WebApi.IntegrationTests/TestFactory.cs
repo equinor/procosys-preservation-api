@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients;
@@ -9,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -19,22 +23,24 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
     {
         private readonly Mock<IPlantApiService> _plantApiServiceMock;
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock;
+        private readonly string _projectDir;
         private readonly string _configPath;
         private HttpClient _anonymousClient;
         private HttpClient _libraryAdminClient;
         private HttpClient _plannerClient;
         private HttpClient _preserverClient;
         private HttpClient _hackerClient;
-        private List<ProcosysPlant> _normalPlantAccess = new List<ProcosysPlant>
+        private readonly List<ProcosysPlant> _normalPlantAccess = new List<ProcosysPlant>
         {
             new ProcosysPlant {Id = PlantWithAccess, HasAccess = true}, 
             new ProcosysPlant {Id = PlantWithoutAccess}
         };
-        private List<ProcosysPlant> _noPlantAccess = new List<ProcosysPlant>()
+        private readonly List<ProcosysPlant> _noPlantAccess = new List<ProcosysPlant>()
         {
             new ProcosysPlant {Id = PlantWithAccess}, 
             new ProcosysPlant {Id = PlantWithoutAccess}
         };
+
 
         public static string PlantWithAccess => "PLANT1";
         public static string PlantWithoutAccess => "PLANT999";
@@ -44,8 +50,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         public TestFactory()
         {
-            var projectDir = Directory.GetCurrentDirectory();
-            _configPath = Path.Combine(projectDir, "appsettings.json");
+            _projectDir = Directory.GetCurrentDirectory();
+            _configPath = Path.Combine(_projectDir, "appsettings.json");
 
             _plantApiServiceMock = new Mock<IPlantApiService>();
 
@@ -124,7 +130,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
-            => builder.ConfigureTestServices(services =>
+        {
+            builder.ConfigureTestServices(services =>
             {
                 services.AddAuthentication()
                     .AddScheme<IntegrationTestAuthOptions, IntegrationTestAuthHandler>(
@@ -132,10 +139,53 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
                 services.PostConfigureAll<JwtBearerOptions>(jwtBearerOptions =>
                     jwtBearerOptions.ForwardAuthenticate = IntegrationTestAuthHandler.TestAuthenticationScheme);
-                
+
                 services.AddScoped(serviceProvider => _plantApiServiceMock.Object);
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
             });
+
+            builder.ConfigureServices(services =>
+            {
+                var descriptor = services.SingleOrDefault
+                    (d => d.ServiceType == typeof(DbContextOptions<PreservationContext>));
+
+                if (descriptor != null)
+                {
+                    services.Remove(descriptor);
+                }
+
+                var connectionString = GetTestDbConnectionString();
+
+                services.AddDbContext<PreservationContext>((_, context) => context.UseSqlServer(connectionString));
+
+                // Build the service provider.
+                var serviceProvider = services.BuildServiceProvider();
+
+                // Create a scope to obtain a reference to the database
+                using var scope = serviceProvider.CreateScope();
+                
+                var dbContext = scope.ServiceProvider.GetRequiredService<PreservationContext>();
+                    
+                dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+
+                var migrations = dbContext.Database.GetPendingMigrations();
+                if (migrations.Any())
+                {
+                    dbContext.Database.Migrate();
+                }
+            });
+        }
+
+        private string GetTestDbConnectionString()
+        {
+            var ns = GetType().Namespace;
+            var idx = _projectDir.LastIndexOf(ns ?? throw new InvalidOperationException(), StringComparison.InvariantCulture);
+            var dbPath = _projectDir.Substring(0, idx + ns.Length);
+            dbPath = Path.Combine(dbPath, "IntegrationTestsDB.mdf");
+            var connectionString =
+                $"Server=(LocalDB)\\MSSQLLocalDB;Integrated Security=true;AttachDbFileName={dbPath}";
+            return connectionString;
+        }
 
         private void SetupPlants(List<ProcosysPlant> plants)
             => _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(plants));
