@@ -31,10 +31,4 @@
     <ProjectReference Include="..\..\Equinor.Procosys.Preservation.WebApi\Equinor.Procosys.Preservation.WebApi.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="IntegrationTestsDB_log.ldf">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>

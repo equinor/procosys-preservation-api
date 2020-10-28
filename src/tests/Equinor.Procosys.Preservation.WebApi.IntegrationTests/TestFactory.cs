@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
     {
         private readonly Mock<IPlantApiService> _plantApiServiceMock;
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock;
-        private readonly string _projectDir;
+        private readonly string _connectionString;
         private readonly string _configPath;
         private HttpClient _anonymousClient;
         private HttpClient _libraryAdminClient;
@@ -41,6 +41,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             new ProcosysPlant {Id = PlantWithoutAccess}
         };
 
+        private readonly List<Action> _teardownList = new List<Action>();
 
         public static string PlantWithAccess => "PLANT1";
         public static string PlantWithoutAccess => "PLANT999";
@@ -50,8 +51,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         public TestFactory()
         {
-            _projectDir = Directory.GetCurrentDirectory();
-            _configPath = Path.Combine(_projectDir, "appsettings.json");
+            var projectDir = Directory.GetCurrentDirectory();
+            _connectionString = GetTestDbConnectionString(projectDir);
+            _configPath = Path.Combine(projectDir, "appsettings.json");
 
             _plantApiServiceMock = new Mock<IPlantApiService>();
 
@@ -100,6 +102,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         public new void Dispose()
         {
+            // Run teardown
+            foreach (var action in _teardownList)
+            {
+                action();
+            }
+
             if (_anonymousClient != null)
             {
                 _anonymousClient.Dispose();
@@ -144,47 +152,46 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
             });
 
-            builder.ConfigureServices(services =>
-            {
-                var descriptor = services.SingleOrDefault
-                    (d => d.ServiceType == typeof(DbContextOptions<PreservationContext>));
-
-                if (descriptor != null)
-                {
-                    services.Remove(descriptor);
-                }
-
-                var connectionString = GetTestDbConnectionString();
-
-                services.AddDbContext<PreservationContext>((_, context) => context.UseSqlServer(connectionString));
-
-                // Build the service provider.
-                var serviceProvider = services.BuildServiceProvider();
-
-                // Create a scope to obtain a reference to the database
-                using var scope = serviceProvider.CreateScope();
-                
-                var dbContext = scope.ServiceProvider.GetRequiredService<PreservationContext>();
-                    
-                dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-
-                var migrations = dbContext.Database.GetPendingMigrations();
-                if (migrations.Any())
-                {
-                    dbContext.Database.Migrate();
-                }
-            });
+            builder.ConfigureServices(CreateDatabaseWithMigreations);
         }
 
-        private string GetTestDbConnectionString()
+        private void CreateDatabaseWithMigreations(IServiceCollection services)
         {
-            var ns = GetType().Namespace;
-            var idx = _projectDir.LastIndexOf(ns ?? throw new InvalidOperationException(), StringComparison.InvariantCulture);
-            var dbPath = _projectDir.Substring(0, idx + ns.Length);
-            dbPath = Path.Combine(dbPath, "IntegrationTestsDB.mdf");
-            var connectionString =
-                $"Server=(LocalDB)\\MSSQLLocalDB;Integrated Security=true;AttachDbFileName={dbPath}";
-            return connectionString;
+            var descriptor = services.SingleOrDefault
+                (d => d.ServiceType == typeof(DbContextOptions<PreservationContext>));
+
+            if (descriptor != null)
+            {
+                services.Remove(descriptor);
+            }
+
+            services.AddDbContext<PreservationContext>(context => context.UseSqlServer(_connectionString));
+
+            using var serviceProvider = services.BuildServiceProvider();
+
+            using var scope = serviceProvider.CreateScope();
+
+            var dbContext = scope.ServiceProvider.GetRequiredService<PreservationContext>();
+
+            dbContext.Database.EnsureDeleted();
+
+            dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+
+            var migrations = dbContext.Database.GetPendingMigrations();
+            if (migrations.Any())
+            {
+                dbContext.Database.Migrate();
+            }
+
+            // Put the teardown here, as we don't have the generic TContext in the dispose method.
+            _teardownList.Add(() => { dbContext.Database.EnsureDeleted(); });
+        }
+
+        private string GetTestDbConnectionString(string projectDir)
+        {
+            var dbName = "IntegrationTestsDB";
+            var dbPath = Path.Combine(projectDir, $"{dbName}.mdf");
+            return $"Server=(LocalDB)\\MSSQLLocalDB;Initial Catalog={dbName};Integrated Security=true;AttachDbFileName={dbPath}";
         }
 
         private void SetupPlants(List<ProcosysPlant> plants)
