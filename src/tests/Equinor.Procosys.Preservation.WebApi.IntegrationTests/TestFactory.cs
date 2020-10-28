@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,11 +15,19 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
     public class TestFactory : WebApplicationFactory<Startup>
     {
         private readonly string _configPath;
+        public string ValidPlant => "ValidPlant";
 
         public TestFactory()
         {
             var projectDir = Directory.GetCurrentDirectory();
             _configPath = Path.Combine(projectDir, "appsettings.json");
+        }
+
+        protected override void ConfigureClient(HttpClient client)
+        {
+            client.DefaultRequestHeaders.Add(CurrentPlantMiddleware.PlantHeader, new List<string> {ValidPlant});
+        
+            base.ConfigureClient(client);
         }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
