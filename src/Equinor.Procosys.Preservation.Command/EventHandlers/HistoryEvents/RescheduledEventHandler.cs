@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
         public Task Handle(RescheduledEvent notification, CancellationToken cancellationToken)
         {
             var eventType = EventType.Rescheduled;
-            var description = $"{eventType.GetDescription()} - {notification.Weeks}(s) {notification.Direction.ToString().ToLower()}. {notification.Comment}";
+            var description = $"{eventType.GetDescription()} - {notification.Weeks} week(s) {notification.Direction.ToString().ToLower()}. {notification.Comment}";
             var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
             _historyRepository.Add(history);
             return Task.CompletedTask;
