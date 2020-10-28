@@ -19,6 +19,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
     public class TestFactory : WebApplicationFactory<Startup>
     {
         private readonly string _configPath;
+        private HttpClient _anonymousClient;
+        private HttpClient _libraryAdminClient;
+        private HttpClient _plannerClient;
+        private HttpClient _preserverClient;
+        private HttpClient _hackerClient;
+
         public string PlantWithAccess => "PLANT1";
         public string PlantWithoutAccess => "PLANT999";
         public string ProjectWithAccess => "Project1";
@@ -28,12 +34,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         {
             var projectDir = Directory.GetCurrentDirectory();
             _configPath = Path.Combine(projectDir, "appsettings.json");
-            AnonymousClient = CreateTestClient(null);
-            LibraryAdminClient = CreateTestClient(Clients.AdminClient.Tokens);
-            PlannerClient = CreateTestClient(Clients.PlannerClient.Tokens);
-            PreserverClient = CreateTestClient(Clients.PreserverClient.Tokens);
-            ReaderClient = CreateTestClient(Clients.ReaderClient.Tokens);
-            HackerClient = CreateTestClient(Clients.HackerClient.Tokens);
 
             PlantApiServiceMock = new Mock<IPlantApiService>();
             PlantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(
@@ -50,55 +50,81 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     new ProcosysProject {Name = ProjectWithAccess, HasAccess = true},
                     new ProcosysProject {Name = ProjectWithoutAccess}
                 }));
-            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<string>>(new List<string> {Permissions.LIBRARY_PRESERVATION_READ}));
 
             PermissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(PlantWithAccess))
                 .Returns(Task.FromResult<IList<string>>(new List<string>()));
 
+            _anonymousClient = CreateTestClient(null);
+            _libraryAdminClient = CreateTestClient(LibraryAdminClient.Tokens);
+            _plannerClient = CreateTestClient(PlannerClient.Tokens);
+            _preserverClient = CreateTestClient(PreserverClient.Tokens);
+            _hackerClient = CreateTestClient(HackerClient.Tokens);
         }
-        
-        public HttpClient AnonymousClient { get; private set; }
-        public HttpClient LibraryAdminClient { get; private set; }
-        public HttpClient PlannerClient { get; private set; }
-        public HttpClient PreserverClient { get; private set; }
-        public HttpClient ReaderClient { get; private set; }
-        public HttpClient HackerClient { get; private set; }
+
+        public HttpClient GetAnonymousClient()
+        {
+            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult<IList<string>>(null));
+            return _anonymousClient;
+        }
+
+        public HttpClient GetLibraryAdminClient()
+        {
+            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult(LibraryAdminClient.ProCoSysPermissions));
+            return _libraryAdminClient;
+        }
+
+        public HttpClient GetPlannerClient()
+        {
+            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult(PlannerClient.ProCoSysPermissions));
+            return _plannerClient;
+        }
+
+        public HttpClient GetPreserverClient()
+        {
+            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult(PreserverClient.ProCoSysPermissions));
+            return _preserverClient;
+        }
+
+        public HttpClient GetHackerClient()
+        {
+            PermissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
+                .Returns(Task.FromResult<IList<string>>(new List<string>()));
+            return _hackerClient;
+        }
 
         public Mock<IPlantApiService> PlantApiServiceMock { get; }
         public Mock<IPermissionApiService> PermissionApiServiceMock { get; }
 
         public new void Dispose()
         {
-            if (AnonymousClient != null)
+            if (_anonymousClient != null)
             {
-                AnonymousClient.Dispose();
-                AnonymousClient = null;
+                _anonymousClient.Dispose();
+                _anonymousClient = null;
             }
-            if (LibraryAdminClient != null)
+            if (_libraryAdminClient != null)
             {
-                LibraryAdminClient.Dispose();
-                LibraryAdminClient = null;
+                _libraryAdminClient.Dispose();
+                _libraryAdminClient = null;
             }
-            if (PlannerClient != null)
+            if (_plannerClient != null)
             {
-                PlannerClient.Dispose();
-                PlannerClient = null;
+                _plannerClient.Dispose();
+                _plannerClient = null;
             }
-            if (PreserverClient != null)
+            if (_preserverClient != null)
             {
-                PreserverClient.Dispose();
-                PreserverClient = null;
+                _preserverClient.Dispose();
+                _preserverClient = null;
             }
-            if (ReaderClient != null)
+            if (_hackerClient != null)
             {
-                ReaderClient.Dispose();
-                ReaderClient = null;
-            }
-            if (HackerClient != null)
-            {
-                HackerClient.Dispose();
-                HackerClient = null;
+                _hackerClient.Dispose();
+                _hackerClient = null;
             }
 
             base.Dispose();

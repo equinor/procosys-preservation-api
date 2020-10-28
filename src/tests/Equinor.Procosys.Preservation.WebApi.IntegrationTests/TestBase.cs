@@ -28,11 +28,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             }
         }
 
-        public HttpClient AnonymousClient => TestFactory.AnonymousClient;
-        public HttpClient LibraryAdminClient => TestFactory.LibraryAdminClient;
-        public HttpClient PlannerClient => TestFactory.PlannerClient;
-        public HttpClient PreserverClient => TestFactory.PreserverClient;
-        public HttpClient ReaderClient => TestFactory.ReaderClient;
-        public HttpClient HackerClient => TestFactory.HackerClient;
+        public HttpClient AnonymousClient => TestFactory.GetAnonymousClient();
+        public HttpClient LibraryAdminClient => TestFactory.GetLibraryAdminClient();
+        public HttpClient PlannerClient => TestFactory.GetPlannerClient();
+        public HttpClient PreserverClient => TestFactory.GetPreserverClient();
+        public HttpClient HackerClient => TestFactory.GetHackerClient();
     }
 }
