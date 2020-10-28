@@ -15,7 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         public async Task Get_AllModes_AsAnonymous_ShouldReturnUnauthorized()
         {
             // Act
-            var response = await anonymousClient.GetAsync($"{ModesPath}");
+            var response = await AnonymousClient.GetAsync($"{ModesPath}");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.Unauthorized, response.StatusCode);
@@ -25,7 +25,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         public async Task Get_AllModes_AsHacker_ShouldReturnForbidden()
         {
             // Act
-            var response = await hackerClient.GetAsync($"{ModesPath}");
+            var response = await HackerClient.GetAsync($"{ModesPath}");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.Forbidden, response.StatusCode);
@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         public async Task Get_AllModes_AsAdmin_ShouldReturnOk()
         {
             // Act
-            var response = await adminClient.GetAsync($"{ModesPath}");
+            var response = await LibraryAdminClient.GetAsync($"{ModesPath}");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);

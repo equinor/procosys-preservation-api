@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
         public async Task Get_IsAlive_AsAnonymous_ShouldReturnOk()
         {
             // Act
-            var response = await anonymousClient.GetAsync($"{HeartbeatPath}/IsAlive");
+            var response = await AnonymousClient.GetAsync($"{HeartbeatPath}/IsAlive");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);

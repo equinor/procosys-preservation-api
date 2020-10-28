@@ -1,9 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Net.Http;
-using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿using System.Net.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
@@ -12,48 +7,32 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
     [TestClass]
     public abstract class TestBase
     {
-        protected static TestFactory testFactory;
-        protected static HttpClient anonymousClient;
-        protected static HttpClient adminClient;
-        protected static HttpClient plannerClient;
-        protected static HttpClient preserverClient;
-        protected static HttpClient readerClient;
-        protected static HttpClient hackerClient;
+        protected static TestFactory TestFactory;
 
         [AssemblyInitialize]
         public static void AssemblyInitialize(TestContext testContext)
         {
-            if (testFactory == null)
+            if (TestFactory == null)
             {
-                testFactory = new TestFactory();
-
-                anonymousClient = testFactory.CreateTestClient(null);
-                adminClient = testFactory.CreateTestClient(AdminClient.Tokens);
-                plannerClient = testFactory.CreateTestClient(PlannerClient.Tokens);
-                preserverClient = testFactory.CreateTestClient(PreserverClient.Tokens);
-                readerClient = testFactory.CreateTestClient(ReaderClient.Tokens);
-                hackerClient = testFactory.CreateTestClient(HackerClient.Tokens);
+                TestFactory = new TestFactory();
             }
         }
 
         [AssemblyCleanup]
         public static void AssemblyCleanup()
         {
-            if (testFactory != null)
+            if (TestFactory != null)
             {
-                testFactory.Dispose();
-                testFactory = null;
-            }
-            if (anonymousClient != null)
-            {
-                anonymousClient.Dispose();
-                anonymousClient = null;
-            }
-            if (adminClient != null)
-            {
-                adminClient.Dispose();
-                adminClient = null;
+                TestFactory.Dispose();
+                TestFactory = null;
             }
         }
+
+        public HttpClient AnonymousClient => TestFactory.AnonymousClient;
+        public HttpClient LibraryAdminClient => TestFactory.LibraryAdminClient;
+        public HttpClient PlannerClient => TestFactory.PlannerClient;
+        public HttpClient PreserverClient => TestFactory.PreserverClient;
+        public HttpClient ReaderClient => TestFactory.ReaderClient;
+        public HttpClient HackerClient => TestFactory.HackerClient;
     }
 }
