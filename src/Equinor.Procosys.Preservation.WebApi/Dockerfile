@@ -13,9 +13,6 @@ COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservati
 # Set workdir where main project is
 WORKDIR "/src/Equinor.Procosys.Preservation.WebApi"
 
-# Restore NuGet packages
-RUN dotnet restore "Equinor.Procosys.Preservation.WebApi.csproj"
-
 # Copy full solution
 COPY . .
 
