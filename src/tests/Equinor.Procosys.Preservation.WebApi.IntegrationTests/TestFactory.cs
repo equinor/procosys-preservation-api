@@ -30,6 +30,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private HttpClient _plannerClient;
         private HttpClient _preserverClient;
         private HttpClient _hackerClient;
+
         private readonly List<ProcosysPlant> _normalPlantAccess = new List<ProcosysPlant>
         {
             new ProcosysPlant {Id = PlantWithAccess, HasAccess = true}, 
