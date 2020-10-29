@@ -10,11 +10,11 @@ COPY Equinor.Procosys.Preservation.BlobStorage/*.csproj ./Equinor.Procosys.Prese
 COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservation.Query/
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
 
-# Set workdir where main project is
-WORKDIR "/src/Equinor.Procosys.Preservation.WebApi"
-
 # Copy full solution
 COPY . .
+
+# Set workdir where main project is
+WORKDIR "/src/Equinor.Procosys.Preservation.WebApi"
 
 # Build
 RUN dotnet build "Equinor.Procosys.Preservation.WebApi.csproj" -c Release
