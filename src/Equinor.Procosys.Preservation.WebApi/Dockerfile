@@ -12,7 +12,7 @@ COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservatio
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
 
 # Restore NuGet packages
-RUN dotnet restore
+RUN dotnet restore "Equinor.Procosys.Preservation.WebApi.csproj"
 
 # Copy full solution
 COPY . .
