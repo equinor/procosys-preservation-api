@@ -25,197 +25,214 @@ variables:
 name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 
 stages:
-# common stage. Docker build, tag and push
-- stage: common
-  displayName: 'common'
+
+- stage: runTest
+  displayName: 'runtest'
   variables:
-    envName: 'common'
-    envRg: '${{ variables.envRgName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}'
+    envName: 'runtest'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
+    testPath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.sln'
 
   jobs:
-
-  # Docker Build
-  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+  # Run Test
+  - template: /templates/pipelines/runtest-preservation.yml@templates
     parameters:
-      deploymentName: 'docker_build'
+      deploymentName: 'run_test'
       dependsOn: ''
       condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
-      env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
-      buildCommand: build
-      versionNumber: ${{ variables.versionNumber }}
-      dockerfilePath: '${{ variables.dockerfilePath }}'
-      buildContext: '$(Build.SourcesDirectory)/src'
-      repository: '${{ variables.repositoryName }}'
-      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+      testPath: '${{ variables.testPath }}'
 
-  # Docker Build and Push (Master Only)
-  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
-    parameters:
-      deploymentName: 'docker_build_and_push_master_only'
-      dependsOn: ''
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-      env: 'pcs-${{ variables.envName }}'
-      envGroup: '${{ variables.envGroupName }}'
-      buildCommand: buildAndPush
-      versionNumber: ${{ variables.versionNumber }}
-      dockerfilePath: '${{ variables.dockerfilePath }}'
-      buildContext: '$(Build.SourcesDirectory)/src'
-      repository: '${{ variables.repositoryName }}'
-      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+# # Build stage. Docker build, tag and push
+# - stage: build
+#   displayName: 'build'
+#   dependsOn: 'runTest'
+#   variables:
+#     envName: 'build'
+#     envRg: '${{ variables.envRgName }}'
+#     containerRegistry: '${{ variables.containerRegistryName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+#     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+#     dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
 
-  # Create Migration Script
-  - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'create_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#   jobs:
+#   # Docker Build
+#   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+#     parameters:
+#       deploymentName: 'docker_build'
+#       dependsOn: ''
+#       condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+#       env: 'pcs-${{ variables.envName }}'
+#       envGroup: '${{ variables.envGroupName }}'
+#       buildCommand: build
+#       versionNumber: ${{ variables.versionNumber }}
+#       dockerfilePath: '${{ variables.dockerfilePath }}'
+#       buildContext: '$(Build.SourcesDirectory)/src'
+#       repository: '${{ variables.repositoryName }}'
+#       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
+#   # Docker Build and Push (Master Only)
+#   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+#     parameters:
+#       deploymentName: 'docker_build_and_push_master_only'
+#       dependsOn: ''
+#       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#       env: 'pcs-${{ variables.envName }}'
+#       envGroup: '${{ variables.envGroupName }}'
+#       buildCommand: buildAndPush
+#       versionNumber: ${{ variables.versionNumber }}
+#       dockerfilePath: '${{ variables.dockerfilePath }}'
+#       buildContext: '$(Build.SourcesDirectory)/src'
+#       repository: '${{ variables.repositoryName }}'
+#       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
-# Dev deploy stage
-- stage: dev
-  displayName: 'Dev'
-  dependsOn: 'common'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  variables:
-    envName: 'dev'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Development'
+#   # Create Migration Script
+#   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
+#     parameters:
+#       dependsOn: ''
+#       deploymentName: 'create_migration_script'
+#       envGroup: '${{ variables.envGroupName }}'
+#       serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
-  jobs:
+# # Dev deploy stage
+# - stage: dev
+#   displayName: 'Dev'
+#   dependsOn: 'build'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   variables:
+#     envName: 'dev'
+#     envRg: '${{ variables.envRgName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+#     serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+#     containerRegistry: '${{ variables.containerRegistryName }}' 
+#     aspNetCoreEnvironment: 'Development'
 
-  # Run Migration Script (Predeploy)
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'run_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: '${{ variables.commonKeyVault }}'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-      serverName: '${{ variables.sqlServerName }}.database.windows.net'
-      databaseName: '${{ variables.sqlDatabaseName }}'
+#   jobs:
 
-  # Deploy to AKS
-  - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: 'run_migration_script'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
-      clusterName: 'pcs-aks-test'
-      kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
-      kvClientSecretName: '${{ variables.kvClientSecretName }}'
-      kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
-      kvName: '${{ variables.kvName }}'
-      kvRgName: '${{ variables.envRgName }}'
-      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+#   # Run Migration Script (Predeploy)
+#   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+#     parameters:
+#       dependsOn: ''
+#       deploymentName: 'run_migration_script'
+#       envGroup: '${{ variables.envGroupName }}'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       kvName: '${{ variables.commonKeyVault }}'
+#       kvRgName: 'pcs-common-rg'
+#       kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+#       serverName: '${{ variables.sqlServerName }}.database.windows.net'
+#       databaseName: '${{ variables.sqlDatabaseName }}'
 
-
-# Test deploy stage
-- stage: test
-  displayName: 'Test'
-  dependsOn: 'common'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  variables:
-    envName: 'test'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    serviceConnection: '${{ variables.nonProdServiceConnection }}'
-    appServicePlan: '${{ variables.nonProdappServicePlanName }}'
-    containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Production'
-
-  jobs:
-
-  # Run Migration Script (Predeploy)
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: ''      
-      deploymentName: 'run_migration_script'
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: '${{ variables.commonKeyVault }}'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-      serverName: '${{ variables.sqlServerName }}.database.windows.net'
-      databaseName: '${{ variables.sqlDatabaseName }}'      
-
-  # Deploy to AKS
-  - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: 'run_migration_script'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
-      clusterName: 'pcs-aks-test'
-      kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
-      kvClientSecretName: '${{ variables.kvClientSecretName }}'
-      kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
-      kvName: '${{ variables.kvName }}'
-      kvRgName: '${{ variables.envRgName }}'
-      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+#   # Deploy to AKS
+#   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
+#     parameters:
+#       deploymentName: 'deploy_to_k8s'
+#       dependsOn: 'run_migration_script'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       env: '${{ variables.envName }}'
+#       envRg: 'pcs-hosting-rg'
+#       envGroup: '${{ variables.envGroupName }}'
+#       dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
+#       clusterName: 'pcs-aks-test'
+#       kvClientIdName: '${{ variables.kvClientIdName }}'
+#       kvUriName: '${{ variables.kvUriName }}'
+#       kvClientSecretName: '${{ variables.kvClientSecretName }}'
+#       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
+#       kvName: '${{ variables.kvName }}'
+#       kvRgName: '${{ variables.envRgName }}'
+#       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
 
 
-# Prod deploy stage
-- stage: prod
-  displayName: 'Prod'
-  dependsOn: 'common'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  variables:
-    envName: 'prod'
-    envRg: '${{ variables.envRgName }}'
-    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    serviceConnection: '${{ variables.prodServiceConnection }}'
+# # Test deploy stage
+# - stage: test
+#   displayName: 'Test'
+#   dependsOn: 'common'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   variables:
+#     envName: 'test'
+#     envRg: '${{ variables.envRgName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+#     serviceConnection: '${{ variables.nonProdServiceConnection }}'
+#     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
+#     containerRegistry: '${{ variables.containerRegistryName }}' 
+#     aspNetCoreEnvironment: 'Production'
 
-  jobs:
+#   jobs:
 
-  # Run Migration Script (Predeploy)
-  - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
-    parameters:
-      dependsOn: ''
-      deploymentName: 'run_migration_script'      
-      envGroup: '${{ variables.envGroupName }}'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      kvName: '${{ variables.commonKeyVault }}'
-      kvRgName: 'pcs-common-rg'
-      kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
-      serverName: '${{ variables.sqlServerName }}.database.windows.net'
-      databaseName: '${{ variables.sqlDatabaseName }}'      
+#   # Run Migration Script (Predeploy)
+#   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+#     parameters:
+#       dependsOn: ''      
+#       deploymentName: 'run_migration_script'
+#       envGroup: '${{ variables.envGroupName }}'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       kvName: '${{ variables.commonKeyVault }}'
+#       kvRgName: 'pcs-common-rg'
+#       kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+#       serverName: '${{ variables.sqlServerName }}.database.windows.net'
+#       databaseName: '${{ variables.sqlDatabaseName }}'      
 
-  # Deploy to AKS
-  - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
-    parameters:
-      deploymentName: 'deploy_to_k8s'
-      dependsOn: 'run_migration_script'
-      serviceConnection: '${{ variables.serviceConnection }}'
-      env: '${{ variables.envName }}'
-      envRg: 'pcs-hosting-rg'
-      envGroup: '${{ variables.envGroupName }}'
-      dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
-      clusterName: 'pcs-aks-prod'
-      kvClientIdName: '${{ variables.kvClientIdName }}'
-      kvUriName: '${{ variables.kvUriName }}'
-      kvClientSecretName: '${{ variables.kvClientSecretName }}'
-      kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
-      kvName: '${{ variables.kvName }}'
-      kvRgName: '${{ variables.envRgName }}'
-      aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+#   # Deploy to AKS
+#   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
+#     parameters:
+#       deploymentName: 'deploy_to_k8s'
+#       dependsOn: 'run_migration_script'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       env: '${{ variables.envName }}'
+#       envRg: 'pcs-hosting-rg'
+#       envGroup: '${{ variables.envGroupName }}'
+#       dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
+#       clusterName: 'pcs-aks-test'
+#       kvClientIdName: '${{ variables.kvClientIdName }}'
+#       kvUriName: '${{ variables.kvUriName }}'
+#       kvClientSecretName: '${{ variables.kvClientSecretName }}'
+#       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
+#       kvName: '${{ variables.kvName }}'
+#       kvRgName: '${{ variables.envRgName }}'
+#       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
+
+
+# # Prod deploy stage
+# - stage: prod
+#   displayName: 'Prod'
+#   dependsOn: 'common'
+#   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+#   variables:
+#     envName: 'prod'
+#     envRg: '${{ variables.envRgName }}'
+#     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+#     serviceConnection: '${{ variables.prodServiceConnection }}'
+
+#   jobs:
+
+#   # Run Migration Script (Predeploy)
+#   - template: /templates/pipelines/runsqlmigrate-preservation.yml@templates
+#     parameters:
+#       dependsOn: ''
+#       deploymentName: 'run_migration_script'      
+#       envGroup: '${{ variables.envGroupName }}'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       kvName: '${{ variables.commonKeyVault }}'
+#       kvRgName: 'pcs-common-rg'
+#       kvSecret: '${{ variables.sqlAdminUserName }}-${{ variables.envName }}'
+#       serverName: '${{ variables.sqlServerName }}.database.windows.net'
+#       databaseName: '${{ variables.sqlDatabaseName }}'      
+
+#   # Deploy to AKS
+#   - template: /templates/pipelines/kubernetes/preservation-deploy.yml@templates
+#     parameters:
+#       deploymentName: 'deploy_to_k8s'
+#       dependsOn: 'run_migration_script'
+#       serviceConnection: '${{ variables.serviceConnection }}'
+#       env: '${{ variables.envName }}'
+#       envRg: 'pcs-hosting-rg'
+#       envGroup: '${{ variables.envGroupName }}'
+#       dockerImage: 'procosys.azurecr.io/preservation/api:${{ variables.versionNumber }}$(Build.BuildId)'
+#       clusterName: 'pcs-aks-prod'
+#       kvClientIdName: '${{ variables.kvClientIdName }}'
+#       kvUriName: '${{ variables.kvUriName }}'
+#       kvClientSecretName: '${{ variables.kvClientSecretName }}'
+#       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
+#       kvName: '${{ variables.kvName }}'
+#       kvRgName: '${{ variables.envRgName }}'
+#       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
