@@ -17,7 +17,7 @@ WORKDIR "/src/Equinor.Procosys.Preservation.WebApi"
 COPY . .
 
 # Build
-RUN dotnet build "Equinor.Procosys.Preservation.WebApi.csproj" -c Release --no-restore
+RUN dotnet build "Equinor.Procosys.Preservation.WebApi.csproj" -c Release
 
 # Publish the application
 FROM build AS publish
