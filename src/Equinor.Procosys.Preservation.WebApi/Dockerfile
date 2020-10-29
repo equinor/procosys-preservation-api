@@ -4,20 +4,12 @@ WORKDIR /src
 # Copy solution and project files separately and restore NuGet packages to create layers
 COPY *.sln .
 COPY Equinor.Procosys.Preservation.Command/*.csproj ./Equinor.Procosys.Preservation.Command/
-COPY tests/Equinor.Procosys.Preservation.Command.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Command.Tests/
 COPY Equinor.Procosys.Preservation.Domain/*.csproj ./Equinor.Procosys.Preservation.Domain/
-COPY tests/Equinor.Procosys.Preservation.Domain.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Domain.Tests/
 COPY Equinor.Procosys.Preservation.Infrastructure/*.csproj ./Equinor.Procosys.Preservation.Infrastructure/
-COPY tests/Equinor.Procosys.Preservation.Infrastructure.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Infrastructure.Tests/
 COPY Equinor.Procosys.Preservation.MainApi/*.csproj ./Equinor.Procosys.Preservation.MainApi/
-COPY tests/Equinor.Procosys.Preservation.MainApi.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.MainApi.Tests/
 COPY Equinor.Procosys.Preservation.BlobStorage/*.csproj ./Equinor.Procosys.Preservation.BlobStorage/
 COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservation.Query/
-COPY tests/Equinor.Procosys.Preservation.Query.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.Query.Tests/
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
-COPY tests/Equinor.Procosys.Preservation.WebApi.Tests/*.csproj ./tests/Equinor.Procosys.Preservation.WebApi.Tests/
-COPY tests/Equinor.Procosys.Preservation.WebApi.IntegrationTests/*.csproj ./tests/Equinor.Procosys.Preservation.WebApi.IntegrationTests/
-COPY tests/Equinor.Procosys.Preservation.Test.Common/*.csproj ./tests/Equinor.Procosys.Preservation.Test.Common/
 
 # Restore NuGet packages
 RUN dotnet restore
@@ -27,11 +19,6 @@ COPY . .
 
 # Build
 RUN dotnet build -c Release --no-restore
-
-# Test runner target
-FROM build AS testrunner
-WORKDIR /src
-RUN dotnet test -c Release --no-build --no-restore
 
 # Publish the application
 FROM build AS publish
