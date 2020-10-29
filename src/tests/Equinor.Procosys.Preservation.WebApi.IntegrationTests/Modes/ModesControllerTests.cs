@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         public async Task Create_Mode_AsAdmin_ShouldCreateMode()
         {
             // Act
-            var id = await ModesControllerTestsHelper.CreateModesAsync(
+            var id = await ModesControllerTestsHelper.CreateModeAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 Guid.NewGuid().ToString());
 
@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         {
             // Arrange
             var title = Guid.NewGuid().ToString();
-            var id = await ModesControllerTestsHelper.CreateModesAsync(
+            var id = await ModesControllerTestsHelper.CreateModeAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 title);
 
@@ -55,13 +55,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         public async Task Update_Mode_AsAdmin_ShouldUpdateModeAndRowVersion()
         {
             // Assert
-            var id = await ModesControllerTestsHelper.CreateModesAsync(
+            var id = await ModesControllerTestsHelper.CreateModeAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 Guid.NewGuid().ToString());
             var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
 
             // Act
-            var newRowVersion = await ModesControllerTestsHelper.UpdateModesAsync(
+            var newRowVersion = await ModesControllerTestsHelper.UpdateModeAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 mode.Id,
                 Guid.NewGuid().ToString(),

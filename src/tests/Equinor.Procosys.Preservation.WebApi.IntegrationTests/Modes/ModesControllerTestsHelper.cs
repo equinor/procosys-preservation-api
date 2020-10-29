@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
             return JsonConvert.DeserializeObject<ModeDto>(content);
         }
 
-        public static async Task<int> CreateModesAsync(
+        public static async Task<int> CreateModeAsync(
             HttpClient client,
             string title,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
             return JsonConvert.DeserializeObject<int>(jsonString);
         }
 
-        public static async Task<string> UpdateModesAsync(
+        public static async Task<string> UpdateModeAsync(
             HttpClient client,
             int id,
             string title,

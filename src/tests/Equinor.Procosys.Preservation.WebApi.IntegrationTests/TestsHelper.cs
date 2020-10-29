@@ -8,13 +8,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
     public static class TestsHelper
     {
-        public static async Task AssertMessageOnBadRequestAsync(HttpResponseMessage result, string expectedMessageOnBadRequest)
+        public static async Task AssertMessageOnBadRequestAsync(
+            HttpResponseMessage result, 
+            string expectedMessagePartOnBadRequest)
         {
             if (result.StatusCode == HttpStatusCode.BadRequest)
             {
                 var jsonString = await result.Content.ReadAsStringAsync();
                 Console.WriteLine(jsonString);
-                Assert.AreEqual(expectedMessageOnBadRequest, jsonString);
+                Assert.IsTrue(jsonString.Contains(expectedMessagePartOnBadRequest));
             }
         }
     }

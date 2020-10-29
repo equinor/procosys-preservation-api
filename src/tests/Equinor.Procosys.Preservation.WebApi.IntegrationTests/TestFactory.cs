@@ -51,6 +51,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public string UnknownPlant => "UNKNOWN_PLANT";
         public string ProjectWithAccess => "Project1";
         public string ProjectWithoutAccess => "Project999";
+        public string AValidRowVersion => "AAAAAAAAAAA=";
 
         public TestFactory()
         {
