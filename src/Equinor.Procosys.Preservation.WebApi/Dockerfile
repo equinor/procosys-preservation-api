@@ -11,6 +11,9 @@ COPY Equinor.Procosys.Preservation.BlobStorage/*.csproj ./Equinor.Procosys.Prese
 COPY Equinor.Procosys.Preservation.Query/*.csproj ./Equinor.Procosys.Preservation.Query/
 COPY Equinor.Procosys.Preservation.WebApi/*.csproj ./Equinor.Procosys.Preservation.WebApi/
 
+# Set workdir to startup project
+WORKDIR "/src/Equinor.Procosys.Preservation.WebApi"
+
 # Restore NuGet packages
 RUN dotnet restore "Equinor.Procosys.Preservation.WebApi.csproj"
 
