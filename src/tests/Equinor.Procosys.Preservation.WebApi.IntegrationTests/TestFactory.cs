@@ -8,6 +8,7 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients;
+using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -36,13 +37,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             new ProcosysPlant {Id = PlantWithAccess, HasAccess = true}, 
             new ProcosysPlant {Id = PlantWithoutAccess}
         };
-        private readonly List<ProcosysPlant> _noPlantAccess = new List<ProcosysPlant>()
+        private readonly List<ProcosysPlant> _noPlantAccess = new List<ProcosysPlant>
         {
             new ProcosysPlant {Id = PlantWithAccess}, 
             new ProcosysPlant {Id = PlantWithoutAccess}
         };
 
         private readonly List<Action> _teardownList = new List<Action>();
+        private readonly List<IDisposable> _disposables = new List<IDisposable>();
 
         public static string PlantWithAccess => "PLANT1";
         public static string PlantWithoutAccess => "PLANT999";
@@ -67,37 +69,43 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             _hackerClient = CreateTestClient(HackerProfile.Tokens);
         }
 
-        public HttpClient GetAnonymousClient()
+        // Todo Refactor to avoid repeating code. Generic or list of clients?
+        public HttpClient GetAnonymousClient(string plant)
         {
-            ClearPlants();
+            ClearPlantAccess();
             ClearPermissions();
+            UpdatePlantInHeader(_anonymousClient, plant);
             return _anonymousClient;
         }
 
-        public HttpClient GetLibraryAdminClient()
+        public HttpClient GetLibraryAdminClient(string plant)
         {
             SetupPlants(_normalPlantAccess);
             SetupPermissionApiService(LibraryAdminProfile.ProCoSysPermissions);
+            UpdatePlantInHeader(_libraryAdminClient, plant);
             return _libraryAdminClient;
         }
-        public HttpClient GetPlannerClient()
+        public HttpClient GetPlannerClient(string plant)
         {
             SetupPlants(_normalPlantAccess);
             SetupPermissionApiService(PlannerProfile.ProCoSysPermissions);
+            UpdatePlantInHeader(_plannerClient, plant);
             return _plannerClient;
         }
 
-        public HttpClient GetPreserverClient()
+        public HttpClient GetPreserverClient(string plant)
         {
             SetupPlants(_normalPlantAccess);
             SetupPermissionApiService(PreserverProfile.ProCoSysPermissions);
+            UpdatePlantInHeader(_preserverClient, plant);
             return _preserverClient;
         }
 
-        public HttpClient GetAuthenticatedHackerClient()
+        public HttpClient GetAuthenticatedHackerClient(string plant)
         {
             SetupPlants(_noPlantAccess);
             SetupPermissionApiService(new List<string>());
+            UpdatePlantInHeader(_hackerClient, plant);
             return _hackerClient;
         }
 
@@ -134,6 +142,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 _hackerClient.Dispose();
                 _hackerClient = null;
             }
+            
+            foreach (var disposable in _disposables)
+            {
+                try { disposable.Dispose(); } catch { /* Ignore */ }
+            }
 
             base.Dispose();
         }
@@ -153,10 +166,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
             });
 
-            builder.ConfigureServices(CreateDatabaseWithMigreations);
+            builder.ConfigureServices(CreateDatabaseWithMigrations);
         }
 
-        private void CreateDatabaseWithMigreations(IServiceCollection services)
+        private void CreateDatabaseWithMigrations(IServiceCollection services)
         {
             var descriptor = services.SingleOrDefault
                 (d => d.ServiceType == typeof(DbContextOptions<PreservationContext>));
@@ -185,7 +198,27 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             }
 
             // Put the teardown here, as we don't have the generic TContext in the dispose method.
-            _teardownList.Add(() => { dbContext.Database.EnsureDeleted(); });
+            _teardownList.Add(() =>
+            {
+                using var dbContextForTeardown = DatabaseContext(services);
+
+                dbContextForTeardown.Database.EnsureDeleted();
+            });
+        }
+        private PreservationContext DatabaseContext(IServiceCollection services)
+        {
+            services.AddDbContext<PreservationContext>(options =>
+            {
+                options.UseSqlServer(_connectionString);
+            });
+
+            var sp = services.BuildServiceProvider();
+            _disposables.Add(sp);
+
+            var spScope = sp.CreateScope();
+            _disposables.Add(spScope);
+
+            return spScope.ServiceProvider.GetRequiredService<PreservationContext>();
         }
 
         private string GetTestDbConnectionString(string projectDir)
@@ -198,7 +231,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private void SetupPlants(List<ProcosysPlant> plants)
             => _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(plants));
 
-        private void ClearPlants() =>
+        private void ClearPlantAccess() =>
             _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult<List<ProcosysPlant>>(null));
         
         private void SetupPermissionApiService(IList<string> proCoSysPermissions)
@@ -243,6 +276,19 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 client.DefaultRequestHeaders.Add("Authorization", BearerTokenUtility.WrapAuthToken(profile));
             }
             return client;
+        }
+
+        private void UpdatePlantInHeader(HttpClient client, string plant)
+        {
+            if (client.DefaultRequestHeaders.Contains(CurrentPlantMiddleware.PlantHeader))
+            {
+                client.DefaultRequestHeaders.Remove(CurrentPlantMiddleware.PlantHeader);
+            }
+
+            if (!string.IsNullOrEmpty(plant))
+            {
+                client.DefaultRequestHeaders.Add(CurrentPlantMiddleware.PlantHeader, plant);
+            }
         }
     }
 }
