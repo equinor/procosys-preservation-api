@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
 {
     [TestClass]
-    public class ModesControllerTests : TestBase
+    public class ModesControllerPermissionTests : TestBase
     {
         [TestMethod]
         public async Task Get_AllModes_AsAnonymous_ShouldReturnUnauthorized()
