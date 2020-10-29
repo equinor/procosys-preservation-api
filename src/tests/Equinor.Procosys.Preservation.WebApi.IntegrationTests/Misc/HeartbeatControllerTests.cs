@@ -12,10 +12,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
         private const string HeartbeatPath = "Heartbeat";
 
         [TestMethod]
-        public async Task Get_IsAlive_AsAnonymous_ShouldReturnOk() => await AssertIsAlive(AnonymousClient);
+        public async Task Get_IsAlive_AsAnonymous_ShouldReturnOk() => await AssertIsAlive(AnonymousClient(null));
 
         [TestMethod]
-        public async Task Get_IsAlive_AsHacker_ShouldReturnOk() => await AssertIsAlive(AuthenticatedHackerClient);
+        public async Task Get_IsAlive_AsHacker_ShouldReturnOk() => await AssertIsAlive(AuthenticatedHackerClient(null));
 
         private static async Task AssertIsAlive(HttpClient client)
         {
