@@ -18,7 +18,7 @@ RUN dotnet restore
 COPY . .
 
 # Build
-RUN dotnet build -c Release --no-restore
+RUN dotnet build "Equinor.Procosys.Preservation.WebApi.csproj" -c Release --no-restore
 
 # Publish the application
 FROM build AS publish
