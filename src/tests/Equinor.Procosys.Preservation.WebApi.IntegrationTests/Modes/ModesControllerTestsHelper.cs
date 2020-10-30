@@ -103,6 +103,32 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
             return await result.Content.ReadAsStringAsync();
         }
 
+        public static async Task<string> VoidModeAsync(
+            HttpClient client,
+            int id,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+            => await VoidUnvoidModeAsync(client,
+                id,
+                rowVersion,
+                "Void",
+                expectedStatusCode,
+                expectedMessageOnBadRequest);
+
+        public static async Task<string> UnvoidModeAsync(
+            HttpClient client,
+            int id,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+            => await VoidUnvoidModeAsync(client,
+                id,
+                rowVersion,
+                "Unvoid",
+                expectedStatusCode,
+                expectedMessageOnBadRequest);
+
         public static async Task DeleteModeAsync(
             HttpClient client,
             int id,
@@ -124,6 +150,33 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
             Assert.AreEqual(expectedStatusCode, result.StatusCode);
 
             await TestsHelper.AssertMessageOnBadRequestAsync(result, expectedMessageOnBadRequest);
+        }
+
+        private static async Task<string> VoidUnvoidModeAsync(
+            HttpClient client,
+            int id,
+            string rowVersion,
+            string action,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var result = await client.PutAsync($"{_route}/{id}/{action}", content);
+            Assert.AreEqual(expectedStatusCode, result.StatusCode);
+
+            if (result.StatusCode != HttpStatusCode.OK)
+            {
+                await TestsHelper.AssertMessageOnBadRequestAsync(result, expectedMessageOnBadRequest);
+                return null;
+            }
+
+            return await result.Content.ReadAsStringAsync();
         }
     }
 }

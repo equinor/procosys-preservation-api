@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -224,6 +223,186 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
                 PreserverClient(TestFactory.PlantWithAccess),
                 9999,
                 "Mode1",
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+        #endregion
+        
+        #region Void
+        [TestMethod]
+        public async Task Void_Mode_AsAnonymous_ShouldReturnUnauthorized()
+            => await ModesControllerTestsHelper.VoidModeAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task Void_Mode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await ModesControllerTestsHelper.VoidModeAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Void_Mode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await ModesControllerTestsHelper.VoidModeAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Void_Mode_AsHacker_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.VoidModeAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Void_Mode_AsAdmin_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.VoidModeAsync(
+                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Void_Mode_AsPlanner_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.VoidModeAsync(
+                PlannerClient(TestFactory.PlantWithAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Void_Mode_AsPreserver_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.VoidModeAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+        #endregion
+        
+        #region Unvoid
+        [TestMethod]
+        public async Task Unvoid_Mode_AsAnonymous_ShouldReturnUnauthorized()
+            => await ModesControllerTestsHelper.UnvoidModeAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task Unvoid_Mode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await ModesControllerTestsHelper.UnvoidModeAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Unvoid_Mode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await ModesControllerTestsHelper.UnvoidModeAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Unvoid_Mode_AsHacker_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.UnvoidModeAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Unvoid_Mode_AsAdmin_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.UnvoidModeAsync(
+                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Unvoid_Mode_AsPlanner_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.UnvoidModeAsync(
+                PlannerClient(TestFactory.PlantWithAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Unvoid_Mode_AsPreserver_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.UnvoidModeAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+        #endregion
+        
+        #region Delete
+        [TestMethod]
+        public async Task Delete_Mode_AsAnonymous_ShouldReturnUnauthorized()
+            => await ModesControllerTestsHelper.DeleteModeAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task Delete_Mode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await ModesControllerTestsHelper.DeleteModeAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Delete_Mode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await ModesControllerTestsHelper.DeleteModeAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Delete_Mode_AsHacker_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.DeleteModeAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_Mode_AsAdmin_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.DeleteModeAsync(
+                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_Mode_AsPlanner_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.DeleteModeAsync(
+                PlannerClient(TestFactory.PlantWithAccess),
+                9999,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Delete_Mode_AsPreserver_ShouldReturnForbidden()
+            => await ModesControllerTestsHelper.DeleteModeAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
         #endregion
