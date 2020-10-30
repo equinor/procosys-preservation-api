@@ -43,56 +43,56 @@ stages:
       envGroup: '${{ variables.envGroupName }}'
       testPath: '${{ variables.testPath }}'
 
-# # Build stage. Docker build, tag and push
-# - stage: build
-#   displayName: 'build'
-#   dependsOn: 'runTest'
-#   variables:
-#     envName: 'build'
-#     envRg: '${{ variables.envRgName }}'
-#     containerRegistry: '${{ variables.containerRegistryName }}'
-#     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-#     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-#     dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
+# Build stage. Docker build, tag and push
+- stage: build
+  displayName: 'build'
+  dependsOn: 'runTest'
+  variables:
+    envName: 'build'
+    envRg: '${{ variables.envRgName }}'
+    containerRegistry: '${{ variables.containerRegistryName }}'
+    envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
+    dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
 
-#   jobs:
-#   # Docker Build
-#   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
-#     parameters:
-#       deploymentName: 'docker_build'
-#       dependsOn: ''
-#       condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
-#       env: 'pcs-${{ variables.envName }}'
-#       envGroup: '${{ variables.envGroupName }}'
-#       buildCommand: build
-#       versionNumber: ${{ variables.versionNumber }}
-#       dockerfilePath: '${{ variables.dockerfilePath }}'
-#       buildContext: '$(Build.SourcesDirectory)/src'
-#       repository: '${{ variables.repositoryName }}'
-#       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+  jobs:
+  # Docker Build
+  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+    parameters:
+      deploymentName: 'docker_build'
+      dependsOn: ''
+      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+      env: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      buildCommand: build
+      versionNumber: ${{ variables.versionNumber }}
+      dockerfilePath: '${{ variables.dockerfilePath }}'
+      buildContext: '$(Build.SourcesDirectory)/src'
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
-#   # Docker Build and Push (Master Only)
-#   - template: /templates/pipelines/dockerbuild-preservation.yml@templates
-#     parameters:
-#       deploymentName: 'docker_build_and_push_master_only'
-#       dependsOn: ''
-#       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-#       env: 'pcs-${{ variables.envName }}'
-#       envGroup: '${{ variables.envGroupName }}'
-#       buildCommand: buildAndPush
-#       versionNumber: ${{ variables.versionNumber }}
-#       dockerfilePath: '${{ variables.dockerfilePath }}'
-#       buildContext: '$(Build.SourcesDirectory)/src'
-#       repository: '${{ variables.repositoryName }}'
-#       dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
+  # Docker Build and Push (Master Only)
+  - template: /templates/pipelines/dockerbuild-preservation.yml@templates
+    parameters:
+      deploymentName: 'docker_build_and_push_master_only'
+      dependsOn: ''
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      env: 'pcs-${{ variables.envName }}'
+      envGroup: '${{ variables.envGroupName }}'
+      buildCommand: buildAndPush
+      versionNumber: ${{ variables.versionNumber }}
+      dockerfilePath: '${{ variables.dockerfilePath }}'
+      buildContext: '$(Build.SourcesDirectory)/src'
+      repository: '${{ variables.repositoryName }}'
+      dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
 
-#   # Create Migration Script
-#   - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
-#     parameters:
-#       dependsOn: ''
-#       deploymentName: 'create_migration_script'
-#       envGroup: '${{ variables.envGroupName }}'
-#       serviceConnection: '${{ variables.nonProdServiceConnection }}'
+  # Create Migration Script
+  - template: /templates/pipelines/createsqlmigrate-preservation.yml@templates
+    parameters:
+      dependsOn: ''
+      deploymentName: 'create_migration_script'
+      envGroup: '${{ variables.envGroupName }}'
+      serviceConnection: '${{ variables.nonProdServiceConnection }}'
 
 # # Dev deploy stage
 # - stage: dev
@@ -146,7 +146,7 @@ stages:
 # # Test deploy stage
 # - stage: test
 #   displayName: 'Test'
-#   dependsOn: 'common'
+#   dependsOn: 'build'
 #   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 #   variables:
 #     envName: 'test'
@@ -195,7 +195,7 @@ stages:
 # # Prod deploy stage
 # - stage: prod
 #   displayName: 'Prod'
-#   dependsOn: 'common'
+#   dependsOn: 'build'
 #   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 #   variables:
 #     envName: 'prod'
