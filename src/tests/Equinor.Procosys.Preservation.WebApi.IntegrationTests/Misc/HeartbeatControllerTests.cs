@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
     [TestClass]
     public class HeartbeatControllerTests : TestBase
     {
-        private const string HeartbeatPath = "Heartbeat";
+        private const string _route = "Heartbeat";
 
         [TestMethod]
         public async Task Get_IsAlive_AsAnonymous_ShouldReturnOk() => await AssertIsAlive(AnonymousClient(null));
@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
 
         private static async Task AssertIsAlive(HttpClient client)
         {
-            var response = await client.GetAsync($"{HeartbeatPath}/IsAlive");
+            var response = await client.GetAsync($"{_route}/IsAlive");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);

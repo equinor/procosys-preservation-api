@@ -108,10 +108,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
             });
 
-            builder.ConfigureServices(CreateDatabaseWithMigrations);
+            builder.ConfigureServices(CreateNewDatabaseWithCorrectSchema);
         }
 
-        private void CreateDatabaseWithMigrations(IServiceCollection services)
+        private void CreateNewDatabaseWithCorrectSchema(IServiceCollection services)
         {
             var descriptor = services.SingleOrDefault
                 (d => d.ServiceType == typeof(DbContextOptions<PreservationContext>));
@@ -147,6 +147,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 dbContextForTeardown.Database.EnsureDeleted();
             });
         }
+        
         private PreservationContext DatabaseContext(IServiceCollection services)
         {
             services.AddDbContext<PreservationContext>(options =>
@@ -167,6 +168,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         {
             var dbName = "IntegrationTestsDB";
             var dbPath = Path.Combine(projectDir, $"{dbName}.mdf");
+            
+            // Set Initial Catalog to be able to delete database!
             return $"Server=(LocalDB)\\MSSQLLocalDB;Initial Catalog={dbName};Integrated Security=true;AttachDbFileName={dbPath}";
         }
 
