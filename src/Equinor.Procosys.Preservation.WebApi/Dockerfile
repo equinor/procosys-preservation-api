@@ -47,6 +47,6 @@ EXPOSE 5000
 WORKDIR /app
 
 # Copy the published files from the build image into this one
-# COPY defaults to copying files as root, specify the user that should be the owner
+# Copy defaults to copying files as root, specify the user that should be the owner
 COPY --chown=apprunner:apprunner --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Equinor.Procosys.Preservation.WebApi.dll"]
