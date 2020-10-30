@@ -27,7 +27,7 @@ name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 stages:
 # Run tests Stage
 - stage: runtests
-  displayName: 'Runtests'
+  displayName: 'Run tests'
   variables:
     envName: 'runtests'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
@@ -95,7 +95,7 @@ stages:
 
 # Dev deploy stage
 - stage: dev
-  displayName: 'Dev'
+  displayName: 'Deploy to Dev'
   dependsOn: 'build'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
@@ -142,7 +142,7 @@ stages:
 
 # Test deploy stage
 - stage: test
-  displayName: 'Test'
+  displayName: 'Deploy to Test'
   dependsOn: 'build'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
@@ -189,7 +189,7 @@ stages:
 
 # Prod deploy stage
 - stage: prod
-  displayName: 'Prod'
+  displayName: 'Deploy to Prod'
   dependsOn: 'build'
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
