@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients
         /// <typeparam name="T">The type of the class that is serialized</typeparam>
         /// <param name="tokenClass">The instance of the token to be wrapped</param>
         /// <returns>Serialized, encoded string ready for authorization header</returns>
-        public static string WrapAuthToken<T>(T tokenClass) where T : Profile
+        public static string WrapAuthToken<T>(T tokenClass) where T : TestProfile
         {
             var serialized = JsonConvert.SerializeObject(tokenClass);
             var tokenBytes = Encoding.UTF8.GetBytes(serialized);

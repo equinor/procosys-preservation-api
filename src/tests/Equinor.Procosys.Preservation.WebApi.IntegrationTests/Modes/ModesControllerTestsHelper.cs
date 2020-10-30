@@ -106,5 +106,27 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
 
             return await result.Content.ReadAsStringAsync();
         }
+
+        public static async Task DeleteModeAsync(
+            HttpClient client,
+            int id,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{ModesPath}/{id}")
+            {
+                Content = new StringContent(serializePayload, Encoding.UTF8, "application/json")
+            };
+
+            var result = await client.SendAsync(request);
+            Assert.AreEqual(expectedStatusCode, result.StatusCode);
+            await TestsHelper.AssertMessageOnBadRequestAsync(result, expectedMessageOnBadRequest);
+        }
     }
 }

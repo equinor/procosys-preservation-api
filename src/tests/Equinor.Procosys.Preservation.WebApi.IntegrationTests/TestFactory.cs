@@ -26,32 +26,21 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock;
         private readonly string _connectionString;
         private readonly string _configPath;
-        private HttpClient _anonymousClient;
-        private HttpClient _libraryAdminClient;
-        private HttpClient _plannerClient;
-        private HttpClient _preserverClient;
-        private HttpClient _hackerClient;
-
-        private readonly List<ProcosysPlant> _normalPlantAccess = new List<ProcosysPlant>
-        {
-            new ProcosysPlant {Id = PlantWithAccess, HasAccess = true}, 
-            new ProcosysPlant {Id = PlantWithoutAccess}
-        };
-        private readonly List<ProcosysPlant> _noPlantAccess = new List<ProcosysPlant>
-        {
-            new ProcosysPlant {Id = PlantWithAccess}, 
-            new ProcosysPlant {Id = PlantWithoutAccess}
-        };
-
+        private Dictionary<string, ITestUser> _testUsers = new Dictionary<string, ITestUser>();
         private readonly List<Action> _teardownList = new List<Action>();
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
 
+        public static string AnonymousUser = "NN";
+        public static string LibraryAdminUser = "Arne Admin";
+        public static string PlannerUser = "Pernilla Planner";
+        public static string PreserverUser = "Peder Preserver";
+        public static string HackerUser = "Harry Hacker";
         public static string PlantWithAccess => "PLANT1";
         public static string PlantWithoutAccess => "PLANT999";
-        public string UnknownPlant => "UNKNOWN_PLANT";
-        public string ProjectWithAccess => "Project1";
-        public string ProjectWithoutAccess => "Project999";
-        public string AValidRowVersion => "AAAAAAAAAAA=";
+        public static string UnknownPlant => "UNKNOWN_PLANT";
+        public static string ProjectWithAccess => "Project1";
+        public static string ProjectWithoutAccess => "Project999";
+        public static string AValidRowVersion => "AAAAAAAAAAA=";
 
         public TestFactory()
         {
@@ -63,51 +52,24 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             _permissionApiServiceMock = new Mock<IPermissionApiService>();
 
-            _anonymousClient = CreateTestClient(null);
-            _libraryAdminClient = CreateTestClient(LibraryAdminProfile.Tokens);
-            _plannerClient = CreateTestClient(PlannerProfile.Tokens);
-            _preserverClient = CreateTestClient(PreserverProfile.Tokens);
-            _hackerClient = CreateTestClient(HackerProfile.Tokens);
+            SetupTestUsers();
         }
 
-        // Todo Refactor to avoid repeating code. Generic or list of clients?
-        public HttpClient GetAnonymousClient(string plant)
+        public HttpClient GetClientForPlant(string user, string plant)
         {
-            ClearPlantAccess();
-            ClearPermissions();
-            UpdatePlantInHeader(_anonymousClient, plant);
-            return _anonymousClient;
-        }
-
-        public HttpClient GetLibraryAdminClient(string plant)
-        {
-            SetupPlants(_normalPlantAccess);
-            SetupPermissionApiService(LibraryAdminProfile.ProCoSysPermissions);
-            UpdatePlantInHeader(_libraryAdminClient, plant);
-            return _libraryAdminClient;
-        }
-        public HttpClient GetPlannerClient(string plant)
-        {
-            SetupPlants(_normalPlantAccess);
-            SetupPermissionApiService(PlannerProfile.ProCoSysPermissions);
-            UpdatePlantInHeader(_plannerClient, plant);
-            return _plannerClient;
-        }
-
-        public HttpClient GetPreserverClient(string plant)
-        {
-            SetupPlants(_normalPlantAccess);
-            SetupPermissionApiService(PreserverProfile.ProCoSysPermissions);
-            UpdatePlantInHeader(_preserverClient, plant);
-            return _preserverClient;
-        }
-
-        public HttpClient GetAuthenticatedHackerClient(string plant)
-        {
-            SetupPlants(_noPlantAccess);
-            SetupPermissionApiService(new List<string>());
-            UpdatePlantInHeader(_hackerClient, plant);
-            return _hackerClient;
+            var testUser = _testUsers[user];
+            
+            // Need to change what the mock returns each time since the factory share the same registered mocks
+            SetupPlantMock(testUser.ProCoSysPlants);
+            
+            SetupPermissionMock(plant, 
+                testUser.ProCoSysPermissions,
+                testUser.ProCoSysProjects,
+                testUser.ProCoSysRestrictions);
+            
+            UpdatePlantInHeader(testUser.HttpClient, plant);
+            
+            return testUser.HttpClient;
         }
 
         public new void Dispose()
@@ -118,30 +80,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 action();
             }
 
-            if (_anonymousClient != null)
+            foreach (var testUser in _testUsers)
             {
-                _anonymousClient.Dispose();
-                _anonymousClient = null;
-            }
-            if (_libraryAdminClient != null)
-            {
-                _libraryAdminClient.Dispose();
-                _libraryAdminClient = null;
-            }
-            if (_plannerClient != null)
-            {
-                _plannerClient.Dispose();
-                _plannerClient = null;
-            }
-            if (_preserverClient != null)
-            {
-                _preserverClient.Dispose();
-                _preserverClient = null;
-            }
-            if (_hackerClient != null)
-            {
-                _hackerClient.Dispose();
-                _hackerClient = null;
+                testUser.Value.HttpClient.Dispose();
             }
             
             foreach (var disposable in _disposables)
@@ -229,54 +170,154 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             return $"Server=(LocalDB)\\MSSQLLocalDB;Initial Catalog={dbName};Integrated Security=true;AttachDbFileName={dbPath}";
         }
 
-        private void SetupPlants(List<ProcosysPlant> plants)
+        private void SetupPlantMock(List<ProcosysPlant> plants)
             => _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(plants));
-
-        private void ClearPlantAccess() =>
-            _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult<List<ProcosysPlant>>(null));
         
-        private void SetupPermissionApiService(IList<string> proCoSysPermissions)
+        private void SetupPermissionMock(
+            string plant,
+            IList<string> proCoSysPermissions,
+            IList<ProcosysProject> proCoSysProjects,
+            IList<string> proCoSysRestrictions
+            )
         {
-            _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
+            _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(plant))
                 .Returns(Task.FromResult(proCoSysPermissions));
-
-            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<string>>(new List<string>()));
                         
-            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<ProcosysProject>>(new List<ProcosysProject>
+            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(plant))
+                .Returns(Task.FromResult(proCoSysProjects));
+
+            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(plant))
+                .Returns(Task.FromResult(proCoSysRestrictions));
+        }
+
+        private void SetupTestUsers()
+        {
+            var commonProCoSysPlants = new List<ProcosysPlant>
+            {
+                new ProcosysPlant {Id = PlantWithAccess, HasAccess = true},
+                new ProcosysPlant {Id = PlantWithoutAccess}
+            };
+
+            var commonProCoSysProjects = new List<ProcosysProject>
+            {
+                new ProcosysProject {Name = ProjectWithAccess, HasAccess = true},
+                new ProcosysProject {Name = ProjectWithoutAccess}
+            };
+
+            var commonProCoSysRestrictions = new List<string>();
+
+            _testUsers.Add(AnonymousUser, new TestUser());
+
+            // Authenticated client with necessary roles to Create and Update in Library
+            _testUsers.Add(LibraryAdminUser,
+                new TestUser
                 {
-                    new ProcosysProject {Name = ProjectWithAccess, HasAccess = true},
-                    new ProcosysProject {Name = ProjectWithoutAccess}
-                }));
+                    Profile =
+                        new TestProfile
+                        {
+                            FullName = LibraryAdminUser,
+                            Oid = "00000000-0000-0000-0000-000000000001"
+                        },
+                    ProCoSysPlants = commonProCoSysPlants,
+                    ProCoSysPermissions = new List<string>
+                    {
+                        Permissions.LIBRARY_PRESERVATION_CREATE,
+                        Permissions.LIBRARY_PRESERVATION_DELETE,
+                        Permissions.LIBRARY_PRESERVATION_READ,
+                        Permissions.LIBRARY_PRESERVATION_VOIDUNVOID,
+                        Permissions.LIBRARY_PRESERVATION_WRITE
+                    },
+                    ProCoSysProjects = commonProCoSysProjects,
+                    ProCoSysRestrictions = commonProCoSysRestrictions
+                });
+
+            // Authenticated client with necessary roles to Create and Update in Scope
+            _testUsers.Add(PlannerUser,
+                new TestUser
+                {
+                    Profile =
+                        new TestProfile
+                        {
+                            FullName = PlannerUser,
+                            Oid = "00000000-0000-0000-0000-000000000002"
+                        },
+                    ProCoSysPlants = commonProCoSysPlants,
+                    ProCoSysPermissions = new List<string>
+                    {
+                        Permissions.LIBRARY_PRESERVATION_READ,
+                        Permissions.PRESERVATION_PLAN_CREATE,
+                        Permissions.PRESERVATION_PLAN_DELETE,
+                        Permissions.PRESERVATION_PLAN_VOIDUNVOID,
+                        Permissions.PRESERVATION_PLAN_WRITE
+                    },
+                    ProCoSysProjects = commonProCoSysProjects,
+                    ProCoSysRestrictions = commonProCoSysRestrictions
+                });
+
+            // Authenticated client with necessary roles to perform preservation work
+            _testUsers.Add(PreserverUser,
+                new TestUser
+                {
+                    Profile =
+                        new TestProfile
+                        {
+                            FullName = PreserverUser,
+                            Oid = "00000000-0000-0000-0000-000000000003"
+                        },
+                    ProCoSysPlants = commonProCoSysPlants,
+                    ProCoSysPermissions = new List<string>
+                    {
+                        Permissions.LIBRARY_PRESERVATION_READ,
+                        Permissions.PRESERVATION_CREATE,
+                        Permissions.PRESERVATION_DELETE,
+                        Permissions.PRESERVATION_READ,
+                        Permissions.PRESERVATION_WRITE,
+                        Permissions.PRESERVATION_ATTACHFILE,
+                        Permissions.PRESERVATION_DETACHFILE
+                    },
+                    ProCoSysProjects = commonProCoSysProjects,
+                    ProCoSysRestrictions = commonProCoSysRestrictions
+                });
+    
+            // Authenticated client without any roles
+            _testUsers.Add(HackerUser,
+                new TestUser
+                {
+                    Profile =
+                        new TestProfile
+                        {
+                            FullName = HackerUser,
+                            Oid = "00000000-0000-0000-0000-000000000666"
+                        },
+                    ProCoSysPlants = new List<ProcosysPlant>
+                    {
+                        new ProcosysPlant {Id = PlantWithAccess},
+                        new ProcosysPlant {Id = PlantWithoutAccess}
+                    },
+                    ProCoSysPermissions = new List<string>(),
+                    ProCoSysProjects = commonProCoSysProjects,
+                    ProCoSysRestrictions = commonProCoSysRestrictions
+                });
+            
+            foreach (var testUser in _testUsers)
+            {
+                SetupHttpClient(testUser.Value);
+            }
         }
 
-        private void ClearPermissions()
+        private void SetupHttpClient(ITestUser user)
         {
-            _permissionApiServiceMock.Setup(p => p.GetPermissionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<string>>(null));
-
-            _permissionApiServiceMock.Setup(p => p.GetContentRestrictionsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<string>>(null));
-                        
-            _permissionApiServiceMock.Setup(p => p.GetAllOpenProjectsAsync(PlantWithAccess))
-                .Returns(Task.FromResult<IList<ProcosysProject>>(null));
-        }
-
-        private HttpClient CreateTestClient(Profile profile)
-        {
-            var client = WithWebHostBuilder(builder =>
+            user.HttpClient = WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment(Startup.IntegrationTestEnvironment);
                 builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(_configPath));
 
             }).CreateClient();
 
-            if (profile != null)
+            if (user.Profile != null)
             {
-                client.DefaultRequestHeaders.Add("Authorization", BearerTokenUtility.WrapAuthToken(profile));
+                user.HttpClient.DefaultRequestHeaders.Add("Authorization", BearerTokenUtility.WrapAuthToken(user.Profile));
             }
-            return client;
         }
 
         private void UpdatePlantInHeader(HttpClient client, string plant)
