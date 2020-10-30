@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Clients;
+using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Users;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using Newtonsoft.Json;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
@@ -26,15 +28,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock;
         private readonly string _connectionString;
         private readonly string _configPath;
-        private Dictionary<string, ITestUser> _testUsers = new Dictionary<string, ITestUser>();
+        private readonly Dictionary<string, ITestUser> _testUsers = new Dictionary<string, ITestUser>();
         private readonly List<Action> _teardownList = new List<Action>();
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
 
-        public static string AnonymousUser = "NN";
-        public static string LibraryAdminUser = "Arne Admin";
-        public static string PlannerUser = "Pernilla Planner";
-        public static string PreserverUser = "Peder Preserver";
-        public static string HackerUser = "Harry Hacker";
+        public static string AnonymousUser => "NN";
+        public static string LibraryAdminUser => "Arne Admin";
+        public static string PlannerUser => "Pernilla Planner";
+        public static string PreserverUser => "Peder Preserver";
+        public static string HackerUser => "Harry Hacker";
         public static string PlantWithAccess => "PLANT1";
         public static string PlantWithoutAccess => "PLANT999";
         public static string UnknownPlant => "UNKNOWN_PLANT";
@@ -319,7 +321,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             if (user.Profile != null)
             {
-                user.HttpClient.DefaultRequestHeaders.Add("Authorization", BearerTokenUtility.WrapAuthToken(user.Profile));
+                user.HttpClient.DefaultRequestHeaders.Add("Authorization", CreateBearerToken(user.Profile));
             }
         }
 
@@ -334,6 +336,21 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             {
                 client.DefaultRequestHeaders.Add(CurrentPlantMiddleware.PlantHeader, plant);
             }
+        }
+        
+        /// <summary>
+        /// Wraps profile by serializing, encoding and then converting to base 64 string.
+        /// "Bearer" is also added, making it ready to be added as Authorization header
+        /// </summary>
+        /// <param name="profile">The instance of the token to be wrapped</param>
+        /// <returns>Serialized, encoded string ready for authorization header</returns>
+        private string CreateBearerToken(TestProfile profile)
+        {
+            var serialized = JsonConvert.SerializeObject(profile);
+            var tokenBytes = Encoding.UTF8.GetBytes(serialized);
+            var tokenString = Convert.ToBase64String(tokenBytes);
+
+            return $"Bearer {tokenString}";
         }
     }
 }

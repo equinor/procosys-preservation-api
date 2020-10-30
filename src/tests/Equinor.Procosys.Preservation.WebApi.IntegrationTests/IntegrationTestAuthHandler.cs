@@ -53,7 +53,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         {
             var tokenDeserialized = new
             {
-                Oid = Guid.Empty, FullName = string.Empty, IsAppToken = false, Roles = new[] {string.Empty}
+                Oid = Guid.Empty,
+                FullName = string.Empty,
+                IsAppToken = false,
+                Roles = new[]
+                {
+                    string.Empty
+                }
             };
 
             var authorizationHeader = Request.Headers["Authorization"];
