@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.Procosys.Preservation.MainApi.TagFunction;
 using MediatR;
 using ServiceResult;
 
@@ -18,27 +18,27 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
         private readonly IPlantProvider _plantProvider;
         private readonly IPlantSetter _plantSetter;
         private readonly IModeRepository _modeRepository;
-        private readonly IResponsibleRepository _responsibleRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ITagFunctionApiService _tagFunctionApiService;
 
         public CloneCommandHandler(
             IPlantProvider plantProvider,
             IPlantSetter plantSetter,
             IUnitOfWork unitOfWork,
             IModeRepository modeRepository,
-            IResponsibleRepository responsibleRepository,
             IRequirementTypeRepository requirementTypeRepository,
-            ITagFunctionRepository tagFunctionRepository)
+            ITagFunctionRepository tagFunctionRepository,
+            ITagFunctionApiService tagFunctionApiService)
         {
             _plantProvider = plantProvider;
             _plantSetter = plantSetter;
+            _unitOfWork = unitOfWork;
             _modeRepository = modeRepository;
-            _responsibleRepository = responsibleRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _tagFunctionRepository = tagFunctionRepository;
-            _unitOfWork = unitOfWork;
+            _tagFunctionApiService = tagFunctionApiService;
         }
 
         public async Task<Result<Unit>> Handle(CloneCommand request, CancellationToken cancellationToken)
@@ -51,10 +51,9 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
             }
 
             await CloneModes(request.SourcePlant, targetPlant);
-            await CloneResponsibles(request.SourcePlant, targetPlant);
             await CloneRequirementTypes(request.SourcePlant, targetPlant);
             
-            // Need to save RequirementDefinitions to get let EF Core set ID's on new Items
+            // Need to save RequirementDefinitions to let EF Core set ID's on new Items
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             // TagFunctions must be cloned after RequirementTypes and RequirementDefinitions
@@ -80,25 +79,6 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
                 {
                     var targetMode = new Mode(targetPlant, sourceMode.Title, sourceMode.ForSupplier);
                     _modeRepository.Add(targetMode);
-                }
-            }
-        }
-
-        private async Task CloneResponsibles(string sourcePlant, string targetPlant)
-        {
-            var originalPlant = _plantProvider.Plant;
-            _plantSetter.SetPlant(sourcePlant);
-            var sourceResponsibles = await _responsibleRepository.GetAllAsync();
-            _plantSetter.SetPlant(originalPlant);
-
-            var targetResponsibles = await _responsibleRepository.GetAllAsync();
-
-            foreach (var sourceResponsible in sourceResponsibles)
-            {
-                if (targetResponsibles.SingleOrDefault(t => t.Description == sourceResponsible.Description) == null)
-                {
-                    var targetResponsible = new Responsible(targetPlant, sourceResponsible.Code, sourceResponsible.Description);
-                    _responsibleRepository.Add(targetResponsible);
                 }
             }
         }
@@ -178,6 +158,15 @@ namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
 
             foreach (var sourceTagFunction in sourceTagFunctions)
             {
+                var mainTagFunction = await _tagFunctionApiService.TryGetTagFunctionAsync(
+                    targetPlant,
+                    sourceTagFunction.Code,
+                    sourceTagFunction.RegisterCode);
+                if (mainTagFunction == null)
+                {
+                    continue;
+                }
+
                 var targetTagFunction = targetTagFunctions.SingleOrDefault(
                     t => t.Code == sourceTagFunction.Code && t.RegisterCode == sourceTagFunction.RegisterCode);
                 if (targetTagFunction == null)
