@@ -24,6 +24,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
     public class TestFactory : WebApplicationFactory<Startup>
     {
+        private readonly string _integrationTestEnvironment = "IntegrationTests";
         private readonly Mock<IPlantApiService> _plantApiServiceMock;
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock;
         private readonly string _connectionString;
@@ -341,7 +342,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private HttpClient SetupHttpClientForUser()
             => WithWebHostBuilder(builder =>
             {
-                builder.UseEnvironment(Startup.IntegrationTestEnvironment);
+                builder.UseEnvironment(_integrationTestEnvironment);
                 builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(_configPath));
 
             }).CreateClient();
