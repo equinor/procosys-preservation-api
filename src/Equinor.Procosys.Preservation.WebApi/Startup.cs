@@ -26,7 +26,6 @@ namespace Equinor.Procosys.Preservation.WebApi
 {
     public class Startup
     {
-        public const string IntegrationTestEnvironment = "IntegrationTests";
         private const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
         private readonly IWebHostEnvironment _environment;
 
