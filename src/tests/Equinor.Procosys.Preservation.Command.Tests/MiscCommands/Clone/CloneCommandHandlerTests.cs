@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.MiscCommands.Clone;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.Procosys.Preservation.MainApi.TagFunction;
 using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -17,18 +17,21 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
     public class CloneCommandHandlerTests : CommandHandlerTestsBase
     {
         private readonly string _sourcePlant = "SOURCE";
+        private readonly string _tfCodeA = "TagFunctionCodeA";
+        private readonly string _tfCodeB = "TagFunctionCodeB";
+        private readonly string _regCodeA = "RegisterCodeA";
+        private readonly string _regCodeB = "RegisterCodeB";
         private CloneCommand _command;
         private CloneCommandHandler _dut;
         private readonly PlantProvider _plantProvider = new PlantProvider(TestPlant);
         private ModeRepository _modeRepository;
         private readonly List<Mode> _sourceModes = new List<Mode>();
-        private ResponsibleRepository _responsibleRepository;
-        private readonly List<Responsible> _sourceResponsibles = new List<Responsible>();
         private RequirementTypeRepository _requirementTypeRepository;
         private readonly List<RequirementType> _sourceRequirementTypes = new List<RequirementType>();
         private TagFunctionRepository _tagFunctionRepository;
         private readonly List<TagFunction> _sourceTagFunctions = new List<TagFunction>();
         private readonly RequirementTypeIcon _requirementIconOther = RequirementTypeIcon.Other;
+        private Mock<ITagFunctionApiService> _tagFunctionApiServiceMock;
 
         [TestInitialize]
         public void Setup()
@@ -38,10 +41,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             _sourceModes.Add(new Mode(_sourcePlant, "ModeA", false));
             _sourceModes.Add(new Mode(_sourcePlant, "ModeB", false));
 
-            _responsibleRepository = new ResponsibleRepository(_plantProvider, _sourceResponsibles);
-            _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeA", "ResponsibleDescA"));
-            _sourceResponsibles.Add(new Responsible(_sourcePlant, "ResponsibleCodeB", "ResponsibleDescB"));
-            
             _requirementTypeRepository = new RequirementTypeRepository(_plantProvider, _sourceRequirementTypes);
             var requirementTypeA = new RequirementType(_sourcePlant, "RequirementTypeCodeA", "RequirementTypeTitleA", _requirementIconOther, 1);
             var reqDefA1 = new RequirementDefinition(_sourcePlant, "RequirementDefCodeA1", 1, RequirementUsage.ForAll, 2);
@@ -56,12 +55,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
             _sourceRequirementTypes.Add(requirementTypeB);
 
             _tagFunctionRepository = new TagFunctionRepository(_plantProvider, _sourceTagFunctions);
-            var tagFunctionA = new TagFunction(_sourcePlant, "TagFunctionCodeA", "TagFunctionDescA", "RegisterCodeA");
+
+            var tagFunctionA = new TagFunction(_sourcePlant, _tfCodeA, "TagFunctionDescA", _regCodeA);
             tagFunctionA.AddRequirement(new TagFunctionRequirement(_sourcePlant, 1, reqDefA1));
             tagFunctionA.AddRequirement(new TagFunctionRequirement(_sourcePlant, 2, reqDefA2));
-            var tagFunctionB = new TagFunction(_sourcePlant, "TagFunctionCodeB", "TagFunctionDescB", "RegisterCodeB");
+            var tagFunctionB = new TagFunction(_sourcePlant, _tfCodeB, "TagFunctionDescB", _regCodeB);
             _sourceTagFunctions.Add(tagFunctionA);
             _sourceTagFunctions.Add(tagFunctionB);
+
+            _tagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
+            _tagFunctionApiServiceMock
+                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeA, _regCodeA))
+                .Returns(Task.FromResult(new ProcosysTagFunction
+                {
+                    Code = _tfCodeA, RegisterCode = _regCodeA
+                }));
+            _tagFunctionApiServiceMock
+                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeB, _regCodeB))
+                .Returns(Task.FromResult(new ProcosysTagFunction
+                {
+                    Code = _tfCodeB, RegisterCode = _regCodeB
+                }));
 
             _command = new CloneCommand(_sourcePlant, TestPlant);
             _dut = new CloneCommandHandler(
@@ -69,9 +83,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 _plantProvider,
                 UnitOfWorkMock.Object,
                 _modeRepository,
-                _responsibleRepository,
                 _requirementTypeRepository,
-                _tagFunctionRepository);
+                _tagFunctionRepository,
+                _tagFunctionApiServiceMock.Object);
 
             UnitOfWorkMock
                 .Setup(uiw => uiw.SaveChangesAsync(It.IsAny<CancellationToken>()))
@@ -94,16 +108,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         }
 
         [TestMethod]
-        public async Task HandlingCloneCommand_ShouldCloneResponsibles()
-        {
-            // Act
-            await _dut.Handle(_command, default);
-
-            // Assert
-            AssertClonedResponsibles(_sourceResponsibles, _responsibleRepository.GetAllAsync().Result);
-        }
-
-        [TestMethod]
         public async Task HandlingCloneCommand_ShouldCloneRequirementTypes()
         {
             // Act
@@ -114,13 +118,31 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
         }
 
         [TestMethod]
-        public async Task HandlingCloneCommand_ShouldCloneTagFunctions()
+        public async Task HandlingCloneCommand_ShouldCloneTagFunctions_WhenExistsInMain()
         {
             // Act
             await _dut.Handle(_command, default);
 
             // Assert
             AssertClonedTagFunctions(_sourceTagFunctions, _tagFunctionRepository.GetAllAsync().Result);
+        }
+
+        [TestMethod]
+        public async Task HandlingCloneCommand_ShouldNotCloneTagFunctions_WhenNotExistsInMain()
+        {
+            // Arrange
+            _tagFunctionApiServiceMock
+                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeA, _regCodeA))
+                .Returns(Task.FromResult<ProcosysTagFunction>(null));
+            _tagFunctionApiServiceMock
+                .Setup(t => t.TryGetTagFunctionAsync(TestPlant, _tfCodeB, _regCodeB))
+                .Returns(Task.FromResult<ProcosysTagFunction>(null));
+            // Act
+            await _dut.Handle(_command, default);
+
+            // Assert
+            var clonedTagFunctions = _tagFunctionRepository.GetAllAsync().Result;
+            Assert.AreEqual(0, clonedTagFunctions.Count);
         }
 
         [TestMethod]
@@ -142,7 +164,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
 
             // Assert
             AssertClonedModes(_sourceModes, _modeRepository.GetAllAsync().Result);
-            AssertClonedResponsibles(_sourceResponsibles, _responsibleRepository.GetAllAsync().Result);
             AssertClonedRequirementTypes(_sourceRequirementTypes, _requirementTypeRepository.GetAllAsync().Result);
             AssertClonedTagFunctions(_sourceTagFunctions, _tagFunctionRepository.GetAllAsync().Result);
         }
@@ -157,20 +178,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
                 Assert.IsNotNull(clone);
                 Assert.AreEqual(TestPlant, clone.Plant);
                 Assert.AreEqual(source.Title, clone.Title);
-            }
-        }
-
-        private void AssertClonedResponsibles(List<Responsible> sourceResponsibles, List<Responsible> result)
-        {
-            Assert.AreEqual(sourceResponsibles.Count, result.Count);
-            for (var i = 0; i < sourceResponsibles.Count; i++)
-            {
-                var source = sourceResponsibles.ElementAt(i);
-                var clone = result.ElementAt(i);
-                Assert.IsNotNull(clone);
-                Assert.AreEqual(TestPlant, clone.Plant);
-                Assert.AreEqual(source.Code, clone.Code);
-                Assert.AreEqual(source.Description, clone.Description);
             }
         }
 
