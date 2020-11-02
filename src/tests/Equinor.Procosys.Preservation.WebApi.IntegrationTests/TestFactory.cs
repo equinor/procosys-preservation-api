@@ -37,8 +37,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string PlannerUser => "Pernilla Planner";
         public static string PreserverUser => "Peder Preserver";
         public static string HackerUser => "Harry Hacker";
-        public static string PlantWithAccess => "PLANT1";
-        public static string PlantWithoutAccess => "PLANT999";
+        public static string PlantWithAccess => "PCS$PLANT1";
+        public static string PlantWithoutAccess => "PCS$PLANT999";
         public static string UnknownPlant => "UNKNOWN_PLANT";
         public static string ProjectWithAccess => "Project1";
         public static string ProjectWithoutAccess => "Project999";
