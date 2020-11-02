@@ -26,6 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi
 {
     public class Startup
     {
+        public const string IntegrationTestEnvironment = "IntegrationTests";
         private const string AllowAllOriginsCorsPolicy = "AllowAllOrigins";
         private readonly IWebHostEnvironment _environment;
 
@@ -46,6 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi
                 {
                     services.AddHostedService<DatabaseMigrator>();
                 }
+
                 if (Configuration.GetValue<bool>("SeedDummyData"))
                 {
                     services.AddHostedService<Seeder>();
