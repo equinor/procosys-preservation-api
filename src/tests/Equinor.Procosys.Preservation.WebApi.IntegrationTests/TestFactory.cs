@@ -211,56 +211,54 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             var commonProCoSysRestrictions = new List<string>();
 
-            _testUsers.Add(AnonymousUser, new TestUser());
+            AddAnonymousUser();
 
-            // Authenticated client with necessary roles to Create and Update in Library
-            _testUsers.Add(LibraryAdminUser,
+            AddLibraryAdminUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+
+            AddPlannerUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+
+            AddPreserverUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
+    
+            AddHackerUser(commonProCoSysProjects, commonProCoSysRestrictions);
+            
+            foreach (var testUser in _testUsers.Values)
+            {
+                testUser.HttpClient = SetupHttpClientForUser();
+
+                if (testUser.Profile != null)
+                {
+                    AuthenticateUser(testUser);
+                }
+            }
+        }
+
+        // Authenticated client without any roles
+        private void AddHackerUser(List<ProcosysProject> commonProCoSysProjects, List<string> commonProCoSysRestrictions) =>
+            _testUsers.Add(HackerUser,
                 new TestUser
                 {
                     Profile =
                         new TestProfile
                         {
-                            FullName = LibraryAdminUser,
-                            Oid = "00000000-0000-0000-0000-000000000001"
+                            FullName = HackerUser,
+                            Oid = "00000000-0000-0000-0000-000000000666"
                         },
-                    ProCoSysPlants = commonProCoSysPlants,
-                    ProCoSysPermissions = new List<string>
+                    ProCoSysPlants = new List<ProcosysPlant>
                     {
-                        Permissions.LIBRARY_PRESERVATION_CREATE,
-                        Permissions.LIBRARY_PRESERVATION_DELETE,
-                        Permissions.LIBRARY_PRESERVATION_READ,
-                        Permissions.LIBRARY_PRESERVATION_VOIDUNVOID,
-                        Permissions.LIBRARY_PRESERVATION_WRITE
+                        new ProcosysPlant {Id = PlantWithAccess},
+                        new ProcosysPlant {Id = PlantWithoutAccess}
                     },
+                    ProCoSysPermissions = new List<string>(),
                     ProCoSysProjects = commonProCoSysProjects,
                     ProCoSysRestrictions = commonProCoSysRestrictions
                 });
 
-            // Authenticated client with necessary roles to Create and Update in Scope
-            _testUsers.Add(PlannerUser,
-                new TestUser
-                {
-                    Profile =
-                        new TestProfile
-                        {
-                            FullName = PlannerUser,
-                            Oid = "00000000-0000-0000-0000-000000000002"
-                        },
-                    ProCoSysPlants = commonProCoSysPlants,
-                    ProCoSysPermissions = new List<string>
-                    {
-                        Permissions.LIBRARY_PRESERVATION_READ,
-                        Permissions.PRESERVATION_PLAN_CREATE,
-                        Permissions.PRESERVATION_PLAN_DELETE,
-                        Permissions.PRESERVATION_PLAN_VOIDUNVOID,
-                        Permissions.PRESERVATION_PLAN_WRITE
-                    },
-                    ProCoSysProjects = commonProCoSysProjects,
-                    ProCoSysRestrictions = commonProCoSysRestrictions
-                });
-
-            // Authenticated client with necessary roles to perform preservation work
-            _testUsers.Add(PreserverUser,
+        // Authenticated client with necessary roles to perform preservation work
+        private void AddPreserverUser(
+            List<ProcosysPlant> commonProCoSysPlants,
+            List<ProcosysProject> commonProCoSysProjects,
+            List<string> commonProCoSysRestrictions)
+            => _testUsers.Add(PreserverUser,
                 new TestUser
                 {
                     Profile =
@@ -283,47 +281,73 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     ProCoSysProjects = commonProCoSysProjects,
                     ProCoSysRestrictions = commonProCoSysRestrictions
                 });
-    
-            // Authenticated client without any roles
-            _testUsers.Add(HackerUser,
+
+        // Authenticated user with necessary roles to Create and Update in Scope
+        private void AddPlannerUser(
+            List<ProcosysPlant> commonProCoSysPlants,
+            List<ProcosysProject> commonProCoSysProjects,
+            List<string> commonProCoSysRestrictions)
+            => _testUsers.Add(PlannerUser,
                 new TestUser
                 {
                     Profile =
                         new TestProfile
                         {
-                            FullName = HackerUser,
-                            Oid = "00000000-0000-0000-0000-000000000666"
+                            FullName = PlannerUser,
+                            Oid = "00000000-0000-0000-0000-000000000002"
                         },
-                    ProCoSysPlants = new List<ProcosysPlant>
+                    ProCoSysPlants = commonProCoSysPlants,
+                    ProCoSysPermissions = new List<string>
                     {
-                        new ProcosysPlant {Id = PlantWithAccess},
-                        new ProcosysPlant {Id = PlantWithoutAccess}
+                        Permissions.LIBRARY_PRESERVATION_READ,
+                        Permissions.PRESERVATION_PLAN_CREATE,
+                        Permissions.PRESERVATION_PLAN_DELETE,
+                        Permissions.PRESERVATION_PLAN_VOIDUNVOID,
+                        Permissions.PRESERVATION_PLAN_WRITE
                     },
-                    ProCoSysPermissions = new List<string>(),
                     ProCoSysProjects = commonProCoSysProjects,
                     ProCoSysRestrictions = commonProCoSysRestrictions
                 });
-            
-            foreach (var testUser in _testUsers)
-            {
-                SetupHttpClient(testUser.Value);
-            }
-        }
 
-        private void SetupHttpClient(ITestUser user)
-        {
-            user.HttpClient = WithWebHostBuilder(builder =>
+        // Authenticated client with necessary roles to Create and Update in Library
+        private void AddLibraryAdminUser(
+            List<ProcosysPlant> commonProCoSysPlants,
+            List<ProcosysProject> commonProCoSysProjects,
+            List<string> commonProCoSysRestrictions)
+            => _testUsers.Add(LibraryAdminUser,
+                new TestUser
+                {
+                    Profile =
+                        new TestProfile
+                        {
+                            FullName = LibraryAdminUser,
+                            Oid = "00000000-0000-0000-0000-000000000001"
+                        },
+                    ProCoSysPlants = commonProCoSysPlants,
+                    ProCoSysPermissions = new List<string>
+                    {
+                        Permissions.LIBRARY_PRESERVATION_CREATE,
+                        Permissions.LIBRARY_PRESERVATION_DELETE,
+                        Permissions.LIBRARY_PRESERVATION_READ,
+                        Permissions.LIBRARY_PRESERVATION_VOIDUNVOID,
+                        Permissions.LIBRARY_PRESERVATION_WRITE
+                    },
+                    ProCoSysProjects = commonProCoSysProjects,
+                    ProCoSysRestrictions = commonProCoSysRestrictions
+                });
+
+        private void AddAnonymousUser() => _testUsers.Add(AnonymousUser, new TestUser());
+
+        private HttpClient SetupHttpClientForUser()
+            => WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment(Startup.IntegrationTestEnvironment);
                 builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(_configPath));
 
             }).CreateClient();
 
-            if (user.Profile != null)
-            {
-                user.HttpClient.DefaultRequestHeaders.Add("Authorization", CreateBearerToken(user.Profile));
-            }
-        }
+        private void AuthenticateUser(ITestUser user)
+            => user.HttpClient.DefaultRequestHeaders.Add("Authorization", CreateBearerToken(user.Profile));
 
         private void UpdatePlantInHeader(HttpClient client, string plant)
         {
