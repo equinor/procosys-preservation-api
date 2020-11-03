@@ -221,9 +221,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
     
             AddHackerUser(commonProCoSysProjects, commonProCoSysRestrictions);
             
+            var webHostBuilder = WithWebHostBuilder(builder =>
+            {
+                builder.UseEnvironment(_integrationTestEnvironment);
+                builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(_configPath));
+            });
+
             foreach (var testUser in _testUsers.Values)
             {
-                testUser.HttpClient = SetupHttpClientForUser();
+                testUser.HttpClient = webHostBuilder.CreateClient();
 
                 if (testUser.Profile != null)
                 {
@@ -337,14 +343,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 });
 
         private void AddAnonymousUser() => _testUsers.Add(AnonymousUser, new TestUser());
-
-        private HttpClient SetupHttpClientForUser()
-            => WithWebHostBuilder(builder =>
-            {
-                builder.UseEnvironment(_integrationTestEnvironment);
-                builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(_configPath));
-
-            }).CreateClient();
 
         private void AuthenticateUser(ITestUser user)
             => user.HttpClient.DefaultRequestHeaders.Add("Authorization", CreateBearerToken(user.Profile));
