@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -16,7 +14,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
 {
     public class Seeder : IHostedService
     {
-        private static readonly Person s_seederUser = new Person(new Guid("12345678-1234-1234-1234-123456789123"), "Angus", "MacGyver");
+        private static readonly Guid _seederOid = new Guid("12345678-1234-1234-1234-123456789123");
+        private static readonly Person _seederUser = new Person(_seederOid, "Angus", "MacGyver");
         private readonly IServiceScopeFactory _serviceProvider;
 
         public Seeder(IServiceScopeFactory serviceProvider) => _serviceProvider = serviceProvider;
@@ -31,10 +30,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     scope.ServiceProvider.GetRequiredService<DbContextOptions<PreservationContext>>(),
                     plantProvider,
                     scope.ServiceProvider.GetRequiredService<IEventDispatcher>(),
-                    new SeederUserProvider()))
+                    new SeedingUserProvider(_seederOid)))
                 {
                     // If the seeder user exists in the database, it's already been seeded. Don't seed again.
-                    if (await dbContext.Persons.AnyAsync(p => p.Oid == s_seederUser.Oid))
+                    if (await dbContext.Persons.AnyAsync(p => p.Oid == _seederUser.Oid))
                     {
                         return;
                     }
@@ -43,7 +42,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                      * Add the initial seeder user. Don't do this through the UnitOfWork as this expects/requires the current user to exist in the database.
                      * This is the first user that is added to the database and will not get "Created" and "CreatedBy" data.
                      */
-                    dbContext.Persons.Add(s_seederUser);
+                    dbContext.Persons.Add(_seederUser);
                     await dbContext.SaveChangesAsync(cancellationToken);
 
                     var personRepository = new PersonRepository(dbContext);
@@ -84,13 +83,5 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
-        private class SeederUserProvider : ICurrentUserProvider
-        {
-            public Guid GetCurrentUserOid() => s_seederUser.Oid;
-            public Guid? TryGetCurrentUserOid() => s_seederUser.Oid;
-            public bool IsCurrentUserAuthenticated() => false;
-            public ClaimsPrincipal GetCurrentUser() => new ClaimsPrincipal();
-        }
     }
 }

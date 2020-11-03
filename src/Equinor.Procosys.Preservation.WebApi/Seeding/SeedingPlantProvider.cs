@@ -7,7 +7,5 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
         public SeedingPlantProvider(string plant) => Plant = plant;
 
         public string Plant { get; }
-        public void SetTemporaryPlant(string plant) => throw new System.NotImplementedException();
-        public void ReleaseTemporaryPlant() => throw new System.NotImplementedException();
     }
 }
