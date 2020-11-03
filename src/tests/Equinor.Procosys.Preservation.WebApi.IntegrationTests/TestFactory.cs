@@ -122,11 +122,19 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
                 services.AddScoped(serviceProvider => _plantApiServiceMock.Object);
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
+            });
+
+            CreateTestDatabaseWithSeeding(builder);
+        }
+
+        private void CreateTestDatabaseWithSeeding(IWebHostBuilder builder)
+        {
+            builder.ConfigureTestServices(services =>
+            {
                 services.AddScoped<ICurrentUserProvider>(serviceProvider => _seedingUserProvider);
                 services.AddScoped<IPlantProvider>(serviceProvider => _seedingPlantProvider);
             });
 
-            // todo try to refactor this to be more elegant
             builder.ConfigureServices(CreateNewDatabaseWithCorrectSchema);
 
             builder.ConfigureTestServices(services =>
@@ -164,7 +172,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 dbContext.Database.Migrate();
             }
 
-            dbContext.Seed(_seedingUserProvider, _seedingPlantProvider);
+            dbContext.Seed(_seedingUserProvider, _seedingPlantProvider, ProjectWithAccess);
 
             // Put the teardown here, as we don't have the generic TContext in the dispose method.
             _teardownList.Add(() =>

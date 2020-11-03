@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TagDto>>> GetTags(
+        public async Task<ActionResult<TagsResult>> GetTags(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
