@@ -3,7 +3,7 @@ using System.Net.Http;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Users
+namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
     public class TestUser : ITestUser
     {

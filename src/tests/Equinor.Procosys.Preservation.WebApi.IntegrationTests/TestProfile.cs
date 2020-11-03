@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Users
+namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
     public class TestProfile
     {
