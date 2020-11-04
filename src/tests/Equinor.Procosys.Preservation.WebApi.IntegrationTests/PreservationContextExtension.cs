@@ -9,6 +9,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,13 +57,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         private static void SeedCurrentUserAsPerson(PreservationContext dbContext, ICurrentUserProvider userProvider)
         {
-            dbContext.Persons.Add(new Person(userProvider.GetCurrentUserOid(), "Siri", "Seed"));
+            var personRepository = new PersonRepository(dbContext);
+            personRepository.Add(new Person(userProvider.GetCurrentUserOid(), "Siri", "Seed"));
             dbContext.SaveChangesAsync().Wait();
         }
 
         private static void SeedTags(PreservationContext dbContext, string plant, Step step,
             RequirementDefinition requirementDef)
         {
+            var projectRepository = new ProjectRepository(dbContext);
             var project = new Project(plant, SeedingData.ProjectCode, SeedingData.ProjectDescription);
             var siteTag = new Tag(
                 plant,
@@ -75,22 +78,24 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     new TagRequirement(plant, 4, requirementDef)
                 });
             project.AddTag(siteTag);
-            dbContext.Projects.Add(project);
+            projectRepository.Add(project);
             dbContext.SaveChangesAsync().Wait();
         }
 
         private static Step SeedJourneys(PreservationContext dbContext, string plant, Mode mode, Responsible responsible)
         {
+            var journeyRepository = new JourneyRepository(dbContext);
             var journey = new Journey(plant, SeedingData.Journey);
             var step = new Step(plant, SeedingData.Step, mode, responsible);
             journey.AddStep(step);
-            dbContext.Journeys.Add(journey);
+            journeyRepository.Add(journey);
             dbContext.SaveChangesAsync().Wait();
             return step;
         }
 
         private static RequirementDefinition SeedRequirements(PreservationContext dbContext, string plant)
         {
+            var requirementTypeRepository = new RequirementTypeRepository(dbContext);
             var requirementType = new RequirementType(
                 plant,
                 SeedingData.RequirementTypeCode,
@@ -100,23 +105,25 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var requirementDef =
                 new RequirementDefinition(plant, SeedingData.RequirementDefinition, 4, RequirementUsage.ForAll, 10);
             requirementType.AddRequirementDefinition(requirementDef);
-            dbContext.RequirementTypes.Add(requirementType);
+            requirementTypeRepository.Add(requirementType);
             dbContext.SaveChangesAsync().Wait();
             return requirementDef;
         }
 
         private static Responsible SeedResponsibles(PreservationContext dbContext, string plant)
         {
+            var responsibleRepository = new ResponsibleRepository(dbContext);
             var responsible = new Responsible(plant, SeedingData.ResponsibleCode, SeedingData.ResponsibleDescription);
-            dbContext.Responsibles.Add(responsible);
+            responsibleRepository.Add(responsible);
             dbContext.SaveChangesAsync().Wait();
             return responsible;
         }
 
         private static Mode SeedModes(PreservationContext dbContext, string plant)
         {
+            var modeRepository = new ModeRepository(dbContext);
             var mode = new Mode(plant, SeedingData.Mode, false);
-            dbContext.Modes.Add(mode);
+            modeRepository.Add(mode);
             dbContext.SaveChangesAsync().Wait();
             return mode;
         }
