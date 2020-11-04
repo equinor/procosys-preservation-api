@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 TestFactory.ProjectWithAccess);
 
             // Assert
-            var readyToBeDuplicatedTag = result.Tags.SingleOrDefault(t => t.IsReadyToBeDuplicated);
+            var readyToBeDuplicatedTag = result.Tags.SingleOrDefault(t => t.ReadyToBeDuplicated);
             Assert.IsNotNull(readyToBeDuplicatedTag);
         }
     }

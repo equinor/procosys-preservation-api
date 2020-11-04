@@ -24,6 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
             bool readyToBeTransferred,
             bool readyToBeCompleted,
             bool readyToBeRescheduled,
+            bool readyToBeDuplicated,
             string purchaseOrderNo,
             IEnumerable<RequirementDto> requirements,
             string responsibleCode,
@@ -54,6 +55,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
             ReadyToBeTransferred = readyToBeTransferred;
             ReadyToBeCompleted = readyToBeCompleted;
             ReadyToBeRescheduled = readyToBeRescheduled;
+            ReadyToBeDuplicated = readyToBeDuplicated;
             PurchaseOrderNo = purchaseOrderNo;
             TagNo = tagNo;
             ResponsibleCode = responsibleCode;
@@ -85,6 +87,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
         public bool ReadyToBeTransferred { get; }
         public bool ReadyToBeCompleted { get; }
         public bool ReadyToBeRescheduled { get; }
+        public bool ReadyToBeDuplicated { get; }
         public IEnumerable<RequirementDto> Requirements { get; }
         public string ResponsibleCode { get; }
         public string ResponsibleDescription { get; }

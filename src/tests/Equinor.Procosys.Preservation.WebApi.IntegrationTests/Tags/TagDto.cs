@@ -7,7 +7,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public int Id { get; set; }
         public string TagNo { get; set; }
         public TagType TagType { get; set; }
-        public bool IsReadyToBeDuplicated { get; set; }
+        public bool ReadyToBeDuplicated { get; set; }
         public string RowVersion { get; set; }
     }
 }
