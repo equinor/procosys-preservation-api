@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -14,8 +15,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
 {
     public class Seeder : IHostedService
     {
-        private static readonly Guid _seederOid = new Guid("12345678-1234-1234-1234-123456789123");
-        private static readonly Person _seederUser = new Person(_seederOid, "Angus", "MacGyver");
+        private static readonly Person _seederUser = new Person(new Guid("12345678-1234-1234-1234-123456789123"), "Angus", "MacGyver");
         private readonly IServiceScopeFactory _serviceProvider;
 
         public Seeder(IServiceScopeFactory serviceProvider) => _serviceProvider = serviceProvider;
@@ -30,10 +30,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     scope.ServiceProvider.GetRequiredService<DbContextOptions<PreservationContext>>(),
                     plantProvider,
                     scope.ServiceProvider.GetRequiredService<IEventDispatcher>(),
-                    new SeedingUserProvider(_seederOid)))
+                    new SeedingUserProvider()))
                 {
                     // If the seeder user exists in the database, it's already been seeded. Don't seed again.
-                    if (await dbContext.Persons.AnyAsync(p => p.Oid == _seederUser.Oid))
+                    if (await dbContext.Persons.AnyAsync(p => p.Oid == _seederUser.Oid, cancellationToken))
                     {
                         return;
                     }
@@ -80,8 +80,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     await dbContext.SaveChangesAsync(cancellationToken);
                 }
             }
+
+
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+        private class SeedingUserProvider : ICurrentUserProvider
+        {
+            public Guid GetCurrentUserOid() => _seederUser.Oid;
+        }
     }
 }
