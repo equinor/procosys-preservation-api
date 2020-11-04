@@ -116,12 +116,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             builder.ConfigureServices(services =>
             {
-                ReplaceDatabaseContextWithTestContext(services);
+                ReplaceRealDbContextWithTestDbContext(services);
+                
                 CreateSeededTestDatabase(services);
+                
+                EnsureTestDatabaseDeletedAtTeardown(services);
             });
         }
 
-        private void ReplaceDatabaseContextWithTestContext(IServiceCollection services)
+        private void ReplaceRealDbContextWithTestDbContext(IServiceCollection services)
         {
             var descriptor = services.SingleOrDefault
                 (d => d.ServiceType == typeof(DbContextOptions<PreservationContext>));
@@ -136,33 +139,36 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         private void CreateSeededTestDatabase(IServiceCollection services)
         {
-            using var serviceProvider = services.BuildServiceProvider();
-
-            using var scope = serviceProvider.CreateScope();
-
-            var dbContext = scope.ServiceProvider.GetRequiredService<PreservationContext>();
-
-            dbContext.Database.EnsureDeleted();
-
-            dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-
-            dbContext.CreateNewDatabaseWithCorrectSchema();
-            var migrations = dbContext.Database.GetPendingMigrations();
-            if (migrations.Any())
+            using (var serviceProvider = services.BuildServiceProvider())
             {
-                dbContext.Database.Migrate();
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<PreservationContext>();
+
+                    dbContext.Database.EnsureDeleted();
+
+                    dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+
+                    dbContext.CreateNewDatabaseWithCorrectSchema();
+                    var migrations = dbContext.Database.GetPendingMigrations();
+                    if (migrations.Any())
+                    {
+                        dbContext.Database.Migrate();
+                    }
+
+                    dbContext.Seed(scope.ServiceProvider);
+                }
             }
-
-            dbContext.Seed(scope.ServiceProvider);
-
-            // Put the teardown here, as we don't have the generic TContext in the dispose method.
-            _teardownList.Add(() =>
-            {
-                using var dbContextForTeardown = DatabaseContext(services);
-
-                dbContextForTeardown.Database.EnsureDeleted();
-            });
         }
+
+        private void EnsureTestDatabaseDeletedAtTeardown(IServiceCollection services)
+            => _teardownList.Add(() =>
+            {
+                using (var dbContext = DatabaseContext(services))
+                {
+                    dbContext.Database.EnsureDeleted();
+                }
+            });
 
         private PreservationContext DatabaseContext(IServiceCollection services)
         {
