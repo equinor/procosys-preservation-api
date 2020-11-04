@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
@@ -8,59 +9,66 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.WebApi.Misc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
     public static class PreservationContextExtension
     {
-        public static void Seed(
-            this PreservationContext dbContext,
-            ICurrentUserProvider userProvider,
-            IPlantProvider plantProvider,
-            string projectName
-            )
+        private static string _seederOid = "00000000-0000-0000-0000-999999999999";
+
+        public static void CreateNewDatabaseWithCorrectSchema(this PreservationContext dbContext)
         {
+            var migrations = dbContext.Database.GetPendingMigrations();
+            if (migrations.Any())
+            {
+                dbContext.Database.Migrate();
+            }
+        }
+
+        public static void Seed(this PreservationContext dbContext, IServiceProvider serviceProvider)
+        {
+            var userProvider = serviceProvider.GetRequiredService<CurrentUserProvider>();
+            var plantProvider = serviceProvider.GetRequiredService<PlantProvider>();
+            userProvider.SetCurrentUserOid(new Guid(_seederOid));
+            plantProvider.SetPlant(SeedingData.Plant);
+            
             /* 
              * Add the initial seeder user. Don't do this through the UnitOfWork as this expects/requires the current user to exist in the database.
              * This is the first user that is added to the database and will not get "Created" and "CreatedBy" data.
              */
-            dbContext.Persons.Add(new Person(userProvider.GetCurrentUserOid(), "Siri", "Seed"));
-            dbContext.SaveChangesAsync().Wait();
+            SeedCurrentUserAsPerson(dbContext, userProvider);
 
             var plant = plantProvider.Plant;
 
-            // todo refactor guids to be known data from TestFactory
-            var mode = new Mode(plant, Guid.NewGuid().ToString(), false);
-            dbContext.Modes.Add(mode);
-            dbContext.SaveChangesAsync().Wait();
+            var mode = SeedModes(dbContext, plant);
 
-            var responsible = new Responsible(plant, Guid.NewGuid().ToString(), Guid.NewGuid().ToString());
-            dbContext.Responsibles.Add(responsible);
-            dbContext.SaveChangesAsync().Wait();
+            var responsible = SeedResponsibles(dbContext, plant);
 
-            var requirementType = new RequirementType(
-                plant,
-                "IR",
-                Guid.NewGuid().ToString(),
-                RequirementTypeIcon.Other, 
-                10);
-            var requirementDef = new RequirementDefinition(plant, Guid.NewGuid().ToString(), 4, RequirementUsage.ForAll, 10);
-            requirementType.AddRequirementDefinition(requirementDef);
-            dbContext.RequirementTypes.Add(requirementType);
-            dbContext.SaveChangesAsync().Wait();
+            var requirementDef = SeedRequirements(dbContext, plant);
 
-            var journey = new Journey(plant, Guid.NewGuid().ToString());
-            var step = new Step(plant, Guid.NewGuid().ToString(), mode, responsible);
-            journey.AddStep(step);
-            dbContext.Journeys.Add(journey);
-            dbContext.SaveChangesAsync().Wait();
+            var step = SeedJourneys(dbContext, plant, mode, responsible);
 
-            var project = new Project(plant, projectName, Guid.NewGuid().ToString());
+            SeedTags(dbContext, plant, step, requirementDef);
+        }
+
+        private static void SeedCurrentUserAsPerson(PreservationContext dbContext, ICurrentUserProvider userProvider)
+        {
+            dbContext.Persons.Add(new Person(userProvider.GetCurrentUserOid(), "Siri", "Seed"));
+            dbContext.SaveChangesAsync().Wait();
+        }
+
+        private static void SeedTags(PreservationContext dbContext, string plant, Step step,
+            RequirementDefinition requirementDef)
+        {
+            var project = new Project(plant, SeedingData.ProjectCode, SeedingData.ProjectDescription);
             var siteTag = new Tag(
-                plant, 
-                TagType.SiteArea, 
-                Guid.NewGuid().ToString(), 
-                Guid.NewGuid().ToString(), 
+                plant,
+                TagType.SiteArea,
+                SeedingData.SiteTagNo,
+                SeedingData.SiteTagDescription,
                 step,
                 new List<TagRequirement>
                 {
@@ -69,6 +77,48 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             project.AddTag(siteTag);
             dbContext.Projects.Add(project);
             dbContext.SaveChangesAsync().Wait();
+        }
+
+        private static Step SeedJourneys(PreservationContext dbContext, string plant, Mode mode, Responsible responsible)
+        {
+            var journey = new Journey(plant, SeedingData.Journey);
+            var step = new Step(plant, SeedingData.Step, mode, responsible);
+            journey.AddStep(step);
+            dbContext.Journeys.Add(journey);
+            dbContext.SaveChangesAsync().Wait();
+            return step;
+        }
+
+        private static RequirementDefinition SeedRequirements(PreservationContext dbContext, string plant)
+        {
+            var requirementType = new RequirementType(
+                plant,
+                SeedingData.RequirementTypeCode,
+                SeedingData.RequirementTypeDescription,
+                RequirementTypeIcon.Other,
+                10);
+            var requirementDef =
+                new RequirementDefinition(plant, SeedingData.RequirementDefinition, 4, RequirementUsage.ForAll, 10);
+            requirementType.AddRequirementDefinition(requirementDef);
+            dbContext.RequirementTypes.Add(requirementType);
+            dbContext.SaveChangesAsync().Wait();
+            return requirementDef;
+        }
+
+        private static Responsible SeedResponsibles(PreservationContext dbContext, string plant)
+        {
+            var responsible = new Responsible(plant, SeedingData.ResponsibleCode, SeedingData.ResponsibleDescription);
+            dbContext.Responsibles.Add(responsible);
+            dbContext.SaveChangesAsync().Wait();
+            return responsible;
+        }
+
+        private static Mode SeedModes(PreservationContext dbContext, string plant)
+        {
+            var mode = new Mode(plant, SeedingData.Mode, false);
+            dbContext.Modes.Add(mode);
+            dbContext.SaveChangesAsync().Wait();
+            return mode;
         }
     }
 }
