@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             _excelConverter = excelConverter;
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet]
         public async Task<ActionResult<TagsResult>> GetTags(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -89,7 +89,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("ExportTagsToExcel")]
         public async Task<ActionResult> ExportTagsToExcel(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return File(excelMemoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{_excelConverter.GetFileName()}.xlsx");  
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}")]
         public async Task<ActionResult<TagDetailsDto>> GetTagDetails(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -125,7 +125,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Requirements")]
         public async Task<ActionResult<List<RequirementDetailsDto>>> GetTagRequirements(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -139,7 +139,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions")]
         public async Task<ActionResult<List<ActionDto>>> GetTagActions(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -151,7 +151,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions/{actionId}")]
         public async Task<ActionResult<ActionDetailsDto>> GetTagActionDetails(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -164,7 +164,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_CREATE)]
+        [AuthorizeAny(Permissions.PRESERVATION_CREATE, Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("{id}/Actions")]
         public async Task<ActionResult<int>> CreateAction(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -185,7 +185,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Actions/{actionId}")]
         public async Task<IActionResult> UpdateAction(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -208,7 +208,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 return this.FromResult(result);
         }
          
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Actions/{actionId}/Close")]
         public async Task<IActionResult> CloseAction(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -228,7 +228,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
        
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions/{actionId}/Attachments")]
         public async Task<ActionResult<List<ActionAttachmentDto>>> GetActionAttachments(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -241,7 +241,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Actions/{actionId}/Attachments/{attachmentId}")]
         public async Task<ActionResult> GetActionAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -267,7 +267,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return Redirect(result.Data.ToString());
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
+        [AuthorizeAny(Permissions.PRESERVATION_ATTACHFILE, Permissions.PRESERVATION_PLAN_ATTACHFILE)]
         [HttpPost("{id}/Actions/{actionId}/Attachments")]
         public async Task<ActionResult<int>> UploadActionAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -291,7 +291,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_DETACHFILE)]
+        [AuthorizeAny(Permissions.PRESERVATION_DETACHFILE, Permissions.PRESERVATION_PLAN_DETACHFILE)]
         [HttpDelete("{id}/Actions/{actionId}/Attachments/{attachmentId}")]
         public async Task<ActionResult<int>> DeleteActionAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -313,7 +313,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTag(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -449,7 +449,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("CheckAreaTagNo")]
         public async Task<ActionResult<Query.CheckAreaTagNo.AreaTagDto>> CheckAreaTagNo(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -493,7 +493,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Preserve")]
         public async Task<IActionResult> Preserve(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -505,7 +505,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("BulkPreserve")]
         public async Task<IActionResult> BulkPreserve(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -570,7 +570,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPost("{id}/Requirements/{requirementId}/RecordValues")]
         public async Task<IActionResult> RecordValues(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -599,7 +599,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPost("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> AddFieldValueAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -624,7 +624,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpDelete("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> DeleteFieldValueAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -644,7 +644,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpGet("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
         public async Task<IActionResult> GetFieldValueAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -670,7 +670,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return Redirect(result.Data.ToString());
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPost("{id}/Requirements/{requirementId}/Preserve")]
         public async Task<IActionResult> Preserve(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -685,7 +685,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
         
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Attachments")]
         public async Task<ActionResult<List<TagAttachmentDto>>> GetTagAttachments(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -697,7 +697,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_ATTACHFILE)]
+        [AuthorizeAny(Permissions.PRESERVATION_ATTACHFILE, Permissions.PRESERVATION_PLAN_ATTACHFILE)]
         [HttpPost("{id}/Attachments")]
         public async Task<ActionResult<int>> UploadTagAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -719,7 +719,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_DETACHFILE)]
+        [AuthorizeAny(Permissions.PRESERVATION_DETACHFILE, Permissions.PRESERVATION_PLAN_DETACHFILE)]
         [HttpDelete("{id}/Attachments/{attachmentId}")]
         public async Task<ActionResult<int>> DeleteTagAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -739,7 +739,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Attachments/{attachmentId}")]
         public async Task<ActionResult> GetTagAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -792,7 +792,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Requirements/{tagRequirementId}/PreservationRecord/{preservationRecordGuid}")]
         public async Task<ActionResult<PreservationRecordDto>>GetPreservationRecord(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -807,7 +807,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         }
 
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/Requirements/{tagRequirementId}/PreservationRecord/{preservationRecordGuid}/Attachment")]
         public async Task<IActionResult> GetHistoricalFieldValueAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -833,7 +833,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return Redirect(result.Data.ToString());
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_READ)]
+        [AuthorizeAny(Permissions.PRESERVATION_READ, Permissions.PRESERVATION_PLAN_READ)]
         [HttpGet("{id}/History")]
         public async Task<ActionResult<List<HistoryDto>>> GetTagHistory(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]

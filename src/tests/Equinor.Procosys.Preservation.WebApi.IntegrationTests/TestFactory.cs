@@ -288,7 +288,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     ProCoSysPlants = commonProCoSysPlants,
                     ProCoSysPermissions = new List<string>
                     {
-                        Permissions.LIBRARY_PRESERVATION_READ,
                         Permissions.PRESERVATION_CREATE,
                         Permissions.PRESERVATION_DELETE,
                         Permissions.PRESERVATION_READ,
@@ -317,11 +316,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     ProCoSysPlants = commonProCoSysPlants,
                     ProCoSysPermissions = new List<string>
                     {
-                        Permissions.LIBRARY_PRESERVATION_READ,
+                        Permissions.PRESERVATION_PLAN_READ,
                         Permissions.PRESERVATION_PLAN_CREATE,
                         Permissions.PRESERVATION_PLAN_DELETE,
                         Permissions.PRESERVATION_PLAN_VOIDUNVOID,
-                        Permissions.PRESERVATION_PLAN_WRITE
+                        Permissions.PRESERVATION_PLAN_WRITE,
+                        Permissions.PRESERVATION_PLAN_ATTACHFILE,
+                        Permissions.PRESERVATION_PLAN_DETACHFILE
                     },
                     ProCoSysProjects = commonProCoSysProjects,
                     ProCoSysRestrictions = commonProCoSysRestrictions
