@@ -47,26 +47,37 @@ namespace Equinor.Procosys.Preservation.WebApi.Authorizations
 
             if (request is ITagCommandRequest tagCommandRequest)
             {
-                var projectName = await _tagHelper.GetProjectNameAsync(tagCommandRequest.TagId);
-                var accessToProject = _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
-
-                if (!accessToProject)
+                if (!await HasCurrentUserAccessToProjectAsync(tagCommandRequest.TagId, userOid))
                 {
-                    _logger.LogWarning($"Current user {userOid} don't have access to project {projectName}");
+                    return false;
                 }
 
-                var accessToContent = await HasCurrentUserAccessToContentAsync(tagCommandRequest);
-                if (!accessToContent)
+                if (!await HasCurrentUserAccessToContentAsync(tagCommandRequest))
                 {
                     _logger.LogWarning($"Current user {userOid} don't have access to content {tagCommandRequest.TagId}");
+                    return false;
                 }
-                return accessToProject && accessToContent;
             }
 
             if (request is ITagQueryRequest tagQueryRequest)
             {
-                var projectName = await _tagHelper.GetProjectNameAsync(tagQueryRequest.TagId);
-                if (!_projectAccessChecker.HasCurrentUserAccessToProject(projectName))
+                if (!await HasCurrentUserAccessToProjectAsync(tagQueryRequest.TagId, userOid))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private async Task<bool> HasCurrentUserAccessToProjectAsync(int tagId, Guid userOid)
+        {
+            var projectName = await _tagHelper.GetProjectNameAsync(tagId);
+            if (projectName != null)
+            {
+                var accessToProject = _projectAccessChecker.HasCurrentUserAccessToProject(projectName);
+
+                if (!accessToProject)
                 {
                     _logger.LogWarning($"Current user {userOid} don't have access to project {projectName}");
                     return false;
