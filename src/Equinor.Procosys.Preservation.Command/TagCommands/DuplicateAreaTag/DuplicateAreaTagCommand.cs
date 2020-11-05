@@ -1,12 +1,14 @@
-﻿using MediatR;
+﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using MediatR;
 using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
 {
-    public class DuplicateAreaTagCommand : IRequest<Result<int>>, ITagCommandRequest
+    public class DuplicateAreaTagCommand : AbstractAreaTag, IRequest<Result<int>>, ITagCommandRequest
     {
         public DuplicateAreaTagCommand(
             int tagId,
+            TagType tagType,
             string disciplineCode,
             string areaCode,
             string tagNoSuffix,
@@ -15,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
             string storageArea)
         {
             TagId = tagId;
+            TagType = tagType;
             DisciplineCode = disciplineCode;
             AreaCode = areaCode;
             TagNoSuffix = tagNoSuffix;
@@ -24,9 +27,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
         }
 
         public int TagId { get; }
-        public string DisciplineCode { get; }
-        public string AreaCode { get; }
-        public string TagNoSuffix { get; }
+        public override TagType TagType { get; }
+        public override string DisciplineCode { get; }
+        public override string AreaCode { get; }
+        public override string PurchaseOrderCalloffCode { get; }
+        public override string TagNoSuffix { get; }
         public string Description { get; }
         public string Remark { get; }
         public string StorageArea { get; }

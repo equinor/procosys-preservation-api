@@ -22,138 +22,68 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
-        private readonly IProjectApiService _projectApiService;
-        private readonly IDisciplineApiService _disciplineApiService;
-        private readonly IAreaApiService _areaApiService;
 
+        // todo unit test
         public DuplicateAreaTagCommandHandler(
             IProjectRepository projectRepository,
             IJourneyRepository journeyRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
-            IPlantProvider plantProvider,
-            IProjectApiService projectApiService,
-            IDisciplineApiService disciplineApiService,
-            IAreaApiService areaApiService)
+            IPlantProvider plantProvider)
         {
             _projectRepository = projectRepository;
             _journeyRepository = journeyRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
-            _projectApiService = projectApiService;
-            _disciplineApiService = disciplineApiService;
-            _areaApiService = areaApiService;
         }
 
         public async Task<Result<int>> Handle(DuplicateAreaTagCommand request, CancellationToken cancellationToken)
         {
             var sourceTag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
 
-            var areaTagToAdd = await DuplicateAreaTagAsync(request, sourceTag);
-
-            if (!await SetAreaDataSuccessfullyAsync(areaTagToAdd, request.AreaCode))
-            {
-                return new NotFoundResult<int>($"Area with code {request.AreaCode} not found");
-            }
-
-            if (!await SetDisciplineDataSuccessfullyAsync(areaTagToAdd, request.DisciplineCode))
-            {
-                return new NotFoundResult<int>($"Discipline with code {request.DisciplineCode} not found");
-            }
+            var duplicatedTag = await DuplicateTagAsync(request, sourceTag);
             
             var project = await _projectRepository.GetProjectOnlyByTagIdAsync(request.TagId);
-            project.AddTag(areaTagToAdd);
+            project.AddTag(duplicatedTag);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<int>(areaTagToAdd.Id);
+            return new SuccessResult<int>(duplicatedTag.Id);
         }
 
-        private async Task<bool> SetDisciplineDataSuccessfullyAsync(Tag tag, string disciplineCode)
+        private async Task<Tag> DuplicateTagAsync(DuplicateAreaTagCommand request, Tag sourceTag)
         {
-            var discipline = await _disciplineApiService.TryGetDisciplineAsync(_plantProvider.Plant, disciplineCode);
-            if (discipline == null)
+            if (!sourceTag.IsReadyToBeDuplicated())
             {
-                return false;
-            }
-            tag.SetDiscipline(disciplineCode, discipline.Description);
-            return true;
-        }
-
-        private async Task<bool> SetAreaDataSuccessfullyAsync(Tag tag, string areaCode)
-        {
-            if (string.IsNullOrEmpty(areaCode))
-            {
-                return true;
-            }
-            var area = await _areaApiService.TryGetAreaAsync(_plantProvider.Plant, areaCode);
-            if (area == null)
-            {
-                return false;
-            }
-            tag.SetArea(areaCode, area.Description);
-            return true;
-        }
-
-        private async Task<Tag> DuplicateAreaTagAsync(DuplicateAreaTagCommand request, Tag sourceTag)
-        {
-            //var reqDefIds = request.Requirements.Select(r => r.RequirementDefinitionId).ToList();
-            //var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
-
-
-            //var requirements = new List<TagRequirement>();
-            //foreach (var requirement in request.Requirements)
-            //{
-            //    var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
-            //    requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
-            //}
-
-            //string purchaseOrderNo = null;
-            //string calloff = null;
-
-            //if (request.TagType == TagType.PoArea)
-            //{
-            //    if (string.IsNullOrEmpty(request.PurchaseOrderCalloffCode))
-            //    {
-            //        throw new Exception($"Tags of type {TagType.PoArea} must have {nameof(request.PurchaseOrderCalloffCode)}");
-            //    }
-            //    var poParts = request.PurchaseOrderCalloffCode.Split('/');
-            //    purchaseOrderNo = poParts[0].Trim();
-            //    if (poParts.Length > 1)
-            //    {
-            //        calloff = poParts[1].Trim();
-            //    }
-            //}
-
-            //var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
-            //return new Tag(
-            //    _plantProvider.Plant,
-            //    request.TagType,
-            //    request.GetTagNo(),
-            //    request.Description,
-            //    step,
-            //    requirements)
-            //{
-            //    PurchaseOrderNo = purchaseOrderNo,
-            //    Calloff = calloff,
-            //    Remark = request.Remark,
-            //    StorageArea = request.StorageArea
-            //};
-            throw new NotImplementedException();
-        }
-
-        private async Task<Project> CreateProjectAsync(string projectName)
-        {
-            var mainProject = await _projectApiService.TryGetProjectAsync(_plantProvider.Plant, projectName);
-            if (mainProject == null)
-            {
-                return null;
+                throw new Exception($"Tag {sourceTag.TagNo} of type {sourceTag.TagType} can't be duplicated");
             }
 
-            var project = new Project(_plantProvider.Plant, projectName, mainProject.Description);
-            _projectRepository.Add(project);
-            return project;
+            var reqDefIds = sourceTag.Requirements.Select(r => r.RequirementDefinitionId).ToList();
+            var reqDefs = await _requirementTypeRepository.GetRequirementDefinitionsByIdsAsync(reqDefIds);
+
+            var requirements = new List<TagRequirement>();
+            foreach (var requirement in sourceTag.Requirements)
+            {
+                var reqDef = reqDefs.Single(rd => rd.Id == requirement.RequirementDefinitionId);
+                requirements.Add(new TagRequirement(_plantProvider.Plant, requirement.IntervalWeeks, reqDef));
+            }
+
+            var step = await _journeyRepository.GetStepByStepIdAsync(sourceTag.StepId);
+            var duplicatedTag = new Tag(
+                            _plantProvider.Plant,
+                            request.TagType,
+                            request.GetTagNo(),
+                            request.Description,
+                            step,
+                            requirements)
+            {
+                Remark = request.Remark,
+                StorageArea = request.StorageArea
+            };
+            duplicatedTag.SetDiscipline(sourceTag.DisciplineCode, sourceTag.DisciplineDescription);
+            duplicatedTag.SetArea(sourceTag.AreaCode, sourceTag.AreaDescription);
+            return duplicatedTag;
         }
     }
 }

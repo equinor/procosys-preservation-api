@@ -8,8 +8,10 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
     public interface ITagValidator
     {
         Task<bool> ExistsAsync(int tagId, CancellationToken token);
-        
+
         Task<bool> ExistsAsync(string tagNo, string projectName, CancellationToken token);
+
+        Task<bool> ExistsAsync(string tagNo, int tagId, CancellationToken token);
 
         Task<bool> IsVoidedAsync(int tagId, CancellationToken token);
         

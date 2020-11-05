@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
 {
     public class DuplicateAreaTagCommandValidator : AbstractValidator<DuplicateAreaTagCommand>
     {
+        // todo unit test
         public DuplicateAreaTagCommandValidator(ITagValidator tagValidator, IProjectValidator projectValidator)
         {
             CascadeMode = CascadeMode.Stop;
@@ -15,13 +16,19 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
-                .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
-                .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}");
+                .MustAsync((command, token) => BeAnExistingSourceTagAsync(command.TagId, token))
+                .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
+                .MustAsync((command, token) => NotBeAnExistingTagWithinProjectAsync(command.GetTagNo(), command.TagId, token))
+                .WithMessage(command => $"Tag already exists in scope for project! Tag={command.GetTagNo()}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
-            async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
+        
+            async Task<bool> BeAnExistingSourceTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.ExistsAsync(tagId, token);
+
+            async Task<bool> NotBeAnExistingTagWithinProjectAsync(string tagNo, int tagId, CancellationToken token)
+                => !await tagValidator.ExistsAsync(tagNo, tagId, token);
         }
     }
 }
