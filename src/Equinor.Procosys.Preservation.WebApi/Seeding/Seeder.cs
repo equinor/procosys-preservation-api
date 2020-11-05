@@ -80,8 +80,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Seeding
                     await dbContext.SaveChangesAsync(cancellationToken);
                 }
             }
-
-
         }
 
         public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
