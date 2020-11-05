@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         protected readonly string KnownAreaCode = "A";
         protected readonly string KnownDisciplineCode = "D";
         protected int InitialTagId;
-        private int InitialTagsCount;
+        protected int InitialTagsCount;
 
         [TestInitialize]
         public async Task TestInitialize()

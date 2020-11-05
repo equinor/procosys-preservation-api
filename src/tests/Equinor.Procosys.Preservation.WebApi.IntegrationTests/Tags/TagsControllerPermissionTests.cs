@@ -198,19 +198,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task DuplicateAreaTag_AsPlanner_ShouldReturnOK_WhenKnownId()
-            => await TagsControllerTestsHelper.DuplicateAreaTagAsync(
-                PlannerClient(TestFactory.PlantWithAccess), 
-                InitialTagId, 
-                AreaTagType.SiteArea,
-                KnownDisciplineCode,
-                KnownAreaCode,
-                null,
-                "Desc",
-                null,
-                null);
-
-        [TestMethod]
         public async Task DuplicateAreaTag_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DuplicateAreaTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
