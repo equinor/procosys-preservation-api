@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
@@ -19,7 +20,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
                 .MustAsync((command, token) => BeAnExistingSourceTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
                 .MustAsync((command, token) => NotBeAnExistingTagWithinProjectAsync(command.GetTagNo(), command.TagId, token))
-                .WithMessage(command => $"Tag already exists in scope for project! Tag={command.GetTagNo()}");
+                .WithMessage(command => $"Tag already exists in scope for project! Tag={command.GetTagNo()}")
+                .MustAsync((command, token) => BeSameTagTypeAsSourceTagAsync(command.TagId, command.TagType, token))
+                .WithMessage(command => $"Tag type must be same as for source tag! Tag={command.TagType}");
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
@@ -29,6 +32,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
 
             async Task<bool> NotBeAnExistingTagWithinProjectAsync(string tagNo, int tagId, CancellationToken token)
                 => !await tagValidator.ExistsAsync(tagNo, tagId, token);
+
+            async Task<bool> BeSameTagTypeAsSourceTagAsync(int tagId, TagType tagType, CancellationToken token)
+                => !await tagValidator.VerifyTagTypeAsync(tagId, tagType, token);
         }
     }
 }
