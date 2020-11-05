@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
     [TestClass]
     public class RescheduleCommandHandlerTests : CommandHandlerTestsBase
     {
-        private Mock<IProjectRepository> _tagRepoMock;
+        private Mock<IProjectRepository> _projectRepoMock;
         private RescheduleCommand _rescheduleOneWeekLaterCommand;
         private RescheduleCommand _rescheduleFourWeeksEarlierCommand;
         private const string _rowVersion1 = "AAAAAAAAABA=";
@@ -71,12 +71,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
             {
                 new IdAndRowVersion(_tagId1, _rowVersion1), new IdAndRowVersion(_tagId2, _rowVersion2)
             };
-            _tagRepoMock = new Mock<IProjectRepository>();
-            _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
+            _projectRepoMock = new Mock<IProjectRepository>();
+            _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
             _rescheduleOneWeekLaterCommand = new RescheduleCommand(tagIdsWithRowVersion, 1, RescheduledDirection.Later, "Comment");
             _rescheduleFourWeeksEarlierCommand = new RescheduleCommand(tagIdsWithRowVersion, 4, RescheduledDirection.Earlier, "Comment");
 
-            _dut = new RescheduleCommandHandler(_tagRepoMock.Object, UnitOfWorkMock.Object);
+            _dut = new RescheduleCommandHandler(_projectRepoMock.Object, UnitOfWorkMock.Object);
         }
 
         [TestMethod]

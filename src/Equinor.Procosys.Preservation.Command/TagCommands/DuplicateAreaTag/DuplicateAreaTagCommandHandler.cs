@@ -9,7 +9,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
-using Equinor.Procosys.Preservation.MainApi.Project;
 using MediatR;
 using ServiceResult;
 
@@ -22,20 +21,25 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
+        private readonly IDisciplineApiService _disciplineApiService;
+        private readonly IAreaApiService _areaApiService;
 
-        // todo unit test
         public DuplicateAreaTagCommandHandler(
             IProjectRepository projectRepository,
             IJourneyRepository journeyRepository,
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
-            IPlantProvider plantProvider)
+            IPlantProvider plantProvider, 
+            IDisciplineApiService disciplineApiService, 
+            IAreaApiService areaApiService)
         {
             _projectRepository = projectRepository;
             _journeyRepository = journeyRepository;
             _requirementTypeRepository = requirementTypeRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
+            _disciplineApiService = disciplineApiService;
+            _areaApiService = areaApiService;
         }
 
         public async Task<Result<int>> Handle(DuplicateAreaTagCommand request, CancellationToken cancellationToken)
@@ -43,6 +47,16 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
             var sourceTag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
 
             var duplicatedTag = await DuplicateTagAsync(request, sourceTag);
+
+            if (!await SetAreaDataSuccessfullyAsync(duplicatedTag, request.AreaCode))
+            {
+                return new NotFoundResult<int>($"Area with code {request.AreaCode} not found");
+            }
+
+            if (!await SetDisciplineDataSuccessfullyAsync(duplicatedTag, request.DisciplineCode))
+            {
+                return new NotFoundResult<int>($"Discipline with code {request.DisciplineCode} not found");
+            }
             
             var project = await _projectRepository.GetProjectOnlyByTagIdAsync(request.TagId);
             project.AddTag(duplicatedTag);
@@ -81,9 +95,33 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
                 Remark = request.Remark,
                 StorageArea = request.StorageArea
             };
-            duplicatedTag.SetDiscipline(sourceTag.DisciplineCode, sourceTag.DisciplineDescription);
-            duplicatedTag.SetArea(sourceTag.AreaCode, sourceTag.AreaDescription);
             return duplicatedTag;
+        }
+
+        private async Task<bool> SetDisciplineDataSuccessfullyAsync(Tag tag, string disciplineCode)
+        {
+            var discipline = await _disciplineApiService.TryGetDisciplineAsync(_plantProvider.Plant, disciplineCode);
+            if (discipline == null)
+            {
+                return false;
+            }
+            tag.SetDiscipline(disciplineCode, discipline.Description);
+            return true;
+        }
+
+        private async Task<bool> SetAreaDataSuccessfullyAsync(Tag tag, string areaCode)
+        {
+            if (string.IsNullOrEmpty(areaCode))
+            {
+                return true;
+            }
+            var area = await _areaApiService.TryGetAreaAsync(_plantProvider.Plant, areaCode);
+            if (area == null)
+            {
+                return false;
+            }
+            tag.SetArea(areaCode, area.Description);
+            return true;
         }
     }
 }

@@ -327,7 +327,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 _timeProvider.ElapseWeeks(IntervalWeeks);
-                var result = await dut.ReadyToBePreservedAsync(_standardTagNotStartedInFirstStepId, default);
+                var result = await dut.IsReadyToBePreservedAsync(_standardTagNotStartedInFirstStepId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -339,7 +339,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 _timeProvider.ElapseWeeks(IntervalWeeks);
-                var result = await dut.ReadyToBePreservedAsync(_standardTagStartedAndInLastStepId, default);
+                var result = await dut.IsReadyToBePreservedAsync(_standardTagStartedAndInLastStepId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -721,6 +721,61 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.IsReadyToBeRescheduledAsync(0, default);
+                Assert.IsFalse(result);
+            }
+        }
+                    
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_StandardTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(_standardTagStartedAndInLastStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_PreAreaTag_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(_preAreaTagNotStartedInFirstStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_SiteAreaTag_ShouldReturnsTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(_siteAreaTagStartedId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_PoAreaTag_ShouldReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(_poAreaTagStartedId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_UnknownTag_ShouldReturnsFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(0, default);
                 Assert.IsFalse(result);
             }
         }

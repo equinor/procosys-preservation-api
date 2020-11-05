@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         
         Task<bool> HasANonVoidedRequirementAsync(int tagId, CancellationToken token);
 
-        Task<bool> ReadyToBePreservedAsync(int tagId, CancellationToken token);
+        Task<bool> IsReadyToBePreservedAsync(int tagId, CancellationToken token);
         
         Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token);
         
@@ -34,6 +34,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         Task<bool> IsReadyToBeStartedAsync(int tagId, CancellationToken token);
         
         Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token);
+        
+        Task<bool> IsReadyToBeDuplicatedAsync(int tagId, CancellationToken token);
             
         Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token);
         

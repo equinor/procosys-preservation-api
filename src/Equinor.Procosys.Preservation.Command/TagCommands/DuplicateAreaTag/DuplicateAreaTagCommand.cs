@@ -30,7 +30,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
         public override TagType TagType { get; }
         public override string DisciplineCode { get; }
         public override string AreaCode { get; }
-        public override string PurchaseOrderCalloffCode { get; }
+        public override string PurchaseOrderCalloffCode => null;
         public override string TagNoSuffix { get; }
         public string Description { get; }
         public string Remark { get; }

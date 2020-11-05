@@ -75,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag != null && tag.Requirements.Any(r => !r.IsVoided);
         }
 
-        public async Task<bool> ReadyToBePreservedAsync(int tagId, CancellationToken token)
+        public async Task<bool> IsReadyToBePreservedAsync(int tagId, CancellationToken token)
         {
             var tag = await GetTagWithPreservationPeriods(tagId, token);
             if (tag == null)
@@ -136,6 +136,17 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 select j).SingleOrDefaultAsync(token);
 
             return tag.IsReadyToBeCompleted(journey);
+        }
+
+        public async Task<bool> IsReadyToBeDuplicatedAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludes(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+                        
+            return tag.IsReadyToBeDuplicated();
         }
 
         public async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token)

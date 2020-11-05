@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
                 => await tagValidator.VerifyPreservationStatusAsync(tagId, PreservationStatus.Active, token);
 
             async Task<bool> BeReadyToBePreservedAsync(int tagId, CancellationToken token)
-                => await tagValidator.ReadyToBePreservedAsync(tagId, token);
+                => await tagValidator.IsReadyToBePreservedAsync(tagId, token);
         }
     }
 }
