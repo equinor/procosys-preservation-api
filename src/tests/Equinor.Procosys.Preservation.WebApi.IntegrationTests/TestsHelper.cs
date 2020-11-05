@@ -17,6 +17,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         {
             if (result.StatusCode == HttpStatusCode.BadRequest)
             {
+                if (string.IsNullOrEmpty(expectedMessagePartOnBadRequest))
+                {
+                    Assert.Fail("Bad test setup! Give part of an expected message when testing on BadRequest");
+                }
+
                 var jsonString = await result.Content.ReadAsStringAsync();
                 Console.WriteLine($"Bad request details: {jsonString}");
                 var problemDetails = JsonConvert.DeserializeObject<ValidationProblemDetails>(jsonString);

@@ -5,36 +5,18 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 {
     [TestClass]
-    public class TagsControllerTests : TestBase
+    public class TagsControllerTests : TagsControllerTestsBase
     {
-        private int initialTagsCount;
-        private int initialTagId;
-
-        [TestInitialize]
-        public async Task TestInitialize()
-        {
-            var result = await TagsControllerTestsHelper.GetAllTagsAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
-                TestFactory.ProjectWithAccess);
-
-            Assert.IsNotNull(result);
-
-            initialTagsCount = result.MaxAvailable;
-            Assert.IsTrue(initialTagsCount > 0, "Didn't find any tags at startup. Bad test setup");
-            Assert.AreEqual(initialTagsCount, result.Tags.Count);
-            initialTagId = result.Tags.First().Id;
-        }
-
         [TestMethod]
         public async Task Get_Tag_AsPreserver_ShouldGetTag()
         {
             // Act
             var tag = await TagsControllerTestsHelper.GetTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
-                initialTagId);
+                InitialTagId);
 
             // Assert
-            Assert.AreEqual(initialTagId, tag.Id);
+            Assert.AreEqual(InitialTagId, tag.Id);
             Assert.IsNotNull(tag.RowVersion);
         }
 

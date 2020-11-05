@@ -2,7 +2,7 @@
 {
     public class DuplicateAreaTagDto
     {
-        public int TagId { get; set; }
+        public int SourceTagId { get; set; }
         public AreaTagType AreaTagType { get; set; }
         public string DisciplineCode { get; set; }
         public string AreaCode { get; set; }

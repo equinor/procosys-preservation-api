@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         }
 
         [TestMethod]
-        public async Task Create_Mode_AsAdmin_ShouldCreateMode()
+        public async Task CreateMode_AsAdmin_ShouldCreateMode()
         {
             // Act
             var id = await ModesControllerTestsHelper.CreateModeAsync(
@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         }
 
         [TestMethod]
-        public async Task Get_Mode_AsAdmin_ShouldGetMode()
+        public async Task GetMode_AsAdmin_ShouldGetMode()
         {
             // Arrange
             var title = Guid.NewGuid().ToString();
@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         }
 
         [TestMethod]
-        public async Task Update_Mode_AsAdmin_ShouldUpdateModeAndRowVersion()
+        public async Task UpdateMode_AsAdmin_ShouldUpdateModeAndRowVersion()
         {
             // Assert
             var id = await ModesControllerTestsHelper.CreateModeAsync(
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         }
 
         [TestMethod]
-        public async Task Void_Mode_AsAdmin_ShouldVoidMode()
+        public async Task VoidMode_AsAdmin_ShouldVoidMode()
         {
             // Assert
             var id = await ModesControllerTestsHelper.CreateModeAsync(
@@ -96,7 +96,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         }
 
         [TestMethod]
-        public async Task Unvoid_Mode_AsAdmin_ShouldUnvoidMode()
+        public async Task UnvoidMode_AsAdmin_ShouldUnvoidMode()
         {
             // Assert
             var id = await ModesControllerTestsHelper.CreateModeAsync(
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         }
 
         [TestMethod]
-        public async Task Delete_Mode_AsAdmin_ShouldDeleteMode()
+        public async Task DeleteMode_AsAdmin_ShouldDeleteMode()
         {
             // Assert
             var id = await ModesControllerTestsHelper.CreateModeAsync(

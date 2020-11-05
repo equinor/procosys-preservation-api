@@ -199,19 +199,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetProjectOnlyByTagIdAsync_KnownTag_ShouldReturnProjectWithoutAnyTags()
-        {
-            // Act
-            var project = await _dut.GetProjectOnlyByTagIdAsync(StandardTagId);
-
-            // Assert
-            Assert.IsNotNull(project);
-            Assert.AreEqual(ProjectNameWithTags, project.Name);
-            Assert.IsNotNull(project.Tags);
-            Assert.AreEqual(0, project.Tags.Count);
-        }
-
-        [TestMethod]
         public async Task GetProjectByTagIdAsync_UnknownTag_ShouldReturnNull()
         {
             // Act

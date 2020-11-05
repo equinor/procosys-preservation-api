@@ -461,7 +461,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             [FromBody] DuplicateAreaTagDto dto)
         {
             var command = new DuplicateAreaTagCommand(
-                dto.TagId,
+                dto.SourceTagId,
                 dto.AreaTagType.ConvertToTagType(),
                 dto.DisciplineCode,
                 dto.AreaCode,
