@@ -1370,7 +1370,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void IsReadyToBeDuplicated_ShouldBeFalse_ForPoAreTag()
+        public void IsReadyToBeDuplicated_ShouldBeFalse_ForPoAreaTag()
         {
             var dut = new Tag(TestPlant, TagType.PoArea, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
