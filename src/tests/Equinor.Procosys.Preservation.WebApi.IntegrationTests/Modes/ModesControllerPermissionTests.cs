@@ -39,14 +39,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task Get_AllModes_AsPlanner_ShouldReturnOk()
+        public async Task Get_AllModes_AsPlanner_ShouldReturnForbidden()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                PlannerClient(TestFactory.PlantWithAccess));
+                PlannerClient(TestFactory.PlantWithAccess),
+                HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task Get_AllModes_AsPreserver_ShouldReturnOk()
+        public async Task Get_AllModes_AsPreserver_ShouldReturnForbidden()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                PreserverClient(TestFactory.PlantWithAccess));
+                PreserverClient(TestFactory.PlantWithAccess),
+                HttpStatusCode.Forbidden);
         #endregion
         
         #region Get
@@ -93,18 +95,18 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.NotFound);
 
         [TestMethod]
-        public async Task Get_Mode_AsPlanner_ShouldReturnNotFound()
+        public async Task Get_Mode_AsPlanner_ShouldReturnForbidden()
             => await ModesControllerTestsHelper.GetModeAsync(
                 PlannerClient(TestFactory.PlantWithAccess), 
                 9999, 
-                HttpStatusCode.NotFound);
+                HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task Get_Mode_AsPreserver_ShouldReturnNotFound()
+        public async Task Get_Mode_AsPreserver_ShouldReturnForbidden()
             => await ModesControllerTestsHelper.GetModeAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
                 9999, 
-                HttpStatusCode.NotFound);
+                HttpStatusCode.Forbidden);
         #endregion
         
         #region Create

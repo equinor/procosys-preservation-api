@@ -12,7 +12,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
         {
             var okOid = new Guid("7DFC890F-F82B-4E2D-B81B-41D6C103F83B");
             var dut = new CurrentUserProvider();
-            dut.SetCurrentUser(okOid);
+            dut.SetCurrentUserOid(okOid);
 
             var oid = dut.GetCurrentUserOid();
 

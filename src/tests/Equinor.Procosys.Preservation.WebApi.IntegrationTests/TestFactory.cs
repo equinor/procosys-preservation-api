@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Users;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +23,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
     public class TestFactory : WebApplicationFactory<Startup>
     {
+        private readonly string _libraryAdminOid = "00000000-0000-0000-0000-000000000001";
+        private readonly string _plannerOid = "00000000-0000-0000-0000-000000000002";
+        private readonly string _preserverOid = "00000000-0000-0000-0000-000000000003";
+        private readonly string _hackerOid = "00000000-0000-0000-0000-000000000666";
         private readonly string _integrationTestEnvironment = "IntegrationTests";
         private readonly Mock<IPlantApiService> _plantApiServiceMock;
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock;
@@ -38,10 +41,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string PlannerUser => "Pernilla Planner";
         public static string PreserverUser => "Peder Preserver";
         public static string HackerUser => "Harry Hacker";
-        public static string PlantWithAccess => "PCS$PLANT1";
+        public static string PlantWithAccess => SeedingData.Plant;
         public static string PlantWithoutAccess => "PCS$PLANT999";
         public static string UnknownPlant => "UNKNOWN_PLANT";
-        public static string ProjectWithAccess => "Project1";
+        public static string ProjectWithAccess => SeedingData.ProjectCode;
         public static string ProjectWithoutAccess => "Project999";
         public static string AValidRowVersion => "AAAAAAAAAAA=";
 
@@ -111,10 +114,17 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
             });
 
-            builder.ConfigureServices(CreateNewDatabaseWithCorrectSchema);
+            builder.ConfigureServices(services =>
+            {
+                ReplaceRealDbContextWithTestDbContext(services);
+                
+                CreateSeededTestDatabase(services);
+                
+                EnsureTestDatabaseDeletedAtTeardown(services);
+            });
         }
 
-        private void CreateNewDatabaseWithCorrectSchema(IServiceCollection services)
+        private void ReplaceRealDbContextWithTestDbContext(IServiceCollection services)
         {
             var descriptor = services.SingleOrDefault
                 (d => d.ServiceType == typeof(DbContextOptions<PreservationContext>));
@@ -124,39 +134,45 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 services.Remove(descriptor);
             }
 
-            services.AddDbContext<PreservationContext>(context => context.UseSqlServer(_connectionString));
-
-            using var serviceProvider = services.BuildServiceProvider();
-
-            using var scope = serviceProvider.CreateScope();
-
-            var dbContext = scope.ServiceProvider.GetRequiredService<PreservationContext>();
-
-            dbContext.Database.EnsureDeleted();
-
-            dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-
-            var migrations = dbContext.Database.GetPendingMigrations();
-            if (migrations.Any())
-            {
-                dbContext.Database.Migrate();
-            }
-
-            // Put the teardown here, as we don't have the generic TContext in the dispose method.
-            _teardownList.Add(() =>
-            {
-                using var dbContextForTeardown = DatabaseContext(services);
-
-                dbContextForTeardown.Database.EnsureDeleted();
-            });
+            services.AddDbContext<PreservationContext>(options => options.UseSqlServer(_connectionString));
         }
-        
+
+        private void CreateSeededTestDatabase(IServiceCollection services)
+        {
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var dbContext = scope.ServiceProvider.GetRequiredService<PreservationContext>();
+
+                    dbContext.Database.EnsureDeleted();
+
+                    dbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+
+                    dbContext.CreateNewDatabaseWithCorrectSchema();
+                    var migrations = dbContext.Database.GetPendingMigrations();
+                    if (migrations.Any())
+                    {
+                        dbContext.Database.Migrate();
+                    }
+
+                    dbContext.Seed(scope.ServiceProvider);
+                }
+            }
+        }
+
+        private void EnsureTestDatabaseDeletedAtTeardown(IServiceCollection services)
+            => _teardownList.Add(() =>
+            {
+                using (var dbContext = DatabaseContext(services))
+                {
+                    dbContext.Database.EnsureDeleted();
+                }
+            });
+
         private PreservationContext DatabaseContext(IServiceCollection services)
         {
-            services.AddDbContext<PreservationContext>(options =>
-            {
-                options.UseSqlServer(_connectionString);
-            });
+            services.AddDbContext<PreservationContext>(options => options.UseSqlServer(_connectionString));
 
             var sp = services.BuildServiceProvider();
             _disposables.Add(sp);
@@ -222,9 +238,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
     
             AddHackerUser(commonProCoSysProjects, commonProCoSysRestrictions);
             
+            var webHostBuilder = WithWebHostBuilder(builder =>
+            {
+                builder.UseEnvironment(_integrationTestEnvironment);
+                builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(_configPath));
+            });
+
             foreach (var testUser in _testUsers.Values)
             {
-                testUser.HttpClient = SetupHttpClientForUser();
+                testUser.HttpClient = webHostBuilder.CreateClient();
 
                 if (testUser.Profile != null)
                 {
@@ -234,15 +256,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         }
 
         // Authenticated client without any roles
-        private void AddHackerUser(List<ProcosysProject> commonProCoSysProjects, List<string> commonProCoSysRestrictions) =>
-            _testUsers.Add(HackerUser,
+        private void AddHackerUser(List<ProcosysProject> commonProCoSysProjects,
+            List<string> commonProCoSysRestrictions)
+            => _testUsers.Add(HackerUser,
                 new TestUser
                 {
                     Profile =
                         new TestProfile
                         {
-                            FullName = HackerUser,
-                            Oid = "00000000-0000-0000-0000-000000000666"
+                            FullName = HackerUser, 
+                            Oid = _hackerOid
                         },
                     ProCoSysPlants = new List<ProcosysPlant>
                     {
@@ -266,12 +289,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                         new TestProfile
                         {
                             FullName = PreserverUser,
-                            Oid = "00000000-0000-0000-0000-000000000003"
+                            Oid = _preserverOid
                         },
                     ProCoSysPlants = commonProCoSysPlants,
                     ProCoSysPermissions = new List<string>
                     {
-                        Permissions.LIBRARY_PRESERVATION_READ,
                         Permissions.PRESERVATION_CREATE,
                         Permissions.PRESERVATION_DELETE,
                         Permissions.PRESERVATION_READ,
@@ -295,16 +317,18 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                         new TestProfile
                         {
                             FullName = PlannerUser,
-                            Oid = "00000000-0000-0000-0000-000000000002"
+                            Oid = _plannerOid
                         },
                     ProCoSysPlants = commonProCoSysPlants,
                     ProCoSysPermissions = new List<string>
                     {
-                        Permissions.LIBRARY_PRESERVATION_READ,
+                        Permissions.PRESERVATION_PLAN_READ,
                         Permissions.PRESERVATION_PLAN_CREATE,
                         Permissions.PRESERVATION_PLAN_DELETE,
                         Permissions.PRESERVATION_PLAN_VOIDUNVOID,
-                        Permissions.PRESERVATION_PLAN_WRITE
+                        Permissions.PRESERVATION_PLAN_WRITE,
+                        Permissions.PRESERVATION_PLAN_ATTACHFILE,
+                        Permissions.PRESERVATION_PLAN_DETACHFILE
                     },
                     ProCoSysProjects = commonProCoSysProjects,
                     ProCoSysRestrictions = commonProCoSysRestrictions
@@ -322,7 +346,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                         new TestProfile
                         {
                             FullName = LibraryAdminUser,
-                            Oid = "00000000-0000-0000-0000-000000000001"
+                            Oid = _libraryAdminOid
                         },
                     ProCoSysPlants = commonProCoSysPlants,
                     ProCoSysPermissions = new List<string>
@@ -338,14 +362,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 });
 
         private void AddAnonymousUser() => _testUsers.Add(AnonymousUser, new TestUser());
-
-        private HttpClient SetupHttpClientForUser()
-            => WithWebHostBuilder(builder =>
-            {
-                builder.UseEnvironment(_integrationTestEnvironment);
-                builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(_configPath));
-
-            }).CreateClient();
 
         private void AuthenticateUser(ITestUser user)
             => user.HttpClient.DefaultRequestHeaders.Add("Authorization", CreateBearerToken(user.Profile));

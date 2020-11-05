@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Synchronization
             var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
             _bearerTokenSetter.SetBearerToken(bearerToken, false);
 
-            _currentUserSetter.SetCurrentUser(_synchronizationUserOid);
+            _currentUserSetter.SetCurrentUserOid(_synchronizationUserOid);
 
             var currentUser = _claimsProvider.GetCurrentUser();
             var claimsIdentity = new ClaimsIdentity();

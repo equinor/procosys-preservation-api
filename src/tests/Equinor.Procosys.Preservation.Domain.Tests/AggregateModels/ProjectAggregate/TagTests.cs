@@ -1342,6 +1342,42 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+
+        #region IsReadyToBeDuplicated
+
+        [TestMethod]
+        public void IsReadyToBeDuplicated_ShouldBeTrue_ForSiteAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.SiteArea, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+
+            Assert.IsTrue(dut.IsReadyToBeDuplicated());
+        }
+        
+        [TestMethod]
+        public void IsReadyToBeDuplicated_ShouldBeTrue_ForPreAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.PreArea, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+
+            Assert.IsTrue(dut.IsReadyToBeDuplicated());
+        }
+
+        [TestMethod]
+        public void IsReadyToBeDuplicated_ShouldBeFalse_ForStandardTag()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+
+            Assert.IsFalse(dut.IsReadyToBeDuplicated());
+        }
+        
+        [TestMethod]
+        public void IsReadyToBeDuplicated_ShouldBeFalse_ForPoAreaTag()
+        {
+            var dut = new Tag(TestPlant, TagType.PoArea, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
+
+            Assert.IsFalse(dut.IsReadyToBeDuplicated());
+        }
+
+        #endregion
         
         #region AddAction
 
