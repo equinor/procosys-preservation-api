@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task DuplicateAreaTagAsync_AsPlanner_ShouldReturnATagReadyToBeDuplicated()
+        public async Task DuplicateAreaTag_AsPlanner_ShouldReturnATagReadyToBeDuplicated()
         {
             // Arrange
             var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(

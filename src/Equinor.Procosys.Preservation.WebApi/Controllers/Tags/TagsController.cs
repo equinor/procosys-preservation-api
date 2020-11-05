@@ -450,7 +450,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
             return this.FromResult(result);
         }
 
-        // todo integration tests
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("DuplicateArea")]
         public async Task<ActionResult<int>> DuplicateAreaTag(
