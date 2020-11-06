@@ -67,5 +67,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
             => DefaultQuery
                 .Where(project => project.Tags.Any(tag => tag.Id == tagId))
                 .SingleOrDefaultAsync();
+
+        public Task<Project> GetProjectOnlyByTagIdAsync(int tagId)
+            => Set
+                .Where(project => project.Tags.Any(tag => tag.Id == tagId))
+                .SingleOrDefaultAsync();
     }
 }

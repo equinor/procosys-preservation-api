@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownTag_ShouldReturnTrue()
+        public async Task ExistsAsync_KnownTagNoInKnownProject_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -121,12 +121,45 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownTag_ShouldReturnTrue()
+        public async Task ExistsAsync_KnownTagNoInUnknownProject_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsAsync(TagNo1, "XYZ", default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAsync_UnknownTagNoInKnownProject_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.ExistsAsync("X", ProjectName, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAsync_KnownTagNoInProjectForTag_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsAsync(TagNo1, _siteAreaTagStartedId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsAsync_UnknownTagNoInProjectForTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsAsync("X", _siteAreaTagStartedId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -294,7 +327,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 _timeProvider.ElapseWeeks(IntervalWeeks);
-                var result = await dut.ReadyToBePreservedAsync(_standardTagNotStartedInFirstStepId, default);
+                var result = await dut.IsReadyToBePreservedAsync(_standardTagNotStartedInFirstStepId, default);
                 Assert.IsFalse(result);
             }
         }
@@ -306,7 +339,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 _timeProvider.ElapseWeeks(IntervalWeeks);
-                var result = await dut.ReadyToBePreservedAsync(_standardTagStartedAndInLastStepId, default);
+                var result = await dut.IsReadyToBePreservedAsync(_standardTagStartedAndInLastStepId, default);
                 Assert.IsTrue(result);
             }
         }
@@ -688,6 +721,61 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.IsReadyToBeRescheduledAsync(0, default);
+                Assert.IsFalse(result);
+            }
+        }
+                    
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_StandardTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(_standardTagStartedAndInLastStepId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_PreAreaTag_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(_preAreaTagNotStartedInFirstStepId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_SiteAreaTag_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(_siteAreaTagStartedId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_PoAreaTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(_poAreaTagStartedId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsReadyToBeDuplicatedAsync_UnknownTag_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsReadyToBeDuplicatedAsync(0, default);
                 Assert.IsFalse(result);
             }
         }

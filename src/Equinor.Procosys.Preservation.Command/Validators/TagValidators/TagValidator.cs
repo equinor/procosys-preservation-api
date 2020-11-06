@@ -28,9 +28,22 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> ExistsAsync(string tagNo, string projectName, CancellationToken token) =>
             await (from tag in _context.QuerySet<Tag>()
-                join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
-                where tag.TagNo == tagNo && p.Name == projectName
-                select p).AnyAsync(token);
+                   join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
+                   where tag.TagNo == tagNo && p.Name == projectName
+                   select p).AnyAsync(token);
+
+        public async Task<bool> ExistsAsync(string tagNo, int tagId, CancellationToken token)
+        {
+            var project = await (from p in _context.QuerySet<Project>()
+                           join tag in _context.QuerySet<Tag>() on p.Id equals EF.Property<int>(tag, "ProjectId")
+                           where tag.Id == tagId
+                           select p).SingleOrDefaultAsync(token);
+            if (project == null)
+            {
+                return false;
+            }
+            return await ExistsAsync(tagNo, project.Name, token);
+        }
 
         public async Task<bool> IsVoidedAsync(int tagId, CancellationToken token)
         {
@@ -62,7 +75,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag != null && tag.Requirements.Any(r => !r.IsVoided);
         }
 
-        public async Task<bool> ReadyToBePreservedAsync(int tagId, CancellationToken token)
+        public async Task<bool> IsReadyToBePreservedAsync(int tagId, CancellationToken token)
         {
             var tag = await GetTagWithPreservationPeriods(tagId, token);
             if (tag == null)
@@ -123,6 +136,17 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 select j).SingleOrDefaultAsync(token);
 
             return tag.IsReadyToBeCompleted(journey);
+        }
+
+        public async Task<bool> IsReadyToBeDuplicatedAsync(int tagId, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludes(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+                        
+            return tag.IsReadyToBeDuplicated();
         }
 
         public async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token)

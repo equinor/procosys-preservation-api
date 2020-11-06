@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
-using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreservation

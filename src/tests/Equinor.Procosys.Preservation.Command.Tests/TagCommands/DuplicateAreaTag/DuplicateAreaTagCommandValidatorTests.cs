@@ -1,38 +1,33 @@
-﻿using System;
-using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
+﻿using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
-using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
+namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.DuplicateAreaTag
 {
     [TestClass]
-    public class PreserveCommandValidatorTests
+    public class DuplicateAreaTagCommandValidatorTests
     {
         private const int TagId = 7;
-        private DateTime _utcNow;
-        private PreserveCommandValidator _dut;
+        private DuplicateAreaTagCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
-        private PreserveCommand _command;
+        private DuplicateAreaTagCommand _command;
 
         [TestInitialize]
         public void Setup_OkState()
         {
-            _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.IsReadyToBePreservedAsync(TagId, default)).Returns(Task.FromResult(true));
-            _command = new PreserveCommand(TagId);
+            _tagValidatorMock.Setup(r => r.IsReadyToBeDuplicatedAsync(TagId, default)).Returns(Task.FromResult(true));
 
-            _dut = new PreserveCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
+            _command = new DuplicateAreaTagCommand(TagId,TagType.SiteArea, "D", "A", "-01", "Desc", "Rem", "SA");
+
+            _dut = new DuplicateAreaTagCommandValidator(_tagValidatorMock.Object, _projectValidatorMock.Object);
         }
 
         [TestMethod]
@@ -44,7 +39,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
+        public void Validate_ShouldFail_WhenSourceTagNotExists()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
             
@@ -54,17 +49,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
         }
-
+        
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagIsVoided()
+        public void Validate_ShouldFail_WhenTargetTagAlreadyExists()
         {
-            _tagValidatorMock.Setup(r => r.IsVoidedAsync(TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsAsync(_command.GetTagNo(), TagId, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is voided!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag already exists in scope for project!"));
         }
 
         [TestMethod]
@@ -76,44 +71,32 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenPreservationIsNotActiveForTag()
+        public void Validate_ShouldFail_WhenNotReadyToBeDuplicated()
         {
-            _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.IsReadyToBeDuplicatedAsync(TagId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Tag must have status {PreservationStatus.Active} to preserve!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotReadyToBePreserved()
-        {
-            _tagValidatorMock.Setup(r => r.IsReadyToBePreservedAsync(TagId, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is not ready to be preserved!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag can not be duplicated!"));
         }
 
         [TestMethod]
         public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
+            _tagValidatorMock.Setup(r => r.IsReadyToBeDuplicatedAsync(TagId, default)).Returns(Task.FromResult(false));
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
-            
+
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
         }
     }
 }

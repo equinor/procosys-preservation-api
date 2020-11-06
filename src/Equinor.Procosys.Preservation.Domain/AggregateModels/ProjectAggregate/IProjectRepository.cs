@@ -13,5 +13,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         void RemoveTag(Tag tag);
         Task<List<Tag>> GetStandardTagsInProjectInStepsAsync(string projectName, IEnumerable<string> tagNos, IEnumerable<int> stepIds);
         Task<Project> GetProjectByTagIdAsync(int tagId);
+        Task<Project> GetProjectOnlyByTagIdAsync(int tagId);
     }
 }

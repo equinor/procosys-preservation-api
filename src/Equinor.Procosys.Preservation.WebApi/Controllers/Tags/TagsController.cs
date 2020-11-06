@@ -21,6 +21,7 @@ using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
 using Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag;
+using Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag;
 using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
 using Equinor.Procosys.Preservation.Command.TagCommands.Reschedule;
 using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
@@ -441,6 +442,29 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
                 dto.TagNoSuffix,
                 dto.StepId,
                 requirements,
+                dto.Description,
+                dto.Remark,
+                dto.StorageArea);
+
+            var result = await _mediator.Send(command);
+            return this.FromResult(result);
+        }
+
+        [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
+        [HttpPost("DuplicateArea")]
+        public async Task<ActionResult<int>> DuplicateAreaTag(
+            [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
+            [Required]
+            [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
+            string plant,
+            [FromBody] DuplicateAreaTagDto dto)
+        {
+            var command = new DuplicateAreaTagCommand(
+                dto.SourceTagId,
+                dto.AreaTagType.ConvertToTagType(),
+                dto.DisciplineCode,
+                dto.AreaCode,
+                dto.TagNoSuffix,
                 dto.Description,
                 dto.Remark,
                 dto.StorageArea);

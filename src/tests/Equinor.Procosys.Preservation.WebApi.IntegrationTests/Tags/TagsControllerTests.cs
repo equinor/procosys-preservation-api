@@ -1,54 +1,68 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 {
     [TestClass]
-    public class TagsControllerTests : TestBase
+    public class TagsControllerTests : TagsControllerTestsBase
     {
-        private int initialTagsCount;
-        private int initialTagId;
-
-        [TestInitialize]
-        public async Task TestInitialize()
+        [TestMethod]
+        public async Task GetAllTags_AsPreserver_ShouldGetTags()
         {
+            // Act
             var result = await TagsControllerTestsHelper.GetAllTagsAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
                 TestFactory.ProjectWithAccess);
 
-            Assert.IsNotNull(result);
-
-            initialTagsCount = result.MaxAvailable;
-            Assert.IsTrue(initialTagsCount > 0, "Didn't find any tags at startup. Bad test setup");
-            Assert.AreEqual(initialTagsCount, result.Tags.Count);
-            initialTagId = result.Tags.First().Id;
+            // Assert
+            Assert.IsTrue(result.Tags.Count > 0);
         }
 
         [TestMethod]
-        public async Task Get_Tag_AsPreserver_ShouldGetTag()
+        public async Task GetTag_AsPreserver_ShouldGetTag()
         {
             // Act
             var tag = await TagsControllerTestsHelper.GetTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
-                initialTagId);
+                InitialTagId);
 
             // Assert
-            Assert.AreEqual(initialTagId, tag.Id);
+            Assert.AreEqual(InitialTagId, tag.Id);
             Assert.IsNotNull(tag.RowVersion);
         }
 
         [TestMethod]
-        public async Task Get_Tags_ShouldReturnATagReadyToBeDuplicated()
+        public async Task DuplicateAreaTag_AsPlanner_ShouldReturnATagReadyToBeDuplicated()
         {
-            // Act
-            var result = await TagsControllerTestsHelper.GetAllTagsAsync(
+            // Arrange
+            var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
                 TestFactory.ProjectWithAccess);
+            var initialTagsCount = tagsResult.Tags.Count;
+            var readyToBeDuplicatedTag = tagsResult.Tags.SingleOrDefault(t => t.ReadyToBeDuplicated);
+            Assert.IsNotNull(readyToBeDuplicatedTag, "Didn't find tag to duplicate. Bad test setup");
+
+            // Act
+            var id = await TagsControllerTestsHelper.DuplicateAreaTagAsync(
+                    PlannerClient(TestFactory.PlantWithAccess), 
+                    readyToBeDuplicatedTag.Id, 
+                    AreaTagType.SiteArea,
+                    KnownDisciplineCode,
+                    KnownAreaCode,
+                    null,
+                    "Desc",
+                    null,
+                    null);
 
             // Assert
-            var readyToBeDuplicatedTag = result.Tags.SingleOrDefault(t => t.ReadyToBeDuplicated);
-            Assert.IsNotNull(readyToBeDuplicatedTag);
+            Assert.IsTrue(id > 0);
+            tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                TestFactory.ProjectWithAccess);
+            Assert.AreEqual(initialTagsCount+1, tagsResult.Tags.Count);
+            Assert.IsNotNull(tagsResult.Tags.SingleOrDefault(t => t.Id == id));
         }
     }
 }

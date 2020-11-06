@@ -6,8 +6,11 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.Procosys.Preservation.MainApi.Area;
+using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -28,13 +31,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private readonly string _preserverOid = "00000000-0000-0000-0000-000000000003";
         private readonly string _hackerOid = "00000000-0000-0000-0000-000000000666";
         private readonly string _integrationTestEnvironment = "IntegrationTests";
-        private readonly Mock<IPlantApiService> _plantApiServiceMock;
-        private readonly Mock<IPermissionApiService> _permissionApiServiceMock;
         private readonly string _connectionString;
         private readonly string _configPath;
         private readonly Dictionary<string, ITestUser> _testUsers = new Dictionary<string, ITestUser>();
         private readonly List<Action> _teardownList = new List<Action>();
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
+
+        private readonly Mock<IPlantApiService> _plantApiServiceMock = new Mock<IPlantApiService>();
+        private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
+        public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
+        public readonly Mock<IAreaApiService> AreaApiServiceMock = new Mock<IAreaApiService>();
 
         public static string AnonymousUser => "NN";
         public static string LibraryAdminUser => "Arne Admin";
@@ -53,10 +59,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var projectDir = Directory.GetCurrentDirectory();
             _connectionString = GetTestDbConnectionString(projectDir);
             _configPath = Path.Combine(projectDir, "appsettings.json");
-
-            _plantApiServiceMock = new Mock<IPlantApiService>();
-
-            _permissionApiServiceMock = new Mock<IPermissionApiService>();
 
             SetupTestUsers();
         }
@@ -112,6 +114,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
                 services.AddScoped(serviceProvider => _plantApiServiceMock.Object);
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
+                services.AddScoped(serviceProvider => DisciplineApiServiceMock.Object);
+                services.AddScoped(serviceProvider => AreaApiServiceMock.Object);
             });
 
             builder.ConfigureServices(services =>
@@ -226,7 +230,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 new ProcosysProject {Name = ProjectWithoutAccess}
             };
 
-            var commonProCoSysRestrictions = new List<string>();
+            var commonProCoSysRestrictions = new List<string>
+            {
+                ClaimsTransformation.NoRestrictions
+            };
 
             AddAnonymousUser();
 
@@ -236,7 +243,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             AddPreserverUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
     
-            AddHackerUser(commonProCoSysProjects, commonProCoSysRestrictions);
+            AddHackerUser(commonProCoSysProjects);
             
             var webHostBuilder = WithWebHostBuilder(builder =>
             {
@@ -256,8 +263,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         }
 
         // Authenticated client without any roles
-        private void AddHackerUser(List<ProcosysProject> commonProCoSysProjects,
-            List<string> commonProCoSysRestrictions)
+        private void AddHackerUser(List<ProcosysProject> commonProCoSysProjects)
             => _testUsers.Add(HackerUser,
                 new TestUser
                 {
@@ -274,7 +280,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     },
                     ProCoSysPermissions = new List<string>(),
                     ProCoSysProjects = commonProCoSysProjects,
-                    ProCoSysRestrictions = commonProCoSysRestrictions
+                    ProCoSysRestrictions = new List<string>()
                 });
 
         // Authenticated client with necessary roles to perform preservation work

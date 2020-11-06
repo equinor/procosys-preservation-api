@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
-using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
 using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -16,7 +15,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
     [TestClass]
     public class CompletePreservationCommandHandlerTests : CommandHandlerTestsBase
     {
-        private Mock<IProjectRepository> _tagRepoMock;
+        private Mock<IProjectRepository> _projectRepoMock;
         private CompletePreservationCommand _command;
         private Tag _tag1;
         private Tag _tag2;
@@ -87,8 +86,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
             var tagIds = new List<int> { tagId1, tagId2 };
             var tagIdsWithRowVersion = new List<IdAndRowVersion> { new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2) };
 
-            _tagRepoMock = new Mock<IProjectRepository>();
-            _tagRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
+            _projectRepoMock = new Mock<IProjectRepository>();
+            _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
 
             var journeyRepoMock = new Mock<IJourneyRepository>();
             journeyRepoMock
@@ -97,7 +96,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
             
             _command = new CompletePreservationCommand(tagIdsWithRowVersion);
 
-            _dut = new CompletePreservationCommandHandler(_tagRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
+            _dut = new CompletePreservationCommandHandler(_projectRepoMock.Object, journeyRepoMock.Object, UnitOfWorkMock.Object);
         }
 
         [TestMethod]
