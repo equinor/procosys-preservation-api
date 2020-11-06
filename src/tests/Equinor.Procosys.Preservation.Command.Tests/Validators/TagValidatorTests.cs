@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownTagNoInUnknownProject_ShouldReturnTrue()
+        public async Task ExistsAsync_KnownTagNoInUnknownProject_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -154,7 +154,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_UnknownTagNoInProjectForTag_ShouldReturnTrue()
+        public async Task ExistsAsync_UnknownTagNoInProjectForTag_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -748,7 +748,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsReadyToBeDuplicatedAsync_SiteAreaTag_ShouldReturnsTrue()
+        public async Task IsReadyToBeDuplicatedAsync_SiteAreaTag_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -759,7 +759,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsReadyToBeDuplicatedAsync_PoAreaTag_ShouldReturnsFalse()
+        public async Task IsReadyToBeDuplicatedAsync_PoAreaTag_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -770,7 +770,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsReadyToBeDuplicatedAsync_UnknownTag_ShouldReturnsFalse()
+        public async Task IsReadyToBeDuplicatedAsync_UnknownTag_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
