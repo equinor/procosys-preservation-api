@@ -66,7 +66,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             RequirementDefinition requirementDef)
         {
             var projectRepository = new ProjectRepository(dbContext);
-            var project = new Project(plant, SeedingData.ProjectCode, SeedingData.ProjectDescription);
+            var project = new Project(plant, SeedingData.ProjectName, SeedingData.ProjectDescription);
             var siteTag = new Tag(
                 plant,
                 TagType.SiteArea,
