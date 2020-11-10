@@ -19,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
             string calloffNo, 
             string purchaseOrderNo, 
             string areaCode, 
+            string disciplineCode, 
             TagType tagType, 
             bool readyToBePreserved, 
             string remark, 
@@ -40,6 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
             CalloffNo = calloffNo;
             PurchaseOrderNo = purchaseOrderNo;
             AreaCode = areaCode;
+            DisciplineCode = disciplineCode;
             TagType = tagType;
             ReadyToBePreserved = readyToBePreserved;
             Remark = remark;
@@ -62,6 +64,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
         public string CalloffNo { get; }
         public string PurchaseOrderNo { get; }
         public string AreaCode { get; }
+        public string DisciplineCode { get; }
         public TagType TagType { get; }
         public bool ReadyToBePreserved { get; }
         public string Remark { get; }

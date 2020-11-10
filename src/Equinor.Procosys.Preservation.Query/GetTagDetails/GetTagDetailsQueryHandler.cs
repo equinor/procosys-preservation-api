@@ -47,6 +47,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagDetails
                                         tag.Calloff,
                                         tag.PurchaseOrderNo,
                                         tag.AreaCode, 
+                                        tag.DisciplineCode,
                                         tag.TagType,
                                         tag.IsReadyToBePreserved(),
                                         tag.Remark,
