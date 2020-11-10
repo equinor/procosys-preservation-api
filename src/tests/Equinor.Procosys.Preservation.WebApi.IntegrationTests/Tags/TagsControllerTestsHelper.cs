@@ -3,7 +3,6 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
@@ -22,11 +21,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var url = $"{_route}{parameters}";
             var response = await client.GetAsync(url);
 
-            Assert.AreEqual(expectedStatusCode, response.StatusCode);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (expectedStatusCode != HttpStatusCode.OK)
             {
-                await TestsHelper.AssertMessageOnBadRequestAsync(response, expectedMessageOnBadRequest);
                 return null;
             }
 
@@ -42,11 +40,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         {
             var response = await client.GetAsync($"{_route}/{id}");
 
-            Assert.AreEqual(expectedStatusCode, response.StatusCode);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (expectedStatusCode != HttpStatusCode.OK)
             {
-                await TestsHelper.AssertMessageOnBadRequestAsync(response, expectedMessageOnBadRequest);
                 return null;
             }
 
@@ -82,11 +79,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
             var response = await client.PostAsync($"{_route}/DuplicateArea", content);
-            Assert.AreEqual(expectedStatusCode, response.StatusCode);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
-                await TestsHelper.AssertMessageOnBadRequestAsync(response, expectedMessageOnBadRequest);
                 return -1;
             }
 
