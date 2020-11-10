@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
 {
     [TestClass]
-    public class ModesControllerPermissionTests : TestBase
+    public class ModesControllerNegativeTests : TestBase
     {
         #region GetAll
         [TestMethod]
