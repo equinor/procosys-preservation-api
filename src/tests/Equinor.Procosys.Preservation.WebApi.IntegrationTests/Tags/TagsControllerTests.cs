@@ -31,6 +31,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             Assert.AreEqual(InitialTagId, tag.Id);
             Assert.IsNotNull(tag.RowVersion);
+            Assert.IsNotNull(tag.AreaCode);
+            Assert.IsNotNull(tag.DisciplineCode);
         }
 
         [TestMethod]

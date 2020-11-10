@@ -77,6 +77,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 {
                     new TagRequirement(plant, 4, requirementDef)
                 });
+            siteTag.SetArea("A","A-D");
+            siteTag.SetDiscipline("D","D-D");
             project.AddTag(siteTag);
             projectRepository.Add(project);
             dbContext.SaveChangesAsync().Wait();
