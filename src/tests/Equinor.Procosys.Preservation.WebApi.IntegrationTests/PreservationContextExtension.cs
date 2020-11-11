@@ -34,7 +34,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var userProvider = serviceProvider.GetRequiredService<CurrentUserProvider>();
             var plantProvider = serviceProvider.GetRequiredService<PlantProvider>();
             userProvider.SetCurrentUserOid(new Guid(_seederOid));
-            plantProvider.SetPlant(SeedingData.Plant);
+            plantProvider.SetPlant(KnownTestData.Plant);
             
             /* 
              * Add the initial seeder user. Don't do this through the UnitOfWork as this expects/requires the current user to exist in the database.
@@ -66,12 +66,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             RequirementDefinition requirementDef)
         {
             var projectRepository = new ProjectRepository(dbContext);
-            var project = new Project(plant, SeedingData.ProjectName, SeedingData.ProjectDescription);
+            var project = new Project(plant, KnownTestData.ProjectName, KnownTestData.ProjectDescription);
             var siteTag = new Tag(
                 plant,
                 TagType.SiteArea,
-                SeedingData.SiteTagNo,
-                SeedingData.SiteTagDescription,
+                KnownTestData.SiteTagNo,
+                KnownTestData.SiteTagDescription,
                 step,
                 new List<TagRequirement>
                 {
@@ -87,8 +87,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private static Step SeedJourneys(PreservationContext dbContext, string plant, Mode mode, Responsible responsible)
         {
             var journeyRepository = new JourneyRepository(dbContext);
-            var journey = new Journey(plant, SeedingData.Journey);
-            var step = new Step(plant, SeedingData.Step, mode, responsible);
+            var journey = new Journey(plant, KnownTestData.Journey);
+            var step = new Step(plant, KnownTestData.Step, mode, responsible);
             journey.AddStep(step);
             journeyRepository.Add(journey);
             dbContext.SaveChangesAsync().Wait();
@@ -100,12 +100,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var requirementTypeRepository = new RequirementTypeRepository(dbContext);
             var requirementType = new RequirementType(
                 plant,
-                SeedingData.RequirementTypeCode,
-                SeedingData.RequirementTypeDescription,
+                KnownTestData.RequirementTypeCode,
+                KnownTestData.RequirementTypeDescription,
                 RequirementTypeIcon.Other,
                 10);
             var requirementDef =
-                new RequirementDefinition(plant, SeedingData.RequirementDefinition, 4, RequirementUsage.ForAll, 10);
+                new RequirementDefinition(plant, KnownTestData.RequirementDefinition, 4, RequirementUsage.ForAll, 10);
             requirementType.AddRequirementDefinition(requirementDef);
             requirementTypeRepository.Add(requirementType);
             dbContext.SaveChangesAsync().Wait();
@@ -115,7 +115,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private static Responsible SeedResponsibles(PreservationContext dbContext, string plant)
         {
             var responsibleRepository = new ResponsibleRepository(dbContext);
-            var responsible = new Responsible(plant, SeedingData.ResponsibleCode, SeedingData.ResponsibleDescription);
+            var responsible = new Responsible(plant, KnownTestData.ResponsibleCode, KnownTestData.ResponsibleDescription);
             responsibleRepository.Add(responsible);
             dbContext.SaveChangesAsync().Wait();
             return responsible;
@@ -124,7 +124,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private static Mode SeedModes(PreservationContext dbContext, string plant)
         {
             var modeRepository = new ModeRepository(dbContext);
-            var mode = new Mode(plant, SeedingData.Mode, false);
+            var mode = new Mode(plant, KnownTestData.Mode, false);
             modeRepository.Add(mode);
             dbContext.SaveChangesAsync().Wait();
             return mode;
