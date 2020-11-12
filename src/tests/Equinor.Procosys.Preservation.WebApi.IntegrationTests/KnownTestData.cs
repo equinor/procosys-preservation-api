@@ -1,6 +1,8 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
+﻿using System.Collections.Generic;
+
+namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
-    public static class KnownTestData
+    public class KnownTestData
     {
         public static string Plant => "PCS$PLANT1";
         public static string ProjectName => "TestProject";
@@ -13,7 +15,13 @@
         public static string RequirementDefinition => "TestRD";
         public static string Journey => "TestJourney";
         public static string Step => "TestStep";
+        public static string StandardTagNo => "Std-Test";
+        public static string StandardTagDescription => "Test - StdTag";
         public static string SiteTagNo => "#SITE-Test";
         public static string SiteTagDescription => "Test - SiteTag";
+        
+        public List<int> StandardTagIds = new List<int>();
+        public List<int> SiteAreaTagIds = new List<int>();
+        public List<int> StepIds = new List<int>();
     }
 }

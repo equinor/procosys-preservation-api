@@ -54,8 +54,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string ProjectWithoutAccess => "Project999";
         public static string AValidRowVersion => "AAAAAAAAAAA=";
 
+        public KnownTestData KnownTestData { get; }
+
         public TestFactory()
         {
+            KnownTestData = new KnownTestData();
+
             var projectDir = Directory.GetCurrentDirectory();
             _connectionString = GetTestDbConnectionString(projectDir);
             _configPath = Path.Combine(projectDir, "appsettings.json");
@@ -160,7 +164,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                         dbContext.Database.Migrate();
                     }
 
-                    dbContext.Seed(scope.ServiceProvider);
+                    dbContext.Seed(scope.ServiceProvider, KnownTestData);
                 }
             }
         }
