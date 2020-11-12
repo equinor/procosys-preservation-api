@@ -1,9 +1,9 @@
 ﻿namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
-    public static class SeedingData
+    public static class KnownTestData
     {
         public static string Plant => "PCS$PLANT1";
-        public static string ProjectCode => "TestProject";
+        public static string ProjectName => "TestProject";
         public static string ProjectDescription => "Test - Project";
         public static string Mode => "TestMode";
         public static string ResponsibleCode => "TestResp";

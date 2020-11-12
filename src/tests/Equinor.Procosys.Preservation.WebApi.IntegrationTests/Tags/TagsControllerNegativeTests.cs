@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 {
     [TestClass]
-    public class TagsControllerPermissionTests : TagsControllerTestsBase
+    public class TagsControllerNegativeTests : TagsControllerTestsBase
     {
         #region GetAll
         [TestMethod]

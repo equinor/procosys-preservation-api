@@ -57,6 +57,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
                 var journey = context.Journeys.Single(j => j.Steps.Any(s => s.Id == step.Id));
                 Assert.IsTrue(dto.IsInUse);
                 Assert.AreEqual(tag.AreaCode, dto.AreaCode);
+                Assert.AreEqual(tag.DisciplineCode, dto.DisciplineCode);
                 Assert.AreEqual(tag.Calloff, dto.CalloffNo);
                 Assert.AreEqual(tag.CommPkgNo, dto.CommPkgNo);
                 Assert.AreEqual(tag.Description, dto.Description);

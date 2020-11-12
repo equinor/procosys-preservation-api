@@ -35,7 +35,7 @@ stages:
 
   jobs:
   # Run Test
-  - template: /templates/pipelines/runtest-preservation.yml@templates
+  - template: /templates/pipelines/runtest.yml@templates
     parameters:
       deploymentName: 'runtests'
       dependsOn: ''

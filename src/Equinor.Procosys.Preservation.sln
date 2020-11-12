@@ -16,6 +16,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{946E8B4F-9EA5-4301-AFAD-14299C816709}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		..\pipelines\api-build.yml = ..\pipelines\api-build.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DFB50BC5-5201-42FD-A049-CF0259AA7AE8}"
