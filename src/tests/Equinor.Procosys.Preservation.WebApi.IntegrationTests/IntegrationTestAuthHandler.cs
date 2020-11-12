@@ -55,11 +55,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             {
                 Oid = Guid.Empty,
                 FullName = string.Empty,
-                IsAppToken = false,
-                Roles = new[]
-                {
-                    string.Empty
-                }
+                IsAppToken = false
             };
 
             var authorizationHeader = Request.Headers["Authorization"];
@@ -90,14 +86,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             switch (authType)
             {
                 case AuthType.Delegated:
-                    if (tokenDeserialized.Roles != null)
-                    {
-                        foreach (var role in tokenDeserialized.Roles)
-                        {
-                            claims.Add(new Claim(ClaimTypes.Role, role));
-                        }
-                    }
-
                     if (string.IsNullOrEmpty(tokenDeserialized.FullName))
                     {
                         throw new ArgumentException("Missing name property in token");
