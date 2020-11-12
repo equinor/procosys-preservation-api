@@ -325,8 +325,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenDescriptionIsBlank()
+        public void Validate_ShouldFail_WhenDescriptionIsBlankForAreaTag()
         {
+            _tagValidatorMock.Setup(t => t.VerifyTagIsAreaTagAsync(_tagId, default)).Returns(Task.FromResult(true));
             var command = new UpdateTagStepAndRequirementsCommand(
                 _tagId,
                 "",
@@ -387,6 +388,28 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag must be an area tag to update description!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldBeValid_WhenKeepingSameDescriptionOnOtherThanAreaTag()
+        {
+            var description = "Desc";
+            _tagValidatorMock.Setup(t => t.VerifyTagDescriptionAsync(_tagId, description, default)).Returns(Task.FromResult(true));
+            var command = new UpdateTagStepAndRequirementsCommand(
+                _tagId,
+                description,
+                _stepId,
+                new List<UpdateRequirementForCommand>(),
+                new List<RequirementForCommand>
+                {
+                    new RequirementForCommand(_reqDefForAll1Id, 1),
+                    new RequirementForCommand(_reqDefForAll2Id, 1)
+                },
+                RowVersion);
+
+            var result = _dut.Validate(command);
+
+            Assert.IsTrue(result.IsValid);
         }
     }
 }
