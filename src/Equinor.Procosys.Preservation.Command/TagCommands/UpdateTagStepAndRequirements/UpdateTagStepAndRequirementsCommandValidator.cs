@@ -59,12 +59,16 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                     .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!");
             });
 
-            When(command => command.Description != null, () =>
+            WhenAsync((command, token) => IsAnAreaTagAsync(command.TagId, token), () =>
             {
                 RuleFor(command => command)
                     .Must(command => !string.IsNullOrEmpty(command.Description))
-                    .WithMessage(command => "Description can not be blank!")
-                    .MustAsync((command, token) => BeAnAreaTagAsync(command.TagId, token))
+                    .WithMessage(command => "Description can not be blank!");
+            }).Otherwise(() =>
+            {
+                RuleFor(command => command)
+                    .MustAsync((command, token)
+                        => NotChangeDescriptionAsync(command.TagId, command.Description, token))
                     .WithMessage(command => "Tag must be an area tag to update description!");
             });
 
@@ -116,7 +120,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
             
-            async Task<bool> BeAnAreaTagAsync(int tagId, CancellationToken token)
+            async Task<bool> IsAnAreaTagAsync(int tagId, CancellationToken token)
                 => await tagValidator.VerifyTagIsAreaTagAsync(tagId, token);
             
             async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
@@ -143,6 +147,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);
+
+            async Task<bool> NotChangeDescriptionAsync(int tagId, string description, CancellationToken token)
+                => description == null || await tagValidator.VerifyTagDescriptionAsync(tagId, description, token);
         }
     }
 }

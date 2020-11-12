@@ -257,6 +257,12 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
         }
         
+        public async Task<bool> VerifyTagDescriptionAsync(int tagId, string description, CancellationToken token)
+        {
+            var tag = await GetTagWithoutIncludes(tagId, token);
+            return tag != null && tag.Description == description;
+        }
+
         public async Task<bool> IsInUseAsync(long tagId, CancellationToken token)
         {
             var inUse = await (from t in _context.QuerySet<Tag>()
