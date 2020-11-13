@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -87,27 +88,27 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetTag_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetTagAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                InitialTagId, 
+                SiteAreaTagIdUnderTest, 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetTag_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetTagAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                InitialTagId, 
+                SiteAreaTagIdUnderTest, 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetTag_AsPlanner_ShouldReturnOK_WhenKnownId()
             => await TagsControllerTestsHelper.GetTagAsync(
                 PlannerClient(TestFactory.PlantWithAccess), 
-                InitialTagId);
+                SiteAreaTagIdUnderTest);
 
         [TestMethod]
         public async Task GetTag_AsPreserver_ShouldReturnOK_WhenKnownId()
             => await TagsControllerTestsHelper.GetTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
-                InitialTagId);
+                SiteAreaTagIdUnderTest);
 
         [TestMethod]
         public async Task GetTag_AsPlanner_ShouldReturnNotFound_WhenUnknownId()
@@ -173,7 +174,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DuplicateAreaTag_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DuplicateAreaTagAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                InitialTagId, 
+                SiteAreaTagIdUnderTest, 
                 AreaTagType.SiteArea,
                 KnownDisciplineCode,
                 KnownAreaCode,
@@ -187,7 +188,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DuplicateAreaTag_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DuplicateAreaTagAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                InitialTagId, 
+                SiteAreaTagIdUnderTest, 
                 AreaTagType.SiteArea,
                 KnownDisciplineCode,
                 KnownAreaCode,
@@ -201,7 +202,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DuplicateAreaTag_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DuplicateAreaTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
-                InitialTagId, 
+                SiteAreaTagIdUnderTest, 
                 AreaTagType.SiteArea,
                 KnownDisciplineCode,
                 KnownAreaCode,
@@ -210,6 +211,93 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 null,
                 HttpStatusCode.Forbidden);
+        #endregion
+        
+        #region UpdateTagStepAndRequirements
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                null,
+                1111,
+                null,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                null,
+                1111,
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                null,
+                1111,
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                SiteAreaTagIdUnderTest, 
+                null,
+                StepIdUnderTest,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess), 
+                SiteAreaTagIdUnderTest, 
+                null,
+                StepIdUnderTest,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                PreserverClient(TestFactory.PlantWithAccess), 
+                SiteAreaTagIdUnderTest, 
+                null,
+                StepIdUnderTest,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldReturnBadRequest_WhenChangeDescriptionOnStandardTag()
+        {
+            // Arrange
+            var plannerClient = PlannerClient(TestFactory.PlantWithAccess);
+            var tag = await TagsControllerTestsHelper.GetTagAsync(
+                plannerClient, 
+                StandardTagIdUnderTest);
+            var oldDescription = tag.Description;
+            var newDescription = Guid.NewGuid().ToString();
+            Assert.AreNotEqual(oldDescription, newDescription);
+
+            // Act
+            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                plannerClient,
+                tag.Id,
+                newDescription,
+                tag.Step.Id,
+                tag.RowVersion,
+                HttpStatusCode.BadRequest,
+                "Tag must be an area tag to update description!");
+        }
         #endregion
     }
 }

@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
                 currentRowVersion);
 
             // Assert
-            Assert.AreNotEqual(currentRowVersion, newRowVersion);
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
 
             // Assert
             mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
-            Assert.AreNotEqual(currentRowVersion, newRowVersion);
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
             Assert.IsTrue(mode.IsVoided);
         }
 
@@ -116,7 +116,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
 
             // Assert
             mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
-            Assert.AreNotEqual(currentRowVersion, newRowVersion);
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
             Assert.IsFalse(mode.IsVoided);
         }
 

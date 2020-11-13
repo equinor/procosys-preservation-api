@@ -11,7 +11,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
     {
         protected readonly string KnownAreaCode = "A";
         protected readonly string KnownDisciplineCode = "D";
-        protected int InitialTagId;
+        protected int StandardTagIdUnderTest;
+        protected int SiteAreaTagIdUnderTest;
+        protected int StepIdUnderTest;
         protected int InitialTagsCount;
 
         [TestInitialize]
@@ -26,7 +28,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             InitialTagsCount = result.MaxAvailable;
             Assert.IsTrue(InitialTagsCount > 0, "Didn't find any tags at startup. Bad test setup");
             Assert.AreEqual(InitialTagsCount, result.Tags.Count);
-            InitialTagId = result.Tags.First().Id;
+            StandardTagIdUnderTest = TestFactory.KnownTestData.StandardTagIds.First();
+            SiteAreaTagIdUnderTest = TestFactory.KnownTestData.SiteAreaTagIds.First();
+            StepIdUnderTest = TestFactory.KnownTestData.StepIds.First();
 
             TestFactory
                 .DisciplineApiServiceMock

@@ -52,5 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         Task<bool> IsInUseAsync(long tagId, CancellationToken token);
         
         Task<bool> HasStepAsync(int tagId, int stepId, CancellationToken token);
+
+        Task<bool> VerifyTagDescriptionAsync(int tagId, string description, CancellationToken token);
     }
 }

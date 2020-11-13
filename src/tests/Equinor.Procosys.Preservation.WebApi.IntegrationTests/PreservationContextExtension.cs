@@ -29,7 +29,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             }
         }
 
-        public static void Seed(this PreservationContext dbContext, IServiceProvider serviceProvider)
+        public static void Seed(this PreservationContext dbContext, IServiceProvider serviceProvider, KnownTestData knownTestData)
         {
             var userProvider = serviceProvider.GetRequiredService<CurrentUserProvider>();
             var plantProvider = serviceProvider.GetRequiredService<PlantProvider>();
@@ -44,15 +44,21 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             var plant = plantProvider.Plant;
 
-            var mode = SeedModes(dbContext, plant);
+            var mode = SeedMode(dbContext, plant);
 
-            var responsible = SeedResponsibles(dbContext, plant);
+            var responsible = SeedResponsible(dbContext, plant);
 
-            var requirementDef = SeedRequirements(dbContext, plant);
+            var requirementDef = SeedRequirement(dbContext, plant);
 
-            var step = SeedJourneys(dbContext, plant, mode, responsible);
+            var journey = SeedJourney(dbContext, plant);
+            var step = SeedStep(dbContext, journey, mode, responsible);
+            knownTestData.StepIds.Add(step.Id);
 
-            SeedTags(dbContext, plant, step, requirementDef);
+            var project = SeedProject(dbContext, plant);
+            var standardTag = SeedStandardTag(dbContext, project, step, requirementDef);
+            knownTestData.StandardTagIds.Add(standardTag.Id);
+            var siteTag = SeedSiteTag(dbContext, project, step, requirementDef);
+            knownTestData.SiteAreaTagIds.Add(siteTag.Id);
         }
 
         private static void SeedCurrentUserAsPerson(PreservationContext dbContext, ICurrentUserProvider userProvider)
@@ -62,40 +68,73 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             dbContext.SaveChangesAsync().Wait();
         }
 
-        private static void SeedTags(PreservationContext dbContext, string plant, Step step,
-            RequirementDefinition requirementDef)
+        private static Project SeedProject(PreservationContext dbContext, string plant)
         {
             var projectRepository = new ProjectRepository(dbContext);
             var project = new Project(plant, KnownTestData.ProjectName, KnownTestData.ProjectDescription);
-            var siteTag = new Tag(
-                plant,
+            projectRepository.Add(project);
+            dbContext.SaveChangesAsync().Wait();
+            return project;
+        }
+
+        private static Tag SeedStandardTag(PreservationContext dbContext, Project project, Step step,
+            RequirementDefinition requirementDef)
+        {
+            var tag = new Tag(
+                project.Plant,
+                TagType.Standard,
+                KnownTestData.StandardTagNo,
+                KnownTestData.StandardTagDescription,
+                step,
+                new List<TagRequirement>
+                {
+                    new TagRequirement(project.Plant, 4, requirementDef)
+                });
+            tag.SetArea("A","A-D");
+            tag.SetDiscipline("D","D-D");
+            project.AddTag(tag);
+            dbContext.SaveChangesAsync().Wait();
+            return tag;
+        }
+
+        private static Tag SeedSiteTag(PreservationContext dbContext, Project project, Step step,
+            RequirementDefinition requirementDef)
+        {
+            var tag = new Tag(
+                project.Plant,
                 TagType.SiteArea,
                 KnownTestData.SiteTagNo,
                 KnownTestData.SiteTagDescription,
                 step,
                 new List<TagRequirement>
                 {
-                    new TagRequirement(plant, 4, requirementDef)
+                    new TagRequirement(project.Plant, 4, requirementDef)
                 });
-            siteTag.SetArea("A","A-D");
-            siteTag.SetDiscipline("D","D-D");
-            project.AddTag(siteTag);
-            projectRepository.Add(project);
+            tag.SetArea("A","A-D");
+            tag.SetDiscipline("D","D-D");
+            project.AddTag(tag);
             dbContext.SaveChangesAsync().Wait();
+            return tag;
         }
 
-        private static Step SeedJourneys(PreservationContext dbContext, string plant, Mode mode, Responsible responsible)
+        private static Journey SeedJourney(PreservationContext dbContext, string plant)
         {
             var journeyRepository = new JourneyRepository(dbContext);
             var journey = new Journey(plant, KnownTestData.Journey);
-            var step = new Step(plant, KnownTestData.Step, mode, responsible);
-            journey.AddStep(step);
             journeyRepository.Add(journey);
+            dbContext.SaveChangesAsync().Wait();
+            return journey;
+        }
+
+        private static Step SeedStep(PreservationContext dbContext, Journey journey, Mode mode, Responsible responsible)
+        {
+            var step = new Step(journey.Plant, KnownTestData.Step, mode, responsible);
+            journey.AddStep(step);
             dbContext.SaveChangesAsync().Wait();
             return step;
         }
 
-        private static RequirementDefinition SeedRequirements(PreservationContext dbContext, string plant)
+        private static RequirementDefinition SeedRequirement(PreservationContext dbContext, string plant)
         {
             var requirementTypeRepository = new RequirementTypeRepository(dbContext);
             var requirementType = new RequirementType(
@@ -112,7 +151,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             return requirementDef;
         }
 
-        private static Responsible SeedResponsibles(PreservationContext dbContext, string plant)
+        private static Responsible SeedResponsible(PreservationContext dbContext, string plant)
         {
             var responsibleRepository = new ResponsibleRepository(dbContext);
             var responsible = new Responsible(plant, KnownTestData.ResponsibleCode, KnownTestData.ResponsibleDescription);
@@ -121,7 +160,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             return responsible;
         }
 
-        private static Mode SeedModes(PreservationContext dbContext, string plant)
+        private static Mode SeedMode(PreservationContext dbContext, string plant)
         {
             var modeRepository = new ModeRepository(dbContext);
             var mode = new Mode(plant, KnownTestData.Mode, false);

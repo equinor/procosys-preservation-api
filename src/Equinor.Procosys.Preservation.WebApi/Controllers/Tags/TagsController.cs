@@ -188,7 +188,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Actions/{actionId}")]
-        public async Task<IActionResult> UpdateAction(
+        public async Task<ActionResult<string>> UpdateAction(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -316,7 +316,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTag(
+        public async Task<ActionResult<string>> UpdateTag(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -334,7 +334,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/UpdateTagStepAndRequirements")]
-        public async Task<IActionResult> UpdateTagStepAndRequirements(
+        public async Task<ActionResult<string>> UpdateTagStepAndRequirements(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
