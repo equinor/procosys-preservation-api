@@ -26,6 +26,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 where t.Id == tagId
                 select t).AnyAsync(token);
 
+        public async Task<bool> ExistsActionAttachmentAsync(int tagId, int actionId, int attachmentId, CancellationToken token) =>
+            await (from t in _context.QuerySet<Tag>()
+                join action in _context.QuerySet<Action>() on t.Id equals EF.Property<int>(action, "TagId")
+                join att in _context.QuerySet<ActionAttachment>() on action.Id equals EF.Property<int>(att, "ActionId")
+                where t.Id == tagId && action.Id == actionId && att.Id == attachmentId
+                select att).AnyAsync(token);
+
         public async Task<bool> ExistsAsync(string tagNo, string projectName, CancellationToken token) =>
             await (from tag in _context.QuerySet<Tag>()
                    join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
