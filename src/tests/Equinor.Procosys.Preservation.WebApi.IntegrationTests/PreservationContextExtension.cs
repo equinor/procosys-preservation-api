@@ -59,23 +59,37 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var standardTag = SeedStandardTag(dbContext, project, step, requirementDef);
             knownTestData.StandardTagIds.Add(standardTag.Id);
 
+            var standardTagAttachment = SeedTagAttachment(dbContext, standardTag);
+            knownTestData.StandardTagAttachmentIds.Add(standardTagAttachment.Id);
+
             var standardTagAction = SeedAction(dbContext, standardTag);
             knownTestData.StandardTagActionIds.Add(standardTagAction.Id);
             var standardTagActionAttachment = SeedActionAttachment(dbContext, standardTagAction);
             knownTestData.StandardTagActionAttachmentIds.Add(standardTagActionAttachment.Id);
 
-            var siteTag = SeedSiteTag(dbContext, project, step, requirementDef);
-            knownTestData.SiteAreaTagIds.Add(siteTag.Id);
+            var siteAreaTag = SeedSiteTag(dbContext, project, step, requirementDef);
+            knownTestData.SiteAreaTagIds.Add(siteAreaTag.Id);
 
-            var areaTagAction = SeedAction(dbContext, siteTag);
+            var siteAreaTagAttachment = SeedTagAttachment(dbContext, siteAreaTag);
+            knownTestData.SiteAreaTagAttachmentIds.Add(siteAreaTagAttachment.Id);
+
+            var areaTagAction = SeedAction(dbContext, siteAreaTag);
             knownTestData.SiteAreaTagActionIds.Add(areaTagAction.Id);
             var areaTagActionAttachment = SeedActionAttachment(dbContext, areaTagAction);
             knownTestData.SiteAreaTagActionAttachmentIds.Add(areaTagActionAttachment.Id);
         }
 
+        private static TagAttachment SeedTagAttachment(PreservationContext dbContext, Tag tag)
+        {
+            var attachment = new TagAttachment(tag.Plant, KnownTestData.TagAttachmentBlobStorageId, "Fil1.txt");
+            tag.AddAttachment(attachment);
+            dbContext.SaveChangesAsync().Wait();
+            return attachment;
+        }
+
         private static ActionAttachment SeedActionAttachment(PreservationContext dbContext, Action action)
         {
-            var attachment = new ActionAttachment(action.Plant, KnownTestData.ActionAttachmentBlobStorageId, "Fil.txt");
+            var attachment = new ActionAttachment(action.Plant, KnownTestData.ActionAttachmentBlobStorageId, "Fil2.txt");
             action.AddAttachment(attachment);
             dbContext.SaveChangesAsync().Wait();
             return attachment;
