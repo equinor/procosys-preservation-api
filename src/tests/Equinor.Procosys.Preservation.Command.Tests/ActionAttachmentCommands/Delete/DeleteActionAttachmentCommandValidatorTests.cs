@@ -2,7 +2,6 @@
 using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete;
 using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
-using Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -21,7 +20,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
         private Mock<IActionValidator> _actionValidatorMock;
-        private Mock<IAttachmentValidator> _attachmentValidatorMock;
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private DeleteActionAttachmentCommand _command;
 
@@ -33,13 +31,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
             _command = new DeleteActionAttachmentCommand(_tagId, _actionId, _attachmentId, _rowVersion);
 
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.ExistsAsync(_command.TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsActionAttachmentAsync(_tagId, _actionId, _attachmentId, default)).Returns(Task.FromResult(true));
 
             _actionValidatorMock = new Mock<IActionValidator>();
             _actionValidatorMock.Setup(r => r.ExistsAsync(2, default)).Returns(Task.FromResult(true));
-
-            _attachmentValidatorMock = new Mock<IAttachmentValidator>();
-            _attachmentValidatorMock.Setup(r => r.ExistsAsync(_command.AttachmentId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
@@ -47,7 +42,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
             _dut = new DeleteActionAttachmentCommandValidator(
                 _projectValidatorMock.Object,
                 _tagValidatorMock.Object,
-                _attachmentValidatorMock.Object,
                 _actionValidatorMock.Object,
                 _rowVersionValidatorMock.Object);
         }
@@ -73,18 +67,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
-        {
-            _tagValidatorMock.Setup(r => r.ExistsAsync(_command.TagId, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenTagIsVoided()
         {
             _tagValidatorMock.Setup(r => r.IsVoidedAsync(_command.TagId, default)).Returns(Task.FromResult(true));
@@ -94,18 +76,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag is voided!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenActionNotExists()
-        {
-            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Action doesn't exist!"));
         }
 
         [TestMethod]
@@ -123,7 +93,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
         [TestMethod]
         public void Validate_ShouldFail_WhenAttachmentNotExists()
         {
-            _attachmentValidatorMock.Setup(r => r.ExistsAsync(_command.AttachmentId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsActionAttachmentAsync(_tagId, _actionId, _attachmentId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
