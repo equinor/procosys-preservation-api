@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
     {
         private const string _route = "Tags";
 
-        public static async Task<TagResultDto>  GetAllTagsAsync(
+        public static async Task<TagResultDto> GetAllTagsAsync(
             HttpClient client,
             string projectName,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
@@ -117,6 +118,26 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             }
 
             return await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<List<ActionAttachmentDto>> GetAllActionAttachmentsAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.GetAsync($"{_route}/{tagId}/Actions/{actionId}/Attachments");
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<ActionAttachmentDto>>(content);
         }
     }
 }

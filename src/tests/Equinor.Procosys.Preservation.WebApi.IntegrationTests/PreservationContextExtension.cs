@@ -59,14 +59,18 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var standardTag = SeedStandardTag(dbContext, project, step, requirementDef);
             knownTestData.StandardTagIds.Add(standardTag.Id);
 
-            var action = SeedAction(dbContext, standardTag);
-            knownTestData.StandardTagActionIds.Add(action.Id);
-
-            var actionAttachment = SeedActionAttachment(dbContext, action);
-            knownTestData.StandardTagActionAttachmentIds.Add(actionAttachment.Id);
+            var standardTagAction = SeedAction(dbContext, standardTag);
+            knownTestData.StandardTagActionIds.Add(standardTagAction.Id);
+            var standardTagActionAttachment = SeedActionAttachment(dbContext, standardTagAction);
+            knownTestData.StandardTagActionAttachmentIds.Add(standardTagActionAttachment.Id);
 
             var siteTag = SeedSiteTag(dbContext, project, step, requirementDef);
             knownTestData.SiteAreaTagIds.Add(siteTag.Id);
+
+            var areaTagAction = SeedAction(dbContext, siteTag);
+            knownTestData.SiteAreaTagActionIds.Add(areaTagAction.Id);
+            var areaTagActionAttachment = SeedActionAttachment(dbContext, areaTagAction);
+            knownTestData.SiteAreaTagActionAttachmentIds.Add(areaTagActionAttachment.Id);
         }
 
         private static ActionAttachment SeedActionAttachment(PreservationContext dbContext, Action action)
@@ -74,7 +78,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var attachment = new ActionAttachment(action.Plant, KnownTestData.ActionAttachmentBlobStorageId, "Fil.txt");
             action.AddAttachment(attachment);
             dbContext.SaveChangesAsync().Wait();
-            
             return attachment;
         }
 
@@ -83,7 +86,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var action = new Action(tag.Plant, KnownTestData.Action, KnownTestData.ActionDescription, null);
             tag.AddAction(action);
             dbContext.SaveChangesAsync().Wait();
-            
             return action;
         }
 

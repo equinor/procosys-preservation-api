@@ -9,7 +9,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
     [TestClass]
     public class TagsControllerNegativeTests : TagsControllerTestsBase
     {
-        #region GetAll
+        #region GetAllTags
         [TestMethod]
         public async Task GetAllTags_AsAnonymous_ShouldReturnUnauthorized()
             => await TagsControllerTestsHelper.GetAllTagsAsync(
@@ -46,18 +46,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 TestFactory.ProjectWithAccess,
                 HttpStatusCode.Forbidden);
-
-        [TestMethod]
-        public async Task GetAllTags_AsPlanner_ShouldReturnOk()
-            => await TagsControllerTestsHelper.GetAllTagsAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
-                TestFactory.ProjectWithAccess);
-
-        [TestMethod]
-        public async Task GetAllTags_AsPreserver_ShouldReturnOk()
-            => await TagsControllerTestsHelper.GetAllTagsAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
-                TestFactory.ProjectWithAccess);
         #endregion
         
         #region Get
@@ -111,14 +99,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 SiteAreaTagIdUnderTest);
 
         [TestMethod]
-        public async Task GetTag_AsPlanner_ShouldReturnNotFound_WhenUnknownId()
+        public async Task GetTag_AsPlanner_ShouldReturnNotFound_WhenUnknownTagId()
             => await TagsControllerTestsHelper.GetTagAsync(
                 PlannerClient(TestFactory.PlantWithAccess), 
                 9999, 
                 HttpStatusCode.NotFound);
 
         [TestMethod]
-        public async Task GetTag_AsPreserver_ShouldReturnNotFound_WhenUnknownId()
+        public async Task GetTag_AsPreserver_ShouldReturnNotFound_WhenUnknownTagId()
             => await TagsControllerTestsHelper.GetTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
                 9999, 
@@ -299,5 +287,67 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Tag must be an area tag to update description!");
         }
         #endregion
+
+        #region GetAllActionAttachments
+        [TestMethod]
+        public async Task GetAllActionAttachments_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task GetAllActionAttachments_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task GetAllActionAttachments_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task GetAllActionAttachments_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetAllActionAttachments_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetAllActionAttachments_AsPreserver_ShouldReturnNotFound_WhenUnknownTagId()
+            => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
+                SiteAreaTagActionIdUnderTest,
+                HttpStatusCode.NotFound);
+
+        [TestMethod]
+        public async Task GetAllActionAttachments_AsPreserver_ShouldReturnNotFound_WhenUnknownActionId()
+            => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                SiteAreaTagActionIdUnderTest, // known actionId, but under other tag
+                HttpStatusCode.NotFound);
+
+        #endregion
+        
     }
 }

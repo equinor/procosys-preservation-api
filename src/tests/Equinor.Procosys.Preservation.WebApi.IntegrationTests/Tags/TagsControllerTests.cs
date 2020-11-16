@@ -13,27 +13,32 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAllTags_AsPreserver_ShouldGetTags()
         {
             // Act
-            var result = await TagsControllerTestsHelper.GetAllTagsAsync(
+            var tagResultDto = await TagsControllerTestsHelper.GetAllTagsAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
                 TestFactory.ProjectWithAccess);
 
             // Assert
-            Assert.IsTrue(result.Tags.Count > 0);
+            Assert.IsTrue(tagResultDto.Tags.Count > 0);
+
+            var siteAreaTag = tagResultDto.Tags.Single(t => t.Id == SiteAreaTagIdUnderTest);
+            Assert.IsNotNull(siteAreaTag.TagNo);
+            Assert.IsNotNull(siteAreaTag.RowVersion);
         }
 
         [TestMethod]
         public async Task GetTag_AsPreserver_ShouldGetTag()
         {
             // Act
-            var tag = await TagsControllerTestsHelper.GetTagAsync(
+            var siteAreaTag = await TagsControllerTestsHelper.GetTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
                 SiteAreaTagIdUnderTest);
 
             // Assert
-            Assert.AreEqual(SiteAreaTagIdUnderTest, tag.Id);
-            Assert.IsNotNull(tag.RowVersion);
-            Assert.IsNotNull(tag.AreaCode);
-            Assert.IsNotNull(tag.DisciplineCode);
+            Assert.AreEqual(SiteAreaTagIdUnderTest, siteAreaTag.Id);
+            Assert.IsNotNull(siteAreaTag.TagNo);
+            Assert.IsNotNull(siteAreaTag.RowVersion);
+            Assert.IsNotNull(siteAreaTag.AreaCode);
+            Assert.IsNotNull(siteAreaTag.DisciplineCode);
         }
 
         [TestMethod]
@@ -122,6 +127,24 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(currentRowVersion, newRowVersion);
             tag = await TagsControllerTestsHelper.GetTagAsync(plannerClient, tagIdUnderTest);
             Assert.AreEqual(oldDescription, tag.Description);
+        }
+
+        [TestMethod]
+        public async Task GetAllActionAttachments_AsPreserver_ShouldGetAttachments()
+        {
+            // Act
+            var attachmentDtos = await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest);
+
+            // Assert
+            Assert.IsNotNull(attachmentDtos);
+            Assert.IsTrue(attachmentDtos.Count > 0);
+
+            var standardTagActionAttachment = attachmentDtos.Single(t => t.Id == StandardTagActionAttachmentIdUnderTest);
+            Assert.IsNotNull(standardTagActionAttachment.FileName);
+            Assert.IsNotNull(standardTagActionAttachment.RowVersion);
         }
     }
 }
