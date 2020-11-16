@@ -99,7 +99,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.D
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag, Action and/or Attachment doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag, action and/or attachment doesn't exist!"));
         }
 
         [TestMethod]

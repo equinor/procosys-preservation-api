@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
                 .MustAsync(BeAnExistingTagAttachmentAsync)
-                .WithMessage(command => "Tag and/or Attachment doesn't exist!")
+                .WithMessage(command => "Tag and/or attachment doesn't exist!")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
