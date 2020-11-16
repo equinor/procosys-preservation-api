@@ -146,5 +146,32 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(standardTagActionAttachment.FileName);
             Assert.IsNotNull(standardTagActionAttachment.RowVersion);
         }
+
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsPreserver_ShouldDeleteActionAttachment()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var attachmentDtos = await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                preserverClient,
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest);
+            var standardTagActionAttachment = attachmentDtos.Single(t => t.Id == StandardTagActionAttachmentIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                preserverClient,
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                StandardTagActionAttachmentIdUnderTest,
+                standardTagActionAttachment.RowVersion);
+
+            // Assert
+            attachmentDtos = await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
+                preserverClient,
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest);
+            Assert.IsNull(attachmentDtos.SingleOrDefault(m => m.Id == StandardTagActionAttachmentIdUnderTest));
+        }
     }
 }
