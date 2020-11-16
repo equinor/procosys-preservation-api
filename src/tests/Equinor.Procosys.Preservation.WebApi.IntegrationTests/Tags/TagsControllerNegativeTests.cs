@@ -379,7 +379,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 StandardTagAttachmentIdUnderTest,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "Tag and/or Attachment doesn't exist!");
+                "Tag and/or attachment doesn't exist!");
 
         [TestMethod]
         public async Task DeleteTagAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
@@ -389,7 +389,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 SiteAreaTagAttachmentIdUnderTest,  // known attachmentId, but under other Tag
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "Tag and/or Attachment doesn't exist!");
+                "Tag and/or attachment doesn't exist!");
         #endregion
         
         #region GetAllActionAttachments
@@ -515,7 +515,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 StandardTagActionAttachmentIdUnderTest,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "Tag, Action and/or Attachment doesn't exist!");
+                "Tag, action and/or attachment doesn't exist!");
 
         [TestMethod]
         public async Task DeleteActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
@@ -526,7 +526,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 StandardTagActionAttachmentIdUnderTest,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "Tag, Action and/or Attachment doesn't exist!");
+                "Tag, action and/or attachment doesn't exist!");
 
         [TestMethod]
         public async Task DeleteActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
@@ -537,7 +537,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 SiteAreaTagActionAttachmentIdUnderTest,  // known attachmentId, but under other action
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "Tag, Action and/or Attachment doesn't exist!");
+                "Tag, action and/or attachment doesn't exist!");
 
         #endregion
         
