@@ -48,7 +48,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 HttpStatusCode.Forbidden);
         #endregion
         
-        #region Get
+        #region GetTag
         [TestMethod]
         public async Task GetTag_AsAnonymous_ShouldReturnUnauthorized()
             => await TagsControllerTestsHelper.GetTagAsync(
@@ -346,6 +346,94 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 StandardTagIdUnderTest,
                 SiteAreaTagActionIdUnderTest, // known actionId, but under other tag
                 HttpStatusCode.NotFound);
+
+        #endregion
+
+        #region DeleteActionAttachment
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                StandardTagActionAttachmentIdUnderTest,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                StandardTagActionAttachmentIdUnderTest,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                StandardTagActionAttachmentIdUnderTest,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                StandardTagActionAttachmentIdUnderTest,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                StandardTagActionAttachmentIdUnderTest,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownTagId()
+            => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
+                StandardTagActionIdUnderTest,
+                StandardTagActionAttachmentIdUnderTest,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "Tag doesn't exist");
+
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
+            => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                SiteAreaTagActionIdUnderTest, // known actionId, but under other tag
+                StandardTagActionAttachmentIdUnderTest,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "???");
+
+        [TestMethod]
+        public async Task DeleteActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
+            => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                StandardTagActionIdUnderTest,
+                SiteAreaTagActionAttachmentIdUnderTest,  // known attachmentId, but under other action
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "???");
 
         #endregion
         

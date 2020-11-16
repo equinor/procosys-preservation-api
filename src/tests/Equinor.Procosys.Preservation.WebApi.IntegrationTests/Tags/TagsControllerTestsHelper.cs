@@ -139,5 +139,28 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<ActionAttachmentDto>>(content);
         }
+
+        public static async Task DeleteActionAttachmentAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            int attachmentId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{_route}/{tagId}/Actions/{actionId}/Attachments/{attachmentId}")
+            {
+                Content = new StringContent(serializePayload, Encoding.UTF8, "application/json")
+            };
+
+            var response = await client.SendAsync(request);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
     }
 }
