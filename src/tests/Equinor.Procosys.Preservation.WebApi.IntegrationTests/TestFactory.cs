@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
@@ -41,6 +42,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
         public readonly Mock<IAreaApiService> AreaApiServiceMock = new Mock<IAreaApiService>();
+        public readonly Mock<IBlobStorage> BlobStorageMock = new Mock<IBlobStorage>();
 
         public static string AnonymousUser => "NN";
         public static string LibraryAdminUser => "Arne Admin";
@@ -120,6 +122,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
                 services.AddScoped(serviceProvider => DisciplineApiServiceMock.Object);
                 services.AddScoped(serviceProvider => AreaApiServiceMock.Object);
+                services.AddScoped(serviceProvider => BlobStorageMock.Object);
             });
 
             builder.ConfigureServices(services =>

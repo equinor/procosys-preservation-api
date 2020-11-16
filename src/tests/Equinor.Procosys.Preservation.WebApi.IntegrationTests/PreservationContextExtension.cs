@@ -13,6 +13,7 @@ using Equinor.Procosys.Preservation.Infrastructure.Repositories;
 using Equinor.Procosys.Preservation.WebApi.Misc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
@@ -57,8 +58,33 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var project = SeedProject(dbContext, plant);
             var standardTag = SeedStandardTag(dbContext, project, step, requirementDef);
             knownTestData.StandardTagIds.Add(standardTag.Id);
+
+            var action = SeedAction(dbContext, standardTag);
+            knownTestData.StandardTagActionIds.Add(action.Id);
+
+            var actionAttachment = SeedActionAttachment(dbContext, action);
+            knownTestData.StandardTagActionAttachmentIds.Add(actionAttachment.Id);
+
             var siteTag = SeedSiteTag(dbContext, project, step, requirementDef);
             knownTestData.SiteAreaTagIds.Add(siteTag.Id);
+        }
+
+        private static ActionAttachment SeedActionAttachment(PreservationContext dbContext, Action action)
+        {
+            var attachment = new ActionAttachment(action.Plant, KnownTestData.ActionAttachmentBlobStorageId, "Fil.txt");
+            action.AddAttachment(attachment);
+            dbContext.SaveChangesAsync().Wait();
+            
+            return attachment;
+        }
+
+        private static Action SeedAction(PreservationContext dbContext, Tag tag)
+        {
+            var action = new Action(tag.Plant, KnownTestData.Action, KnownTestData.ActionDescription, null);
+            tag.AddAction(action);
+            dbContext.SaveChangesAsync().Wait();
+            
+            return action;
         }
 
         private static void SeedCurrentUserAsPerson(PreservationContext dbContext, ICurrentUserProvider userProvider)

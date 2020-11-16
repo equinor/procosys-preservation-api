@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
@@ -19,9 +20,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string StandardTagDescription => "Test - StdTag";
         public static string SiteTagNo => "#SITE-Test";
         public static string SiteTagDescription => "Test - SiteTag";
-        
+        public static string Action => "TestAction";
+        public static string ActionDescription => "Test - Action";
+        public static Guid ActionAttachmentBlobStorageId = new Guid("{EBD527CC-54CD-443E-B6E4-D7D486EFA5BB}");
+
         public List<int> StandardTagIds = new List<int>();
         public List<int> SiteAreaTagIds = new List<int>();
         public List<int> StepIds = new List<int>();
+        public List<int> StandardTagActionIds = new List<int>();
+        public List<int> StandardTagActionAttachmentIds = new List<int>();
     }
 }
