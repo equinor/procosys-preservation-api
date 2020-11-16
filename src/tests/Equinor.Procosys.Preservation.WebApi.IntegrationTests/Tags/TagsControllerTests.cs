@@ -130,6 +130,47 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
+        public async Task GetAllTagAttachments_AsPreserver_ShouldGetAttachments()
+        {
+            // Act
+            var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest);
+
+            // Assert
+            Assert.IsNotNull(attachmentDtos);
+            Assert.IsTrue(attachmentDtos.Count > 0);
+
+            var standardTagAttachment = attachmentDtos.Single(t => t.Id == StandardTagAttachmentIdUnderTest);
+            Assert.IsNotNull(standardTagAttachment.FileName);
+            Assert.IsNotNull(standardTagAttachment.RowVersion);
+        }
+
+        [TestMethod]
+        public async Task DeleteTagAttachment_AsPreserver_ShouldDeleteTagAttachment()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
+                preserverClient,
+                StandardTagIdUnderTest);
+            var standardTagAttachment = attachmentDtos.Single(t => t.Id == StandardTagAttachmentIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.DeleteTagAttachmentAsync(
+                preserverClient,
+                StandardTagIdUnderTest,
+                StandardTagAttachmentIdUnderTest,
+                standardTagAttachment.RowVersion);
+
+            // Assert
+            attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
+                preserverClient,
+                StandardTagIdUnderTest);
+            Assert.IsNull(attachmentDtos.SingleOrDefault(m => m.Id == StandardTagAttachmentIdUnderTest));
+        }
+
+        [TestMethod]
         public async Task GetAllActionAttachments_AsPreserver_ShouldGetAttachments()
         {
             // Act
