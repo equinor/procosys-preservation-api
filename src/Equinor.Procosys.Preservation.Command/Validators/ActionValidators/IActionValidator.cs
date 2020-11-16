@@ -5,7 +5,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ActionValidators
 {
     public interface IActionValidator
     {
-        Task<bool> ExistsAsync(int actionId, CancellationToken token);
+        Task<bool> ExistsAsync(int actionId, CancellationToken token); // todo remove
         Task<bool> IsClosedAsync(int actionId, CancellationToken token);
         Task<bool> AttachmentWithFilenameExistsAsync(int actionId, string fileName, CancellationToken token);
     }
