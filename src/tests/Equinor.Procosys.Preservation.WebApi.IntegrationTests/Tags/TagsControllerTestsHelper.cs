@@ -35,11 +35,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         
         public static async Task<TagDetailsDto> GetTagAsync(
             HttpClient client,
-            int id,
+            int tagId,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
-            var response = await client.GetAsync($"{_route}/{id}");
+            var response = await client.GetAsync($"{_route}/{tagId}");
 
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
@@ -221,6 +221,56 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
             var content = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<ActionDto>>(content);
+        }
+
+        public static async Task<string> UpdateActionAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            string title,
+            string description,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                title,
+                description,
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_route}/{tagId}/Actions/{actionId}", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<ActionDetailsDto> GetActionAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.GetAsync($"{_route}/{tagId}/Actions/{actionId}");
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ActionDetailsDto>(content);
         }
     }
 }
