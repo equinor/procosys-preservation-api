@@ -411,7 +411,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 StandardTagActionAttachmentIdUnderTest,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "Tag doesn't exist");
+                "Attachment doesn't exist!");
 
         [TestMethod]
         public async Task DeleteActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
@@ -422,7 +422,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 StandardTagActionAttachmentIdUnderTest,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "???");
+                "Attachment doesn't exist!");
 
         [TestMethod]
         public async Task DeleteActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
@@ -433,7 +433,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 SiteAreaTagActionAttachmentIdUnderTest,  // known attachmentId, but under other action
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "???");
+                "Attachment doesn't exist!");
 
         #endregion
         
