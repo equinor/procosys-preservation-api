@@ -657,7 +657,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "TestDescription",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "Tag and/or Action doesn't exist!");
+                "Tag and/or action doesn't exist!");
 
         [TestMethod]
         public async Task UpdateAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
@@ -669,7 +669,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "TestDescription",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
-                "Tag and/or Action doesn't exist!");
+                "Tag and/or action doesn't exist!");
         #endregion
         
         #region GetAction
