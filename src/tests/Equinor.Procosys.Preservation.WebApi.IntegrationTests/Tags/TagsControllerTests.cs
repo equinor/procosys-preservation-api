@@ -214,5 +214,22 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 StandardTagActionIdUnderTest);
             Assert.IsNull(attachmentDtos.SingleOrDefault(m => m.Id == StandardTagActionAttachmentIdUnderTest));
         }
+
+        [TestMethod]
+        public async Task GetAllActions_AsPreserver_ShouldGetAttachments()
+        {
+            // Act
+            var actionDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest);
+
+            // Assert
+            Assert.IsNotNull(actionDtos);
+            Assert.IsTrue(actionDtos.Count > 0);
+
+            var standardTagAction = actionDtos.Single(t => t.Id == StandardTagActionIdUnderTest);
+            Assert.IsNotNull(standardTagAction.Title);
+            Assert.IsNotNull(standardTagAction.RowVersion);
+        }
     }
 }

@@ -553,5 +553,52 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Tag, Action and/or Attachment doesn't exist!");
 
         #endregion
+        
+        #region GetAllActions
+        [TestMethod]
+        public async Task GetAllActions_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.GetAllActionsAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task GetAllActions_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.GetAllActionsAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task GetAllActions_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.GetAllActionsAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                StandardTagIdUnderTest,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task GetAllActions_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.GetAllActionsAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetAllActions_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.GetAllActionsAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetAllActions_AsPreserver_ShouldReturnNotFound_WhenUnknownTagId()
+            => await TagsControllerTestsHelper.GetAllActionsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
+                HttpStatusCode.NotFound);
+
+        #endregion
     }
 }
