@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
 using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -15,7 +14,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         private DeleteTagAttachmentCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
-        private Mock<IAttachmentValidator> _attachmentValidatorMock;
         private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private DeleteTagAttachmentCommand _command;
 
@@ -31,10 +29,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Dele
             _command = new DeleteTagAttachmentCommand(_tagId, _attachmentId, _rowVersion);
 
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.ExistsAsync(_command.TagId, default)).Returns(Task.FromResult(true));
-
-            _attachmentValidatorMock = new Mock<IAttachmentValidator>();
-            _attachmentValidatorMock.Setup(r => r.ExistsAsync(_command.AttachmentId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsTagAttachmentAsync(_command.TagId, _command.AttachmentId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_rowVersion)).Returns(true);
@@ -42,7 +37,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Dele
             _dut = new DeleteTagAttachmentCommandValidator(
                 _projectValidatorMock.Object,
                 _tagValidatorMock.Object,
-                _attachmentValidatorMock.Object,
                 _rowVersionValidatorMock.Object);
         }
 
@@ -67,27 +61,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
-        {
-            _tagValidatorMock.Setup(r => r.ExistsAsync(_command.TagId, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenAttachmentNotExists()
         {
-            _attachmentValidatorMock.Setup(r => r.ExistsAsync(_command.AttachmentId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsTagAttachmentAsync(_command.TagId, _command.AttachmentId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Attachment doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag and/or Attachment doesn't exist!"));
         }
 
         [TestMethod]
