@@ -17,6 +17,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         protected int StandardTagActionIdUnderTest;
         protected int SiteAreaTagActionIdUnderTest;
         protected int InitialTagsCount;
+        protected int StandardTagAttachmentIdUnderTest;
+        protected int SiteAreaTagAttachmentIdUnderTest;
         protected int StandardTagActionAttachmentIdUnderTest;
         protected int SiteAreaTagActionAttachmentIdUnderTest;
 
@@ -37,6 +39,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             StepIdUnderTest = TestFactory.KnownTestData.StepIds.First();
             StandardTagActionIdUnderTest = TestFactory.KnownTestData.StandardTagActionIds.First();
             SiteAreaTagActionIdUnderTest = TestFactory.KnownTestData.SiteAreaTagActionIds.First();
+            StandardTagAttachmentIdUnderTest = TestFactory.KnownTestData.StandardTagAttachmentIds.First();
+            SiteAreaTagAttachmentIdUnderTest = TestFactory.KnownTestData.SiteAreaTagAttachmentIds.First();
             StandardTagActionAttachmentIdUnderTest = TestFactory.KnownTestData.StandardTagActionAttachmentIds.First();
             SiteAreaTagActionAttachmentIdUnderTest = TestFactory.KnownTestData.SiteAreaTagActionAttachmentIds.First();
 

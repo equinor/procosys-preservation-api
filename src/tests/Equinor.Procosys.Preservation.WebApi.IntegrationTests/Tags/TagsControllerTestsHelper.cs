@@ -120,6 +120,47 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             return await response.Content.ReadAsStringAsync();
         }
 
+        public static async Task<List<TagAttachmentDto>> GetAllTagAttachmentsAsync(
+            HttpClient client,
+            int tagId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.GetAsync($"{_route}/{tagId}/Attachments");
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<TagAttachmentDto>>(content);
+        }
+
+        public static async Task DeleteTagAttachmentAsync(
+            HttpClient client,
+            int tagId,
+            int attachmentId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{_route}/{tagId}/Attachments/{attachmentId}")
+            {
+                Content = new StringContent(serializePayload, Encoding.UTF8, "application/json")
+            };
+
+            var response = await client.SendAsync(request);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
         public static async Task<List<ActionAttachmentDto>> GetAllActionAttachmentsAsync(
             HttpClient client,
             int tagId,
