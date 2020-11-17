@@ -256,12 +256,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var tagIdUnderTest = StandardTagIdUnderTest;
             var actionIdUnderTest = StandardTagActionIdUnderTest;
 
-            var actionDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
-                preserverClient,
-                tagIdUnderTest);
-            
-            var action = actionDtos.Single(t => t.Id == StandardTagActionIdUnderTest);
-            var currentRowVersion = action.RowVersion;
+            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            var currentRowVersion = actionDetails.RowVersion;
             var newTitle = Guid.NewGuid().ToString();
             var newDescription = Guid.NewGuid().ToString();
 
@@ -276,12 +275,43 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+            actionDetails = await TagsControllerTestsHelper.GetActionAsync(
                 preserverClient, 
                 tagIdUnderTest,
                 actionIdUnderTest);
             Assert.AreEqual(newTitle, actionDetails.Title);
             Assert.AreEqual(newDescription, actionDetails.Description);
+        }
+
+        [TestMethod]
+        public async Task CloseAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = StandardTagIdUnderTest;
+            var actionIdUnderTest = StandardTagActionIdUnderTest;
+
+            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            var currentRowVersion = actionDetails.RowVersion;
+            Assert.IsNull(actionDetails.ClosedAtUtc);
+
+            // Act
+            var newRowVersion = await TagsControllerTestsHelper.CloseActionAsync(
+                preserverClient,
+                tagIdUnderTest,
+                actionIdUnderTest,
+                currentRowVersion);
+            
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            Assert.IsNotNull(actionDetails.ClosedAtUtc);
         }
     }
 }
