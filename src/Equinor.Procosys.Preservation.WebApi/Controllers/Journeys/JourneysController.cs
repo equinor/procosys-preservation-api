@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateJourney(
+        public async Task<ActionResult<string>> UpdateJourney(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -97,7 +97,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
         
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Void")]
-        public async Task<IActionResult> VoidJourney(
+        public async Task<ActionResult<string>> VoidJourney(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -111,7 +111,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Unvoid")]
-        public async Task<IActionResult> UnvoidJourney(
+        public async Task<ActionResult<string>> UnvoidJourney(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -138,7 +138,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_CREATE)]
         [HttpPost("{id}/AddStep")]
-        public async Task<ActionResult> AddStep(
+        public async Task<ActionResult<int>> AddStep(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -157,7 +157,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}/Steps/{stepId}")]
-        public async Task<ActionResult> UpdateStep(
+        public async Task<ActionResult<string>> UpdateStep(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -193,7 +193,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Steps/{stepId}/Void")]
-        public async Task<ActionResult> VoidStep(
+        public async Task<ActionResult<string>> VoidStep(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
@@ -208,7 +208,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_VOIDUNVOID)]
         [HttpPut("{id}/Steps/{stepId}/Unvoid")]
-        public async Task<ActionResult> UnvoidStep(
+        public async Task<ActionResult<string>> UnvoidStep(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]

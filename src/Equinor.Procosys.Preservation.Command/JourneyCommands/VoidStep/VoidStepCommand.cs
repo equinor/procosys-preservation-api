@@ -3,7 +3,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep
 {
-    public class VoidStepCommand : IRequest<Result<Unit>>
+    public class VoidStepCommand : IRequest<Result<string>>
     {
         public VoidStepCommand(int journeyId, int stepId, string rowVersion)
         {
