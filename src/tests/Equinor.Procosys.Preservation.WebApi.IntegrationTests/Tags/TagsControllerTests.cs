@@ -233,7 +233,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         }
         
         [TestMethod]
-        public async Task GetAction_AsPreserver_ShouldReturnNotFound_WhenUnknownActionId()
+        public async Task GetAction_AsPreserver_ShouldGetActionDetails()
         {
             // Act
             var actionDetailsDto = await TagsControllerTestsHelper.GetActionAsync(
@@ -249,7 +249,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task UpdateAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
+        public async Task UpdateAction_AsPreserver_ShouldUpdateAction()
         {
             // Arrange
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
@@ -284,12 +284,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task CloseAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
+        public async Task CloseAction_AsPreserver_ShouldCloseAction()
         {
             // Arrange
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
             var tagIdUnderTest = StandardTagIdUnderTest;
-            var actionIdUnderTest = StandardTagActionIdUnderTest;
+            var actionIdUnderTest = await TagsControllerTestsHelper.CreateActionAsync(
+                preserverClient,
+                tagIdUnderTest,
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString());
 
             var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
                 preserverClient, 
@@ -312,6 +316,35 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 tagIdUnderTest,
                 actionIdUnderTest);
             Assert.IsNotNull(actionDetails.ClosedAtUtc);
+        }
+
+        [TestMethod]
+        public async Task UploadActionAttachment_AsPreserver_ShouldUploadActionAttachment()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = StandardTagIdUnderTest;
+            var actionIdUnderTest = StandardTagActionIdUnderTest;
+
+            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            var attachmentCount = actionDetails.AttachmentCount;
+
+            // Act
+            await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                preserverClient,
+                tagIdUnderTest,
+                actionIdUnderTest,
+                FileToBeUploaded);
+            
+            // Assert
+            actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            Assert.AreEqual(attachmentCount + 1, actionDetails.AttachmentCount);
         }
     }
 }

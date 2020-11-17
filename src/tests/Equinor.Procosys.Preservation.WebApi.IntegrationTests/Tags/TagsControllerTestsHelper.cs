@@ -298,5 +298,47 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
             return await response.Content.ReadAsStringAsync();
         }
+
+        public static async Task UploadActionAttachmentAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            TestFile file,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var httpContent = file.CreateHttpContent();
+            var response = await client.PostAsync($"{_route}/{tagId}/Actions/{actionId}/Attachments", httpContent);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<int> CreateActionAsync(
+            HttpClient client,
+            int tagId,
+            string title,
+            string description,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                title,
+                description
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_route}/{tagId}/Actions", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return -1;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<int>(jsonString);
+        }
     }
 }

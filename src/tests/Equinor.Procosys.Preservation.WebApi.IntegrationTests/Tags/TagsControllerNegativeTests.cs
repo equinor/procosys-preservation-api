@@ -801,5 +801,75 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 HttpStatusCode.BadRequest,
                 "Tag and/or action doesn't exist!");
         #endregion
+        
+        #region UploadActionAttachment
+        [TestMethod]
+        public async Task UploadActionAttachment_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                FileToBeUploaded,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task UploadActionAttachment_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                FileToBeUploaded,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task UploadActionAttachment_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                FileToBeUploaded,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task UploadActionAttachment_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                SiteAreaTagIdUnderTest, 
+                SiteAreaTagActionIdUnderTest,
+                FileToBeUploaded,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UploadActionAttachment_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess), 
+                SiteAreaTagIdUnderTest, 
+                SiteAreaTagActionIdUnderTest,
+                FileToBeUploaded,
+                HttpStatusCode.Forbidden);
+
+
+        [TestMethod]
+        public async Task UploadActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownTagId()
+            => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999, 
+                SiteAreaTagActionIdUnderTest,
+                FileToBeUploaded,
+                HttpStatusCode.BadRequest,
+                "Tag and/or action doesn't exist!");
+
+        [TestMethod]
+        public async Task UploadActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
+            => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                SiteAreaTagIdUnderTest, 
+                StandardTagActionIdUnderTest,   // known actionId, but under other Tag
+                FileToBeUploaded,
+                HttpStatusCode.BadRequest,
+                "Tag and/or action doesn't exist!");
+        #endregion
     }
 }
