@@ -7,63 +7,56 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
     [TestClass]
     public class JourneysControllerNegativeTests : JourneysControllerTestsBase
     {
-        #region GetStep
+        #region GetJourney
         [TestMethod]
-        public async Task GetStep_AsAnonymous_ShouldReturnUnauthorized()
-            => await JourneysControllerTestsHelper.GetStepAsync(
+        public async Task GetJourney_AsAnonymous_ShouldReturnUnauthorized()
+            => await JourneysControllerTestsHelper.GetJourneyAsync(
                 AnonymousClient(TestFactory.UnknownPlant),
                 9999,
-                8888,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task GetStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
-            => await JourneysControllerTestsHelper.GetStepAsync(
+        public async Task GetJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.GetJourneyAsync(
                 AuthenticatedHackerClient(TestFactory.UnknownPlant),
                 9999,
-                8888,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
-        public async Task GetStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
-            => await JourneysControllerTestsHelper.GetStepAsync(
+        public async Task GetJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.GetJourneyAsync(
                 LibraryAdminClient(TestFactory.UnknownPlant),
                 9999,
-                8888,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
-        public async Task GetStep_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
-            => await JourneysControllerTestsHelper.GetStepAsync(
+        public async Task GetJourney_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.GetJourneyAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
                 9999,
-                8888,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task GetStep_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
-            => await JourneysControllerTestsHelper.GetStepAsync(
+        public async Task GetJourney_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.GetJourneyAsync(
                 LibraryAdminClient(TestFactory.PlantWithoutAccess),
                 9999,
-                8888,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task GetStep_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
-            => await JourneysControllerTestsHelper.GetStepAsync(
+        public async Task GetJourney_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.GetJourneyAsync(
                 PlannerClient(TestFactory.PlantWithAccess),
                 9999,
-                8888,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
-        public async Task GetStep_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
-            => await JourneysControllerTestsHelper.GetStepAsync(
+        public async Task GetJourney_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.GetJourneyAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
                 9999,
-                8888,
                 HttpStatusCode.Forbidden);
         #endregion
 
@@ -75,6 +68,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 9999,
                 8888,
                 "Step1",
+                7777,
+                "RC",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Unauthorized);
 
@@ -85,6 +80,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 9999,
                 8888,
                 "Step1",
+                7777,
+                "RC",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -96,6 +93,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 9999,
                 8888,
                 "Step1",
+                7777,
+                "RC",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -107,6 +106,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 9999,
                 8888,
                 "Step1",
+                7777,
+                "RC",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -117,6 +118,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 9999,
                 8888,
                 "Step1",
+                7777,
+                "RC",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -127,6 +130,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 9999,
                 8888,
                 "Step1",
+                7777,
+                "RC",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -137,6 +142,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 9999,
                 8888,
                 "Step1",
+                7777,
+                "RC",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
         #endregion
