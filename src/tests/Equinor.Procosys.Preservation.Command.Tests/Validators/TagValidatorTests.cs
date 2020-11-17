@@ -39,6 +39,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private int _tagReqForSupplierId;
         private int _tagReqForOtherId;
         private int _firstStepId;
+        private int _poAreaTagActionId;
+        private int _poAreaTagAttachmentId;
+        private int _poAreaTagActionAttachmentId;
         private const int IntervalWeeks = 4;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -91,6 +94,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 var poAreaTagStarted = AddTag(context, project, TagType.PoArea, "#PO-E-A2", _tagDescription,
                     firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 poAreaTagStarted.StartPreservation();
+
+                var tagAttachment = new TagAttachment(TestPlant, Guid.Empty, "fil1.txt");
+                poAreaTagStarted.AddAttachment(tagAttachment);
+
+                var action = new Action(TestPlant, "A", "D", null);
+                poAreaTagStarted.AddAction(action);
+                var actionAttachment = new ActionAttachment(TestPlant, Guid.Empty, "fil2.txt");
+                action.AddAttachment(actionAttachment);
                 
                 context.SaveChangesAsync().Wait();
 
@@ -107,6 +118,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _siteAreaTagStartedId = siteAreaTagStarted.Id;
                 _poAreaTagStartedId = poAreaTagStarted.Id;
                 _standardTagCompletedId = standardTagCompleted.Id;
+                _poAreaTagActionId = action.Id;
+                _poAreaTagAttachmentId = tagAttachment.Id;
+                _poAreaTagActionAttachmentId = actionAttachment.Id;
             }
         }
 
@@ -128,6 +142,108 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.ExistsAsync(TagNo1, "XYZ", default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task ExistsTagAttachmentAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsTagAttachmentAsync(
+                    _poAreaTagStartedId,
+                    _poAreaTagAttachmentId,
+                    default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsTagAttachmentAsync_UnknownTagId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsTagAttachmentAsync(
+                    9999,
+                    _poAreaTagAttachmentId,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsTagAttachmentAsync_UnknownAttachmentId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsTagAttachmentAsync(
+                    _poAreaTagStartedId,
+                    9999,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsActionAttachmentAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsActionAttachmentAsync(
+                    _poAreaTagStartedId,
+                    _poAreaTagActionId,
+                    _poAreaTagActionAttachmentId,
+                    default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsActionAttachmentAsync_UnknownTagId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsActionAttachmentAsync(
+                    9999,
+                    _poAreaTagActionId,
+                    _poAreaTagActionAttachmentId,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsActionAttachmentAsync_UnknownActionId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsActionAttachmentAsync(
+                    _poAreaTagStartedId,
+                    9999,
+                    _poAreaTagActionAttachmentId,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsActionAttachmentAsync_UnknownAttachmentId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsActionAttachmentAsync(
+                    _poAreaTagStartedId,
+                    _poAreaTagActionId,
+                    9999,
+                    default);
                 Assert.IsFalse(result);
             }
         }

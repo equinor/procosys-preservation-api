@@ -14,7 +14,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         protected int StandardTagIdUnderTest;
         protected int SiteAreaTagIdUnderTest;
         protected int StepIdUnderTest;
+        protected int StandardTagActionIdUnderTest;
+        protected int SiteAreaTagActionIdUnderTest;
         protected int InitialTagsCount;
+        protected int StandardTagAttachmentIdUnderTest;
+        protected int SiteAreaTagAttachmentIdUnderTest;
+        protected int StandardTagActionAttachmentIdUnderTest;
+        protected int SiteAreaTagActionAttachmentIdUnderTest;
 
         [TestInitialize]
         public async Task TestInitialize()
@@ -31,6 +37,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             StandardTagIdUnderTest = TestFactory.KnownTestData.StandardTagIds.First();
             SiteAreaTagIdUnderTest = TestFactory.KnownTestData.SiteAreaTagIds.First();
             StepIdUnderTest = TestFactory.KnownTestData.StepIds.First();
+            StandardTagActionIdUnderTest = TestFactory.KnownTestData.StandardTagActionIds.First();
+            SiteAreaTagActionIdUnderTest = TestFactory.KnownTestData.SiteAreaTagActionIds.First();
+            StandardTagAttachmentIdUnderTest = TestFactory.KnownTestData.StandardTagAttachmentIds.First();
+            SiteAreaTagAttachmentIdUnderTest = TestFactory.KnownTestData.SiteAreaTagAttachmentIds.First();
+            StandardTagActionAttachmentIdUnderTest = TestFactory.KnownTestData.StandardTagActionAttachmentIds.First();
+            SiteAreaTagActionAttachmentIdUnderTest = TestFactory.KnownTestData.SiteAreaTagActionAttachmentIds.First();
 
             TestFactory
                 .DisciplineApiServiceMock

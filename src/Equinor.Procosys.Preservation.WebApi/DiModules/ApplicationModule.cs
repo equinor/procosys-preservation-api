@@ -2,7 +2,6 @@
 using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
-using Equinor.Procosys.Preservation.Command.Validators.AttachmentValidators;
 using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
 using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
@@ -141,7 +140,6 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IResponsibleValidator, ResponsibleValidator>();
             services.AddScoped<IFieldValidator, FieldValidator>();
             services.AddScoped<IActionValidator, ActionValidator>();
-            services.AddScoped<IAttachmentValidator, AttachmentValidator>();
             services.AddScoped<IRequirementTypeValidator, RequirementTypeValidator>();
             services.AddScoped<ITagFunctionValidator, TagFunctionValidator>();
             services.AddScoped<IRowVersionValidator, RowVersionValidator>();
