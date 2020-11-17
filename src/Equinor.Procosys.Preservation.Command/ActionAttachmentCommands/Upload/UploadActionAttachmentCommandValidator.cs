@@ -19,12 +19,10 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
-                .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
-                .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
-                .MustAsync((command, token) => BeAnExistingActionAsync(command.ActionId, token))
-                .WithMessage(command => $"Action doesn't exist! Action={command.ActionId}")
+                .MustAsync(BeAnExistingActionAsync)
+                .WithMessage(command => "Tag and/or action doesn't exist!")
                 .MustAsync((command, token) => NotBeAClosedActionAsync(command.ActionId, token))
                 .WithMessage(command => $"Action is closed! Action={command.ActionId}")
                 .MustAsync((command, token) => NotHaveAttachmentWithFilenameAsync(command.ActionId, command.FileName, token))
@@ -33,14 +31,12 @@ namespace Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload
 
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
-            async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
-                => await tagValidator.ExistsAsync(tagId, token);
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
             async Task<bool> NotHaveAttachmentWithFilenameAsync(int actionId, string fileName, CancellationToken token)
                 => !await actionValidator.AttachmentWithFilenameExistsAsync(actionId, fileName, token);
-            async Task<bool> BeAnExistingActionAsync(int actionId, CancellationToken token)
-                => await actionValidator.ExistsAsync(actionId, token);
+            async Task<bool> BeAnExistingActionAsync(UploadActionAttachmentCommand command, CancellationToken token)
+                => await tagValidator.ExistsActionAsync(command.TagId, command.ActionId, token);
             async Task<bool> NotBeAClosedActionAsync(int actionId, CancellationToken token)
                 => !await actionValidator.IsClosedAsync(actionId, token);
         }
