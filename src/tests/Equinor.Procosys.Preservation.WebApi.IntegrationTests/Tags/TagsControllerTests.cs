@@ -346,5 +346,30 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 actionIdUnderTest);
             Assert.AreEqual(attachmentCount + 1, actionDetails.AttachmentCount);
         }
+
+        [TestMethod]
+        public async Task CreateAction_AsPreserver_ShouldCreateAction()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = StandardTagIdUnderTest;
+            var title = Guid.NewGuid().ToString();
+            var description = Guid.NewGuid().ToString();
+
+            // Act
+            var id = await TagsControllerTestsHelper.CreateActionAsync(
+                preserverClient,
+                tagIdUnderTest,
+                title,
+                description);
+            
+            // Assert
+            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                id);
+            Assert.AreEqual(title, actionDetails.Title);
+            Assert.AreEqual(description, actionDetails.Description);
+        }
     }
 }

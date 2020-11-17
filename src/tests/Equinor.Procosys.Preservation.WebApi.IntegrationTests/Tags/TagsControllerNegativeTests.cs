@@ -660,7 +660,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Tag and/or action doesn't exist!");
 
         [TestMethod]
-        public async Task UpdateAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
+        public async Task UpdateAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
             => await TagsControllerTestsHelper.UpdateActionAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
                 SiteAreaTagIdUnderTest, 
@@ -792,7 +792,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Tag and/or action doesn't exist!");
 
         [TestMethod]
-        public async Task CloseAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
+        public async Task CloseAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
             => await TagsControllerTestsHelper.CloseActionAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
                 SiteAreaTagIdUnderTest, 
@@ -862,7 +862,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Tag and/or action doesn't exist!");
 
         [TestMethod]
-        public async Task UploadActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownAttachmentId()
+        public async Task UploadActionAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
             => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
                 SiteAreaTagIdUnderTest, 
@@ -870,6 +870,66 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 FileToBeUploaded,
                 HttpStatusCode.BadRequest,
                 "Tag and/or action doesn't exist!");
+        #endregion
+        
+        #region CreateAction
+        [TestMethod]
+        public async Task CreateAction_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.CreateActionAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                null,
+                null,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task CreateAction_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.CreateActionAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                null,
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task CreateAction_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.CreateActionAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                null,
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task CreateAction_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.CreateActionAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                SiteAreaTagIdUnderTest, 
+                null,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task CreateAction_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.CreateActionAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess), 
+                SiteAreaTagIdUnderTest, 
+                null,
+                null,
+                HttpStatusCode.Forbidden);
+
+
+        [TestMethod]
+        public async Task CreateAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownTagId()
+            => await TagsControllerTestsHelper.CreateActionAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999, 
+                "TestTitle",
+                "TestDescription",
+                HttpStatusCode.BadRequest,
+                "Tag doesn't exist!");
         #endregion
     }
 }
