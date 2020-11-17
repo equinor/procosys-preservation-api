@@ -46,6 +46,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var plant = plantProvider.Plant;
 
             var mode = SeedMode(dbContext, plant);
+            knownTestData.ModeIds.Add(mode.Id);
 
             var responsible = SeedResponsible(dbContext, plant);
 
