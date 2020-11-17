@@ -39,10 +39,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 KnownTestData.ResponsibleCode);
 
             // Assert
-            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
-                JourneyIdUnderTest);
-            var step = journey.Steps.SingleOrDefault(s => s.Id == stepId);
+            var step = await GetStepDetails(stepId);
             Assert.IsNotNull(step);
         }
 
@@ -50,10 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task UpdateStep_AsAdmin_ShouldUpdateStepAndRowVersion()
         {
             // Arrange
-            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
-                JourneyIdUnderTest);
-            var step = journey.Steps.Single(s => s.Id == StepIdUnderTest);
+            var step = await GetStepDetails(StepIdUnderTest);
             var currentRowVersion = step.RowVersion;
             var newTitle = Guid.NewGuid().ToString();
 
@@ -69,11 +63,73 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
 
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+            step = await GetStepDetails(StepIdUnderTest);
+            Assert.AreEqual(newTitle, step.Title);
+        }
+
+        [TestMethod]
+        public async Task VoidStep_AsAdmin_ShouldVoidStep()
+        {
+            // Arrange
+            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyIdUnderTest,
+                Guid.NewGuid().ToString(),
+                ModeIdUnderTest,
+                KnownTestData.ResponsibleCode);
+            var step = await GetStepDetails(stepId);
+            var currentRowVersion = step.RowVersion;
+            Assert.IsFalse(step.IsVoided);
+
+            // Act
+            var newRowVersion = await JourneysControllerTestsHelper.VoidStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyIdUnderTest,
+                stepId,
+                currentRowVersion);
+
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            step = await GetStepDetails(stepId);
+            Assert.IsTrue(step.IsVoided);
+        }
+
+        [TestMethod]
+        public async Task UnvoidStep_AsAdmin_ShouldUnvoidStep()
+        {
+            // Arrange
+            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyIdUnderTest,
+                Guid.NewGuid().ToString(),
+                ModeIdUnderTest,
+                KnownTestData.ResponsibleCode);
+            var step = await GetStepDetails(stepId);
+            var currentRowVersion = await JourneysControllerTestsHelper.VoidStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyIdUnderTest,
+                stepId,
+                step.RowVersion);
+
+            // Act
+            var newRowVersion = await JourneysControllerTestsHelper.UnvoidStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyIdUnderTest,
+                stepId,
+                currentRowVersion);
+
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            step = await GetStepDetails(stepId);
+            Assert.IsFalse(step.IsVoided);
+        }
+
+        private async Task<StepDetailsDto> GetStepDetails(int stepId)
+        {
+            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 JourneyIdUnderTest);
-            step = journey.Steps.Single(s => s.Id == StepIdUnderTest);
-            Assert.AreEqual(newTitle, step.Title);
+            return journey.Steps.SingleOrDefault(s => s.Id == stepId);
         }
     }
 }
