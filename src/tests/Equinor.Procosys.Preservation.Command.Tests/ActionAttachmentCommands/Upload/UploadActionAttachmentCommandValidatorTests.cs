@@ -28,10 +28,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             _projectValidatorMock = new Mock<IProjectValidator>();
 
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.ExistsAsync(_tagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsActionAsync(_tagId, _actionId, default)).Returns(Task.FromResult(true));
 
             _actionValidatorMock = new Mock<IActionValidator>();
-            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(true));
 
             _commandWithoutOverwrite = new UploadActionAttachmentCommand(_tagId, _actionId, _fileName, false, new MemoryStream());
 
@@ -56,18 +55,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project for tag is closed!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
-        {
-            _tagValidatorMock.Setup(r => r.ExistsAsync(_commandWithoutOverwrite.TagId, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_commandWithoutOverwrite);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
         }
 
         [TestMethod]
@@ -122,13 +109,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.U
         [TestMethod]
         public void Validate_ShouldFail_WhenActionNotExists()
         {
-            _actionValidatorMock.Setup(r => r.ExistsAsync(_actionId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsActionAsync(_tagId, _actionId, default)).Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_commandWithoutOverwrite);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Action doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag and/or action doesn't exist!"));
         }
     }
 }
