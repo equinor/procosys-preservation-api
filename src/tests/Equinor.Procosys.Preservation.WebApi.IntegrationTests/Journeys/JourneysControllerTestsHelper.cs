@@ -145,6 +145,28 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 expectedStatusCode,
                 expectedMessageOnBadRequest);
 
+        public static async Task DeleteStepAsync(
+            HttpClient client,
+            int journeyId,
+            int stepId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var request = new HttpRequestMessage(HttpMethod.Delete, $"{_route}/{journeyId}/Steps/{stepId}")
+            {
+                Content = new StringContent(serializePayload, Encoding.UTF8, "application/json")
+            };
+
+            var response = await client.SendAsync(request);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
         private static async Task<string> VoidUnvoidStepAsync(
             HttpClient client,
             int journeyId,

@@ -14,10 +14,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string RequirementTypeCode => "TestRT";
         public static string RequirementTypeDescription => "Test - RequirementType";
         public static string RequirementDefinition => "TestRD";
-        public static string JourneyA => "TestJourneyA";
-        public static string StepInJourneyA => "TestStepA";
-        public static string JourneyB => "TestJourneyB";
-        public static string StepInJourneyB => "TestStepB";
+        public static string JourneyWithTags => "TestJourneyA";
+        public static string StepInJourneyWithTags => "TestStepA";
+        public static string JourneyNotInUse => "TestJourneyB";
+        public static string StepInJourneyNotInUse => "TestStepB";
         public static string StandardTagNo => "Std-Test";
         public static string StandardTagDescription => "Test - StdTag";
         public static string SiteTagNo => "#SITE-Test";

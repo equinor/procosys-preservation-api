@@ -9,22 +9,22 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
     public class JourneysControllerTestsBase : TestBase
     {
         protected int ModeIdUnderTest;
-        protected int JourneyAIdUnderTest;
-        protected int StepInJourneyAIdUnderTest;
-        protected int JourneyBIdUnderTest;
-        protected int StepInJourneyBIdUnderTest;
+        protected int JourneyWithTagsIdUnderTest;
+        protected int StepInJourneyWithTagsIdUnderTest;
+        protected int JourneyNotInUseIdUnderTest;
+        protected int StepInJourneyNotInUseIdUnderTest;
 
         [TestInitialize]
         public async Task TestInitialize()
         {
             ModeIdUnderTest = TestFactory.KnownTestData.ModeIds.First();
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
-            var journeyA = journeys.Single(j => j.Title == KnownTestData.JourneyA);
-            JourneyAIdUnderTest = journeyA.Id;
-            StepInJourneyAIdUnderTest = journeyA.Steps.First().Id;
-            var journeyB = journeys.Single(j => j.Title == KnownTestData.JourneyB);
-            JourneyBIdUnderTest = journeyB.Id;
-            StepInJourneyBIdUnderTest = journeyB.Steps.First().Id;
+            var journeyWithTags = journeys.Single(j => j.Title == KnownTestData.JourneyWithTags);
+            JourneyWithTagsIdUnderTest = journeyWithTags.Id;
+            StepInJourneyWithTagsIdUnderTest = journeyWithTags.Steps.First().Id;
+            var journeyNotInUse = journeys.Single(j => j.Title == KnownTestData.JourneyNotInUse);
+            JourneyNotInUseIdUnderTest = journeyNotInUse.Id;
+            StepInJourneyNotInUseIdUnderTest = journeyNotInUse.Steps.First().Id;
 
             TestFactory
                 .ResponsibleApiServiceMock

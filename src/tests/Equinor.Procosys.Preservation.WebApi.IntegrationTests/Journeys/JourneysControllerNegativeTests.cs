@@ -272,8 +272,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task UpdateStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                JourneyBIdUnderTest,
-                StepInJourneyAIdUnderTest, // step in other Journey
+                JourneyNotInUseIdUnderTest,
+                StepInJourneyWithTagsIdUnderTest, // step in other Journey
                 Guid.NewGuid().ToString(),
                 ModeIdUnderTest,
                 KnownTestData.ResponsibleCode,
@@ -353,8 +353,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task VoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.VoidStepAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                JourneyBIdUnderTest,
-                StepInJourneyAIdUnderTest, // step in other Journey
+                JourneyNotInUseIdUnderTest,
+                StepInJourneyWithTagsIdUnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Journey and/or step doesn't exist!");
@@ -430,11 +430,89 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task UnvoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                JourneyBIdUnderTest,
-                StepInJourneyAIdUnderTest, // step in other Journey
+                JourneyNotInUseIdUnderTest,
+                StepInJourneyWithTagsIdUnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Journey and/or step doesn't exist!");
+        #endregion
+
+        #region DeleteStep
+        [TestMethod]
+        public async Task DeleteStep_AsAnonymous_ShouldReturnUnauthorized()
+            => await JourneysControllerTestsHelper.DeleteStepAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task DeleteStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.DeleteStepAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task DeleteStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.DeleteStepAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task DeleteStep_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.DeleteStepAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                9999,
+                8888,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task DeleteStep_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.DeleteStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                9999,
+                8888,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task DeleteStep_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.DeleteStepAsync(
+                PlannerClient(TestFactory.PlantWithAccess),
+                9999,
+                8888,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task DeleteStep_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.DeleteStepAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
+                8888,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task DeleteStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
+            => await JourneysControllerTestsHelper.DeleteStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyNotInUseIdUnderTest,
+                StepInJourneyWithTagsIdUnderTest, // step in other Journey
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "Journey and/or step doesn't exist!");
+
         #endregion
     }
 }

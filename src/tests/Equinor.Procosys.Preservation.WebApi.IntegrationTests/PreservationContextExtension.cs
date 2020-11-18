@@ -52,16 +52,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             var requirementDef = SeedRequirement(dbContext, plant);
 
-            var journeyA = SeedJourney(dbContext, plant, KnownTestData.JourneyA);
-            var stepA = SeedStep(dbContext, journeyA, KnownTestData.StepInJourneyA, mode, responsible);
-            knownTestData.StepIds.Add(stepA.Id);
+            var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.JourneyWithTags);
+            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepInJourneyWithTags, mode, responsible);
+            knownTestData.StepIds.Add(stepInJourneyWithTags.Id);
 
-            var journeyB = SeedJourney(dbContext, plant, KnownTestData.JourneyB);
-            var stepB = SeedStep(dbContext, journeyB, KnownTestData.StepInJourneyB, mode, responsible);
-            knownTestData.StepIds.Add(stepB.Id);
+            var journeyWithoutTags = SeedJourney(dbContext, plant, KnownTestData.JourneyNotInUse);
+            var stepInJourneyWithoutTags = SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, mode, responsible);
+            knownTestData.StepIds.Add(stepInJourneyWithoutTags.Id);
 
             var project = SeedProject(dbContext, plant);
-            var standardTag = SeedStandardTag(dbContext, project, stepA, requirementDef);
+            var standardTag = SeedStandardTag(dbContext, project, stepInJourneyWithTags, requirementDef);
             knownTestData.StandardTagIds.Add(standardTag.Id);
 
             var standardTagAttachment = SeedTagAttachment(dbContext, standardTag);
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var standardTagActionAttachment = SeedActionAttachment(dbContext, standardTagAction);
             knownTestData.StandardTagActionAttachmentIds.Add(standardTagActionAttachment.Id);
 
-            var siteAreaTag = SeedSiteTag(dbContext, project, stepA, requirementDef);
+            var siteAreaTag = SeedSiteTag(dbContext, project, stepInJourneyWithTags, requirementDef);
             knownTestData.SiteAreaTagIds.Add(siteAreaTag.Id);
 
             var siteAreaTagAttachment = SeedTagAttachment(dbContext, siteAreaTag);
