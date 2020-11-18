@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         [TestMethod]
-        public async Task VoidStep_AsAdmin_ShouldVoidStep()
+        public async Task VoidStep_AsAdmin_ShouldVoidStep_AndUpdateAndRowVersion()
         {
             // Arrange
             var journeyIdUnderTest = JourneyWithTagsIdUnderTest;
@@ -113,7 +113,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         [TestMethod]
-        public async Task UnvoidStep_AsAdmin_ShouldUnvoidStep()
+        public async Task UnvoidStep_AsAdmin_ShouldUnvoidStep_AndUpdateAndRowVersion()
         {
             // Arrange
             var journeyIdUnderTest = JourneyWithTagsIdUnderTest;
