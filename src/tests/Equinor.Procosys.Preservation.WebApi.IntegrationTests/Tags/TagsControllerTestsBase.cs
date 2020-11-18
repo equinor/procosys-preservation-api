@@ -22,6 +22,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         protected int StandardTagActionAttachmentIdUnderTest;
         protected int SiteAreaTagActionAttachmentIdUnderTest;
 
+        protected TestFile FileToBeUploaded = new TestFile("test file content", "file.txt");
+
         [TestInitialize]
         public async Task TestInitialize()
         {

@@ -35,11 +35,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         
         public static async Task<TagDetailsDto> GetTagAsync(
             HttpClient client,
-            int id,
+            int tagId,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
-            var response = await client.GetAsync($"{_route}/{id}");
+            var response = await client.GetAsync($"{_route}/{tagId}");
 
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
@@ -202,6 +202,143 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
             var response = await client.SendAsync(request);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<List<ActionDto>> GetAllActionsAsync(
+            HttpClient client,
+            int tagId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.GetAsync($"{_route}/{tagId}/Actions");
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<ActionDto>>(content);
+        }
+
+        public static async Task<string> UpdateActionAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            string title,
+            string description,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                title,
+                description,
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_route}/{tagId}/Actions/{actionId}", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task<ActionDetailsDto> GetActionAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.GetAsync($"{_route}/{tagId}/Actions/{actionId}");
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ActionDetailsDto>(content);
+        }
+
+        public static async Task<string> CloseActionAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            string rowVersion,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                rowVersion
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_route}/{tagId}/Actions/{actionId}/Close", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        public static async Task UploadActionAttachmentAsync(
+            HttpClient client,
+            int tagId,
+            int actionId,
+            TestFile file,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var httpContent = file.CreateHttpContent();
+            var response = await client.PostAsync($"{_route}/{tagId}/Actions/{actionId}/Attachments", httpContent);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<int> CreateActionAsync(
+            HttpClient client,
+            int tagId,
+            string title,
+            string description,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                title,
+                description
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_route}/{tagId}/Actions", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return -1;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<int>(jsonString);
         }
     }
 }

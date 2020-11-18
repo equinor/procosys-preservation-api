@@ -9,7 +9,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
 {
-    public class CloseActionCommandHandler : IRequestHandler<CloseActionCommand, Result<Unit>>
+    public class CloseActionCommandHandler : IRequestHandler<CloseActionCommand, Result<string>>
     {
         private readonly IProjectRepository _projectRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -29,16 +29,16 @@ namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
             _currentUserProvider = currentUserProvider;
         }
 
-        public async Task<Result<Unit>> Handle(CloseActionCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(CloseActionCommand request, CancellationToken cancellationToken)
         {
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
 
-            tag.CloseAction(request.ActionId, currentUser, TimeService.UtcNow, request.RowVersion);
+            var action = tag.CloseAction(request.ActionId, currentUser, TimeService.UtcNow, request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(action.RowVersion.ConvertToString());
         }
     }
 }

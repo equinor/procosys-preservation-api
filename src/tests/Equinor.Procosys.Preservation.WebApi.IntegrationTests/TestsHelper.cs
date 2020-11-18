@@ -24,7 +24,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 if (!string.IsNullOrEmpty(expectedMessagePartOnBadRequest))
                 {
                     var problemDetails = JsonConvert.DeserializeObject<ValidationProblemDetails>(jsonString);
-                    Assert.IsTrue(problemDetails.Errors.SelectMany(e => e.Value).Any(e => e.Contains(expectedMessagePartOnBadRequest)));
+                    Assert.IsTrue(
+                        problemDetails.Errors.SelectMany(e => e.Value)
+                            .Any(e => e.Contains(expectedMessagePartOnBadRequest)), 
+                        $"Expected to find message part '{expectedMessagePartOnBadRequest}'");
                 }
             }
 

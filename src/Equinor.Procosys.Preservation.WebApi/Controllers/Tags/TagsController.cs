@@ -211,7 +211,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
          
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Actions/{actionId}/Close")]
-        public async Task<IActionResult> CloseAction(
+        public async Task<ActionResult<string>> CloseAction(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
