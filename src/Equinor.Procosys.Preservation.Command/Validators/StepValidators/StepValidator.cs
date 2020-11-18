@@ -66,10 +66,5 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
                 select s).SingleOrDefaultAsync(token);
             return step != null && step.ModeId == modeId;
         }
-
-        public async Task<bool> StepHasJourneyAsParentAsync(int journeyId, int stepId, CancellationToken token)
-            => await (from s in _context.QuerySet<Step>()
-                where s.Id == stepId && EF.Property<int>(s, "JourneyId") == journeyId
-                select s).AnyAsync(token);
     }
 }
