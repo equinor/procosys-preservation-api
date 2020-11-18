@@ -133,7 +133,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
             // Act
             var newRowVersion = await JourneysControllerTestsHelper.UnvoidStepAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                JourneyWithTagsIdUnderTest,
+                journeyIdUnderTest,
                 stepId,
                 currentRowVersion);
 
