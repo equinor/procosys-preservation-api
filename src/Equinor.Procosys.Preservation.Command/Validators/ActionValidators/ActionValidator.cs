@@ -13,11 +13,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.ActionValidators
 
         public ActionValidator(IReadOnlyContext context) => _context = context;
 
-        public async Task<bool> ExistsAsync(int actionId, CancellationToken token) =>
-            await (from a in _context.QuerySet<Action>()
-                where a.Id == actionId
-                select a).AnyAsync(token);
-
         public async Task<bool> IsClosedAsync(int actionId, CancellationToken token)
         {
             var action = await (from a in _context.QuerySet<Action>()

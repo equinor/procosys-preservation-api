@@ -214,5 +214,162 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 StandardTagActionIdUnderTest);
             Assert.IsNull(attachmentDtos.SingleOrDefault(m => m.Id == StandardTagActionAttachmentIdUnderTest));
         }
+
+        [TestMethod]
+        public async Task GetAllActions_AsPreserver_ShouldGetAttachments()
+        {
+            // Act
+            var actionDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                StandardTagIdUnderTest);
+
+            // Assert
+            Assert.IsNotNull(actionDtos);
+            Assert.IsTrue(actionDtos.Count > 0);
+
+            var action = actionDtos.Single(t => t.Id == StandardTagActionIdUnderTest);
+            Assert.IsNotNull(action.Title);
+            Assert.IsNotNull(action.RowVersion);
+        }
+        
+        [TestMethod]
+        public async Task GetAction_AsPreserver_ShouldGetActionDetails()
+        {
+            // Act
+            var actionDetailsDto = await TagsControllerTestsHelper.GetActionAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                SiteAreaTagIdUnderTest,
+                SiteAreaTagActionIdUnderTest);
+
+            // Assert
+            Assert.AreEqual(SiteAreaTagActionIdUnderTest, actionDetailsDto.Id);
+            Assert.IsNotNull(actionDetailsDto.Title);
+            Assert.IsNotNull(actionDetailsDto.Description);
+            Assert.IsNotNull(actionDetailsDto.RowVersion);
+        }
+
+        [TestMethod]
+        public async Task UpdateAction_AsPreserver_ShouldUpdateAction()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = StandardTagIdUnderTest;
+            var actionIdUnderTest = StandardTagActionIdUnderTest;
+
+            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            var currentRowVersion = actionDetails.RowVersion;
+            var newTitle = Guid.NewGuid().ToString();
+            var newDescription = Guid.NewGuid().ToString();
+
+            // Act
+            var newRowVersion = await TagsControllerTestsHelper.UpdateActionAsync(
+                preserverClient,
+                tagIdUnderTest,
+                actionIdUnderTest,
+                newTitle,
+                newDescription,
+                currentRowVersion);
+            
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            Assert.AreEqual(newTitle, actionDetails.Title);
+            Assert.AreEqual(newDescription, actionDetails.Description);
+        }
+
+        [TestMethod]
+        public async Task CloseAction_AsPreserver_ShouldCloseAction()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = StandardTagIdUnderTest;
+            var actionIdUnderTest = await TagsControllerTestsHelper.CreateActionAsync(
+                preserverClient,
+                tagIdUnderTest,
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString());
+
+            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            var currentRowVersion = actionDetails.RowVersion;
+            Assert.IsNull(actionDetails.ClosedAtUtc);
+
+            // Act
+            var newRowVersion = await TagsControllerTestsHelper.CloseActionAsync(
+                preserverClient,
+                tagIdUnderTest,
+                actionIdUnderTest,
+                currentRowVersion);
+            
+            // Assert
+            AssertRowVersionChange(currentRowVersion, newRowVersion);
+            actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            Assert.IsNotNull(actionDetails.ClosedAtUtc);
+        }
+
+        [TestMethod]
+        public async Task UploadActionAttachment_AsPreserver_ShouldUploadActionAttachment()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = StandardTagIdUnderTest;
+            var actionIdUnderTest = StandardTagActionIdUnderTest;
+
+            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            var attachmentCount = actionDetails.AttachmentCount;
+
+            // Act
+            await TagsControllerTestsHelper.UploadActionAttachmentAsync(
+                preserverClient,
+                tagIdUnderTest,
+                actionIdUnderTest,
+                FileToBeUploaded);
+            
+            // Assert
+            actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                actionIdUnderTest);
+            Assert.AreEqual(attachmentCount + 1, actionDetails.AttachmentCount);
+        }
+
+        [TestMethod]
+        public async Task CreateAction_AsPreserver_ShouldCreateAction()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = StandardTagIdUnderTest;
+            var title = Guid.NewGuid().ToString();
+            var description = Guid.NewGuid().ToString();
+
+            // Act
+            var id = await TagsControllerTestsHelper.CreateActionAsync(
+                preserverClient,
+                tagIdUnderTest,
+                title,
+                description);
+            
+            // Assert
+            var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
+                preserverClient, 
+                tagIdUnderTest,
+                id);
+            Assert.AreEqual(title, actionDetails.Title);
+            Assert.AreEqual(description, actionDetails.Description);
+        }
     }
 }

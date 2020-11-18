@@ -73,7 +73,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             };
             _otherStep.SetProtectedIdForTesting(++_nextStepId);
 
-            _person = new Mock<Person>().Object;
+            _person = new Person(Guid.Empty, "Espen", "Askeladd");
+            _person.SetProtectedIdForTesting(12);
 
             _journey = new Journey(TestPlant, "J");
             _journey.AddStep(_supplierStep);
@@ -1413,9 +1414,19 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             var action = new Action(TestPlant, "", "", null);
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
-            _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
+            var closedAction = _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
 
-            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.Actions.First().IsClosed);
+            Assert.IsTrue(closedAction.IsClosed);
+        }
+
+        [TestMethod]
+        public void CloseAction_ShouldSetClosedBy()
+        {
+            var action = new Action(TestPlant, "", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+            var closedAction = _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
+
+            Assert.AreEqual(_person.Id, closedAction.ClosedById);
         }
 
         [TestMethod]
@@ -1431,6 +1442,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(ActionClosedEvent));
+        }
+
+        [TestMethod]
+        public void CloseAction_ShouldReturnClosedAction()
+        {
+            var action = new Action(TestPlant, "", "", null);
+            _dutWithOneReqNotNeedInputTwoWeekInterval.AddAction(action);
+            var closedAction = _dutWithOneReqNotNeedInputTwoWeekInterval.CloseAction(action.Id, _person, DateTime.UtcNow, "AAAAAAAAABA=");
+
+            Assert.AreEqual(action, closedAction);
         }
 
         #endregion

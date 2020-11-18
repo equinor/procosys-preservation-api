@@ -9,6 +9,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
     public class ModesControllerTests : TestBase
     {
         private int initialModesCount;
+        private int _modeIdUnderTest;
 
         [TestInitialize]
         public async Task TestInitialize()
@@ -16,49 +17,43 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
             var modes = await ModesControllerTestsHelper.GetAllModesAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
 
             initialModesCount = modes.Count;
+
+            _modeIdUnderTest = TestFactory.KnownTestData.ModeIds.First();
         }
 
         [TestMethod]
         public async Task CreateMode_AsAdmin_ShouldCreateMode()
         {
             // Act
-            var id = await ModesControllerTestsHelper.CreateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
-                Guid.NewGuid().ToString());
-
-            // Assert
-            Assert.IsTrue(id > 0);
-            var modes = await ModesControllerTestsHelper.GetAllModesAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
-            Assert.AreEqual(initialModesCount+1, modes.Count);
-            Assert.IsNotNull(modes.SingleOrDefault(m => m.Id == id));
-        }
-
-        [TestMethod]
-        public async Task GetMode_AsAdmin_ShouldGetMode()
-        {
-            // Arrange
             var title = Guid.NewGuid().ToString();
             var id = await ModesControllerTestsHelper.CreateModeAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 title);
 
+            // Assert
+            Assert.IsTrue(id > 0);
+            var modes = await ModesControllerTestsHelper.GetAllModesAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
+            Assert.AreEqual(initialModesCount+1, modes.Count);
+            var mode = modes.SingleOrDefault(m => m.Id == id);
+            Assert.IsNotNull(mode);
+            Assert.AreEqual(title, mode.Title);
+        }
+
+        [TestMethod]
+        public async Task GetMode_AsAdmin_ShouldGetMode()
+        {
             // Act
-            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
+            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), _modeIdUnderTest);
 
             // Assert
-            Assert.AreEqual(id, mode.Id);
-            Assert.AreEqual(title, mode.Title);
+            Assert.AreEqual(_modeIdUnderTest, mode.Id);
             Assert.IsNotNull(mode.RowVersion);
         }
 
         [TestMethod]
         public async Task UpdateMode_AsAdmin_ShouldUpdateModeAndRowVersion()
         {
-            // Assert
-            var id = await ModesControllerTestsHelper.CreateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
-                Guid.NewGuid().ToString());
-            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
+            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), _modeIdUnderTest);
             var currentRowVersion = mode.RowVersion;
 
             // Act
