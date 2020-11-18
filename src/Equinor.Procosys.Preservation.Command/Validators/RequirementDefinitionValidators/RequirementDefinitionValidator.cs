@@ -107,11 +107,6 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 select fv).AnyAsync(token);
         }
 
-        public async Task<bool> RequirementDefinitionHasRequirementTypeAsParentAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token) =>
-            await (from rd in _context.QuerySet<RequirementDefinition>()
-                where rd.Id == requirementDefinitionId && EF.Property<int>(rd, "RequirementTypeId") == requirementTypeId
-                select rd).AnyAsync(token);
-
         private async Task<RequirementDefinition> GetRequirementDefinitionWithFieldsAsync(int requirementDefinitionId, CancellationToken token)
             => await (from rd in _context.QuerySet<RequirementDefinition>()
                     .Include(rd => rd.Fields)

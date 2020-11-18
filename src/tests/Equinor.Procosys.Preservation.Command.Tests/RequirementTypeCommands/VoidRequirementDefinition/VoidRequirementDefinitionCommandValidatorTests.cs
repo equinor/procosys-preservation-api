@@ -25,8 +25,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
         public void Setup_OkState()
         {
             _reqTypeValidatorMock = new Mock<IRequirementTypeValidator>();
-            _reqTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
-            _reqTypeValidatorMock.Setup(r => r.HasRequirementDefinitionAsync(_requirementTypeId, _requirementDefinitionId, default)).Returns(Task.FromResult(true));
+            _reqTypeValidatorMock
+                .Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
+                .Returns(Task.FromResult(true));
 
             _reqDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
 
@@ -46,27 +47,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Vo
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeNotExists()
+        public void Validate_ShouldFail_WhenRequirementDefinitionDoesNotExists()
         {
-            _reqTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(false));
+            _reqTypeValidatorMock
+                .Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
+                .Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type doesn't exist!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenTypeDontHaveDefinition()
-        {
-            _reqTypeValidatorMock.Setup(r => r.HasRequirementDefinitionAsync(_requirementTypeId, _requirementDefinitionId, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist within given requirement type"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type and/or requirement definition doesn't exist!"));
         }
 
         [TestMethod]
