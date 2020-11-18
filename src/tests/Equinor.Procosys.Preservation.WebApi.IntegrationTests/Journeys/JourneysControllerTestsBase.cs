@@ -9,15 +9,22 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
     public class JourneysControllerTestsBase : TestBase
     {
         protected int ModeIdUnderTest;
-        protected int JourneyIdUnderTest;
-        protected int StepIdUnderTest;
+        protected int JourneyAIdUnderTest;
+        protected int StepInJourneyAIdUnderTest;
+        protected int JourneyBIdUnderTest;
+        protected int StepInJourneyBIdUnderTest;
 
         [TestInitialize]
-        public void TestInitialize()
+        public async Task TestInitialize()
         {
             ModeIdUnderTest = TestFactory.KnownTestData.ModeIds.First();
-            JourneyIdUnderTest = TestFactory.KnownTestData.JourneyIds.First();
-            StepIdUnderTest = TestFactory.KnownTestData.StepIds.First();
+            var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
+            var journeyA = journeys.Single(j => j.Title == KnownTestData.JourneyA);
+            JourneyAIdUnderTest = journeyA.Id;
+            StepInJourneyAIdUnderTest = journeyA.Steps.First().Id;
+            var journeyB = journeys.Single(j => j.Title == KnownTestData.JourneyB);
+            JourneyBIdUnderTest = journeyB.Id;
+            StepInJourneyBIdUnderTest = journeyB.Steps.First().Id;
 
             TestFactory
                 .ResponsibleApiServiceMock

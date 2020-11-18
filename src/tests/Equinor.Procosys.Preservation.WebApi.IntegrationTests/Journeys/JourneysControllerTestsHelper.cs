@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,6 +10,26 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
     public static class JourneysControllerTestsHelper
     {
         private const string _route = "Journeys";
+        
+        public static async Task<List<JourneyDto>> GetJourneysAsync(
+            HttpClient client,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var parameters = new ParameterCollection {{"includeVoided", "true"}};
+            var url = $"{_route}{parameters}";
+            var response = await client.GetAsync(url);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<JourneyDto>>(content);
+        }
         
         public static async Task<JourneyDetailsDto> GetJourneyAsync(
             HttpClient client,

@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -7,6 +8,52 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
     [TestClass]
     public class JourneysControllerNegativeTests : JourneysControllerTestsBase
     {
+        #region GetJourneys
+        [TestMethod]
+        public async Task GetJourneys_AsAnonymous_ShouldReturnUnauthorized()
+            => await JourneysControllerTestsHelper.GetJourneysAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task GetJourneys_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.GetJourneysAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task GetJourneys_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.GetJourneysAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task GetJourneys_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.GetJourneysAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetJourneys_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.GetJourneysAsync(
+                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetJourneys_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.GetJourneysAsync(
+                PlannerClient(TestFactory.PlantWithAccess),
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetJourneys_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.GetJourneysAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                HttpStatusCode.Forbidden);
+        #endregion
+
         #region GetJourney
         [TestMethod]
         public async Task GetJourney_AsAnonymous_ShouldReturnUnauthorized()
@@ -220,6 +267,20 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 "RC",
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UpdateStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
+            => await JourneysControllerTestsHelper.UpdateStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyBIdUnderTest,
+                StepInJourneyAIdUnderTest, // step in other Journey
+                Guid.NewGuid().ToString(),
+                ModeIdUnderTest,
+                KnownTestData.ResponsibleCode,
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "Journey and/or step doesn't exist!");
+
         #endregion
 
         #region VoidStep
@@ -287,6 +348,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 8888,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task VoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
+            => await JourneysControllerTestsHelper.VoidStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyBIdUnderTest,
+                StepInJourneyAIdUnderTest, // step in other Journey
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "Journey and/or step doesn't exist!");
         #endregion
 
         #region UnvoidStep
@@ -354,6 +425,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
                 8888,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task UnvoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
+            => await JourneysControllerTestsHelper.UnvoidStepAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                JourneyBIdUnderTest,
+                StepInJourneyAIdUnderTest, // step in other Journey
+                TestFactory.AValidRowVersion,
+                HttpStatusCode.BadRequest,
+                "Journey and/or step doesn't exist!");
         #endregion
     }
 }

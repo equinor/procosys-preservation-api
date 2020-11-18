@@ -14,8 +14,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string RequirementTypeCode => "TestRT";
         public static string RequirementTypeDescription => "Test - RequirementType";
         public static string RequirementDefinition => "TestRD";
-        public static string Journey => "TestJourney";
-        public static string Step => "TestStep";
+        public static string JourneyA => "TestJourneyA";
+        public static string StepInJourneyA => "TestStepA";
+        public static string JourneyB => "TestJourneyB";
+        public static string StepInJourneyB => "TestStepB";
         public static string StandardTagNo => "Std-Test";
         public static string StandardTagDescription => "Test - StdTag";
         public static string SiteTagNo => "#SITE-Test";
@@ -27,9 +29,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         public List<int> StandardTagIds = new List<int>();
         public List<int> SiteAreaTagIds = new List<int>();
-        public List<int> ModeIds = new List<int>();
-        public List<int> JourneyIds = new List<int>();
         public List<int> StepIds = new List<int>();
+        public List<int> ModeIds = new List<int>();
         public List<int> StandardTagActionIds = new List<int>();
         public List<int> SiteAreaTagActionIds = new List<int>();
         public List<int> StandardTagAttachmentIds = new List<int>();

@@ -52,13 +52,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             var requirementDef = SeedRequirement(dbContext, plant);
 
-            var journey = SeedJourney(dbContext, plant);
-            knownTestData.JourneyIds.Add(journey.Id);
-            var step = SeedStep(dbContext, journey, mode, responsible);
-            knownTestData.StepIds.Add(step.Id);
+            var journeyA = SeedJourney(dbContext, plant, KnownTestData.JourneyA);
+            var stepA = SeedStep(dbContext, journeyA, KnownTestData.StepInJourneyA, mode, responsible);
+            knownTestData.StepIds.Add(stepA.Id);
+
+            var journeyB = SeedJourney(dbContext, plant, KnownTestData.JourneyB);
+            var stepB = SeedStep(dbContext, journeyB, KnownTestData.StepInJourneyB, mode, responsible);
+            knownTestData.StepIds.Add(stepB.Id);
 
             var project = SeedProject(dbContext, plant);
-            var standardTag = SeedStandardTag(dbContext, project, step, requirementDef);
+            var standardTag = SeedStandardTag(dbContext, project, stepA, requirementDef);
             knownTestData.StandardTagIds.Add(standardTag.Id);
 
             var standardTagAttachment = SeedTagAttachment(dbContext, standardTag);
@@ -69,7 +72,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var standardTagActionAttachment = SeedActionAttachment(dbContext, standardTagAction);
             knownTestData.StandardTagActionAttachmentIds.Add(standardTagActionAttachment.Id);
 
-            var siteAreaTag = SeedSiteTag(dbContext, project, step, requirementDef);
+            var siteAreaTag = SeedSiteTag(dbContext, project, stepA, requirementDef);
             knownTestData.SiteAreaTagIds.Add(siteAreaTag.Id);
 
             var siteAreaTagAttachment = SeedTagAttachment(dbContext, siteAreaTag);
@@ -161,18 +164,18 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             return tag;
         }
 
-        private static Journey SeedJourney(PreservationContext dbContext, string plant)
+        private static Journey SeedJourney(PreservationContext dbContext, string plant, string title)
         {
             var journeyRepository = new JourneyRepository(dbContext);
-            var journey = new Journey(plant, KnownTestData.Journey);
+            var journey = new Journey(plant, title);
             journeyRepository.Add(journey);
             dbContext.SaveChangesAsync().Wait();
             return journey;
         }
 
-        private static Step SeedStep(PreservationContext dbContext, Journey journey, Mode mode, Responsible responsible)
+        private static Step SeedStep(PreservationContext dbContext, Journey journey, string title, Mode mode, Responsible responsible)
         {
-            var step = new Step(journey.Plant, KnownTestData.Step, mode, responsible);
+            var step = new Step(journey.Plant, title, mode, responsible);
             journey.AddStep(step);
             dbContext.SaveChangesAsync().Wait();
             return step;
