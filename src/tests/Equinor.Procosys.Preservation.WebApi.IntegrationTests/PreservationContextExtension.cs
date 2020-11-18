@@ -50,14 +50,18 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             var responsible = SeedResponsible(dbContext, plant);
 
-            var requirementDef = SeedRequirement(dbContext, plant);
+            var reqTypeA = SeedReqType(dbContext, plant, KnownTestData.ReqTypeA);
+            var reqDefA = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeA);
+
+            var reqTypeB = SeedReqType(dbContext, plant, KnownTestData.ReqTypeB);
+            SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
 
             var journey = SeedJourney(dbContext, plant);
             var step = SeedStep(dbContext, journey, mode, responsible);
             knownTestData.StepIds.Add(step.Id);
 
             var project = SeedProject(dbContext, plant);
-            var standardTag = SeedStandardTag(dbContext, project, step, requirementDef);
+            var standardTag = SeedStandardTag(dbContext, project, step, reqDefA);
             knownTestData.StandardTagIds.Add(standardTag.Id);
 
             var standardTagAttachment = SeedTagAttachment(dbContext, standardTag);
@@ -68,7 +72,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var standardTagActionAttachment = SeedActionAttachment(dbContext, standardTagAction);
             knownTestData.StandardTagActionAttachmentIds.Add(standardTagActionAttachment.Id);
 
-            var siteAreaTag = SeedSiteTag(dbContext, project, step, requirementDef);
+            var siteAreaTag = SeedSiteTag(dbContext, project, step, reqDefA);
             knownTestData.SiteAreaTagIds.Add(siteAreaTag.Id);
 
             var siteAreaTagAttachment = SeedTagAttachment(dbContext, siteAreaTag);
@@ -177,21 +181,27 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             return step;
         }
 
-        private static RequirementDefinition SeedRequirement(PreservationContext dbContext, string plant)
+        private static RequirementType SeedReqType(PreservationContext dbContext, string plant, string code)
         {
-            var requirementTypeRepository = new RequirementTypeRepository(dbContext);
-            var requirementType = new RequirementType(
+            var reqTypeRepository = new RequirementTypeRepository(dbContext);
+            var reqType = new RequirementType(
                 plant,
-                KnownTestData.RequirementTypeCode,
-                KnownTestData.RequirementTypeDescription,
+                code,
+                $"{code} - Description",
                 RequirementTypeIcon.Other,
                 10);
-            var requirementDef =
-                new RequirementDefinition(plant, KnownTestData.RequirementDefinition, 4, RequirementUsage.ForAll, 10);
-            requirementType.AddRequirementDefinition(requirementDef);
-            requirementTypeRepository.Add(requirementType);
+            reqTypeRepository.Add(reqType);
             dbContext.SaveChangesAsync().Wait();
-            return requirementDef;
+            return reqType;
+        }
+
+        private static RequirementDefinition SeedReqDef(PreservationContext dbContext, RequirementType reqType, string title)
+        {
+            var reqDef =
+                new RequirementDefinition(reqType.Plant, title, 4, RequirementUsage.ForAll, 10);
+            reqType.AddRequirementDefinition(reqDef);
+            dbContext.SaveChangesAsync().Wait();
+            return reqDef;
         }
 
         private static Responsible SeedResponsible(PreservationContext dbContext, string plant)
