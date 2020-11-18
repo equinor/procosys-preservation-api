@@ -29,8 +29,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         public List<int> StandardTagIds = new List<int>();
         public List<int> SiteAreaTagIds = new List<int>();
-        public List<int> StepIds = new List<int>();
         public List<int> ModeIds = new List<int>();
+        public List<int> StepIds = new List<int>();
         public List<int> StandardTagActionIds = new List<int>();
         public List<int> SiteAreaTagActionIds = new List<int>();
         public List<int> StandardTagAttachmentIds = new List<int>();
