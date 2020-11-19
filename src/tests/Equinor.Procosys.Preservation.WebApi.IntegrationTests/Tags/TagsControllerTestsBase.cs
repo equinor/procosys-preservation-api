@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
@@ -71,15 +70,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 {
                     Code = KnownAreaCode, Description = $"{KnownAreaCode} - Description"
                 }));
-        }
-
-        protected async Task<int> GetCurrentStepId(HttpClient client, int tagId)
-        {
-            var tagDetails = await TagsControllerTestsHelper.GetTagAsync(
-                client,
-                tagId);
-            Assert.IsNotNull(tagDetails, "Bad test setup: Didn't find expected tag by id");
-            return tagDetails.Step.Id;
         }
     }
 }

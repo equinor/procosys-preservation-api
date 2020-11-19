@@ -77,14 +77,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetTag_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetTagAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                9999, 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetTag_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetTagAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                9999, 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
@@ -151,7 +151,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DuplicateAreaTag_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DuplicateAreaTagAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                9999, 
                 AreaTagType.SiteArea,
                 KnownDisciplineCode,
                 KnownAreaCode,
@@ -165,7 +165,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DuplicateAreaTag_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DuplicateAreaTagAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                9999, 
                 AreaTagType.SiteArea,
                 KnownDisciplineCode,
                 KnownAreaCode,
@@ -179,7 +179,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DuplicateAreaTag_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DuplicateAreaTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                9999, 
                 AreaTagType.SiteArea,
                 KnownDisciplineCode,
                 KnownAreaCode,
@@ -225,55 +225,33 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
-        {
-            // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
-            var currentStepId = await GetCurrentStepId(PreserverClient(TestFactory.PlantWithAccess), tagIdUnderTest);
-            
-            // Act
-            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                tagIdUnderTest,
+                9999,
                 null,
-                currentStepId,
+                5555,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
-        }
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
-        {
-            // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
-            var currentStepId = await GetCurrentStepId(PreserverClient(TestFactory.PlantWithAccess), tagIdUnderTest);
-            
-            // Act
-            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                tagIdUnderTest,
+                9999,
                 null,
-                currentStepId,
+                5555,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
-        }
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
-        {
-            // Arrange
-            var client = PreserverClient(TestFactory.PlantWithAccess);
-            var tagIdUnderTest = TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
-            var currentStepId = await GetCurrentStepId(client, tagIdUnderTest);
-            
-            // Act
-            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
-                client,
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted,
+            => await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
                 null,
-                currentStepId,
+                5555,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
-        }
 
         [TestMethod]
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldReturnBadRequest_WhenChangeDescriptionOnStandardTag()
@@ -380,8 +358,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DeleteTagAttachment_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DeleteTagAttachmentAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
-                StandardTagAttachmentIdUnderTest,
+                9999,
+                5555,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -389,8 +367,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DeleteTagAttachment_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DeleteTagAttachmentAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
-                StandardTagAttachmentIdUnderTest,
+                9999,
+                5555,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -446,16 +424,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAllActionAttachments_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
-                StandardTagActionIdUnderTest,
+                9999,
+                5555,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetAllActionAttachments_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
-                StandardTagActionIdUnderTest,
+                9999,
+                5555,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
@@ -513,9 +491,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DeleteActionAttachment_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
-                StandardTagActionIdUnderTest,
-                StandardTagActionAttachmentIdUnderTest,
+                9999,
+                5555,
+                4444,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -523,9 +501,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DeleteActionAttachment_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
-                StandardTagActionIdUnderTest,
-                StandardTagActionAttachmentIdUnderTest,
+                9999,
+                5555,
+                4444,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -592,14 +570,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAllActions_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetAllActionsAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
+                9999,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetAllActions_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetAllActionsAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
+                9999,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
@@ -651,8 +629,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateAction_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.UpdateActionAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 null,
                 null,
                 TestFactory.AValidRowVersion,
@@ -662,8 +640,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateAction_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.UpdateActionAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 null,
                 null,
                 TestFactory.AValidRowVersion,
@@ -725,16 +703,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAction_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetActionAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted,
-                SiteAreaTagActionIdUnderTest,
+                9999,
+                8888,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetAction_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetActionAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
@@ -788,8 +766,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CloseAction_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.CloseActionAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -797,8 +775,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CloseAction_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.CloseActionAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
@@ -858,8 +836,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UploadActionAttachment_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 FileToBeUploaded,
                 HttpStatusCode.Forbidden);
 
@@ -867,8 +845,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UploadActionAttachment_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.UploadActionAttachmentAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 FileToBeUploaded,
                 HttpStatusCode.Forbidden);
 
@@ -928,7 +906,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CreateAction_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.CreateActionAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                9999, 
                 null,
                 null,
                 HttpStatusCode.Forbidden);
@@ -937,7 +915,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CreateAction_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.CreateActionAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                9999, 
                 null,
                 null,
                 HttpStatusCode.Forbidden);
@@ -982,14 +960,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetTagRequirementsAsync_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetTagRequirementsAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted,
+                9999,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetTagRequirements_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetTagRequirementsAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
+                9999, 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
@@ -1037,8 +1015,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UploadFieldValueAttachment_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
                 AuthenticatedHackerClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 7777,
                 FileToBeUploaded,
                 HttpStatusCode.Forbidden);
@@ -1047,8 +1025,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UploadFieldValueAttachment_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess), 
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                SiteAreaTagActionIdUnderTest,
+                9999, 
+                8888,
                 7777,
                 FileToBeUploaded,
                 HttpStatusCode.Forbidden);
@@ -1110,6 +1088,78 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 HttpStatusCode.BadRequest,
                 "Tag, requirement and/or field doesn't exist!");
         }
+
+        #endregion
+        
+        #region PreserveRequirement
+        [TestMethod]
+        public async Task PreserveRequirement_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.PreserveRequirementAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task PreserveRequirement_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.PreserveRequirementAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task PreserveRequirement_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.PreserveRequirementAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task PreserveRequirement_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.PreserveRequirementAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                9999,
+                8888,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task PreserveRequirement_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.PreserveRequirementAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess), 
+                9999,
+                8888,
+                HttpStatusCode.Forbidden);
+
+
+        [TestMethod]
+        public async Task PreserveRequirement_AsPreserver_ShouldReturnBadRequest_WhenUnknownTagId()
+        {
+            // Arrange
+            var client = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(client, tagIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.PreserveRequirementAsync(
+                client,
+                9999,
+                requirement.Id,
+                HttpStatusCode.BadRequest,
+                "Tag and/or requirement doesn't exist!");
+        }
+
+        [TestMethod]
+        public async Task PreserveRequirement_AsPreserver_ShouldReturnBadRequest_WhenUnknownRequirementId()
+            => await TagsControllerTestsHelper.PreserveRequirementAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started,
+                8888,
+                HttpStatusCode.BadRequest,
+                "Tag and/or requirement doesn't exist!");
 
         #endregion
     }
