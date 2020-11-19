@@ -1162,5 +1162,126 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Tag and/or requirement doesn't exist!");
 
         #endregion
+        
+        #region RecordCbValue
+        [TestMethod]
+        public async Task RecordCbValue_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.RecordCbValueAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                7777,
+                null,
+                true,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task RecordCbValue_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.RecordCbValueAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                7777,
+                null,
+                true,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task RecordCbValue_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.RecordCbValueAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                9999,
+                8888,
+                7777,
+                null,
+                true,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task RecordCbValue_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.RecordCbValueAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                9999, 
+                8888,
+                7777,
+                null,
+                true,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task RecordCbValue_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.RecordCbValueAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess), 
+                9999, 
+                8888,
+                7777,
+                null,
+                true,
+                HttpStatusCode.Forbidden);
+
+
+        [TestMethod]
+        public async Task RecordCbValue_AsPreserver_ShouldReturnBadRequest_WhenUnknownTagId()
+        {
+            // Arrange
+            var client = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(client, tagIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.RecordCbValueAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                9999,
+                requirement.Id,
+                requirement.Fields.First().Id,
+                null,
+                true,
+                HttpStatusCode.BadRequest,
+                "Tag, requirement and/or field action doesn't exist!");
+        }
+
+        [TestMethod]
+        public async Task RecordCbValue_AsPreserver_ShouldReturnBadRequest_WhenUnknownRequirementId()
+        {
+            // Arrange
+            var client = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(client, tagIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.RecordCbValueAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                tagIdUnderTest,
+                8888,
+                requirement.Fields.First().Id,
+                null,
+                true,
+                HttpStatusCode.BadRequest,
+                "Tag, requirement and/or field doesn't exist!");
+        }
+
+        [TestMethod]
+        public async Task RecordCbValue_AsPreserver_ShouldReturnBadRequest_WhenUnknownFieldId()
+        {
+            // Arrange
+            var client = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(client, tagIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.RecordCbValueAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                tagIdUnderTest,
+                requirement.Id,
+                7777,
+                null,
+                true,
+                HttpStatusCode.BadRequest,
+                "Tag, requirement and/or field doesn't exist!");
+        }
+
+        #endregion
     }
 }
