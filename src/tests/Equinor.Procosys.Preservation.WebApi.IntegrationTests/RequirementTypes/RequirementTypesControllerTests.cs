@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
@@ -38,6 +40,41 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             // Assert
             var reqDef = await GetRequirementDefinitionDetailsAsync(reqTypeIdUnderTest, reqDefId);
             Assert.IsNotNull(reqDef);
+            Assert.AreEqual(title, reqDef.Title);
+            Assert.IsNotNull(reqDef.Fields);
+            Assert.AreEqual(0, reqDef.Fields.Count());
+        }
+
+        [TestMethod]
+        public async Task CreateRequirementDefinition_AsAdmin_ShouldCreateRequirementDefinitionWithField()
+        {
+            // Arrange
+            var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
+            var title = Guid.NewGuid().ToString();
+            var label = Guid.NewGuid().ToString();
+
+            // Act
+            var reqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                reqTypeIdUnderTest,
+                title,
+                new List<FieldDto>
+                {
+                    new FieldDto
+                    {
+                        FieldType = FieldType.Info,
+                        Label = label,
+                        SortKey = 20
+                    }
+                });
+
+            // Assert
+            var reqDef = await GetRequirementDefinitionDetailsAsync(reqTypeIdUnderTest, reqDefId);
+            Assert.IsNotNull(reqDef);
+            Assert.AreEqual(title, reqDef.Title);
+            Assert.IsNotNull(reqDef.Fields);
+            Assert.AreEqual(1, reqDef.Fields.Count());
+            Assert.AreEqual(label, reqDef.Fields.Single().Label);
         }
 
         [TestMethod]
@@ -45,7 +82,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         {
             // Arrange
             var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
-            var reqDefIdUnderTest = ReqDefInReqTypeAIdUnderTest;
+            var reqDefIdUnderTest = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                reqTypeIdUnderTest,
+                Guid.NewGuid().ToString());
             var reqDef = await GetRequirementDefinitionDetailsAsync(reqTypeIdUnderTest, reqDefIdUnderTest);
             var currentRowVersion = reqDef.RowVersion;
             var newTitle = Guid.NewGuid().ToString();
@@ -63,6 +103,48 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             AssertRowVersionChange(currentRowVersion, newRowVersion);
             reqDef = await GetRequirementDefinitionDetailsAsync(reqTypeIdUnderTest, reqDefIdUnderTest);
             Assert.AreEqual(newTitle, reqDef.Title);
+        }
+
+        [TestMethod]
+        public async Task UpdateRequirementDefinition_AsAdmin_ShouldUpdateFieldAndFieldRowVersion()
+        {
+            // Arrange
+            var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
+            var reqDefIdUnderTest = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                reqTypeIdUnderTest,
+                Guid.NewGuid().ToString(),
+                new List<FieldDto>
+                {
+                    new FieldDto
+                    {
+                        FieldType = FieldType.Info,
+                        Label = Guid.NewGuid().ToString(),
+                        SortKey = 20
+                    }
+                });
+            var reqDef = await GetRequirementDefinitionDetailsAsync(reqTypeIdUnderTest, reqDefIdUnderTest);
+            
+            var fieldDetailsDto = reqDef.Fields.Single();
+            var oldFieldRowVersion = fieldDetailsDto.RowVersion;
+            var newFieldLabel = Guid.NewGuid().ToString();
+            fieldDetailsDto.Label = newFieldLabel;
+
+            // Act
+            await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                reqTypeIdUnderTest,
+                reqDef.Id,
+                reqDef.Title,
+                4,
+                reqDef.RowVersion,
+                reqDef.Fields.ToList());
+
+            // Assert
+            reqDef = await GetRequirementDefinitionDetailsAsync(reqTypeIdUnderTest, reqDefIdUnderTest);
+            fieldDetailsDto = reqDef.Fields.Single();
+            AssertRowVersionChange(oldFieldRowVersion, fieldDetailsDto.RowVersion);
+            Assert.AreEqual(newFieldLabel, fieldDetailsDto.Label);
         }
 
         [TestMethod]

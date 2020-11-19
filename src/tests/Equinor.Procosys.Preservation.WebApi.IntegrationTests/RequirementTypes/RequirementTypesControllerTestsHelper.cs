@@ -35,6 +35,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             HttpClient client,
             int reqTypeId,
             string title,
+            List<FieldDto> fields = null,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -42,7 +43,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             {
                 title,
                 sortKey = 10,
-                defaultIntervalWeeks = 4
+                defaultIntervalWeeks = 4,
+                fields
             };
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
@@ -66,6 +68,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             string title,
             int defaultIntervalWeeks,
             string rowVersion,
+            List<FieldDetailsDto> updatedFields = null,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -74,12 +77,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 title,
                 defaultIntervalWeeks,
                 sortKey = 10,
-                rowVersion
+                rowVersion,
+                updatedFields
             };
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"{_route}/{requirementTypeId}/RequirementDefinitions/{requirementDefinitionId}", content);
+            var response =
+                await client.PutAsync($"{_route}/{requirementTypeId}/RequirementDefinitions/{requirementDefinitionId}",
+                    content);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)

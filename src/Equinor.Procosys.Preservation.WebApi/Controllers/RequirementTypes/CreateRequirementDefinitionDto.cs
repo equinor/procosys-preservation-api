@@ -9,6 +9,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
         public RequirementUsage Usage { get; set; }
         public string Title { get; set; }
         public int DefaultIntervalWeeks { get; set; }
-        public IList<FieldDto> Fields { get; set; } = new List<FieldDto>();
+        public IList<FieldDto> Fields { get; set; }
     }
 }
