@@ -20,8 +20,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
-                .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
-                .WithMessage(command => $"Tag doesn't exist! Tag={command.TagId}")
+                .MustAsync(BeAnExistingRequirementAsync)
+                .WithMessage(command => "Tag and/or requirement doesn't exist!")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .MustAsync((command, token) => HasRequirementWithActivePeriodAsync(command.TagId, command.RequirementId, token))
@@ -31,10 +31,10 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             When(command => command.NumberValues.Any(), () =>
             {
                 RuleForEach(command => command.NumberValues)
+                    .MustAsync((command, fv, token) => BeAnExistingFieldForRequirementAsync(command, fv.FieldId, token))
+                    .WithMessage(command => "Field doesn't exist for requirement!")
                     .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.FieldId}")
-                    .MustAsync((_, fv, token) => BeAnExistingFieldAsync(fv.FieldId, token))
-                    .WithMessage((_, fv) => $"Field doesn't exist! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field is voided! Field={fv.FieldId}");
             });
@@ -42,10 +42,10 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             When(command => command.CheckBoxValues.Any(), () =>
             {
                 RuleForEach(command => command.CheckBoxValues)
+                    .MustAsync((command, fv, token) => BeAnExistingFieldForRequirementAsync(command, fv.FieldId, token))
+                    .WithMessage(command => "Field doesn't exist for requirement!")
                     .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.FieldId}")
-                    .MustAsync((_, fv, token) => BeAnExistingFieldAsync(fv.FieldId, token))
-                    .WithMessage((_, fv) => $"Field doesn't exist! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field is voided! Field={fv.FieldId}");
             });
@@ -53,8 +53,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
-            async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
-                => await tagValidator.ExistsAsync(tagId, token);
+            async Task<bool> BeAnExistingRequirementAsync(RecordValuesCommand command, CancellationToken token)
+                => await tagValidator.ExistsRequirementAsync(command.TagId, command.RequirementId, token);
 
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
@@ -62,8 +62,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             async Task<bool> HasRequirementWithActivePeriodAsync(int tagId, int requirementId, CancellationToken token)
                 => await tagValidator.HasRequirementWithActivePeriodAsync(tagId, requirementId, token);
 
-            async Task<bool> BeAnExistingFieldAsync(int fieldId, CancellationToken token)
-                => await fieldValidator.ExistsAsync(fieldId, token);
+            async Task<bool> BeAnExistingFieldForRequirementAsync(RecordValuesCommand command, int fieldId, CancellationToken token)
+                => await tagValidator.ExistsFieldForRequirementAsync(command.TagId, command.RequirementId, fieldId, token);
 
             async Task<bool> NotBeAVoidedFieldAsync(int fieldId, CancellationToken token)
                 => !await fieldValidator.IsVoidedAsync(fieldId, token);

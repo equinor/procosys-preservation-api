@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
     {
         private const int TagId = 1;
         private const int AttachmentFieldId = 11;
-        private const int RequirementId = 21;
+        private const int ReqId = 21;
 
         private UploadFieldValueAttachmentCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
@@ -27,12 +27,12 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(v => v.ExistsRequirementAsync(TagId, RequirementId, default))
+            _tagValidatorMock.Setup(v => v.ExistsRequirementAsync(TagId, ReqId, default))
                 .Returns(Task.FromResult(true));
             _tagValidatorMock
-                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, RequirementId, AttachmentFieldId, default))
+                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, AttachmentFieldId, default))
                 .Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, RequirementId, default))
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default))
                 .Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
             _fieldValidatorMock.Setup(r => r.IsValidForAttachmentAsync(AttachmentFieldId, default))
@@ -40,7 +40,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
 
             _command = new UploadFieldValueAttachmentCommand(
                 TagId, 
-                RequirementId, 
+                ReqId, 
                 AttachmentFieldId,
                 "F",
                 new MemoryStream());
@@ -51,7 +51,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         [TestMethod]
         public void Validate_ShouldFail_WhenTagOrReqNotExists()
         {
-            _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, RequirementId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
@@ -64,7 +64,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         public void Validate_ShouldFail_WhenFieldNotExistsForRequirement()
         {
             _tagValidatorMock
-                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, RequirementId, AttachmentFieldId, default))
+                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, AttachmentFieldId, default))
                 .Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDontHaveActivePeriod()
         {
-            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, RequirementId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
@@ -126,7 +126,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, RequirementId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 

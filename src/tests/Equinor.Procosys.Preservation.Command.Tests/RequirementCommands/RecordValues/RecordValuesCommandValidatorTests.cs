@@ -31,13 +31,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.ExistsRequirementAsync(TagId, ReqId, default))
+                .Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, NumberFieldId, default))
+                .Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, CheckBoxFieldId, default))
+                .Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default))
+                .Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
-            _fieldValidatorMock.Setup(v => v.ExistsAsync(NumberFieldId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(NumberFieldId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(v => v.ExistsAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(NumberFieldId, default))
+                .Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(CheckBoxFieldId, default))
+                .Returns(Task.FromResult(true));
 
             _recordValuesCommandWithCommentOnly = new RecordValuesCommand(
                 TagId,
@@ -65,15 +71,29 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
+        public void Validate_ShouldFail_WhenTagOrReqNotExists()
         {
-            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
-            var result = _dut.Validate(_recordValuesCommandWithCommentOnly);
+            var result = _dut.Validate(_recordValuesCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag and/or requirement doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenFieldNotExistsForRequirement()
+        {
+            _tagValidatorMock
+                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, CheckBoxFieldId, default))
+                .Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_recordValuesCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist for requirement!"));
         }
 
         [TestMethod]
@@ -113,18 +133,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenNumberFieldNotExists()
-        {
-            _fieldValidatorMock.Setup(r => r.ExistsAsync(NumberFieldId, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_recordValuesCommand);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenNumberFieldNotForRecording()
         {
             _fieldValidatorMock.Setup(r => r.IsValidForRecordingAsync(NumberFieldId, default)).Returns(Task.FromResult(false));
@@ -134,18 +142,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field values can not be recorded for field type!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenCheckBoxFieldNotExists()
-        {
-            _fieldValidatorMock.Setup(r => r.ExistsAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_recordValuesCommand);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist!"));
         }
 
         [TestMethod]
@@ -177,8 +173,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Record
         public void Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(v => v.ExistsAsync(NumberFieldId, default)).Returns(Task.FromResult(false));
-            _fieldValidatorMock.Setup(v => v.ExistsAsync(CheckBoxFieldId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, NumberFieldId, default))
+                .Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, CheckBoxFieldId, default))
+                .Returns(Task.FromResult(false));
 
             var result = _dut.Validate(_recordValuesCommand);
             
