@@ -646,7 +646,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
 
-
         [TestMethod]
         public async Task UpdateAction_AsPreserver_ShouldReturnBadRequest_WhenUnknownTagId()
             => await TagsControllerTestsHelper.UpdateActionAsync(

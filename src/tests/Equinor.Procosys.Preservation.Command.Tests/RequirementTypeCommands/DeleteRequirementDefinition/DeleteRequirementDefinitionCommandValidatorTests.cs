@@ -25,8 +25,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
         public void Setup_OkState()
         {
             _requirementTypeValidatorMock = new Mock<IRequirementTypeValidator>();
-            _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(true));
-            _requirementTypeValidatorMock.Setup(r => r.HasRequirementDefinitionAsync(_requirementTypeId, _requirementDefinitionId, default)).Returns(Task.FromResult(true));
+            _requirementTypeValidatorMock
+                .Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
+                .Returns(Task.FromResult(true));
 
             _requirementDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _requirementDefinitionValidatorMock.Setup(r => r.IsVoidedAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
@@ -36,7 +37,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
 
             _command = new DeleteRequirementDefinitionCommand(_requirementTypeId, _requirementDefinitionId, _rowVersion);
 
-            _dut = new DeleteRequirementDefinitionCommandValidator(_requirementTypeValidatorMock.Object, _requirementDefinitionValidatorMock.Object, _rowVersionValidatorMock.Object);
+            _dut = new DeleteRequirementDefinitionCommandValidator(
+                _requirementTypeValidatorMock.Object,
+                _requirementDefinitionValidatorMock.Object,
+                _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -48,27 +52,17 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.De
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenRequirementTypeNotExists()
+        public void Validate_ShouldFail_WhenRequirementDefinitionDoesNotExists()
         {
-            _requirementTypeValidatorMock.Setup(r => r.ExistsAsync(_requirementTypeId, default)).Returns(Task.FromResult(false));
-            
+            _requirementTypeValidatorMock
+                .Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
+                .Returns(Task.FromResult(false));
+
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type doesn't exist!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenTypeDontHaveDefinition()
-        {
-            _requirementTypeValidatorMock.Setup(r => r.HasRequirementDefinitionAsync(_requirementTypeId, _requirementDefinitionId, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist within given requirement type!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement type and/or requirement definition doesn't exist!"));
         }
 
         [TestMethod]

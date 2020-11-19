@@ -16,6 +16,5 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
         Task<bool> TagFunctionRequirementsExistAsync(int requirementDefinitionId, CancellationToken token);
         Task<bool> AllExcludedFieldsAreVoidedAsync(int requirementDefinitionId, List<int> updateFieldIds, CancellationToken token);
         Task<bool> AnyExcludedFieldsIsInUseAsync(int requirementDefinitionId, List<int> updateFieldIds, CancellationToken token);
-        Task<bool> RequirementDefinitionHasRequirementTypeAsParentAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token);
     }
 }
