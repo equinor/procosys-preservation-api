@@ -340,5 +340,39 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<int>(jsonString);
         }
+
+        public static async Task<List<RequirementDetailsDto>> GetTagRequirementsAsync(
+            HttpClient client,
+            int tagId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.GetAsync($"{_route}/{tagId}/Requirements");
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<RequirementDetailsDto>>(content);
+        }
+
+        public static async Task UploadFieldValueAttachmentAsync(
+            HttpClient client,
+            int tagId,
+            int requirementId,
+            int fieldId,
+            TestFile file,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var httpContent = file.CreateHttpContent();
+            var response = await client.PostAsync($"{_route}/{tagId}/Requirements/{requirementId}/Attachment/{fieldId}", httpContent);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
     }
 }

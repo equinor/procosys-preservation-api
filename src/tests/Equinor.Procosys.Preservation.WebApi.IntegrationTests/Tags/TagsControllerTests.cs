@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             Assert.IsTrue(tagResultDto.Tags.Count > 0);
 
-            var siteAreaTag = tagResultDto.Tags.Single(t => t.Id == SiteAreaTagIdUnderTest);
+            var siteAreaTag = tagResultDto.Tags.Single(t => t.Id == TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted);
             Assert.IsNotNull(siteAreaTag.TagNo);
             Assert.IsNotNull(siteAreaTag.RowVersion);
         }
@@ -31,10 +31,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Act
             var siteAreaTag = await TagsControllerTestsHelper.GetTagAsync(
                 PreserverClient(TestFactory.PlantWithAccess), 
-                SiteAreaTagIdUnderTest);
+                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted);
 
             // Assert
-            Assert.AreEqual(SiteAreaTagIdUnderTest, siteAreaTag.Id);
+            Assert.AreEqual(TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, siteAreaTag.Id);
             Assert.IsNotNull(siteAreaTag.TagNo);
             Assert.IsNotNull(siteAreaTag.RowVersion);
             Assert.IsNotNull(siteAreaTag.AreaCode);
@@ -80,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var plannerClient = PlannerClient(TestFactory.PlantWithAccess);
-            var tagIdUnderTest = SiteAreaTagIdUnderTest;
+            var tagIdUnderTest = TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
             var tag = await TagsControllerTestsHelper.GetTagAsync(
                 plannerClient, 
                 tagIdUnderTest);
@@ -110,7 +110,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var plannerClient = PlannerClient(TestFactory.PlantWithAccess);
-            var tagIdUnderTest = StandardTagIdUnderTest;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
             var tag = await TagsControllerTestsHelper.GetTagAsync(plannerClient, tagIdUnderTest);
             var oldDescription = tag.Description;
             var currentRowVersion = tag.RowVersion;
@@ -135,7 +135,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Act
             var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
-                StandardTagIdUnderTest);
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted);
 
             // Assert
             Assert.IsNotNull(attachmentDtos);
@@ -153,20 +153,20 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
             var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
                 preserverClient,
-                StandardTagIdUnderTest);
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted);
             var standardTagAttachment = attachmentDtos.Single(t => t.Id == StandardTagAttachmentIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.DeleteTagAttachmentAsync(
                 preserverClient,
-                StandardTagIdUnderTest,
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
                 StandardTagAttachmentIdUnderTest,
                 standardTagAttachment.RowVersion);
 
             // Assert
             attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
                 preserverClient,
-                StandardTagIdUnderTest);
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted);
             Assert.IsNull(attachmentDtos.SingleOrDefault(m => m.Id == StandardTagAttachmentIdUnderTest));
         }
 
@@ -176,7 +176,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Act
             var attachmentDtos = await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
-                StandardTagIdUnderTest,
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
                 StandardTagActionIdUnderTest);
 
             // Assert
@@ -195,14 +195,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
             var attachmentDtos = await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
                 preserverClient,
-                StandardTagIdUnderTest,
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
                 StandardTagActionIdUnderTest);
             var standardTagActionAttachment = attachmentDtos.Single(t => t.Id == StandardTagActionAttachmentIdUnderTest);
 
             // Act
             await TagsControllerTestsHelper.DeleteActionAttachmentAsync(
                 preserverClient,
-                StandardTagIdUnderTest,
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
                 StandardTagActionIdUnderTest,
                 StandardTagActionAttachmentIdUnderTest,
                 standardTagActionAttachment.RowVersion);
@@ -210,7 +210,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             attachmentDtos = await TagsControllerTestsHelper.GetAllActionAttachmentsAsync(
                 preserverClient,
-                StandardTagIdUnderTest,
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted,
                 StandardTagActionIdUnderTest);
             Assert.IsNull(attachmentDtos.SingleOrDefault(m => m.Id == StandardTagActionAttachmentIdUnderTest));
         }
@@ -221,7 +221,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Act
             var actionDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
-                StandardTagIdUnderTest);
+                TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted);
 
             // Assert
             Assert.IsNotNull(actionDtos);
@@ -238,7 +238,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Act
             var actionDetailsDto = await TagsControllerTestsHelper.GetActionAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
-                SiteAreaTagIdUnderTest,
+                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted,
                 SiteAreaTagActionIdUnderTest);
 
             // Assert
@@ -253,7 +253,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
-            var tagIdUnderTest = StandardTagIdUnderTest;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
             var actionIdUnderTest = StandardTagActionIdUnderTest;
 
             var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
@@ -288,7 +288,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
-            var tagIdUnderTest = StandardTagIdUnderTest;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
             var actionIdUnderTest = await TagsControllerTestsHelper.CreateActionAsync(
                 preserverClient,
                 tagIdUnderTest,
@@ -323,7 +323,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
-            var tagIdUnderTest = StandardTagIdUnderTest;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
             var actionIdUnderTest = StandardTagActionIdUnderTest;
 
             var actionDetails = await TagsControllerTestsHelper.GetActionAsync(
@@ -352,7 +352,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
-            var tagIdUnderTest = StandardTagIdUnderTest;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
             var title = Guid.NewGuid().ToString();
             var description = Guid.NewGuid().ToString();
 
@@ -370,6 +370,57 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 id);
             Assert.AreEqual(title, actionDetails.Title);
             Assert.AreEqual(description, actionDetails.Description);
+        }
+
+        [TestMethod]
+        public async Task GetTagRequirements_AsPreserver_ShouldGetTagRequirements()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+            
+            // Act
+            var requirementDetailDtos = await TagsControllerTestsHelper.GetTagRequirementsAsync(
+                preserverClient, 
+                tagIdUnderTest);
+            
+            // Assert
+            Assert.IsNotNull(requirementDetailDtos);
+            Assert.IsTrue(requirementDetailDtos.Count > 0);
+
+            var requirementDetailDto = requirementDetailDtos.First();
+            Assert.IsNotNull(requirementDetailDto.RowVersion);
+        }
+
+        [TestMethod]
+        public async Task UploadFieldValueAttachment_AsPreserver_ShouldUploadFieldValueAttachment()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+
+            var requirementDetailDtos = await TagsControllerTestsHelper.GetTagRequirementsAsync(
+                preserverClient, 
+                tagIdUnderTest);
+            var requirementDetailDto = requirementDetailDtos.First();
+            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup. Preservation not started");
+            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup. Expect to find 1 requirement on tag under test");
+            Assert.IsNull(requirementDetailDto.Fields.Single().CurrentValue);
+            
+            // Act
+            await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
+                preserverClient,
+                tagIdUnderTest,
+                requirementDetailDto.Id,
+                requirementDetailDto.Fields.First().Id,
+                FileToBeUploaded);
+            
+            // Assert
+            requirementDetailDtos = await TagsControllerTestsHelper.GetTagRequirementsAsync(
+                preserverClient, 
+                tagIdUnderTest);
+            requirementDetailDto = requirementDetailDtos.First();
+            Assert.IsNotNull(requirementDetailDto.Fields.Single().CurrentValue);
         }
     }
 }

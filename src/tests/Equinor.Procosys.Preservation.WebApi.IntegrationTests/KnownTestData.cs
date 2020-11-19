@@ -28,8 +28,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static Guid ActionAttachmentBlobStorageId = new Guid("{11111111-1111-1111-1111-111111111111}");
         public static Guid TagAttachmentBlobStorageId = new Guid("{22222222-2222-2222-2222-222222222222}");
 
-        public List<int> StandardTagIds = new List<int>();
-        public List<int> SiteAreaTagIds = new List<int>();
+        public int TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
+        public int TagId_ForStandardTagWithAttachmentRequirement_Started;
+        public int TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
         public List<int> ModeIds = new List<int>();
         public List<int> StepIds = new List<int>();
         public List<int> StandardTagActionIds = new List<int>();
