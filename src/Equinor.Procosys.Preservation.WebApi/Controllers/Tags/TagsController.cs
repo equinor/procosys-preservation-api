@@ -625,7 +625,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPost("{id}/Requirements/{requirementId}/Attachment/{fieldId}")]
-        public async Task<IActionResult> AddFieldValueAttachment(
+        public async Task<IActionResult> UploadFieldValueAttachment(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
