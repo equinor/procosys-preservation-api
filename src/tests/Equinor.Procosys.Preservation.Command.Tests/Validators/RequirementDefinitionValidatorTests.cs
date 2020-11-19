@@ -66,6 +66,39 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
+        public async Task ExistsFieldAsync_KnownId_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.ExistsFieldAsync(_reqDefWithTwoFields.Id, _numberFieldId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsFieldAsync_UnknownReqDefId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.ExistsFieldAsync(126234, _numberFieldId, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsFieldAsync_UnknownFieldId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.ExistsFieldAsync(_reqDefWithTwoFields.Id, 126234, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
         public async Task IsVoidedAsync_KnownVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

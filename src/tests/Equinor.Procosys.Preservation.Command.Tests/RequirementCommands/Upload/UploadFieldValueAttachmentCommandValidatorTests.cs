@@ -14,7 +14,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
     {
         private const int TagId = 1;
         private const int AttachmentFieldId = 11;
-        private const int ReqId = 21;
+        private const int RequirementId = 21;
 
         private UploadFieldValueAttachmentCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
@@ -27,15 +27,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.ExistsRequirementAsync(TagId, RequirementId, default))
+                .Returns(Task.FromResult(true));
+            _tagValidatorMock
+                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, RequirementId, AttachmentFieldId, default))
+                .Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, RequirementId, default))
+                .Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
-            _fieldValidatorMock.Setup(v => v.ExistsAsync(AttachmentFieldId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(r => r.IsValidForAttachmentAsync(AttachmentFieldId, default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(r => r.IsValidForAttachmentAsync(AttachmentFieldId, default))
+                .Returns(Task.FromResult(true));
 
             _command = new UploadFieldValueAttachmentCommand(
                 TagId, 
-                ReqId, 
+                RequirementId, 
                 AttachmentFieldId,
                 "F",
                 new MemoryStream());
@@ -44,15 +49,29 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
+        public void Validate_ShouldFail_WhenTagOrReqNotExists()
         {
-            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, RequirementId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag and/or requirement doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenFieldNotExistsForRequirement()
+        {
+            _tagValidatorMock
+                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, RequirementId, AttachmentFieldId, default))
+                .Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist for requirement!"));
         }
 
         [TestMethod]
@@ -82,25 +101,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDontHaveActivePeriod()
         {
-            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, RequirementId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't have this requirement with active period!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenAttachmentFieldNotExists()
-        {
-            _fieldValidatorMock.Setup(r => r.ExistsAsync(AttachmentFieldId, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist!"));
         }
 
         [TestMethod]
@@ -119,7 +126,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
         public void Validate_ShouldFailWith1Error_WhenMultipleErrorsInSameRule()
         {
             _projectValidatorMock.Setup(r => r.IsClosedForTagAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, RequirementId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 

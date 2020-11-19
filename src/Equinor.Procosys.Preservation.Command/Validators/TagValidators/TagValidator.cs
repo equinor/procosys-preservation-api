@@ -32,6 +32,21 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
                 where t.Id == tagId && tr.Id == requirementId
                 select tr).AnyAsync(token);
 
+        public async Task<bool> ExistsFieldForRequirementAsync(int tagId, int requirementId, int fieldId, CancellationToken token)
+        {
+            var tagRequirement = await (from t in _context.QuerySet<Tag>()
+                join tr in _context.QuerySet<TagRequirement>() on t.Id equals EF.Property<int>(tr, "TagId")
+                where t.Id == tagId && tr.Id == requirementId
+                select tr).SingleOrDefaultAsync(token);
+
+            if (tagRequirement == null)
+            {
+                return false;
+            }
+
+            return await _requirementDefinitionValidator.ExistsFieldAsync(tagRequirement.RequirementDefinitionId, fieldId, token);
+        }
+
         public async Task<bool> ExistsActionAsync(int tagId, int actionId, CancellationToken token) =>
             await (from t in _context.QuerySet<Tag>()
                 join action in _context.QuerySet<Action>() on t.Id equals EF.Property<int>(action, "TagId")

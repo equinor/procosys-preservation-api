@@ -1048,7 +1048,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 requirement.Fields.First().Id,
                 FileToBeUploaded,
                 HttpStatusCode.BadRequest,
-                "Tag, requirement and/or field action doesn't exist!");
+                "Tag and/or requirement doesn't exist!");
         }
 
         [TestMethod]
@@ -1067,7 +1067,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 requirement.Fields.First().Id,
                 FileToBeUploaded,
                 HttpStatusCode.BadRequest,
-                "Tag, requirement and/or field doesn't exist!");
+                "Tag and/or requirement doesn't exist!");
         }
 
         [TestMethod]
@@ -1086,7 +1086,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 7777,
                 FileToBeUploaded,
                 HttpStatusCode.BadRequest,
-                "Tag, requirement and/or field doesn't exist!");
+                "Field doesn't exist for requirement!");
         }
 
         #endregion
@@ -1239,7 +1239,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 true,
                 HttpStatusCode.BadRequest,
-                "Tag, requirement and/or field action doesn't exist!");
+                "Tag and/or requirement doesn't exist!");
         }
 
         [TestMethod]
@@ -1259,7 +1259,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 true,
                 HttpStatusCode.BadRequest,
-                "Tag, requirement and/or field doesn't exist!");
+                "Tag and/or requirement doesn't exist!");
         }
 
         [TestMethod]
@@ -1279,7 +1279,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 true,
                 HttpStatusCode.BadRequest,
-                "Tag, requirement and/or field doesn't exist!");
+                "Field doesn't exist for requirement!");
         }
 
         #endregion
