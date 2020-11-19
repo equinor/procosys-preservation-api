@@ -59,6 +59,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var reqDefAWithInfoField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeAWithInfoField);
             SeedInfoField(dbContext, reqDefAWithInfoField);
 
+            var reqDefAWithCbField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeAWithCbField);
+            SeedCbField(dbContext, reqDefAWithCbField);
+
             var reqTypeB = SeedReqType(dbContext, plant, KnownTestData.ReqTypeB);
             SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
             
@@ -81,6 +84,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             standardTagWithInfoRequirement_Started.StartPreservation();
             dbContext.SaveChangesAsync().Wait();
             knownTestData.TagId_ForStandardTagWithInfoRequirement_Started = standardTagWithInfoRequirement_Started.Id;
+
+            var standardTagWithCbRequirement_Started = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefAWithCbField);
+            standardTagWithCbRequirement_Started.StartPreservation();
+            dbContext.SaveChangesAsync().Wait();
+            knownTestData.TagId_ForStandardTagWithCbRequirement_Started = standardTagWithCbRequirement_Started.Id;
 
             var standardTagAttachment = SeedTagAttachment(dbContext, standardTagReadyForBulkPreserve_NotStarted);
             knownTestData.StandardTagAttachmentIds.Add(standardTagAttachment.Id);
@@ -106,6 +114,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         {
             var infoField = new Field(reqDef.Plant, Guid.NewGuid().ToString(), FieldType.Info, 10);
             reqDef.AddField(infoField);
+            dbContext.SaveChangesAsync().Wait();
+        }
+
+        private static void SeedCbField(PreservationContext dbContext, RequirementDefinition reqDef)
+        {
+            var cbField = new Field(reqDef.Plant, Guid.NewGuid().ToString(), FieldType.CheckBox, 10);
+            reqDef.AddField(cbField);
             dbContext.SaveChangesAsync().Wait();
         }
 

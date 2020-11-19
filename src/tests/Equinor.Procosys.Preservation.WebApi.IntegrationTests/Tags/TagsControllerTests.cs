@@ -400,7 +400,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
 
             var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
-            Assert.IsNull(requirement.Fields.Single().CurrentValue, "Bad test setup: Should not be possible");
+            Assert.IsNull(requirement.Fields.Single().CurrentValue, "Bad test setup: Attachment already uploaded");
 
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
@@ -409,6 +409,31 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 requirement.Id,
                 requirement.Fields.First().Id,
                 FileToBeUploaded);
+            
+            // Assert
+            requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
+            Assert.IsNotNull(requirement.Fields.Single().CurrentValue);
+        }
+
+        [TestMethod]
+        public async Task RecordCbValueAsync_AsPreserver_ShouldRecordCbValueAsync()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithCbRequirement_Started;
+
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
+            Assert.IsNull(requirement.Fields.Single().CurrentValue, "Bad test setup: Value already recorded");
+            var comment = Guid.NewGuid().ToString();
+
+            // Act
+            await TagsControllerTestsHelper.RecordCbValueAsync(
+                preserverClient,
+                tagIdUnderTest,
+                requirement.Id,
+                requirement.Fields.First().Id,
+                comment,
+                true);
             
             // Assert
             requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);

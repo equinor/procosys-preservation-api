@@ -377,6 +377,35 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
 
+        public static async Task RecordCbValueAsync(
+            HttpClient client,
+            int tagId,
+            int requirementId,
+            int fieldId,
+            string comment,
+            bool isChecked,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                comment,
+                checkBoxValues = new []
+                {
+                    new {
+                        fieldId,
+                        isChecked
+                    }
+                }
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_route}/{tagId}/Requirements/{requirementId}/RecordValues", content);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
         public static async Task<GetTagRequirementInfo> GetTagRequirementInfoAsync(HttpClient client, int tagId)
         {
             var requirementDetailDtos = await GetTagRequirementsAsync(client, tagId);
