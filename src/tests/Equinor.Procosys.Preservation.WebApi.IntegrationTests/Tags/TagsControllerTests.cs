@@ -400,7 +400,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
 
             var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
-            
+            Assert.IsNull(requirement.Fields.Single().CurrentValue, "Bad test setup: Should not be possible");
+
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
                 preserverClient,
@@ -412,6 +413,23 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
             Assert.IsNotNull(requirement.Fields.Single().CurrentValue);
+        }
+
+        [TestMethod]
+        public async Task PreserveRequirement_AsPreserver_ShouldPreserveRequirement()
+        {
+            // Arrange
+            var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithInfoRequirement_Started;
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
+            var oldNextDueTimeUtc = requirement.NextDueTimeUtc;
+
+            // Act
+            await TagsControllerTestsHelper.PreserveRequirementAsync(preserverClient, tagIdUnderTest, requirement.Id);
+
+            // Assert
+            requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
+            Assert.AreNotEqual(oldNextDueTimeUtc, requirement.NextDueTimeUtc);
         }
     }
 }

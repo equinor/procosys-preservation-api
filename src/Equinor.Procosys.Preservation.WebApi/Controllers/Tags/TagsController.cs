@@ -519,7 +519,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("{id}/Preserve")]
-        public async Task<IActionResult> Preserve(
+        public async Task<IActionResult> PreserveTag(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -531,7 +531,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("BulkPreserve")]
-        public async Task<IActionResult> BulkPreserve(
+        public async Task<IActionResult> BulkPreserveTags(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
@@ -696,7 +696,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [AuthorizeAny(Permissions.PRESERVATION_WRITE, Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPost("{id}/Requirements/{requirementId}/Preserve")]
-        public async Task<IActionResult> Preserve(
+        public async Task<IActionResult> PreserveRequirement
+        (
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]

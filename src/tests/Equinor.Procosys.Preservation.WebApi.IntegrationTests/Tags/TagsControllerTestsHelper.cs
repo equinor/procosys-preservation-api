@@ -383,8 +383,22 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var requirementDetailDto = requirementDetailDtos.First();
             Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup: Preservation not started");
             Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup: Expect to find 1 requirement on tag under test");
-            Assert.IsNull(requirementDetailDto.Fields.Single().CurrentValue);
-            return new GetTagRequirementInfo(requirementDetailDto.Id, requirementDetailDto.Fields);
+            return new GetTagRequirementInfo(
+                requirementDetailDto.Id,
+                requirementDetailDto.NextDueTimeUtc.Value,
+                requirementDetailDto.Fields);
+        }
+
+        public static async Task PreserveRequirementAsync(
+            HttpClient client,
+            int tagId,
+            int requirementId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.PostAsync($"{_route}/{tagId}/Requirements/{requirementId}/Preserve", null);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
     }
 }

@@ -13,6 +13,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string ResponsibleDescription => "Test - Responsible";
         public static string ReqTypeA => "TestRT-A";
         public static string ReqDefInReqTypeANoField => "TestRD-A";
+        public static string ReqDefInReqTypeAWithInfoField => "TestRD-A-Info";
         public static string ReqDefInReqTypeAWithAttachmentField => "TestRD-A-Attachment";
         public static string ReqTypeB => "TestRT-B";
         public static string ReqDefInReqTypeB => "TestRD-B";
@@ -29,6 +30,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static Guid TagAttachmentBlobStorageId = new Guid("{22222222-2222-2222-2222-222222222222}");
 
         public int TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
+        public int TagId_ForStandardTagWithInfoRequirement_Started;
         public int TagId_ForStandardTagWithAttachmentRequirement_Started;
         public int TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
         public int ModeId;

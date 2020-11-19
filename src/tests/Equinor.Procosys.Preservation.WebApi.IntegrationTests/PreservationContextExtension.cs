@@ -52,8 +52,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             var reqTypeA = SeedReqType(dbContext, plant, KnownTestData.ReqTypeA);
             var reqDefANoField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeANoField);
+
             var reqDefAWithAttachmentField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeAWithAttachmentField);
             SeedAttachmentField(dbContext, reqDefAWithAttachmentField);
+
+            var reqDefAWithInfoField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeAWithInfoField);
+            SeedInfoField(dbContext, reqDefAWithInfoField);
 
             var reqTypeB = SeedReqType(dbContext, plant, KnownTestData.ReqTypeB);
             SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
@@ -73,6 +77,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             dbContext.SaveChangesAsync().Wait();
             knownTestData.TagId_ForStandardTagWithAttachmentRequirement_Started = standardTagWithAttachmentRequirement_Started.Id;
 
+            var standardTagWithInfoRequirement_Started = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefAWithInfoField);
+            standardTagWithInfoRequirement_Started.StartPreservation();
+            dbContext.SaveChangesAsync().Wait();
+            knownTestData.TagId_ForStandardTagWithInfoRequirement_Started = standardTagWithInfoRequirement_Started.Id;
+
             var standardTagAttachment = SeedTagAttachment(dbContext, standardTagReadyForBulkPreserve_NotStarted);
             knownTestData.StandardTagAttachmentIds.Add(standardTagAttachment.Id);
 
@@ -91,6 +100,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             knownTestData.SiteAreaTagActionIds.Add(areaTagAction.Id);
             var areaTagActionAttachment = SeedActionAttachment(dbContext, areaTagAction);
             knownTestData.SiteAreaTagActionAttachmentIds.Add(areaTagActionAttachment.Id);
+        }
+
+        private static void SeedInfoField(PreservationContext dbContext, RequirementDefinition reqDef)
+        {
+            var infoField = new Field(reqDef.Plant, Guid.NewGuid().ToString(), FieldType.Info, 10);
+            reqDef.AddField(infoField);
+            dbContext.SaveChangesAsync().Wait();
         }
 
         private static void SeedAttachmentField(PreservationContext dbContext, RequirementDefinition reqDef)
