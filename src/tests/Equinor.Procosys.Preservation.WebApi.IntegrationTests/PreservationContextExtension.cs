@@ -46,7 +46,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var plant = plantProvider.Plant;
 
             var mode = SeedMode(dbContext, plant);
-            knownTestData.ModeIds.Add(mode.Id);
+            knownTestData.ModeId = mode.Id;
 
             var responsible = SeedResponsible(dbContext, plant);
 
@@ -60,11 +60,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             
             var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.JourneyWithTags);
             var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepInJourneyWithTags, mode, responsible);
-            knownTestData.StepIds.Add(stepInJourneyWithTags.Id);
             
             var journeyWithoutTags = SeedJourney(dbContext, plant, KnownTestData.JourneyNotInUse);
-            var stepInJourneyWithoutTags = SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, mode, responsible);
-            knownTestData.StepIds.Add(stepInJourneyWithoutTags.Id);
+            SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, mode, responsible);
 
             var project = SeedProject(dbContext, plant);
             var standardTagReadyForBulkPreserve_NotStarted = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);

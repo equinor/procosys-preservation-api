@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 TestFactory.ProjectWithAccess);
             var initialTagsCount = tagsResult.Tags.Count;
             var readyToBeDuplicatedTag = tagsResult.Tags.SingleOrDefault(t => t.ReadyToBeDuplicated);
-            Assert.IsNotNull(readyToBeDuplicatedTag, "Didn't find tag to duplicate. Bad test setup");
+            Assert.IsNotNull(readyToBeDuplicatedTag, "Bad test setup: Didn't find tag to duplicate.");
 
             // Act
             var id = await TagsControllerTestsHelper.DuplicateAreaTagAsync(
@@ -403,8 +403,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 preserverClient, 
                 tagIdUnderTest);
             var requirementDetailDto = requirementDetailDtos.First();
-            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup. Preservation not started");
-            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup. Expect to find 1 requirement on tag under test");
+            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup: Preservation not started");
+            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup: Expect to find 1 requirement on tag under test");
             Assert.IsNull(requirementDetailDto.Fields.Single().CurrentValue);
             
             // Act

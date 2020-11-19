@@ -31,8 +31,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public int TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
         public int TagId_ForStandardTagWithAttachmentRequirement_Started;
         public int TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
-        public List<int> ModeIds = new List<int>();
-        public List<int> StepIds = new List<int>();
+        public int ModeId;
+
+        // todo get rid of these, use helper classes to get these ids on-the-fly
         public List<int> StandardTagActionIds = new List<int>();
         public List<int> SiteAreaTagActionIds = new List<int>();
         public List<int> StandardTagAttachmentIds = new List<int>();

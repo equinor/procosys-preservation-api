@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
 
             initialModesCount = modes.Count;
 
-            _modeIdUnderTest = TestFactory.KnownTestData.ModeIds.First();
+            _modeIdUnderTest = TestFactory.KnownTestData.ModeId;
         }
 
         [TestMethod]

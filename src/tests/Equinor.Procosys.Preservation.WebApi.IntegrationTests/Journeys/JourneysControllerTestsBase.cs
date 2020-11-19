@@ -17,7 +17,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestInitialize]
         public async Task TestInitialize()
         {
-            ModeIdUnderTest = TestFactory.KnownTestData.ModeIds.First();
+            ModeIdUnderTest = TestFactory.KnownTestData.ModeId;
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
             var journeyWithTags = journeys.Single(j => j.Title == KnownTestData.JourneyWithTags);
             JourneyWithTagsIdUnderTest = journeyWithTags.Id;
