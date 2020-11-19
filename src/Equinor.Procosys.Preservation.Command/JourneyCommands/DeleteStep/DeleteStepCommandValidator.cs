@@ -17,22 +17,17 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep
             CascadeMode = CascadeMode.Stop;
             
             RuleFor(command => command)
-                .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
-                .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepId, token))
-                .WithMessage(command => $"Step doesn't exist within given journey! Step={command.StepId}")
+                .MustAsync((command, token) => BeAnExistingStepAsync(command.JourneyId, command.StepId, token))
+                .WithMessage(command => "Journey and/or step doesn't exist!")
                 .MustAsync((command, token) => BeAVoidedStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step is not voided! Step={command.StepId}")
                 .MustAsync((command, token) => JourneyForStepNotBeUsedAsync(command.JourneyId, token))
                 .WithMessage(command => $"No steps can be deleted from journey when preservation tags exists in journey! Journey={command.JourneyId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
-
-            async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
-                => await journeyValidator.ExistsAsync(journeyId, token);
             
-            async Task<bool> BeAnExistingStepInJourneyAsync(int journeyId, int stepId, CancellationToken token)
-                => await journeyValidator.HasStepAsync(journeyId, stepId, token);
+            async Task<bool> BeAnExistingStepAsync(int journeyId, int stepId, CancellationToken token)
+                => await journeyValidator.ExistsStepAsync(journeyId, stepId, token);
             
             async Task<bool> BeAVoidedStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsVoidedAsync(stepId, token);

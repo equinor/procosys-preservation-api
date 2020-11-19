@@ -55,13 +55,17 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             var reqTypeB = SeedReqType(dbContext, plant, KnownTestData.ReqTypeB);
             SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
-
-            var journey = SeedJourney(dbContext, plant);
-            var step = SeedStep(dbContext, journey, mode, responsible);
-            knownTestData.StepIds.Add(step.Id);
+            
+            var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.JourneyWithTags);
+            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepInJourneyWithTags, mode, responsible);
+            knownTestData.StepIds.Add(stepInJourneyWithTags.Id);
+            
+            var journeyWithoutTags = SeedJourney(dbContext, plant, KnownTestData.JourneyNotInUse);
+            var stepInJourneyWithoutTags = SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, mode, responsible);
+            knownTestData.StepIds.Add(stepInJourneyWithoutTags.Id);
 
             var project = SeedProject(dbContext, plant);
-            var standardTag = SeedStandardTag(dbContext, project, step, reqDefA);
+            var standardTag = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefA);
             knownTestData.StandardTagIds.Add(standardTag.Id);
 
             var standardTagAttachment = SeedTagAttachment(dbContext, standardTag);
@@ -72,7 +76,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var standardTagActionAttachment = SeedActionAttachment(dbContext, standardTagAction);
             knownTestData.StandardTagActionAttachmentIds.Add(standardTagActionAttachment.Id);
 
-            var siteAreaTag = SeedSiteTag(dbContext, project, step, reqDefA);
+            var siteAreaTag = SeedSiteTag(dbContext, project, stepInJourneyWithTags, reqDefA);
             knownTestData.SiteAreaTagIds.Add(siteAreaTag.Id);
 
             var siteAreaTagAttachment = SeedTagAttachment(dbContext, siteAreaTag);
@@ -164,18 +168,18 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             return tag;
         }
 
-        private static Journey SeedJourney(PreservationContext dbContext, string plant)
+        private static Journey SeedJourney(PreservationContext dbContext, string plant, string title)
         {
             var journeyRepository = new JourneyRepository(dbContext);
-            var journey = new Journey(plant, KnownTestData.Journey);
+            var journey = new Journey(plant, title);
             journeyRepository.Add(journey);
             dbContext.SaveChangesAsync().Wait();
             return journey;
         }
 
-        private static Step SeedStep(PreservationContext dbContext, Journey journey, Mode mode, Responsible responsible)
+        private static Step SeedStep(PreservationContext dbContext, Journey journey, string title, Mode mode, Responsible responsible)
         {
-            var step = new Step(journey.Plant, KnownTestData.Step, mode, responsible);
+            var step = new Step(journey.Plant, title, mode, responsible);
             journey.AddStep(step);
             dbContext.SaveChangesAsync().Wait();
             return step;

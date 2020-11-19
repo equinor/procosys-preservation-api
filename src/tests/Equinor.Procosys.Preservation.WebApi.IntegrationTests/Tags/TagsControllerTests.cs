@@ -216,7 +216,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task GetAllActions_AsPreserver_ShouldGetAttachments()
+        public async Task GetAllActions_AsPreserver_ShouldGetActions()
         {
             // Act
             var actionDtos = await TagsControllerTestsHelper.GetAllActionsAsync(

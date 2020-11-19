@@ -17,12 +17,10 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
             CascadeMode = CascadeMode.Stop;
 
             RuleFor(command => command)
-                .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
-                .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
-                .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepAId, token))
-                .WithMessage(command => $"Step doesn't exist within given journey! Step={command.StepAId}")
-                .MustAsync((command, token) => BeAnExistingStepInJourneyAsync(command.JourneyId, command.StepBId, token))
-                .WithMessage(command => $"Step doesn't exist within given journey! Step={command.StepBId}")
+                .MustAsync((command, token) => BeAnExistingStepAsync(command.JourneyId, command.StepAId, token))
+                .WithMessage(command => "Journey and/or step doesn't exist!")
+                .MustAsync((command, token) => BeAnExistingStepAsync(command.JourneyId, command.StepBId, token))
+                .WithMessage(command => "Journey and/or step doesn't exist!")
                 .MustAsync((command, token) => BeAdjacentStepsInAJourneyAsync(command.JourneyId, command.StepAId, command.StepBId, token))
                 .WithMessage(command => $"Steps are not adjacent! Steps={command.StepAId} and {command.StepBId}")
                 .MustAsync((command, token) => NotIncludeAnySupplierStep(command.StepAId, command.StepBId, token))
@@ -31,12 +29,9 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
                 .WithMessage(command => $"Not a valid row version! Row version{command.StepARowVersion}")
                 .Must(command => HaveAValidRowVersion(command.StepBRowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.StepBRowVersion}");
-
-            async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
-                => await journeyValidator.ExistsAsync(journeyId, token);
             
-            async Task<bool> BeAnExistingStepInJourneyAsync(int journeyId, int stepId, CancellationToken token)
-                => await journeyValidator.HasStepAsync(journeyId, stepId, token);
+            async Task<bool> BeAnExistingStepAsync(int journeyId, int stepId, CancellationToken token)
+                => await journeyValidator.ExistsStepAsync(journeyId, stepId, token);
             
             async Task<bool> BeAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
                 => await journeyValidator.AreAdjacentStepsInAJourneyAsync(journeyId, stepAId, stepBId, token);

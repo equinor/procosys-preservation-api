@@ -7,7 +7,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep
 {
-    public class VoidStepCommandHandler : IRequestHandler<VoidStepCommand, Result<Unit>>
+    public class VoidStepCommandHandler : IRequestHandler<VoidStepCommand, Result<string>>
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IUnitOfWork _unitOfWork;
@@ -18,14 +18,14 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<Unit>> Handle(VoidStepCommand request, CancellationToken cancellationToken)
+        public async Task<Result<string>> Handle(VoidStepCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
 
-            journey.VoidStep(request.StepId, request.RowVersion);
+            var step = journey.VoidStep(request.StepId, request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<string>(step.RowVersion.ConvertToString());
         }
     }
 }
