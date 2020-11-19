@@ -11,6 +11,7 @@ using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.MainApi.Responsible;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,6 +41,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         private readonly Mock<IPlantApiService> _plantApiServiceMock = new Mock<IPlantApiService>();
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
+        public readonly Mock<IResponsibleApiService> ResponsibleApiServiceMock = new Mock<IResponsibleApiService>();
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
         public readonly Mock<IAreaApiService> AreaApiServiceMock = new Mock<IAreaApiService>();
         public readonly Mock<IBlobStorage> BlobStorageMock = new Mock<IBlobStorage>();
@@ -120,6 +122,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
                 services.AddScoped(serviceProvider => _plantApiServiceMock.Object);
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
+                services.AddScoped(serviceProvider => ResponsibleApiServiceMock.Object);
                 services.AddScoped(serviceProvider => DisciplineApiServiceMock.Object);
                 services.AddScoped(serviceProvider => AreaApiServiceMock.Object);
                 services.AddScoped(serviceProvider => BlobStorageMock.Object);

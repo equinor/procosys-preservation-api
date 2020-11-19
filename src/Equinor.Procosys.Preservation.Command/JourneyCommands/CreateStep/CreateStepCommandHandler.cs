@@ -10,7 +10,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 {
-    public class CreateStepCommandHandler : IRequestHandler<CreateStepCommand, Result<Unit>>
+    public class CreateStepCommandHandler : IRequestHandler<CreateStepCommand, Result<int>>
     {
         private readonly IJourneyRepository _journeyRepository;
         private readonly IModeRepository _modeRepository;
@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
             _responsibleApiService = responsibleApiService;
         }
 
-        public async Task<Result<Unit>> Handle(CreateStepCommand request, CancellationToken cancellationToken)
+        public async Task<Result<int>> Handle(CreateStepCommand request, CancellationToken cancellationToken)
         {
             var journey = await _journeyRepository.GetByIdAsync(request.JourneyId);
             var mode = await _modeRepository.GetByIdAsync(request.ModeId);
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
                 responsible = await CreateResponsibleAsync(request.ResponsibleCode);
                 if (responsible == null)
                 {
-                    return new NotFoundResult<Unit>($"Responsible with code {request.ResponsibleCode} not found");
+                    return new NotFoundResult<int>($"Responsible with code {request.ResponsibleCode} not found");
                 }
                 // must save new Responsible to get id of it
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
             journey.AddStep(step);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return new SuccessResult<Unit>(Unit.Value);
+            return new SuccessResult<int>(step.Id);
         }
 
         private async Task<Responsible> CreateResponsibleAsync(string responsibleCode)

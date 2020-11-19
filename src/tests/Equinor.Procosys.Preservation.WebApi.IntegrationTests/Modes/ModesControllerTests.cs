@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task VoidMode_AsAdmin_ShouldVoidMode()
         {
-            // Assert
+            // Arrange
             var id = await ModesControllerTestsHelper.CreateModeAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 Guid.NewGuid().ToString());
@@ -93,7 +93,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UnvoidMode_AsAdmin_ShouldUnvoidMode()
         {
-            // Assert
+            // Arrange
             var id = await ModesControllerTestsHelper.CreateModeAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 Guid.NewGuid().ToString());
@@ -118,7 +118,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task DeleteMode_AsAdmin_ShouldDeleteMode()
         {
-            // Assert
+            // Arrange
             var id = await ModesControllerTestsHelper.CreateModeAsync(
                 LibraryAdminClient(TestFactory.PlantWithAccess),
                 Guid.NewGuid().ToString());

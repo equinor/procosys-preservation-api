@@ -210,38 +210,5 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 Assert.IsTrue(result);
             }
         }
-
-        [TestMethod]
-        public async Task StepHasJourneyAsParentAsync_UnknownStepId_ShouldReturnFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new StepValidator(context);
-                var result = await dut.StepHasJourneyAsParentAsync(_journey1.Id, 126234, default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task StepHasJourneyAsParentAsync_UnknownJourneyId_ShouldReturnFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new StepValidator(context);
-                var result = await dut.StepHasJourneyAsParentAsync(126234, _step1InJourney1ForSupplier.Id, default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task StepHasJourneyAsParentAsync_KnownIds_ShouldReturnTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new StepValidator(context);
-                var result = await dut.StepHasJourneyAsParentAsync(_journey1.Id, _step1InJourney1ForSupplier.Id, default);
-                Assert.IsTrue(result);
-            }
-        }
     }
 }

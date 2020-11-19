@@ -74,34 +74,34 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task HasStepAsync_KnownIds_ShouldReturnTrue()
+        public async Task ExistsStepAsync_KnownIds_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasStepAsync(_journey1WithStepId, _step1InJourney1.Id, default);
+                var result = await dut.ExistsStepAsync(_journey1WithStepId, _step1InJourney1.Id, default);
                 Assert.IsTrue(result);
             }
         }
 
         [TestMethod]
-        public async Task HasStepAsync_UnknownJourneyId_ShouldReturnFalse()
+        public async Task ExistsStepAsync_UnknownJourneyId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasStepAsync(126234, _step1InJourney1.Id, default);
+                var result = await dut.ExistsStepAsync(126234, _step1InJourney1.Id, default);
                 Assert.IsFalse(result);
             }
         }
 
         [TestMethod]
-        public async Task HasStepAsync_UnknownStepId_ShouldReturnFalse()
+        public async Task ExistsStepAsync_UnknownStepId_ShouldReturnFalse()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new JourneyValidator(context);
-                var result = await dut.HasStepAsync(_journey1WithStepId, 126234, default);
+                var result = await dut.ExistsStepAsync(_journey1WithStepId, 126234, default);
                 Assert.IsFalse(result);
             }
         }

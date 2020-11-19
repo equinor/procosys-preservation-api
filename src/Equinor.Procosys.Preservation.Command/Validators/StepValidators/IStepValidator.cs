@@ -11,6 +11,5 @@ namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
         Task<bool> IsFirstStepOrModeIsNotForSupplierAsync(int journeyId, int modeId, int stepId, CancellationToken token);
         Task<bool> IsForSupplierAsync(int stepId, CancellationToken token);
         Task<bool> HasModeAsync(int modeId, int stepId, CancellationToken token);
-        Task<bool> StepHasJourneyAsParentAsync(int journeyId, int stepId, CancellationToken token);
     }
 }

@@ -28,11 +28,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         public void Setup_OkState()
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
             _journeyValidatorMock.Setup(r => r.AreAdjacentStepsInAJourneyAsync(_journeyId, _stepAId, _stepBId, default))
                 .Returns(Task.FromResult(true));
-            _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(true));
-            _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(true));
 
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
             _rowVersionValidatorMock.Setup(r => r.IsValid(_stepARowVersion)).Returns(true);
@@ -54,39 +53,27 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyNotExists()
+        public void Validate_ShouldFail_WhenStepANotExists()
         {
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey doesn't exist!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyDoesNotHaveStepA()
-        {
-            _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(false));
+            _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepAId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exist within given journey!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey and/or step doesn't exist!"));
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyDoesNotHaveStepB()
+        public void Validate_ShouldFail_WhenStepBNotExists()
         {
-            _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(false));
+            _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepBId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exist within given journey!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey and/or step doesn't exist!"));
         }
 
         [TestMethod]

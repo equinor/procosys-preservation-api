@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
 {
-    public class CreateStepCommand : IRequest<Result<Unit>>
+    public class CreateStepCommand : IRequest<Result<int>>
     {
         public CreateStepCommand(
             int journeyId,

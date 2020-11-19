@@ -25,8 +25,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         public void Setup_OkState()
         {
             _journeyValidatorMock = new Mock<IJourneyValidator>();
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(true));
-            _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
+            _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
             _stepValidatorMock = new Mock<IStepValidator>();
             _stepValidatorMock.Setup(r => r.IsVoidedAsync(_stepId, default)).Returns(Task.FromResult(true));
             _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
@@ -49,27 +48,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.DeleteStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyNotExists()
+        public void Validate_ShouldFail_WhenStepNotExists()
         {
-            _journeyValidatorMock.Setup(r => r.ExistsAsync(_journeyId, default)).Returns(Task.FromResult(false));
+            _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey doesn't exist!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenJourneyDontHaveTheStep()
-        {
-            _journeyValidatorMock.Setup(r => r.HasStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Step doesn't exist within given journey!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Journey and/or step doesn't exist!"));
         }
 
         [TestMethod]
