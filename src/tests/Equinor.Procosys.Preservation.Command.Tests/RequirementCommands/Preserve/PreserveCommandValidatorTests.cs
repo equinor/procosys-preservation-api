@@ -23,7 +23,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, RequirementId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.HasANonVoidedRequirementAsync(TagId, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.VerifyPreservationStatusAsync(TagId, PreservationStatus.Active, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.RequirementIsReadyToBePreservedAsync(TagId, RequirementId, default)).Returns(Task.FromResult(true));
@@ -41,15 +41,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preser
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
+        public void Validate_ShouldFail_WhenTagOrReqNotExists()
         {
-            _tagValidatorMock.Setup(r => r.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, RequirementId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag and/or requirement doesn't exist!"));
         }
 
         [TestMethod]

@@ -42,6 +42,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private int _poAreaTagActionId;
         private int _poAreaTagAttachmentId;
         private int _poAreaTagActionAttachmentId;
+        private int _poAreaTagRequirementId;
         private const int IntervalWeeks = 4;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -91,8 +92,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 siteAreaTagStarted.StartPreservation();
                 var poAreaTagNotStarted = AddTag(context, project, TagType.PoArea, "#PO-E-A1", _tagDescription,
                     firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                var tagRequirementForPoAreaTag = new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1);
                 var poAreaTagStarted = AddTag(context, project, TagType.PoArea, "#PO-E-A2", _tagDescription,
-                    firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                    firstStep, new List<TagRequirement> {tagRequirementForPoAreaTag});
                 poAreaTagStarted.StartPreservation();
 
                 var tagAttachment = new TagAttachment(TestPlant, Guid.Empty, "fil1.txt");
@@ -117,6 +119,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 _poAreaTagNotStartedId = poAreaTagNotStarted.Id;
                 _siteAreaTagStartedId = siteAreaTagStarted.Id;
                 _poAreaTagStartedId = poAreaTagStarted.Id;
+                _poAreaTagRequirementId = tagRequirementForPoAreaTag.Id;
                 _standardTagCompletedId = standardTagCompleted.Id;
                 _poAreaTagActionId = action.Id;
                 _poAreaTagAttachmentId = tagAttachment.Id;
@@ -142,6 +145,48 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.ExistsAsync(TagNo1, "XYZ", default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task ExistsRequirementAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsRequirementAsync(
+                    _poAreaTagStartedId,
+                    _poAreaTagRequirementId,
+                    default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsRequirementAsync_UnknownTagId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsRequirementAsync(
+                    9999,
+                    _poAreaTagRequirementId,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsRequirementAsync_UnknownActionId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsRequirementAsync(
+                    _poAreaTagStartedId,
+                    9999,
+                    default);
                 Assert.IsFalse(result);
             }
         }

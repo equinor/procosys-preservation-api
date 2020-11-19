@@ -16,8 +16,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
-                .MustAsync((command, token) => BeAnExistingTagAsync(command.TagId, token))
-                .WithMessage((x, id) => $"Tag doesn't exist! Tag={id}")
+                .MustAsync(BeAnExistingRequirementAsync)
+                .WithMessage((x, id) => "Tag and/or requirement doesn't exist!")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage((x, id) => $"Tag is voided! Tag={id}")
                 .MustAsync((command, token) => PreservationIsStartedAsync(command.TagId, token))
@@ -29,8 +29,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
             async Task<bool> NotBeAClosedProjectForTagAsync(int tagId, CancellationToken token)
                 => !await projectValidator.IsClosedForTagAsync(tagId, token);
 
-            async Task<bool> BeAnExistingTagAsync(int tagId, CancellationToken token)
-                => await tagValidator.ExistsAsync(tagId, token);
+            async Task<bool> BeAnExistingRequirementAsync(PreserveCommand command, CancellationToken token)
+                => await tagValidator.ExistsRequirementAsync(command.TagId, command.RequirementId, token);
 
             async Task<bool> NotBeAVoidedTagAsync(int tagId, CancellationToken token)
                 => !await tagValidator.IsVoidedAsync(tagId, token);
