@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
@@ -373,6 +375,16 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var response = await client.PostAsync($"{_route}/{tagId}/Requirements/{requirementId}/Attachment/{fieldId}", httpContent);
 
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<GetTagRequirementInfo> GetTagRequirementInfoAsync(HttpClient client, int tagId)
+        {
+            var requirementDetailDtos = await GetTagRequirementsAsync(client, tagId);
+            var requirementDetailDto = requirementDetailDtos.First();
+            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup: Preservation not started");
+            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup: Expect to find 1 requirement on tag under test");
+            Assert.IsNull(requirementDetailDto.Fields.Single().CurrentValue);
+            return new GetTagRequirementInfo(requirementDetailDto.Id, requirementDetailDto.Fields);
         }
     }
 }

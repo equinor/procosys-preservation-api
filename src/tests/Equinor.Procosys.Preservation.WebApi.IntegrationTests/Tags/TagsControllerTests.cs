@@ -399,28 +399,19 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var preserverClient = PreserverClient(TestFactory.PlantWithAccess);
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
 
-            var requirementDetailDtos = await TagsControllerTestsHelper.GetTagRequirementsAsync(
-                preserverClient, 
-                tagIdUnderTest);
-            var requirementDetailDto = requirementDetailDtos.First();
-            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup: Preservation not started");
-            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup: Expect to find 1 requirement on tag under test");
-            Assert.IsNull(requirementDetailDto.Fields.Single().CurrentValue);
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
             
             // Act
             await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
                 preserverClient,
                 tagIdUnderTest,
-                requirementDetailDto.Id,
-                requirementDetailDto.Fields.First().Id,
+                requirement.Id,
+                requirement.Fields.First().Id,
                 FileToBeUploaded);
             
             // Assert
-            requirementDetailDtos = await TagsControllerTestsHelper.GetTagRequirementsAsync(
-                preserverClient, 
-                tagIdUnderTest);
-            requirementDetailDto = requirementDetailDtos.First();
-            Assert.IsNotNull(requirementDetailDto.Fields.Single().CurrentValue);
+            requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(preserverClient, tagIdUnderTest);
+            Assert.IsNotNull(requirement.Fields.Single().CurrentValue);
         }
     }
 }

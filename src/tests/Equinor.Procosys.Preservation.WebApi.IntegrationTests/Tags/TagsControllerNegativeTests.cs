@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
@@ -1055,25 +1056,61 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
         [TestMethod]
         public async Task UploadFieldValueAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownTagId()
-            => await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
+        {
+            // Arrange
+            var client = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(client, tagIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
-                9999, 
-                SiteAreaTagActionIdUnderTest,
-                7777,
+                9999,
+                requirement.Id,
+                requirement.Fields.First().Id,
                 FileToBeUploaded,
                 HttpStatusCode.BadRequest,
-                "Tag and/or action doesn't exist!");
+                "Tag, requirement and/or field action doesn't exist!");
+        }
 
         [TestMethod]
-        public async Task UploadFieldValueAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownActionId()
-            => await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
+        public async Task UploadFieldValueAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownRequirementId()
+        {
+            // Arrange
+            var client = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(client, tagIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
                 PreserverClient(TestFactory.PlantWithAccess),
-                TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted, 
-                StandardTagActionIdUnderTest,   // known actionId, but under other Tag
+                tagIdUnderTest,
+                8888,
+                requirement.Fields.First().Id,
+                FileToBeUploaded,
+                HttpStatusCode.BadRequest,
+                "Tag, requirement and/or field doesn't exist!");
+        }
+
+        [TestMethod]
+        public async Task UploadFieldValueAttachment_AsPreserver_ShouldReturnBadRequest_WhenUnknownFieldId()
+        {
+            // Arrange
+            var client = PreserverClient(TestFactory.PlantWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+            var requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(client, tagIdUnderTest);
+
+            // Act
+            await TagsControllerTestsHelper.UploadFieldValueAttachmentAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                tagIdUnderTest,
+                requirement.Id,
                 7777,
                 FileToBeUploaded,
                 HttpStatusCode.BadRequest,
-                "Tag and/or action doesn't exist!");
+                "Tag, requirement and/or field doesn't exist!");
+        }
+
         #endregion
     }
 }
