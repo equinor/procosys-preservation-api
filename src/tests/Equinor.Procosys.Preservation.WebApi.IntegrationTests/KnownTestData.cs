@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
@@ -31,18 +30,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static Guid TagAttachmentBlobStorageId = new Guid("{22222222-2222-2222-2222-222222222222}");
 
         public int TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
+        public int TagId_ForStandardTagWithAttachmentsAndActionAttachments;
         public int TagId_ForStandardTagWithInfoRequirement_Started;
         public int TagId_ForStandardTagWithCbRequirement_Started;
         public int TagId_ForStandardTagWithAttachmentRequirement_Started;
         public int TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
+        public int TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments;
         public int ModeId;
-
-        // todo get rid of these, use helper classes to get these ids on-the-fly
-        public List<int> StandardTagActionIds = new List<int>();
-        public List<int> SiteAreaTagActionIds = new List<int>();
-        public List<int> StandardTagAttachmentIds = new List<int>();
-        public List<int> SiteAreaTagAttachmentIds = new List<int>();
-        public List<int> StandardTagActionAttachmentIds = new List<int>();
-        public List<int> SiteAreaTagActionAttachmentIds = new List<int>();
     }
 }

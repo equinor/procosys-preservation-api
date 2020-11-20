@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -19,12 +18,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         protected int TagIdUnderTest_ForStandardTagWithCbRequirement_Started;
         protected int TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
         protected int TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
-        protected int StandardTagActionIdUnderTest;
-        protected int SiteAreaTagActionIdUnderTest;
-        protected int StandardTagAttachmentIdUnderTest;
-        protected int SiteAreaTagAttachmentIdUnderTest;
-        protected int StandardTagActionAttachmentIdUnderTest;
-        protected int SiteAreaTagActionAttachmentIdUnderTest;
+
+        protected int TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+        protected int TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments;
 
         protected TestFile FileToBeUploaded = new TestFile("test file content", "file.txt");
 
@@ -51,12 +47,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 = TestFactory.KnownTestData.TagId_ForStandardTagWithCbRequirement_Started;
             TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted
                 = TestFactory.KnownTestData.TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
-            StandardTagActionIdUnderTest = TestFactory.KnownTestData.StandardTagActionIds.First();
-            SiteAreaTagActionIdUnderTest = TestFactory.KnownTestData.SiteAreaTagActionIds.First();
-            StandardTagAttachmentIdUnderTest = TestFactory.KnownTestData.StandardTagAttachmentIds.First();
-            SiteAreaTagAttachmentIdUnderTest = TestFactory.KnownTestData.SiteAreaTagAttachmentIds.First();
-            StandardTagActionAttachmentIdUnderTest = TestFactory.KnownTestData.StandardTagActionAttachmentIds.First();
-            SiteAreaTagActionAttachmentIdUnderTest = TestFactory.KnownTestData.SiteAreaTagActionAttachmentIds.First();
+
+            TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments
+                = TestFactory.KnownTestData.TagId_ForStandardTagWithAttachmentsAndActionAttachments;
+            TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments
+                = TestFactory.KnownTestData.TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments;
 
             TestFactory
                 .DisciplineApiServiceMock

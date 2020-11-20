@@ -90,24 +90,26 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             dbContext.SaveChangesAsync().Wait();
             knownTestData.TagId_ForStandardTagWithCbRequirement_Started = standardTagWithCbRequirement_Started.Id;
 
-            var standardTagAttachment = SeedTagAttachment(dbContext, standardTagReadyForBulkPreserve_NotStarted);
-            knownTestData.StandardTagAttachmentIds.Add(standardTagAttachment.Id);
+            var standardTagWithAttachmentsAndActions = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
+            knownTestData.TagId_ForStandardTagWithAttachmentsAndActionAttachments = standardTagWithAttachmentsAndActions.Id;
+            SeedTagAttachment(dbContext, standardTagWithAttachmentsAndActions);
+            SeedTagAttachment(dbContext, standardTagWithAttachmentsAndActions);
 
-            var standardTagAction = SeedAction(dbContext, standardTagReadyForBulkPreserve_NotStarted);
-            knownTestData.StandardTagActionIds.Add(standardTagAction.Id);
-            var standardTagActionAttachment = SeedActionAttachment(dbContext, standardTagAction);
-            knownTestData.StandardTagActionAttachmentIds.Add(standardTagActionAttachment.Id);
+            var standardTagAction = SeedAction(dbContext, standardTagWithAttachmentsAndActions);
+            SeedActionAttachment(dbContext, standardTagAction);
+            SeedActionAttachment(dbContext, standardTagAction);
 
             var siteAreaTag = SeedSiteTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
             knownTestData.TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted = siteAreaTag.Id;
 
-            var siteAreaTagAttachment = SeedTagAttachment(dbContext, siteAreaTag);
-            knownTestData.SiteAreaTagAttachmentIds.Add(siteAreaTagAttachment.Id);
+            var siteAreaTagWithAttachmentsAndActionAttachments = SeedSiteTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
+            knownTestData.TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments = siteAreaTagWithAttachmentsAndActionAttachments.Id;
+            SeedTagAttachment(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
+            SeedTagAttachment(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
 
-            var areaTagAction = SeedAction(dbContext, siteAreaTag);
-            knownTestData.SiteAreaTagActionIds.Add(areaTagAction.Id);
-            var areaTagActionAttachment = SeedActionAttachment(dbContext, areaTagAction);
-            knownTestData.SiteAreaTagActionAttachmentIds.Add(areaTagActionAttachment.Id);
+            var areaTagAction = SeedAction(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
+            SeedActionAttachment(dbContext, areaTagAction);
+            SeedActionAttachment(dbContext, areaTagAction);
         }
 
         private static void SeedInfoField(PreservationContext dbContext, RequirementDefinition reqDef)
@@ -131,20 +133,18 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             dbContext.SaveChangesAsync().Wait();
         }
 
-        private static TagAttachment SeedTagAttachment(PreservationContext dbContext, Tag tag)
+        private static void SeedTagAttachment(PreservationContext dbContext, Tag tag)
         {
             var attachment = new TagAttachment(tag.Plant, KnownTestData.TagAttachmentBlobStorageId, "Fil1.txt");
             tag.AddAttachment(attachment);
             dbContext.SaveChangesAsync().Wait();
-            return attachment;
         }
 
-        private static ActionAttachment SeedActionAttachment(PreservationContext dbContext, Action action)
+        private static void SeedActionAttachment(PreservationContext dbContext, Action action)
         {
             var attachment = new ActionAttachment(action.Plant, KnownTestData.ActionAttachmentBlobStorageId, "Fil2.txt");
             action.AddAttachment(attachment);
             dbContext.SaveChangesAsync().Wait();
-            return attachment;
         }
 
         private static Action SeedAction(PreservationContext dbContext, Tag tag)
@@ -199,11 +199,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private static Tag SeedSiteTag(PreservationContext dbContext, Project project, Step step,
             RequirementDefinition requirementDef)
         {
+            var suffix = Guid.NewGuid().ToString();
+            var tagNo = $"{KnownTestData.SiteTagNo}-{suffix}";
             var tag = new Tag(
                 project.Plant,
                 TagType.SiteArea,
-                KnownTestData.SiteTagNo,
-                KnownTestData.SiteTagDescription,
+                tagNo,
+                $"{tagNo} - Description",
                 step,
                 new List<TagRequirement>
                 {
