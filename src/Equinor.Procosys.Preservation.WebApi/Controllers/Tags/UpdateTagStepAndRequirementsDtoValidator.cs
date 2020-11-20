@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 {
@@ -9,30 +8,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
         {
             RuleFor(x => x).NotNull();
 
-            RuleFor(x => x.NewRequirements)
-                .NotNull();
-
-            RuleFor(x => x.UpdatedRequirements)
-                .NotNull();
-
-            RuleFor(x => x)
-                .Must(BeUniqueRequirements)
-                .WithMessage("Requirement definitions must be unique!");
-
-            RuleForEach(x => x.NewRequirements)
-                .Must(NewRequirementMustHavePositiveInterval)
-                .WithMessage("Week interval must be positive");
-
-            RuleForEach(x => x.UpdatedRequirements)
-                .Must(UpdatedRequirementMustHavePositiveInterval)
-                .WithMessage("Week interval must be positive");
-
-            bool BeUniqueRequirements(UpdateTagStepAndRequirementsDto dto)
+            When(x => x.NewRequirements != null, () =>
             {
-                var reqIds = dto.UpdatedRequirements.Select(u=>u.RequirementId)
-                    .Union(dto.NewRequirements.Select(n=>n.RequirementDefinitionId)).ToList();
-                return reqIds.Distinct().Count() == reqIds.Count;
-            }
+                RuleForEach(x => x.NewRequirements)
+                    .Must(NewRequirementMustHavePositiveInterval)
+                    .WithMessage("Week interval must be positive!");
+            });
+
+            When(x => x.UpdatedRequirements != null, () =>
+            {
+                RuleForEach(x => x.UpdatedRequirements)
+                    .Must(UpdatedRequirementMustHavePositiveInterval)
+                    .WithMessage("Week interval must be positive!");
+            });
 
             bool UpdatedRequirementMustHavePositiveInterval(UpdatedTagRequirementDto arg) => arg.IntervalWeeks > 0;
 

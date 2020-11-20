@@ -17,8 +17,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             TagId = tagId;
             Description = description;
             StepId = stepId;
-            UpdatedRequirements = updatedRequirements;
-            NewRequirements = newRequirements;
+            UpdatedRequirements = updatedRequirements ?? new List<UpdateRequirementForCommand>();
+            NewRequirements = newRequirements ?? new List<RequirementForCommand>();
             RowVersion = rowVersion;
         }
 
