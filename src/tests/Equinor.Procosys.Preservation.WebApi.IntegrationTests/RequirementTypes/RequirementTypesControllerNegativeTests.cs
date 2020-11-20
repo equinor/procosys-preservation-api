@@ -254,7 +254,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 TestFactory.AValidRowVersion,
                 fieldsToUpdate,
                 HttpStatusCode.BadRequest,
-                "Field doesn't exist!");
+                "Field doesn't exist in requirement!");
         }
 
         #endregion

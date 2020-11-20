@@ -46,6 +46,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             _reqTypeValidatorMock
                 .Setup(r => r.RequirementDefinitionExistsAsync(_requirementTypeId, _requirementDefinitionId, default))
                 .Returns(Task.FromResult(true));
+            _reqTypeValidatorMock
+                .Setup(r => r.FieldExistsAsync(_requirementTypeId, _requirementDefinitionId, _updateFieldId, default))
+                .Returns(Task.FromResult(true));
 
             _reqDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
             _reqDefinitionValidatorMock
@@ -53,7 +56,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
                 .Returns(Task.FromResult(true));
 
             _fieldValidatorMock = new Mock<IFieldValidator>();
-            _fieldValidatorMock.Setup(f => f.ExistsAsync(_updateFieldId, default)).Returns(Task.FromResult(true));
             _fieldValidatorMock.Setup(f => f.VerifyFieldTypeAsync(_updateFieldId, _fieldType, default)).Returns(Task.FromResult(true));
 
             _command = new UpdateRequirementDefinitionCommand(
@@ -95,6 +97,20 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
         }
 
         [TestMethod]
+        public void Validate_ShouldFail_WhenFieldDoesNotExists()
+        {
+            _reqTypeValidatorMock
+                .Setup(r => r.FieldExistsAsync(_requirementTypeId, _requirementDefinitionId, _updateFieldId, default))
+                .Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist in requirement!"));
+        }
+
+        [TestMethod]
         public void Validate_ShouldFail_WhenRequirementDefinitionIsVoided()
         {
             _reqDefinitionValidatorMock.Setup(r => r.IsVoidedAsync(_requirementDefinitionId, default)).Returns(Task.FromResult(true));
@@ -126,18 +142,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.Up
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("A requirement definition with this title already exists on the requirement type"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenFieldToUpdateChangeType()
-        {
-            _fieldValidatorMock.Setup(f => f.ExistsAsync(_updateFieldId, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist!"));
         }
 
         [TestMethod]

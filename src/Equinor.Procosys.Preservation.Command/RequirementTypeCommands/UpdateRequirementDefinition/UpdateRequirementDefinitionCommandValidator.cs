@@ -31,7 +31,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 .WithMessage(command => $"Fields to be deleted can not be in use! Requirement definition={command.Title}");
 
             RuleForEach(command => command.UpdateFields)
-                .MustAsync((command, field, __, token) => BeAnExistingField(field.Id, token))
+                .MustAsync((command, field, __, token) => BeAnExistingField(command, field.Id, token))
                 .WithMessage(command => "Field doesn't exist in requirement!")
                 .MustAsync((command, field, __, token) => BeSameFieldTypeOnExistingFieldsAsync(field, token))
                 .WithMessage((_, field) => $"Cannot change field type on existing fields! Field={field.Id}");
@@ -57,8 +57,8 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
                     token);
             }
 
-            async Task<bool> BeAnExistingField(int fieldId, CancellationToken token)
-                => await fieldValidator.ExistsAsync(fieldId, token);
+            async Task<bool> BeAnExistingField(UpdateRequirementDefinitionCommand command, int fieldId, CancellationToken token)
+                => await requirementTypeValidator.FieldExistsAsync(command.RequirementTypeId, command.RequirementDefinitionId, fieldId, token);
 
             async Task<bool> BeSameFieldTypeOnExistingFieldsAsync(UpdateFieldsForCommand field, CancellationToken token)
                 => await fieldValidator.VerifyFieldTypeAsync(field.Id, field.FieldType, token);

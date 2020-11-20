@@ -26,11 +26,26 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValida
             return reqType != null && reqType.RequirementDefinitions.Any();
         }
 
-        public async Task<bool> RequirementDefinitionExistsAsync(int requirementTypeId, int requirementDefinitionId, CancellationToken token)
+        public async Task<bool> RequirementDefinitionExistsAsync(
+            int requirementTypeId,
+            int requirementDefinitionId,
+            CancellationToken token)
         {
             var reqType = await GetRequirementTypeWithDefinitionsAsync(requirementTypeId, token);
 
             return reqType?.RequirementDefinitions.SingleOrDefault(d => d.Id == requirementDefinitionId) != null;
+        }
+
+        public async Task<bool> FieldExistsAsync(
+            int requirementTypeId,
+            int requirementDefinitionId,
+            int fieldId,
+            CancellationToken token)
+        {
+            var reqType = await GetRequirementTypeWithDefinitionsAsync(requirementTypeId, token);
+
+            var requirementDefinition = reqType?.RequirementDefinitions.SingleOrDefault(d => d.Id == requirementDefinitionId);
+            return requirementDefinition != null && requirementDefinition.Fields.SingleOrDefault(f => f.Id == fieldId) != null;
         }
 
         public async Task<bool> IsVoidedAsync(int requirementTypeId, CancellationToken token)
@@ -102,6 +117,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValida
         {
             var reqType = await _context.QuerySet<RequirementType>()
                 .Include(rt => rt.RequirementDefinitions)
+                .ThenInclude(rd => rd.Fields)
                 .SingleOrDefaultAsync(rt => rt.Id == requirementTypeId, token);
             return reqType;
         }
