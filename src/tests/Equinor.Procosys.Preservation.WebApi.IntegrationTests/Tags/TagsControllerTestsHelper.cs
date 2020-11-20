@@ -100,6 +100,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             string description,
             int stepId,
             string rowVersion,
+            List<TagRequirementDto> newRequirements = null,
+            List<UpdatedTagRequirementDto> updatedRequirements = null,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -107,7 +109,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             {
                 description,
                 stepId,
-                rowVersion
+                rowVersion,
+                newRequirements,
+                updatedRequirements
             };
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
