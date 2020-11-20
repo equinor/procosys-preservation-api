@@ -22,7 +22,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Upload
                 .MustAsync(BeAnExistingRequirementAsync)
                 .WithMessage(command => "Tag and/or requirement doesn't exist!")
                 .MustAsync(BeAnExistingFieldForRequirementAsync)
-                .WithMessage(command => "Field doesn't exist for requirement!")
+                .WithMessage(command => "Field doesn't exist in requirement!")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .MustAsync((command, token) => HasRequirementWithActivePeriodAsync(command.TagId, command.RequirementId, token))

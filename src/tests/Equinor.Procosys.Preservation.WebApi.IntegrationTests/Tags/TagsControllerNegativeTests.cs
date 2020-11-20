@@ -1086,7 +1086,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 7777,
                 FileToBeUploaded,
                 HttpStatusCode.BadRequest,
-                "Field doesn't exist for requirement!");
+                "Field doesn't exist in requirement!");
         }
 
         #endregion
@@ -1279,7 +1279,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 true,
                 HttpStatusCode.BadRequest,
-                "Field doesn't exist for requirement!");
+                "Field doesn't exist in requirement!");
         }
 
         #endregion

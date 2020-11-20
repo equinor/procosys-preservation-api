@@ -71,7 +71,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist for requirement!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist in requirement!"));
         }
 
         [TestMethod]

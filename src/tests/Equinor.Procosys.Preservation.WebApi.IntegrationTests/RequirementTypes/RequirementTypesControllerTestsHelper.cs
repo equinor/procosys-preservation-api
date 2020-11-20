@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -146,6 +147,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
 
             var response = await client.SendAsync(request);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+        
+        public static async Task<RequirementDefinitionDto> GetRequirementDefinitionDetailsAsync(HttpClient client, int reqTypeId, int reqDefId)
+        {
+            var reqType = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(client);
+            return reqType
+                .Single(r => r.Id == reqTypeId)
+                .RequirementDefinitions
+                .SingleOrDefault(s => s.Id == reqDefId);
         }
 
         private static async Task<string> VoidUnvoidRequirementDefinitionAsync(

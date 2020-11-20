@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
@@ -206,6 +209,54 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 TestFactory.AValidRowVersion,
                 expectedStatusCode:HttpStatusCode.BadRequest,
                 expectedMessageOnBadRequest:"Requirement type and/or requirement definition doesn't exist!");
+
+        [TestMethod]
+        public async Task UpdateRequirementDefinition_AsPreserver_ShouldReturnBadRequest_WhenUpdatingUnknownFieldId()
+        {
+            var client = LibraryAdminClient(TestFactory.PlantWithAccess);
+            var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
+            var reqDefIdUnderTest = ReqDefIdUnderTest_ForReqDefWithCbField_InReqTypeA;
+            var existingReqDefWithField = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
+                client,
+                reqTypeIdUnderTest,
+                reqDefIdUnderTest);
+
+            var newReqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
+                client,
+                reqTypeIdUnderTest,
+                Guid.NewGuid().ToString(),
+                new List<FieldDto>
+                {
+                    new FieldDto
+                    {
+                        FieldType = FieldType.Info,
+                        Label = Guid.NewGuid().ToString(),
+                        SortKey = 20
+                    }
+                });
+            var newReqDefWithField = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
+                client,
+                reqTypeIdUnderTest,
+                newReqDefId);
+
+            var fieldsToUpdate = new List<FieldDetailsDto>();
+            fieldsToUpdate.AddRange(existingReqDefWithField.Fields);
+
+            // try to update a known field in another requirement definition
+            fieldsToUpdate.Add(newReqDefWithField.Fields.Single());
+
+            await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
+                client,
+                reqTypeIdUnderTest,
+                reqDefIdUnderTest,
+                Guid.NewGuid().ToString(),
+                4,
+                TestFactory.AValidRowVersion,
+                fieldsToUpdate,
+                HttpStatusCode.BadRequest,
+                "Field doesn't exist!");
+        }
+
         #endregion
 
         #region VoidRequirementDefinition

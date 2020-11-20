@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             {
                 RuleForEach(command => command.NumberValues)
                     .MustAsync((command, fv, token) => BeAnExistingFieldForRequirementAsync(command, fv.FieldId, token))
-                    .WithMessage(command => "Field doesn't exist for requirement!")
+                    .WithMessage(command => "Field doesn't exist in requirement!")
                     .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
             {
                 RuleForEach(command => command.CheckBoxValues)
                     .MustAsync((command, fv, token) => BeAnExistingFieldForRequirementAsync(command, fv.FieldId, token))
-                    .WithMessage(command => "Field doesn't exist for requirement!")
+                    .WithMessage(command => "Field doesn't exist in requirement!")
                     .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))

@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRe
 
             RuleForEach(command => command.UpdateFields)
                 .MustAsync((command, field, __, token) => BeAnExistingField(field.Id, token))
-                .WithMessage((_, field) => $"Field doesn't exist! Field={field.Id}")
+                .WithMessage(command => "Field doesn't exist in requirement!")
                 .MustAsync((command, field, __, token) => BeSameFieldTypeOnExistingFieldsAsync(field, token))
                 .WithMessage((_, field) => $"Cannot change field type on existing fields! Field={field.Id}");
             
