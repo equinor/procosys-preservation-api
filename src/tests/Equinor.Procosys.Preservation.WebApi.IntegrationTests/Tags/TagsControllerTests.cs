@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
@@ -134,6 +136,59 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(currentRowVersion, newRowVersion);
             tag = await TagsControllerTestsHelper.GetTagAsync(_plannerClient, tagIdUnderTest);
             Assert.AreEqual(oldDescription, tag.Description);
+        }
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldUpdateAndAddRequirements()
+        {
+            // Arrange
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
+            var tag = await TagsControllerTestsHelper.GetTagAsync(_plannerClient, tagIdUnderTest);
+            var oldDescription = tag.Description;
+            var oldRequirements =  await TagsControllerTestsHelper.GetTagRequirementsAsync(_plannerClient, tagIdUnderTest);
+            var requirementToUpdate = oldRequirements.First();
+            var adminClient = LibraryAdminClient(TestFactory.PlantWithAccess);
+            var reqTypes = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(adminClient);
+            var newReqTitle = Guid.NewGuid().ToString();
+            var newReqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
+                adminClient, reqTypes.First().Id, newReqTitle);
+
+            // Act
+            var updatedIntervalWeeks = requirementToUpdate.IntervalWeeks + 1;
+            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                _plannerClient,
+                tag.Id,
+                oldDescription,
+                tag.Step.Id,
+                tag.RowVersion,
+                new List<TagRequirementDto>
+                {
+                    new TagRequirementDto
+                    {
+                        IntervalWeeks = 4,
+                        RequirementDefinitionId = newReqDefId
+                    }
+                },
+                new List<UpdatedTagRequirementDto>
+                {
+                    new UpdatedTagRequirementDto
+                    {
+                        IntervalWeeks = updatedIntervalWeeks,
+                        IsVoided = false,
+                        RequirementId = requirementToUpdate.Id,
+                        RowVersion = requirementToUpdate.RowVersion
+                    }
+                });
+
+            // Assert
+            var newRequirements =  await TagsControllerTestsHelper.GetTagRequirementsAsync(_plannerClient, tagIdUnderTest);
+            Assert.AreEqual(oldRequirements.Count+1, newRequirements.Count);
+            var newRequirement = newRequirements.SingleOrDefault(r => r.RequirementDefinition.Id == newReqDefId);
+            Assert.IsNotNull(newRequirement);
+            Assert.AreEqual(newReqTitle, newRequirement.RequirementDefinition.Title);
+            var updatedRequirement = newRequirements.SingleOrDefault(r => r.RequirementDefinition.Id == requirementToUpdate.Id);
+            Assert.IsNotNull(updatedRequirement);
+            Assert.AreEqual(updatedIntervalWeeks, updatedRequirement.IntervalWeeks);
         }
 
         [TestMethod]

@@ -93,7 +93,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             return JsonConvert.DeserializeObject<int>(jsonString);
         }
 
-        // todo write integration tests for adding and/or updating requirements
         public static async Task<string> UpdateTagStepAndRequirementsAsync(
             HttpClient client,
             int tagId,
