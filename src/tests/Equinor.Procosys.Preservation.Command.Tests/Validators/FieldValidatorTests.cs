@@ -31,28 +31,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task ExistsAsync_KnownId_ShouldReturnTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new FieldValidator(context);
-                var result = await dut.ExistsAsync(_infoFieldId, default);
-                Assert.IsTrue(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task ExistsAsync_UnknownId_ShouldReturnFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new FieldValidator(context);
-                var result = await dut.ExistsAsync(126234, default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
         public async Task IsVoidedAsync_KnownVoided_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

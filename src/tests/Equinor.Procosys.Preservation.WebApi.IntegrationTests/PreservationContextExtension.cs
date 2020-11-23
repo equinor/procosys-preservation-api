@@ -46,62 +46,105 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             var plant = plantProvider.Plant;
 
             var mode = SeedMode(dbContext, plant);
-            knownTestData.ModeIds.Add(mode.Id);
+            knownTestData.ModeId = mode.Id;
 
             var responsible = SeedResponsible(dbContext, plant);
 
             var reqTypeA = SeedReqType(dbContext, plant, KnownTestData.ReqTypeA);
-            var reqDefA = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeA);
+            var reqDefANoField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeANoField);
+
+            var reqDefAWithAttachmentField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeAWithAttachmentField);
+            SeedAttachmentField(dbContext, reqDefAWithAttachmentField);
+
+            var reqDefAWithInfoField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeAWithInfoField);
+            SeedInfoField(dbContext, reqDefAWithInfoField);
+
+            var reqDefAWithCbField = SeedReqDef(dbContext, reqTypeA, KnownTestData.ReqDefInReqTypeAWithCbField);
+            SeedCbField(dbContext, reqDefAWithCbField);
 
             var reqTypeB = SeedReqType(dbContext, plant, KnownTestData.ReqTypeB);
             SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
             
             var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.JourneyWithTags);
             var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepInJourneyWithTags, mode, responsible);
-            knownTestData.StepIds.Add(stepInJourneyWithTags.Id);
             
             var journeyWithoutTags = SeedJourney(dbContext, plant, KnownTestData.JourneyNotInUse);
-            var stepInJourneyWithoutTags = SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, mode, responsible);
-            knownTestData.StepIds.Add(stepInJourneyWithoutTags.Id);
+            SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, mode, responsible);
 
             var project = SeedProject(dbContext, plant);
-            var standardTag = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefA);
-            knownTestData.StandardTagIds.Add(standardTag.Id);
+            var standardTagReadyForBulkPreserve_NotStarted = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
+            knownTestData.TagId_ForStandardTagReadyForBulkPreserve_NotStarted = standardTagReadyForBulkPreserve_NotStarted.Id;
 
-            var standardTagAttachment = SeedTagAttachment(dbContext, standardTag);
-            knownTestData.StandardTagAttachmentIds.Add(standardTagAttachment.Id);
+            var standardTagWithAttachmentRequirement_Started = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefAWithAttachmentField);
+            standardTagWithAttachmentRequirement_Started.StartPreservation();
+            dbContext.SaveChangesAsync().Wait();
+            knownTestData.TagId_ForStandardTagWithAttachmentRequirement_Started = standardTagWithAttachmentRequirement_Started.Id;
 
-            var standardTagAction = SeedAction(dbContext, standardTag);
-            knownTestData.StandardTagActionIds.Add(standardTagAction.Id);
-            var standardTagActionAttachment = SeedActionAttachment(dbContext, standardTagAction);
-            knownTestData.StandardTagActionAttachmentIds.Add(standardTagActionAttachment.Id);
+            var standardTagWithInfoRequirement_Started = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefAWithInfoField);
+            standardTagWithInfoRequirement_Started.StartPreservation();
+            dbContext.SaveChangesAsync().Wait();
+            knownTestData.TagId_ForStandardTagWithInfoRequirement_Started = standardTagWithInfoRequirement_Started.Id;
 
-            var siteAreaTag = SeedSiteTag(dbContext, project, stepInJourneyWithTags, reqDefA);
-            knownTestData.SiteAreaTagIds.Add(siteAreaTag.Id);
+            var standardTagWithCbRequirement_Started = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefAWithCbField);
+            standardTagWithCbRequirement_Started.StartPreservation();
+            dbContext.SaveChangesAsync().Wait();
+            knownTestData.TagId_ForStandardTagWithCbRequirement_Started = standardTagWithCbRequirement_Started.Id;
 
-            var siteAreaTagAttachment = SeedTagAttachment(dbContext, siteAreaTag);
-            knownTestData.SiteAreaTagAttachmentIds.Add(siteAreaTagAttachment.Id);
+            var standardTagWithAttachmentsAndActions = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
+            knownTestData.TagId_ForStandardTagWithAttachmentsAndActionAttachments = standardTagWithAttachmentsAndActions.Id;
+            SeedTagAttachment(dbContext, standardTagWithAttachmentsAndActions);
+            SeedTagAttachment(dbContext, standardTagWithAttachmentsAndActions);
 
-            var areaTagAction = SeedAction(dbContext, siteAreaTag);
-            knownTestData.SiteAreaTagActionIds.Add(areaTagAction.Id);
-            var areaTagActionAttachment = SeedActionAttachment(dbContext, areaTagAction);
-            knownTestData.SiteAreaTagActionAttachmentIds.Add(areaTagActionAttachment.Id);
+            var standardTagAction = SeedAction(dbContext, standardTagWithAttachmentsAndActions);
+            SeedActionAttachment(dbContext, standardTagAction);
+            SeedActionAttachment(dbContext, standardTagAction);
+
+            var siteAreaTag = SeedSiteTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
+            knownTestData.TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted = siteAreaTag.Id;
+
+            var siteAreaTagWithAttachmentsAndActionAttachments = SeedSiteTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
+            knownTestData.TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments = siteAreaTagWithAttachmentsAndActionAttachments.Id;
+            SeedTagAttachment(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
+            SeedTagAttachment(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
+
+            var areaTagAction = SeedAction(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
+            SeedActionAttachment(dbContext, areaTagAction);
+            SeedActionAttachment(dbContext, areaTagAction);
         }
 
-        private static TagAttachment SeedTagAttachment(PreservationContext dbContext, Tag tag)
+        private static void SeedInfoField(PreservationContext dbContext, RequirementDefinition reqDef)
+        {
+            var infoField = new Field(reqDef.Plant, Guid.NewGuid().ToString(), FieldType.Info, 10);
+            reqDef.AddField(infoField);
+            dbContext.SaveChangesAsync().Wait();
+        }
+
+        private static void SeedCbField(PreservationContext dbContext, RequirementDefinition reqDef)
+        {
+            var cbField = new Field(reqDef.Plant, Guid.NewGuid().ToString(), FieldType.CheckBox, 10);
+            reqDef.AddField(cbField);
+            dbContext.SaveChangesAsync().Wait();
+        }
+
+        private static void SeedAttachmentField(PreservationContext dbContext, RequirementDefinition reqDef)
+        {
+            var attachmentField = new Field(reqDef.Plant, Guid.NewGuid().ToString(), FieldType.Attachment, 10);
+            reqDef.AddField(attachmentField);
+            dbContext.SaveChangesAsync().Wait();
+        }
+
+        private static void SeedTagAttachment(PreservationContext dbContext, Tag tag)
         {
             var attachment = new TagAttachment(tag.Plant, KnownTestData.TagAttachmentBlobStorageId, "Fil1.txt");
             tag.AddAttachment(attachment);
             dbContext.SaveChangesAsync().Wait();
-            return attachment;
         }
 
-        private static ActionAttachment SeedActionAttachment(PreservationContext dbContext, Action action)
+        private static void SeedActionAttachment(PreservationContext dbContext, Action action)
         {
             var attachment = new ActionAttachment(action.Plant, KnownTestData.ActionAttachmentBlobStorageId, "Fil2.txt");
             action.AddAttachment(attachment);
             dbContext.SaveChangesAsync().Wait();
-            return attachment;
         }
 
         private static Action SeedAction(PreservationContext dbContext, Tag tag)
@@ -128,14 +171,19 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             return project;
         }
 
-        private static Tag SeedStandardTag(PreservationContext dbContext, Project project, Step step,
+        private static Tag SeedStandardTag(
+            PreservationContext dbContext,
+            Project project,
+            Step step,
             RequirementDefinition requirementDef)
         {
+            var suffix = Guid.NewGuid().ToString();
+            var tagNo = $"{KnownTestData.StandardTagNo}-{suffix}";
             var tag = new Tag(
                 project.Plant,
                 TagType.Standard,
-                KnownTestData.StandardTagNo,
-                KnownTestData.StandardTagDescription,
+                tagNo,
+                $"{tagNo} - Description",
                 step,
                 new List<TagRequirement>
                 {
@@ -151,11 +199,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private static Tag SeedSiteTag(PreservationContext dbContext, Project project, Step step,
             RequirementDefinition requirementDef)
         {
+            var suffix = Guid.NewGuid().ToString();
+            var tagNo = $"{KnownTestData.SiteTagNo}-{suffix}";
             var tag = new Tag(
                 project.Plant,
                 TagType.SiteArea,
-                KnownTestData.SiteTagNo,
-                KnownTestData.SiteTagDescription,
+                tagNo,
+                $"{tagNo} - Description",
                 step,
                 new List<TagRequirement>
                 {

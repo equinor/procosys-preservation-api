@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
@@ -97,6 +99,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             string description,
             int stepId,
             string rowVersion,
+            List<TagRequirementDto> newRequirements = null,
+            List<UpdatedTagRequirementDto> updatedRequirements = null,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -104,7 +108,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             {
                 description,
                 stepId,
-                rowVersion
+                rowVersion,
+                newRequirements,
+                updatedRequirements
             };
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
@@ -339,6 +345,93 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<int>(jsonString);
+        }
+
+        public static async Task<List<RequirementDetailsDto>> GetTagRequirementsAsync(
+            HttpClient client,
+            int tagId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.GetAsync($"{_route}/{tagId}/Requirements");
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var content = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<RequirementDetailsDto>>(content);
+        }
+
+        public static async Task UploadFieldValueAttachmentAsync(
+            HttpClient client,
+            int tagId,
+            int requirementId,
+            int fieldId,
+            TestFile file,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var httpContent = file.CreateHttpContent();
+            var response = await client.PostAsync($"{_route}/{tagId}/Requirements/{requirementId}/Attachment/{fieldId}", httpContent);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task RecordCbValueAsync(
+            HttpClient client,
+            int tagId,
+            int requirementId,
+            int fieldId,
+            string comment,
+            bool isChecked,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                comment,
+                checkBoxValues = new []
+                {
+                    new {
+                        fieldId,
+                        isChecked
+                    }
+                }
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_route}/{tagId}/Requirements/{requirementId}/RecordValues", content);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<GetTagRequirementInfo> GetTagRequirementInfoAsync(HttpClient client, int tagId)
+        {
+            var requirementDetailDtos = await GetTagRequirementsAsync(client, tagId);
+            var requirementDetailDto = requirementDetailDtos.First();
+            Assert.IsNotNull(requirementDetailDto.NextDueTimeUtc, "Bad test setup: Preservation not started");
+            Assert.AreEqual(1, requirementDetailDto.Fields.Count, "Bad test setup: Expect to find 1 requirement on tag under test");
+            return new GetTagRequirementInfo(
+                requirementDetailDto.Id,
+                requirementDetailDto.NextDueTimeUtc.Value,
+                requirementDetailDto.Fields);
+        }
+
+        public static async Task PreserveRequirementAsync(
+            HttpClient client,
+            int tagId,
+            int requirementId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await client.PostAsync($"{_route}/{tagId}/Requirements/{requirementId}/Preserve", null);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
     }
 }

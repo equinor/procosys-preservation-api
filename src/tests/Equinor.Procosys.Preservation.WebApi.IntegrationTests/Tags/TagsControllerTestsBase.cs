@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -11,16 +10,17 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
     {
         protected readonly string KnownAreaCode = "A";
         protected readonly string KnownDisciplineCode = "D";
-        protected int StandardTagIdUnderTest;
-        protected int SiteAreaTagIdUnderTest;
-        protected int StepIdUnderTest;
-        protected int StandardTagActionIdUnderTest;
-        protected int SiteAreaTagActionIdUnderTest;
+
         protected int InitialTagsCount;
-        protected int StandardTagAttachmentIdUnderTest;
-        protected int SiteAreaTagAttachmentIdUnderTest;
-        protected int StandardTagActionAttachmentIdUnderTest;
-        protected int SiteAreaTagActionAttachmentIdUnderTest;
+        
+        protected int TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
+        protected int TagIdUnderTest_ForStandardTagWithInfoRequirement_Started;
+        protected int TagIdUnderTest_ForStandardTagWithCbRequirement_Started;
+        protected int TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
+        protected int TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
+
+        protected int TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+        protected int TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments;
 
         protected TestFile FileToBeUploaded = new TestFile("test file content", "file.txt");
 
@@ -34,17 +34,24 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(result);
 
             InitialTagsCount = result.MaxAvailable;
-            Assert.IsTrue(InitialTagsCount > 0, "Didn't find any tags at startup. Bad test setup");
+            Assert.IsTrue(InitialTagsCount > 0, "Bad test setup: Didn't find any tags at startup");
             Assert.AreEqual(InitialTagsCount, result.Tags.Count);
-            StandardTagIdUnderTest = TestFactory.KnownTestData.StandardTagIds.First();
-            SiteAreaTagIdUnderTest = TestFactory.KnownTestData.SiteAreaTagIds.First();
-            StepIdUnderTest = TestFactory.KnownTestData.StepIds.First();
-            StandardTagActionIdUnderTest = TestFactory.KnownTestData.StandardTagActionIds.First();
-            SiteAreaTagActionIdUnderTest = TestFactory.KnownTestData.SiteAreaTagActionIds.First();
-            StandardTagAttachmentIdUnderTest = TestFactory.KnownTestData.StandardTagAttachmentIds.First();
-            SiteAreaTagAttachmentIdUnderTest = TestFactory.KnownTestData.SiteAreaTagAttachmentIds.First();
-            StandardTagActionAttachmentIdUnderTest = TestFactory.KnownTestData.StandardTagActionAttachmentIds.First();
-            SiteAreaTagActionAttachmentIdUnderTest = TestFactory.KnownTestData.SiteAreaTagActionAttachmentIds.First();
+
+            TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted
+                = TestFactory.KnownTestData.TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
+            TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started
+                = TestFactory.KnownTestData.TagId_ForStandardTagWithAttachmentRequirement_Started;
+            TagIdUnderTest_ForStandardTagWithInfoRequirement_Started
+                = TestFactory.KnownTestData.TagId_ForStandardTagWithInfoRequirement_Started;
+            TagIdUnderTest_ForStandardTagWithCbRequirement_Started
+                = TestFactory.KnownTestData.TagId_ForStandardTagWithCbRequirement_Started;
+            TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted
+                = TestFactory.KnownTestData.TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
+
+            TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments
+                = TestFactory.KnownTestData.TagId_ForStandardTagWithAttachmentsAndActionAttachments;
+            TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments
+                = TestFactory.KnownTestData.TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments;
 
             TestFactory
                 .DisciplineApiServiceMock

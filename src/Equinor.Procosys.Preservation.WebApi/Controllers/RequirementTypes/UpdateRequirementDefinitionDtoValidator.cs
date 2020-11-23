@@ -22,30 +22,32 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .Must(BePositive)
                 .WithMessage("Week interval must be positive");
 
-            RuleForEach(x => x.NewFields)
-                .Must(FieldLabelNotNullAndMaxLength)
-                .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}");
+            When(x => x.NewFields != null, () =>
+            {
+                RuleForEach(x => x.NewFields)
+                    .Must(FieldLabelNotNullAndMaxLength)
+                    .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}")
+                    .Must(FieldUnitMaxLength)
+                    .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
+            });
 
-            RuleForEach(x => x.UpdatedFields)
-                .Must(FieldLabelNotNullAndMaxLength)
-                .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}");
+            When(x => x.UpdatedFields != null, () =>
+            {
+                RuleFor(x => x.UpdatedFields)
+                    .Must(BeUniqueFieldIds)
+                    .WithMessage("Fields to update or delete must be unique");
+
+                RuleForEach(x => x.UpdatedFields)
+                    .Must(FieldLabelNotNullAndMaxLength)
+                    .WithMessage($"Field label cannot be null and must be maximum {Field.LabelLengthMax}")
+                    .Must(FieldUnitMaxLength)
+                    .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
+            });
 
             RuleFor(x => x)
                 .Must(NotHaveDuplicateFieldLabels)
                 .WithMessage("Cannot have duplicate field labels");
-
-            RuleForEach(x => x.NewFields)
-                .Must(FieldUnitMaxLength)
-                .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
-
-            RuleForEach(x => x.UpdatedFields)
-                .Must(FieldUnitMaxLength)
-                .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
             
-            RuleFor(x => x.UpdatedFields)
-                .Must(BeUniqueFieldIds)
-                .WithMessage("Fields to update or delete must be unique");
-                        
             bool BeUniqueFieldIds(IList<UpdateFieldDto> updatedFields)
             {
                 var fieldIds = updatedFields.Select(u => u.Id).ToList();
@@ -56,15 +58,28 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
 
             bool NotHaveDuplicateFieldLabels(UpdateRequirementDefinitionDto dto)
             {
-                var allFieldLabelsLowercase = dto.UpdatedFields.Where(f => !string.IsNullOrEmpty(f.Label)).Select(f => f.Label.ToLower())
-                    .Concat(dto.NewFields.Where(f => !string.IsNullOrEmpty(f.Label)).Select(f => f.Label.ToLower())).ToList();
+                var allFieldLabelsLowercase = new List<string>();
+
+                if (dto.UpdatedFields != null)
+                {
+                    allFieldLabelsLowercase.AddRange(dto.UpdatedFields.Where(f => !string.IsNullOrEmpty(f.Label))
+                        .Select(f => f.Label.ToLower()));
+                }
+
+                if (dto.NewFields != null)
+                {
+                    allFieldLabelsLowercase.AddRange(dto.NewFields.Where(f => !string.IsNullOrEmpty(f.Label))
+                        .Select(f => f.Label.ToLower()));
+                }
 
                 return allFieldLabelsLowercase.Distinct().Count() == allFieldLabelsLowercase.Count;
             }
 
-            bool FieldLabelNotNullAndMaxLength(FieldDto fieldDto) => fieldDto.Label != null && fieldDto.Label.Length < Field.LabelLengthMax;
+            bool FieldLabelNotNullAndMaxLength(FieldDto fieldDto)
+                => fieldDto.Label != null && fieldDto.Label.Length < Field.LabelLengthMax;
 
-            bool FieldUnitMaxLength(FieldDto fieldDto) => fieldDto.Unit == null || fieldDto.Unit.Length < Field.UnitLengthMax;
+            bool FieldUnitMaxLength(FieldDto fieldDto)
+                => fieldDto.Unit == null || fieldDto.Unit.Length < Field.UnitLengthMax;
         }
     }
 }

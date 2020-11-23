@@ -39,6 +39,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.RequirementType
         }
 
         [TestMethod]
+        public void Validate_OK_WhenRequirementListsExplicitNull()
+        {
+            _dto.NewFields = null;
+            _dto.UpdatedFields = null;
+            var result = _dut.Validate(_dto);
+
+            Assert.IsTrue(result.IsValid);
+        }
+
+        [TestMethod]
         public void Fail_WhenTitleIsTooLong()
         {
             _dto.Title = new string('x', RequirementDefinition.TitleLengthMax + 1); 
@@ -195,7 +205,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.RequirementType
         }
 
         [TestMethod]
-        public void Fail_DefaultIntervalWeeksZero()
+        public void Fail_DefaultIntervalWeeksIsZero()
         {
             _dto.DefaultIntervalWeeks = 0; 
 

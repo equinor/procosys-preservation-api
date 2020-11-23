@@ -23,17 +23,18 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 .Must(BePositive)
                 .WithMessage("Week interval must be positive");
 
-            RuleForEach(x => x.Fields)
-                .Must(FieldLabelNotNullAndMaxLength)
-                .WithMessage($"Field label cannot be null and must be maximum {nameof(Field.LabelLengthMax)}");
+            When(x => x.Fields != null, () =>
+            {
+                RuleFor(x => x.Fields)
+                    .Must(NotHaveDuplicateFieldLabels)
+                    .WithMessage("Cannot have duplicate fields");
 
-            RuleFor(x => x.Fields)
-                .Must(NotHaveDuplicateFieldLabels)
-                .WithMessage("Cannot have duplicate fields");
-
-            RuleForEach(x => x.Fields)
-                .Must(FieldUnitMaxLength)
-                .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
+                RuleForEach(x => x.Fields)
+                    .Must(FieldLabelNotNullAndMaxLength)
+                    .WithMessage($"Field label cannot be null and must be maximum {nameof(Field.LabelLengthMax)}")
+                    .Must(FieldUnitMaxLength)
+                    .WithMessage($"Field unit must be maximum {nameof(Field.UnitLengthMax)}");
+            });
 
             bool BePositive(int arg) => arg > 0;
 
@@ -44,9 +45,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                 return lowerCaseFieldLabels.Distinct().Count() == lowerCaseFieldLabels.Count;
             }
 
-            bool FieldLabelNotNullAndMaxLength(FieldDto arg) => arg.Label != null && arg.Label.Length < Field.LabelLengthMax;
+            bool FieldLabelNotNullAndMaxLength(FieldDto fieldDto)
+                => fieldDto.Label != null && fieldDto.Label.Length < Field.LabelLengthMax;
 
-            bool FieldUnitMaxLength(FieldDto arg) => arg.Unit.Length < Field.UnitLengthMax;
+            bool FieldUnitMaxLength(FieldDto fieldDto)
+                => fieldDto.Unit == null || fieldDto.Unit.Length < Field.UnitLengthMax;
         }
     }
 }

@@ -26,30 +26,52 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Delete
         {
             _projectValidatorMock = new Mock<IProjectValidator>();
             _tagValidatorMock = new Mock<ITagValidator>();
-            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.ExistsRequirementAsync(TagId, ReqId, default))
+                .Returns(Task.FromResult(true));
+            _tagValidatorMock
+                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, AttachmentFieldId, default))
+                .Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(v => v.HasRequirementWithActivePeriodAsync(TagId, ReqId, default))
+                .Returns(Task.FromResult(true));
             _fieldValidatorMock = new Mock<IFieldValidator>();
-            _fieldValidatorMock.Setup(v => v.ExistsAsync(AttachmentFieldId, default)).Returns(Task.FromResult(true));
-            _fieldValidatorMock.Setup(r => r.IsValidForAttachmentAsync(AttachmentFieldId, default)).Returns(Task.FromResult(true));
+            _fieldValidatorMock.Setup(r => r.IsValidForAttachmentAsync(AttachmentFieldId, default))
+                .Returns(Task.FromResult(true));
 
             _command = new DeleteFieldValueAttachmentCommand(
                 TagId, 
                 ReqId, 
                 AttachmentFieldId);
 
-            _dut = new DeleteFieldValueAttachmentCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object, _fieldValidatorMock.Object);
+            _dut = new DeleteFieldValueAttachmentCommandValidator(
+                _projectValidatorMock.Object,
+                _tagValidatorMock.Object,
+                _fieldValidatorMock.Object);
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenTagNotExists()
+        public void Validate_ShouldFail_WhenTagOrReqNotExists()
         {
-            _tagValidatorMock.Setup(v => v.ExistsAsync(TagId, default)).Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(r => r.ExistsRequirementAsync(TagId, ReqId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag doesn't exist!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Tag and/or requirement doesn't exist!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenFieldNotExistsForRequirement()
+        {
+            _tagValidatorMock
+                .Setup(v => v.ExistsFieldForRequirementAsync(TagId, ReqId, AttachmentFieldId, default))
+                .Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist in requirement!"));
         }
 
         [TestMethod]
@@ -89,18 +111,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Delete
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenAttachmentFieldNotExists()
-        {
-            _fieldValidatorMock.Setup(r => r.ExistsAsync(AttachmentFieldId, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field doesn't exist!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenFieldNotForAttachment()
         {
             _fieldValidatorMock.Setup(r => r.IsValidForAttachmentAsync(AttachmentFieldId, default)).Returns(Task.FromResult(false));
@@ -109,7 +119,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Delete
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Field values can not be recorded for field type!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Attachment can not be uploaded for field!"));
         }
 
         [TestMethod]

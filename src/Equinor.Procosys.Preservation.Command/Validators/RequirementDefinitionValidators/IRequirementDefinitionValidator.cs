@@ -7,6 +7,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
     public interface IRequirementDefinitionValidator
     {
         Task<bool> ExistsAsync(int requirementDefinitionId, CancellationToken token);
+        Task<bool> ExistsFieldAsync(int requirementDefinitionId, int fieldId, CancellationToken token);
         Task<bool> IsVoidedAsync(int requirementDefinitionId, CancellationToken token);
         Task<bool> UsageCoversBothForSupplierAndOtherAsync(List<int> requirementDefinitionIds, CancellationToken token);
         Task<bool> UsageCoversForOtherThanSuppliersAsync(List<int> requirementDefinitionIds, CancellationToken token);

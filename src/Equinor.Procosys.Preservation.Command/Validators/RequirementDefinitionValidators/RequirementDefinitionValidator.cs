@@ -21,6 +21,12 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                 where rd.Id == requirementDefinitionId
                 select rd).AnyAsync(token);
 
+        public async Task<bool> ExistsFieldAsync(int requirementDefinitionId, int fieldId, CancellationToken token) =>
+            await (from rd in _context.QuerySet<RequirementDefinition>()
+                join f in _context.QuerySet<Field>() on rd.Id equals EF.Property<int>(f, "RequirementDefinitionId")
+                where rd.Id == requirementDefinitionId && f.Id == fieldId
+                select rd).AnyAsync(token);
+
         public async Task<bool> IsVoidedAsync(
             int requirementDefinitionId,
             CancellationToken token)

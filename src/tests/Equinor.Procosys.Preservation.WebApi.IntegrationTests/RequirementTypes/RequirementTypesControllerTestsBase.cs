@@ -8,7 +8,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
     public class RequirementTypesControllerTestsBase : TestBase
     {
         protected int ReqTypeAIdUnderTest;
-        protected int ReqDefInReqTypeAIdUnderTest;
+        protected int ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA;
+        protected int ReqDefIdUnderTest_ForReqDefWithCbField_InReqTypeA;
         protected int ReqTypeBIdUnderTest;
         protected int ReqDefInReqTypeBIdUnderTest;
 
@@ -19,7 +20,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             
             var reqTypeA = requirementTypes.Single(j => j.Code == KnownTestData.ReqTypeA);
             ReqTypeAIdUnderTest = reqTypeA.Id;
-            ReqDefInReqTypeAIdUnderTest = reqTypeA.RequirementDefinitions.First().Id;
+            ReqDefIdUnderTest_ForReqDefWithNoFields_InReqTypeA
+                = reqTypeA.RequirementDefinitions.Single(rd => rd.Title == KnownTestData.ReqDefInReqTypeANoField).Id;
+            ReqDefIdUnderTest_ForReqDefWithCbField_InReqTypeA
+                = reqTypeA.RequirementDefinitions.Single(rd => rd.Title == KnownTestData.ReqDefInReqTypeAWithCbField).Id;
             
             var reqTypeB = requirementTypes.Single(j => j.Code == KnownTestData.ReqTypeB);
             ReqTypeBIdUnderTest = reqTypeB.Id;

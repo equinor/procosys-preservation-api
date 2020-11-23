@@ -19,24 +19,34 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private readonly string _reqTypeCode2 = "Code2";
         private readonly string _reqDefTitle2 = "DefTitle2";
         private int _reqTypeId1;
+        private int _reqTypeId2;
+        private int _reqDefId1_1;
         private int _reqDefId1_2;
         private string _reqTypeTitle1;
         private string _reqTypeTitle2;
+        private int _infoFieldId1_1;
+        private int _infoFieldId1_2;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
             using (var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var requirementType = AddRequirementTypeWith1DefWithoutField(context, _reqTypeCode1, _reqDefTitle1_1, RequirementTypeIcon.Other);
-                _reqTypeId1 = requirementType.Id;
-                _reqTypeTitle1 = requirementType.Title;
-                
-                var requirementDefinition = new RequirementDefinition(TestPlant, _reqDefTitle1_2, 2, RequirementUsage.ForAll, 1);
-                requirementType.AddRequirementDefinition(requirementDefinition);
-                context.SaveChangesAsync().Wait();
-                _reqDefId1_2 = requirementDefinition.Id;
+                var reqType1 = AddRequirementTypeWith1DefWithoutField(context, _reqTypeCode1, _reqDefTitle1_1, RequirementTypeIcon.Other);
+                _reqTypeId1 = reqType1.Id;
+                _reqTypeTitle1 = reqType1.Title;
+                var reqDef1_1 = reqType1.RequirementDefinitions.Single();
+                _reqDefId1_1 = reqDef1_1.Id;
+                _infoFieldId1_1 = AddInfoField(context, reqDef1_1, "I").Id;
 
-                _reqTypeTitle2 = AddRequirementTypeWith1DefWithoutField(context, _reqTypeCode2, _reqDefTitle2, RequirementTypeIcon.Other).Title;
+                var reqDef1_2 = new RequirementDefinition(TestPlant, _reqDefTitle1_2, 2, RequirementUsage.ForAll, 1);
+                reqType1.AddRequirementDefinition(reqDef1_2);
+                context.SaveChangesAsync().Wait();
+                _reqDefId1_2 = reqDef1_2.Id;
+                _infoFieldId1_2 = AddInfoField(context, reqDef1_2, "I").Id;
+
+                var reqType2 = AddRequirementTypeWith1DefWithoutField(context, _reqTypeCode2, _reqDefTitle2, RequirementTypeIcon.Other);
+                _reqTypeId2 = reqType2.Id;
+                _reqTypeTitle2 = reqType2.Title;
             }
         }
 
@@ -58,6 +68,72 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new RequirementTypeValidator(context);
                 var result = await dut.ExistsAsync(126234, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task RequirementDefinitionExistsAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.RequirementDefinitionExistsAsync(_reqTypeId1, _reqDefId1_1, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task RequirementDefinitionExistsAsync_UnknownIds_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.RequirementDefinitionExistsAsync(_reqTypeId2, _reqDefId1_1, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task FieldExistsAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.FieldExistsAsync(_reqTypeId1, _reqDefId1_1, _infoFieldId1_1, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task FieldExistsAsync_UnknownReqTypeId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.FieldExistsAsync(_reqTypeId2, _reqDefId1_1, _infoFieldId1_1, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task FieldExistsAsync_UnknownReqDefId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.FieldExistsAsync(_reqTypeId1, _reqDefId1_2, _infoFieldId1_1, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task FieldExistsAsync_UnknownFieldId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new RequirementTypeValidator(context);
+                var result = await dut.FieldExistsAsync(_reqTypeId1, _reqDefId1_1, _infoFieldId1_2, default);
                 Assert.IsFalse(result);
             }
         }

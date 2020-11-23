@@ -206,7 +206,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
             [FromRoute] int requirementDefinitionId,
             [FromBody] UpdateRequirementDefinitionDto dto)
         {
-            var updatedFields = dto.UpdatedFields.Select(f =>
+            var updatedFields = dto.UpdatedFields?.Select(f =>
                 new UpdateFieldsForCommand(
                     f.Id, 
                     f.Label, 
@@ -216,7 +216,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
                     f.RowVersion, 
                     f.Unit, 
                     f.ShowPrevious)).ToList();
-            var newFields = dto.NewFields.Select(f =>
+            var newFields = dto.NewFields?.Select(f =>
                 new FieldsForCommand(
                     f.Label, 
                     f.FieldType, 

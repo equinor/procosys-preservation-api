@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -35,6 +36,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             HttpClient client,
             int reqTypeId,
             string title,
+            List<FieldDto> fields = null,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -42,7 +44,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             {
                 title,
                 sortKey = 10,
-                defaultIntervalWeeks = 4
+                defaultIntervalWeeks = 4,
+                fields
             };
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
@@ -66,6 +69,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             string title,
             int defaultIntervalWeeks,
             string rowVersion,
+            List<FieldDetailsDto> updatedFields = null,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -74,12 +78,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 title,
                 defaultIntervalWeeks,
                 sortKey = 10,
-                rowVersion
+                rowVersion,
+                updatedFields
             };
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"{_route}/{requirementTypeId}/RequirementDefinitions/{requirementDefinitionId}", content);
+            var response =
+                await client.PutAsync($"{_route}/{requirementTypeId}/RequirementDefinitions/{requirementDefinitionId}",
+                    content);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)
@@ -140,6 +147,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
 
             var response = await client.SendAsync(request);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+        
+        public static async Task<RequirementDefinitionDto> GetRequirementDefinitionDetailsAsync(HttpClient client, int reqTypeId, int reqDefId)
+        {
+            var reqType = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(client);
+            return reqType
+                .Single(r => r.Id == reqTypeId)
+                .RequirementDefinitions
+                .SingleOrDefault(s => s.Id == reqDefId);
         }
 
         private static async Task<string> VoidUnvoidRequirementDefinitionAsync(

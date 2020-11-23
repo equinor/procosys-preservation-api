@@ -12,6 +12,7 @@ using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.Procosys.Preservation.Command.Tests.Validators
@@ -42,6 +43,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         private int _poAreaTagActionId;
         private int _poAreaTagAttachmentId;
         private int _poAreaTagActionAttachmentId;
+        private TagRequirement _tagRequirementForPoAreaTag;
         private const int IntervalWeeks = 4;
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
@@ -91,8 +93,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 siteAreaTagStarted.StartPreservation();
                 var poAreaTagNotStarted = AddTag(context, project, TagType.PoArea, "#PO-E-A1", _tagDescription,
                     firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                _tagRequirementForPoAreaTag = new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1);
                 var poAreaTagStarted = AddTag(context, project, TagType.PoArea, "#PO-E-A2", _tagDescription,
-                    firstStep, new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
+                    firstStep, new List<TagRequirement> {_tagRequirementForPoAreaTag});
                 poAreaTagStarted.StartPreservation();
 
                 var tagAttachment = new TagAttachment(TestPlant, Guid.Empty, "fil1.txt");
@@ -142,6 +145,132 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.ExistsAsync(TagNo1, "XYZ", default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task ExistsRequirementAsync_KnownIds_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsRequirementAsync(
+                    _poAreaTagStartedId,
+                    _tagRequirementForPoAreaTag.Id,
+                    default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsRequirementAsync_UnknownTagId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsRequirementAsync(
+                    9999,
+                    _tagRequirementForPoAreaTag.Id,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsRequirementAsync_UnknownRequirementId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.ExistsRequirementAsync(
+                    _poAreaTagStartedId,
+                    9999,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+        
+        [TestMethod]
+        public async Task ExistsFieldForRequirementAsync_KnownIds_ShouldReturnTrue()
+        {
+            var fieldId = 3654;
+            var requirementDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
+            requirementDefinitionValidatorMock.Setup(
+                    r => r.ExistsFieldAsync(_tagRequirementForPoAreaTag.RequirementDefinitionId, fieldId, default))
+                .Returns(Task.FromResult(true));
+            
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, requirementDefinitionValidatorMock.Object);
+                var result = await dut.ExistsFieldForRequirementAsync(
+                    _poAreaTagStartedId,
+                    _tagRequirementForPoAreaTag.Id,
+                    fieldId,
+                    default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsFieldForRequirementAsync_UnknownTagId_ShouldReturnFalse()
+        {
+            var fieldId = 3654;
+            var requirementDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
+            requirementDefinitionValidatorMock.Setup(
+                    r => r.ExistsFieldAsync(_tagRequirementForPoAreaTag.RequirementDefinitionId, fieldId, default))
+                .Returns(Task.FromResult(true));
+            
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, requirementDefinitionValidatorMock.Object);
+                var result = await dut.ExistsFieldForRequirementAsync(
+                    9999,
+                    _tagRequirementForPoAreaTag.Id,
+                    fieldId,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsFieldForRequirementAsync_UnknownRequirementId_ShouldReturnFalse()
+        {
+            var fieldId = 3654;
+            var requirementDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
+            requirementDefinitionValidatorMock.Setup(
+                    r => r.ExistsFieldAsync(_tagRequirementForPoAreaTag.RequirementDefinitionId, fieldId, default))
+                .Returns(Task.FromResult(true));
+            
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, requirementDefinitionValidatorMock.Object);
+                var result = await dut.ExistsFieldForRequirementAsync(
+                    _poAreaTagStartedId,
+                    9999,
+                    fieldId,
+                    default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task ExistsFieldForRequirementAsync_UnknownFieldId_ShouldReturnFalse()
+        {
+            var fieldId = 3654;
+            var requirementDefinitionValidatorMock = new Mock<IRequirementDefinitionValidator>();
+            requirementDefinitionValidatorMock.Setup(
+                    r => r.ExistsFieldAsync(_tagRequirementForPoAreaTag.RequirementDefinitionId, fieldId, default))
+                .Returns(Task.FromResult(false));
+            
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, requirementDefinitionValidatorMock.Object);
+                var result = await dut.ExistsFieldForRequirementAsync(
+                    _poAreaTagStartedId,
+                    _tagRequirementForPoAreaTag.Id,
+                    fieldId,
+                    default);
                 Assert.IsFalse(result);
             }
         }
