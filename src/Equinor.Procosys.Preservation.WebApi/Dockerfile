@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
+FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 
 # Copy project files separately and restore NuGet packages to create layers. Skip test projects!
@@ -25,7 +25,7 @@ WORKDIR "/src/Equinor.Procosys.Preservation.WebApi"
 RUN dotnet publish "Equinor.Procosys.Preservation.WebApi.csproj" -c Release --no-restore -o /app/publish
 
 # Define the image used for the final result
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
 
 # Install System.Drawing native dependencies (added because of Excel export (ClosedXML library) support).
 RUN apt-get update
