@@ -456,5 +456,86 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<IdAndRowVersion>>(jsonString);
         }
+
+        public static async Task<IList<IdAndRowVersion>> CompletePreservationAsync(
+            HttpClient client,
+            IEnumerable<IdAndRowVersion> tagDtos,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = tagDtos;
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_route}/CompletePreservation", content);
+            
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<IdAndRowVersion>>(jsonString);
+        }
+
+        public static async Task StartPreservationAsync(
+            HttpClient client,
+            IEnumerable<int> tagIds,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = tagIds;
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_route}/StartPreservation", content);
+            
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<int> CreateAreaTagAsync(
+            HttpClient client,
+            string projectName,
+            AreaTagType areaTagType,
+            string disciplineCode,
+            string areaCode,
+            string tagNoSuffix,
+            List<TagRequirementDto> requirements,
+            int stepId,
+            string description,
+            string remark,
+            string storageArea,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                projectName,
+                areaTagType,
+                disciplineCode,
+                areaCode,
+                tagNoSuffix,
+                requirements,
+                stepId,
+                description,
+                remark,
+                storageArea
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PostAsync($"{_route}/Area", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return -1;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<int>(jsonString);
+        }
     }
 }

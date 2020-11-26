@@ -1,6 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
+using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys;
+using Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
@@ -22,6 +27,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         protected int TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
         protected int TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments;
 
+        protected JourneyDto JourneyWithTags;
+
         protected TestFile FileToBeUploaded = new TestFile("test file content", "file.txt");
 
         [TestInitialize]
@@ -36,6 +43,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             InitialTagsCount = result.MaxAvailable;
             Assert.IsTrue(InitialTagsCount > 0, "Bad test setup: Didn't find any tags at startup");
             Assert.AreEqual(InitialTagsCount, result.Tags.Count);
+
+            var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
+            JourneyWithTags = journeys.Single(j => j.Title == KnownTestData.JourneyWithTags);
 
             TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted
                 = TestFactory.KnownTestData.TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
@@ -68,6 +78,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 {
                     Code = KnownAreaCode, Description = $"{KnownAreaCode} - Description"
                 }));
+        }
+
+        protected async Task<int> CreateRequirementDefinitionAsync(HttpClient client)
+        {
+            var reqTypes = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(client);
+            var newReqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
+                client, reqTypes.First().Id, Guid.NewGuid().ToString());
+            return newReqDefId;
         }
     }
 }
