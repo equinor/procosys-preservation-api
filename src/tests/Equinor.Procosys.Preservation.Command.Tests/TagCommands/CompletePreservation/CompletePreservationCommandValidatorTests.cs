@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -16,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
         private CompletePreservationCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private CompletePreservationCommand _command;
 
         private const int TagId1 = 7;
@@ -42,9 +44,15 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeCompletedAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeCompletedAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion1)).Returns(true);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(true);
             _command = new CompletePreservationCommand(_tagsIdsWithRowVersion);
 
-            _dut = new CompletePreservationCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
+            _dut = new CompletePreservationCommandValidator(
+                _projectValidatorMock.Object,
+                _tagValidatorMock.Object,
+                _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -162,6 +170,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CompletePreser
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(false);
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid row version!"));
         }
     }
 }

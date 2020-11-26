@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using FluentValidation;
@@ -13,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
     {
         public CompletePreservationCommandValidator(
             IProjectValidator projectValidator,
-            ITagValidator tagValidator)
+            ITagValidator tagValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.Stop;
                         
@@ -35,8 +36,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
                     .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tag, __, token) => IsReadyToBeCompletedAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Preservation on tag can not be completed! Tag={id}");
-                // todo add validation of valid RowVersion. See Reschedule
+                    .WithMessage((_, id) => $"Preservation on tag can not be completed! Tag={id}")
+                    .Must(tag => HaveAValidRowVersion(tag.RowVersion))
+                    .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
@@ -59,6 +61,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
 
             async Task<bool> IsReadyToBeCompletedAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToBeCompletedAsync(tagId, token);
+
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }
