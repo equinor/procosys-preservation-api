@@ -66,7 +66,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
             
             var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.JourneyWithTags);
-            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepInJourneyWithTags, mode, responsible);
+            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepAInJourneyWithTags, mode, responsible);
+            SeedStep(dbContext, journeyWithTags, KnownTestData.StepBInJourneyWithTags, mode, responsible);
             
             var journeyWithoutTags = SeedJourney(dbContext, plant, KnownTestData.JourneyNotInUse);
             SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, mode, responsible);

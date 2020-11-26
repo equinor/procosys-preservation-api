@@ -31,8 +31,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TagResultDto>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TagResultDto>(jsonString);
         }
         
         public static async Task<TagDetailsDto> GetTagAsync(
@@ -50,8 +50,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<TagDetailsDto>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TagDetailsDto>(jsonString);
         }
 
         public static async Task<int> DuplicateAreaTagAsync(
@@ -141,8 +141,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<TagAttachmentDto>>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<TagAttachmentDto>>(jsonString);
         }
 
         public static async Task DeleteTagAttachmentAsync(
@@ -183,8 +183,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<ActionAttachmentDto>>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<ActionAttachmentDto>>(jsonString);
         }
 
         public static async Task DeleteActionAttachmentAsync(
@@ -225,8 +225,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<ActionDto>>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<ActionDto>>(jsonString);
         }
 
         public static async Task<string> UpdateActionAsync(
@@ -275,8 +275,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<ActionDetailsDto>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<ActionDetailsDto>(jsonString);
         }
 
         public static async Task<string> CloseActionAsync(
@@ -362,8 +362,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<RequirementDetailsDto>>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<RequirementDetailsDto>>(jsonString);
         }
 
         public static async Task UploadFieldValueAttachmentAsync(
@@ -432,6 +432,29 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var response = await client.PostAsync($"{_route}/{tagId}/Requirements/{requirementId}/Preserve", null);
 
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<IList<IdAndRowVersion>> TransferAsync(
+            HttpClient client,
+            IEnumerable<IdAndRowVersion> tagDtos,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = tagDtos;
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"{_route}/Transfer", content);
+            
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<IdAndRowVersion>>(jsonString);
         }
     }
 }

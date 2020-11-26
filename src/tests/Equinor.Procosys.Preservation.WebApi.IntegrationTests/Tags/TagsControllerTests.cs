@@ -545,5 +545,36 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(_preserverClient, tagIdUnderTest);
             Assert.AreNotEqual(oldNextDueTimeUtc, requirement.NextDueTimeUtc);
         }
+
+        [TestMethod]
+        public async Task Transfer_AsPlanner_ShouldTransferTags()
+        {
+            // Arrange 
+            var tagResultDto = await TagsControllerTestsHelper.GetAllTagsAsync(
+                _plannerClient,
+                TestFactory.ProjectWithAccess);
+            var tagToTransfer = tagResultDto.Tags.FirstOrDefault(t => t.ReadyToBeTransferred);
+            Assert.IsNotNull(tagToTransfer, "Bad test setup: Didn't find tag ready to be transferred");
+
+            // Act
+            var currentRowVersion = tagToTransfer.RowVersion;
+            var idAndRowVersions = await TagsControllerTestsHelper.TransferAsync(
+                _plannerClient,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagToTransfer.Id,
+                        RowVersion = currentRowVersion
+                    }
+                });
+
+            // Assert
+            Assert.IsNotNull(idAndRowVersions);
+            Assert.AreEqual(1, idAndRowVersions.Count);
+
+            var requirementDetailDto = idAndRowVersions.Single();
+            AssertRowVersionChange(currentRowVersion, requirementDetailDto.RowVersion);
+        }
     }
 }

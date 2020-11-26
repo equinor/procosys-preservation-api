@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -1335,6 +1336,78 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 true,
                 HttpStatusCode.BadRequest,
                 "Field doesn't exist in requirement!");
+        }
+
+        #endregion
+        
+        #region Transfer
+        [TestMethod]
+        public async Task Transfer_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.TransferAsync(
+                AnonymousClient(TestFactory.UnknownPlant),
+                null,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task Transfer_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.TransferAsync(
+                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Transfer_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.TransferAsync(
+                LibraryAdminClient(TestFactory.UnknownPlant),
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task Transfer_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.TransferAsync(
+                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Transfer_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.TransferAsync(
+                LibraryAdminClient(TestFactory.PlantWithAccess),
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Transfer_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.TransferAsync(
+                PreserverClient(TestFactory.PlantWithAccess),
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task Transfer_AsPlanner_ShouldReturnBadRequest_WhenIllegalRowVersion()
+        {
+            // Arrange 
+            var plannerClient = PlannerClient(TestFactory.PlantWithAccess);
+            var tagResultDto = await TagsControllerTestsHelper.GetAllTagsAsync(
+                plannerClient,
+                TestFactory.ProjectWithAccess);
+            var tagToTransfer = tagResultDto.Tags.FirstOrDefault(t => t.ReadyToBeTransferred);
+            Assert.IsNotNull(tagToTransfer, "Bad test setup: Didn't find tag ready to be transferred");
+            
+            // Act
+            await TagsControllerTestsHelper.TransferAsync(
+                plannerClient,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagToTransfer.Id,
+                        RowVersion = "invalidrowversion"
+                    }
+                },
+                HttpStatusCode.BadRequest);
         }
 
         #endregion
