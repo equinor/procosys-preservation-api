@@ -35,8 +35,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                      Action = a,
                      CreatedBy = createdUser,
                      ClosedBy = closedUser,
-                     ModifiedBy = modifiedUser,
-                     AttachmentCount = a.Attachments.ToList().Count
+                     ModifiedBy = modifiedUser
                  }).SingleOrDefaultAsync(cancellationToken);
 
             if (dto == null)
@@ -67,7 +66,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActionDetails
                 dto.Action.IsClosed,
                 closedBy,
                 dto.Action.ClosedAtUtc,
-                dto.AttachmentCount,
+                dto.Action.Attachments.Count,
                 modifiedBy,
                 dto.Action.ModifiedAtUtc,
                 dto.Action.RowVersion.ConvertToString()
