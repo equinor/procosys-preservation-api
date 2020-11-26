@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -18,6 +19,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
         private TransferCommandValidator _dut;
         private Mock<IProjectValidator> _projectValidatorMock;
         private Mock<ITagValidator> _tagValidatorMock;
+        private Mock<IRowVersionValidator> _rowVersionValidatorMock;
         private TransferCommand _command;
 
         private List<int> _tagIds;
@@ -39,9 +41,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             _tagValidatorMock.Setup(r => r.ExistsAsync(TagId2, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId1, default)).Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(r => r.IsReadyToBeTransferredAsync(TagId2, default)).Returns(Task.FromResult(true));
+            _rowVersionValidatorMock = new Mock<IRowVersionValidator>();
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion1)).Returns(true);
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(true);
+
             _command = new TransferCommand(_tagIdsWithRowVersion);
 
-            _dut = new TransferCommandValidator(_projectValidatorMock.Object, _tagValidatorMock.Object);
+            _dut = new TransferCommandValidator(
+                _projectValidatorMock.Object,
+                _tagValidatorMock.Object,
+                _rowVersionValidatorMock.Object);
         }
 
         [TestMethod]
@@ -135,6 +144,18 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Project is closed!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_WhenInvalidRowVersion()
+        {
+            _rowVersionValidatorMock.Setup(r => r.IsValid(RowVersion2)).Returns(false);
+
+            var result = _dut.Validate(_command);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid row version!"));
         }
     }
 }

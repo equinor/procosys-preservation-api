@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
 using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
@@ -12,7 +13,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
     {
         public TransferCommandValidator(
             IProjectValidator projectValidator,
-            ITagValidator tagValidator)
+            ITagValidator tagValidator,
+            IRowVersionValidator rowVersionValidator)
         {
             CascadeMode = CascadeMode.Stop;
                         
@@ -34,8 +36,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
                     .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}");
-                // todo add validation of valid RowVersion. See Reschedule
+                    .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}")
+                    .Must(tag => HaveAValidRowVersion(tag.RowVersion))
+                    .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });
 
             bool BeUniqueTags(IEnumerable<IdAndRowVersion> tags)
@@ -58,6 +61,9 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
 
             async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToBeTransferredAsync(tagId, token);
+
+            bool HaveAValidRowVersion(string rowVersion)
+                => rowVersionValidator.IsValid(rowVersion);
         }
     }
 }

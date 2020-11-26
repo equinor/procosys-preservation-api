@@ -1407,7 +1407,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                         RowVersion = "invalidrowversion"
                     }
                 },
-                HttpStatusCode.BadRequest);
+                HttpStatusCode.BadRequest,
+                "Not a valid row version!");
         }
 
         #endregion
