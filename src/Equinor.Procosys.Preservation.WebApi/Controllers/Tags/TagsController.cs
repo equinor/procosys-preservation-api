@@ -543,13 +543,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("Transfer")]
-        public async Task<IActionResult> Transfer(
+        public async Task<ActionResult<List<IdAndRowVersion>>> Transfer(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
-            var tags = tagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var tags = tagDtos?.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
             var result = await _mediator.Send(new TransferCommand(tags));
             return this.FromResult(result);
         }
@@ -583,13 +583,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_WRITE)]
         [HttpPut("CompletePreservation")]
-        public async Task<IActionResult> CompletePreservation(
+        public async Task<ActionResult<List<IdAndRowVersion>>> CompletePreservation(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant,
             [FromBody] List<TagIdWithRowVersionDto> tagDtos)
         {
-            var tags = tagDtos.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
+            var tags = tagDtos?.Select(t => new IdAndRowVersion(t.Id, t.RowVersion));
             var result = await _mediator.Send(new CompletePreservationCommand(tags));
             return this.FromResult(result);
         }

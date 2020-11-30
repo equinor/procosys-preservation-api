@@ -11,6 +11,7 @@ using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
 using Equinor.Procosys.Preservation.MainApi.Permission;
 using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.Procosys.Preservation.MainApi.Project;
 using Equinor.Procosys.Preservation.MainApi.Responsible;
 using Equinor.Procosys.Preservation.WebApi.Authorizations;
 using Equinor.Procosys.Preservation.WebApi.Middleware;
@@ -23,6 +24,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using Newtonsoft.Json;
+using ProcosysProject = Equinor.Procosys.Preservation.MainApi.Permission.ProcosysProject;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
@@ -40,6 +42,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
 
         private readonly Mock<IPlantApiService> _plantApiServiceMock = new Mock<IPlantApiService>();
+        private readonly Mock<IProjectApiService> _projectApiServiceMock = new Mock<IProjectApiService>();
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
         public readonly Mock<IResponsibleApiService> ResponsibleApiServiceMock = new Mock<IResponsibleApiService>();
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
@@ -121,6 +124,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     jwtBearerOptions.ForwardAuthenticate = IntegrationTestAuthHandler.TestAuthenticationScheme);
 
                 services.AddScoped(serviceProvider => _plantApiServiceMock.Object);
+                services.AddScoped(serviceProvider => _projectApiServiceMock.Object);
                 services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
                 services.AddScoped(serviceProvider => ResponsibleApiServiceMock.Object);
                 services.AddScoped(serviceProvider => DisciplineApiServiceMock.Object);
