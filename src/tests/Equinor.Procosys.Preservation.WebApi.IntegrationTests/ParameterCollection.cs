@@ -1,18 +1,25 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Specialized;
 using System.Net;
 using System.Text;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 {
-    public class ParameterCollection : Dictionary<string,string>
+    public class ParameterCollection : NameValueCollection
     {
         public override string ToString()
         {
             var sb = new StringBuilder();
-            foreach (var kvp in this)
+            foreach (var key in AllKeys)
             {
-                sb.Append(sb.Length > 0 ? "&" : "?");
-                sb.AppendFormat("{0}={1}", WebUtility.UrlEncode(kvp.Key), WebUtility.UrlEncode(kvp.Value));
+                var values = GetValues(key);
+                if (values != null)
+                {
+                    foreach (var value in values)
+                    {
+                        sb.Append(sb.Length > 0 ? "&" : "?");
+                        sb.AppendFormat("{0}={1}", WebUtility.UrlEncode(key), WebUtility.UrlEncode(value));
+                    }
+                }
             }
             return sb.ToString();
         }
