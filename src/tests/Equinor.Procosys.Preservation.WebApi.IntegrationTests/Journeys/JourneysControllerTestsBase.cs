@@ -17,8 +17,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestInitialize]
         public async Task TestInitialize()
         {
-            ModeIdUnderTest = TestFactory.KnownTestData.ModeId;
-            var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
+            ModeIdUnderTest = TestFactory.Instance.KnownTestData.ModeId;
+            var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
             var journeyWithTags = journeys.Single(j => j.Title == KnownTestData.JourneyWithTags);
             JourneyWithTagsIdUnderTest = journeyWithTags.Id;
             StepInJourneyWithTagsIdUnderTest = journeyWithTags.Steps.First().Id;
@@ -26,7 +26,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
             JourneyNotInUseIdUnderTest = journeyNotInUse.Id;
             StepInJourneyNotInUseIdUnderTest = journeyNotInUse.Steps.First().Id;
 
-            TestFactory
+            TestFactory.Instance
                 .ResponsibleApiServiceMock
                 .Setup(service => service.TryGetResponsibleAsync(TestFactory.PlantWithAccess, KnownTestData.ResponsibleCode))
                 .Returns(Task.FromResult(new ProcosysResponsible

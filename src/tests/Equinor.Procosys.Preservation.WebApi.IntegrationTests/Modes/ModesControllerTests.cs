@@ -8,17 +8,17 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
     [TestClass]
     public class ModesControllerTests : TestBase
     {
-        private int initialModesCount;
+        private int _initialModesCount;
         private int _modeIdUnderTest;
 
         [TestInitialize]
         public async Task TestInitialize()
         {
-            var modes = await ModesControllerTestsHelper.GetAllModesAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
+            var modes = await ModesControllerTestsHelper.GetAllModesAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
 
-            initialModesCount = modes.Count;
+            _initialModesCount = modes.Count;
 
-            _modeIdUnderTest = TestFactory.KnownTestData.ModeId;
+            _modeIdUnderTest = TestFactory.Instance.KnownTestData.ModeId;
         }
 
         [TestMethod]
@@ -27,13 +27,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
             // Act
             var title = Guid.NewGuid().ToString();
             var id = await ModesControllerTestsHelper.CreateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 title);
 
             // Assert
             Assert.IsTrue(id > 0);
-            var modes = await ModesControllerTestsHelper.GetAllModesAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
-            Assert.AreEqual(initialModesCount+1, modes.Count);
+            var modes = await ModesControllerTestsHelper.GetAllModesAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            Assert.AreEqual(_initialModesCount+1, modes.Count);
             var mode = modes.SingleOrDefault(m => m.Id == id);
             Assert.IsNotNull(mode);
             Assert.AreEqual(title, mode.Title);
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         public async Task GetMode_AsAdmin_ShouldGetMode()
         {
             // Act
-            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), _modeIdUnderTest);
+            var mode = await ModesControllerTestsHelper.GetModeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, _modeIdUnderTest);
 
             // Assert
             Assert.AreEqual(_modeIdUnderTest, mode.Id);
@@ -53,12 +53,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UpdateMode_AsAdmin_ShouldUpdateModeAndRowVersion()
         {
-            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), _modeIdUnderTest);
+            var mode = await ModesControllerTestsHelper.GetModeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, _modeIdUnderTest);
             var currentRowVersion = mode.RowVersion;
 
             // Act
             var newRowVersion = await ModesControllerTestsHelper.UpdateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 mode.Id,
                 Guid.NewGuid().ToString(),
                 currentRowVersion);
@@ -72,20 +72,20 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         {
             // Arrange
             var id = await ModesControllerTestsHelper.CreateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 Guid.NewGuid().ToString());
-            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
+            var mode = await ModesControllerTestsHelper.GetModeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, id);
             var currentRowVersion = mode.RowVersion;
             Assert.IsFalse(mode.IsVoided);
 
             // Act
             var newRowVersion = await ModesControllerTestsHelper.VoidModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 mode.Id,
                 currentRowVersion);
 
             // Assert
-            mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
+            mode = await ModesControllerTestsHelper.GetModeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, id);
             AssertRowVersionChange(currentRowVersion, newRowVersion);
             Assert.IsTrue(mode.IsVoided);
         }
@@ -95,22 +95,22 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         {
             // Arrange
             var id = await ModesControllerTestsHelper.CreateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 Guid.NewGuid().ToString());
-            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
+            var mode = await ModesControllerTestsHelper.GetModeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, id);
             var currentRowVersion = await ModesControllerTestsHelper.VoidModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 mode.Id,
                 mode.RowVersion);
 
             // Act
             var newRowVersion = await ModesControllerTestsHelper.UnvoidModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 mode.Id,
                 currentRowVersion);
 
             // Assert
-            mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
+            mode = await ModesControllerTestsHelper.GetModeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, id);
             AssertRowVersionChange(currentRowVersion, newRowVersion);
             Assert.IsFalse(mode.IsVoided);
         }
@@ -120,22 +120,22 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         {
             // Arrange
             var id = await ModesControllerTestsHelper.CreateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 Guid.NewGuid().ToString());
-            var mode = await ModesControllerTestsHelper.GetModeAsync(LibraryAdminClient(TestFactory.PlantWithAccess), id);
+            var mode = await ModesControllerTestsHelper.GetModeAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess, id);
             var currentRowVersion = await ModesControllerTestsHelper.VoidModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 mode.Id,
                 mode.RowVersion);
 
             // Act
             await ModesControllerTestsHelper.DeleteModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 mode.Id,
                 currentRowVersion);
 
             // Assert
-            var modes = await ModesControllerTestsHelper.GetAllModesAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
+            var modes = await ModesControllerTestsHelper.GetAllModesAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
             Assert.IsNull(modes.SingleOrDefault(m => m.Id == id));
         }
     }

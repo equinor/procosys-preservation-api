@@ -13,7 +13,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         {
             // Act
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess));
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess);
 
             // Assert
             Assert.IsNotNull(journeys);
@@ -27,7 +27,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         {
             // Act
             var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyWithTagsIdUnderTest);
 
             // Assert
@@ -47,7 +47,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
 
             // Act
             var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 title,
                 ModeIdUnderTest,
@@ -70,7 +70,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
 
             // Act
             var newRowVersion = await JourneysControllerTestsHelper.UpdateStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 step.Id,
                 newTitle,
@@ -90,7 +90,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
             // Arrange
             var journeyIdUnderTest = JourneyWithTagsIdUnderTest;
             var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 Guid.NewGuid().ToString(),
                 ModeIdUnderTest,
@@ -101,7 +101,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
 
             // Act
             var newRowVersion = await JourneysControllerTestsHelper.VoidStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 stepId,
                 currentRowVersion);
@@ -118,21 +118,21 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
             // Arrange
             var journeyIdUnderTest = JourneyWithTagsIdUnderTest;
             var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 Guid.NewGuid().ToString(),
                 ModeIdUnderTest,
                 KnownTestData.ResponsibleCode);
             var step = await GetStepDetails(journeyIdUnderTest, stepId);
             var currentRowVersion = await JourneysControllerTestsHelper.VoidStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 stepId,
                 step.RowVersion);
 
             // Act
             var newRowVersion = await JourneysControllerTestsHelper.UnvoidStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 stepId,
                 currentRowVersion);
@@ -149,21 +149,21 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
             // Arrange
             var journeyIdUnderTest = JourneyNotInUseIdUnderTest;
             var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 Guid.NewGuid().ToString(),
                 ModeIdUnderTest,
                 KnownTestData.ResponsibleCode);
             var step = await GetStepDetails(journeyIdUnderTest, stepId);
             var currentRowVersion = await JourneysControllerTestsHelper.VoidStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 stepId,
                 step.RowVersion);
 
             // Act
             await JourneysControllerTestsHelper.DeleteStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 stepId,
                 currentRowVersion);
@@ -176,7 +176,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         private async Task<StepDetailsDto> GetStepDetails(int journeyId, int stepId)
         {
             var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 journeyId);
             return journey.Steps.SingleOrDefault(s => s.Id == stepId);
         }

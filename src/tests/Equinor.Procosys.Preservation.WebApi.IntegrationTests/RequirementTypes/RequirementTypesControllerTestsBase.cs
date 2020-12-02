@@ -16,7 +16,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestInitialize]
         public async Task TestInitialize()
         {
-            var requirementTypes = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(LibraryAdminClient(TestFactory.PlantWithAccess));
+            var requirementTypes = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
             
             var reqTypeA = requirementTypes.Single(j => j.Code == KnownTestData.ReqTypeA);
             ReqTypeAIdUnderTest = reqTypeA.Id;
