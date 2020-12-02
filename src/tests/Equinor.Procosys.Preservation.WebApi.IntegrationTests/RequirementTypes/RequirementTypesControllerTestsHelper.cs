@@ -19,7 +19,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         {
             var parameters = new ParameterCollection {{"includeVoided", "true"}};
             var url = $"{_route}{parameters}";
-            var response = await TestFactory.GetHttpClient(userType, plant).GetAsync(url);
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
 
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
-            var response = await TestFactory.GetHttpClient(userType, plant).PostAsync($"{_route}/{reqTypeId}/RequirementDefinitions", content);
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PostAsync($"{_route}/{reqTypeId}/RequirementDefinitions", content);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
             var response =
-                await TestFactory.GetHttpClient(userType, plant).PutAsync($"{_route}/{requirementTypeId}/RequirementDefinitions/{requirementDefinitionId}",
+                await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{requirementTypeId}/RequirementDefinitions/{requirementDefinitionId}",
                     content);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             string rowVersion,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
-            => await VoidUnvoidRequirementDefinitionAsync(TestFactory.GetHttpClient(userType, plant),
+            => await VoidUnvoidRequirementDefinitionAsync(TestFactory.Instance.GetHttpClient(userType, plant),
                 reqTypeId,
                 reqDefId,
                 rowVersion,
@@ -119,7 +119,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             string rowVersion,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
-            => await VoidUnvoidRequirementDefinitionAsync(TestFactory.GetHttpClient(userType, plant),
+            => await VoidUnvoidRequirementDefinitionAsync(TestFactory.Instance.GetHttpClient(userType, plant),
                 reqTypeId,
                 reqDefId,
                 rowVersion,
@@ -145,7 +145,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 Content = new StringContent(serializePayload, Encoding.UTF8, "application/json")
             };
 
-            var response = await TestFactory.GetHttpClient(userType, plant).SendAsync(request);
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).SendAsync(request);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
         

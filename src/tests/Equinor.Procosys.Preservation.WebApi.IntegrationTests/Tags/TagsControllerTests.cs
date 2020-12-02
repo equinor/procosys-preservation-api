@@ -585,7 +585,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         [TestMethod]
         public async Task CreateAreaTag_AsPlanner_ShouldCreateAreaTag()
         {
-            var x = TestFactory.GetHttpClient(UserType.Hacker, "XYZ");
+            var x = TestFactory.Instance.GetHttpClient(UserType.Hacker, "XYZ");
 
             // Arrange
             var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);

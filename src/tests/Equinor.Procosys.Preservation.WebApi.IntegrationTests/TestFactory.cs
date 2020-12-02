@@ -112,7 +112,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             base.Dispose();
         }
 
-        public static HttpClient GetHttpClient(UserType userType, string plant)
+        public HttpClient GetHttpClient(UserType userType, string plant)
             => Instance.GetHttpClientForPlant(userType, plant);
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)

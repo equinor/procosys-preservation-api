@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
 
         private static async Task AssertIsAlive(UserType userType)
         {
-            var response = await TestFactory.GetHttpClient(userType, null).GetAsync($"{_route}/IsAlive");
+            var response = await TestFactory.Instance.GetHttpClient(userType, null).GetAsync($"{_route}/IsAlive");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
