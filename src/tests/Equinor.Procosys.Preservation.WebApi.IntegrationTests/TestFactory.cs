@@ -66,17 +66,19 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         {
             get
             {
-                if (s_instance == null)  
-                {  
-                    lock (s_padlock)  
-                    {  
-                        if (s_instance == null)  
-                        {  
-                            s_instance = new TestFactory();  
-                        }  
-                    }  
-                }  
-                return s_instance;            }
+                if (s_instance == null)
+                {
+                    lock (s_padlock)
+                    {
+                        if (s_instance == null)
+                        {
+                            s_instance = new TestFactory();
+                        }
+                    }
+                }
+
+                return s_instance;
+            }
         }
 
         private TestFactory()
@@ -113,7 +115,21 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         }
 
         public HttpClient GetHttpClient(UserType userType, string plant)
-            => Instance.GetHttpClientForPlant(userType, plant);
+        {
+            var testUser = _testUsers[userType];
+            
+            // Need to change what the mock returns each time since the factory share the same registered mocks
+            SetupPlantMock(testUser.ProCoSysPlants);
+            
+            SetupPermissionMock(plant, 
+                testUser.ProCoSysPermissions,
+                testUser.ProCoSysProjects,
+                testUser.ProCoSysRestrictions);
+            
+            UpdatePlantInHeader(testUser.HttpClient, plant);
+            
+            return testUser.HttpClient;
+        }
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -143,23 +159,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 
                 EnsureTestDatabaseDeletedAtTeardown(services);
             });
-        }
-                        
-        private HttpClient GetHttpClientForPlant(UserType userType, string plant)
-        {
-            var testUser = _testUsers[userType];
-            
-            // Need to change what the mock returns each time since the factory share the same registered mocks
-            SetupPlantMock(testUser.ProCoSysPlants);
-            
-            SetupPermissionMock(plant, 
-                testUser.ProCoSysPermissions,
-                testUser.ProCoSysProjects,
-                testUser.ProCoSysRestrictions);
-            
-            UpdatePlantInHeader(testUser.HttpClient, plant);
-            
-            return testUser.HttpClient;
         }
 
         private void ReplaceRealDbContextWithTestDbContext(IServiceCollection services)
