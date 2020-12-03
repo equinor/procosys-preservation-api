@@ -12,45 +12,45 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task GetJourneys_AsAnonymous_ShouldReturnUnauthorized()
             => await JourneysControllerTestsHelper.GetJourneysAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task GetJourneys_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.GetJourneysAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
         public async Task GetJourneys_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.GetJourneysAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
         public async Task GetJourneys_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.GetJourneysAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetJourneys_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.GetJourneysAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetJourneys_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.GetJourneysAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetJourneys_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.GetJourneysAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 HttpStatusCode.Forbidden);
         #endregion
 
@@ -58,14 +58,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task GetJourney_AsAnonymous_ShouldReturnUnauthorized()
             => await JourneysControllerTestsHelper.GetJourneyAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task GetJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.GetJourneyAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -73,7 +73,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task GetJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.GetJourneyAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -81,28 +81,28 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task GetJourney_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.GetJourneyAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetJourney_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.GetJourneyAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetJourney_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.GetJourneyAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetJourney_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.GetJourneyAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 HttpStatusCode.Forbidden);
         #endregion
@@ -111,7 +111,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task CreateStep_AsAnonymous_ShouldReturnUnauthorized()
             => await JourneysControllerTestsHelper.CreateStepAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 "Step1",
                 7777,
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task CreateStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.CreateStepAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 "Step1",
                 7777,
@@ -132,7 +132,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task CreateStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.CreateStepAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 "Step1",
                 7777,
@@ -143,7 +143,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task CreateStep_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.CreateStepAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 "Step1",
                 7777,
@@ -153,7 +153,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task CreateStep_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.CreateStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 "Step1",
                 7777,
@@ -163,7 +163,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task CreateStep_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.CreateStepAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 "Step1",
                 7777,
@@ -173,7 +173,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task CreateStep_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.CreateStepAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 "Step1",
                 7777,
@@ -185,7 +185,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UpdateStep_AsAnonymous_ShouldReturnUnauthorized()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 "Step1",
@@ -197,7 +197,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UpdateStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 "Step1",
@@ -210,7 +210,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UpdateStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 "Step1",
@@ -223,7 +223,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UpdateStep_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 "Step1",
@@ -235,7 +235,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UpdateStep_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 "Step1",
@@ -247,7 +247,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UpdateStep_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 "Step1",
@@ -259,7 +259,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UpdateStep_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 "Step1",
@@ -271,7 +271,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UpdateStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.UpdateStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyNotInUseIdUnderTest,
                 StepInJourneyWithTagsIdUnderTest, // step in other Journey
                 Guid.NewGuid().ToString(),
@@ -287,7 +287,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task VoidStep_AsAnonymous_ShouldReturnUnauthorized()
             => await JourneysControllerTestsHelper.VoidStepAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -296,7 +296,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task VoidStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.VoidStepAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -306,7 +306,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task VoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.VoidStepAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -316,7 +316,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task VoidStep_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.VoidStepAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -325,7 +325,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task VoidStep_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.VoidStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -334,7 +334,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task VoidStep_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.VoidStepAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -343,7 +343,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task VoidStep_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.VoidStepAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -352,7 +352,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task VoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.VoidStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyNotInUseIdUnderTest,
                 StepInJourneyWithTagsIdUnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
@@ -364,7 +364,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UnvoidStep_AsAnonymous_ShouldReturnUnauthorized()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -373,7 +373,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UnvoidStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -383,7 +383,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UnvoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -393,7 +393,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UnvoidStep_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -402,7 +402,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UnvoidStep_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -411,7 +411,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UnvoidStep_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -420,7 +420,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UnvoidStep_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -429,7 +429,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task UnvoidStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyNotInUseIdUnderTest,
                 StepInJourneyWithTagsIdUnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
@@ -441,7 +441,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task DeleteStep_AsAnonymous_ShouldReturnUnauthorized()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -450,7 +450,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task DeleteStep_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -460,7 +460,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task DeleteStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -470,7 +470,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task DeleteStep_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -479,7 +479,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task DeleteStep_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -488,7 +488,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task DeleteStep_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -497,7 +497,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task DeleteStep_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -506,7 +506,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
         [TestMethod]
         public async Task DeleteStep_AsAdmin_ShouldReturnBadRequest_WhenUnknownJourneyOrStepId()
             => await JourneysControllerTestsHelper.DeleteStepAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyNotInUseIdUnderTest,
                 StepInJourneyWithTagsIdUnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,

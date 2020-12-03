@@ -13,13 +13,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         private const string _route = "RequirementTypes";
 
         public static async Task<List<RequirementTypeDto>> GetRequirementTypesAsync(
-            HttpClient client,
+            UserType userType, string plant,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
             var parameters = new ParameterCollection {{"includeVoided", "true"}};
             var url = $"{_route}{parameters}";
-            var response = await client.GetAsync(url);
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
 
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
@@ -33,7 +33,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         }
         
         public static async Task<int> CreateRequirementDefinitionAsync(
-            HttpClient client,
+            UserType userType, string plant,
             int reqTypeId,
             string title,
             List<FieldDto> fields = null,
@@ -50,7 +50,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
-            var response = await client.PostAsync($"{_route}/{reqTypeId}/RequirementDefinitions", content);
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PostAsync($"{_route}/{reqTypeId}/RequirementDefinitions", content);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
             if (response.StatusCode != HttpStatusCode.OK)
@@ -63,7 +63,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         }
 
         public static async Task<string> UpdateRequirementDefinitionAsync(
-            HttpClient client,
+            UserType userType, string plant,
             int requirementTypeId,
             int requirementDefinitionId,
             string title,
@@ -85,7 +85,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);
             var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
             var response =
-                await client.PutAsync($"{_route}/{requirementTypeId}/RequirementDefinitions/{requirementDefinitionId}",
+                await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{requirementTypeId}/RequirementDefinitions/{requirementDefinitionId}",
                     content);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
 
@@ -98,13 +98,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         }
 
         public static async Task<string> VoidRequirementDefinitionAsync(
-            HttpClient client,
+            UserType userType, string plant,
             int reqTypeId,
             int reqDefId,
             string rowVersion,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
-            => await VoidUnvoidRequirementDefinitionAsync(client,
+            => await VoidUnvoidRequirementDefinitionAsync(TestFactory.Instance.GetHttpClient(userType, plant),
                 reqTypeId,
                 reqDefId,
                 rowVersion,
@@ -113,13 +113,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 expectedMessageOnBadRequest);
 
         public static async Task<string> UnvoidRequirementDefinitionAsync(
-            HttpClient client,
+            UserType userType, string plant,
             int reqTypeId,
             int reqDefId,
             string rowVersion,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
-            => await VoidUnvoidRequirementDefinitionAsync(client,
+            => await VoidUnvoidRequirementDefinitionAsync(TestFactory.Instance.GetHttpClient(userType, plant),
                 reqTypeId,
                 reqDefId,
                 rowVersion,
@@ -128,7 +128,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 expectedMessageOnBadRequest);
 
         public static async Task DeleteRequirementDefinitionAsync(
-            HttpClient client,
+            UserType userType, string plant,
             int reqTypeId,
             int reqDefId,
             string rowVersion,
@@ -145,13 +145,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                 Content = new StringContent(serializePayload, Encoding.UTF8, "application/json")
             };
 
-            var response = await client.SendAsync(request);
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).SendAsync(request);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
         
-        public static async Task<RequirementDefinitionDto> GetRequirementDefinitionDetailsAsync(HttpClient client, int reqTypeId, int reqDefId)
+        public static async Task<RequirementDefinitionDto> GetRequirementDefinitionDetailsAsync(UserType userType, string plant, int reqTypeId, int reqDefId)
         {
-            var reqType = await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(client);
+            var reqType = await GetRequirementTypesAsync(userType, plant);
             return reqType
                 .Single(r => r.Id == reqTypeId)
                 .RequirementDefinitions

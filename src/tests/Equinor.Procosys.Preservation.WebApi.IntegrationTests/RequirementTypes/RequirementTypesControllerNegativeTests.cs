@@ -15,45 +15,45 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task GetRequirementTypes_AsAnonymous_ShouldReturnUnauthorized()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task GetRequirementTypes_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
         public async Task GetRequirementTypes_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
         public async Task GetRequirementTypes_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetRequirementTypes_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetRequirementTypes_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetRequirementTypes_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.GetRequirementTypesAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 HttpStatusCode.Forbidden);
         #endregion
 
@@ -61,7 +61,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task CreateRequirementDefinition_AsAnonymous_ShouldReturnUnauthorized()
             => await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 "RequirementDefinition1",
                 expectedStatusCode:HttpStatusCode.Unauthorized);
@@ -69,7 +69,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task CreateRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 "RequirementDefinition1",
                 expectedStatusCode:HttpStatusCode.BadRequest,
@@ -78,7 +78,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task CreateRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 "RequirementDefinition1",
                 expectedStatusCode:HttpStatusCode.BadRequest,
@@ -87,7 +87,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task CreateRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 "RequirementDefinition1",
                 expectedStatusCode:HttpStatusCode.Forbidden);
@@ -95,7 +95,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task CreateRequirementDefinition_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 "RequirementDefinition1",
                 expectedStatusCode:HttpStatusCode.Forbidden);
@@ -103,7 +103,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task CreateRequirementDefinition_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 "RequirementDefinition1",
                 expectedStatusCode:HttpStatusCode.Forbidden);
@@ -111,7 +111,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task CreateRequirementDefinition_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 "RequirementDefinition1",
                 expectedStatusCode:HttpStatusCode.Forbidden);
@@ -121,7 +121,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsAnonymous_ShouldReturnUnauthorized()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 Guid.NewGuid().ToString(),
@@ -132,7 +132,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 Guid.NewGuid().ToString(),
@@ -144,7 +144,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 Guid.NewGuid().ToString(),
@@ -156,7 +156,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithAccess),
+                UserType.Hacker, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 Guid.NewGuid().ToString(),
@@ -167,7 +167,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                PlannerClient(TestFactory.PlantWithAccess), 
+                UserType.Planner, TestFactory.PlantWithAccess, 
                 9999,
                 8888,
                 Guid.NewGuid().ToString(),
@@ -178,7 +178,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                PreserverClient(TestFactory.PlantWithAccess), 
+                UserType.Preserver, TestFactory.PlantWithAccess, 
                 9999,
                 8888,
                 Guid.NewGuid().ToString(),
@@ -189,7 +189,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsPreserver_ShouldReturnBadRequest_WhenUnknownReqTypeId()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 9999, 
                 8888,
                 Guid.NewGuid().ToString(),
@@ -201,7 +201,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsPreserver_ShouldReturnBadRequest_WhenUnknownReqDefId()
             => await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 ReqTypeAIdUnderTest, 
                 ReqDefInReqTypeBIdUnderTest,   // known ReqDefId, but under other ReqType
                 Guid.NewGuid().ToString(),
@@ -213,16 +213,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UpdateRequirementDefinition_AsPreserver_ShouldReturnBadRequest_WhenUpdatingUnknownFieldId()
         {
-            var client = LibraryAdminClient(TestFactory.PlantWithAccess);
             var reqTypeIdUnderTest = ReqTypeAIdUnderTest;
             var reqDefIdUnderTest = ReqDefIdUnderTest_ForReqDefWithCbField_InReqTypeA;
             var existingReqDefWithField = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
-                client,
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
                 reqDefIdUnderTest);
 
             var newReqDefId = await RequirementTypesControllerTestsHelper.CreateRequirementDefinitionAsync(
-                client,
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
                 Guid.NewGuid().ToString(),
                 new List<FieldDto>
@@ -235,7 +234,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
                     }
                 });
             var newReqDefWithField = await RequirementTypesControllerTestsHelper.GetRequirementDefinitionDetailsAsync(
-                client,
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
                 newReqDefId);
 
@@ -246,7 +245,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
             fieldsToUpdate.Add(newReqDefWithField.Fields.Single());
 
             await RequirementTypesControllerTestsHelper.UpdateRequirementDefinitionAsync(
-                client,
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 reqTypeIdUnderTest,
                 reqDefIdUnderTest,
                 Guid.NewGuid().ToString(),
@@ -263,7 +262,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task VoidRequirementDefinition_AsAnonymous_ShouldReturnUnauthorized()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -272,7 +271,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task VoidRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -282,7 +281,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task VoidRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -292,7 +291,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task VoidRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -301,7 +300,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task VoidRequirementDefinition_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -310,7 +309,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task VoidRequirementDefinition_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -319,7 +318,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task VoidRequirementDefinition_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -328,7 +327,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task VoidRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownRequirementTypeOrRequirementDefinitionId()
             => await RequirementTypesControllerTestsHelper.VoidRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 ReqTypeAIdUnderTest,
                 ReqDefInReqTypeBIdUnderTest, // req def in other RequirementType
                 TestFactory.AValidRowVersion,
@@ -340,7 +339,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsAnonymous_ShouldReturnUnauthorized()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -349,7 +348,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -359,7 +358,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -369,7 +368,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -378,7 +377,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -387,7 +386,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -396,7 +395,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -405,7 +404,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task UnvoidRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownRequirementTypeOrRequirementDefinitionId()
             => await RequirementTypesControllerTestsHelper.UnvoidRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 ReqTypeAIdUnderTest,
                 ReqDefInReqTypeBIdUnderTest, // req def in other RequirementType
                 TestFactory.AValidRowVersion,
@@ -417,7 +416,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsAnonymous_ShouldReturnUnauthorized()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -426,7 +425,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -436,7 +435,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -446,7 +445,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -455,7 +454,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -464,7 +463,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -473,7 +472,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 8888,
                 TestFactory.AValidRowVersion,
@@ -482,7 +481,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
         [TestMethod]
         public async Task DeleteRequirementDefinition_AsAdmin_ShouldReturnBadRequest_WhenUnknownRequirementTypeOrRequirementDefinitionId()
             => await RequirementTypesControllerTestsHelper.DeleteRequirementDefinitionAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 ReqTypeAIdUnderTest,
                 ReqDefInReqTypeBIdUnderTest, // req def in other RequirementType
                 TestFactory.AValidRowVersion,

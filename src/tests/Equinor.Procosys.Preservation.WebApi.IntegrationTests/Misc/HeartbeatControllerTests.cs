@@ -1,5 +1,4 @@
 ﻿using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -12,14 +11,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
         private const string _route = "Heartbeat";
 
         [TestMethod]
-        public async Task Get_IsAlive_AsAnonymous_ShouldReturnOk() => await AssertIsAlive(AnonymousClient(null));
+        public async Task Get_IsAlive_AsAnonymous_ShouldReturnOk() => await AssertIsAlive(UserType.Anonymous);
 
         [TestMethod]
-        public async Task Get_IsAlive_AsHacker_ShouldReturnOk() => await AssertIsAlive(AuthenticatedHackerClient(null));
+        public async Task Get_IsAlive_AsHacker_ShouldReturnOk() => await AssertIsAlive(UserType.Hacker);
 
-        private static async Task AssertIsAlive(HttpClient client)
+        private static async Task AssertIsAlive(UserType userType)
         {
-            var response = await client.GetAsync($"{_route}/IsAlive");
+            var response = await TestFactory.Instance.GetHttpClient(userType, null).GetAsync($"{_route}/IsAlive");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);

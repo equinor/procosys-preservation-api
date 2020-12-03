@@ -11,45 +11,45 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task GetAllModes_AsAnonymous_ShouldReturnUnauthorized()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task GetAllModes_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
         public async Task GetAllModes_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
         [TestMethod]
         public async Task GetAllModes_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetAllModes_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetAllModes_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetAllModes_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.GetAllModesAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 HttpStatusCode.Forbidden);
         #endregion
         
@@ -57,14 +57,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task GetMode_AsAnonymous_ShouldReturnUnauthorized()
             => await ModesControllerTestsHelper.GetModeAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task GetMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.GetModeAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -72,7 +72,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task GetMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.GetModeAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999, 
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -80,35 +80,35 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task GetMode_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.GetModeAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999, 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetMode_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.GetModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess), 
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess, 
                 9999, 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetMode_AsAdmin_ShouldReturnNotFound()
             => await ModesControllerTestsHelper.GetModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithAccess), 
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess, 
                 9999, 
                 HttpStatusCode.NotFound);
 
         [TestMethod]
         public async Task GetMode_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.GetModeAsync(
-                PlannerClient(TestFactory.PlantWithAccess), 
+                UserType.Planner, TestFactory.PlantWithAccess, 
                 9999, 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetMode_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.GetModeAsync(
-                PreserverClient(TestFactory.PlantWithAccess), 
+                UserType.Preserver, TestFactory.PlantWithAccess, 
                 9999, 
                 HttpStatusCode.Forbidden);
         #endregion
@@ -117,14 +117,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task CreateMode_AsAnonymous_ShouldReturnUnauthorized()
             => await ModesControllerTestsHelper.CreateModeAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 "Mode1",
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task CreateMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.CreateModeAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 "Mode1",
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -132,7 +132,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task CreateMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.CreateModeAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 "Mode1",
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
@@ -140,28 +140,28 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task CreateMode_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.CreateModeAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 "Mode1", 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task CreateMode_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.CreateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 "Mode1", 
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task CreateMode_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.CreateModeAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 "Mode1",
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task CreateMode_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.CreateModeAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 "Mode1",
                 HttpStatusCode.Forbidden);
         #endregion
@@ -170,7 +170,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UpdateMode_AsAnonymous_ShouldReturnUnauthorized()
             => await ModesControllerTestsHelper.UpdateModeAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 "Mode1",
                 TestFactory.AValidRowVersion,
@@ -179,7 +179,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UpdateMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.UpdateModeAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 "Mode1",
                 TestFactory.AValidRowVersion,
@@ -189,7 +189,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UpdateMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.UpdateModeAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 "Mode1",
                 TestFactory.AValidRowVersion,
@@ -199,7 +199,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UpdateMode_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.UpdateModeAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 "Mode1",
                 TestFactory.AValidRowVersion,
@@ -208,7 +208,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UpdateMode_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.UpdateModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 "Mode1",
                 TestFactory.AValidRowVersion,
@@ -217,7 +217,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UpdateMode_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.UpdateModeAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 "Mode1",
                 TestFactory.AValidRowVersion,
@@ -226,7 +226,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UpdateMode_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.UpdateModeAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 "Mode1",
                 TestFactory.AValidRowVersion,
@@ -237,7 +237,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task VoidMode_AsAnonymous_ShouldReturnUnauthorized()
             => await ModesControllerTestsHelper.VoidModeAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Unauthorized);
@@ -245,7 +245,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task VoidMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.VoidModeAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
@@ -254,7 +254,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task VoidMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.VoidModeAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
@@ -263,7 +263,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task VoidMode_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.VoidModeAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -271,7 +271,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task VoidMode_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.VoidModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -279,7 +279,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task VoidMode_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.VoidModeAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -287,7 +287,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task VoidMode_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.VoidModeAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -297,7 +297,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UnvoidMode_AsAnonymous_ShouldReturnUnauthorized()
             => await ModesControllerTestsHelper.UnvoidModeAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Unauthorized);
@@ -305,7 +305,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UnvoidMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.UnvoidModeAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
@@ -314,7 +314,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UnvoidMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.UnvoidModeAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
@@ -323,7 +323,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UnvoidMode_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.UnvoidModeAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -331,7 +331,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UnvoidMode_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.UnvoidModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -339,7 +339,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UnvoidMode_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.UnvoidModeAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -347,7 +347,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task UnvoidMode_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.UnvoidModeAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -357,7 +357,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task DeleteMode_AsAnonymous_ShouldReturnUnauthorized()
             => await ModesControllerTestsHelper.DeleteModeAsync(
-                AnonymousClient(TestFactory.UnknownPlant),
+                UserType.Anonymous, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Unauthorized);
@@ -365,7 +365,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task DeleteMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.DeleteModeAsync(
-                AuthenticatedHackerClient(TestFactory.UnknownPlant),
+                UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
@@ -374,7 +374,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task DeleteMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await ModesControllerTestsHelper.DeleteModeAsync(
-                LibraryAdminClient(TestFactory.UnknownPlant),
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
@@ -383,7 +383,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task DeleteMode_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.DeleteModeAsync(
-                AuthenticatedHackerClient(TestFactory.PlantWithoutAccess),
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -391,7 +391,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task DeleteMode_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
             => await ModesControllerTestsHelper.DeleteModeAsync(
-                LibraryAdminClient(TestFactory.PlantWithoutAccess),
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -399,7 +399,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task DeleteMode_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.DeleteModeAsync(
-                PlannerClient(TestFactory.PlantWithAccess),
+                UserType.Planner, TestFactory.PlantWithAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
@@ -407,7 +407,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
         [TestMethod]
         public async Task DeleteMode_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
             => await ModesControllerTestsHelper.DeleteModeAsync(
-                PreserverClient(TestFactory.PlantWithAccess),
+                UserType.Preserver, TestFactory.PlantWithAccess,
                 9999,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.Forbidden);
