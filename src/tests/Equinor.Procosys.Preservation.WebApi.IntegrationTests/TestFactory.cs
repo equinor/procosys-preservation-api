@@ -110,6 +110,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             {
                 try { disposable.Dispose(); } catch { /* Ignore */ }
             }
+            
+            lock (s_padlock)
+            {
+                s_instance = null;
+            }
 
             base.Dispose();
         }
@@ -222,7 +227,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         private string GetTestDbConnectionString(string projectDir)
         {
-            var dbName = "IntegrationTestsDB";
+            var dbName = "IntegrationTestsPresDB";
             var dbPath = Path.Combine(projectDir, $"{dbName}.mdf");
             
             // Set Initial Catalog to be able to delete database!
