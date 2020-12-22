@@ -23,5 +23,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             }
             return sb.ToString();
         }
+
+        public override void Add(string name, string value)
+            => base.Add(name, value ?? "");
     }
 }
