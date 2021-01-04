@@ -45,8 +45,6 @@ namespace Equinor.Procosys.Preservation.Infrastructure
         }
 
         public static DateTimeKindConverter DateTimeKindConverter { get; } = new DateTimeKindConverter();
-        public static NullableDateTimeKindConverter NullableDateTimeKindConverter { get; } = new NullableDateTimeKindConverter();
-
         public virtual DbSet<Journey> Journeys { get; set; }
         public virtual DbSet<Step> Steps { get; set; }
         public virtual DbSet<Mode> Modes { get; set; }

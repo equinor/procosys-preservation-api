@@ -29,10 +29,10 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .OnDelete(DeleteBehavior.NoAction);
 
             builder.Property(x => x.DueTimeUtc)
-                .HasConversion(PreservationContext.NullableDateTimeKindConverter);
+                .HasConversion(PreservationContext.DateTimeKindConverter);
             
             builder.Property(x => x.ClosedAtUtc)
-                .HasConversion(PreservationContext.NullableDateTimeKindConverter);
+                .HasConversion(PreservationContext.DateTimeKindConverter);
 
             builder
                 .HasMany(x => x.Attachments)
