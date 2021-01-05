@@ -88,7 +88,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
                 .IsRequired();
             
             builder.Property(x => x.NextDueTimeUtc)
-                .HasConversion(PreservationContext.NullableDateTimeKindConverter);
+                .HasConversion(PreservationContext.DateTimeKindConverter);
 
             builder.HasCheckConstraint("constraint_tag_check_valid_statusenum", $"{nameof(Tag.Status)} in ({GetValidStatusEnums()})");
 

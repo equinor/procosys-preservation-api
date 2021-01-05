@@ -20,7 +20,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             builder.ConfigureConcurrencyToken();
 
             builder.Property(x => x.NextDueTimeUtc)
-                .HasConversion(PreservationContext.NullableDateTimeKindConverter);
+                .HasConversion(PreservationContext.DateTimeKindConverter);
 
             builder.HasOne<RequirementDefinition>()
                 .WithMany()
