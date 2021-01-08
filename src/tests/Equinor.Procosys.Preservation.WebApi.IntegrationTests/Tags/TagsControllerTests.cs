@@ -50,13 +50,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+            var tag = tagsResult.Tags.Single(t => t.Id == tagIdUnderTest);
+            var tagDetails = await TagsControllerTestsHelper.GetTagAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
 
-            // Assert
-            Assert.IsTrue(tagsResult.Tags.Count > 0);
-
-            var tag = tagsResult.Tags.Single(t => t.Id == TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started);
-
-            AssertTagsSheet(file.Workbook.Worksheets.Worksheet("Tags"), tag);
+            AssertTagsSheet(file.Workbook.Worksheets.Worksheet("Tags"), tag, tagDetails);
             Assert.AreEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.ContentType);
         }
 
@@ -668,7 +666,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(tagsResult.Tags.SingleOrDefault(t => t.Id == id));
         }
 
-        private void AssertTagsSheet(IXLWorksheet worksheet, TagDto tag)
+        private void AssertTagsSheet(IXLWorksheet worksheet, TagDto tag, TagDetailsDto tagDetailsDto)
         {
             var row = worksheet.Row(1);
 
@@ -677,6 +675,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual("Tag description", row.Cell(ExcelConverter.DescriptionCol).Value);
             Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.NextCol).Value);
             Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.DueCol).Value);
+            Assert.AreEqual("Journey", row.Cell(ExcelConverter.JourneyCol).Value);
+            Assert.AreEqual("Step", row.Cell(ExcelConverter.StepCol).Value);
             Assert.AreEqual("Mode", row.Cell(ExcelConverter.ModeCol).Value);
             Assert.AreEqual("Purchase order", row.Cell(ExcelConverter.PoCol).Value);
             Assert.AreEqual("Area", row.Cell(ExcelConverter.AreaCol).Value);
@@ -695,6 +695,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var firstRequirement = tag.Requirements.First();
             Assert.AreEqual(firstRequirement.NextDueAsYearAndWeek, row.Cell(ExcelConverter.NextCol).Value);
             Assert.AreEqual(firstRequirement.NextDueWeeks.ToString(), row.Cell(ExcelConverter.DueCol).Value.ToString());
+            Assert.AreEqual(tagDetailsDto.Journey.Title, row.Cell(ExcelConverter.JourneyCol).Value);
+            Assert.AreEqual(tagDetailsDto.Step.Title, row.Cell(ExcelConverter.StepCol).Value);
             Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.ModeCol).Value);
             Assert.AreEqual(PurchaseOrderHelper.CreateTitle(tag.PurchaseOrderNo, tag.CalloffNo), row.Cell(ExcelConverter.PoCol).Value);
             Assert.AreEqual(tag.AreaCode, row.Cell(ExcelConverter.AreaCol).Value);

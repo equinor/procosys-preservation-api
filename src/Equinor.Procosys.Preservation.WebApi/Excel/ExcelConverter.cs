@@ -12,15 +12,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         public static int DescriptionCol = 2;
         public static int NextCol = 3;
         public static int DueCol = 4;
-        public static int ModeCol = 5;
-        public static int PoCol = 6;
-        public static int AreaCol = 7;
-        public static int RespCol = 8;
-        public static int DiscCol = 9;
-        public static int PresStatusCol = 10;
-        public static int ReqCol = 11;
-        public static int ActionStatusCol = 12;
-        public static int VoidedCol = 13;
+        public static int JourneyCol = 5;
+        public static int StepCol = 6;
+        public static int ModeCol = 7;
+        public static int PoCol = 8;
+        public static int AreaCol = 9;
+        public static int RespCol = 10;
+        public static int DiscCol = 11;
+        public static int PresStatusCol = 12;
+        public static int ReqCol = 13;
+        public static int ActionStatusCol = 14;
+        public static int VoidedCol = 15;
         public static int LastCol = VoidedCol;
 
         public MemoryStream Convert(ExportDto dto)
@@ -51,6 +53,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(DescriptionCol).Value = "Tag description";
             row.Cell(NextCol).Value = "Next preservation";
             row.Cell(DueCol).Value = "Due (weeks)";
+            row.Cell(JourneyCol).Value = "Journey";
+            row.Cell(StepCol).Value = "Step";
             row.Cell(ModeCol).Value = "Mode";
             row.Cell(PoCol).Value = "Purchase order";
             row.Cell(AreaCol).Value = "Area";
@@ -73,6 +77,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                     // The only number cell: NextDueWeeks
                     row.Cell(DueCol).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
                 }
+                row.Cell(JourneyCol).SetValue(tag.Journey).SetDataType(XLDataType.Text);
+                row.Cell(StepCol).SetValue(tag.Step).SetDataType(XLDataType.Text);
                 row.Cell(ModeCol).SetValue(tag.Mode).SetDataType(XLDataType.Text);
                 row.Cell(PoCol).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
                 row.Cell(AreaCol).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);

@@ -40,6 +40,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             }
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId);
+            var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
 
             // get tags again, including Requirements. See comment in CreateQueryableWithFilter regarding Include and EF
             var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>()
@@ -47,6 +48,19 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     where tagsIds.Contains(tag.Id)
                     select tag)
                 .ToListAsync(cancellationToken);
+            
+            // get Journeys with Steps to be able to export journey and step titles
+            var journeysWithSteps = await (from j in _context.QuerySet<Journey>()
+                        .Include(j => j.Steps)
+                    where journeyIds.Contains(j.Id)
+                    select j)
+                .ToListAsync(cancellationToken);
+
+            // enrich DTO to be able to get distinct NextSteps to query database for distinct NextMode + NextResponsible
+            foreach (var dto in orderedDtos)
+            {
+                dto.JourneyWithSteps = journeysWithSteps.Single(j => j.Id == dto.JourneyId);
+            }
 
             var requirementDefinitionIds = tagsWithRequirements.SelectMany(t => t.Requirements).Select(r => r.RequirementDefinitionId).Distinct();
             
@@ -178,11 +192,15 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     nextDueAsYearAndWeek = firstUpcomingRequirement.NextDueTimeUtc?.FormatAsYearAndWeekString();
                 }
 
+                var step = dto.JourneyWithSteps.Steps.Single(s => s.Id == dto.StepId);
+
                 return new ExportTagDto(
                     dto.GetActionStatus().GetDisplayValue(),
                     dto.AreaCode,
                     dto.DisciplineCode,
                     dto.IsVoided,
+                    dto.JourneyWithSteps.Title,
+                    step.Title,
                     dto.ModeTitle,
                     nextDueAsYearAndWeek,
                     nextDueWeeks,

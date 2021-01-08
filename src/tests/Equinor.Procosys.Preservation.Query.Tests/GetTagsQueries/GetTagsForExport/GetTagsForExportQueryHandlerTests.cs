@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -64,10 +63,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
 
                 var tagDto = result.Data.Tags.First(t => t.TagNo.StartsWith(_testDataSet.StdTagPrefix));
                 var tag = context.Tags.Single(t => t.TagNo == tagDto.TagNo);
-                Assert.AreEqual(String.Empty, tagDto.ActionStatus);
+                Assert.AreEqual(string.Empty, tagDto.ActionStatus);
                 Assert.AreEqual(tag.AreaCode, tagDto.AreaCode);
                 Assert.AreEqual(tag.DisciplineCode, tagDto.DisciplineCode);
                 Assert.AreEqual(tag.IsVoided, tagDto.IsVoided);
+                Assert.AreEqual(_testDataSet.Journey1With2Steps.Title, tagDto.Journey);
+                Assert.AreEqual(_testDataSet.Journey1With2Steps.Steps.ElementAt(0).Title, tagDto.Step);
                 Assert.AreEqual(_testDataSet.Mode1.Title, tagDto.Mode);
                 Assert.AreEqual(_testDataSet.Responsible1.Code, tagDto.ResponsibleCode);
                 Assert.AreEqual(tag.Description, tagDto.Description);

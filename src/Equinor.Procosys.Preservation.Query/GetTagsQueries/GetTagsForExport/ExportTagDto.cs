@@ -7,6 +7,8 @@
             string areaCode,
             string disciplineCode,
             bool isVoided,
+            string journey,
+            string step,
             string mode,
             string nextDueAsYearAndWeek,
             int? nextDueWeeks,
@@ -22,6 +24,8 @@
             Description = tagDescription;
             DisciplineCode = disciplineCode;
             IsVoided = isVoided;
+            Journey = journey;
+            Step = step;
             Mode = mode;
             NextDueWeeks = nextDueWeeks;
             PurchaseOrderTitle = purchaseOrderTitle;
@@ -37,6 +41,8 @@
         public string Description { get; }
         public string DisciplineCode { get; }
         public bool IsVoided { get; }
+        public string Journey { get; }
+        public string Step { get; }
         public string Mode { get; }
         public string NextDueAsYearAndWeek { get; }
         /// <summary>
