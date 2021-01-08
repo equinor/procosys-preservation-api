@@ -8,6 +8,21 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
+        public static int TagNoCol = 1;
+        public static int DescriptionCol = 2;
+        public static int NextCol = 3;
+        public static int DueCol = 4;
+        public static int ModeCol = 5;
+        public static int PoCol = 6;
+        public static int AreaCol = 7;
+        public static int RespCol = 8;
+        public static int DiscCol = 9;
+        public static int PresStatusCol = 10;
+        public static int ReqCol = 11;
+        public static int ActionStatusCol = 12;
+        public static int VoidedCol = 13;
+        public static int LastCol = VoidedCol;
+
         public MemoryStream Convert(ExportDto dto)
         {
             // see https://github.com/ClosedXML/ClosedXML for sample code
@@ -26,68 +41,52 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 
         private void CreateTagSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)
         {
-            var colIdx = 0;
-
-            var tagNoCol = ++colIdx;
-            var descriptionCol = ++colIdx;
-            var nextCol = ++colIdx;
-            var dueCol = ++colIdx;
-            var modeCol = ++colIdx;
-            var poCol = ++colIdx;
-            var areaCol = ++colIdx;
-            var respCol = ++colIdx;
-            var discCol = ++colIdx;
-            var statusCol = ++colIdx;
-            var reqCol = ++colIdx;
-            var actionCol = ++colIdx;
-            var voidedCol = ++colIdx;
-
             var sheet = workbook.Worksheets.Add("Tags");
 
             var rowIdx = 0;
             var row = sheet.Row(++rowIdx);
             row.Style.Font.SetBold();
             row.Style.Font.SetFontSize(12);
-            row.Cell(tagNoCol).Value = "Tag nr";
-            row.Cell(descriptionCol).Value = "Tag description";
-            row.Cell(nextCol).Value = "Next preservation";
-            row.Cell(dueCol).Value = "Due (weeks)";
-            row.Cell(modeCol).Value = "Mode";
-            row.Cell(poCol).Value = "Purchase order";
-            row.Cell(areaCol).Value = "Area";
-            row.Cell(respCol).Value = "Responsible";
-            row.Cell(discCol).Value = "Discipline";
-            row.Cell(statusCol).Value = "Status";
-            row.Cell(reqCol).Value = "Requirements";
-            row.Cell(actionCol).Value = "Action status";
-            row.Cell(voidedCol).Value = "Is voided";
+            row.Cell(TagNoCol).Value = "Tag nr";
+            row.Cell(DescriptionCol).Value = "Tag description";
+            row.Cell(NextCol).Value = "Next preservation";
+            row.Cell(DueCol).Value = "Due (weeks)";
+            row.Cell(ModeCol).Value = "Mode";
+            row.Cell(PoCol).Value = "Purchase order";
+            row.Cell(AreaCol).Value = "Area";
+            row.Cell(RespCol).Value = "Responsible";
+            row.Cell(DiscCol).Value = "Discipline";
+            row.Cell(PresStatusCol).Value = "Status";
+            row.Cell(ReqCol).Value = "Requirements";
+            row.Cell(ActionStatusCol).Value = "Action status";
+            row.Cell(VoidedCol).Value = "Is voided";
 
             foreach (var tag in tags)
             {
                 row = sheet.Row(++rowIdx);
 
-                row.Cell(tagNoCol).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
-                row.Cell(descriptionCol).SetValue(tag.Description).SetDataType(XLDataType.Text);
-                row.Cell(nextCol).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
+                row.Cell(TagNoCol).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
+                row.Cell(DescriptionCol).SetValue(tag.Description).SetDataType(XLDataType.Text);
+                row.Cell(NextCol).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
                 if (tag.NextDueWeeks.HasValue)
                 {
                     // The only number cell: NextDueWeeks
-                    row.Cell(dueCol).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
+                    row.Cell(DueCol).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
                 }
-                row.Cell(modeCol).SetValue(tag.Mode).SetDataType(XLDataType.Text);
-                row.Cell(poCol).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
-                row.Cell(areaCol).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
-                row.Cell(respCol).SetValue(tag.ResponsibleCode).SetDataType(XLDataType.Text);
-                row.Cell(discCol).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
-                row.Cell(statusCol).SetValue(tag.Status).SetDataType(XLDataType.Text);
-                row.Cell(reqCol).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
-                row.Cell(actionCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
-                row.Cell(voidedCol).SetValue(tag.IsVoided).SetDataType(XLDataType.Text);
+                row.Cell(ModeCol).SetValue(tag.Mode).SetDataType(XLDataType.Text);
+                row.Cell(PoCol).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
+                row.Cell(AreaCol).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
+                row.Cell(RespCol).SetValue(tag.ResponsibleCode).SetDataType(XLDataType.Text);
+                row.Cell(DiscCol).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
+                row.Cell(PresStatusCol).SetValue(tag.Status).SetDataType(XLDataType.Text);
+                row.Cell(ReqCol).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
+                row.Cell(ActionStatusCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
+                row.Cell(VoidedCol).SetValue(tag.IsVoided).SetDataType(XLDataType.Text);
             }
 
             const int minWidth = 10;
             const int maxWidth = 100;
-            sheet.Columns(1, colIdx).AdjustToContents(1, rowIdx, minWidth, maxWidth);
+            sheet.Columns(1, LastCol).AdjustToContents(1, rowIdx, minWidth, maxWidth);
         }
 
         private void CreateFrontSheet(XLWorkbook workbook, UsedFilterDto usedFilter)
