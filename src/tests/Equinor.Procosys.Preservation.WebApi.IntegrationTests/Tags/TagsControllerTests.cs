@@ -2,7 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ClosedXML.Excel;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries;
+using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Equinor.Procosys.Preservation.WebApi.Excel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
@@ -24,6 +29,35 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var siteAreaTag = tagsResult.Tags.Single(t => t.Id == TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted);
             Assert.IsNotNull(siteAreaTag.TagNo);
             Assert.IsNotNull(siteAreaTag.RowVersion);
+        }
+
+        [TestMethod]
+        public async Task ExportTagsToExcel_AsPreserver_ShouldGetAnExcelFile()
+        {
+            // Act
+            var file = await TagsControllerTestsHelper.ExportTagsToExcelAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+
+            // Assert
+            Assert.IsNotNull(file);
+            Assert.IsNotNull(file.Workbook);
+            Assert.IsNotNull(file.Workbook.Worksheets);
+            Assert.AreEqual(2, file.Workbook.Worksheets.Count);
+            
+            AssertFiltersSheet(file.Workbook.Worksheets.Worksheet("Filters"));
+
+            var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+
+            // Assert
+            Assert.IsTrue(tagsResult.Tags.Count > 0);
+
+            var tag = tagsResult.Tags.Single(t => t.Id == TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started);
+
+            AssertTagsSheet(file.Workbook.Worksheets.Worksheet("Tags"), tag);
+            Assert.AreEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.ContentType);
         }
 
         [TestMethod]
@@ -178,7 +212,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Act
             var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
-                TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments);
+                TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started);
 
             // Assert
             Assert.IsNotNull(attachmentDtos);
@@ -193,7 +227,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DeleteTagAttachment_AsPreserver_ShouldDeleteTagAttachment()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest);
@@ -217,7 +251,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAllActionAttachments_AsPreserver_ShouldGetAttachments()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var actionsDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest);
@@ -242,7 +276,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task DeleteActionAttachment_AsPreserver_ShouldDeleteActionAttachment()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var actionsDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest);
@@ -273,7 +307,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAllActions_AsPreserver_ShouldGetActions()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var actionIdUnderTest = await TagsControllerTestsHelper.CreateActionAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest,
@@ -298,7 +332,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAction_AsPreserver_ShouldGetActionDetails()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var actionIdUnderTest = await TagsControllerTestsHelper.CreateActionAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest,
@@ -322,7 +356,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateAction_AsPreserver_ShouldUpdateAction()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var actionIdUnderTest = await TagsControllerTestsHelper.CreateActionAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest,
@@ -360,7 +394,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CloseAction_AsPreserver_ShouldCloseAction()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var actionIdUnderTest = await TagsControllerTestsHelper.CreateActionAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest,
@@ -394,7 +428,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UploadActionAttachment_AsPreserver_ShouldUploadActionAttachment()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var actionIdUnderTest = await TagsControllerTestsHelper.CreateActionAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 tagIdUnderTest,
@@ -426,7 +460,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CreateAction_AsPreserver_ShouldCreateAction()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var title = Guid.NewGuid().ToString();
             var description = Guid.NewGuid().ToString();
 
@@ -585,8 +619,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         [TestMethod]
         public async Task CreateAreaTag_AsPlanner_ShouldCreateAreaTag()
         {
-            var x = TestFactory.Instance.GetHttpClient(UserType.Hacker, "XYZ");
-
             // Arrange
             var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
             var stepId = JourneyWithTags.Steps.Last().Id;
@@ -634,6 +666,76 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 TestFactory.ProjectWithAccess);
             Assert.AreEqual(initialTagsCount + 1, tagsResult.Tags.Count);
             Assert.IsNotNull(tagsResult.Tags.SingleOrDefault(t => t.Id == id));
+        }
+
+        private void AssertTagsSheet(IXLWorksheet worksheet, TagDto tag)
+        {
+            var row = worksheet.Row(1);
+
+            Assert.AreEqual(ExcelConverter.LastCol, row.CellsUsed().Count());
+            Assert.AreEqual("Tag nr", row.Cell(ExcelConverter.TagNoCol).Value);
+            Assert.AreEqual("Tag description", row.Cell(ExcelConverter.DescriptionCol).Value);
+            Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.NextCol).Value);
+            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.DueCol).Value);
+            Assert.AreEqual("Mode", row.Cell(ExcelConverter.ModeCol).Value);
+            Assert.AreEqual("Purchase order", row.Cell(ExcelConverter.PoCol).Value);
+            Assert.AreEqual("Area", row.Cell(ExcelConverter.AreaCol).Value);
+            Assert.AreEqual("Responsible", row.Cell(ExcelConverter.RespCol).Value);
+            Assert.AreEqual("Discipline", row.Cell(ExcelConverter.DiscCol).Value);
+            Assert.AreEqual("Status", row.Cell(ExcelConverter.PresStatusCol).Value);
+            Assert.AreEqual("Requirements", row.Cell(ExcelConverter.ReqCol).Value);
+            Assert.AreEqual("Action status", row.Cell(ExcelConverter.ActionStatusCol).Value);
+            Assert.AreEqual("Is voided", row.Cell(ExcelConverter.VoidedCol).Value);
+
+            row = FindRowWithTag(worksheet, tag.TagNo);
+
+            Assert.IsNotNull(row);
+            Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.TagNoCol).Value);
+            Assert.AreEqual(tag.Description, row.Cell(ExcelConverter.DescriptionCol).Value);
+            var firstRequirement = tag.Requirements.First();
+            Assert.AreEqual(firstRequirement.NextDueAsYearAndWeek, row.Cell(ExcelConverter.NextCol).Value);
+            Assert.AreEqual(firstRequirement.NextDueWeeks.ToString(), row.Cell(ExcelConverter.DueCol).Value.ToString());
+            Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.ModeCol).Value);
+            Assert.AreEqual(PurchaseOrderHelper.CreateTitle(tag.PurchaseOrderNo, tag.CalloffNo), row.Cell(ExcelConverter.PoCol).Value);
+            Assert.AreEqual(tag.AreaCode, row.Cell(ExcelConverter.AreaCol).Value);
+            Assert.AreEqual(tag.ResponsibleCode, row.Cell(ExcelConverter.RespCol).Value);
+            Assert.AreEqual(tag.DisciplineCode, row.Cell(ExcelConverter.DiscCol).Value);
+            var status = Enum.Parse<PreservationStatus>(tag.Status);
+            Assert.AreEqual(status.GetDisplayValue(), row.Cell(ExcelConverter.PresStatusCol).Value);
+            var requirements = row.Cell(ExcelConverter.ReqCol).Value.ToString();
+            // simple test for requirements since it is a comma-sep list of RequirementType titles which we don't have available here
+            Assert.IsNotNull(requirements);
+            var count = requirements.Count(comma => comma == ',') + 1;
+            Assert.AreEqual(tag.Requirements.Count(), count);
+            Assert.AreEqual(tag.ActionStatus.GetDisplayValue(), row.Cell(ExcelConverter.ActionStatusCol).Value);
+            Assert.AreEqual(tag.IsVoided.ToString().ToUpper(), row.Cell(ExcelConverter.VoidedCol).Value.ToString()?.ToUpper());
+        }
+
+        private IXLRow FindRowWithTag(IXLWorksheet worksheet, string tagNo)
+        {
+            var rowsUsed = worksheet.RowsUsed().Count();
+            for (var i = 2; i <= rowsUsed; i++)
+            {
+                var value = worksheet.Row(i).Cell(1).Value;
+                if (value as string == tagNo)
+                {
+                    return worksheet.Row(i);
+                }
+            }
+
+            return null;
+        }
+
+        private void AssertFiltersSheet(IXLWorksheet worksheet)
+        {
+            var row = worksheet.Row(1);
+            Assert.AreEqual(1, row.CellsUsed().Count());
+            Assert.AreEqual("Export of preserved tags", row.Cell(1).Value);
+            
+            row = worksheet.Row(3);
+            Assert.AreEqual(2, row.CellsUsed().Count());
+            Assert.AreEqual("Plant", row.Cell(1).Value);
+            Assert.AreEqual(TestFactory.PlantWithAccess, row.Cell(2).Value);
         }
     }
 }

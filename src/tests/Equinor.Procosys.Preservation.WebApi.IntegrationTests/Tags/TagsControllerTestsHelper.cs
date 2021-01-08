@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
+using ClosedXML.Excel;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 {
@@ -15,7 +16,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         private const string _route = "Tags";
 
         public static async Task<TagResultDto> GetAllTagsAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             string projectName,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
@@ -35,6 +37,34 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             return JsonConvert.DeserializeObject<TagResultDto>(jsonString);
         }
         
+        public static async Task<XLFile> ExportTagsToExcelAsync(
+            UserType userType,
+            string plant,
+            string projectName,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var parameters = new ParameterCollection {{"projectName", projectName}};
+            var url = $"{_route}/ExportTagsToExcel{parameters}";
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var stream = await response.Content.ReadAsStreamAsync();
+            var result = new XLFile
+            {
+                Workbook = new XLWorkbook(stream),
+                ContentType = response.Content.Headers.ContentType?.MediaType
+            };
+
+            return result;
+        }
+
         public static async Task<TagDetailsDto> GetTagAsync(
             UserType userType, string plant,
             int tagId,

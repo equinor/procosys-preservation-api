@@ -23,8 +23,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         protected int TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started;
         protected int TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
 
-        protected int TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
-        protected int TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments;
+        protected int TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+        protected int TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
 
         protected JourneyDto JourneyWithTags;
 
@@ -57,10 +57,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted
                 = TestFactory.Instance.KnownTestData.TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
 
-            TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments
-                = TestFactory.Instance.KnownTestData.TagId_ForStandardTagWithAttachmentsAndActionAttachments;
-            TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments
-                = TestFactory.Instance.KnownTestData.TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments;
+            TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started
+                = TestFactory.Instance.KnownTestData.TagId_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+            TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted
+                = TestFactory.Instance.KnownTestData.TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
 
             TestFactory.Instance
                 .DisciplineApiServiceMock
