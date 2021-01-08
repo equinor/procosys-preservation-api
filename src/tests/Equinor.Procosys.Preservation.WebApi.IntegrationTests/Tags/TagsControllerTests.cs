@@ -687,6 +687,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual("Remark", row.Cell(ExcelConverter.RemarkCol).Value);
             Assert.AreEqual("Storage area", row.Cell(ExcelConverter.StorageAreaCol).Value);
             Assert.AreEqual("Action status", row.Cell(ExcelConverter.ActionStatusCol).Value);
+            Assert.AreEqual("Comm pkg", row.Cell(ExcelConverter.CommPkgCol).Value);
+            Assert.AreEqual("MC pkg", row.Cell(ExcelConverter.McPkgCol).Value);
             Assert.AreEqual("Is voided", row.Cell(ExcelConverter.VoidedCol).Value);
 
             row = FindRowWithTag(worksheet, tag.TagNo);
@@ -714,6 +716,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(tagDetailsDto.Remark, row.Cell(ExcelConverter.RemarkCol).Value);
             Assert.AreEqual(tagDetailsDto.StorageArea, row.Cell(ExcelConverter.StorageAreaCol).Value);
             Assert.AreEqual(tag.ActionStatus.GetDisplayValue(), row.Cell(ExcelConverter.ActionStatusCol).Value);
+            Assert.AreEqual(tag.CommPkgNo, row.Cell(ExcelConverter.CommPkgCol).Value);
+            Assert.AreEqual(tag.McPkgNo, row.Cell(ExcelConverter.McPkgCol).Value);
             Assert.AreEqual(tag.IsVoided.ToString().ToUpper(), row.Cell(ExcelConverter.VoidedCol).Value.ToString()?.ToUpper());
         }
 

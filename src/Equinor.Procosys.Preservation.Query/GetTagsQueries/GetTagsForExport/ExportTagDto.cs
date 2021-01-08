@@ -5,9 +5,11 @@
         public ExportTagDto(
             string actionStatus,
             string areaCode,
+            string commPkgNo,
             string disciplineCode,
             bool isVoided,
             string journey,
+            string mcPkgNo,
             string mode,
             string nextDueAsYearAndWeek,
             int? nextDueWeeks,
@@ -23,10 +25,12 @@
         {
             ActionStatus = actionStatus;
             AreaCode = areaCode;
+            CommPkgNo = commPkgNo;
             Description = tagDescription;
             DisciplineCode = disciplineCode;
             IsVoided = isVoided;
             Journey = journey;
+            McPkgNo = mcPkgNo;
             Mode = mode;
             NextDueWeeks = nextDueWeeks;
             PurchaseOrderTitle = purchaseOrderTitle;
@@ -42,10 +46,12 @@
 
         public string ActionStatus { get; }
         public string AreaCode { get; }
+        public string CommPkgNo { get; }
         public string Description { get; }
         public string DisciplineCode { get; }
         public bool IsVoided { get; }
         public string Journey { get; }
+        public string McPkgNo { get; }
         public string Mode { get; }
         public string NextDueAsYearAndWeek { get; }
         /// <summary>

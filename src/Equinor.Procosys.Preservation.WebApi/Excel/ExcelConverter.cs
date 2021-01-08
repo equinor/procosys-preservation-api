@@ -24,7 +24,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         public static int RemarkCol = 14;
         public static int StorageAreaCol = 15;
         public static int ActionStatusCol = 16;
-        public static int VoidedCol = 17;
+        public static int CommPkgCol = 17;
+        public static int McPkgCol = 18;
+        public static int VoidedCol = 19;
         public static int LastCol = VoidedCol;
 
         public MemoryStream Convert(ExportDto dto)
@@ -67,6 +69,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(RemarkCol).Value = "Remark";
             row.Cell(StorageAreaCol).Value = "Storage area";
             row.Cell(ActionStatusCol).Value = "Action status";
+            row.Cell(CommPkgCol).Value = "Comm pkg";
+            row.Cell(McPkgCol).Value = "MC pkg";
             row.Cell(VoidedCol).Value = "Is voided";
 
             foreach (var tag in tags)
@@ -93,6 +97,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(RemarkCol).SetValue(tag.Remark).SetDataType(XLDataType.Text);
                 row.Cell(StorageAreaCol).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
                 row.Cell(ActionStatusCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
+                row.Cell(CommPkgCol).SetValue(tag.CommPkgNo).SetDataType(XLDataType.Text);
+                row.Cell(McPkgCol).SetValue(tag.McPkgNo).SetDataType(XLDataType.Text);
                 row.Cell(VoidedCol).SetValue(tag.IsVoided).SetDataType(XLDataType.Text);
             }
 

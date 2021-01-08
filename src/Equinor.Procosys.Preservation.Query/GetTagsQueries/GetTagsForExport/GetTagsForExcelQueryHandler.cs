@@ -197,9 +197,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 return new ExportTagDto(
                     dto.GetActionStatus().GetDisplayValue(),
                     dto.AreaCode,
+                    dto.CommPkgNo,
                     dto.DisciplineCode,
                     dto.IsVoided,
                     dto.JourneyWithSteps.Title,
+                    dto.McPkgNo,
                     dto.ModeTitle,
                     nextDueAsYearAndWeek,
                     nextDueWeeks,
