@@ -75,6 +75,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual($"{tag.PurchaseOrderNo}/{tag.Calloff}", tagDto.PurchaseOrderTitle);
                 Assert.AreEqual(tag.Status.GetDisplayValue(), tagDto.Status);
                 Assert.AreEqual(tag.TagNo, tagDto.TagNo);
+                Assert.AreEqual(tag.Remark, tagDto.Remark);
+                Assert.AreEqual(tag.StorageArea, tagDto.StorageArea);
                 Assert.AreEqual(_testDataSet.ReqType1.RequirementDefinitions.First().Title, tagDto.RequirementTitles);
 
                 Assert.AreEqual(TestPlant, result.Data.UsedFilter.Plant);

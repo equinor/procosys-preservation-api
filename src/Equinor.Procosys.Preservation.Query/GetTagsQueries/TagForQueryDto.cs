@@ -20,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
         public string ModeTitle { get; set; }
         public DateTime? NextDueTimeUtc { get; set; }
         public string PurchaseOrderNo { get; set; }
+        public string Remark { get; set; }
         public string ResponsibleCode { get; set; }
         public string ResponsibleDescription { get; set; }
         public PreservationStatus Status { get; set; }

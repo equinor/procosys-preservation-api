@@ -195,6 +195,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             tag.SetDiscipline("D","D-D");
             tag.PurchaseOrderNo = "PO";
             tag.Calloff = "CO";
+            tag.Remark = "Rem";
+            tag.StorageArea = "SA";
             project.AddTag(tag);
             dbContext.SaveChangesAsync().Wait();
             return tag;
@@ -219,6 +221,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             tag.SetDiscipline("D","D-D");
             tag.PurchaseOrderNo = "PO";
             tag.Calloff = "CO";
+            tag.Remark = "Rem";
+            tag.StorageArea = "SA";
             project.AddTag(tag);
             dbContext.SaveChangesAsync().Wait();
             return tag;

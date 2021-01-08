@@ -113,6 +113,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                     McPkgNo = tag.McPkgNo,
                     NextDueTimeUtc = tag.NextDueTimeUtc,
                     PurchaseOrderNo = tag.PurchaseOrderNo,
+                    Remark = tag.Remark,
                     ResponsibleCode = responsible.Code,
                     ResponsibleDescription = responsible.Description,
                     Status = tag.Status,

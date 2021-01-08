@@ -684,6 +684,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual("Discipline", row.Cell(ExcelConverter.DiscCol).Value);
             Assert.AreEqual("Status", row.Cell(ExcelConverter.PresStatusCol).Value);
             Assert.AreEqual("Requirements", row.Cell(ExcelConverter.ReqCol).Value);
+            Assert.AreEqual("Remark", row.Cell(ExcelConverter.RemarkCol).Value);
+            Assert.AreEqual("Storage area", row.Cell(ExcelConverter.StorageAreaCol).Value);
             Assert.AreEqual("Action status", row.Cell(ExcelConverter.ActionStatusCol).Value);
             Assert.AreEqual("Is voided", row.Cell(ExcelConverter.VoidedCol).Value);
 
@@ -709,6 +711,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(requirements);
             var count = requirements.Count(comma => comma == ',') + 1;
             Assert.AreEqual(tag.Requirements.Count(), count);
+            Assert.AreEqual(tagDetailsDto.Remark, row.Cell(ExcelConverter.RemarkCol).Value);
+            Assert.AreEqual(tagDetailsDto.StorageArea, row.Cell(ExcelConverter.StorageAreaCol).Value);
             Assert.AreEqual(tag.ActionStatus.GetDisplayValue(), row.Cell(ExcelConverter.ActionStatusCol).Value);
             Assert.AreEqual(tag.IsVoided.ToString().ToUpper(), row.Cell(ExcelConverter.VoidedCol).Value.ToString()?.ToUpper());
         }

@@ -21,8 +21,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         public static int DiscCol = 11;
         public static int PresStatusCol = 12;
         public static int ReqCol = 13;
-        public static int ActionStatusCol = 14;
-        public static int VoidedCol = 15;
+        public static int RemarkCol = 14;
+        public static int StorageAreaCol = 15;
+        public static int ActionStatusCol = 16;
+        public static int VoidedCol = 17;
         public static int LastCol = VoidedCol;
 
         public MemoryStream Convert(ExportDto dto)
@@ -62,6 +64,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(DiscCol).Value = "Discipline";
             row.Cell(PresStatusCol).Value = "Status";
             row.Cell(ReqCol).Value = "Requirements";
+            row.Cell(RemarkCol).Value = "Remark";
+            row.Cell(StorageAreaCol).Value = "Storage area";
             row.Cell(ActionStatusCol).Value = "Action status";
             row.Cell(VoidedCol).Value = "Is voided";
 
@@ -86,6 +90,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(DiscCol).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
                 row.Cell(PresStatusCol).SetValue(tag.Status).SetDataType(XLDataType.Text);
                 row.Cell(ReqCol).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
+                row.Cell(RemarkCol).SetValue(tag.Remark).SetDataType(XLDataType.Text);
+                row.Cell(StorageAreaCol).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
                 row.Cell(ActionStatusCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
                 row.Cell(VoidedCol).SetValue(tag.IsVoided).SetDataType(XLDataType.Text);
             }

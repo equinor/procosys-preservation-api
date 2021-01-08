@@ -200,14 +200,16 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     dto.DisciplineCode,
                     dto.IsVoided,
                     dto.JourneyWithSteps.Title,
-                    step.Title,
                     dto.ModeTitle,
                     nextDueAsYearAndWeek,
                     nextDueWeeks,
                     PurchaseOrderHelper.CreateTitle(dto.PurchaseOrderNo, dto.CalloffNo),
+                    dto.Remark,
                     string.Join(",", requirementTitles),
                     dto.ResponsibleCode,
                     dto.Status.GetDisplayValue(),
+                    step.Title,
+                    dto.StorageArea,
                     dto.Description,
                     dto.TagNo);
             });
