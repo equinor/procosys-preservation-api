@@ -23,10 +23,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         public static int ReqCol = 13;
         public static int RemarkCol = 14;
         public static int StorageAreaCol = 15;
-        public static int ActionStatusCol = 16;
-        public static int CommPkgCol = 17;
-        public static int McPkgCol = 18;
-        public static int VoidedCol = 19;
+        public static int CommPkgCol = 16;
+        public static int McPkgCol = 17;
+        public static int ActionStatusCol = 18;
+        public static int ActionsCol = 19;
+        public static int OpenActionsCol = 20;
+        public static int OverdueActionsCol = 21;
+        public static int AttachmentsCol = 22;
+        public static int VoidedCol = 23;
         public static int LastCol = VoidedCol;
 
         public MemoryStream Convert(ExportDto dto)
@@ -68,9 +72,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(ReqCol).Value = "Requirements";
             row.Cell(RemarkCol).Value = "Remark";
             row.Cell(StorageAreaCol).Value = "Storage area";
-            row.Cell(ActionStatusCol).Value = "Action status";
             row.Cell(CommPkgCol).Value = "Comm pkg";
             row.Cell(McPkgCol).Value = "MC pkg";
+            row.Cell(ActionStatusCol).Value = "Action status";
+            row.Cell(ActionsCol).Value = "Actions";
+            row.Cell(OpenActionsCol).Value = "Open actions";
+            row.Cell(OverdueActionsCol).Value = "Overdue actions";
+            row.Cell(AttachmentsCol).Value = "Attachments";
             row.Cell(VoidedCol).Value = "Is voided";
 
             foreach (var tag in tags)
@@ -96,9 +104,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(ReqCol).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
                 row.Cell(RemarkCol).SetValue(tag.Remark).SetDataType(XLDataType.Text);
                 row.Cell(StorageAreaCol).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
-                row.Cell(ActionStatusCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
                 row.Cell(CommPkgCol).SetValue(tag.CommPkgNo).SetDataType(XLDataType.Text);
                 row.Cell(McPkgCol).SetValue(tag.McPkgNo).SetDataType(XLDataType.Text);
+                row.Cell(ActionStatusCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
+                row.Cell(ActionsCol).SetValue(tag.ActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(OpenActionsCol).SetValue(tag.OpenActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(OverdueActionsCol).SetValue(tag.OverdueActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(AttachmentsCol).SetValue(tag.AttachmentsCount).SetDataType(XLDataType.Number);
                 row.Cell(VoidedCol).SetValue(tag.IsVoided).SetDataType(XLDataType.Text);
             }
 

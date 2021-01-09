@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,16 +22,18 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
     {
         private readonly IReadOnlyContext _context;
         private readonly int _tagIsNewHours;
+        private readonly DateTime _utcNow;
 
         public GetTagsQueryHandler(IReadOnlyContext context, IOptionsMonitor<TagOptions> options)
         {
             _context = context;
             _tagIsNewHours = options.CurrentValue.IsNewHours;
+            _utcNow = TimeService.UtcNow;
         }
 
         public async Task<Result<TagsResult>> Handle(GetTagsQuery request, CancellationToken cancellationToken)
         {
-            var queryable = CreateQueryableWithFilter(_context, request.ProjectName, request.Filter);
+            var queryable = CreateQueryableWithFilter(_context, request.ProjectName, request.Filter, _utcNow);
 
             // count before adding sorting/paging
             var maxAvailable = await queryable.CountAsync(cancellationToken);

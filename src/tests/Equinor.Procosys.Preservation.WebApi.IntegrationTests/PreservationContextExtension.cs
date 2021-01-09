@@ -151,7 +151,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         private static Action SeedAction(PreservationContext dbContext, Tag tag)
         {
-            var action = new Action(tag.Plant, KnownTestData.Action, KnownTestData.ActionDescription, null);
+            var action = new Action(tag.Plant, KnownTestData.Action, KnownTestData.ActionDescription, new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
             tag.AddAction(action);
             dbContext.SaveChangesAsync().Wait();
             return action;
