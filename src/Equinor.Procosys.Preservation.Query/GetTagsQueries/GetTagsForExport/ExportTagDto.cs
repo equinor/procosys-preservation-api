@@ -1,8 +1,11 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
+﻿using System.Collections.Generic;
+
+namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
     public class ExportTagDto
     {
         public ExportTagDto(
+            List<ExportActionDto> actions,
             string actionStatus,
             int actionsCount,
             string areaCode,
@@ -27,6 +30,7 @@
             string tagDescription,
             string tagNo)
         {
+            Actions = actions;
             ActionStatus = actionStatus;
             ActionsCount = actionsCount;
             AreaCode = areaCode;
@@ -52,6 +56,7 @@
             StorageArea = storageArea;
         }
 
+        public List<ExportActionDto> Actions { get; }
         public string ActionStatus { get; }
         public int ActionsCount { get; }
         public string AreaCode { get; }

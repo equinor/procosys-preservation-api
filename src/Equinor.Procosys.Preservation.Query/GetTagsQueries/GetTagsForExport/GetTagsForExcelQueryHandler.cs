@@ -204,6 +204,12 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 var overdueActionsCount = tagWithIncludes.Actions.Count(a => !a.IsClosed && a.DueTimeUtc.HasValue && a.DueTimeUtc.Value < _utcNow);
 
                 return new ExportTagDto(
+                    tagWithIncludes.Actions.Select(action => new ExportActionDto(
+                        action.Id,
+                        action.ClosedAtUtc,
+                        action.Description,
+                        action.DueTimeUtc,
+                        action.Title)).ToList(),
                     dto.GetActionStatus().GetDisplayValue(),
                     tagWithIncludes.Actions.Count,
                     dto.AreaCode,
