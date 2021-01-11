@@ -26,7 +26,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string SiteTagNo => "#SITE-Test";
         public static string SiteTagDescription => "Test - SiteTag";
         public static string Action => "TestAction";
-        public static string ActionDescription => "Test - Action";
         public static Guid ActionAttachmentBlobStorageId = new Guid("{11111111-1111-1111-1111-111111111111}");
         public static Guid TagAttachmentBlobStorageId = new Guid("{22222222-2222-2222-2222-222222222222}");
 

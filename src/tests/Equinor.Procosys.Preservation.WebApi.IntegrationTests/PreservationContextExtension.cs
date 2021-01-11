@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
              * Add the initial seeder user. Don't do this through the UnitOfWork as this expects/requires the current user to exist in the database.
              * This is the first user that is added to the database and will not get "Created" and "CreatedBy" data.
              */
-            SeedCurrentUserAsPerson(dbContext, userProvider);
+            var seeder = SeedCurrentUserAsPerson(dbContext, userProvider);
 
             var plant = plantProvider.Plant;
 
@@ -101,6 +101,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             SeedActionAttachment(dbContext, standardTagAction);
             SeedActionAttachment(dbContext, standardTagAction);
 
+            standardTagAction = SeedAction(dbContext, standardTagWithAttachmentsAndActionsStarted);
+            standardTagAction.Close(new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc), seeder);
+            dbContext.SaveChangesAsync().Wait();
+
             var siteAreaTag = SeedSiteTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
             knownTestData.TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted = siteAreaTag.Id;
 
@@ -110,6 +114,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             SeedTagAttachment(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
 
             var areaTagAction = SeedAction(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
+            areaTagAction.Close(new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc), seeder);
+            dbContext.SaveChangesAsync().Wait();
+            
             SeedActionAttachment(dbContext, areaTagAction);
             SeedActionAttachment(dbContext, areaTagAction);
         }
@@ -151,17 +158,21 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         private static Action SeedAction(PreservationContext dbContext, Tag tag)
         {
-            var action = new Action(tag.Plant, KnownTestData.Action, KnownTestData.ActionDescription, new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+            var suffix = Guid.NewGuid().ToString().Substring(3,8);
+            var title = $"{KnownTestData.Action}-{suffix}";
+            var action = new Action(tag.Plant, title, $"{title}-Desc", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
             tag.AddAction(action);
             dbContext.SaveChangesAsync().Wait();
             return action;
         }
 
-        private static void SeedCurrentUserAsPerson(PreservationContext dbContext, ICurrentUserProvider userProvider)
+        private static Person SeedCurrentUserAsPerson(PreservationContext dbContext, ICurrentUserProvider userProvider)
         {
             var personRepository = new PersonRepository(dbContext);
-            personRepository.Add(new Person(userProvider.GetCurrentUserOid(), "Siri", "Seed"));
+            var person = new Person(userProvider.GetCurrentUserOid(), "Siri", "Seed");
+            personRepository.Add(person);
             dbContext.SaveChangesAsync().Wait();
+            return person;
         }
 
         private static Project SeedProject(PreservationContext dbContext, string plant)
