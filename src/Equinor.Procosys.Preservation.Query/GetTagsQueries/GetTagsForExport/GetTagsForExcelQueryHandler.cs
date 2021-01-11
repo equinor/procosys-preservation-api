@@ -201,7 +201,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 var step = dto.JourneyWithSteps.Steps.Single(s => s.Id == dto.StepId);
 
                 var openActionsCount = tagWithIncludes.Actions.Count(a => !a.IsClosed);
-                var overdueActionsCount = tagWithIncludes.Actions.Count(a => !a.IsOverDue());
+                var overdueActionsCount = tagWithIncludes.Actions.Count(a => a.IsOverDue());
 
                 var orderedActions = tagWithIncludes
                     .Actions
