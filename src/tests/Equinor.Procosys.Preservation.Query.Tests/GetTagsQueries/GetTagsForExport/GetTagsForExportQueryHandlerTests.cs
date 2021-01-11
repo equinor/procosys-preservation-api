@@ -73,6 +73,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var result = await dut.Handle(_query, default);
 
                 var tagDto = result.Data.Tags.Single(t => t.TagNo == tag.TagNo);
+                Assert.AreEqual(2, tagDto.ActionsCount);
+                Assert.AreEqual(2, tagDto.OpenActionsCount);
+                Assert.AreEqual(1, tagDto.OverdueActionsCount);
+                Assert.AreEqual(1, tagDto.AttachmentsCount);
 
                 AssertTag(tag, tagDto);
                 AssertUsedFilter(result.Data.UsedFilter);
