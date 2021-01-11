@@ -186,7 +186,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     dto.ModeTitle,
                     nextDueAsYearAndWeek,
                     nextDueWeeks,
-                    string.IsNullOrEmpty(dto.CalloffNo) ? dto.PurchaseOrderNo : $"{dto.PurchaseOrderNo}/{dto.CalloffNo}",
+                    PurchaseOrderHelper.CreateTitle(dto.PurchaseOrderNo, dto.CalloffNo),
                     string.Join(",", requirementTitles),
                     dto.ResponsibleCode,
                     dto.Status.GetDisplayValue(),

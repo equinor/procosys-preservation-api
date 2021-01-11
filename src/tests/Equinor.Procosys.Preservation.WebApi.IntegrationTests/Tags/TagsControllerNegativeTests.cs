@@ -27,25 +27,25 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task Setup()
         {
 
-            _tagId1_WithAttachment = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            _tagId1_WithAttachment = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 _tagId1_WithAttachment);
             _tagAttachmentId1 = attachmentDtos.First().Id;
 
-            _tagId2_WithAttachment = TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments;
+            _tagId2_WithAttachment = TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
             attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 _tagId2_WithAttachment);
             _tagAttachmentId2 = attachmentDtos.First().Id;
 
-            _tagId1_WithAction = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments;
+            _tagId1_WithAction = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var actionDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 _tagId1_WithAction);
             _tagActionId1 = actionDtos.First().Id;
 
-            _tagId2_WithAction = TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments;
+            _tagId2_WithAction = TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
             actionDtos = await TagsControllerTestsHelper.GetAllActionsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 _tagId2_WithAction);
@@ -99,6 +99,45 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         [TestMethod]
         public async Task GetAllTags_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.GetAllTagsAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                HttpStatusCode.Forbidden);
+        #endregion
+
+        #region ExportTagsToExcel
+        [TestMethod]
+        public async Task ExportTagsToExcel_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                TestFactory.ProjectWithAccess,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task ExportTagsToExcel_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                TestFactory.ProjectWithAccess,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task ExportTagsToExcel_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                TestFactory.ProjectWithAccess,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task ExportTagsToExcel_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
+                UserType.Hacker, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task ExportTagsToExcel_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess,
                 HttpStatusCode.Forbidden);

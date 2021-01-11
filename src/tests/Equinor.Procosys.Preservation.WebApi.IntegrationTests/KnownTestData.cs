@@ -31,12 +31,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static Guid TagAttachmentBlobStorageId = new Guid("{22222222-2222-2222-2222-222222222222}");
 
         public int TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
-        public int TagId_ForStandardTagWithAttachmentsAndActionAttachments;
+        public int TagId_ForStandardTagWithAttachmentsAndActionAttachments_Started;
         public int TagId_ForStandardTagWithInfoRequirement_Started;
         public int TagId_ForStandardTagWithCbRequirement_Started;
         public int TagId_ForStandardTagWithAttachmentRequirement_Started;
         public int TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
-        public int TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments;
+        public int TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
         public int ModeId;
     }
 }
