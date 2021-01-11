@@ -794,6 +794,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(tagAction.ClosedAtUtc, tagDtoAction.ClosedAtUtc);
                 Assert.AreEqual(tagAction.Description, tagDtoAction.Description);
                 Assert.AreEqual(tagAction.Title, tagDtoAction.Title);
+                Assert.AreEqual(tagAction.IsOverDue(), tagDtoAction.IsOverDue);
             }
         }
 
