@@ -7,6 +7,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActions
         public ActionDto(
             int id,
             string title,
+            bool isOverDue,
             DateTime? dueTimeUtc,
             bool isClosed,
             int attachmentCount,
@@ -14,6 +15,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActions
         {
             Id = id;
             Title = title;
+            IsOverDue = isOverDue;
             DueTimeUtc = dueTimeUtc;
             IsClosed = isClosed;
             AttachmentCount = attachmentCount;
@@ -22,6 +24,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActions
 
         public int Id { get; }
         public string Title { get; }
+        public bool IsOverDue { get; }
         public DateTime? DueTimeUtc { get; }
         public bool IsClosed { get; }
         public int AttachmentCount { get; }

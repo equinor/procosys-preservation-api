@@ -41,6 +41,7 @@ namespace Equinor.Procosys.Preservation.Query.GetActions
                 .Select(action => new ActionDto(
                     action.Id,
                     action.Title,
+                    action.IsOverDue(),
                     action.DueTimeUtc,
                     action.IsClosed,
                     action.Attachments.ToList().Count,
