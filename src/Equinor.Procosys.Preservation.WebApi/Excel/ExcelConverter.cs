@@ -42,11 +42,17 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             {
                 CreateFrontSheet(workbook, dto.UsedFilter);
                 CreateTagSheet(workbook, dto.Tags);
+                CreateActionSheet(workbook, dto.Tags);
 
                 workbook.SaveAs(excelStream);
             }
 
             return excelStream;
+        }
+
+        private void CreateActionSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)
+        {
+            var sheet = workbook.Worksheets.Add("Actions");
         }
 
         private void CreateTagSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)

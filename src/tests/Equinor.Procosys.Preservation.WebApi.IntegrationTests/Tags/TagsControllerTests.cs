@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(file);
             Assert.IsNotNull(file.Workbook);
             Assert.IsNotNull(file.Workbook.Worksheets);
-            Assert.AreEqual(2, file.Workbook.Worksheets.Count);
+            Assert.AreEqual(3, file.Workbook.Worksheets.Count);
             Assert.AreEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.ContentType);
             
             AssertFiltersSheet(file.Workbook.Worksheets.Worksheet("Filters"));
@@ -60,6 +60,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsTrue(attachments.Count > 0, "Expect to find attachments. Bad test setup");
             
             AssertTagsSheet(file.Workbook.Worksheets.Worksheet("Tags"), tag, tagDetails, actions, attachments);
+            AssertActionsSheet(file.Workbook.Worksheets.Worksheet("Actions"), tag, tagDetails, actions);
         }
 
         [TestMethod]
@@ -677,6 +678,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             List<ActionDto> actions,
             List<TagAttachmentDto> attachments)
         {
+            Assert.IsNotNull(worksheet);
             var row = worksheet.Row(1);
 
             Assert.AreEqual(ExcelConverter.LastCol, row.CellsUsed().Count());
@@ -759,6 +761,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
         private void AssertFiltersSheet(IXLWorksheet worksheet)
         {
+            Assert.IsNotNull(worksheet);
             var row = worksheet.Row(1);
             Assert.AreEqual(1, row.CellsUsed().Count());
             Assert.AreEqual("Export of preserved tags", row.Cell(1).Value);
@@ -767,6 +770,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(2, row.CellsUsed().Count());
             Assert.AreEqual("Plant", row.Cell(1).Value);
             Assert.AreEqual(TestFactory.PlantWithAccess, row.Cell(2).Value);
+        }
+
+        private void AssertActionsSheet(IXLWorksheet worksheet, TagDto tag, TagDetailsDto tagDetails, List<ActionDto> actions)
+        {
+            Assert.IsNotNull(worksheet);
         }
     }
 }
