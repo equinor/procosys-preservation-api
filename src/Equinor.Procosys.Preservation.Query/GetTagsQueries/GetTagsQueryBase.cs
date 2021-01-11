@@ -6,7 +6,6 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.Time;
 using Microsoft.EntityFrameworkCore;
 using PreservationAction = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
@@ -14,9 +13,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
 {
     public abstract class GetTagsQueryBase
     {
-        protected IQueryable<TagForQueryDto> CreateQueryableWithFilter(IReadOnlyContext _context, string projectName, Filter filter)
+        protected IQueryable<TagForQueryDto> CreateQueryableWithFilter(IReadOnlyContext context, string projectName, Filter filter, DateTime utcNow)
         {
-            var utcNow = TimeService.UtcNow;
             var startOfThisWeekUtc = DateTime.MinValue;
             var startOfNextWeekUtc = DateTime.MinValue;
             var startOfTwoWeeksUtc = DateTime.MinValue;
@@ -33,24 +31,24 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
 
             // No .Include() here. EF do not support .Include together with selecting a projection (dto).
             // If the select-statement select tag so queryable has been of type IQueryable<Tag>, .Include(t => t.Requirements) work fine
-            var queryable = from tag in _context.QuerySet<Tag>()
-                join project in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals project.Id
-                join step in _context.QuerySet<Step>() on tag.StepId equals step.Id
-                join journey in _context.QuerySet<Journey>() on EF.Property<int>(step, "JourneyId") equals journey.Id
-                join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
-                join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
-                let anyReqTypeFiltered = (from req in _context.QuerySet<TagRequirement>()
-                    join reqDef in _context.QuerySet<RequirementDefinition>() on req.RequirementDefinitionId equals reqDef.Id
-                    join reqType in _context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals reqType.Id
+            var queryable = from tag in context.QuerySet<Tag>()
+                join project in context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals project.Id
+                join step in context.QuerySet<Step>() on tag.StepId equals step.Id
+                join journey in context.QuerySet<Journey>() on EF.Property<int>(step, "JourneyId") equals journey.Id
+                join mode in context.QuerySet<Mode>() on step.ModeId equals mode.Id
+                join responsible in context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
+                let anyReqTypeFiltered = (from req in context.QuerySet<TagRequirement>()
+                    join reqDef in context.QuerySet<RequirementDefinition>() on req.RequirementDefinitionId equals reqDef.Id
+                    join reqType in context.QuerySet<RequirementType>() on EF.Property<int>(reqDef, "RequirementTypeId") equals reqType.Id
                     where EF.Property<int>(req, "TagId") == tag.Id && filter.RequirementTypeIds.Contains(reqType.Id)
                     select reqType.Id).Any()
-                let anyOverdueActions = (from a in _context.QuerySet<PreservationAction>()
+                let anyOverdueActions = (from a in context.QuerySet<PreservationAction>()
                     where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue && a.DueTimeUtc < utcNow
                     select a.Id).Any()
-                let anyOpenActions = (from a in _context.QuerySet<PreservationAction>()
+                let anyOpenActions = (from a in context.QuerySet<PreservationAction>()
                     where EF.Property<int>(a, "TagId") == tag.Id && !a.ClosedAtUtc.HasValue
                     select a.Id).Any()
-                let anyClosedActions = (from a in _context.QuerySet<PreservationAction>()
+                let anyClosedActions = (from a in context.QuerySet<PreservationAction>()
                     where EF.Property<int>(a, "TagId") == tag.Id && a.ClosedAtUtc.HasValue
                     select a.Id).Any()
                 where project.Name == projectName &&
@@ -113,6 +111,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
                     McPkgNo = tag.McPkgNo,
                     NextDueTimeUtc = tag.NextDueTimeUtc,
                     PurchaseOrderNo = tag.PurchaseOrderNo,
+                    Remark = tag.Remark,
                     ResponsibleCode = responsible.Code,
                     ResponsibleDescription = responsible.Description,
                     Status = tag.Status,

@@ -151,7 +151,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
         private static Action SeedAction(PreservationContext dbContext, Tag tag)
         {
-            var action = new Action(tag.Plant, KnownTestData.Action, KnownTestData.ActionDescription, null);
+            var action = new Action(tag.Plant, KnownTestData.Action, KnownTestData.ActionDescription, new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc));
             tag.AddAction(action);
             dbContext.SaveChangesAsync().Wait();
             return action;
@@ -179,7 +179,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             Step step,
             RequirementDefinition requirementDef)
         {
-            var suffix = Guid.NewGuid().ToString();
+            var suffix = Guid.NewGuid().ToString().Substring(3,8);
             var tagNo = $"{KnownTestData.StandardTagNo}-{suffix}";
             var tag = new Tag(
                 project.Plant,
@@ -191,10 +191,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 {
                     new TagRequirement(project.Plant, 4, requirementDef)
                 });
-            tag.SetArea("A","A-D");
-            tag.SetDiscipline("D","D-D");
-            tag.PurchaseOrderNo = "PO";
-            tag.Calloff = "CO";
+            FillTag(tag, suffix);
             project.AddTag(tag);
             dbContext.SaveChangesAsync().Wait();
             return tag;
@@ -203,7 +200,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private static Tag SeedSiteTag(PreservationContext dbContext, Project project, Step step,
             RequirementDefinition requirementDef)
         {
-            var suffix = Guid.NewGuid().ToString();
+            var suffix = Guid.NewGuid().ToString().Substring(3,8);
             var tagNo = $"{KnownTestData.SiteTagNo}-{suffix}";
             var tag = new Tag(
                 project.Plant,
@@ -215,13 +212,22 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                 {
                     new TagRequirement(project.Plant, 4, requirementDef)
                 });
-            tag.SetArea("A","A-D");
-            tag.SetDiscipline("D","D-D");
-            tag.PurchaseOrderNo = "PO";
-            tag.Calloff = "CO";
+            FillTag(tag, suffix);
             project.AddTag(tag);
             dbContext.SaveChangesAsync().Wait();
             return tag;
+        }
+
+        private static void FillTag(Tag tag, string suffix)
+        {
+            tag.SetArea($"A-{suffix}", $"A-D-{suffix}");
+            tag.SetDiscipline($"D-{suffix}", $"D-D-{suffix}");
+            tag.McPkgNo = $"McP-{suffix}";
+            tag.CommPkgNo = $"CoP-{suffix}";
+            tag.PurchaseOrderNo = $"PO-{suffix}";
+            tag.Calloff = $"CO-{suffix}";
+            tag.Remark = $"Rem-{suffix}";
+            tag.StorageArea = $"SA-{suffix}";
         }
 
         private static Journey SeedJourney(PreservationContext dbContext, string plant, string title)

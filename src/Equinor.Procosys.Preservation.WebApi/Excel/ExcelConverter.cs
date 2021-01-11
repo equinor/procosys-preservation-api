@@ -12,15 +12,25 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         public static int DescriptionCol = 2;
         public static int NextCol = 3;
         public static int DueCol = 4;
-        public static int ModeCol = 5;
-        public static int PoCol = 6;
-        public static int AreaCol = 7;
-        public static int RespCol = 8;
-        public static int DiscCol = 9;
-        public static int PresStatusCol = 10;
-        public static int ReqCol = 11;
-        public static int ActionStatusCol = 12;
-        public static int VoidedCol = 13;
+        public static int JourneyCol = 5;
+        public static int StepCol = 6;
+        public static int ModeCol = 7;
+        public static int PoCol = 8;
+        public static int AreaCol = 9;
+        public static int RespCol = 10;
+        public static int DiscCol = 11;
+        public static int PresStatusCol = 12;
+        public static int ReqCol = 13;
+        public static int RemarkCol = 14;
+        public static int StorageAreaCol = 15;
+        public static int CommPkgCol = 16;
+        public static int McPkgCol = 17;
+        public static int ActionStatusCol = 18;
+        public static int ActionsCol = 19;
+        public static int OpenActionsCol = 20;
+        public static int OverdueActionsCol = 21;
+        public static int AttachmentsCol = 22;
+        public static int VoidedCol = 23;
         public static int LastCol = VoidedCol;
 
         public MemoryStream Convert(ExportDto dto)
@@ -51,6 +61,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(DescriptionCol).Value = "Tag description";
             row.Cell(NextCol).Value = "Next preservation";
             row.Cell(DueCol).Value = "Due (weeks)";
+            row.Cell(JourneyCol).Value = "Journey";
+            row.Cell(StepCol).Value = "Step";
             row.Cell(ModeCol).Value = "Mode";
             row.Cell(PoCol).Value = "Purchase order";
             row.Cell(AreaCol).Value = "Area";
@@ -58,7 +70,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(DiscCol).Value = "Discipline";
             row.Cell(PresStatusCol).Value = "Status";
             row.Cell(ReqCol).Value = "Requirements";
+            row.Cell(RemarkCol).Value = "Remark";
+            row.Cell(StorageAreaCol).Value = "Storage area";
+            row.Cell(CommPkgCol).Value = "Comm pkg";
+            row.Cell(McPkgCol).Value = "MC pkg";
             row.Cell(ActionStatusCol).Value = "Action status";
+            row.Cell(ActionsCol).Value = "Actions";
+            row.Cell(OpenActionsCol).Value = "Open actions";
+            row.Cell(OverdueActionsCol).Value = "Overdue actions";
+            row.Cell(AttachmentsCol).Value = "Attachments";
             row.Cell(VoidedCol).Value = "Is voided";
 
             foreach (var tag in tags)
@@ -73,6 +93,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                     // The only number cell: NextDueWeeks
                     row.Cell(DueCol).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
                 }
+                row.Cell(JourneyCol).SetValue(tag.Journey).SetDataType(XLDataType.Text);
+                row.Cell(StepCol).SetValue(tag.Step).SetDataType(XLDataType.Text);
                 row.Cell(ModeCol).SetValue(tag.Mode).SetDataType(XLDataType.Text);
                 row.Cell(PoCol).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
                 row.Cell(AreaCol).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
@@ -80,7 +102,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(DiscCol).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
                 row.Cell(PresStatusCol).SetValue(tag.Status).SetDataType(XLDataType.Text);
                 row.Cell(ReqCol).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
+                row.Cell(RemarkCol).SetValue(tag.Remark).SetDataType(XLDataType.Text);
+                row.Cell(StorageAreaCol).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
+                row.Cell(CommPkgCol).SetValue(tag.CommPkgNo).SetDataType(XLDataType.Text);
+                row.Cell(McPkgCol).SetValue(tag.McPkgNo).SetDataType(XLDataType.Text);
                 row.Cell(ActionStatusCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
+                row.Cell(ActionsCol).SetValue(tag.ActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(OpenActionsCol).SetValue(tag.OpenActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(OverdueActionsCol).SetValue(tag.OverdueActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(AttachmentsCol).SetValue(tag.AttachmentsCount).SetDataType(XLDataType.Number);
                 row.Cell(VoidedCol).SetValue(tag.IsVoided).SetDataType(XLDataType.Text);
             }
 

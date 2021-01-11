@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.Procosys.Preservation.Domain.Time;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
@@ -18,16 +20,18 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
     {
         private readonly IReadOnlyContext _context;
         private readonly IPlantProvider _plantProvider;
+        private readonly DateTime _utcNow;
 
         public GetTagsForExportQueryHandler(IReadOnlyContext context, IPlantProvider plantProvider)
         {
             _context = context;
             _plantProvider = plantProvider;
+            _utcNow = TimeService.UtcNow;
         }
 
         public async Task<Result<ExportDto>> Handle(GetTagsForExportQuery request, CancellationToken cancellationToken)
         {
-            var queryable = CreateQueryableWithFilter(_context, request.ProjectName, request.Filter);
+            var queryable = CreateQueryableWithFilter(_context, request.ProjectName, request.Filter, _utcNow);
 
             queryable = AddSorting(request.Sorting, queryable);
 
@@ -40,15 +44,31 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             }
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId);
+            var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
 
-            // get tags again, including Requirements. See comment in CreateQueryableWithFilter regarding Include and EF
-            var tagsWithRequirements = await (from tag in _context.QuerySet<Tag>()
+            // get tags again, including Requirements, Actions and Attachments. See comment in CreateQueryableWithFilter regarding Include and EF
+            var tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
                         .Include(t => t.Requirements)
+                        .Include(t => t.Attachments)
+                        .Include(t => t.Actions)
                     where tagsIds.Contains(tag.Id)
                     select tag)
                 .ToListAsync(cancellationToken);
+            
+            // get Journeys with Steps to be able to export journey and step titles
+            var journeysWithSteps = await (from j in _context.QuerySet<Journey>()
+                        .Include(j => j.Steps)
+                    where journeyIds.Contains(j.Id)
+                    select j)
+                .ToListAsync(cancellationToken);
 
-            var requirementDefinitionIds = tagsWithRequirements.SelectMany(t => t.Requirements).Select(r => r.RequirementDefinitionId).Distinct();
+            // enrich DTO to be able to get distinct NextSteps to query database for distinct NextMode + NextResponsible
+            foreach (var dto in orderedDtos)
+            {
+                dto.JourneyWithSteps = journeysWithSteps.Single(j => j.Id == dto.JourneyId);
+            }
+
+            var requirementDefinitionIds = tagsWithIncludes.SelectMany(t => t.Requirements).Select(r => r.RequirementDefinitionId).Distinct();
             
             var reqDefs = await (from rd in _context.QuerySet<RequirementDefinition>()
                     where requirementDefinitionIds.Contains(rd.Id)
@@ -61,7 +81,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 
             var tags = CreateTagDtos(
                 orderedDtos,
-                tagsWithRequirements,
+                tagsWithIncludes,
                 reqDefs);
 
             return new SuccessResult<ExportDto>(new ExportDto(tags, usedFilterDto));
@@ -153,13 +173,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 
         private IEnumerable<ExportTagDto> CreateTagDtos(
             List<TagForQueryDto> orderedDtos,
-            List<Tag> tagsWithRequirements,
+            List<Tag> tagsWithIncludes,
             List<ReqDefDto> reqDefs)
         {
             var tags = orderedDtos.Select(dto =>
             {
-                var tagWithRequirements = tagsWithRequirements.Single(t => t.Id == dto.TagId);
-                var orderedRequirements = tagWithRequirements.OrderedRequirements().ToList();
+                var tagWithIncludes = tagsWithIncludes.Single(t => t.Id == dto.TagId);
+                var orderedRequirements = tagWithIncludes.OrderedRequirements().ToList();
                 var requirementTitles = orderedRequirements.Select(
                         r =>
                         {
@@ -178,18 +198,33 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     nextDueAsYearAndWeek = firstUpcomingRequirement.NextDueTimeUtc?.FormatAsYearAndWeekString();
                 }
 
+                var step = dto.JourneyWithSteps.Steps.Single(s => s.Id == dto.StepId);
+
+                var openActionsCount = tagWithIncludes.Actions.Count(a => !a.IsClosed);
+                var overdueActionsCount = tagWithIncludes.Actions.Count(a => !a.IsClosed && a.DueTimeUtc.HasValue && a.DueTimeUtc.Value < _utcNow);
+
                 return new ExportTagDto(
                     dto.GetActionStatus().GetDisplayValue(),
+                    tagWithIncludes.Actions.Count,
                     dto.AreaCode,
+                    tagWithIncludes.Attachments.Count,
+                    dto.CommPkgNo,
                     dto.DisciplineCode,
                     dto.IsVoided,
+                    dto.JourneyWithSteps.Title,
+                    dto.McPkgNo,
                     dto.ModeTitle,
                     nextDueAsYearAndWeek,
                     nextDueWeeks,
+                    openActionsCount,
+                    overdueActionsCount,
                     PurchaseOrderHelper.CreateTitle(dto.PurchaseOrderNo, dto.CalloffNo),
+                    dto.Remark,
                     string.Join(",", requirementTitles),
                     dto.ResponsibleCode,
                     dto.Status.GetDisplayValue(),
+                    step.Title,
+                    dto.StorageArea,
                     dto.Description,
                     dto.TagNo);
             });
