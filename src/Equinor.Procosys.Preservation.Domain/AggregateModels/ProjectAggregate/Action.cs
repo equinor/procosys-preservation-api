@@ -71,6 +71,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
         public ActionAttachment GetAttachmentByFileName(string fileName)
             => _attachments.SingleOrDefault(a => a.FileName.ToUpper() == fileName.ToUpper());
 
+        public bool IsOverDue()
+            => !IsClosed && DueTimeUtc.HasValue && DueTimeUtc.Value < TimeService.UtcNow;
+
         public void SetDueTime(DateTime? dueTimeUtc)
         {
             if (dueTimeUtc.HasValue && dueTimeUtc.Value.Kind != DateTimeKind.Utc)
