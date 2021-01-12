@@ -214,11 +214,11 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     orderedActions.Select(
                         action => new ExportActionDto(
                             action.Id,
-                            action.ClosedAtUtc,
+                            action.Title,
                             action.Description,
-                            action.DueTimeUtc,
                             action.IsOverDue(),
-                            action.Title)).ToList(),
+                            action.DueTimeUtc,
+                            action.ClosedAtUtc)).ToList(),
                     dto.GetActionStatus().GetDisplayValue(),
                     tagWithIncludes.Actions.Count,
                     dto.AreaCode,
