@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using ClosedXML.Excel;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
-        public static string CentralEuropeanTime = "W. Europe Standard Time";
+        public static string CentralEuropeanTime = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+            ? "W. Europe Standard Time" // Windows
+            : "Europe/Stockholm";       // Unix
+        
         private readonly TimeZoneInfo _cetTimeZoneInfo;
 
         public static class TagSheetColumns
@@ -58,6 +62,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             try
             {
                 _cetTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(CentralEuropeanTime);
+
+                DateTime? winter = new DateTime(2021, 1, 1, 1, 0, 0, DateTimeKind.Utc);
+                DateTime? summer = new DateTime(2021, 7, 1, 1, 0, 0, DateTimeKind.Utc);
+                var w = ConvertToCet(winter);
+                var s = ConvertToCet(summer);
             }
             catch (Exception e)
             {
