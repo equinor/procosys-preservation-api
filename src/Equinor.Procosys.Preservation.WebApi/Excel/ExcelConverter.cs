@@ -42,10 +42,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             public static int TagNo = 1;
             public static int Title = 2;
             public static int Description = 3;
-            public static int DueTime = 4;
+            public static int DueDate = 4;
             public static int OverDue = 5;
-            public static int ClosedAt = 6;
-            public static int Last = ClosedAt;
+            public static int Closed = 6;
+            public static int Last = Closed;
         }
 
         public MemoryStream Convert(ExportDto dto)
@@ -76,9 +76,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(ActionSheetColumns.TagNo).Value = "Tag nr";
             row.Cell(ActionSheetColumns.Title).Value = "Title";
             row.Cell(ActionSheetColumns.Description).Value = "Description";
-            row.Cell(ActionSheetColumns.DueTime).Value = "Due date (UTC)";
+            row.Cell(ActionSheetColumns.DueDate).Value = "Due date (UTC)";
             row.Cell(ActionSheetColumns.OverDue).Value = "Overdue";
-            row.Cell(ActionSheetColumns.ClosedAt).Value = "Closed at (UTC)";
+            row.Cell(ActionSheetColumns.Closed).Value = "Closed (UTC)";
 
             foreach (var tag in tags.Where(t => t.Actions.Count > 0))
             {
@@ -91,14 +91,14 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                     row.Cell(ActionSheetColumns.Description).SetValue(action.Description).SetDataType(XLDataType.Text);
                     if (action.DueTimeUtc.HasValue)
                     {
-                        var cell = row.Cell(ActionSheetColumns.DueTime);
+                        var cell = row.Cell(ActionSheetColumns.DueDate);
                         cell.SetValue(action.DueTimeUtc.Value.Date).SetDataType(XLDataType.DateTime);
                         cell.Style.DateFormat.Format = "yyyy-mm-dd";
                     }
                     row.Cell(ActionSheetColumns.OverDue).SetValue(action.IsOverDue).SetDataType(XLDataType.Boolean);
                     if (action.ClosedAtUtc.HasValue)
                     {
-                        var cell = row.Cell(ActionSheetColumns.ClosedAt);
+                        var cell = row.Cell(ActionSheetColumns.Closed);
                         cell.SetValue(action.ClosedAtUtc.Value).SetDataType(XLDataType.DateTime);
                         cell.Style.DateFormat.Format = "yyyy-mm-dd";
                     }
