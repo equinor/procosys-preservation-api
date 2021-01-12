@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -43,7 +44,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 return new SuccessResult<ExportDto>(new ExportDto(null, usedFilterDto));
             }
 
-            var tagsIds = orderedDtos.Select(dto => dto.TagId);
+            var tagsIds = orderedDtos.Select(dto => dto.TagId).ToList();
             var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
 
             // get tags again, including Requirements, Actions and Attachments. See comment in CreateQueryableWithFilter regarding Include and EF
@@ -66,6 +67,18 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             foreach (var dto in orderedDtos)
             {
                 dto.JourneyWithSteps = journeysWithSteps.Single(j => j.Id == dto.JourneyId);
+            }
+
+            // enrich DTO with history if one and only one tag found
+            if (tagsIds.Count == 1)
+            {
+                var singleTagId = tagsIds.Single();
+                orderedDtos.Single().History = await (from h in _context.QuerySet<History>()
+                        join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
+                        where tag.Id == singleTagId
+                        select h)
+                    .OrderByDescending(h => h.CreatedAtUtc)
+                    .ToListAsync(cancellationToken);
             }
 
             var requirementDefinitionIds = tagsWithIncludes.SelectMany(t => t.Requirements).Select(r => r.RequirementDefinitionId).Distinct();
@@ -171,7 +184,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 select r.Title).ToListAsync();
         }
 
-        private IEnumerable<ExportTagDto> CreateTagDtos(
+        private IList<ExportTagDto> CreateTagDtos(
             List<TagForQueryDto> orderedDtos,
             List<Tag> tagsWithIncludes,
             List<ReqDefDto> reqDefs)
@@ -210,6 +223,15 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     .ThenBy(t => t.DueTimeUtc)
                     .ThenBy(t => t.ModifiedAtUtc)
                     .ThenBy(t => t.CreatedAtUtc);
+
+                var exportHistory = dto.History != null
+                    ? dto.History.Select(h => new ExportHistoryDto(
+                        h.Id,
+                        h.Description,
+                        h.CreatedAtUtc,
+                        h.DueInWeeks)).ToList()
+                    : new List<ExportHistoryDto>();
+
                 return new ExportTagDto(
                     orderedActions.Select(
                         action => new ExportActionDto(
@@ -225,6 +247,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     tagWithIncludes.Attachments.Count,
                     dto.CommPkgNo,
                     dto.DisciplineCode,
+                    exportHistory,
                     dto.IsVoided,
                     dto.JourneyWithSteps.Title,
                     dto.McPkgNo,
@@ -244,7 +267,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     dto.TagNo);
             });
 
-            return tags;
+            return tags.ToList();
         }
 
         private class ReqDefDto
