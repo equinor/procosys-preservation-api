@@ -2,22 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using ClosedXML.Excel;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
-using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
-        public static string CentralEuropeanTime
-            = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
-            ? "W. Europe Standard Time" // Windows
-            : "Europe/Stockholm";       // Unix
-        
-        private readonly TimeZoneInfo _cetTimeZoneInfo;
-
         public static class TagSheetColumns
         {
             public static int TagNo = 1;
@@ -51,24 +42,10 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             public static int TagNo = 1;
             public static int Title = 2;
             public static int Description = 3;
-            public static int DueTimeCet = 4;
-            public static int DueTimeUtc = 5;
-            public static int OverDue = 6;
-            public static int ClosedAtCet = 7;
-            public static int ClosedAtUtc = 8;
-            public static int Last = ClosedAtUtc;
-        }
-
-        public ExcelConverter(ILogger<ExcelConverter> logger)
-        {
-            try
-            {
-                _cetTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(CentralEuropeanTime);
-            }
-            catch (Exception e)
-            {
-                logger.LogError(e, $"Error getting '{CentralEuropeanTime}' time zone");
-            }
+            public static int DueTime = 4;
+            public static int OverDue = 5;
+            public static int ClosedAt = 6;
+            public static int Last = ClosedAt;
         }
 
         public MemoryStream Convert(ExportDto dto)
@@ -99,11 +76,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(ActionSheetColumns.TagNo).Value = "Tag nr";
             row.Cell(ActionSheetColumns.Title).Value = "Title";
             row.Cell(ActionSheetColumns.Description).Value = "Description";
-            row.Cell(ActionSheetColumns.DueTimeCet).Value = "Due date (CET)";
-            row.Cell(ActionSheetColumns.DueTimeUtc).Value = "Due date (UTC)";
+            row.Cell(ActionSheetColumns.DueTime).Value = "Due date (UTC)";
             row.Cell(ActionSheetColumns.OverDue).Value = "Overdue";
-            row.Cell(ActionSheetColumns.ClosedAtCet).Value = "Closed at (CET)";
-            row.Cell(ActionSheetColumns.ClosedAtUtc).Value = "Closed at (UTC)";
+            row.Cell(ActionSheetColumns.ClosedAt).Value = "Closed at (UTC)";
 
             foreach (var tag in tags.Where(t => t.Actions.Count > 0))
             {
@@ -114,27 +89,25 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                     row.Cell(ActionSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
                     row.Cell(ActionSheetColumns.Title).SetValue(action.Title).SetDataType(XLDataType.Text);
                     row.Cell(ActionSheetColumns.Description).SetValue(action.Description).SetDataType(XLDataType.Text);
-                    row.Cell(ActionSheetColumns.DueTimeCet).SetValue(ConvertToCet(action.DueTimeUtc)).SetDataType(XLDataType.DateTime);
-                    row.Cell(ActionSheetColumns.DueTimeUtc).SetValue(action.DueTimeUtc).SetDataType(XLDataType.DateTime);
+                    if (action.DueTimeUtc.HasValue)
+                    {
+                        var cell = row.Cell(ActionSheetColumns.DueTime);
+                        cell.SetValue(action.DueTimeUtc.Value.Date).SetDataType(XLDataType.DateTime);
+                        cell.Style.DateFormat.Format = "yyyy-mm-dd";
+                    }
                     row.Cell(ActionSheetColumns.OverDue).SetValue(action.IsOverDue).SetDataType(XLDataType.Boolean);
-                    row.Cell(ActionSheetColumns.ClosedAtCet).SetValue(ConvertToCet(action.ClosedAtUtc)).SetDataType(XLDataType.DateTime);
-                    row.Cell(ActionSheetColumns.ClosedAtUtc).SetValue(action.ClosedAtUtc).SetDataType(XLDataType.DateTime);
+                    if (action.ClosedAtUtc.HasValue)
+                    {
+                        var cell = row.Cell(ActionSheetColumns.ClosedAt);
+                        cell.SetValue(action.ClosedAtUtc.Value).SetDataType(XLDataType.DateTime);
+                        cell.Style.DateFormat.Format = "yyyy-mm-dd";
+                    }
                 }
             }
 
             const int minWidth = 10;
             const int maxWidth = 100;
             sheet.Columns(1, ActionSheetColumns.Last).AdjustToContents(1, rowIdx, minWidth, maxWidth);
-        }
-
-        private DateTime? ConvertToCet(DateTime? timeUtc)
-        {
-            if (!timeUtc.HasValue || _cetTimeZoneInfo == null)
-            {
-                return null;
-            }
-
-            return TimeZoneInfo.ConvertTime(timeUtc.Value, _cetTimeZoneInfo);
         }
 
         private void CreateTagSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)

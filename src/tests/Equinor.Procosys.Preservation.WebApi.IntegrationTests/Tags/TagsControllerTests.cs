@@ -691,10 +691,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual("Title", row.Cell(ExcelConverter.ActionSheetColumns.Title).Value);
             Assert.AreEqual("Description", row.Cell(ExcelConverter.ActionSheetColumns.Description).Value);
             Assert.AreEqual("Overdue", row.Cell(ExcelConverter.ActionSheetColumns.OverDue).Value);
-            Assert.AreEqual("Due date (CET)", row.Cell(ExcelConverter.ActionSheetColumns.DueTimeCet).Value);
-            Assert.AreEqual("Due date (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.DueTimeUtc).Value);
-            Assert.AreEqual("Closed at (CET)", row.Cell(ExcelConverter.ActionSheetColumns.ClosedAtCet).Value);
-            Assert.AreEqual("Closed at (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.ClosedAtUtc).Value);
+            Assert.AreEqual("Due date (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.DueTime).Value);
+            Assert.AreEqual("Closed at (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.ClosedAt).Value);
 
             var rows = FindRowsWithTag(worksheet, tag.TagNo);
             Assert.AreEqual(actions.Count, rows.Count);
@@ -710,28 +708,19 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 Assert.AreEqual(action.Title, row.Cell(ExcelConverter.ActionSheetColumns.Title).Value);
                 Assert.AreEqual(action.IsOverDue.ToString().ToUpper(), row.Cell(ExcelConverter.ActionSheetColumns.OverDue).Value.ToString()?.ToUpper());
                 Assert.AreEqual(actionDetailsDto.Description, row.Cell(ExcelConverter.ActionSheetColumns.Description).Value);
-                AssertDates(
-                    actionDetailsDto.DueTimeUtc,
-                    row.Cell(ExcelConverter.ActionSheetColumns.DueTimeCet).Value,
-                    row.Cell(ExcelConverter.ActionSheetColumns.DueTimeUtc).Value);
-                AssertDates(
-                    actionDetailsDto.ClosedAtUtc,
-                    row.Cell(ExcelConverter.ActionSheetColumns.ClosedAtCet).Value,
-                    row.Cell(ExcelConverter.ActionSheetColumns.ClosedAtUtc).Value);
+                AssertDates(actionDetailsDto.DueTimeUtc, row.Cell(ExcelConverter.ActionSheetColumns.DueTime).Value);
+                AssertDates(actionDetailsDto.ClosedAtUtc, row.Cell(ExcelConverter.ActionSheetColumns.ClosedAt).Value);
             }
         }
 
-        private void AssertDates(DateTime? expectedTimeUtc, object timeCet, object timeUtc)
+        private void AssertDates(DateTime? expectedTimeUtc, object timeUtc)
         {
             if (expectedTimeUtc.HasValue)
             {
-                var expectedTimeCet = TimeZoneInfo.ConvertTime((DateTime)expectedTimeUtc, CetTimeZoneInfo);
-                Assert.AreEqual(expectedTimeCet, timeCet);
                 Assert.AreEqual(expectedTimeUtc, timeUtc);
             }
             else
             {
-                Assert.AreEqual(string.Empty, timeCet);
                 Assert.AreEqual(string.Empty, timeUtc);
             }
         }
