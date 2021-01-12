@@ -48,6 +48,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             public static int Last = Closed;
         }
 
+        public static class HistorySheetColumns
+        {
+            public static int TagNo = 1;
+            public static int Description = 2;
+            public static int DueWeeks = 3;
+            public static int Date = 4;
+            public static int Last = Date;
+        }
+
         public MemoryStream Convert(ExportDto dto)
         {
             // see https://github.com/ClosedXML/ClosedXML for sample code
@@ -56,13 +65,49 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             using (var workbook = new XLWorkbook())
             {
                 CreateFrontSheet(workbook, dto.UsedFilter);
-                CreateTagSheet(workbook, dto.Tags);
-                CreateActionSheet(workbook, dto.Tags);
+                var exportTagDtos = dto.Tags.ToList();
+                CreateTagSheet(workbook, exportTagDtos);
+                CreateActionSheet(workbook, exportTagDtos);
+                CreateHistorySheet(workbook, exportTagDtos);
 
                 workbook.SaveAs(excelStream);
             }
 
             return excelStream;
+        }
+
+        private void CreateHistorySheet(XLWorkbook workbook, IList<ExportTagDto> tags)
+        {
+            if (tags.Count != 1)
+            {
+                return;
+            }
+
+            var sheet = workbook.Worksheets.Add("History");
+
+            var rowIdx = 0;
+            var row = sheet.Row(++rowIdx);
+            row.Style.Font.SetBold();
+            row.Style.Font.SetFontSize(12);
+            row.Cell(HistorySheetColumns.TagNo).Value = "Tag nr";
+            row.Cell(HistorySheetColumns.Description).Value = "Description";
+            row.Cell(HistorySheetColumns.DueWeeks).Value = "Due (weeks)";
+            row.Cell(HistorySheetColumns.Date).Value = "Date (UTC)";
+
+            var tag = tags.Single();
+            foreach (var history in tag.History)
+            {
+                row = sheet.Row(++rowIdx);
+            
+                row.Cell(HistorySheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
+                row.Cell(HistorySheetColumns.Description).SetValue(history.Description).SetDataType(XLDataType.Text);
+                row.Cell(HistorySheetColumns.DueWeeks).SetValue(history.DueInWeeks).SetDataType(XLDataType.Number);
+                AddDateCell(row, HistorySheetColumns.Date, history.CreatedAtUtc);
+            }
+       
+            const int minWidth = 10;
+            const int maxWidth = 100;
+            sheet.Columns(1, HistorySheetColumns.Last).AdjustToContents(1, rowIdx, minWidth, maxWidth);
         }
 
         private void CreateActionSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)
@@ -91,16 +136,12 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                     row.Cell(ActionSheetColumns.Description).SetValue(action.Description).SetDataType(XLDataType.Text);
                     if (action.DueTimeUtc.HasValue)
                     {
-                        var cell = row.Cell(ActionSheetColumns.DueDate);
-                        cell.SetValue(action.DueTimeUtc.Value.Date).SetDataType(XLDataType.DateTime);
-                        cell.Style.DateFormat.Format = "yyyy-mm-dd";
+                        AddDateCell(row, ActionSheetColumns.DueDate, action.DueTimeUtc.Value.Date);
                     }
                     row.Cell(ActionSheetColumns.OverDue).SetValue(action.IsOverDue).SetDataType(XLDataType.Boolean);
                     if (action.ClosedAtUtc.HasValue)
                     {
-                        var cell = row.Cell(ActionSheetColumns.Closed);
-                        cell.SetValue(action.ClosedAtUtc.Value).SetDataType(XLDataType.DateTime);
-                        cell.Style.DateFormat.Format = "yyyy-mm-dd";
+                        AddDateCell(row, ActionSheetColumns.Closed, action.ClosedAtUtc.Value.Date);
                     }
                 }
             }
@@ -108,6 +149,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             const int minWidth = 10;
             const int maxWidth = 100;
             sheet.Columns(1, ActionSheetColumns.Last).AdjustToContents(1, rowIdx, minWidth, maxWidth);
+        }
+
+        private void AddDateCell(IXLRow row, int cellIdx, DateTime date)
+        {
+            var cell = row.Cell(cellIdx);
+            cell.SetValue(date).SetDataType(XLDataType.DateTime);
+            cell.Style.DateFormat.Format = "yyyy-mm-dd";
         }
 
         private void CreateTagSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)
@@ -206,7 +254,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             AddUsedFilter(sheet.Row(++rowIdx), "Preservation status", usedFilter.PreservationStatus);
             AddUsedFilter(sheet.Row(++rowIdx), "Preservation actions", usedFilter.ActionStatus);
             AddUsedFilter(sheet.Row(++rowIdx), "Voided/unvoided tags", usedFilter.VoidedFilter);
-            AddUsedFilter(sheet.Row(++rowIdx), "Preservation dute date", usedFilter.DueFilters);
+            AddUsedFilter(sheet.Row(++rowIdx), "Preservation due date", usedFilter.DueFilters);
             AddUsedFilter(sheet.Row(++rowIdx), "Journeys", usedFilter.JourneyTitles);
             AddUsedFilter(sheet.Row(++rowIdx), "Modes", usedFilter.ModeTitles);
             AddUsedFilter(sheet.Row(++rowIdx), "Requirements", usedFilter.RequirementTypeTitles);
