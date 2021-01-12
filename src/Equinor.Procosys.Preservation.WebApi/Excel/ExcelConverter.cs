@@ -11,7 +11,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
-        public static string CentralEuropeanTime = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+        public static string CentralEuropeanTime
+            = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
             ? "W. Europe Standard Time" // Windows
             : "Europe/Stockholm";       // Unix
         
@@ -44,6 +45,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             public static int Voided = 23;
             public static int Last = Voided;
         }
+
         public static class ActionSheetColumns
         {
             public static int TagNo = 1;
@@ -62,11 +64,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             try
             {
                 _cetTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(CentralEuropeanTime);
-
-                DateTime? winter = new DateTime(2021, 1, 1, 1, 0, 0, DateTimeKind.Utc);
-                DateTime? summer = new DateTime(2021, 7, 1, 1, 0, 0, DateTimeKind.Utc);
-                var w = ConvertToCet(winter);
-                var s = ConvertToCet(summer);
             }
             catch (Exception e)
             {
