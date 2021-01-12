@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -185,6 +186,7 @@ namespace Equinor.Procosys.Preservation.Test.Common
             //  - 10 tags on project 2 (P2), all tags same as 10 first in P1
             //  - requirement period for all 30 tags is 2 weeks
             //  - all steps in all journeys has responsible 1
+            //  - All Tags has 1 history record
             var _projectName1 = "P1";
             var _projectName2 = "P2";
             var _journeyTitle1 = "J1";
@@ -290,6 +292,13 @@ namespace Equinor.Procosys.Preservation.Test.Common
                     });
 
                 testDataSet.Project2.AddTag(tag);
+            }
+            
+            context.SaveChangesAsync().Wait();
+            
+            foreach (var tag in context.Tags)
+            {
+                context.History.Add(new History(TestPlant, $"Description-{Guid.NewGuid()}", tag.ObjectGuid, ObjectType.Tag, EventType.TagCreated));
             }
             
             context.SaveChangesAsync().Wait();
