@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.MainApi.Area;
 using Equinor.Procosys.Preservation.MainApi.Discipline;
+using Equinor.Procosys.Preservation.WebApi.Excel;
 using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys;
 using Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -29,10 +30,13 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         protected JourneyDto JourneyWithTags;
 
         protected TestFile FileToBeUploaded = new TestFile("test file content", "file.txt");
+        protected TimeZoneInfo CetTimeZoneInfo;
 
         [TestInitialize]
         public async Task TestInitialize()
         {
+            CetTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(ExcelConverter.CentralEuropeanTime);
+
             var result = await TagsControllerTestsHelper.GetAllTagsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);

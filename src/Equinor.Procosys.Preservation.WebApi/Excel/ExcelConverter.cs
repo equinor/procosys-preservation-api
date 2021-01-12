@@ -4,17 +4,21 @@ using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
+using Microsoft.Extensions.Logging;
 
 namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
+        public static string CentralEuropeanTime = "W. Europe Standard Time";
+        private readonly TimeZoneInfo _cetTimeZoneInfo;
+
         public static class TagSheetColumns
         {
             public static int TagNo = 1;
             public static int Description = 2;
             public static int Next = 3;
-            public static int Due = 4;
+            public static int DueWeeks = 4;
             public static int Journey = 5;
             public static int Step = 6;
             public static int Mode = 7;
@@ -41,10 +45,24 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             public static int TagNo = 1;
             public static int Title = 2;
             public static int Description = 3;
-            public static int DueDate = 4;
-            public static int OverDue = 5;
-            public static int ClosedDate = 6;
-            public static int Last = ClosedDate;
+            public static int DueTimeCet = 4;
+            public static int DueTimeUtc = 5;
+            public static int OverDue = 6;
+            public static int ClosedAtCet = 7;
+            public static int ClosedAtUtc = 8;
+            public static int Last = ClosedAtUtc;
+        }
+
+        public ExcelConverter(ILogger<ExcelConverter> logger)
+        {
+            try
+            {
+                _cetTimeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(CentralEuropeanTime);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, $"Error getting '{CentralEuropeanTime}' time zone");
+            }
         }
 
         public MemoryStream Convert(ExportDto dto)
@@ -75,9 +93,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(ActionSheetColumns.TagNo).Value = "Tag nr";
             row.Cell(ActionSheetColumns.Title).Value = "Title";
             row.Cell(ActionSheetColumns.Description).Value = "Description";
-            row.Cell(ActionSheetColumns.DueDate).Value = "Due date (UTC)";
+            row.Cell(ActionSheetColumns.DueTimeCet).Value = "Due date (CET)";
+            row.Cell(ActionSheetColumns.DueTimeUtc).Value = "Due date (UTC)";
             row.Cell(ActionSheetColumns.OverDue).Value = "Overdue";
-            row.Cell(ActionSheetColumns.ClosedDate).Value = "Closed date (UTC)";
+            row.Cell(ActionSheetColumns.ClosedAtCet).Value = "Closed at (CET)";
+            row.Cell(ActionSheetColumns.ClosedAtUtc).Value = "Closed at (UTC)";
 
             foreach (var tag in tags.Where(t => t.Actions.Count > 0))
             {
@@ -88,15 +108,27 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                     row.Cell(ActionSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
                     row.Cell(ActionSheetColumns.Title).SetValue(action.Title).SetDataType(XLDataType.Text);
                     row.Cell(ActionSheetColumns.Description).SetValue(action.Description).SetDataType(XLDataType.Text);
-                    row.Cell(ActionSheetColumns.DueDate).SetValue(action.DueTimeUtc).SetDataType(XLDataType.DateTime);
+                    row.Cell(ActionSheetColumns.DueTimeCet).SetValue(ConvertToCet(action.DueTimeUtc)).SetDataType(XLDataType.DateTime);
+                    row.Cell(ActionSheetColumns.DueTimeUtc).SetValue(action.DueTimeUtc).SetDataType(XLDataType.DateTime);
                     row.Cell(ActionSheetColumns.OverDue).SetValue(action.IsOverDue).SetDataType(XLDataType.Boolean);
-                    row.Cell(ActionSheetColumns.ClosedDate).SetValue(action.ClosedAtUtc).SetDataType(XLDataType.DateTime);
+                    row.Cell(ActionSheetColumns.ClosedAtCet).SetValue(ConvertToCet(action.ClosedAtUtc)).SetDataType(XLDataType.DateTime);
+                    row.Cell(ActionSheetColumns.ClosedAtUtc).SetValue(action.ClosedAtUtc).SetDataType(XLDataType.DateTime);
                 }
             }
 
             const int minWidth = 10;
             const int maxWidth = 100;
             sheet.Columns(1, ActionSheetColumns.Last).AdjustToContents(1, rowIdx, minWidth, maxWidth);
+        }
+
+        private DateTime? ConvertToCet(DateTime? timeUtc)
+        {
+            if (!timeUtc.HasValue || _cetTimeZoneInfo == null)
+            {
+                return null;
+            }
+
+            return TimeZoneInfo.ConvertTime(timeUtc.Value, _cetTimeZoneInfo);
         }
 
         private void CreateTagSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)
@@ -110,7 +142,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(TagSheetColumns.TagNo).Value = "Tag nr";
             row.Cell(TagSheetColumns.Description).Value = "Tag description";
             row.Cell(TagSheetColumns.Next).Value = "Next preservation";
-            row.Cell(TagSheetColumns.Due).Value = "Due (weeks)";
+            row.Cell(TagSheetColumns.DueWeeks).Value = "Due (weeks)";
             row.Cell(TagSheetColumns.Journey).Value = "Journey";
             row.Cell(TagSheetColumns.Step).Value = "Step";
             row.Cell(TagSheetColumns.Mode).Value = "Mode";
@@ -141,7 +173,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 if (tag.NextDueWeeks.HasValue)
                 {
                     // The only number cell: NextDueWeeks
-                    row.Cell(TagSheetColumns.Due).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
+                    row.Cell(TagSheetColumns.DueWeeks).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
                 }
                 row.Cell(TagSheetColumns.Journey).SetValue(tag.Journey).SetDataType(XLDataType.Text);
                 row.Cell(TagSheetColumns.Step).SetValue(tag.Step).SetDataType(XLDataType.Text);

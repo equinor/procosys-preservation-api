@@ -691,8 +691,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual("Title", row.Cell(ExcelConverter.ActionSheetColumns.Title).Value);
             Assert.AreEqual("Description", row.Cell(ExcelConverter.ActionSheetColumns.Description).Value);
             Assert.AreEqual("Overdue", row.Cell(ExcelConverter.ActionSheetColumns.OverDue).Value);
-            Assert.AreEqual("Due date (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.DueDate).Value);
-            Assert.AreEqual("Closed date (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.ClosedDate).Value);
+            Assert.AreEqual("Due date (CET)", row.Cell(ExcelConverter.ActionSheetColumns.DueTimeCet).Value);
+            Assert.AreEqual("Due date (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.DueTimeUtc).Value);
+            Assert.AreEqual("Closed at (CET)", row.Cell(ExcelConverter.ActionSheetColumns.ClosedAtCet).Value);
+            Assert.AreEqual("Closed at (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.ClosedAtUtc).Value);
 
             var rows = FindRowsWithTag(worksheet, tag.TagNo);
             Assert.AreEqual(actions.Count, rows.Count);
@@ -702,22 +704,35 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 row = FindRowWithAction(rows, action.Title);
                 Assert.IsNotNull(row);
 
+                var actionDetailsDto = TagsControllerTestsHelper.GetActionAsync(UserType.Preserver, TestFactory.PlantWithAccess, tag.Id, action.Id).Result;
+
                 Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.ActionSheetColumns.TagNo).Value);
                 Assert.AreEqual(action.Title, row.Cell(ExcelConverter.ActionSheetColumns.Title).Value);
                 Assert.AreEqual(action.IsOverDue.ToString().ToUpper(), row.Cell(ExcelConverter.ActionSheetColumns.OverDue).Value.ToString()?.ToUpper());
-                
-                var actionDetailsDto = TagsControllerTestsHelper.GetActionAsync(UserType.Preserver, TestFactory.PlantWithAccess, tag.Id, action.Id).Result;
-
                 Assert.AreEqual(actionDetailsDto.Description, row.Cell(ExcelConverter.ActionSheetColumns.Description).Value);
-                var closedDate = row.Cell(ExcelConverter.ActionSheetColumns.ClosedDate).Value;
-                if (action.IsClosed)
-                {
-                    Assert.AreEqual(actionDetailsDto.ClosedAtUtc, closedDate);
-                }
-                else
-                {
-                    Assert.AreEqual(string.Empty, closedDate);
-                }
+                AssertDates(
+                    actionDetailsDto.DueTimeUtc,
+                    row.Cell(ExcelConverter.ActionSheetColumns.DueTimeCet).Value,
+                    row.Cell(ExcelConverter.ActionSheetColumns.DueTimeUtc).Value);
+                AssertDates(
+                    actionDetailsDto.ClosedAtUtc,
+                    row.Cell(ExcelConverter.ActionSheetColumns.ClosedAtCet).Value,
+                    row.Cell(ExcelConverter.ActionSheetColumns.ClosedAtUtc).Value);
+            }
+        }
+
+        private void AssertDates(DateTime? expectedTimeUtc, object timeCet, object timeUtc)
+        {
+            if (expectedTimeUtc.HasValue)
+            {
+                var expectedTimeCet = TimeZoneInfo.ConvertTime((DateTime)expectedTimeUtc, CetTimeZoneInfo);
+                Assert.AreEqual(expectedTimeCet, timeCet);
+                Assert.AreEqual(expectedTimeUtc, timeUtc);
+            }
+            else
+            {
+                Assert.AreEqual(string.Empty, timeCet);
+                Assert.AreEqual(string.Empty, timeUtc);
             }
         }
 
@@ -735,7 +750,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual("Tag nr", row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
             Assert.AreEqual("Tag description", row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
             Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.TagSheetColumns.Next).Value);
-            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.TagSheetColumns.Due).Value);
+            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.TagSheetColumns.DueWeeks).Value);
             Assert.AreEqual("Journey", row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
             Assert.AreEqual("Step", row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
             Assert.AreEqual("Mode", row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
@@ -763,7 +778,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var firstRequirement = tag.Requirements.First();
             Assert.AreEqual(firstRequirement.NextDueAsYearAndWeek, row.Cell(ExcelConverter.TagSheetColumns.Next).Value);
             Assert.IsTrue(firstRequirement.NextDueWeeks.HasValue);
-            Assert.AreEqual((double)firstRequirement.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.Due).Value);
+            Assert.AreEqual((double)firstRequirement.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.DueWeeks).Value);
             Assert.AreEqual(tagDetailsDto.Journey.Title, row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
             Assert.AreEqual(tagDetailsDto.Step.Title, row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
             Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
