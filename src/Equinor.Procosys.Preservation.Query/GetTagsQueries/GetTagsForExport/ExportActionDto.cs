@@ -5,26 +5,26 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
     public class ExportActionDto
     {
         public ExportActionDto(
-            int id,
-            DateTime? closedAtUtc,
-            string description,
+            int id, 
+            string title,
+            string description, 
+            bool isOverDue, 
             DateTime? dueTimeUtc, 
-            bool isOverDue,
-            string title)
+            DateTime? closedAtUtc)
         {
             Id = id;
-            ClosedAtUtc = closedAtUtc;
-            Description = description;
-            DueTimeUtc = dueTimeUtc;
-            IsOverDue = isOverDue;
             Title = title;
+            Description = description;
+            IsOverDue = isOverDue;
+            DueTimeUtc = dueTimeUtc;
+            ClosedAtUtc = closedAtUtc;
         }
 
         public int Id { get; }
-        public DateTime? ClosedAtUtc { get; }
-        public string Description { get; }
-        public DateTime? DueTimeUtc { get; }
-        public bool IsOverDue { get; }
         public string Title { get; }
+        public string Description { get; }
+        public bool IsOverDue { get; }
+        public DateTime? DueTimeUtc { get; }
+        public DateTime? ClosedAtUtc { get; }
     }
 }
