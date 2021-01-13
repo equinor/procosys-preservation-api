@@ -90,6 +90,20 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
                 Assert.AreEqual(0, result.Data.Count);
             }
         }
+        
+        [TestMethod]
+        public async Task HandleGetHistoryQuery_ShouldReturnNotFound_WhenTagNotFound()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetHistoryQueryHandler(context);
+                var result = await dut.Handle(new GetHistoryQuery(0), default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.NotFound, result.ResultType);
+                Assert.IsNull(result.Data);
+            }
+        }
 
         private void AssertHistory(History expected, HistoryDto actual)
         {
