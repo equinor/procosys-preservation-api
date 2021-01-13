@@ -101,8 +101,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             SeedActionAttachment(dbContext, standardTagAction);
             SeedActionAttachment(dbContext, standardTagAction);
 
-            standardTagAction = SeedAction(dbContext, standardTagWithAttachmentsAndActionsStarted);
-            standardTagAction.Close(new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc), seeder);
+            var closedStandardTagAction = SeedAction(dbContext, standardTagWithAttachmentsAndActionsStarted);
+            closedStandardTagAction.Close(new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc), seeder);
             dbContext.SaveChangesAsync().Wait();
 
             var siteAreaTag = SeedSiteTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
@@ -113,12 +113,12 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             SeedTagAttachment(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
             SeedTagAttachment(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
 
-            var areaTagAction = SeedAction(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
-            areaTagAction.Close(new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc), seeder);
+            var closedAreaTagAction = SeedAction(dbContext, siteAreaTagWithAttachmentsAndActionAttachments);
+            closedAreaTagAction.Close(new DateTime(1971, 1, 1, 0, 0, 0, DateTimeKind.Utc), seeder);
             dbContext.SaveChangesAsync().Wait();
             
-            SeedActionAttachment(dbContext, areaTagAction);
-            SeedActionAttachment(dbContext, areaTagAction);
+            SeedActionAttachment(dbContext, closedAreaTagAction);
+            SeedActionAttachment(dbContext, closedAreaTagAction);
         }
 
         private static void SeedInfoField(PreservationContext dbContext, RequirementDefinition reqDef)

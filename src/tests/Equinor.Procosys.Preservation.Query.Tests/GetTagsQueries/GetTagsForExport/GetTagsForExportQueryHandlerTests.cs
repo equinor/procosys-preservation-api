@@ -781,7 +781,6 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             Assert.AreEqual(1, tagDto.AttachmentsCount);
 
             AssertActions(tag.Actions, tagDto.Actions);
-
         }
 
         private void AssertActions(IReadOnlyCollection<Action> tagActions, List<ExportActionDto> tagDtoActions)

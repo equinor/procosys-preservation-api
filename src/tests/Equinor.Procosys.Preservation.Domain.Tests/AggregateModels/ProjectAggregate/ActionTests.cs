@@ -226,7 +226,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void IsOverDue_ShouldBeTrueWhenDueDateInPast_ButClosed()
+        public void IsOverDue_ShouldBeFalseWhenDueDateInPast_ButClosed()
         {
             // Arrange
             _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
