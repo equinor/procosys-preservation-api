@@ -6,6 +6,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
     {
         public int Id { get; set; }
         public string Title { get; set; }
+        public bool IsOverDue { get; set; }
         public DateTime? DueTimeUtc { get; set; }
         public bool IsClosed { get; set; }
         public int AttachmentCount { get; set; }

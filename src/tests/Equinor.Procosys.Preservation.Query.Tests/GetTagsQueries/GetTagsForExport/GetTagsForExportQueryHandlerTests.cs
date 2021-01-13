@@ -57,11 +57,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         [TestMethod]
         public async Task HandleGetTagsForExportQuery_ShouldReturnCorrectDto()
         {
-            string tagWithActionAndAttachmentTagNo;
+            Tag tag;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tag = context.Tags.First();
-                tagWithActionAndAttachmentTagNo = tag.TagNo;
+                tag = context.Tags.First();
                 tag.AddAction(new Action(TestPlant, "A1", "Desc", null));
                 tag.AddAction(new Action(TestPlant, "A2", "Desc", new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)));
                 tag.AddAttachment(new TagAttachment(TestPlant, Guid.Empty, "F.txt"));
@@ -73,50 +72,14 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var dut = new GetTagsForExportQueryHandler(context, _plantProvider);
                 var result = await dut.Handle(_query, default);
 
-                var tagDto = result.Data.Tags.Single(t => t.TagNo == tagWithActionAndAttachmentTagNo);
-                var tag = context.Tags.Single(t => t.TagNo == tagDto.TagNo);
-
-                Assert.AreEqual("Has overdue action(s)", tagDto.ActionStatus);
-                Assert.AreEqual(tag.AreaCode, tagDto.AreaCode);
-                Assert.AreEqual(tag.CommPkgNo, tagDto.CommPkgNo);
-                Assert.AreEqual(tag.DisciplineCode, tagDto.DisciplineCode);
-                Assert.AreEqual(tag.IsVoided, tagDto.IsVoided);
-                Assert.AreEqual(_testDataSet.Journey1With2Steps.Title, tagDto.Journey);
-                Assert.AreEqual(_testDataSet.Journey1With2Steps.Steps.ElementAt(0).Title, tagDto.Step);
-                Assert.AreEqual(tag.McPkgNo, tagDto.McPkgNo);
-                Assert.AreEqual(_testDataSet.Mode1.Title, tagDto.Mode);
-                Assert.AreEqual(_testDataSet.Responsible1.Code, tagDto.ResponsibleCode);
-                Assert.AreEqual(tag.Description, tagDto.Description);
-                Assert.AreEqual($"{tag.PurchaseOrderNo}/{tag.Calloff}", tagDto.PurchaseOrderTitle);
-                Assert.AreEqual(tag.Status.GetDisplayValue(), tagDto.Status);
-                Assert.AreEqual(tag.TagNo, tagDto.TagNo);
-                Assert.AreEqual(tag.Remark, tagDto.Remark);
-                Assert.AreEqual(tag.StorageArea, tagDto.StorageArea);
-                Assert.AreEqual(_testDataSet.ReqType1.RequirementDefinitions.First().Title, tagDto.RequirementTitles);
+                var tagDto = result.Data.Tags.Single(t => t.TagNo == tag.TagNo);
                 Assert.AreEqual(2, tagDto.ActionsCount);
                 Assert.AreEqual(2, tagDto.OpenActionsCount);
                 Assert.AreEqual(1, tagDto.OverdueActionsCount);
                 Assert.AreEqual(1, tagDto.AttachmentsCount);
 
-                Assert.AreEqual(TestPlant, result.Data.UsedFilter.Plant);
-                Assert.AreEqual(_query.ProjectName, result.Data.UsedFilter.ProjectName);
-                Assert.AreEqual(_query.Filter.ActionStatus.GetDisplayValue(), result.Data.UsedFilter.ActionStatus);
-                Assert.AreEqual(0, result.Data.UsedFilter.AreaCodes.Count());
-                Assert.IsNull(result.Data.UsedFilter.CallOffStartsWith);
-                Assert.IsNull(result.Data.UsedFilter.CommPkgNoStartsWith);
-                Assert.AreEqual(0, result.Data.UsedFilter.DisciplineCodes.Count());
-                Assert.AreEqual(0, result.Data.UsedFilter.DueFilters.Count());
-                Assert.AreEqual(0, result.Data.UsedFilter.JourneyTitles.Count());
-                Assert.IsNull(result.Data.UsedFilter.McPkgNoStartsWith);
-                Assert.AreEqual(0, result.Data.UsedFilter.ModeTitles.Count());
-                Assert.AreEqual(_query.Filter.PreservationStatus.GetDisplayValue(), result.Data.UsedFilter.PreservationStatus);
-                Assert.IsNull(result.Data.UsedFilter.PurchaseOrderNoStartsWith);
-                Assert.AreEqual(0, result.Data.UsedFilter.RequirementTypeTitles.Count());
-                Assert.AreEqual(0, result.Data.UsedFilter.ResponsibleCodes.Count());
-                Assert.IsNull(result.Data.UsedFilter.StorageAreaStartsWith);
-                Assert.AreEqual(0, result.Data.UsedFilter.TagFunctionCodes.Count());
-                Assert.IsNull(result.Data.UsedFilter.TagNoStartsWith);
-                Assert.AreEqual(_query.Filter.VoidedFilter.GetDisplayValue(), result.Data.UsedFilter.VoidedFilter);
+                AssertTag(tag, tagDto);
+                AssertUsedFilter(result.Data.UsedFilter);
             }
         }
 
@@ -791,6 +754,70 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             {
                 Assert.AreEqual(isVoided, tag.IsVoided);
             }
+        }
+
+        private void AssertTag(Tag tag, ExportTagDto tagDto)
+        {
+            Assert.AreEqual("Has overdue action(s)", tagDto.ActionStatus);
+            Assert.AreEqual(tag.AreaCode, tagDto.AreaCode);
+            Assert.AreEqual(tag.CommPkgNo, tagDto.CommPkgNo);
+            Assert.AreEqual(tag.DisciplineCode, tagDto.DisciplineCode);
+            Assert.AreEqual(tag.IsVoided, tagDto.IsVoided);
+            Assert.AreEqual(_testDataSet.Journey1With2Steps.Title, tagDto.Journey);
+            Assert.AreEqual(_testDataSet.Journey1With2Steps.Steps.ElementAt(0).Title, tagDto.Step);
+            Assert.AreEqual(tag.McPkgNo, tagDto.McPkgNo);
+            Assert.AreEqual(_testDataSet.Mode1.Title, tagDto.Mode);
+            Assert.AreEqual(_testDataSet.Responsible1.Code, tagDto.ResponsibleCode);
+            Assert.AreEqual(tag.Description, tagDto.Description);
+            Assert.AreEqual($"{tag.PurchaseOrderNo}/{tag.Calloff}", tagDto.PurchaseOrderTitle);
+            Assert.AreEqual(tag.Status.GetDisplayValue(), tagDto.Status);
+            Assert.AreEqual(tag.TagNo, tagDto.TagNo);
+            Assert.AreEqual(tag.Remark, tagDto.Remark);
+            Assert.AreEqual(tag.StorageArea, tagDto.StorageArea);
+            Assert.AreEqual(_testDataSet.ReqType1.RequirementDefinitions.First().Title, tagDto.RequirementTitles);
+            Assert.AreEqual(2, tagDto.ActionsCount);
+            Assert.AreEqual(2, tagDto.OpenActionsCount);
+            Assert.AreEqual(1, tagDto.OverdueActionsCount);
+            Assert.AreEqual(1, tagDto.AttachmentsCount);
+
+            AssertActions(tag.Actions, tagDto.Actions);
+        }
+
+        private void AssertActions(IReadOnlyCollection<Action> tagActions, List<ExportActionDto> tagDtoActions)
+        {
+            Assert.AreEqual(tagActions.Count, tagDtoActions.Count);
+            foreach (var tagAction in tagActions)
+            {
+                var tagDtoAction = tagDtoActions.Single(a => a.Id == tagAction.Id);
+                Assert.AreEqual(tagAction.DueTimeUtc, tagDtoAction.DueTimeUtc);
+                Assert.AreEqual(tagAction.ClosedAtUtc, tagDtoAction.ClosedAtUtc);
+                Assert.AreEqual(tagAction.Description, tagDtoAction.Description);
+                Assert.AreEqual(tagAction.Title, tagDtoAction.Title);
+                Assert.AreEqual(tagAction.IsOverDue(), tagDtoAction.IsOverDue);
+            }
+        }
+
+        private void AssertUsedFilter(UsedFilterDto usedFilterDto)
+        {
+            Assert.AreEqual(TestPlant, usedFilterDto.Plant);
+            Assert.AreEqual(_query.ProjectName, usedFilterDto.ProjectName);
+            Assert.AreEqual(_query.Filter.ActionStatus.GetDisplayValue(), usedFilterDto.ActionStatus);
+            Assert.AreEqual(0, usedFilterDto.AreaCodes.Count());
+            Assert.IsNull(usedFilterDto.CallOffStartsWith);
+            Assert.IsNull(usedFilterDto.CommPkgNoStartsWith);
+            Assert.AreEqual(0, usedFilterDto.DisciplineCodes.Count());
+            Assert.AreEqual(0, usedFilterDto.DueFilters.Count());
+            Assert.AreEqual(0, usedFilterDto.JourneyTitles.Count());
+            Assert.IsNull(usedFilterDto.McPkgNoStartsWith);
+            Assert.AreEqual(0, usedFilterDto.ModeTitles.Count());
+            Assert.AreEqual(_query.Filter.PreservationStatus.GetDisplayValue(), usedFilterDto.PreservationStatus);
+            Assert.IsNull(usedFilterDto.PurchaseOrderNoStartsWith);
+            Assert.AreEqual(0, usedFilterDto.RequirementTypeTitles.Count());
+            Assert.AreEqual(0, usedFilterDto.ResponsibleCodes.Count());
+            Assert.IsNull(usedFilterDto.StorageAreaStartsWith);
+            Assert.AreEqual(0, usedFilterDto.TagFunctionCodes.Count());
+            Assert.IsNull(usedFilterDto.TagNoStartsWith);
+            Assert.AreEqual(_query.Filter.VoidedFilter.GetDisplayValue(), usedFilterDto.VoidedFilter);
         }
     }
 }

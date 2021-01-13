@@ -32,7 +32,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task ExportTagsToExcel_AsPreserver_ShouldGetAnExcelFile()
+        public async Task ExportTagsToExcel_AsPreserver_ShouldGetACorrectExcelFile()
         {
             // Act
             var file = await TagsControllerTestsHelper.ExportTagsToExcelAsync(
@@ -43,7 +43,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(file);
             Assert.IsNotNull(file.Workbook);
             Assert.IsNotNull(file.Workbook.Worksheets);
-            Assert.AreEqual(2, file.Workbook.Worksheets.Count);
+            Assert.AreEqual(3, file.Workbook.Worksheets.Count);
             Assert.AreEqual("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", file.ContentType);
             
             AssertFiltersSheet(file.Workbook.Worksheets.Worksheet("Filters"));
@@ -53,13 +53,24 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 TestFactory.ProjectWithAccess);
             var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var tag = tagsResult.Tags.Single(t => t.Id == tagIdUnderTest);
-            var tagDetails = await TagsControllerTestsHelper.GetTagAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
-            var actions = await TagsControllerTestsHelper.GetAllActionsAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
-            var attachments = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var tagDetails = await TagsControllerTestsHelper.GetTagAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var actions = await TagsControllerTestsHelper.GetAllActionsAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var attachments = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            
             Assert.IsTrue(actions.Count > 0, "Expect to find actions. Bad test setup");
             Assert.IsTrue(attachments.Count > 0, "Expect to find attachments. Bad test setup");
             
             AssertTagsSheet(file.Workbook.Worksheets.Worksheet("Tags"), tag, tagDetails, actions, attachments);
+            AssertActionsSheet(file.Workbook.Worksheets.Worksheet("Actions"), tag, actions);
         }
 
         [TestMethod]
@@ -669,6 +680,50 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(initialTagsCount + 1, tagsResult.Tags.Count);
             Assert.IsNotNull(tagsResult.Tags.SingleOrDefault(t => t.Id == id));
         }
+        
+        private void AssertActionsSheet(IXLWorksheet worksheet, TagDto tag, List<ActionDto> actions)
+        {
+            Assert.IsNotNull(worksheet);
+            var row = worksheet.Row(1);
+
+            Assert.AreEqual(ExcelConverter.ActionSheetColumns.Last, row.CellsUsed().Count());
+            Assert.AreEqual("Tag nr", row.Cell(ExcelConverter.ActionSheetColumns.TagNo).Value);
+            Assert.AreEqual("Title", row.Cell(ExcelConverter.ActionSheetColumns.Title).Value);
+            Assert.AreEqual("Description", row.Cell(ExcelConverter.ActionSheetColumns.Description).Value);
+            Assert.AreEqual("Overdue", row.Cell(ExcelConverter.ActionSheetColumns.OverDue).Value);
+            Assert.AreEqual("Due date (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.DueDate).Value);
+            Assert.AreEqual("Closed (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.Closed).Value);
+
+            var rows = FindRowsWithTag(worksheet, tag.TagNo);
+            Assert.AreEqual(actions.Count, rows.Count);
+
+            foreach (var action in actions)
+            {
+                row = FindRowWithAction(rows, action.Title);
+                Assert.IsNotNull(row);
+
+                var actionDetailsDto = TagsControllerTestsHelper.GetActionAsync(UserType.Preserver, TestFactory.PlantWithAccess, tag.Id, action.Id).Result;
+
+                Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.ActionSheetColumns.TagNo).Value);
+                Assert.AreEqual(action.Title, row.Cell(ExcelConverter.ActionSheetColumns.Title).Value);
+                Assert.AreEqual(action.IsOverDue.ToString().ToUpper(), row.Cell(ExcelConverter.ActionSheetColumns.OverDue).Value.ToString()?.ToUpper());
+                Assert.AreEqual(actionDetailsDto.Description, row.Cell(ExcelConverter.ActionSheetColumns.Description).Value);
+                AssertDates(actionDetailsDto.DueTimeUtc, row.Cell(ExcelConverter.ActionSheetColumns.DueDate).Value);
+                AssertDates(actionDetailsDto.ClosedAtUtc, row.Cell(ExcelConverter.ActionSheetColumns.Closed).Value);
+            }
+        }
+
+        private void AssertDates(DateTime? expectedTimeUtc, object timeUtc)
+        {
+            if (expectedTimeUtc.HasValue)
+            {
+                Assert.AreEqual(expectedTimeUtc, timeUtc);
+            }
+            else
+            {
+                Assert.AreEqual(string.Empty, timeUtc);
+            }
+        }
 
         private void AssertTagsSheet(
             IXLWorksheet worksheet,
@@ -677,80 +732,103 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             List<ActionDto> actions,
             List<TagAttachmentDto> attachments)
         {
+            Assert.IsNotNull(worksheet);
             var row = worksheet.Row(1);
 
-            Assert.AreEqual(ExcelConverter.LastCol, row.CellsUsed().Count());
-            Assert.AreEqual("Tag nr", row.Cell(ExcelConverter.TagNoCol).Value);
-            Assert.AreEqual("Tag description", row.Cell(ExcelConverter.DescriptionCol).Value);
-            Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.NextCol).Value);
-            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.DueCol).Value);
-            Assert.AreEqual("Journey", row.Cell(ExcelConverter.JourneyCol).Value);
-            Assert.AreEqual("Step", row.Cell(ExcelConverter.StepCol).Value);
-            Assert.AreEqual("Mode", row.Cell(ExcelConverter.ModeCol).Value);
-            Assert.AreEqual("Purchase order", row.Cell(ExcelConverter.PoCol).Value);
-            Assert.AreEqual("Area", row.Cell(ExcelConverter.AreaCol).Value);
-            Assert.AreEqual("Responsible", row.Cell(ExcelConverter.RespCol).Value);
-            Assert.AreEqual("Discipline", row.Cell(ExcelConverter.DiscCol).Value);
-            Assert.AreEqual("Status", row.Cell(ExcelConverter.PresStatusCol).Value);
-            Assert.AreEqual("Requirements", row.Cell(ExcelConverter.ReqCol).Value);
-            Assert.AreEqual("Remark", row.Cell(ExcelConverter.RemarkCol).Value);
-            Assert.AreEqual("Storage area", row.Cell(ExcelConverter.StorageAreaCol).Value);
-            Assert.AreEqual("Comm pkg", row.Cell(ExcelConverter.CommPkgCol).Value);
-            Assert.AreEqual("MC pkg", row.Cell(ExcelConverter.McPkgCol).Value);
-            Assert.AreEqual("Action status", row.Cell(ExcelConverter.ActionStatusCol).Value);
-            Assert.AreEqual("Actions", row.Cell(ExcelConverter.ActionsCol).Value);
-            Assert.AreEqual("Open actions", row.Cell(ExcelConverter.OpenActionsCol).Value);
-            Assert.AreEqual("Overdue actions", row.Cell(ExcelConverter.OverdueActionsCol).Value);
-            Assert.AreEqual("Attachments", row.Cell(ExcelConverter.AttachmentsCol).Value);
-            Assert.AreEqual("Is voided", row.Cell(ExcelConverter.VoidedCol).Value);
+            Assert.AreEqual(ExcelConverter.TagSheetColumns.Last, row.CellsUsed().Count());
+            Assert.AreEqual("Tag nr", row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
+            Assert.AreEqual("Tag description", row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
+            Assert.AreEqual("Next preservation", row.Cell(ExcelConverter.TagSheetColumns.Next).Value);
+            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.TagSheetColumns.DueWeeks).Value);
+            Assert.AreEqual("Journey", row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
+            Assert.AreEqual("Step", row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
+            Assert.AreEqual("Mode", row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
+            Assert.AreEqual("Purchase order", row.Cell(ExcelConverter.TagSheetColumns.Po).Value);
+            Assert.AreEqual("Area", row.Cell(ExcelConverter.TagSheetColumns.Area).Value);
+            Assert.AreEqual("Responsible", row.Cell(ExcelConverter.TagSheetColumns.Resp).Value);
+            Assert.AreEqual("Discipline", row.Cell(ExcelConverter.TagSheetColumns.Disc).Value);
+            Assert.AreEqual("Status", row.Cell(ExcelConverter.TagSheetColumns.PresStatus).Value);
+            Assert.AreEqual("Requirements", row.Cell(ExcelConverter.TagSheetColumns.Req).Value);
+            Assert.AreEqual("Remark", row.Cell(ExcelConverter.TagSheetColumns.Remark).Value);
+            Assert.AreEqual("Storage area", row.Cell(ExcelConverter.TagSheetColumns.StorageArea).Value);
+            Assert.AreEqual("Comm pkg", row.Cell(ExcelConverter.TagSheetColumns.CommPkg).Value);
+            Assert.AreEqual("MC pkg", row.Cell(ExcelConverter.TagSheetColumns.McPkg).Value);
+            Assert.AreEqual("Action status", row.Cell(ExcelConverter.TagSheetColumns.ActionStatus).Value);
+            Assert.AreEqual("Actions", row.Cell(ExcelConverter.TagSheetColumns.Actions).Value);
+            Assert.AreEqual("Open actions", row.Cell(ExcelConverter.TagSheetColumns.OpenActions).Value);
+            Assert.AreEqual("Overdue actions", row.Cell(ExcelConverter.TagSheetColumns.OverdueActions).Value);
+            Assert.AreEqual("Attachments", row.Cell(ExcelConverter.TagSheetColumns.Attachments).Value);
+            Assert.AreEqual("Is voided", row.Cell(ExcelConverter.TagSheetColumns.Voided).Value);
 
             row = FindRowWithTag(worksheet, tag.TagNo);
 
-            Assert.IsNotNull(row);
-            Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.TagNoCol).Value);
-            Assert.AreEqual(tag.Description, row.Cell(ExcelConverter.DescriptionCol).Value);
+            Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
+            Assert.AreEqual(tag.Description, row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
             var firstRequirement = tag.Requirements.First();
-            Assert.AreEqual(firstRequirement.NextDueAsYearAndWeek, row.Cell(ExcelConverter.NextCol).Value);
+            Assert.AreEqual(firstRequirement.NextDueAsYearAndWeek, row.Cell(ExcelConverter.TagSheetColumns.Next).Value);
             Assert.IsTrue(firstRequirement.NextDueWeeks.HasValue);
-            Assert.AreEqual((double)firstRequirement.NextDueWeeks, row.Cell(ExcelConverter.DueCol).Value);
-            Assert.AreEqual(tagDetailsDto.Journey.Title, row.Cell(ExcelConverter.JourneyCol).Value);
-            Assert.AreEqual(tagDetailsDto.Step.Title, row.Cell(ExcelConverter.StepCol).Value);
-            Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.ModeCol).Value);
-            Assert.AreEqual(PurchaseOrderHelper.CreateTitle(tag.PurchaseOrderNo, tag.CalloffNo), row.Cell(ExcelConverter.PoCol).Value);
-            Assert.AreEqual(tag.AreaCode, row.Cell(ExcelConverter.AreaCol).Value);
-            Assert.AreEqual(tag.ResponsibleCode, row.Cell(ExcelConverter.RespCol).Value);
-            Assert.AreEqual(tag.DisciplineCode, row.Cell(ExcelConverter.DiscCol).Value);
+            Assert.AreEqual((double)firstRequirement.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.DueWeeks).Value);
+            Assert.AreEqual(tagDetailsDto.Journey.Title, row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
+            Assert.AreEqual(tagDetailsDto.Step.Title, row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
+            Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
+            Assert.AreEqual(PurchaseOrderHelper.CreateTitle(tag.PurchaseOrderNo, tag.CalloffNo), row.Cell(ExcelConverter.TagSheetColumns.Po).Value);
+            Assert.AreEqual(tag.AreaCode, row.Cell(ExcelConverter.TagSheetColumns.Area).Value);
+            Assert.AreEqual(tag.ResponsibleCode, row.Cell(ExcelConverter.TagSheetColumns.Resp).Value);
+            Assert.AreEqual(tag.DisciplineCode, row.Cell(ExcelConverter.TagSheetColumns.Disc).Value);
             var status = Enum.Parse<PreservationStatus>(tag.Status);
-            Assert.AreEqual(status.GetDisplayValue(), row.Cell(ExcelConverter.PresStatusCol).Value);
-            var requirements = row.Cell(ExcelConverter.ReqCol).Value.ToString();
+            Assert.AreEqual(status.GetDisplayValue(), row.Cell(ExcelConverter.TagSheetColumns.PresStatus).Value);
+            var requirements = row.Cell(ExcelConverter.TagSheetColumns.Req).Value.ToString();
             // simple test for requirements since it is a comma-sep list of RequirementType titles which we don't have available here
             Assert.IsNotNull(requirements);
             var count = requirements.Count(comma => comma == ',') + 1;
             Assert.AreEqual(tag.Requirements.Count(), count);
-            Assert.AreEqual(tagDetailsDto.Remark, row.Cell(ExcelConverter.RemarkCol).Value);
-            Assert.AreEqual(tagDetailsDto.StorageArea, row.Cell(ExcelConverter.StorageAreaCol).Value);
-            Assert.AreEqual(tag.ActionStatus.GetDisplayValue(), row.Cell(ExcelConverter.ActionStatusCol).Value);
-            Assert.AreEqual(tag.CommPkgNo, row.Cell(ExcelConverter.CommPkgCol).Value);
-            Assert.AreEqual(tag.McPkgNo, row.Cell(ExcelConverter.McPkgCol).Value);
-            Assert.AreEqual(tag.ActionStatus.GetDisplayValue(), row.Cell(ExcelConverter.ActionStatusCol).Value);
-            Assert.AreEqual((double)actions.Count, row.Cell(ExcelConverter.ActionsCol).Value);
+            Assert.AreEqual(tagDetailsDto.Remark, row.Cell(ExcelConverter.TagSheetColumns.Remark).Value);
+            Assert.AreEqual(tagDetailsDto.StorageArea, row.Cell(ExcelConverter.TagSheetColumns.StorageArea).Value);
+            Assert.AreEqual(tag.ActionStatus.GetDisplayValue(), row.Cell(ExcelConverter.TagSheetColumns.ActionStatus).Value);
+            Assert.AreEqual(tag.CommPkgNo, row.Cell(ExcelConverter.TagSheetColumns.CommPkg).Value);
+            Assert.AreEqual(tag.McPkgNo, row.Cell(ExcelConverter.TagSheetColumns.McPkg).Value);
+            Assert.AreEqual(tag.ActionStatus.GetDisplayValue(), row.Cell(ExcelConverter.TagSheetColumns.ActionStatus).Value);
+            Assert.AreEqual((double)actions.Count, row.Cell(ExcelConverter.TagSheetColumns.Actions).Value);
             var openActions = actions.Count(a => !a.IsClosed);
-            Assert.AreEqual((double)openActions, row.Cell(ExcelConverter.OpenActionsCol).Value);
+            Assert.AreEqual((double)openActions, row.Cell(ExcelConverter.TagSheetColumns.OpenActions).Value);
             var overDueActions = actions.Count(a => !a.IsClosed && a.DueTimeUtc.HasValue && a.DueTimeUtc.Value < DateTime.UtcNow);
-            Assert.AreEqual((double)overDueActions, row.Cell(ExcelConverter.OverdueActionsCol).Value);
-            Assert.AreEqual((double)attachments.Count, row.Cell(ExcelConverter.AttachmentsCol).Value);
-            Assert.AreEqual(tag.IsVoided.ToString().ToUpper(), row.Cell(ExcelConverter.VoidedCol).Value.ToString()?.ToUpper());
+            Assert.AreEqual((double)overDueActions, row.Cell(ExcelConverter.TagSheetColumns.OverdueActions).Value);
+            Assert.AreEqual((double)attachments.Count, row.Cell(ExcelConverter.TagSheetColumns.Attachments).Value);
+            Assert.AreEqual(tag.IsVoided.ToString().ToUpper(), row.Cell(ExcelConverter.TagSheetColumns.Voided).Value.ToString()?.ToUpper());
         }
 
         private IXLRow FindRowWithTag(IXLWorksheet worksheet, string tagNo)
         {
+            var rows = FindRowsWithTag(worksheet, tagNo);
+            Assert.AreEqual(1, rows.Count, $"Expect to find 1 row with {tagNo}, but found {rows.Count}");
+            return rows.Single();
+        }
+
+        private List<IXLRow> FindRowsWithTag(IXLWorksheet worksheet, string tagNo)
+        {
             var rowsUsed = worksheet.RowsUsed().Count();
+            var rows = new List<IXLRow>();
             for (var i = 2; i <= rowsUsed; i++)
             {
                 var value = worksheet.Row(i).Cell(1).Value;
                 if (value as string == tagNo)
                 {
-                    return worksheet.Row(i);
+                    rows.Add(worksheet.Row(i));
+                }
+            }
+
+            return rows;
+        }
+        
+        private IXLRow FindRowWithAction(List<IXLRow> rows, string actionTitle)
+        {
+            for (var i = 0; i < rows.Count; i++)
+            {
+                var row = rows.ElementAt(i);
+                var value = row.Cell(2).Value;
+                if (value as string == actionTitle)
+                {
+                    return row;
                 }
             }
 
@@ -759,6 +837,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
         private void AssertFiltersSheet(IXLWorksheet worksheet)
         {
+            Assert.IsNotNull(worksheet);
             var row = worksheet.Row(1);
             Assert.AreEqual(1, row.CellsUsed().Count());
             Assert.AreEqual("Export of preserved tags", row.Cell(1).Value);

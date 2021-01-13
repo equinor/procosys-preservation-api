@@ -2,6 +2,8 @@
 using System.Linq;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.Procosys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -16,6 +18,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private Mock<Person> _personMock;
         private DateTime _utcNow;
         private Action _dut;
+        private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void Setup()
@@ -23,6 +26,8 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(PersonId);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
+            _timeProvider = new ManualTimeProvider(_utcNow);
+            TimeService.SetProvider(_timeProvider);
             _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
         }
 
@@ -166,5 +171,73 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RemoveAttachment_ShouldThrowException_WhenAttachmentNotGiven()
             => Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveAttachment(null));
+
+        [TestMethod]
+        public void IsOverDue_ShouldBeFalseWhenNoDueDate()
+        {
+            // Arrange
+            _dut = new Action(TestPlant, "TitleA", "DescA", null);
+
+            // Act
+            var overDue = _dut.IsOverDue();
+
+            // Assert
+            Assert.IsFalse(overDue);
+        }
+
+        [TestMethod]
+        public void IsOverDue_ShouldBeFalseWhenDueDateExactNow()
+        {
+            // Arrange
+            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
+
+            // Act
+            var overDue = _dut.IsOverDue();
+
+            // Assert
+            Assert.IsFalse(overDue);
+        }
+
+        [TestMethod]
+        public void IsOverDue_ShouldBeFalseWhenDueDateInFuture()
+        {
+            // Arrange
+            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow.AddHours(1));
+
+            // Act
+            var overDue = _dut.IsOverDue();
+
+            // Assert
+            Assert.IsFalse(overDue);
+        }
+
+        [TestMethod]
+        public void IsOverDue_ShouldBeTrueWhenDueDateInPast()
+        {
+            // Arrange
+            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
+            _timeProvider.Elapse(new TimeSpan(1, 0, 0));
+
+            // Act
+            var overDue = _dut.IsOverDue();
+
+            // Assert
+            Assert.IsTrue(overDue);
+        }
+
+        [TestMethod]
+        public void IsOverDue_ShouldBeFalseWhenDueDateInPast_ButClosed()
+        {
+            // Arrange
+            _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
+            _timeProvider.Elapse(new TimeSpan(1, 0, 0));
+            _dut.Close(_utcNow, _personMock.Object);
+
+            // Act
+            var overDue = _dut.IsOverDue();
+
+            // Assert
+            Assert.IsFalse(overDue);
+        }
     }
 }

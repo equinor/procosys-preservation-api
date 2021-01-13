@@ -142,6 +142,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetActions
         private void AssertAction(ActionDto actionDto, Action action)
         {
             Assert.AreEqual(action.Id, actionDto.Id);
+            Assert.AreEqual(action.IsOverDue(), actionDto.IsOverDue);
             Assert.AreEqual(action.Title, actionDto.Title);
             Assert.AreEqual(action.IsClosed, actionDto.IsClosed);
             Assert.AreEqual(action.DueTimeUtc, actionDto.DueTimeUtc);

@@ -190,7 +190,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 
                 int? nextDueWeeks = null;
                 var nextDueAsYearAndWeek = string.Empty;
-                
+
                 var firstUpcomingRequirement = orderedRequirements.FirstOrDefault();
                 if (firstUpcomingRequirement != null)
                 {
@@ -201,9 +201,24 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 var step = dto.JourneyWithSteps.Steps.Single(s => s.Id == dto.StepId);
 
                 var openActionsCount = tagWithIncludes.Actions.Count(a => !a.IsClosed);
-                var overdueActionsCount = tagWithIncludes.Actions.Count(a => !a.IsClosed && a.DueTimeUtc.HasValue && a.DueTimeUtc.Value < _utcNow);
+                var overdueActionsCount = tagWithIncludes.Actions.Count(a => a.IsOverDue());
 
+                var orderedActions = tagWithIncludes
+                    .Actions
+                    .OrderBy(t => t.IsClosed.Equals(true))
+                    .ThenByDescending(t => t.DueTimeUtc.HasValue)
+                    .ThenBy(t => t.DueTimeUtc)
+                    .ThenBy(t => t.ModifiedAtUtc)
+                    .ThenBy(t => t.CreatedAtUtc);
                 return new ExportTagDto(
+                    orderedActions.Select(
+                        action => new ExportActionDto(
+                            action.Id,
+                            action.Title,
+                            action.Description,
+                            action.IsOverDue(),
+                            action.DueTimeUtc,
+                            action.ClosedAtUtc)).ToList(),
                     dto.GetActionStatus().GetDisplayValue(),
                     tagWithIncludes.Actions.Count,
                     dto.AreaCode,

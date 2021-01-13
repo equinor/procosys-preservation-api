@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using ClosedXML.Excel;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 
@@ -8,30 +9,44 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
-        public static int TagNoCol = 1;
-        public static int DescriptionCol = 2;
-        public static int NextCol = 3;
-        public static int DueCol = 4;
-        public static int JourneyCol = 5;
-        public static int StepCol = 6;
-        public static int ModeCol = 7;
-        public static int PoCol = 8;
-        public static int AreaCol = 9;
-        public static int RespCol = 10;
-        public static int DiscCol = 11;
-        public static int PresStatusCol = 12;
-        public static int ReqCol = 13;
-        public static int RemarkCol = 14;
-        public static int StorageAreaCol = 15;
-        public static int CommPkgCol = 16;
-        public static int McPkgCol = 17;
-        public static int ActionStatusCol = 18;
-        public static int ActionsCol = 19;
-        public static int OpenActionsCol = 20;
-        public static int OverdueActionsCol = 21;
-        public static int AttachmentsCol = 22;
-        public static int VoidedCol = 23;
-        public static int LastCol = VoidedCol;
+        public static class TagSheetColumns
+        {
+            public static int TagNo = 1;
+            public static int Description = 2;
+            public static int Next = 3;
+            public static int DueWeeks = 4;
+            public static int Journey = 5;
+            public static int Step = 6;
+            public static int Mode = 7;
+            public static int Po = 8;
+            public static int Area = 9;
+            public static int Resp = 10;
+            public static int Disc = 11;
+            public static int PresStatus = 12;
+            public static int Req = 13;
+            public static int Remark = 14;
+            public static int StorageArea = 15;
+            public static int CommPkg = 16;
+            public static int McPkg = 17;
+            public static int ActionStatus = 18;
+            public static int Actions = 19;
+            public static int OpenActions = 20;
+            public static int OverdueActions = 21;
+            public static int Attachments = 22;
+            public static int Voided = 23;
+            public static int Last = Voided;
+        }
+
+        public static class ActionSheetColumns
+        {
+            public static int TagNo = 1;
+            public static int Title = 2;
+            public static int Description = 3;
+            public static int DueDate = 4;
+            public static int OverDue = 5;
+            public static int Closed = 6;
+            public static int Last = Closed;
+        }
 
         public MemoryStream Convert(ExportDto dto)
         {
@@ -42,11 +57,57 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             {
                 CreateFrontSheet(workbook, dto.UsedFilter);
                 CreateTagSheet(workbook, dto.Tags);
+                CreateActionSheet(workbook, dto.Tags);
 
                 workbook.SaveAs(excelStream);
             }
 
             return excelStream;
+        }
+
+        private void CreateActionSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)
+        {
+            var sheet = workbook.Worksheets.Add("Actions");
+
+            var rowIdx = 0;
+            var row = sheet.Row(++rowIdx);
+            row.Style.Font.SetBold();
+            row.Style.Font.SetFontSize(12);
+            row.Cell(ActionSheetColumns.TagNo).Value = "Tag nr";
+            row.Cell(ActionSheetColumns.Title).Value = "Title";
+            row.Cell(ActionSheetColumns.Description).Value = "Description";
+            row.Cell(ActionSheetColumns.DueDate).Value = "Due date (UTC)";
+            row.Cell(ActionSheetColumns.OverDue).Value = "Overdue";
+            row.Cell(ActionSheetColumns.Closed).Value = "Closed (UTC)";
+
+            foreach (var tag in tags.Where(t => t.Actions.Count > 0))
+            {
+                foreach (var action in tag.Actions)
+                {
+                    row = sheet.Row(++rowIdx);
+
+                    row.Cell(ActionSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
+                    row.Cell(ActionSheetColumns.Title).SetValue(action.Title).SetDataType(XLDataType.Text);
+                    row.Cell(ActionSheetColumns.Description).SetValue(action.Description).SetDataType(XLDataType.Text);
+                    if (action.DueTimeUtc.HasValue)
+                    {
+                        var cell = row.Cell(ActionSheetColumns.DueDate);
+                        cell.SetValue(action.DueTimeUtc.Value.Date).SetDataType(XLDataType.DateTime);
+                        cell.Style.DateFormat.Format = "yyyy-mm-dd";
+                    }
+                    row.Cell(ActionSheetColumns.OverDue).SetValue(action.IsOverDue).SetDataType(XLDataType.Boolean);
+                    if (action.ClosedAtUtc.HasValue)
+                    {
+                        var cell = row.Cell(ActionSheetColumns.Closed);
+                        cell.SetValue(action.ClosedAtUtc.Value).SetDataType(XLDataType.DateTime);
+                        cell.Style.DateFormat.Format = "yyyy-mm-dd";
+                    }
+                }
+            }
+
+            const int minWidth = 10;
+            const int maxWidth = 100;
+            sheet.Columns(1, ActionSheetColumns.Last).AdjustToContents(1, rowIdx, minWidth, maxWidth);
         }
 
         private void CreateTagSheet(XLWorkbook workbook, IEnumerable<ExportTagDto> tags)
@@ -57,66 +118,66 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             var row = sheet.Row(++rowIdx);
             row.Style.Font.SetBold();
             row.Style.Font.SetFontSize(12);
-            row.Cell(TagNoCol).Value = "Tag nr";
-            row.Cell(DescriptionCol).Value = "Tag description";
-            row.Cell(NextCol).Value = "Next preservation";
-            row.Cell(DueCol).Value = "Due (weeks)";
-            row.Cell(JourneyCol).Value = "Journey";
-            row.Cell(StepCol).Value = "Step";
-            row.Cell(ModeCol).Value = "Mode";
-            row.Cell(PoCol).Value = "Purchase order";
-            row.Cell(AreaCol).Value = "Area";
-            row.Cell(RespCol).Value = "Responsible";
-            row.Cell(DiscCol).Value = "Discipline";
-            row.Cell(PresStatusCol).Value = "Status";
-            row.Cell(ReqCol).Value = "Requirements";
-            row.Cell(RemarkCol).Value = "Remark";
-            row.Cell(StorageAreaCol).Value = "Storage area";
-            row.Cell(CommPkgCol).Value = "Comm pkg";
-            row.Cell(McPkgCol).Value = "MC pkg";
-            row.Cell(ActionStatusCol).Value = "Action status";
-            row.Cell(ActionsCol).Value = "Actions";
-            row.Cell(OpenActionsCol).Value = "Open actions";
-            row.Cell(OverdueActionsCol).Value = "Overdue actions";
-            row.Cell(AttachmentsCol).Value = "Attachments";
-            row.Cell(VoidedCol).Value = "Is voided";
+            row.Cell(TagSheetColumns.TagNo).Value = "Tag nr";
+            row.Cell(TagSheetColumns.Description).Value = "Tag description";
+            row.Cell(TagSheetColumns.Next).Value = "Next preservation";
+            row.Cell(TagSheetColumns.DueWeeks).Value = "Due (weeks)";
+            row.Cell(TagSheetColumns.Journey).Value = "Journey";
+            row.Cell(TagSheetColumns.Step).Value = "Step";
+            row.Cell(TagSheetColumns.Mode).Value = "Mode";
+            row.Cell(TagSheetColumns.Po).Value = "Purchase order";
+            row.Cell(TagSheetColumns.Area).Value = "Area";
+            row.Cell(TagSheetColumns.Resp).Value = "Responsible";
+            row.Cell(TagSheetColumns.Disc).Value = "Discipline";
+            row.Cell(TagSheetColumns.PresStatus).Value = "Status";
+            row.Cell(TagSheetColumns.Req).Value = "Requirements";
+            row.Cell(TagSheetColumns.Remark).Value = "Remark";
+            row.Cell(TagSheetColumns.StorageArea).Value = "Storage area";
+            row.Cell(TagSheetColumns.CommPkg).Value = "Comm pkg";
+            row.Cell(TagSheetColumns.McPkg).Value = "MC pkg";
+            row.Cell(TagSheetColumns.ActionStatus).Value = "Action status";
+            row.Cell(TagSheetColumns.Actions).Value = "Actions";
+            row.Cell(TagSheetColumns.OpenActions).Value = "Open actions";
+            row.Cell(TagSheetColumns.OverdueActions).Value = "Overdue actions";
+            row.Cell(TagSheetColumns.Attachments).Value = "Attachments";
+            row.Cell(TagSheetColumns.Voided).Value = "Is voided";
 
             foreach (var tag in tags)
             {
                 row = sheet.Row(++rowIdx);
 
-                row.Cell(TagNoCol).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
-                row.Cell(DescriptionCol).SetValue(tag.Description).SetDataType(XLDataType.Text);
-                row.Cell(NextCol).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Description).SetValue(tag.Description).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Next).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
                 if (tag.NextDueWeeks.HasValue)
                 {
                     // The only number cell: NextDueWeeks
-                    row.Cell(DueCol).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
+                    row.Cell(TagSheetColumns.DueWeeks).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
                 }
-                row.Cell(JourneyCol).SetValue(tag.Journey).SetDataType(XLDataType.Text);
-                row.Cell(StepCol).SetValue(tag.Step).SetDataType(XLDataType.Text);
-                row.Cell(ModeCol).SetValue(tag.Mode).SetDataType(XLDataType.Text);
-                row.Cell(PoCol).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
-                row.Cell(AreaCol).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
-                row.Cell(RespCol).SetValue(tag.ResponsibleCode).SetDataType(XLDataType.Text);
-                row.Cell(DiscCol).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
-                row.Cell(PresStatusCol).SetValue(tag.Status).SetDataType(XLDataType.Text);
-                row.Cell(ReqCol).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
-                row.Cell(RemarkCol).SetValue(tag.Remark).SetDataType(XLDataType.Text);
-                row.Cell(StorageAreaCol).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
-                row.Cell(CommPkgCol).SetValue(tag.CommPkgNo).SetDataType(XLDataType.Text);
-                row.Cell(McPkgCol).SetValue(tag.McPkgNo).SetDataType(XLDataType.Text);
-                row.Cell(ActionStatusCol).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
-                row.Cell(ActionsCol).SetValue(tag.ActionsCount).SetDataType(XLDataType.Number);
-                row.Cell(OpenActionsCol).SetValue(tag.OpenActionsCount).SetDataType(XLDataType.Number);
-                row.Cell(OverdueActionsCol).SetValue(tag.OverdueActionsCount).SetDataType(XLDataType.Number);
-                row.Cell(AttachmentsCol).SetValue(tag.AttachmentsCount).SetDataType(XLDataType.Number);
-                row.Cell(VoidedCol).SetValue(tag.IsVoided).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Journey).SetValue(tag.Journey).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Step).SetValue(tag.Step).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Mode).SetValue(tag.Mode).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Po).SetValue(tag.PurchaseOrderTitle).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Area).SetValue(tag.AreaCode).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Resp).SetValue(tag.ResponsibleCode).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Disc).SetValue(tag.DisciplineCode).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.PresStatus).SetValue(tag.Status).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Req).SetValue(tag.RequirementTitles).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Remark).SetValue(tag.Remark).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.StorageArea).SetValue(tag.StorageArea).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.CommPkg).SetValue(tag.CommPkgNo).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.McPkg).SetValue(tag.McPkgNo).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.ActionStatus).SetValue(tag.ActionStatus).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.Actions).SetValue(tag.ActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(TagSheetColumns.OpenActions).SetValue(tag.OpenActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(TagSheetColumns.OverdueActions).SetValue(tag.OverdueActionsCount).SetDataType(XLDataType.Number);
+                row.Cell(TagSheetColumns.Attachments).SetValue(tag.AttachmentsCount).SetDataType(XLDataType.Number);
+                row.Cell(TagSheetColumns.Voided).SetValue(tag.IsVoided).SetDataType(XLDataType.Boolean);
             }
 
             const int minWidth = 10;
             const int maxWidth = 100;
-            sheet.Columns(1, LastCol).AdjustToContents(1, rowIdx, minWidth, maxWidth);
+            sheet.Columns(1, TagSheetColumns.Last).AdjustToContents(1, rowIdx, minWidth, maxWidth);
         }
 
         private void CreateFrontSheet(XLWorkbook workbook, UsedFilterDto usedFilter)
