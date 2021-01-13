@@ -71,6 +71,40 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             
             AssertTagsSheet(file.Workbook.Worksheets.Worksheet("Tags"), tag, tagDetails, actions, attachments);
             AssertActionsSheet(file.Workbook.Worksheets.Worksheet("Actions"), tag, actions);
+
+            // history sheet made when one and only one tag exported
+            var historySheetFound = file.Workbook.Worksheets.TryGetWorksheet("History", out _);
+            Assert.IsFalse(historySheetFound);
+        }
+
+        [TestMethod]
+        public async Task ExportTagsToExcel_AsPreserver_ShouldGetExcelFileWithHistorySheet_WhenSingleTag()
+        {
+            // Arrange
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+            var tagDetails = await TagsControllerTestsHelper.GetTagAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+
+            // Act
+            var file = await TagsControllerTestsHelper.ExportTagsToExcelAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                tagDetails.TagNo);
+
+            // Assert
+            Assert.IsNotNull(file);
+            Assert.IsNotNull(file.Workbook);
+            Assert.IsNotNull(file.Workbook.Worksheets);
+            Assert.AreEqual(4, file.Workbook.Worksheets.Count);
+
+            var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            AssertHistorySheet(file.Workbook.Worksheets.Worksheet("History"), tagDetails.TagNo, historyDtos);
         }
 
         [TestMethod]
@@ -360,6 +394,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
             // Assert
             Assert.AreEqual(actionIdUnderTest, actionDetailsDto.Id);
+            Assert.IsNotNull(actionDetailsDto.CreatedBy);
             Assert.IsNotNull(actionDetailsDto.Title);
             Assert.IsNotNull(actionDetailsDto.Description);
             Assert.IsNotNull(actionDetailsDto.RowVersion);
@@ -435,6 +470,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 tagIdUnderTest,
                 actionIdUnderTest);
             Assert.IsNotNull(actionDetails.ClosedAtUtc);
+            Assert.IsNotNull(actionDetails.ClosedBy);
         }
 
         [TestMethod]
@@ -665,6 +701,61 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             await AssertNewTagCreated(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
         }
+        
+        [TestMethod]
+        public async Task GetHistory_AsPreserver_ShouldGetHistory()
+        {
+            // Arrange
+            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            var stepId = JourneyWithTags.Steps.First().Id;
+
+            var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
+                UserType.Planner, 
+                TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                AreaTagType.PreArea,
+                KnownDisciplineCode,
+                KnownAreaCode,
+                Guid.NewGuid().ToString(),
+                new List<TagRequirementDto>
+                {
+                    new TagRequirementDto
+                    {
+                        IntervalWeeks = 4,
+                        RequirementDefinitionId = newReqDefId
+                    }
+                },
+                stepId,
+                "Desc",
+                null,
+                null);
+            await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
+
+            // Act
+            var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                newTagId);
+
+            // Assert
+            Assert.IsNotNull(historyDtos);
+            Assert.AreEqual(2, historyDtos.Count);
+
+            var plannerProfile = TestFactory.Instance.GetTestProfile(UserType.Planner);
+            // history records are sorted with newest first in list
+            var historyDto = historyDtos.First();
+            Assert.IsTrue(historyDto.Description.Contains("started"));
+            AssertUser(plannerProfile, historyDto.CreatedBy);
+            historyDto = historyDtos.Last();
+            Assert.IsTrue(historyDto.Description.Contains("created"));
+            AssertUser(plannerProfile, historyDto.CreatedBy);
+        }
+
+        private void AssertUser(TestProfile profile, PersonDto personDto)
+        {
+            Assert.IsNotNull(personDto);
+            Assert.AreEqual(profile.FirstName, personDto.FirstName);
+            Assert.AreEqual(profile.LastName, personDto.LastName);
+        }
 
         private async Task AssertNewTagCreated(
             UserType userType, 
@@ -694,7 +785,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual("Due date (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.DueDate).Value);
             Assert.AreEqual("Closed (UTC)", row.Cell(ExcelConverter.ActionSheetColumns.Closed).Value);
 
-            var rows = FindRowsWithTag(worksheet, tag.TagNo);
+            var rows = FindRowsWithTag(worksheet, tag.TagNo, ExcelConverter.ActionSheetColumns.TagNo);
             Assert.AreEqual(actions.Count, rows.Count);
 
             foreach (var action in actions)
@@ -708,20 +799,34 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 Assert.AreEqual(action.Title, row.Cell(ExcelConverter.ActionSheetColumns.Title).Value);
                 Assert.AreEqual(action.IsOverDue.ToString().ToUpper(), row.Cell(ExcelConverter.ActionSheetColumns.OverDue).Value.ToString()?.ToUpper());
                 Assert.AreEqual(actionDetailsDto.Description, row.Cell(ExcelConverter.ActionSheetColumns.Description).Value);
-                AssertDates(actionDetailsDto.DueTimeUtc, row.Cell(ExcelConverter.ActionSheetColumns.DueDate).Value);
-                AssertDates(actionDetailsDto.ClosedAtUtc, row.Cell(ExcelConverter.ActionSheetColumns.Closed).Value);
+                AssertUtcDateTime(actionDetailsDto.DueTimeUtc, row.Cell(ExcelConverter.ActionSheetColumns.DueDate).Value);
+                AssertUtcDateTime(actionDetailsDto.ClosedAtUtc, row.Cell(ExcelConverter.ActionSheetColumns.Closed).Value);
             }
         }
 
-        private void AssertDates(DateTime? expectedTimeUtc, object timeUtc)
+        private void AssertHistorySheet(IXLWorksheet worksheet, string tagNo, List<HistoryDto> historyDtos)
         {
-            if (expectedTimeUtc.HasValue)
+            Assert.IsNotNull(worksheet);
+            var row = worksheet.Row(1);
+
+            Assert.AreEqual(ExcelConverter.HistorySheetColumns.Last, row.CellsUsed().Count());
+            Assert.AreEqual("Tag nr", row.Cell(ExcelConverter.HistorySheetColumns.TagNo).Value);
+            Assert.AreEqual("Description", row.Cell(ExcelConverter.HistorySheetColumns.Description).Value);
+            Assert.AreEqual("Due (weeks)", row.Cell(ExcelConverter.HistorySheetColumns.DueWeeks).Value);
+            Assert.AreEqual("Date (UTC)", row.Cell(ExcelConverter.HistorySheetColumns.Date).Value);
+       
+            var rowsUsed = worksheet.RowsUsed().Count();
+            Assert.AreEqual(historyDtos.Count + 1, rowsUsed);
+            for (var i = 2; i <= rowsUsed; i++)
             {
-                Assert.AreEqual(expectedTimeUtc, timeUtc);
-            }
-            else
-            {
-                Assert.AreEqual(string.Empty, timeUtc);
+                row = worksheet.Row(i);
+                Assert.AreEqual(tagNo, row.Cell(ExcelConverter.HistorySheetColumns.TagNo).Value);
+                var description = row.Cell(ExcelConverter.HistorySheetColumns.Description).Value as string;
+                var historyDtoCount = historyDtos.Count(h => h.Description == description);
+                Assert.AreEqual(1, historyDtoCount, "Bad test setup. The tested tagNo probably have more than one record wih same description which is OK in real life");
+                var historyDto = historyDtos.Single(h => h.Description == description);
+                AssertUtcDateTime(historyDto.CreatedAtUtc, row.Cell(ExcelConverter.HistorySheetColumns.Date).Value);
+                AssertInt(historyDto.DueWeeks, row.Cell(ExcelConverter.HistorySheetColumns.DueWeeks).Value);
             }
         }
 
@@ -760,14 +865,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual("Attachments", row.Cell(ExcelConverter.TagSheetColumns.Attachments).Value);
             Assert.AreEqual("Is voided", row.Cell(ExcelConverter.TagSheetColumns.Voided).Value);
 
-            row = FindRowWithTag(worksheet, tag.TagNo);
+            row = FindRowWithTag(worksheet, tag.TagNo, ExcelConverter.TagSheetColumns.TagNo);
 
             Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.TagSheetColumns.TagNo).Value);
             Assert.AreEqual(tag.Description, row.Cell(ExcelConverter.TagSheetColumns.Description).Value);
             var firstRequirement = tag.Requirements.First();
             Assert.AreEqual(firstRequirement.NextDueAsYearAndWeek, row.Cell(ExcelConverter.TagSheetColumns.Next).Value);
             Assert.IsTrue(firstRequirement.NextDueWeeks.HasValue);
-            Assert.AreEqual((double)firstRequirement.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.DueWeeks).Value);
+            AssertInt(firstRequirement.NextDueWeeks, row.Cell(ExcelConverter.TagSheetColumns.DueWeeks).Value);
             Assert.AreEqual(tagDetailsDto.Journey.Title, row.Cell(ExcelConverter.TagSheetColumns.Journey).Value);
             Assert.AreEqual(tagDetailsDto.Step.Title, row.Cell(ExcelConverter.TagSheetColumns.Step).Value);
             Assert.AreEqual(tag.Mode, row.Cell(ExcelConverter.TagSheetColumns.Mode).Value);
@@ -797,20 +902,20 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(tag.IsVoided.ToString().ToUpper(), row.Cell(ExcelConverter.TagSheetColumns.Voided).Value.ToString()?.ToUpper());
         }
 
-        private IXLRow FindRowWithTag(IXLWorksheet worksheet, string tagNo)
+        private IXLRow FindRowWithTag(IXLWorksheet worksheet, string tagNo, int tagNoCell)
         {
-            var rows = FindRowsWithTag(worksheet, tagNo);
+            var rows = FindRowsWithTag(worksheet, tagNo, tagNoCell);
             Assert.AreEqual(1, rows.Count, $"Expect to find 1 row with {tagNo}, but found {rows.Count}");
             return rows.Single();
         }
 
-        private List<IXLRow> FindRowsWithTag(IXLWorksheet worksheet, string tagNo)
+        private List<IXLRow> FindRowsWithTag(IXLWorksheet worksheet, string tagNo, int tagNoCell)
         {
             var rowsUsed = worksheet.RowsUsed().Count();
             var rows = new List<IXLRow>();
             for (var i = 2; i <= rowsUsed; i++)
             {
-                var value = worksheet.Row(i).Cell(1).Value;
+                var value = worksheet.Row(i).Cell(tagNoCell).Value;
                 if (value as string == tagNo)
                 {
                     rows.Add(worksheet.Row(i));
@@ -825,7 +930,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             for (var i = 0; i < rows.Count; i++)
             {
                 var row = rows.ElementAt(i);
-                var value = row.Cell(2).Value;
+                var value = row.Cell(ExcelConverter.ActionSheetColumns.Title).Value;
                 if (value as string == actionTitle)
                 {
                     return row;
@@ -846,6 +951,38 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(2, row.CellsUsed().Count());
             Assert.AreEqual("Plant", row.Cell(1).Value);
             Assert.AreEqual(TestFactory.PlantWithAccess, row.Cell(2).Value);
+        }
+
+        private void AssertUtcDateTime(DateTime? expectedUtcValue, object value)
+        {
+            if (expectedUtcValue.HasValue)
+            {
+                Assert.IsInstanceOfType(value, typeof(DateTime));
+                var dt1 = expectedUtcValue.Value;
+                Assert.AreEqual(DateTimeKind.Utc, dt1.Kind);
+                var dt2 = (DateTime)value;
+                // compare only parts of datetime since info about ticks and kind lost in Excel
+                var newDt1 = new DateTime(dt1.Year, dt1.Month, dt1.Day, dt1.Hour, dt1.Minute, dt1.Second, dt1.Kind);
+                var newDt2 = new DateTime(dt2.Year, dt2.Month, dt2.Day, dt2.Hour, dt2.Minute, dt2.Second, DateTimeKind.Utc);
+                Assert.AreEqual(newDt1, newDt2);
+            }
+            else
+            {
+                Assert.AreEqual(string.Empty, value);
+            }
+        }
+        
+        private void AssertInt(int? expectedValue, object value)
+        {
+            if (expectedValue.HasValue)
+            {
+                Assert.AreEqual((double)expectedValue.Value, value);
+
+            }
+            else
+            {
+                Assert.AreEqual(string.Empty, value);
+            }
         }
     }
 }

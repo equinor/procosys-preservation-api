@@ -22,7 +22,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
-            var parameters = new ParameterCollection {{"projectName", projectName}};
+            var parameters = new ParameterCollection
+            {
+                {"ProjectName", projectName}
+            };
             var url = $"{_route}{parameters}";
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
 
@@ -41,10 +44,15 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             UserType userType,
             string plant,
             string projectName,
+            string tagNoStartsWith = null,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
-            var parameters = new ParameterCollection {{"projectName", projectName}};
+            var parameters = new ParameterCollection
+            {
+                {"ProjectName", projectName},
+                {"TagNoStartsWith", tagNoStartsWith}
+            };
             var url = $"{_route}/ExportTagsToExcel{parameters}";
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync(url);
 
@@ -566,6 +574,25 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<int>(jsonString);
+        }
+
+        public static async Task<List<HistoryDto>> GetHistoryAsync(
+            UserType userType, string plant,
+            int tagId,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).GetAsync($"{_route}/{tagId}/History");
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (expectedStatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<HistoryDto>>(jsonString);
         }
     }
 }

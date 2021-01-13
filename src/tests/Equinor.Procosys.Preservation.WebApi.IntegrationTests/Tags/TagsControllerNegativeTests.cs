@@ -110,37 +110,37 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
                 UserType.Anonymous, TestFactory.UnknownPlant,
                 TestFactory.ProjectWithAccess,
-                HttpStatusCode.Unauthorized);
+                expectedStatusCode:HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task ExportTagsToExcel_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 TestFactory.ProjectWithAccess,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
+                expectedStatusCode:HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest:"is not a valid plant");
 
         [TestMethod]
         public async Task ExportTagsToExcel_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
                 UserType.LibraryAdmin, TestFactory.UnknownPlant,
                 TestFactory.ProjectWithAccess,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
+                expectedStatusCode:HttpStatusCode.BadRequest,
+                expectedMessageOnBadRequest:"is not a valid plant");
 
         [TestMethod]
         public async Task ExportTagsToExcel_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
                 UserType.Hacker, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess,
-                HttpStatusCode.Forbidden);
+                expectedStatusCode:HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task ExportTagsToExcel_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
             => await TagsControllerTestsHelper.ExportTagsToExcelAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess,
-                HttpStatusCode.Forbidden);
+                expectedStatusCode:HttpStatusCode.Forbidden);
         #endregion
         
         #region GetTag
@@ -640,14 +640,14 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAllActions_AsAnonymous_ShouldReturnUnauthorized()
             => await TagsControllerTestsHelper.GetAllActionsAsync(
                 UserType.Anonymous, TestFactory.UnknownPlant,
-                _tagId1_WithAttachment,
+                9999,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
         public async Task GetAllActions_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
             => await TagsControllerTestsHelper.GetAllActionsAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
-                _tagId1_WithAttachment,
+                9999,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
@@ -655,7 +655,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetAllActions_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
             => await TagsControllerTestsHelper.GetAllActionsAsync(
                 UserType.LibraryAdmin, TestFactory.UnknownPlant,
-                _tagId1_WithAttachment,
+                9999,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
@@ -1686,6 +1686,59 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 null,
                 HttpStatusCode.Forbidden);
+        #endregion
+        
+        #region GetHistory
+        [TestMethod]
+        public async Task GetHistory_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Anonymous, 
+                TestFactory.UnknownPlant,
+                9999,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task GetHistory_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Hacker,
+                TestFactory.UnknownPlant,
+                9999,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task GetHistory_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.LibraryAdmin,
+                TestFactory.UnknownPlant,
+                9999,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task GetHistory_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Hacker, 
+                TestFactory.PlantWithAccess,
+                9999,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetHistory_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                9999,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task GetHistory_AsPreserver_ShouldReturnNotFound_WhenUnknownTagId()
+            => await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                9999,
+                HttpStatusCode.NotFound);
+
         #endregion
     }
 }
