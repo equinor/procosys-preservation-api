@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -23,7 +22,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using Newtonsoft.Json;
 using ProcosysProject = Equinor.Procosys.Preservation.MainApi.Permission.ProcosysProject;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
@@ -135,6 +133,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             
             return testUser.HttpClient;
         }
+
+        public TestProfile GetTestProfile(UserType userType) => _testUsers[userType].Profile;
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -308,7 +308,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     Profile =
                         new TestProfile
                         {
-                            FullName = "Harry Hacker", 
+                            FirstName = "Harry",
+                            LastName = "Hacker", 
                             Oid = _hackerOid
                         },
                     ProCoSysPlants = new List<ProcosysPlant>
@@ -332,7 +333,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     Profile =
                         new TestProfile
                         {
-                            FullName = "Peder Preserver",
+                            FirstName = "Peder",
+                            LastName = "Preserver",
                             Oid = _preserverOid
                         },
                     ProCoSysPlants = commonProCoSysPlants,
@@ -360,7 +362,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     Profile =
                         new TestProfile
                         {
-                            FullName = "Pernilla Planner",
+                            FirstName = "Pernilla",
+                            LastName = "Planner",
                             Oid = _plannerOid
                         },
                     ProCoSysPlants = commonProCoSysPlants,
@@ -389,7 +392,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
                     Profile =
                         new TestProfile
                         {
-                            FullName = "Arne Admin",
+                            FirstName = "Arne",
+                            LastName = "Admin",
                             Oid = _libraryAdminOid
                         },
                     ProCoSysPlants = commonProCoSysPlants,
@@ -408,7 +412,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         private void AddAnonymousUser() => _testUsers.Add(UserType.Anonymous, new TestUser());
 
         private void AuthenticateUser(ITestUser user)
-            => user.HttpClient.DefaultRequestHeaders.Add("Authorization", CreateBearerToken(user.Profile));
+            => user.HttpClient.DefaultRequestHeaders.Add("Authorization", user.Profile.CreateBearerToken());
 
         private void UpdatePlantInHeader(HttpClient client, string plant)
         {
@@ -421,21 +425,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             {
                 client.DefaultRequestHeaders.Add(CurrentPlantMiddleware.PlantHeader, plant);
             }
-        }
-        
-        /// <summary>
-        /// Wraps profile by serializing, encoding and then converting to base 64 string.
-        /// "Bearer" is also added, making it ready to be added as Authorization header
-        /// </summary>
-        /// <param name="profile">The instance of the token to be wrapped</param>
-        /// <returns>Serialized, encoded string ready for authorization header</returns>
-        private string CreateBearerToken(TestProfile profile)
-        {
-            var serialized = JsonConvert.SerializeObject(profile);
-            var tokenBytes = Encoding.UTF8.GetBytes(serialized);
-            var tokenString = Convert.ToBase64String(tokenBytes);
-
-            return $"Bearer {tokenString}";
         }
     }
 }

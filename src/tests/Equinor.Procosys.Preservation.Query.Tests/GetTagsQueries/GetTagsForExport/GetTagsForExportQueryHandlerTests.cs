@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries;
@@ -148,6 +149,58 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 }
           
                 Assert.AreEqual(tagNoStartsWith, result.Data.UsedFilter.TagNoStartsWith);
+            }
+        }
+        
+        [TestMethod]
+        public async Task HandleGetTagsForExportQuery_ShouldNotGetHistoryForManyTags()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsForExportQueryHandler(context, _plantProvider);
+                var result = await dut.Handle(_query, default);
+                Assert.IsTrue(result.Data.Tags.Count() > 1);
+                foreach (var tag in result.Data.Tags)
+                {
+                    Assert.AreEqual(0, tag.History.Count);
+                }
+            }
+        }
+
+        [TestMethod]
+        public async Task HandleGetTagsForExportQuery_ShouldGetHistoryForSingleTag()
+        {
+            var tagNoStartsWith = $"{_testDataSet.StdTagPrefix}-0";
+            History history;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Single(t => t.TagNo == tagNoStartsWith);
+                history = new History(
+                    TestPlant,
+                    "Description",
+                    tag.ObjectGuid,
+                    ObjectType.Tag,
+                    EventType.RequirementPreserved)
+                {
+                    DueInWeeks = 1
+                };
+                context.History.Add(history);
+                context.SaveChangesAsync().Wait();
+            }
+            
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new GetTagsForExportQueryHandler(context, _plantProvider);
+                var filter = new Filter {TagNoStartsWith = tagNoStartsWith};
+
+                var result = await dut.Handle(new GetTagsForExportQuery(_testDataSet.Project1.Name, filter: filter), default);
+
+                var tag = result.Data.Tags.Single();
+                Assert.AreEqual(2, tag.History.Count);
+                var historyDto = tag.History.Single(h => h.Id == history.Id);
+                Assert.AreEqual(history.Description, historyDto.Description);
+                Assert.AreEqual(history.DueInWeeks, historyDto.DueInWeeks);
+                Assert.AreEqual(history.CreatedAtUtc, historyDto.CreatedAtUtc);
             }
         }
 

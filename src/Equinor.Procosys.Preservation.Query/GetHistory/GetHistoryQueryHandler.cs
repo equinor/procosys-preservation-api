@@ -21,15 +21,25 @@ namespace Equinor.Procosys.Preservation.Query.GetHistory
 
         public async Task<Result<List<HistoryDto>>> Handle(GetHistoryQuery request, CancellationToken cancellationToken)
         {
+            // Get tag with all actions
+            var tag = await
+                (from t in _context.QuerySet<Tag>()
+                    where t.Id == request.TagId
+                    select t).SingleOrDefaultAsync(cancellationToken);
+            
+            if (tag == null)
+            {
+                return new NotFoundResult<List<HistoryDto>>($"Entity with ID {request.TagId} not found");
+            }
+
             var tagHistory = await (from h in _context.QuerySet<History>()
-                join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
+                join t in _context.QuerySet<Tag>() on h.ObjectGuid equals t.ObjectGuid
                 join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
                 from preservationRecord in _context.QuerySet<PreservationRecord>()
                     .Where(pr => pr.ObjectGuid == EF.Property<Guid>(h, "PreservationRecordGuid")).DefaultIfEmpty() //left join
                 from preservationPeriod in _context.QuerySet<PreservationPeriod>()
                     .Where(pr => pr.PreservationRecord.Id == EF.Property<int>(preservationRecord, "Id")).DefaultIfEmpty() // left join
-                where tag.ObjectGuid == h.ObjectGuid
-                where tag.Id == request.TagId
+                where t.Id == request.TagId
                 select new HistoryDto(
                     h.Id,
                     h.Description,
