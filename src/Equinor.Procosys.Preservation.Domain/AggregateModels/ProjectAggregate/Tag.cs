@@ -303,9 +303,9 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         public IEnumerable<TagRequirement> GetUpComingRequirements()
         {
-            var GetUpComingRequirements = OrderedRequirements()
+            var upComingRequirements = OrderedRequirements()
                 .Where(r => r.IsReadyAndDueToBePreserved());
-            return GetUpComingRequirements;
+            return upComingRequirements;
         }
 
         public IOrderedEnumerable<TagRequirement> OrderedRequirements(bool includeVoided = false, bool includeAllUsages = false)
