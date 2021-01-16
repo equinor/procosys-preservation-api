@@ -9,12 +9,40 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 {
     public class ExcelConverter : IExcelConverter
     {
+        public static class FrontSheetRows
+        {
+            public static int MainHeading = 1;
+            public static int Blank1 = 2;
+            public static int Plant = 3;
+            public static int ProjectName = 4;
+            public static int ProjectDesc = 5;
+            public static int Blank2 = 6;
+            public static int FilterHeading = 7;
+            public static int Tag = 8;
+            public static int PO = 9;
+            public static int CO = 10;
+            public static int CommPkg = 11;
+            public static int McPkg = 12;
+            public static int StorageArea = 13;
+            public static int Status = 14;
+            public static int Actions = 15;
+            public static int Voided = 16;
+            public static int Due = 17;
+            public static int Journeys = 18;
+            public static int Modes = 19;
+            public static int Reqs = 20;
+            public static int TF = 21;
+            public static int Disc = 22;
+            public static int Resp = 23;
+            public static int Areas = 24;
+        }
+
         public static class TagSheetColumns
         {
             public static int TagNo = 1;
             public static int Description = 2;
-            public static int Next = 3;
-            public static int DueWeeks = 4;
+            public static int NextInYearAndWeek = 3;
+            public static int NextDueWeeks = 4;
             public static int Journey = 5;
             public static int Step = 6;
             public static int Mode = 7;
@@ -52,7 +80,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         {
             public static int TagNo = 1;
             public static int Description = 2;
-            public static int DueWeeks = 3;
+            public static int DueInWeeks = 3;
             public static int Date = 4;
             public static int Details = 5;
             public static int Comment = 6;
@@ -93,7 +121,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Style.Font.SetFontSize(12);
             row.Cell(HistorySheetColumns.TagNo).Value = "Tag nr";
             row.Cell(HistorySheetColumns.Description).Value = "Description";
-            row.Cell(HistorySheetColumns.DueWeeks).Value = "Due (weeks)";
+            row.Cell(HistorySheetColumns.DueInWeeks).Value = "Due (weeks)";
             row.Cell(HistorySheetColumns.Date).Value = "Date (UTC)";
             row.Cell(HistorySheetColumns.Details).Value = "Preservation details";
             row.Cell(HistorySheetColumns.Comment).Value = "Preservation comment";
@@ -105,7 +133,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             
                 row.Cell(HistorySheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
                 row.Cell(HistorySheetColumns.Description).SetValue(history.Description).SetDataType(XLDataType.Text);
-                row.Cell(HistorySheetColumns.DueWeeks).SetValue(history.DueInWeeks).SetDataType(XLDataType.Number);
+                row.Cell(HistorySheetColumns.DueInWeeks).SetValue(history.DueInWeeks).SetDataType(XLDataType.Number);
                 AddDateCell(row, HistorySheetColumns.Date, history.CreatedAtUtc);
                 row.Cell(HistorySheetColumns.Details).SetValue(history.PreservationDetails).SetDataType(XLDataType.Text);
                 row.Cell(HistorySheetColumns.Comment).SetValue(history.PreservationComment).SetDataType(XLDataType.Text);
@@ -174,8 +202,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Style.Font.SetFontSize(12);
             row.Cell(TagSheetColumns.TagNo).Value = "Tag nr";
             row.Cell(TagSheetColumns.Description).Value = "Tag description";
-            row.Cell(TagSheetColumns.Next).Value = "Next preservation";
-            row.Cell(TagSheetColumns.DueWeeks).Value = "Due (weeks)";
+            row.Cell(TagSheetColumns.NextInYearAndWeek).Value = "Next preservation";
+            row.Cell(TagSheetColumns.NextDueWeeks).Value = "Due (weeks)";
             row.Cell(TagSheetColumns.Journey).Value = "Journey";
             row.Cell(TagSheetColumns.Step).Value = "Step";
             row.Cell(TagSheetColumns.Mode).Value = "Mode";
@@ -202,11 +230,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
 
                 row.Cell(TagSheetColumns.TagNo).SetValue(tag.TagNo).SetDataType(XLDataType.Text);
                 row.Cell(TagSheetColumns.Description).SetValue(tag.Description).SetDataType(XLDataType.Text);
-                row.Cell(TagSheetColumns.Next).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
+                row.Cell(TagSheetColumns.NextInYearAndWeek).SetValue(tag.NextDueAsYearAndWeek).SetDataType(XLDataType.Text);
                 if (tag.NextDueWeeks.HasValue)
                 {
                     // The only number cell: NextDueWeeks
-                    row.Cell(TagSheetColumns.DueWeeks).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
+                    row.Cell(TagSheetColumns.NextDueWeeks).SetValue(tag.NextDueWeeks.Value).SetDataType(XLDataType.Number);
                 }
                 row.Cell(TagSheetColumns.Journey).SetValue(tag.Journey).SetDataType(XLDataType.Text);
                 row.Cell(TagSheetColumns.Step).SetValue(tag.Step).SetDataType(XLDataType.Text);
@@ -237,37 +265,34 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
         private void CreateFrontSheet(XLWorkbook workbook, UsedFilterDto usedFilter)
         {
             var sheet = workbook.Worksheets.Add("Filters");
-            var rowIdx = 0;
-            var row = sheet.Row(++rowIdx);
+            var row = sheet.Row(FrontSheetRows.MainHeading);
             row.Style.Font.SetBold();
             row.Style.Font.SetFontSize(14);
             row.Cell(1).Value = "Export of preserved tags";
 
-            rowIdx++;
-            AddUsedFilter(sheet.Row(++rowIdx), "Plant", usedFilter.Plant, true);
-            AddUsedFilter(sheet.Row(++rowIdx), "Project", usedFilter.ProjectName, true);
-            AddUsedFilter(sheet.Row(++rowIdx), "Project description", usedFilter.ProjectDescription, true);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Plant), "Plant", usedFilter.Plant, true);
+            AddUsedFilter(sheet.Row(FrontSheetRows.ProjectName), "Project", usedFilter.ProjectName, true);
+            AddUsedFilter(sheet.Row(FrontSheetRows.ProjectDesc), "Project description", usedFilter.ProjectDescription, true);
 
-            rowIdx++;
-            AddUsedFilter(sheet.Row(++rowIdx), "Filter values:", "", true);
+            AddUsedFilter(sheet.Row(FrontSheetRows.FilterHeading), "Filter values:", "", true);
 
-            AddUsedFilter(sheet.Row(++rowIdx), "Tag number starts with", usedFilter.TagNoStartsWith);
-            AddUsedFilter(sheet.Row(++rowIdx), "Purchase order number starts with", usedFilter.PurchaseOrderNoStartsWith);
-            AddUsedFilter(sheet.Row(++rowIdx), "Calloff number starts with", usedFilter.CallOffStartsWith);
-            AddUsedFilter(sheet.Row(++rowIdx), "CommPkg number starts with", usedFilter.CommPkgNoStartsWith);
-            AddUsedFilter(sheet.Row(++rowIdx), "McPkg number starts with", usedFilter.McPkgNoStartsWith);
-            AddUsedFilter(sheet.Row(++rowIdx), "Storage area starts with", usedFilter.StorageAreaStartsWith);
-            AddUsedFilter(sheet.Row(++rowIdx), "Preservation status", usedFilter.PreservationStatus);
-            AddUsedFilter(sheet.Row(++rowIdx), "Preservation actions", usedFilter.ActionStatus);
-            AddUsedFilter(sheet.Row(++rowIdx), "Voided/unvoided tags", usedFilter.VoidedFilter);
-            AddUsedFilter(sheet.Row(++rowIdx), "Preservation due date", usedFilter.DueFilters);
-            AddUsedFilter(sheet.Row(++rowIdx), "Journeys", usedFilter.JourneyTitles);
-            AddUsedFilter(sheet.Row(++rowIdx), "Modes", usedFilter.ModeTitles);
-            AddUsedFilter(sheet.Row(++rowIdx), "Requirements", usedFilter.RequirementTypeTitles);
-            AddUsedFilter(sheet.Row(++rowIdx), "Tag functions", usedFilter.TagFunctionCodes);
-            AddUsedFilter(sheet.Row(++rowIdx), "Disciplines", usedFilter.DisciplineCodes);
-            AddUsedFilter(sheet.Row(++rowIdx), "Responsibles", usedFilter.ResponsibleCodes);
-            AddUsedFilter(sheet.Row(++rowIdx), "Areas", usedFilter.AreaCodes);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Tag), "Tag number starts with", usedFilter.TagNoStartsWith);
+            AddUsedFilter(sheet.Row(FrontSheetRows.PO), "Purchase order number starts with", usedFilter.PurchaseOrderNoStartsWith);
+            AddUsedFilter(sheet.Row(FrontSheetRows.CO), "Calloff number starts with", usedFilter.CallOffStartsWith);
+            AddUsedFilter(sheet.Row(FrontSheetRows.CommPkg), "CommPkg number starts with", usedFilter.CommPkgNoStartsWith);
+            AddUsedFilter(sheet.Row(FrontSheetRows.McPkg), "McPkg number starts with", usedFilter.McPkgNoStartsWith);
+            AddUsedFilter(sheet.Row(FrontSheetRows.StorageArea), "Storage area starts with", usedFilter.StorageAreaStartsWith);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Status), "Preservation status", usedFilter.PreservationStatus);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Actions), "Preservation actions", usedFilter.ActionStatus);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Voided), "Voided/unvoided tags", usedFilter.VoidedFilter);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Due), "Preservation due date", usedFilter.DueFilters);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Journeys), "Journeys", usedFilter.JourneyTitles);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Modes), "Modes", usedFilter.ModeTitles);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Reqs), "Requirements", usedFilter.RequirementTypeTitles);
+            AddUsedFilter(sheet.Row(FrontSheetRows.TF), "Tag functions", usedFilter.TagFunctionCodes);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Disc), "Disciplines", usedFilter.DisciplineCodes);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Resp), "Responsibles", usedFilter.ResponsibleCodes);
+            AddUsedFilter(sheet.Row(FrontSheetRows.Areas), "Areas", usedFilter.AreaCodes);
          
             sheet.Columns(1, 2).AdjustToContents();
         }
