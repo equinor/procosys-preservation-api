@@ -461,15 +461,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
             IXLWorksheet worksheet,
             int rowIdx,
             int expectedCellsUsed,
-            string expectedTekst1,
-            string expectedTekst2 = null)
+            string expectedText1,
+            string expectedText2 = null)
         {
             var row = worksheet.Row(rowIdx);
             Assert.AreEqual(expectedCellsUsed, row.CellsUsed().Count());
-            Assert.AreEqual(expectedTekst1, row.Cell(1).Value);
+            Assert.AreEqual(expectedText1, row.Cell(1).Value);
             if (expectedCellsUsed > 1)
             {
-                Assert.AreEqual(expectedTekst2, row.Cell(2).Value);
+                Assert.AreEqual(expectedText2, row.Cell(2).Value);
             }
         }
 
