@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries;
 using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
@@ -171,10 +172,54 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
         public async Task HandleGetTagsForExportQuery_ShouldGetHistoryForSingleTag()
         {
             var tagNoStartsWith = $"{_testDataSet.StdTagPrefix}-0";
+            var comment = "Comment";
+            var labelForNumberFirst = "Label for Number - first";
+            var labelForNumberSecond = "Label for Number - second";
+            var labelForCheckBox = "Label for CheckBox";
+            var labelForAtt = "Label for Attachment";
+            var labelForInfo = "Label for Info";
             History history;
+            var number = 1282.91;
+            var fileName = "filename.txt";
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                var tag = context.Tags.Single(t => t.TagNo == tagNoStartsWith);
+                var tag = context.Tags
+                    .Include(t => t.Requirements)
+                    .ThenInclude(r => r.PreservationPeriods)
+                    .Single(t => t.TagNo == tagNoStartsWith);
+                var reqDef = new RequirementDefinition(TestPlant, "Title", 2, RequirementUsage.ForAll, 1);
+                var numberField1 = new Field(TestPlant, labelForNumberFirst, FieldType.Number, 1, "U", false);
+                var numberField2 = new Field(TestPlant, labelForNumberSecond, FieldType.Number, 2, "U", false);
+                var cbField = new Field(TestPlant, labelForCheckBox, FieldType.CheckBox, 3);
+                var attField = new Field(TestPlant, labelForAtt, FieldType.Attachment, 4);
+                var infoField = new Field(TestPlant, labelForInfo, FieldType.Info, 5);
+                reqDef.AddField(numberField1);
+                reqDef.AddField(numberField2);
+                reqDef.AddField(cbField);
+                reqDef.AddField(attField);
+                reqDef.AddField(infoField);
+                context.RequirementTypes.First().AddRequirementDefinition(reqDef);
+                context.SaveChangesAsync().Wait();
+                tag.AddRequirement(new TagRequirement(TestPlant,4, reqDef));
+                tag.StartPreservation();
+                var tagRequirement = tag.Requirements.Last();
+                tagRequirement.SetComment(comment);
+                tagRequirement.RecordNumberValues(new Dictionary<int, double?>
+                    {
+                        {numberField1.Id, number},
+                    },
+                    reqDef);
+                tagRequirement.RecordCheckBoxValues(new Dictionary<int, bool>
+                    {
+                        {cbField.Id, true},
+                    },
+                    reqDef);
+                tagRequirement.RecordAttachment(new FieldValueAttachment(TestPlant, Guid.NewGuid(), fileName), 
+                    attField.Id,
+                    reqDef);
+                tagRequirement.RecordNumberIsNaValues(new List<int>{numberField2.Id}, reqDef);
+                var activePeriodBeforePreservation = tagRequirement.ActivePeriod;
+                tagRequirement.Preserve(_testDataSet.CurrentUser, false);
                 history = new History(
                     TestPlant,
                     "Description",
@@ -182,7 +227,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                     ObjectType.Tag,
                     EventType.RequirementPreserved)
                 {
-                    DueInWeeks = 1
+                    DueInWeeks = 1,
+                    PreservationRecordGuid = activePeriodBeforePreservation.PreservationRecord.ObjectGuid
                 };
                 context.History.Add(history);
                 context.SaveChangesAsync().Wait();
@@ -201,6 +247,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(history.Description, historyDto.Description);
                 Assert.AreEqual(history.DueInWeeks, historyDto.DueInWeeks);
                 Assert.AreEqual(history.CreatedAtUtc, historyDto.CreatedAtUtc);
+                Assert.AreEqual(comment, historyDto.PreservationComment);
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForNumberFirst}={number}."));
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForNumberSecond}=N/A."));
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForCheckBox}=true."));
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForAtt}={fileName}"));
+                Assert.IsFalse(historyDto.PreservationDetails.Contains(labelForInfo));
             }
         }
 

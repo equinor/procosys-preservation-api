@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain;
@@ -45,17 +46,18 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             }
 
             var tagsIds = orderedDtos.Select(dto => dto.TagId).ToList();
+            var getHistory = tagsIds.Count == 1;
             var journeyIds = orderedDtos.Select(dto => dto.JourneyId).Distinct();
 
-            // get tags again, including Requirements, Actions and Attachments. See comment in CreateQueryableWithFilter regarding Include and EF
-            var tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
-                        .Include(t => t.Requirements)
-                        .Include(t => t.Attachments)
-                        .Include(t => t.Actions)
-                    where tagsIds.Contains(tag.Id)
-                    select tag)
-                .ToListAsync(cancellationToken);
+            var tagsWithIncludes = await GetTagsWithIncludesAsync(tagsIds, getHistory, cancellationToken);
             
+            var requirementDefinitionIds = tagsWithIncludes.SelectMany(t => t.Requirements)
+                .Select(r => r.RequirementDefinitionId).Distinct();
+            
+            var reqDefWithFields = await (from rd in _context.QuerySet<RequirementDefinition>().Include(rd => rd.Fields)
+                    where requirementDefinitionIds.Contains(rd.Id)
+                    select rd).ToListAsync(cancellationToken);
+
             // get Journeys with Steps to be able to export journey and step titles
             var journeysWithSteps = await (from j in _context.QuerySet<Journey>()
                         .Include(j => j.Steps)
@@ -63,41 +65,157 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     select j)
                 .ToListAsync(cancellationToken);
 
-            // enrich DTO to be able to get distinct NextSteps to query database for distinct NextMode + NextResponsible
-            foreach (var dto in orderedDtos)
+            var exportTagDtos = CreateExportTagDtos(
+                orderedDtos,
+                tagsWithIncludes,
+                journeysWithSteps,
+                reqDefWithFields);
+
+            if (getHistory)
             {
-                dto.JourneyWithSteps = journeysWithSteps.Single(j => j.Id == dto.JourneyId);
+                await GetHistoryForSingleTagAsync(tagsIds.Single(), exportTagDtos, tagsWithIncludes, reqDefWithFields, cancellationToken);
             }
 
-            // enrich DTO with history if one and only one tag found
-            if (tagsIds.Count == 1)
+            return new SuccessResult<ExportDto>(new ExportDto(exportTagDtos, usedFilterDto));
+        }
+
+        private async Task GetHistoryForSingleTagAsync(
+            int singleTagId,
+            IList<ExportTagDto> exportTagDtos,
+            List<Tag> tagsWithIncludes,
+            List<RequirementDefinition> reqDefWithFields,
+            CancellationToken cancellationToken)
+        {
+            var history = await (from h in _context.QuerySet<History>()
+                    join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
+                    where tag.Id == singleTagId
+                    select h)
+                .OrderByDescending(h => h.CreatedAtUtc)
+                .ToListAsync(cancellationToken);
+
+            var singleExportTagDto = exportTagDtos.Single();
+            var singleTag = tagsWithIncludes.Single();
+
+            foreach (var h in history)
             {
-                var singleTagId = tagsIds.Single();
-                orderedDtos.Single().History = await (from h in _context.QuerySet<History>()
-                        join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
-                        where tag.Id == singleTagId
-                        select h)
-                    .OrderByDescending(h => h.CreatedAtUtc)
+                var preservationComment = string.Empty;
+                var preservationDetails = new StringBuilder();
+
+                if (h.PreservationRecordGuid.HasValue)
+                {
+                    (preservationComment, preservationDetails) = GetPreservationDetailsFromPeriod(
+                        h.PreservationRecordGuid.Value,
+                        singleTag,
+                        reqDefWithFields);
+                }
+
+                singleExportTagDto.History.Add(new ExportHistoryDto(
+                    h.Id,
+                    h.Description,
+                    h.CreatedAtUtc,
+                    h.DueInWeeks,
+                    preservationDetails.ToString(),
+                    preservationComment));
+            }
+        }
+
+        private static (string, StringBuilder) GetPreservationDetailsFromPeriod(
+            Guid preservationRecordGuid,
+            Tag singleTag,
+            List<RequirementDefinition> reqDefWithFields)
+        {
+            var tagRequirement =
+                singleTag.Requirements
+                    .Single(r =>
+                        r.PreservationPeriods.Any(pp =>
+                            pp.PreservationRecord != null &&
+                            pp.PreservationRecord.ObjectGuid == preservationRecordGuid));
+
+            var preservationPeriod = tagRequirement
+                .PreservationPeriods
+                .Single(pp =>
+                    pp.PreservationRecord != null &&
+                    pp.PreservationRecord.ObjectGuid == preservationRecordGuid);
+
+            var reqDefWithField = reqDefWithFields.Single(r => r.Id == tagRequirement.RequirementDefinitionId);
+
+            var preservationDetails = new StringBuilder();
+            foreach (var field in reqDefWithField.Fields)
+            {
+                GetPreservationDetailsFromField(preservationDetails, field, preservationPeriod);
+            }
+
+            return (preservationPeriod.Comment, preservationDetails);
+        }
+
+        private static void GetPreservationDetailsFromField(
+            StringBuilder preservationDetails, Field field,
+            PreservationPeriod preservationPeriod)
+        {
+            if (!field.FieldType.NeedsUserInput())
+            {
+                return;
+            }
+
+            if (preservationDetails.Length > 0)
+            {
+                preservationDetails.Append(". ");
+            }
+
+            preservationDetails.Append($"{field.Label}=");
+
+            var currentValue = preservationPeriod.GetFieldValue(field.Id);
+            switch (field.FieldType)
+            {
+                case FieldType.Number:
+                    var number = (NumberValue) currentValue;
+                    preservationDetails.Append(number.Value.HasValue ? number.Value.ToString() : "N/A");
+                    break;
+                case FieldType.CheckBox:
+                    var cb = currentValue is CheckBoxChecked;
+                    preservationDetails.Append(cb.ToString().ToLower());
+                    break;
+                case FieldType.Attachment:
+                    var av = (AttachmentValue) currentValue;
+                    preservationDetails.Append(av.FieldValueAttachment.FileName);
+                    break;
+            }
+        }
+
+        private async Task<List<Tag>> GetTagsWithIncludesAsync(List<int> tagsIds, bool getHistory, CancellationToken cancellationToken)
+        {
+            List<Tag> tagsWithIncludes;
+            if (getHistory)
+            {
+                // get tags again, including Requirements, Actions, Attachments and preservation details. See comment in CreateQueryableWithFilter regarding Include and EF
+                // Preservation details found to enrich History info when one tag found
+                tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
+                            .Include(t => t.Requirements)
+                            .ThenInclude(r => r.PreservationPeriods)
+                            .ThenInclude(p => p.PreservationRecord)
+                            .Include(t => t.Requirements)
+                            .ThenInclude(r => r.PreservationPeriods)
+                            .ThenInclude(p => p.FieldValues)
+                            .ThenInclude(fv => fv.FieldValueAttachment)
+                            .Include(t => t.Attachments)
+                            .Include(t => t.Actions)
+                        where tag.Id == tagsIds.Single()
+                        select tag)
+                    .ToListAsync(cancellationToken);
+            }
+            else
+            {
+                // get tags again, including Requirements, Actions and Attachments. See comment in CreateQueryableWithFilter regarding Include and EF
+                tagsWithIncludes = await (from tag in _context.QuerySet<Tag>()
+                            .Include(t => t.Requirements)
+                            .Include(t => t.Attachments)
+                            .Include(t => t.Actions)
+                        where tagsIds.Contains(tag.Id)
+                        select tag)
                     .ToListAsync(cancellationToken);
             }
 
-            var requirementDefinitionIds = tagsWithIncludes.SelectMany(t => t.Requirements).Select(r => r.RequirementDefinitionId).Distinct();
-            
-            var reqDefs = await (from rd in _context.QuerySet<RequirementDefinition>()
-                    where requirementDefinitionIds.Contains(rd.Id)
-                    select new ReqDefDto
-                    {
-                        RequirementDefinitionId = rd.Id,
-                        RequirementDefinitionTitle = rd.Title
-                    }
-                ).ToListAsync(cancellationToken);
-
-            var tags = CreateTagDtos(
-                orderedDtos,
-                tagsWithIncludes,
-                reqDefs);
-
-            return new SuccessResult<ExportDto>(new ExportDto(tags, usedFilterDto));
+            return tagsWithIncludes;
         }
 
         private async Task<UsedFilterDto> CreateUsedFilterDtoAsync(string projectName, Filter filter)
@@ -184,21 +302,18 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                 select r.Title).ToListAsync();
         }
 
-        private IList<ExportTagDto> CreateTagDtos(
+        private IList<ExportTagDto> CreateExportTagDtos(
             List<TagForQueryDto> orderedDtos,
             List<Tag> tagsWithIncludes,
-            List<ReqDefDto> reqDefs)
+            List<Journey> journeysWithSteps,
+            List<RequirementDefinition> reqDefs)
         {
             var tags = orderedDtos.Select(dto =>
             {
                 var tagWithIncludes = tagsWithIncludes.Single(t => t.Id == dto.TagId);
                 var orderedRequirements = tagWithIncludes.OrderedRequirements().ToList();
-                var requirementTitles = orderedRequirements.Select(
-                        r =>
-                        {
-                            var reqTypeDto = reqDefs.Single(innerDto => innerDto.RequirementDefinitionId == r.RequirementDefinitionId);
-                            return reqTypeDto.RequirementDefinitionTitle;
-                        })
+                var requirementTitles = orderedRequirements
+                    .Select(r => reqDefs.Single(rd => rd.Id == r.RequirementDefinitionId).Title)
                     .ToList();
 
                 int? nextDueWeeks = null;
@@ -211,7 +326,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     nextDueAsYearAndWeek = firstUpcomingRequirement.NextDueTimeUtc?.FormatAsYearAndWeekString();
                 }
 
-                var step = dto.JourneyWithSteps.Steps.Single(s => s.Id == dto.StepId);
+                var journeyWithSteps = journeysWithSteps.Single(j => j.Id == dto.JourneyId);
+                var step = journeyWithSteps.Steps.Single(s => s.Id == dto.StepId);
 
                 var openActionsCount = tagWithIncludes.Actions.Count(a => !a.IsClosed);
                 var overdueActionsCount = tagWithIncludes.Actions.Count(a => a.IsOverDue());
@@ -223,14 +339,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     .ThenBy(t => t.DueTimeUtc)
                     .ThenBy(t => t.ModifiedAtUtc)
                     .ThenBy(t => t.CreatedAtUtc);
-
-                var exportHistory = dto.History != null
-                    ? dto.History.Select(h => new ExportHistoryDto(
-                        h.Id,
-                        h.Description,
-                        h.CreatedAtUtc,
-                        h.DueInWeeks)).ToList()
-                    : new List<ExportHistoryDto>();
 
                 return new ExportTagDto(
                     orderedActions.Select(
@@ -247,9 +355,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     tagWithIncludes.Attachments.Count,
                     dto.CommPkgNo,
                     dto.DisciplineCode,
-                    exportHistory,
                     dto.IsVoided,
-                    dto.JourneyWithSteps.Title,
+                    journeyWithSteps.Title,
                     dto.McPkgNo,
                     dto.ModeTitle,
                     nextDueAsYearAndWeek,
@@ -268,12 +375,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             });
 
             return tags.ToList();
-        }
-
-        private class ReqDefDto
-        {
-            public int RequirementDefinitionId { get; set; }
-            public string RequirementDefinitionTitle { get; set; }
         }
     }
 }
