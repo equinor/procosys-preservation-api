@@ -54,7 +54,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             public static int Description = 2;
             public static int DueWeeks = 3;
             public static int Date = 4;
-            public static int Last = Date;
+            public static int Details = 5;
+            public static int Comment = 6;
+            public static int Last = Comment;
         }
 
         public MemoryStream Convert(ExportDto dto)
@@ -93,6 +95,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
             row.Cell(HistorySheetColumns.Description).Value = "Description";
             row.Cell(HistorySheetColumns.DueWeeks).Value = "Due (weeks)";
             row.Cell(HistorySheetColumns.Date).Value = "Date (UTC)";
+            row.Cell(HistorySheetColumns.Details).Value = "Preservation details";
+            row.Cell(HistorySheetColumns.Comment).Value = "Preservation comment";
 
             var tag = tags.Single();
             foreach (var history in tag.History)
@@ -103,6 +107,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Excel
                 row.Cell(HistorySheetColumns.Description).SetValue(history.Description).SetDataType(XLDataType.Text);
                 row.Cell(HistorySheetColumns.DueWeeks).SetValue(history.DueInWeeks).SetDataType(XLDataType.Number);
                 AddDateCell(row, HistorySheetColumns.Date, history.CreatedAtUtc);
+                row.Cell(HistorySheetColumns.Details).SetValue(history.PreservationDetails).SetDataType(XLDataType.Text);
+                row.Cell(HistorySheetColumns.Comment).SetValue(history.PreservationComment).SetDataType(XLDataType.Text);
             }
        
             const int minWidth = 10;
