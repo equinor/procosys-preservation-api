@@ -410,8 +410,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
                     Assert.AreEqual(action.IsOverDue.ToString().ToUpper(),
                         row.Cell(ExcelConverter.ActionSheetColumns.OverDue).Value.ToString()?.ToUpper());
                     Assert.AreEqual(action.Description, row.Cell(ExcelConverter.ActionSheetColumns.Description).Value);
-                    AssertUtcDateTime(action.DueTimeUtc, row.Cell(ExcelConverter.ActionSheetColumns.DueDate));
-                    AssertUtcDateTime(action.ClosedAtUtc, row.Cell(ExcelConverter.ActionSheetColumns.Closed));
+                    AssertDateTime(action.DueTimeUtc, row.Cell(ExcelConverter.ActionSheetColumns.DueDate));
+                    AssertDateTime(action.ClosedAtUtc, row.Cell(ExcelConverter.ActionSheetColumns.Closed));
                 }
             }
         }
@@ -446,7 +446,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
 
                 Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.HistorySheetColumns.TagNo).Value);
                 Assert.AreEqual(historyDto.Description, row.Cell(ExcelConverter.HistorySheetColumns.Description).Value);
-                AssertUtcDateTime(historyDto.CreatedAtUtc, row.Cell(ExcelConverter.HistorySheetColumns.Date));
+                AssertDateTime(historyDto.CreatedAtUtc, row.Cell(ExcelConverter.HistorySheetColumns.Date));
                 AssertInt(historyDto.DueInWeeks, row.Cell(ExcelConverter.HistorySheetColumns.DueInWeeks).Value);
             }
         }
@@ -564,20 +564,13 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
         private void AssertBool(bool b, object value)
             => Assert.AreEqual(b.ToString().ToUpper(), value?.ToString()?.ToUpper());
 
-        private void AssertUtcDateTime(DateTime? expectedUtcValue, IXLCell cell)
+        private void AssertDateTime(DateTime? expectedUtcValue, IXLCell cell)
         {
             if (expectedUtcValue.HasValue)
             {
                 Assert.IsInstanceOfType(cell.Value, typeof(DateTime));
                 Assert.AreEqual("yyyy-mm-dd", cell.Style.DateFormat.Format);
                 Assert.AreEqual(expectedUtcValue.Value.Date, ((DateTime)cell.Value).Date);
-                //var dt1 = expectedUtcValue.Value;
-                //Assert.AreEqual(DateTimeKind.Utc, dt1.Kind);
-                //var dt2 = (DateTime)cell.Value;
-                //// compare only parts of datetime since info about ticks and kind lost in Excel
-                //var newDt1 = new DateTime(dt1.Year, dt1.Month, dt1.Day, dt1.Hour, dt1.Minute, dt1.Second, dt1.Kind);
-                //var newDt2 = new DateTime(dt2.Year, dt2.Month, dt2.Day, dt2.Hour, dt2.Minute, dt2.Second, DateTimeKind.Utc);
-                //Assert.AreEqual(newDt1, newDt2);
             }
             else
             {
