@@ -4,13 +4,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
     public class ExportDto
     {
-        public ExportDto(IEnumerable<ExportTagDto> tags, UsedFilterDto usedFilter)
+        public ExportDto(IList<ExportTagDto> tags, UsedFilterDto usedFilter)
         {
             UsedFilter = usedFilter;
             Tags = tags ?? new List<ExportTagDto>();
         }
 
-        public IEnumerable<ExportTagDto> Tags { get; }
+        public IList<ExportTagDto> Tags { get; }
         public UsedFilterDto UsedFilter { get; }
     }
 }

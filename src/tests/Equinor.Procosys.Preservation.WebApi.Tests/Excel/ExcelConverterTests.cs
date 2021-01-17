@@ -19,55 +19,11 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
 
         private static readonly string[] _expected3Sheets = {_filtersSheet, _tagsSheet, _actionsSheet};
         private static readonly string[] _expected4Sheets = {_filtersSheet, _tagsSheet, _actionsSheet, _historySheet};
-
-        private static readonly string _presActions = "actions";
-        private static readonly List<string> _areaCodes = new List<string>{"AreaCode1", "AreaCode2"};
-        private static readonly string _callOffStartsWith = "callOffStartsWith";
-        private static readonly string _commPkgNoStartsWith = "commPkgNoStartsWith";
-        private static readonly List<string> _disciplineCodes = new List<string>{"DiscCode1", "DiscCode2"};
-        private static readonly List<string> _dueFilters = new List<string>{"DueFilter1", "DueFilter2"};
-        private static readonly List<string> _journeyTitles = new List<string>{"J1", "J2"};
-        private static readonly string _mcPkgNoStartsWith = "mcPkgNoStartsWith";
-        private static readonly List<string> _modeTitles = new List<string>{"Mode1", "Mode2"};
-        private static readonly string _preservationStatus = "preservationStatus";
-        private static readonly string _projectDescription = "projectDescription";
-        private static readonly string _plant = "plant";
-        private static readonly string _projectName = "projectName";
-        private static readonly string _purchaseOrderNoStartsWith = "purchaseOrderNoStartsWith";
-        private static readonly List<string> _requirementTypeTitles = new List<string> {"ReqType1", "ReqType2"};
-        private static readonly List<string> _responsibleCodes = new List<string>{"Resp1", "Resp2"};
-        private static readonly string _storageAreaStartsWith = "storageAreaStartsWith";
-        private static readonly List<string> _tagFunctionCodes = new List<string>{"TF1", "TF2"};
-        private static readonly string _tagNoStartsWith = "tagNoStartsWith";
-        private static readonly string _voidedFilter = "voidedFilter";
-
-        private static readonly string _actionStatus = "action";
-        private static readonly int _actionsCount = 2;
-        private static readonly string _areaCode = "area";
-        private static readonly int _attachmentsCount = 3;
-        private static readonly string _commPkgNo = "commPkg";
-        private static readonly string _disciplineCode = "disc";
-        private static readonly bool _isVoided = true;
-        private static readonly string _journey = "J";
-        private static readonly string _mcPkgNo = "mcPkg";
-        private static readonly string _mode = "mode";
-        private static readonly string _nextDueAsYearAndWeek = "200112";
-        private static readonly int? _nextDueWeeks = 4;
-        private static readonly int _openActionsCount = 5;
-        private static readonly int _overdueActionsCount = 6;
-        private static readonly string _purchaseOrderTitle ="po";
-        private static readonly string _remark = "rem";
-        private static readonly string _requirementTitles = "r1,r2";
-        private static readonly string _responsibleCode = "resp";
-        private static readonly string _status = "stat";
-        private static readonly string _step = "step";
-        private static readonly string _storageArea = "sa";
-        private static readonly string _tagDescription = "tDesc";
-        private static readonly string _tagNo = "tagNo";
         
         private ExcelConverter _dut;
         private UsedFilterDto _usedFilterDto;
         private ExportTagDto _exportTagDtoWithoutActionsAndHistory;
+        private ExportTagDto _exportTagDtoWithOneActionAndOneHistoryItems;
         private ExportTagDto _exportTagDtoWithTwoActionsAndTwoHistoryItems;
 
         [TestInitialize]
@@ -75,55 +31,55 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
         {
             _dut = new ExcelConverter();
             _usedFilterDto = new UsedFilterDto(
-                _presActions,
-                _areaCodes,
-                _callOffStartsWith,
-                _commPkgNoStartsWith,
-                _disciplineCodes,
-                _dueFilters,
-                _journeyTitles,
-                _mcPkgNoStartsWith,
-                _modeTitles,
-                _preservationStatus,
-                _projectDescription,
-                _plant,
-                _projectName,
-                _purchaseOrderNoStartsWith,
-                _requirementTypeTitles,
-                _responsibleCodes,
-                _storageAreaStartsWith,
-                _tagFunctionCodes,
-                _tagNoStartsWith,
-                _voidedFilter);
+                "presActions",
+                new List<string>{"ac1", "ac2"}, 
+                "callOffStartsWith",
+                "commPkgNoStartsWith",
+                new List<string>{"dc1", "dc2"},
+                new List<string>{"df1", "df2"},
+                new List<string>{"j1", "j2"},
+                "mcPkgNoStartsWith",
+                new List<string>{"m1", "m2"},
+                "preservationStatus",
+                "projectDescription",
+                "plant",
+                "projectName",
+                "purchaseOrderNoStartsWith",
+                new List<string>{"rt1", "rt2"},
+                new List<string>{"r1", "r2"},
+                "storageAreaStartsWith",
+                new List<string>{"tf"},
+                "tagNoStartsWith",
+                "voidedFilter");
             
             _exportTagDtoWithoutActionsAndHistory = new ExportTagDto(
                 new List<ExportActionDto>(), 
-                _actionStatus,
-                _actionsCount,
-                _areaCode,
-                _attachmentsCount,
-                _commPkgNo,
-                _disciplineCode,
-                _isVoided,
-                _journey,
-                _mcPkgNo,
-                _mode,
-                _nextDueAsYearAndWeek,
-                _nextDueWeeks,
-                _openActionsCount,
-                _overdueActionsCount,
-                _purchaseOrderTitle,
-                _remark,
-                _requirementTitles,
-                _responsibleCode,
-                _status,
-                _step,
-                _storageArea,
-                _tagDescription,
-                _tagNo
+                "actionStatus1",
+                1,
+                "areaCode1",
+                2,
+                "commPkgNo1",
+                "disciplineCode1",
+                true,
+                "journey1",
+                "mcPkgNo1",
+                "mode1",
+                "nextDueAsYearAndWeek1",
+                4,
+                5,
+                6,
+                "purchaseOrderTitle1",
+                "remark1",
+                "requirementTitles1",
+                "responsibleCode1",
+                "status1",
+                "step1",
+                "storageArea1",
+                "tagDescription1",
+                "tagNo1"
             );
 
-            var actionDtos = new List<ExportActionDto>
+            var actionDtos1 = new List<ExportActionDto>
             {
                 new ExportActionDto(
                     1,
@@ -142,45 +98,83 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
             };
 
             _exportTagDtoWithTwoActionsAndTwoHistoryItems = new ExportTagDto(
-                actionDtos,
-                _actionStatus,
-                _actionsCount,
-                _areaCode,
-                _attachmentsCount,
-                _commPkgNo,
-                _disciplineCode,
-                _isVoided,
-                _journey,
-                _mcPkgNo,
-                _mode,
-                _nextDueAsYearAndWeek,
-                _nextDueWeeks,
-                _openActionsCount,
-                _overdueActionsCount,
-                _purchaseOrderTitle,
-                _remark,
-                _requirementTitles,
-                _responsibleCode,
-                _status,
-                _step,
-                _storageArea,
-                _tagDescription,
-                _tagNo
+                actionDtos1,
+                "actionStatus2",
+                11,
+                "areaCode2",
+                12,
+                "commPkgNo2",
+                "disciplineCode2",
+                false,
+                "journey2",
+                "mcPkgNo2",
+                "mode2",
+                "nextDueAsYearAndWeek2",
+                14,
+                15,
+                16,
+                "purchaseOrderTitle2",
+                "remark2",
+                "requirementTitles2",
+                "responsibleCode2",
+                "status2",
+                "step2",
+                "storageArea2",
+                "tagDescription2",
+                "tagNo2"
             );
-
             _exportTagDtoWithTwoActionsAndTwoHistoryItems.History.Add(
                 new ExportHistoryDto(1, "H1", new DateTime(2021, 2, 3, 4, 5, 6, DateTimeKind.Utc), null, null, null));
             _exportTagDtoWithTwoActionsAndTwoHistoryItems.History.Add(
-                new ExportHistoryDto(1, "H2", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), 2, "Details", "Comment"));
+                new ExportHistoryDto(2, "H2", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), 2, "Details2", "Comment2"));
+
+            var actionDtos2 = new List<ExportActionDto>
+            {
+                new ExportActionDto(
+                    3,
+                    "C",
+                    "CDesc",
+                    false,
+                    null,
+                    null)
+            };
+
+            _exportTagDtoWithOneActionAndOneHistoryItems = new ExportTagDto(
+                actionDtos2,
+                "actionStatus3",
+                110,
+                "areaCode3",
+                120,
+                "commPkgNo3",
+                "disciplineCode3",
+                false,
+                "journey3",
+                "mcPkgNo3",
+                "mode3",
+                "nextDueAsYearAndWeek3",
+                140,
+                150,
+                160,
+                "purchaseOrderTitle3",
+                "remark3",
+                "requirementTitles3",
+                "responsibleCode3",
+                "status3",
+                "step3",
+                "storageArea3",
+                "tagDescription3",
+                "tagNo3"
+            );
+            _exportTagDtoWithOneActionAndOneHistoryItems.History.Add(
+                new ExportHistoryDto(3, "H3", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), 2, "Details3", "Comment3"));
         }
 
         [TestMethod]
         public void Convert_DtoWithNoTags_ShouldCreateExcelWith3Sheets()
         {
             // Arrange
-            var zeroTagDtos = new List<ExportTagDto>();
             var exportDto = new ExportDto(
-                zeroTagDtos,
+                new List<ExportTagDto>(),
                 _usedFilterDto);
 
             // Act
@@ -188,17 +182,57 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
 
             // Assert
             var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
-            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet));
-            AssertHistorySheet(workbook, _historySheet, zeroTagDtos);
+            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
+            AssertSheetExists(workbook, _historySheet, false);
+        }
+        
+        [TestMethod]
+        public void Convert_DtoWithOneTag_ShouldCreateExcelWith4Sheets()
+        {
+            // Arrange
+            var exportDto = new ExportDto(
+                new List<ExportTagDto>
+                {
+                    _exportTagDtoWithoutActionsAndHistory
+                },
+                _usedFilterDto);
+
+            // Act
+            var xlStream = _dut.Convert(exportDto);
+
+            // Assert
+            var workbook = AssertWorkbookFromStream(xlStream, _expected4Sheets);
+            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
+            AssertSheetExists(workbook, _historySheet, true);
+        }
+
+        [TestMethod]
+        public void Convert_DtoWithManyTags_ShouldCreateExcelWith3Sheets()
+        {
+            // Arrange
+            var exportDto = new ExportDto(
+                new List<ExportTagDto>
+                {
+                    _exportTagDtoWithoutActionsAndHistory,
+                    _exportTagDtoWithOneActionAndOneHistoryItems
+                },
+                _usedFilterDto);
+
+            // Act
+            var xlStream = _dut.Convert(exportDto);
+
+            // Assert
+            var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
+            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
+            AssertSheetExists(workbook, _historySheet, false);
         }
 
         [TestMethod]
         public void Convert_DtoWithNoTags_ShouldCreateExcelWithEmptyTagSheet()
         {
             // Arrange
-            var zeroTagDtos = new List<ExportTagDto>();
             var exportDto = new ExportDto(
-                zeroTagDtos,
+                new List<ExportTagDto>(),
                 _usedFilterDto);
 
             // Act
@@ -206,17 +240,16 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
 
             // Assert
             var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
-            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet));
-            AssertTagSheet(workbook.Worksheets.Worksheet(_tagsSheet), zeroTagDtos);
+            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
+            AssertTagSheet(workbook.Worksheets.Worksheet(_tagsSheet), exportDto.Tags);
         }
 
         [TestMethod]
         public void Convert_DtoWithNoTags_ShouldCreateExcelWithEmptyActionSheet()
         {
             // Arrange
-            var zeroTagDtos = new List<ExportTagDto>();
             var exportDto = new ExportDto(
-                zeroTagDtos,
+                new List<ExportTagDto>(),
                 _usedFilterDto);
 
             // Act
@@ -224,40 +257,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
 
             // Assert
             var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
-            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet));
-            AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), zeroTagDtos);
-        }
-
-        [TestMethod]
-        public void Convert_DtoWithOneTag_ShouldCreateExcelWith4Sheets()
-        {
-            // Arrange
-            var exportTagDtos = new List<ExportTagDto>
-            {
-                _exportTagDtoWithoutActionsAndHistory
-            };
-            var exportDto = new ExportDto(
-                exportTagDtos,
-                _usedFilterDto);
-
-            // Act
-            var xlStream = _dut.Convert(exportDto);
-
-            // Assert
-            var workbook = AssertWorkbookFromStream(xlStream, _expected4Sheets);
-            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet));
+            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
+            AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
         }
 
         [TestMethod]
         public void Convert_DtoWithOneTagWithoutAction_ShouldCreateExcelWithEmptyActionSheet()
         {
             // Arrange
-            var exportTagDtos = new List<ExportTagDto>
-            {
-                _exportTagDtoWithoutActionsAndHistory
-            };
             var exportDto = new ExportDto(
-                exportTagDtos,
+                new List<ExportTagDto>
+                {
+                    _exportTagDtoWithoutActionsAndHistory
+                },
                 _usedFilterDto);
 
             // Act
@@ -265,41 +277,19 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
 
             // Assert
             var workbook = AssertWorkbookFromStream(xlStream, _expected4Sheets);
-            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet));
-            AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportTagDtos);
-        }
-
-        [TestMethod]
-        public void Convert_DtoWithOneTagWithoutHistory_ShouldCreateExcelWithEmptyHistory()
-        {
-            // Arrange
-            var exportTagDtos = new List<ExportTagDto>
-            {
-                _exportTagDtoWithoutActionsAndHistory
-            };
-            var exportDto = new ExportDto(
-                exportTagDtos,
-                _usedFilterDto);
-
-            // Act
-            var xlStream = _dut.Convert(exportDto);
-
-            // Assert
-            var workbook = AssertWorkbookFromStream(xlStream, _expected4Sheets);
-            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet));
-            AssertHistorySheet(workbook, _historySheet, exportTagDtos);
+            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
+            AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
         }
         
         [TestMethod]
         public void Convert_DtoWithOneTagWithActionsAndHistory_ShouldCreateExcelWithCorrectDataInAllSheets()
         {
             // Arrange
-            var exportTagDtos = new List<ExportTagDto>
-            {
-                _exportTagDtoWithTwoActionsAndTwoHistoryItems
-            };
             var exportDto = new ExportDto(
-                exportTagDtos,
+                new List<ExportTagDto>
+                {
+                    _exportTagDtoWithTwoActionsAndTwoHistoryItems
+                },
                 _usedFilterDto);
 
             // Act
@@ -307,42 +297,65 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
 
             // Assert
             var workbook = AssertWorkbookFromStream(xlStream, _expected4Sheets);
-            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet));
-            AssertTagSheet(workbook.Worksheets.Worksheet(_tagsSheet), exportTagDtos);
-            AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportTagDtos);
-            AssertHistorySheet(workbook, _historySheet, exportTagDtos);
+            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
+            AssertTagSheet(workbook.Worksheets.Worksheet(_tagsSheet), exportDto.Tags);
+            AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
+            AssertHistorySheet(workbook.Worksheets.Worksheet(_historySheet), exportDto.Tags);
+        }
+        
+        [TestMethod]
+        public void Convert_DtoWithManyTagsWithActionsAndHistory_ShouldCreateExcelWithCorrectDataInAllSheets()
+        {
+            // Arrange
+            var exportDto = new ExportDto(
+                new List<ExportTagDto>
+                {
+                    _exportTagDtoWithTwoActionsAndTwoHistoryItems,
+                    _exportTagDtoWithOneActionAndOneHistoryItems
+                },
+                _usedFilterDto);
+
+            // Act
+            var xlStream = _dut.Convert(exportDto);
+
+            // Assert
+            var workbook = AssertWorkbookFromStream(xlStream, _expected3Sheets);
+            AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
+            AssertTagSheet(workbook.Worksheets.Worksheet(_tagsSheet), exportDto.Tags);
+            AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
+            AssertSheetExists(workbook, _historySheet, false);
         }
 
-        private void AssertFiltersSheet(IXLWorksheet worksheet)
+        private void AssertFiltersSheet(IXLWorksheet worksheet, UsedFilterDto expextedFilterDto)
         {
             Assert.IsNotNull(worksheet);
             AssertRow(worksheet, ExcelConverter.FrontSheetRows.MainHeading, 1, "Export of preserved tags");
             AssertBlankRow(worksheet, ExcelConverter.FrontSheetRows.Blank1);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Plant, 2, "Plant", _plant);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.ProjectName, 2, "Project", _projectName);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.ProjectDesc, 2, "Project description", _projectDescription);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Plant, 2, "Plant", expextedFilterDto.Plant);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.ProjectName, 2, "Project", expextedFilterDto.ProjectName);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.ProjectDesc, 2, "Project description", expextedFilterDto.ProjectDescription);
             AssertBlankRow(worksheet, ExcelConverter.FrontSheetRows.Blank2);
             AssertRow(worksheet, ExcelConverter.FrontSheetRows.FilterHeading, 1, "Filter values:");
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Tag, 2, "Tag number starts with", _tagNoStartsWith);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.PO, 2, "Purchase order number starts with", _purchaseOrderNoStartsWith);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.CO, 2, "Calloff number starts with", _callOffStartsWith);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.CommPkg, 2, "CommPkg number starts with", _commPkgNoStartsWith);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.McPkg, 2, "McPkg number starts with", _mcPkgNoStartsWith);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.StorageArea, 2, "Storage area starts with", _storageAreaStartsWith);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Status, 2, "Preservation status", _preservationStatus);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Actions, 2, "Preservation actions", _presActions);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Voided, 2, "Voided/unvoided tags", _voidedFilter);
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Due, 2, "Preservation due date", string.Join(",", _dueFilters));
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Journeys, 2, "Journeys", string.Join(",", _journeyTitles));
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Modes, 2, "Modes", string.Join(",", _modeTitles));
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Reqs, 2, "Requirements", string.Join(",", _requirementTypeTitles));
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.TF, 2, "Tag functions", string.Join(",", _tagFunctionCodes));
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Disc, 2, "Disciplines", string.Join(",", _disciplineCodes));
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Resp, 2, "Responsibles", string.Join(",", _responsibleCodes));
-            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Areas, 2, "Areas", string.Join(",", _areaCodes));
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Tag, 2, "Tag number starts with", expextedFilterDto.TagNoStartsWith);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.PO, 2, "Purchase order number starts with", expextedFilterDto.PurchaseOrderNoStartsWith);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.CO, 2, "Calloff number starts with", expextedFilterDto.CallOffStartsWith);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.CommPkg, 2, "CommPkg number starts with", expextedFilterDto.CommPkgNoStartsWith);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.McPkg, 2, "McPkg number starts with", expextedFilterDto.McPkgNoStartsWith);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.StorageArea, 2, "Storage area starts with", expextedFilterDto.StorageAreaStartsWith);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Status, 2, "Preservation status", expextedFilterDto.PreservationStatus);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Actions, 2, "Preservation actions", expextedFilterDto.ActionStatus);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Voided, 2, "Voided/unvoided tags", expextedFilterDto.VoidedFilter);
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Due, 2, "Preservation due date", string.Join(",", expextedFilterDto.DueFilters));
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Journeys, 2, "Journeys", string.Join(",", expextedFilterDto.JourneyTitles));
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Modes, 2, "Modes", string.Join(",", expextedFilterDto.ModeTitles));
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Reqs, 2, "Requirements", string.Join(",", expextedFilterDto.RequirementTypeTitles));
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.TF, 2, "Tag functions", string.Join(",", expextedFilterDto.TagFunctionCodes));
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Disc, 2, "Disciplines", string.Join(",", expextedFilterDto.DisciplineCodes));
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Resp, 2, "Responsibles", string.Join(",", expextedFilterDto.ResponsibleCodes));
+            AssertRow(worksheet, ExcelConverter.FrontSheetRows.Areas, 2, "Areas", string.Join(",", expextedFilterDto.AreaCodes));
         }
 
-        private void AssertTagSheet(IXLWorksheet worksheet, List<ExportTagDto> expectedTagData)
+        private void AssertTagSheet(IXLWorksheet worksheet, IList<ExportTagDto> expectedTagData)
         {
             Assert.IsNotNull(worksheet);
             AssertHeadingsInTagSheet(worksheet);
@@ -385,7 +398,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
             }
         }
 
-        private void AssertActionSheet(IXLWorksheet worksheet, List<ExportTagDto> expectedTagData)
+        private void AssertActionSheet(IXLWorksheet worksheet, IList<ExportTagDto> expectedTagData)
         {
             Assert.IsNotNull(worksheet);
             AssertHeadingsInActionsSheet(worksheet);
@@ -416,17 +429,8 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
             }
         }
 
-        private void AssertHistorySheet(XLWorkbook workbook, string expectedSheet, List<ExportTagDto> expectedTagData)
+        private void AssertHistorySheet(IXLWorksheet worksheet, IList<ExportTagDto> expectedTagData)
         {
-            var expectHistorySheetToExists = expectedTagData.Count == 1;
-            AssertSheetExists(workbook, expectedSheet, expectHistorySheetToExists);
-
-            if (!expectHistorySheetToExists)
-            {
-                return;
-            }
-
-            var worksheet = workbook.Worksheets.Worksheet(expectedSheet);
             Assert.IsNotNull(worksheet);
             AssertHeadingsInHistorySheet(worksheet);
 
