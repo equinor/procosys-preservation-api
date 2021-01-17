@@ -300,7 +300,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
             AssertFiltersSheet(workbook.Worksheets.Worksheet(_filtersSheet), exportDto.UsedFilter);
             AssertTagSheet(workbook.Worksheets.Worksheet(_tagsSheet), exportDto.Tags);
             AssertActionSheet(workbook.Worksheets.Worksheet(_actionsSheet), exportDto.Tags);
-            AssertHistorySheet(workbook.Worksheets.Worksheet(_historySheet), exportDto.Tags);
+            AssertHistorySheet(workbook.Worksheets.Worksheet(_historySheet), exportDto.Tags.Single());
         }
         
         [TestMethod]
@@ -359,13 +359,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
         {
             Assert.IsNotNull(worksheet);
             AssertHeadingsInTagSheet(worksheet);
-
-            if (expectedTagData.Count == 0)
-            {
-                Assert.AreEqual(1, worksheet.RowsUsed().Count());
-                return;
-            }
-
+            
             Assert.AreEqual(expectedTagData.Count + 1, worksheet.RowsUsed().Count());
 
             for (var i = 0; i < expectedTagData.Count; i++)
@@ -406,11 +400,6 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
             var expectedData = expectedTagData.SelectMany(t => t.Actions).ToList();
             Assert.AreEqual(expectedData.Count + 1, worksheet.RowsUsed().Count());
 
-            if (expectedData.Count == 0)
-            {
-                return;
-            }
-
             var rowIdx = 2; // Start at 2 because Row(1) is the header
             foreach (var tag in expectedTagData.Where(t => t.Actions.Count > 0))
             {
@@ -429,26 +418,20 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
             }
         }
 
-        private void AssertHistorySheet(IXLWorksheet worksheet, IList<ExportTagDto> expectedTagData)
+        private void AssertHistorySheet(IXLWorksheet worksheet, ExportTagDto expectedTagData)
         {
             Assert.IsNotNull(worksheet);
             AssertHeadingsInHistorySheet(worksheet);
 
-            var tag = expectedTagData.Single();
-            var expectedData = tag.History;
+            var expectedData = expectedTagData.History;
             Assert.AreEqual(expectedData.Count + 1, worksheet.RowsUsed().Count());
-            
-            if (expectedData.Count == 0)
-            {
-                return;
-            }
 
             var rowIdx = 2; // Start at 2 because Row(1) is the header
             foreach (var historyDto in expectedData)
             {
                 var row = worksheet.Row(rowIdx++);
 
-                Assert.AreEqual(tag.TagNo, row.Cell(ExcelConverter.HistorySheetColumns.TagNo).Value);
+                Assert.AreEqual(expectedTagData.TagNo, row.Cell(ExcelConverter.HistorySheetColumns.TagNo).Value);
                 Assert.AreEqual(historyDto.Description, row.Cell(ExcelConverter.HistorySheetColumns.Description).Value);
                 AssertDateTime(historyDto.CreatedAtUtc, row.Cell(ExcelConverter.HistorySheetColumns.Date));
                 AssertInt(historyDto.DueInWeeks, row.Cell(ExcelConverter.HistorySheetColumns.DueInWeeks).Value);
