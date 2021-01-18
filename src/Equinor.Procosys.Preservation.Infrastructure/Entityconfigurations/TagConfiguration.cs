@@ -100,12 +100,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             
             builder
                 .HasIndex(x => x.Plant)
-                .HasName("IX_Tags_Plant_ASC")
+                .HasDatabaseName("IX_Tags_Plant_ASC")
                 .IncludeProperties(x => x.TagNo);
 
             builder
                 .HasIndex(x => x.TagNo)
-                .HasName("IX_Tags_TagNo_ASC")
+                .HasDatabaseName("IX_Tags_TagNo_ASC")
                 .IncludeProperties(x => new
                 {
                     x.AreaCode,
@@ -126,7 +126,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
             
             builder
                 .HasIndex(x => x.CommPkgNo)
-                .HasName("IX_Tags_CommPkgNo_ASC")
+                .HasDatabaseName("IX_Tags_CommPkgNo_ASC")
                 .IncludeProperties(x => new
                 {
                     x.AreaCode,
@@ -147,7 +147,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 
             builder
                 .HasIndex(x => x.McPkgNo)
-                .HasName("IX_Tags_McPkgNo_ASC")
+                .HasDatabaseName("IX_Tags_McPkgNo_ASC")
                 .IncludeProperties(x => new
                 {
                     x.AreaCode,
@@ -168,7 +168,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 
             builder
                 .HasIndex(x => x.Calloff)
-                .HasName("IX_Tags_Calloff_ASC")
+                .HasDatabaseName("IX_Tags_Calloff_ASC")
                 .IncludeProperties(x => new
                 {
                     x.AreaCode,
@@ -189,7 +189,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 
             builder
                 .HasIndex(x => x.PurchaseOrderNo)
-                .HasName("IX_Tags_PurchaseOrderNo_ASC")
+                .HasDatabaseName("IX_Tags_PurchaseOrderNo_ASC")
                 .IncludeProperties(x => new
                 {
                     x.AreaCode,
@@ -210,7 +210,7 @@ namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
 
             builder
                 .HasIndex(x => x.StorageArea)
-                .HasName("IX_Tags_StorageArea_ASC")
+                .HasDatabaseName("IX_Tags_StorageArea_ASC")
                 .IncludeProperties(x => new
                 {
                     x.AreaCode,

@@ -7,8 +7,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class PreservationRecord : PlantEntityBase, ICreationAuditable
     {
-        public const int CommentLengthMax = 2048;
-
         protected PreservationRecord()
             : base(null)
         {
@@ -27,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
             ObjectGuid = Guid.NewGuid();
         }
 
+        // Todo Rename to PreservationRecordGuid
         public Guid ObjectGuid { get; private set; }
         public DateTime PreservedAtUtc { get; private set; }
         public int PreservedById { get; private set; }

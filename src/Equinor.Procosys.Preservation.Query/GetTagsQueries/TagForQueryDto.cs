@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
@@ -35,7 +33,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
         public byte[] RowVersion { get; set; }
         public Journey JourneyWithSteps { get; set; }
         public Step NextStep { get; set; }
-        public List<History> History { get; set; }
 
         public ActionStatus? GetActionStatus()
         {

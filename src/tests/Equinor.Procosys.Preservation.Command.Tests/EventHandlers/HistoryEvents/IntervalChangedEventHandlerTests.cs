@@ -67,7 +67,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.AreEqual(EventType.IntervalChanged, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
             Assert.AreEqual(expectedDescription, _historyAdded.Description);
-            Assert.IsNull(_historyAdded.PreservationRecordId);
+            Assert.IsFalse(_historyAdded.PreservationRecordGuid.HasValue);
+            Assert.IsFalse(_historyAdded.DueInWeeks.HasValue);
         }
     }
 }

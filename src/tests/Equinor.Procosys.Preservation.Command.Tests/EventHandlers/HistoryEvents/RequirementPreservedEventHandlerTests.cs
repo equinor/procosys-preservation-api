@@ -53,7 +53,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             // Act
             var objectGuid = Guid.NewGuid();
             var preservationRecordGuid = Guid.NewGuid();
-            _dut.Handle(new RequirementPreservedEvent(_plant, objectGuid, _requirementDefinitionId, 2, preservationRecordGuid), default);
+            var dueInWeeks = 2;
+            _dut.Handle(new RequirementPreservedEvent(_plant, objectGuid, _requirementDefinitionId, dueInWeeks, preservationRecordGuid), default);
 
             // Assert
             var expectedDescription = $"{EventType.RequirementPreserved.GetDescription()} - '{_requirementDefinition.Title}'";
@@ -61,12 +62,14 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(_plant, _historyAdded.Plant);
             Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
-            Assert.AreEqual(preservationRecordGuid, _historyAdded.PreservationRecordGuid);
             Assert.IsNotNull(_historyAdded.Description);
             Assert.AreEqual(EventType.RequirementPreserved, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
             Assert.AreEqual(expectedDescription, _historyAdded.Description);
-            Assert.IsNull(_historyAdded.PreservationRecordId);
+            Assert.IsTrue(_historyAdded.PreservationRecordGuid.HasValue);
+            Assert.IsTrue(_historyAdded.DueInWeeks.HasValue);
+            Assert.AreEqual(preservationRecordGuid, _historyAdded.PreservationRecordGuid.Value);
+            Assert.AreEqual(dueInWeeks, _historyAdded.DueInWeeks.Value);
         }
     }
 }

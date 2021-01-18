@@ -12,7 +12,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             int attachmentsCount,
             string commPkgNo,
             string disciplineCode,
-            List<ExportHistoryDto> history,
             bool isVoided,
             string journey,
             string mcPkgNo,
@@ -39,7 +38,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             CommPkgNo = commPkgNo;
             Description = tagDescription;
             DisciplineCode = disciplineCode;
-            History = history;
             IsVoided = isVoided;
             Journey = journey;
             McPkgNo = mcPkgNo;
@@ -56,6 +54,8 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             Status = status;
             Step = step;
             StorageArea = storageArea;
+
+            History = new List<ExportHistoryDto>();
         }
 
         public List<ExportActionDto> Actions { get; }
