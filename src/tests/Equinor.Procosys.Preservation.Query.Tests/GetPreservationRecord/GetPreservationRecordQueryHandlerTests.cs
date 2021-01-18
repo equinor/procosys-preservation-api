@@ -24,6 +24,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
         private RequirementType _requirementType;
         private RequirementDefinition _requirementDefinitionWithoutOneField;
         private Field _infoField;
+        private int _interval;
+        private string _comment = "comment";
 
         protected override void SetupNewDatabase(DbContextOptions<PreservationContext> dbContextOptions)
         {
@@ -34,9 +36,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 _requirementType = AddRequirementTypeWith1DefWithoutField(context, "RT", "RD", RequirementTypeIcon.Other, 1);
                 _requirementDefinitionWithoutOneField =
                     _requirementType.RequirementDefinitions.Single();
+                _interval = _requirementDefinitionWithoutOneField.DefaultIntervalWeeks * 2;
                 _infoField = AddInfoField(context, _requirementDefinitionWithoutOneField, "I");
 
-                var requirementWithoutField = new TagRequirement(TestPlant, 1, _requirementDefinitionWithoutOneField);
+                var requirementWithoutField = new TagRequirement(TestPlant, _interval, _requirementDefinitionWithoutOneField);
 
                 var tag = new Tag(TestPlant,
                     TagType.Standard, 
@@ -62,6 +65,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                     tag.Requirements.Single(r => r.Id == requirementWithoutField.Id).ActivePeriod;
 
                 Assert.IsNull(activePeriodForRequirementWithOutField.PreservationRecord);
+                requirementWithoutField.SetComment(_comment);
                 // Active Period gets a Preservation Record and the current Active Period be a new active Period when preserving
                 tag.Preserve(new Mock<Person>().Object, _requirementWithoutFieldId);
                 Assert.IsNotNull(activePeriodForRequirementWithOutField.PreservationRecord);
@@ -85,6 +89,8 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 var dto = result.Data;
                 Assert.AreEqual(dto.Id, _preservationRecordId);
                 Assert.IsNotNull(dto.RequirementType);
+                Assert.AreEqual(_interval, dto.IntervalWeeks);
+                Assert.AreEqual(_comment, dto.Comment);
                 Assert.AreEqual(_requirementType.Id, dto.RequirementType.Id);
                 Assert.AreEqual(_requirementType.Code, dto.RequirementType.Code);
                 Assert.AreEqual(_requirementType.Icon, dto.RequirementType.Icon);

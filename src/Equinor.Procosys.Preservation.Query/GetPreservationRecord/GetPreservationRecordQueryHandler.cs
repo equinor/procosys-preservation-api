@@ -104,7 +104,7 @@ namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
                 new RequirementDefinitionDetailDto(
                     requirementDto.RequirementDefinition.Id,
                     requirementDto.RequirementDefinition.Title), 
-                requirementDto.RequirementDefinition.DefaultIntervalWeeks,
+                tagRequirement.IntervalWeeks,
                 preservationPeriod.Comment, 
                 fields);
 
