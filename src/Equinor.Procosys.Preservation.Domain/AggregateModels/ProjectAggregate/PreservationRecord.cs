@@ -7,8 +7,6 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class PreservationRecord : PlantEntityBase, ICreationAuditable
     {
-        public const int CommentLengthMax = 2048;
-
         protected PreservationRecord()
             : base(null)
         {

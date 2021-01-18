@@ -24,7 +24,6 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         public string Description { get; }
         public DateTime CreatedAtUtc { get; }
         public int? DueInWeeks { get; }
-
         public string PreservationDetails { get; }
         public string PreservationComment { get; }
     }
