@@ -165,21 +165,52 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             preservationDetails.Append($"{field.Label}=");
 
             var currentValue = preservationPeriod.GetFieldValue(field.Id);
+            var value = string.Empty;
             switch (field.FieldType)
             {
                 case FieldType.Number:
-                    var number = (NumberValue) currentValue;
-                    preservationDetails.Append(number.Value.HasValue ? number.Value.ToString() : "N/A");
+                    value = GetNumberValueAsString(currentValue);
                     break;
                 case FieldType.CheckBox:
-                    var cb = currentValue is CheckBoxChecked;
-                    preservationDetails.Append(cb.ToString().ToLower());
+                    value = GetCheckBoxValueAsString(currentValue);
                     break;
                 case FieldType.Attachment:
-                    var av = (AttachmentValue) currentValue;
-                    preservationDetails.Append(av.FieldValueAttachment.FileName);
+                    value = GetAttachmentValueAsString(currentValue);
                     break;
             }
+            preservationDetails.Append(value);
+        }
+
+        private static string GetAttachmentValueAsString(FieldValue fieldValue)
+        {
+            if (!(fieldValue is AttachmentValue))
+            {
+                return "<NoData>";
+            }
+            var av = (AttachmentValue) fieldValue;
+            return av.FieldValueAttachment.FileName;
+
+        }
+
+        private static string GetCheckBoxValueAsString(FieldValue fieldValue)
+        {
+            if (!(fieldValue is CheckBoxChecked))
+            {
+                return "<NoData>";
+            }
+            // A CheckBox checked is true if fieldValue is of type CheckBoxChecked
+            return "true";
+        }
+
+        private static string GetNumberValueAsString(FieldValue fieldValue)
+        {
+            if (!(fieldValue is NumberValue))
+            {
+                return "<NoData>";
+            }
+            var number = (NumberValue) fieldValue;
+            return number.Value.HasValue ? number.Value.ToString() : "N/A";
+
         }
 
         private async Task<List<Tag>> GetTagsWithIncludesAsync(List<int> tagsIds, bool getHistory, CancellationToken cancellationToken)
