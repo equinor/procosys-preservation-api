@@ -20,6 +20,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
     public class GetTagsForExportQueryHandler : GetTagsQueryBase, IRequestHandler<GetTagsForExportQuery, Result<ExportDto>>
     {
+        private readonly string _noDataFoundMarker = "null";
         private readonly IReadOnlyContext _context;
         private readonly IPlantProvider _plantProvider;
         private readonly DateTime _utcNow;
@@ -119,7 +120,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             }
         }
 
-        private static (string, StringBuilder) GetPreservationDetailsFromPeriod(
+        private (string, StringBuilder) GetPreservationDetailsFromPeriod(
             Guid preservationRecordGuid,
             Tag singleTag,
             List<RequirementDefinition> reqDefWithFields)
@@ -148,18 +149,13 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             return (preservationPeriod.Comment, preservationDetails);
         }
 
-        private static void GetPreservationDetailsFromField(
+        private void GetPreservationDetailsFromField(
             StringBuilder preservationDetails, Field field,
             PreservationPeriod preservationPeriod)
         {
             if (!field.FieldType.NeedsUserInput())
             {
                 return;
-            }
-
-            if (preservationDetails.Length > 0)
-            {
-                preservationDetails.Append(". ");
             }
 
             preservationDetails.Append($"{field.Label}=");
@@ -178,39 +174,38 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
                     value = GetAttachmentValueAsString(currentValue);
                     break;
             }
-            preservationDetails.Append(value);
+            preservationDetails.Append($"{value}. ");
         }
 
-        private static string GetAttachmentValueAsString(FieldValue fieldValue)
+        private string GetAttachmentValueAsString(FieldValue fieldValue)
         {
             if (!(fieldValue is AttachmentValue))
             {
-                return "<NoData>";
+                return _noDataFoundMarker;
             }
             var av = (AttachmentValue) fieldValue;
             return av.FieldValueAttachment.FileName;
 
         }
 
-        private static string GetCheckBoxValueAsString(FieldValue fieldValue)
+        private string GetCheckBoxValueAsString(FieldValue fieldValue)
         {
             if (!(fieldValue is CheckBoxChecked))
             {
-                return "<NoData>";
+                return _noDataFoundMarker;
             }
             // A CheckBox checked is true if fieldValue is of type CheckBoxChecked
             return "true";
         }
 
-        private static string GetNumberValueAsString(FieldValue fieldValue)
+        private string GetNumberValueAsString(FieldValue fieldValue)
         {
             if (!(fieldValue is NumberValue))
             {
-                return "<NoData>";
+                return _noDataFoundMarker;
             }
             var number = (NumberValue) fieldValue;
             return number.Value.HasValue ? number.Value.ToString() : "N/A";
-
         }
 
         private async Task<List<Tag>> GetTagsWithIncludesAsync(List<int> tagsIds, bool getHistory, CancellationToken cancellationToken)
