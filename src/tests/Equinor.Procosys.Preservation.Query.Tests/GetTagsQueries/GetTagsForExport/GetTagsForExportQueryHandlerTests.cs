@@ -175,8 +175,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             var comment = "Comment";
             var labelForNumberFirst = "Label for Number - first";
             var labelForNumberSecond = "Label for Number - second";
-            var labelForCheckBox = "Label for CheckBox";
-            var labelForAtt = "Label for Attachment";
+            var labelForNumberThird = "Label for Number - third";
+            var labelForCheckBoxFirst = "Label for CheckBox - first";
+            var labelForCheckBoxSecond = "Label for CheckBox - second";
+            var labelForAttFirst = "Label for Attachment - first";
+            var labelForAttSecond = "Label for Attachment - second";
             var labelForInfo = "Label for Info";
             History history;
             var number = 1282.91;
@@ -190,13 +193,13 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 var reqDef = new RequirementDefinition(TestPlant, "Title", 2, RequirementUsage.ForAll, 1);
                 var numberField1 = new Field(TestPlant, labelForNumberFirst, FieldType.Number, 1, "U", false);
                 var numberField2 = new Field(TestPlant, labelForNumberSecond, FieldType.Number, 2, "U", false);
-                var cbField = new Field(TestPlant, labelForCheckBox, FieldType.CheckBox, 3);
-                var attField = new Field(TestPlant, labelForAtt, FieldType.Attachment, 4);
+                var cbField1 = new Field(TestPlant, labelForCheckBoxFirst, FieldType.CheckBox, 3);
+                var attField1 = new Field(TestPlant, labelForAttFirst, FieldType.Attachment, 4);
                 var infoField = new Field(TestPlant, labelForInfo, FieldType.Info, 5);
                 reqDef.AddField(numberField1);
                 reqDef.AddField(numberField2);
-                reqDef.AddField(cbField);
-                reqDef.AddField(attField);
+                reqDef.AddField(cbField1);
+                reqDef.AddField(attField1);
                 reqDef.AddField(infoField);
                 context.RequirementTypes.First().AddRequirementDefinition(reqDef);
                 context.SaveChangesAsync().Wait();
@@ -211,11 +214,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                     reqDef);
                 tagRequirement.RecordCheckBoxValues(new Dictionary<int, bool>
                     {
-                        {cbField.Id, true},
+                        {cbField1.Id, true},
                     },
                     reqDef);
                 tagRequirement.RecordAttachment(new FieldValueAttachment(TestPlant, Guid.NewGuid(), fileName), 
-                    attField.Id,
+                    attField1.Id,
                     reqDef);
                 tagRequirement.RecordNumberIsNaValues(new List<int>{numberField2.Id}, reqDef);
                 var activePeriodBeforePreservation = tagRequirement.ActivePeriod;
@@ -231,6 +234,16 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                     PreservationRecordGuid = activePeriodBeforePreservation.PreservationRecord.ObjectGuid
                 };
                 context.History.Add(history);
+                context.SaveChangesAsync().Wait();
+
+                // also add other fields to requirement AFTER preservation done.
+                // This is possible in real life, resulting that old preservation periods will exist without values for those fields
+                var numberField3 = new Field(TestPlant, labelForNumberThird, FieldType.Number, 11, "U", false);
+                var cbField2 = new Field(TestPlant, labelForCheckBoxSecond, FieldType.CheckBox, 12);
+                var attField2 = new Field(TestPlant, labelForAttSecond, FieldType.Attachment, 13);
+                reqDef.AddField(numberField3);
+                reqDef.AddField(cbField2);
+                reqDef.AddField(attField2);
                 context.SaveChangesAsync().Wait();
             }
             
@@ -250,9 +263,12 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(comment, historyDto.PreservationComment);
                 Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForNumberFirst}={number}."));
                 Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForNumberSecond}=N/A."));
-                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForCheckBox}=true."));
-                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForAtt}={fileName}"));
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForCheckBoxFirst}=true."));
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForAttFirst}={fileName}."));
                 Assert.IsFalse(historyDto.PreservationDetails.Contains(labelForInfo));
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForNumberThird}=null."));
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForCheckBoxSecond}=null."));
+                Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForAttSecond}=null."));
             }
         }
 
