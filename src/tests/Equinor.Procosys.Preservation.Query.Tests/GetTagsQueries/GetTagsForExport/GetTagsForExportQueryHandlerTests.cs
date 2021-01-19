@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Infrastructure;
@@ -184,8 +185,11 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
             History history;
             var number = 1282.91;
             var fileName = "filename.txt";
+            Person currentUser;
+
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
+                currentUser = context.Persons.Single(p => p.Oid == _currentUserOid);
                 var tag = context.Tags
                     .Include(t => t.Requirements)
                     .ThenInclude(r => r.PreservationPeriods)
@@ -260,6 +264,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                 Assert.AreEqual(history.Description, historyDto.Description);
                 Assert.AreEqual(history.DueInWeeks, historyDto.DueInWeeks);
                 Assert.AreEqual(history.CreatedAtUtc, historyDto.CreatedAtUtc);
+                Assert.AreEqual($"{currentUser.FirstName} {currentUser.LastName}", historyDto.CreatedBy);
                 Assert.AreEqual(comment, historyDto.PreservationComment);
                 Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForNumberFirst}={number}."));
                 Assert.IsTrue(historyDto.PreservationDetails.Contains($"{labelForNumberSecond}=N/A."));

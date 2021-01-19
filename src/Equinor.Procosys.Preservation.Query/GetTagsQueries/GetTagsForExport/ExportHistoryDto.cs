@@ -8,6 +8,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             int id,
             string description,
             DateTime createdAtUtc,
+            string createdBy,
             int? dueInWeeks,
             string preservationDetails,
             string preservationComment)
@@ -15,6 +16,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
             Id = id;
             Description = description;
             CreatedAtUtc = createdAtUtc;
+            CreatedBy = createdBy;
             DueInWeeks = dueInWeeks;
             PreservationDetails = preservationDetails;
             PreservationComment = preservationComment;
@@ -23,6 +25,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         public int Id { get; }
         public string Description { get; }
         public DateTime CreatedAtUtc { get; }
+        public string CreatedBy { get; }
         public int? DueInWeeks { get; }
         public string PreservationDetails { get; }
         public string PreservationComment { get; }

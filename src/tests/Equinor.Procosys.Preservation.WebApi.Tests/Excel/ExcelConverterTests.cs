@@ -124,9 +124,9 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
                 "tagNo2"
             );
             _exportTagDtoWithTwoActionsAndTwoHistoryItems.History.Add(
-                new ExportHistoryDto(1, "H1", new DateTime(2021, 2, 3, 4, 5, 6, DateTimeKind.Utc), null, null, null));
+                new ExportHistoryDto(1, "H1", new DateTime(2021, 2, 3, 4, 5, 6, DateTimeKind.Utc), "Espen Askeladd", null, null, null));
             _exportTagDtoWithTwoActionsAndTwoHistoryItems.History.Add(
-                new ExportHistoryDto(2, "H2", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), 2, "Details2", "Comment2"));
+                new ExportHistoryDto(2, "H2", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), "Espen Askeladd", 2, "Details2", "Comment2"));
 
             var actionDtos2 = new List<ExportActionDto>
             {
@@ -166,7 +166,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
                 "tagNo3"
             );
             _exportTagDtoWithOneActionAndOneHistoryItems.History.Add(
-                new ExportHistoryDto(3, "H3", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), 2, "Details3", "Comment3"));
+                new ExportHistoryDto(3, "H3", new DateTime(2021, 4, 5, 14, 15, 16, DateTimeKind.Utc), "Espen Askeladd", 2, "Details3", "Comment3"));
         }
 
         [TestMethod]
@@ -434,6 +434,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
                 Assert.AreEqual(expectedTagData.TagNo, row.Cell(ExcelConverter.HistorySheetColumns.TagNo).Value);
                 Assert.AreEqual(historyDto.Description, row.Cell(ExcelConverter.HistorySheetColumns.Description).Value);
                 AssertDateTime(historyDto.CreatedAtUtc, row.Cell(ExcelConverter.HistorySheetColumns.Date));
+                Assert.AreEqual(historyDto.CreatedBy, row.Cell(ExcelConverter.HistorySheetColumns.User).Value);
                 AssertInt(historyDto.DueInWeeks, row.Cell(ExcelConverter.HistorySheetColumns.DueInWeeks).Value);
             }
         }
