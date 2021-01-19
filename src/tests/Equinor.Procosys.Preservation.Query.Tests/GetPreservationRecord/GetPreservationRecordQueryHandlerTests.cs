@@ -36,8 +36,10 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetPreservationRecord
                 _requirementType = AddRequirementTypeWith1DefWithoutField(context, "RT", "RD", RequirementTypeIcon.Other, 1);
                 _requirementDefinitionWithoutOneField =
                     _requirementType.RequirementDefinitions.Single();
-                _interval = _requirementDefinitionWithoutOneField.DefaultIntervalWeeks * 2;
                 _infoField = AddInfoField(context, _requirementDefinitionWithoutOneField, "I");
+
+                // be sure to use different intervals in the TagRequirement and RequirementDefinition to be able to Assert on correct value for dto.IntervalWeeks
+                _interval = _requirementDefinitionWithoutOneField.DefaultIntervalWeeks * 2;
 
                 var requirementWithoutField = new TagRequirement(TestPlant, _interval, _requirementDefinitionWithoutOneField);
 
