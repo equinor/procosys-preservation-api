@@ -8,6 +8,7 @@ using Equinor.Procosys.Preservation.Domain;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
@@ -89,32 +90,37 @@ namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
         {
             var history = await (from h in _context.QuerySet<History>()
                     join tag in _context.QuerySet<Tag>() on h.ObjectGuid equals tag.ObjectGuid
+                    join createdBy in _context.QuerySet<Person>() on h.CreatedById equals createdBy.Id
                     where tag.Id == singleTagId
-                    select h)
-                .OrderByDescending(h => h.CreatedAtUtc)
+                    select new
+                    {
+                        History = h,
+                        CreatedBy = createdBy
+                    })
                 .ToListAsync(cancellationToken);
 
             var singleExportTagDto = exportTagDtos.Single();
             var singleTag = tagsWithIncludes.Single();
 
-            foreach (var h in history)
+            foreach (var dto in history.OrderByDescending(x => x.History.CreatedAtUtc))
             {
                 var preservationComment = string.Empty;
                 var preservationDetails = new StringBuilder();
 
-                if (h.PreservationRecordGuid.HasValue)
+                if (dto.History.PreservationRecordGuid.HasValue)
                 {
                     (preservationComment, preservationDetails) = GetPreservationDetailsFromPeriod(
-                        h.PreservationRecordGuid.Value,
+                        dto.History.PreservationRecordGuid.Value,
                         singleTag,
                         reqDefWithFields);
                 }
 
                 singleExportTagDto.History.Add(new ExportHistoryDto(
-                    h.Id,
-                    h.Description,
-                    h.CreatedAtUtc,
-                    h.DueInWeeks,
+                    dto.History.Id,
+                    dto.History.Description,
+                    dto.History.CreatedAtUtc,
+                    $"{dto.CreatedBy.FirstName} {dto.CreatedBy.LastName}",
+                    dto.History.DueInWeeks,
                     preservationDetails.ToString(),
                     preservationComment));
             }
