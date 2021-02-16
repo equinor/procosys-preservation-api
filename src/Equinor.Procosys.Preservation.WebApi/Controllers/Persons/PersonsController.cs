@@ -21,7 +21,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
 
         public PersonsController(IMediator mediator) => _mediator = mediator;
 
-        [Authorize(Roles = Permissions.PRESERVATION_CREATE)]
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpPost("/SavedFilter")]
         public async Task<ActionResult<int>> CreateSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -45,7 +45,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_DELETE)]
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpDelete("/SavedFilters/{id}")]
         public async Task<ActionResult> DeleteSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
@@ -58,7 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
             return this.FromResult(result);
         }
 
-        [Authorize(Roles = Permissions.PRESERVATION_WRITE)]
+        [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpPut("/SavedFilters/{id}")]
         public async Task<ActionResult> UpdateSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
