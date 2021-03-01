@@ -8,6 +8,7 @@ using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using ClosedXML.Excel;
+using Equinor.Procosys.Preservation.Domain.Events;
 
 namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 {
@@ -593,6 +594,38 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
 
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<List<HistoryDto>>(jsonString);
+        }
+
+        public static async Task<IList<IdAndRowVersion>> RescheduleAsync(
+            UserType userType, string plant,
+            IEnumerable<IdAndRowVersion> tagDtos,
+            int weeks,
+            RescheduledDirection direction,
+            string comment,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                Tags = tagDtos,
+                weeks,
+                direction,
+                comment
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/Reschedule", content);
+            
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<IdAndRowVersion>>(jsonString);
         }
     }
 }
