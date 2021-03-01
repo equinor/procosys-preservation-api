@@ -11,6 +11,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
 {
     public class RescheduleCommandValidator : AbstractValidator<RescheduleCommand>
     {
+        public static int MaxRescheduleWeeks = 52;
+
         public RescheduleCommandValidator(
             IProjectValidator projectValidator,
             ITagValidator tagValidator,
@@ -29,8 +31,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.Reschedule
                 .WithMessage("Project is closed!");
             
             RuleFor(command => command.Weeks)
-                .InclusiveBetween(1,4)
-                .WithMessage("Rescheduling must be in range of 1 to 4 week(s)!");
+                .InclusiveBetween(1, MaxRescheduleWeeks)
+                .WithMessage($"Rescheduling must be in range of 1 to {MaxRescheduleWeeks} week(s)!");
 
             When(command => command.Tags.Any() && BeUniqueTags(command.Tags), () =>
             {
