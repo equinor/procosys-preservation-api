@@ -37,17 +37,15 @@ namespace Equinor.Procosys.Preservation.WebApi.Authentication
                         .Build();
 
                     var tokenResult = await app
-                        .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken.ToString()))
+                        .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken))
                         .ExecuteAsync();
 
                     _onBehalfOfUserToken = tokenResult.AccessToken;
                 }
                 return _onBehalfOfUserToken;
             }
-            else
-            {
-                return _requestToken;
-            }
+
+            return _requestToken;
         }
 
         public async ValueTask<string> GetBearerTokenForApplicationAsync()
