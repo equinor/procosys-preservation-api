@@ -70,19 +70,19 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Reschedule
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Rescheduling must be in range of 1 to 4 week(s)!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Rescheduling must be in range of 1 to {RescheduleCommandValidator.MaxRescheduleWeeks} week(s)!"));
         }
         
         [TestMethod]
         public void Validate_ShouldFail_WhenWeeksToHigh()
         {
-            var command = new RescheduleCommand(_tagIdsWithRowVersion, 5, RescheduledDirection.Later, "Comment");
+            var command = new RescheduleCommand(_tagIdsWithRowVersion, RescheduleCommandValidator.MaxRescheduleWeeks + 1, RescheduledDirection.Later, "Comment");
             
             var result = _dut.Validate(command);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Rescheduling must be in range of 1 to 4 week(s)!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Rescheduling must be in range of 1 to {RescheduleCommandValidator.MaxRescheduleWeeks} week(s)!"));
         }
         
         [TestMethod]

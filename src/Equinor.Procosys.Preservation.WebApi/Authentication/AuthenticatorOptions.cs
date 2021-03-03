@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Equinor.Procosys.Preservation.WebApi.Authentication
+﻿namespace Equinor.Procosys.Preservation.WebApi.Authentication
 {
     public class AuthenticatorOptions
     {

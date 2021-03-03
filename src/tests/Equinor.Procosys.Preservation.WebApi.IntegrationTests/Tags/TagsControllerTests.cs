@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -679,6 +680,63 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             historyDto = historyDtos.Last();
             Assert.IsTrue(historyDto.Description.Contains("created"));
             AssertUser(plannerProfile, historyDto.CreatedBy);
+        }
+
+        [TestMethod]
+        public async Task Reschedule_AsPlanner_ShouldRescheduleTags()
+        {
+            // Arrange 
+            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+            var stepId = JourneyWithTags.Steps.First().Id;
+
+            var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                AreaTagType.PreArea,
+                KnownDisciplineCode,
+                KnownAreaCode,
+                Guid.NewGuid().ToString(),
+                new List<TagRequirementDto>
+                {
+                    new TagRequirementDto
+                    {
+                        IntervalWeeks = 4,
+                        RequirementDefinitionId = newReqDefId
+                    }
+                },
+                stepId,
+                "Desc",
+                null,
+                null);
+            await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
+
+            var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess);
+            var tagToReschedule = tagsResult.Tags.Single(t => t.Id == newTagId);
+            
+            // Act
+            var currentRowVersion = tagToReschedule.RowVersion;
+            var idAndRowVersions = await TagsControllerTestsHelper.RescheduleAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                new List<IdAndRowVersion>
+                {
+                    new IdAndRowVersion
+                    {
+                        Id = tagToReschedule.Id,
+                        RowVersion = currentRowVersion
+                    }
+                },
+                52,
+                RescheduledDirection.Later,
+                "Test");
+
+            // Assert
+            Assert.IsNotNull(idAndRowVersions);
+            Assert.AreEqual(1, idAndRowVersions.Count);
+
+            var requirementDetailDto = idAndRowVersions.Single();
+            AssertRowVersionChange(currentRowVersion, requirementDetailDto.RowVersion);
         }
 
         private void AssertUser(TestProfile profile, PersonDto personDto)
