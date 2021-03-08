@@ -1770,6 +1770,26 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
                         
         [TestMethod]
+        public void UpdateRequirement_UnVoid_ShouldChangeNextDueTime_WhenPreservationStarted()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            dut.StartPreservation();
+            
+            var twoWeekRequirement = dut.OrderedRequirements().First();
+            var threeWeekRequirement = dut.OrderedRequirements().Last();
+            Assert.AreEqual(twoWeekRequirement.NextDueTimeUtc, dut.NextDueTimeUtc);
+            dut.UpdateRequirement(twoWeekRequirement.Id, true, twoWeekRequirement.IntervalWeeks, "AAAAAAAAABA=");
+            Assert.AreEqual(threeWeekRequirement.NextDueTimeUtc, dut.NextDueTimeUtc);
+        
+            // Act
+            dut.UpdateRequirement(twoWeekRequirement.Id, false, twoWeekRequirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            // Assert
+            Assert.AreEqual(twoWeekRequirement.NextDueTimeUtc, dut.NextDueTimeUtc);
+        }
+                        
+        [TestMethod]
         public void UpdateRequirement_Void_ShouldKeepDueTimeNull_BeforePreservationStarted()
         {
             // Arrange
