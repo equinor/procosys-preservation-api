@@ -391,5 +391,71 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(Description, _areaTagWithOneRequirement.Description);
         }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldBeAbleToDeleteRequirement_WhenRequirementIsUpdatedAsVoided()
+        {
+            // Arrange
+            var tagRequirement1 = _standardTagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId1);
+
+            Assert.AreEqual(2, _standardTagWithTwoRequirements.Requirements.Count);
+            
+            var updatedRequirements = new List<UpdateRequirementForCommand>
+            {
+                new UpdateRequirementForCommand(tagRequirement1.Id, ThreeWeekInterval, true, RowVersion)
+            };
+
+            var deleteRequirements = new List<DeleteRequirementForCommand>
+            {
+                new DeleteRequirementForCommand(tagRequirement1.Id, RowVersion)
+            };
+
+            var command = new UpdateTagStepAndRequirementsCommand(
+                StandardTagId2,
+                null,
+                StepId2,
+                updatedRequirements,
+                null,
+                deleteRequirements, 
+                RowVersion);
+
+            // Act
+            var result = await _dut.Handle(command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(1, _standardTagWithTwoRequirements.Requirements.Count);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldBeAbleToDeleteRequirement_WhenRequirementIsAlreadyVoided()
+        {
+            // Arrange
+            var tagRequirement1 = _standardTagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId1);
+            tagRequirement1.IsVoided = true;
+
+            Assert.AreEqual(2, _standardTagWithTwoRequirements.Requirements.Count);
+
+            var deleteRequirements = new List<DeleteRequirementForCommand>
+            {
+                new DeleteRequirementForCommand(tagRequirement1.Id, RowVersion)
+            };
+
+            var command = new UpdateTagStepAndRequirementsCommand(
+                StandardTagId2,
+                null,
+                StepId2,
+                null,
+                null,
+                deleteRequirements, 
+                RowVersion);
+
+            // Act
+            var result = await _dut.Handle(command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(1, _standardTagWithTwoRequirements.Requirements.Count);
+        }
     }
 }
