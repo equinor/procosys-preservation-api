@@ -80,6 +80,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new RequirementForCommand(_reqDefForAll1Id, 1), 
                     new RequirementForCommand(_reqDefForAll2Id, 1)
                 },
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
         }
 
@@ -117,6 +118,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 _stepId,
                 new List<UpdateRequirementForCommand>(),
                 new List<RequirementForCommand>(),
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
 
             // Act
@@ -138,6 +140,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 _stepId,
                 new List<UpdateRequirementForCommand>(),
                 new List<RequirementForCommand>(),
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
 
             // Act
@@ -164,6 +167,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new UpdateRequirementForCommand(_tagReqForAll2Id, 1, true, RowVersion)
                 },
                 new List<RequirementForCommand> {new RequirementForCommand(_reqDef3Id, 1)},
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
 
             // Act
@@ -191,6 +195,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new UpdateRequirementForCommand(_tagReqForAll2Id, 1, true, RowVersion)
                 },
                 new List<RequirementForCommand> {new RequirementForCommand(_reqDef3Id, 1)},
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
 
             // Act
@@ -314,6 +319,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new RequirementForCommand(_reqDefForAll1Id, 1),
                     new RequirementForCommand(_reqDefForAll2Id, 1)
                 },
+                new List<DeleteRequirementForCommand>(), 
                 invalidRowVersion);
             _rowVersionValidatorMock.Setup(r => r.IsValid(invalidRowVersion)).Returns(false);
 
@@ -338,6 +344,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new RequirementForCommand(_reqDefForAll1Id, 1),
                     new RequirementForCommand(_reqDefForAll2Id, 1)
                 },
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
 
             var result = _dut.Validate(command);
@@ -361,6 +368,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new RequirementForCommand(_reqDefForAll1Id, 1),
                     new RequirementForCommand(_reqDefForAll2Id, 1)
                 },
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
 
             var result = _dut.Validate(command);
@@ -381,6 +389,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new RequirementForCommand(_reqDefForAll1Id, 1),
                     new RequirementForCommand(_reqDefForAll2Id, 1)
                 },
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
 
             var result = _dut.Validate(command);
@@ -405,6 +414,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new RequirementForCommand(_reqDefForAll1Id, 1),
                     new RequirementForCommand(_reqDefForAll2Id, 1)
                 },
+                new List<DeleteRequirementForCommand>(), 
                 RowVersion);
 
             var result = _dut.Validate(command);

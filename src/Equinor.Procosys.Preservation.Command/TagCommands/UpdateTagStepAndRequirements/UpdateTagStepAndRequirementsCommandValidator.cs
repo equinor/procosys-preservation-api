@@ -35,7 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                     .MustAsync((_, command, token) =>
                         RequirementUsageIsForAllJourneysAsync(
                             command.TagId,
-                            command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
+                            command.UpdateRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                             command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
                     .WithMessage(command => "Requirements must include requirements to be used both for supplier and other than suppliers!");
@@ -53,7 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                     .MustAsync((_, command, token) =>
                         RequirementUsageIsForJourneysWithoutSupplierAsync(
                             command.TagId,
-                            command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
+                            command.UpdateRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                             command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
                     .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!");
@@ -84,7 +84,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version={command.RowVersion}");
 
-            RuleForEach(command => command.UpdatedRequirements)
+            RuleForEach(command => command.UpdateRequirements)
                 .MustAsync((command, req, __, token) => BeAnExistingTagRequirementAsync(command.TagId, req.TagRequirementId, token))
                 .WithMessage((_, req) => $"Requirement doesn't exist! Requirement={req.TagRequirementId}");
             
@@ -96,7 +96,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 .WithMessage((_, req) =>
                     $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
 
-            async Task<bool> RequirementsMustBeUniqueAfterUpdateAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token)
+            async Task<bool> RequirementsMustBeUniqueAfterUpdateAsync(
+                int tagId,
+                List<int> requirementDefinitionIdsToBeAdded,
+                CancellationToken token)
                 => requirementDefinitionIdsToBeAdded.Count == 0 || 
                    await tagValidator.AllRequirementsWillBeUniqueAsync(tagId, requirementDefinitionIdsToBeAdded, token);
             

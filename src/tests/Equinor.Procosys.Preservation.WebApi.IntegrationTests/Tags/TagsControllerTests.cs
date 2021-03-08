@@ -147,9 +147,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var oldRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner,
                 TestFactory.PlantWithAccess, tagIdUnderTest);
             var requirementToUpdate = oldRequirements.First();
+            var updatedIntervalWeeks = requirementToUpdate.IntervalWeeks + 1;
 
             // Act
-            var updatedIntervalWeeks = requirementToUpdate.IntervalWeeks + 1;
             await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 tag.Id,
@@ -176,13 +176,72 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 });
 
             // Assert
-            var newRequirements =  await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
+            var newRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
             Assert.AreEqual(oldRequirements.Count+1, newRequirements.Count);
             var newRequirement = newRequirements.SingleOrDefault(r => r.RequirementDefinition.Id == newReqDefId);
             Assert.IsNotNull(newRequirement);
             var updatedRequirement = newRequirements.SingleOrDefault(r => r.RequirementDefinition.Id == requirementToUpdate.Id);
             Assert.IsNotNull(updatedRequirement);
             Assert.AreEqual(updatedIntervalWeeks, updatedRequirement.IntervalWeeks);
+        }
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldDeleteRequirement()
+        {
+            // Arrange
+            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
+            var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                tag.Id,
+                tag.Description,
+                tag.Step.Id,
+                tag.RowVersion,
+                new List<TagRequirementDto>
+                {
+                    new TagRequirementDto
+                    {
+                        IntervalWeeks = 4,
+                        RequirementDefinitionId = newReqDefId
+                    }
+                });
+            var oldRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner,
+                TestFactory.PlantWithAccess, tagIdUnderTest);
+            Assert.IsTrue(oldRequirements.Count > 1);
+            var requirementToDelete = oldRequirements.First();
+
+            // Act
+            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                tag.Id,
+                tag.Description,
+                tag.Step.Id,
+                tag.RowVersion,
+                updatedRequirements: new List<UpdatedTagRequirementDto>
+                {
+                    new UpdatedTagRequirementDto
+                    {
+                        IntervalWeeks = requirementToDelete.IntervalWeeks,
+                        IsVoided = true,
+                        RequirementId = requirementToDelete.Id,
+                        RowVersion = requirementToDelete.RowVersion
+                    }
+                },
+                deletedRequirement: new List<DeletedTagRequirementDto>
+                {
+                    new DeletedTagRequirementDto
+                    {
+                        RequirementId = requirementToDelete.Id,
+                        RowVersion = requirementToDelete.RowVersion
+                    }
+                });
+
+            // Assert
+            var newRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
+            Assert.AreEqual(oldRequirements.Count-1, newRequirements.Count);
         }
 
         [TestMethod]

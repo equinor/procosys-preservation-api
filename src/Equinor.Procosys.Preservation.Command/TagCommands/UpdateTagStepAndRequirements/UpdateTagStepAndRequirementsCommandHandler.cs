@@ -43,9 +43,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             
             tag.UpdateStep(step);
 
-            foreach (var update in request.UpdatedRequirements)
+            foreach (var update in request.UpdateRequirements)
             {
                 tag.UpdateRequirement(update.TagRequirementId, update.IsVoided, update.IntervalWeeks, update.RowVersion);
+            }
+
+            foreach (var delete in request.DeleteRequirements)
+            {
+                tag.RemoveRequirement(delete.TagRequirementId, delete.RowVersion);
             }
 
             foreach (var newRequirement in request.NewRequirements)

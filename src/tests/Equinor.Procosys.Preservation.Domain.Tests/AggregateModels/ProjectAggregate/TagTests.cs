@@ -314,6 +314,65 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         #endregion
 
+        #region DeleteRequirement
+
+        [TestMethod]
+        public void DeleteRequirement_ShouldDeleteRequirement()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            Assert.AreEqual(2, dut.Requirements.Count);
+            var requirement = dut.Requirements.Last();
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            // Act
+            dut.RemoveRequirement(requirement.Id, "AAAAAAAAABA=");
+
+            // Assert
+            Assert.AreEqual(1, dut.Requirements.Count);
+        }
+
+        [TestMethod]
+        public void DeleteRequirement_ShouldAddRequirementDeletedEvent()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.Last();
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            // Act
+            dut.RemoveRequirement(requirement.Id, "AAAAAAAAABA=");
+
+            Assert.AreEqual(3, dut.DomainEvents.Count);
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementDeletedEvent));
+        }
+
+        [TestMethod]
+        public void DeleteRequirement_ShouldThrowException_WhenPreservationStarted()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            dut.StartPreservation();
+            var requirement = dut.Requirements.Last();
+            dut.UpdateRequirement(requirement.Id, true, requirement.IntervalWeeks, "AAAAAAAAABA=");
+
+            // Act and Assert
+            Assert.ThrowsException<Exception>(() => dut.RemoveRequirement(requirement.Id, "AAAAAAAAABA="));
+        }
+
+        [TestMethod]
+        public void DeleteRequirement_ShouldThrowException_WhenNotVoided()
+        {
+            // Arrange
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
+            var requirement = dut.Requirements.Last();
+
+            // Act and Assert
+            Assert.ThrowsException<Exception>(() => dut.RemoveRequirement(requirement.Id, "AAAAAAAAABA="));
+        }
+
+        #endregion
+
         #region StartPreservation
 
         [TestMethod]
@@ -588,7 +647,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
         
         [TestMethod]
-        public void Preserve_ShouldChange_NextDueTime()
+        public void Preserve_ShouldChangeNextDueTime()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation();
@@ -646,7 +705,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void PreserveRequirement_ShouldChange_NextDueTime()
+        public void PreserveRequirement_ShouldChangeNextDueTime()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
@@ -785,7 +844,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void BulkPreserve_ShouldChange_NextDueTime()
+        public void BulkPreserve_ShouldChangeNextDueTime()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _twoReqs_FirstNotNeedInputTwoWeekInterval_SecondNotNeedInputThreeWeekInterval);
             dut.StartPreservation();
