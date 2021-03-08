@@ -194,6 +194,26 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
         }
 
         [TestMethod]
+        public async Task Handler_ShouldReturnTagRequirements_NotInUse_BeforePreservationStarted()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
+                var dut = new GetTagRequirementsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                foreach (var requirement in result.Data)
+                {
+                    Assert.IsFalse(requirement.IsInUse);
+                }
+            }
+        }
+
+        [TestMethod]
         public async Task Handler_ShouldReturnTagRequirements_Voided()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -266,6 +286,33 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
                 }
             
                 AssertRequirements(result.Data);
+            }
+        }
+        
+        [TestMethod]
+        public async Task Handler_ShouldReturnTagRequirements_IsInUse_AfterPreservationStarted()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single();
+                tag.StartPreservation();
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagRequirementsQuery(_tagId, false, false);
+                var dut = new GetTagRequirementsQueryHandler(context);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+
+                foreach (var requirement in result.Data)
+                {
+                    Assert.IsTrue(requirement.IsInUse);
+                }
             }
         }
 

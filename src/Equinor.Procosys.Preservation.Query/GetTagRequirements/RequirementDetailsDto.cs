@@ -17,6 +17,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             List<FieldDetailsDto> fields,
             string comment,
             bool isVoided,
+            bool isInUse,
             string rowVersion)
         {
             Id = id;
@@ -30,6 +31,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
             NextDueAsYearAndWeek = NextDueTimeUtc?.FormatAsYearAndWeekString();
             Comment = comment;
             IsVoided = isVoided;
+            IsInUse = isInUse;
             RowVersion = rowVersion;
         }
 
@@ -47,6 +49,7 @@ namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
         public List<FieldDetailsDto> Fields { get; }
         public string Comment { get; }
         public bool IsVoided { get;  }
+        public bool IsInUse { get; set; }
         public string RowVersion { get; }
     }
 }
