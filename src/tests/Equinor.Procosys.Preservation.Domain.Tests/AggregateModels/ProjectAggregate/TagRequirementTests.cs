@@ -125,6 +125,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             Assert.AreEqual(reqDefId, dut.RequirementDefinitionId);
             Assert.AreEqual(usage, dut.Usage);
             Assert.IsFalse(dut.IsVoided);
+            Assert.IsFalse(dut.IsInUse);
             Assert.IsFalse(dut.ReadyToBePreserved);
             _timeProvider.ElapseWeeks(TwoWeeksInterval);
             Assert.IsFalse(dut.IsReadyAndDueToBePreserved());
@@ -251,6 +252,16 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.StartPreservation();
 
             Assert.AreEqual(PreservationPeriodStatus.ReadyToBePreserved, dut.PreservationPeriods.First().Status);
+        }
+
+        [TestMethod]
+        public void StartPreservation_ShouldSetInUse()
+        {
+            var dut = new TagRequirement(TestPlant, TwoWeeksInterval, _reqDefWithInfoFieldMock.Object);
+
+            dut.StartPreservation();
+
+            Assert.IsTrue(dut.IsInUse);
         }
 
         #endregion
