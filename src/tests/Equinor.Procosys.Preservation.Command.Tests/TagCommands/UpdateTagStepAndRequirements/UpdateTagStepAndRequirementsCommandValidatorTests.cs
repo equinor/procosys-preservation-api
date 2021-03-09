@@ -368,7 +368,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_WhenRequirementToDelete_ExistsAsVoided()
+        public void Validate_ShouldBeValid_WhenRequirementToDelete_IsVoidedInAdvance()
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_reqDefForAll2Id}, default)).Returns(Task.FromResult(true));
@@ -385,6 +385,43 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 null,
                 _stepId,
                 null,
+                new List<RequirementForCommand>
+                {
+                    new RequirementForCommand(_reqDefForAll2Id, 1)
+                },
+                new List<DeleteRequirementForCommand>
+                {
+                    new DeleteRequirementForCommand(_tagReqForAll1Id, RowVersion)
+                },
+                RowVersion);
+
+            // Act
+            var result = _dut.Validate(command);
+
+            // Assert
+            Assert.IsTrue(result.IsValid);
+        }
+
+        [TestMethod]
+        public void Validate_ShouldBeValid_WhenRequirementToDelete_WillBeVoidedInSameCommand()
+        {
+            // Arrange
+            _tagValidatorMock.Setup(t => t.AllRequirementsWillBeUniqueAsync(_tagId, new List<int>{_reqDefForAll2Id}, default)).Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(t => t.RequirementUsageWillCoverBothForSupplierAndOtherAsync(
+                    _tagId,
+                    new List<int>(),
+                    new List<int> {_tagReqForAll1Id},
+                    new List<int> {_reqDefForAll2Id},
+                    default))
+                .Returns(Task.FromResult(true));
+            var command = new UpdateTagStepAndRequirementsCommand(
+                _tagId,
+                null,
+                _stepId,
+                new List<UpdateRequirementForCommand>
+                {
+                    new UpdateRequirementForCommand(_tagReqForAll1Id, 1, true, RowVersion)
+                }, 
                 new List<RequirementForCommand>
                 {
                     new RequirementForCommand(_reqDefForAll2Id, 1)
