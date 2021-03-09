@@ -1393,5 +1393,48 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
                 Assert.IsTrue(result);
             }
         }
+
+        [TestMethod]
+        public async Task IsRequirementVoidedAsync_WhenRequirementIsVoided_ShouldReturnTrue()
+        {
+            int reqId;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _poAreaTagStartedId);
+                var req = tag.Requirements.First();
+                req.IsVoided = true;
+                reqId = req.Id;
+                context.SaveChangesAsync().Wait();
+            }
+
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsRequirementVoidedAsync(_poAreaTagStartedId, reqId, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsRequirementVoidedAsync_UnknownTagId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsRequirementVoidedAsync(9999, _tagRequirementForPoAreaTag.Id, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task IsRequirementVoidedAsync_UnknownRequirementId_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var dut = new TagValidator(context, null);
+                var result = await dut.IsRequirementVoidedAsync(_poAreaTagStartedId, 9999, default);
+                Assert.IsFalse(result);
+            }
+        }
     }
 }

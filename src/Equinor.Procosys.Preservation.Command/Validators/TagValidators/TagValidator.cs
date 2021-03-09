@@ -303,6 +303,19 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag != null && tag.Description == description;
         }
 
+        public async Task<bool> IsRequirementVoidedAsync(int tagId, int requirementId, CancellationToken token)
+        {
+            var tag = await GetTagWithRequirements(tagId, token);
+            if (tag == null)
+            {
+                return false;
+            }
+
+            var requirement = tag.Requirements.SingleOrDefault(r => r.Id == requirementId);
+
+            return requirement != null && requirement.IsVoided;
+        }
+
         public async Task<bool> IsInUseAsync(long tagId, CancellationToken token)
         {
             var inUse = await (from t in _context.QuerySet<Tag>()
