@@ -140,7 +140,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             string rowVersion,
             List<TagRequirementDto> newRequirements = null,
             List<UpdatedTagRequirementDto> updatedRequirements = null,
-            List<DeletedTagRequirementDto> deletedRequirement = null,
+            List<DeletedTagRequirementDto> deletedRequirements = null,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -151,7 +151,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 rowVersion,
                 newRequirements,
                 updatedRequirements,
-                deletedRequirement
+                deletedRequirements
             };
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);

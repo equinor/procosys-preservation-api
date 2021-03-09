@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.Procosys.Preservation.Domain.Events;
 using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -56,7 +58,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task DuplicateAreaTag_AsPlanner_ShouldReturnATagReadyToBeDuplicated()
+        public async Task DuplicateAreaTag_AsPlanner_ShouldDuplicateTag()
         {
             // Arrange
             var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
@@ -79,7 +81,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                     null);
 
             // Assert
-            await AssertNewTagCreated(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
+            await AssertNewTagCreatedAsync(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
+            await AssertInHistoryAsLatestEventAsync(id, UserType.Planner, EventType.TagCreated);
         }
 
         [TestMethod]
@@ -230,7 +233,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                         RowVersion = requirementToDelete.RowVersion
                     }
                 },
-                deletedRequirement: new List<DeletedTagRequirementDto>
+                deletedRequirements: new List<DeletedTagRequirementDto>
                 {
                     new DeletedTagRequirementDto
                     {
@@ -242,6 +245,64 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             var newRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
             Assert.AreEqual(oldRequirements.Count-1, newRequirements.Count);
+        }
+
+        [TestMethod]
+        public async Task UpdateTagStepAndRequirements_AsPlanner_WhenDeleteRequirement_ShouldAddCorrectEventToHistory()
+        {
+            // Arrange
+            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+
+            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
+            var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                tag.Id,
+                tag.Description,
+                tag.Step.Id,
+                tag.RowVersion,
+                new List<TagRequirementDto>
+                {
+                    new TagRequirementDto
+                    {
+                        IntervalWeeks = 4,
+                        RequirementDefinitionId = newReqDefId
+                    }
+                });
+            var oldRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner,
+                TestFactory.PlantWithAccess, tagIdUnderTest);
+            Assert.IsTrue(oldRequirements.Count > 1);
+            var requirementToDelete = oldRequirements.First();
+
+            // Act
+            await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                tag.Id,
+                tag.Description,
+                tag.Step.Id,
+                tag.RowVersion,
+                updatedRequirements: new List<UpdatedTagRequirementDto>
+                {
+                    new UpdatedTagRequirementDto
+                    {
+                        IntervalWeeks = requirementToDelete.IntervalWeeks,
+                        IsVoided = true,
+                        RequirementId = requirementToDelete.Id,
+                        RowVersion = requirementToDelete.RowVersion
+                    }
+                },
+                deletedRequirements: new List<DeletedTagRequirementDto>
+                {
+                    new DeletedTagRequirementDto
+                    {
+                        RequirementId = requirementToDelete.Id,
+                        RowVersion = requirementToDelete.RowVersion
+                    }
+                });
+
+            // Assert
+            await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Planner, EventType.RequirementDeleted);
         }
 
         [TestMethod]
@@ -690,7 +751,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null);
 
             // Assert
-            await AssertNewTagCreated(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
+            await AssertNewTagCreatedAsync(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
         }
         
         [TestMethod]
@@ -734,10 +795,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             var plannerProfile = TestFactory.Instance.GetTestProfile(UserType.Planner);
             // history records are sorted with newest first in list
             var historyDto = historyDtos.First();
-            Assert.IsTrue(historyDto.Description.Contains("started"));
+            Assert.IsTrue(historyDto.Description.StartsWith(EventType.PreservationStarted.GetDescription()));
             AssertUser(plannerProfile, historyDto.CreatedBy);
             historyDto = historyDtos.Last();
-            Assert.IsTrue(historyDto.Description.Contains("created"));
+            Assert.IsTrue(historyDto.Description.StartsWith(EventType.TagCreated.GetDescription()));
             AssertUser(plannerProfile, historyDto.CreatedBy);
         }
 
@@ -805,7 +866,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(profile.LastName, personDto.LastName);
         }
 
-        private async Task AssertNewTagCreated(
+        private async Task AssertNewTagCreatedAsync(
             UserType userType, 
             string plant,
             int id, 
@@ -818,6 +879,19 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 TestFactory.ProjectWithAccess);
             Assert.AreEqual(initialTagsCount + 1, tagsResult.Tags.Count);
             Assert.IsNotNull(tagsResult.Tags.SingleOrDefault(t => t.Id == id));
+        }
+
+        private async Task AssertInHistoryAsLatestEventAsync(int tagIdUnderTest, UserType userType, EventType eventType)
+        {
+            var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                tagIdUnderTest);
+            var plannerProfile = TestFactory.Instance.GetTestProfile(userType);
+            
+            // history records are sorted with newest first in list
+            var historyDto = historyDtos.First();
+            Assert.IsTrue(historyDto.Description.StartsWith(eventType.GetDescription()));
+            AssertUser(plannerProfile, historyDto.CreatedBy);
         }
     }
 }
