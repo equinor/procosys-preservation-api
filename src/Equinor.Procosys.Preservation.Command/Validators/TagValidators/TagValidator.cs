@@ -253,16 +253,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return allRequirementDefinitionIds.Count == allRequirementDefinitionIds.Distinct().Count();
         }
 
-        public async Task<bool> UsageCoversBothForSupplierAndOtherAsync(
+        public async Task<bool> RequirementUsageWillCoverBothForSupplierAndOtherAsync(
             int tagId,
+            List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
         {
             List<int> requirementDefinitionIds;
             Tag tag;
-            (tag, requirementDefinitionIds) = await GetRequirementDefinitionIdsFromNonVoidedRequirements(
+            (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIds(
                 tagId,
+                tagRequirementIdsToBeUnvoided,
                 tagRequirementIdsToBeVoided,
                 requirementDefinitionIdsToBeAdded,
                 token);
@@ -275,16 +277,18 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return await _requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(requirementDefinitionIds, token);
         }
 
-        public async Task<bool> UsageCoversForOtherThanSuppliersAsync(
+        public async Task<bool> RequirementUsageWillCoverForOtherThanSuppliersAsync(
             int tagId,
+            List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
         {
             List<int> requirementDefinitionIds;
             Tag tag;
-            (tag, requirementDefinitionIds) = await GetRequirementDefinitionIdsFromNonVoidedRequirements(
+            (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIds(
                 tagId,
+                tagRequirementIdsToBeUnvoided,
                 tagRequirementIdsToBeVoided,
                 requirementDefinitionIdsToBeAdded,
                 token);
@@ -367,8 +371,9 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return tag;
         }
 
-        private async Task<(Tag, List<int>)> GetRequirementDefinitionIdsFromNonVoidedRequirements(
+        private async Task<(Tag, List<int>)> GetNonVoidedRequirementDefinitionIds(
             int tagId,
+            List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token)
@@ -381,7 +386,8 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
 
             var nonVoidedTagRequirementIds = 
                 tag.Requirements
-                    .Where(r => !r.IsVoided)
+                    .Where(r => !r.IsVoided || 
+                                (r.IsVoided && tagRequirementIdsToBeUnvoided.Contains(r.Id)))
                     .Select(r => r.Id)
                     .Except(tagRequirementIdsToBeVoided).ToList();
             
