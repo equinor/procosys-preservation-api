@@ -5,15 +5,15 @@ namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
     public enum EventType
     {
         [Description("Requirement added")]
-        TagRequirementAdded,
+        RequirementAdded,
         [Description("Requirement deleted")]
-        TagRequirementDeleted,
+        RequirementDeleted,
         [Description("Requirement voided")]
-        TagRequirementVoided,
+        RequirementVoided,
         [Description("Requirement unvoided")]
-        TagRequirementUnvoided,
+        RequirementUnvoided,
         [Description("Requirement preserved")]
-        TagRequirementPreserved,
+        RequirementPreserved,
         [Description("Tag voided")]
         TagVoided,
         [Description("Tag unvoided")]

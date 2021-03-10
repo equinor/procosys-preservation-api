@@ -187,7 +187,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             Assert.IsNotNull(updatedRequirement);
             Assert.AreEqual(updatedIntervalWeeks, updatedRequirement.IntervalWeeks);
        
-            await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Planner, EventType.TagRequirementAdded);
+            await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Planner, EventType.RequirementAdded);
             await AssertInHistoryAsExistingEventAsync(tagIdUnderTest, UserType.Planner, EventType.IntervalChanged);
         }
 
@@ -248,8 +248,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             var newRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
             Assert.AreEqual(oldRequirements.Count-1, newRequirements.Count);
-            await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Planner, EventType.TagRequirementDeleted);
-            await AssertInHistoryAsExistingEventAsync(tagIdUnderTest, UserType.Planner, EventType.TagRequirementVoided);
+            await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Planner, EventType.RequirementDeleted);
+            await AssertInHistoryAsExistingEventAsync(tagIdUnderTest, UserType.Planner, EventType.RequirementVoided);
         }
 
         [TestMethod]
@@ -610,7 +610,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             // Assert
             requirement = await TagsControllerTestsHelper.GetTagRequirementInfoAsync(UserType.Preserver, TestFactory.PlantWithAccess, tagIdUnderTest);
             Assert.AreNotEqual(oldNextDueTimeUtc, requirement.NextDueTimeUtc);
-            await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Preserver, EventType.TagRequirementPreserved);
+            await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Preserver, EventType.RequirementPreserved);
         }
 
         [TestMethod]

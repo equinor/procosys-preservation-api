@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents;
 using Equinor.Procosys.Preservation.Domain;
@@ -55,13 +56,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             _dut.Handle(new TagRequirementAddedEvent(_plant, objectGuid, _requirementDefinitionId), default);
 
             // Assert
-            var expectedDescription = $"{EventType.TagRequirementAdded.GetDescription()} - '{_requirementDefinition.Title}'";
+            var expectedDescription = $"{EventType.RequirementAdded.GetDescription()} - '{_requirementDefinition.Title}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(_plant, _historyAdded.Plant);
             Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
             Assert.IsNotNull(_historyAdded.Description);
-            Assert.AreEqual(EventType.TagRequirementAdded, _historyAdded.EventType);
+            Assert.AreEqual(EventType.RequirementAdded, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
             Assert.AreEqual(expectedDescription, _historyAdded.Description);
             Assert.IsFalse(_historyAdded.PreservationRecordGuid.HasValue);

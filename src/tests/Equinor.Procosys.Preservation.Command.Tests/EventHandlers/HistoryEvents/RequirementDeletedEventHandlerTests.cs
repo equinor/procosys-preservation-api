@@ -55,13 +55,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
             _dut.Handle(new TagRequirementDeletedEvent(_plant, objectGuid, _requirementDefinitionId), default);
 
             // Assert
-            var expectedDescription = $"{EventType.TagRequirementDeleted.GetDescription()} - '{_requirementDefinition.Title}'";
+            var expectedDescription = $"{EventType.RequirementDeleted.GetDescription()} - '{_requirementDefinition.Title}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(_plant, _historyAdded.Plant);
             Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
             Assert.IsNotNull(_historyAdded.Description);
-            Assert.AreEqual(EventType.TagRequirementDeleted, _historyAdded.EventType);
+            Assert.AreEqual(EventType.RequirementDeleted, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
             Assert.AreEqual(expectedDescription, _historyAdded.Description);
             Assert.IsFalse(_historyAdded.PreservationRecordGuid.HasValue);

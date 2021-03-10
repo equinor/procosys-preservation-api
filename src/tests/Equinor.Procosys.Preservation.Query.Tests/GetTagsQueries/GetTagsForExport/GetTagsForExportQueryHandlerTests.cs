@@ -232,7 +232,7 @@ namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTagsForExp
                     "Description",
                     tag.ObjectGuid,
                     ObjectType.Tag,
-                    EventType.TagRequirementPreserved)
+                    EventType.RequirementPreserved)
                 {
                     DueInWeeks = 1,
                     PreservationRecordGuid = activePeriodBeforePreservation.PreservationRecord.ObjectGuid
