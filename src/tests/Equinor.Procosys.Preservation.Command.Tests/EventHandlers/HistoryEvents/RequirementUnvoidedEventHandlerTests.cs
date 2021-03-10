@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
         private Mock<IRequirementTypeRepository> _requirementTypeRepositoryMock;
         private Mock<IHistoryRepository> _historyRepositoryMock;
-        private RequirementUnvoidedEventHandler _dut;
+        private TagRequirementUnvoidedEventHandler _dut;
         private History _historyAdded;
         private RequirementDefinition _requirementDefinition;
 
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
                 .Setup(repo => repo.GetRequirementDefinitionByIdAsync(_requirementDefinitionId))
                 .Returns(Task.FromResult(_requirementDefinition));
 
-            _dut = new RequirementUnvoidedEventHandler(_historyRepositoryMock.Object, _requirementTypeRepositoryMock.Object);
+            _dut = new TagRequirementUnvoidedEventHandler(_historyRepositoryMock.Object, _requirementTypeRepositoryMock.Object);
         }
 
         [TestMethod]
@@ -52,7 +52,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Act
             var objectGuid = Guid.NewGuid();
-            _dut.Handle(new RequirementUnvoidedEvent(_plant, objectGuid, _requirementDefinitionId), default);
+            _dut.Handle(new TagRequirementUnvoidedEvent(_plant, objectGuid, _requirementDefinitionId), default);
 
             // Assert
             var expectedDescription = $"{EventType.RequirementUnvoided.GetDescription()} - '{_requirementDefinition.Title}'";

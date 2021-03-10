@@ -8,18 +8,18 @@ using MediatR;
 
 namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
 {
-    public class RequirementPreservedEventHandler : INotificationHandler<RequirementPreservedEvent>
+    public class TagRequirementPreservedEventHandler : INotificationHandler<TagRequirementPreservedEvent>
     {
         private readonly IHistoryRepository _historyRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
 
-        public RequirementPreservedEventHandler(IHistoryRepository historyRepository, IRequirementTypeRepository requirementTypeRepository)
+        public TagRequirementPreservedEventHandler(IHistoryRepository historyRepository, IRequirementTypeRepository requirementTypeRepository)
         {
             _historyRepository = historyRepository;
             _requirementTypeRepository = requirementTypeRepository;
         }
 
-        public Task Handle(RequirementPreservedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(TagRequirementPreservedEvent notification, CancellationToken cancellationToken)
         {
             var requirementDefinition =
                 _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.RequirementDefinitionId);

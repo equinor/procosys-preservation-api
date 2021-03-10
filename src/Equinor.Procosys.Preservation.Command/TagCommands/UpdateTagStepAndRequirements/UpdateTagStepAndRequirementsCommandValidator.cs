@@ -35,6 +35,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                     .MustAsync((_, command, token) =>
                         RequirementUsageIsForAllJourneysAsync(
                             command.TagId,
+                            command.UpdatedRequirements.Where(u => !u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                             command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                             command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
@@ -53,6 +54,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                     .MustAsync((_, command, token) =>
                         RequirementUsageIsForJourneysWithoutSupplierAsync(
                             command.TagId,
+                            command.UpdatedRequirements.Where(u => !u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                             command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                             command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                             token))
@@ -87,6 +89,16 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             RuleForEach(command => command.UpdatedRequirements)
                 .MustAsync((command, req, __, token) => BeAnExistingTagRequirementAsync(command.TagId, req.TagRequirementId, token))
                 .WithMessage((_, req) => $"Requirement doesn't exist! Requirement={req.TagRequirementId}");
+
+            RuleForEach(command => command.DeletedRequirements)
+                .MustAsync((command, req, __, token) => BeAnExistingTagRequirementAsync(command.TagId, req.TagRequirementId, token))
+                .WithMessage((_, req) => $"Requirement doesn't exist! Requirement={req.TagRequirementId}")
+                .MustAsync((command, req, __, token) => BeAVoidedTagRequirementAsync(
+                    command.TagId,
+                    req.TagRequirementId,
+                    command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
+                    token))
+                .WithMessage((_, req) => $"Requirement is not voided! Requirement={req.TagRequirementId}");
             
             RuleForEach(command => command.NewRequirements)
                 .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req.RequirementDefinitionId, token))
@@ -96,23 +108,38 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 .WithMessage((_, req) =>
                     $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
 
-            async Task<bool> RequirementsMustBeUniqueAfterUpdateAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token)
+            async Task<bool> RequirementsMustBeUniqueAfterUpdateAsync(
+                int tagId,
+                List<int> requirementDefinitionIdsToBeAdded,
+                CancellationToken token)
                 => requirementDefinitionIdsToBeAdded.Count == 0 || 
                    await tagValidator.AllRequirementsWillBeUniqueAsync(tagId, requirementDefinitionIdsToBeAdded, token);
             
             async Task<bool> RequirementUsageIsForAllJourneysAsync(
                 int tagId, 
+                List<int> tagRequirementIdsToBeUnvoided,
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
-                => await tagValidator.UsageCoversBothForSupplierAndOtherAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
+                => await tagValidator.RequirementUsageWillCoverBothForSupplierAndOtherAsync(
+                    tagId, 
+                    tagRequirementIdsToBeUnvoided, 
+                    tagRequirementIdsToBeVoided, 
+                    requirementDefinitionIdsToBeAdded, 
+                    token);
             
             async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(
                 int tagId, 
+                List<int> tagRequirementIdsToBeUnvoided,
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
-                => await tagValidator.UsageCoversForOtherThanSuppliersAsync(tagId, tagRequirementIdsToBeVoided, requirementDefinitionIdsToBeAdded, token);
+                => await tagValidator.RequirementUsageWillCoverForOtherThanSuppliersAsync(
+                    tagId, 
+                    tagRequirementIdsToBeUnvoided, 
+                    tagRequirementIdsToBeVoided, 
+                    requirementDefinitionIdsToBeAdded, 
+                    token);
             
             async Task<bool> IsASupplierStepAsync(int stepId, CancellationToken token)
                 => await stepValidator.IsForSupplierAsync(stepId, token);
@@ -145,6 +172,20 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             async Task<bool> BeAnExistingTagRequirementAsync(int tagId, int tagRequirementId, CancellationToken token)
                 => await tagValidator.HasRequirementAsync(tagId, tagRequirementId, token);
             
+            async Task<bool> BeAVoidedTagRequirementAsync(
+                int tagId,
+                int tagRequirementId,
+                List<int> tagRequirementIdsToBeVoided,
+                CancellationToken token)
+            {
+                if (tagRequirementIdsToBeVoided.Contains(tagRequirementId))
+                {
+                    return true;
+                }
+
+                return await tagValidator.IsRequirementVoidedAsync(tagId, tagRequirementId, token);
+            }
+
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);
 

@@ -113,7 +113,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldAddNewRequirement_WhenAddingAddNewRequirement()
         {
             // Arrange
-            var updatedRequirements = new List<UpdateRequirementForCommand>();
             var newRequirements = new List<RequirementForCommand>
             {
                 new RequirementForCommand(ReqDefId2, ThreeWeekInterval)
@@ -122,8 +121,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 StandardTagId1,
                 null,
                 StepId1,
-                updatedRequirements,
+                null, 
                 newRequirements, 
+                null, 
                 RowVersion);
             
             // Act
@@ -150,7 +150,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 null,
                 StepId2,
                 updatedRequirements,
-                new List<RequirementForCommand>(),
+                null,
+                null, 
                 RowVersion);
 
             // Act
@@ -167,7 +168,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldNotStartPreservationOnNewRequirements_WhenPreservationNotStarted()
         {
             // Arrange
-            var updatedRequirements = new List<UpdateRequirementForCommand>();
             var newRequirements = new List<RequirementForCommand>
             {
                 new RequirementForCommand(ReqDefId2, ThreeWeekInterval)
@@ -176,8 +176,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 StandardTagId1,
                 null,
                 StepId1,
-                updatedRequirements,
+                null, 
                 newRequirements, 
+                null, 
                 RowVersion);
             
             // Act
@@ -198,7 +199,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             _standardTagWithOneRequirement.StartPreservation();
             Assert.IsNotNull(_standardTagWithOneRequirement.NextDueTimeUtc);
 
-            var updatedRequirements = new List<UpdateRequirementForCommand>();
             var newRequirements = new List<RequirementForCommand>
             {
                 new RequirementForCommand(ReqDefId2, ThreeWeekInterval)
@@ -207,8 +207,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 StandardTagId1,
                 null,
                 StepId1,
-                updatedRequirements,
+                null, 
                 newRequirements, 
+                null, 
                 RowVersion);
             
             // Act
@@ -222,7 +223,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         }
 
         [TestMethod]
-        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldBeAbleToVoidRequirement_WhenNonVoidingRequirementExistsAfter()
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldBeAbleToVoidRequirement_WhenNonVoidedRequirementExistsAfter()
         {
             // Arrange
             var tagRequirement1 = _standardTagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId1);
@@ -240,7 +241,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 null,
                 StepId2,
                 updatedRequirements,
-                new List<RequirementForCommand>(),
+                null,
+                null,
                 RowVersion);
 
             // Act
@@ -271,7 +273,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 null,
                 StepId2,
                 updatedRequirements,
-                new List<RequirementForCommand>(),
+                null,
+                null,
                 RowVersion);
 
             // Act
@@ -298,7 +301,6 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             var oldNextDueTimeOnTag = _standardTagWithOneRequirement.NextDueTimeUtc;
             Assert.IsNotNull(oldNextDueTimeOnTag);
 
-            var updatedRequirements = new List<UpdateRequirementForCommand>();
             var newRequirements = new List<RequirementForCommand>
             {
                 new RequirementForCommand(ReqDefId2, TwoWeekInterval)
@@ -307,8 +309,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 StandardTagId1,
                 null,
                 StepId1,
-                updatedRequirements,
+                null,
                 newRequirements, 
+                null,
                 RowVersion);
 
             // Act
@@ -337,8 +340,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 AreaTagId,
                 null,
                 StepId1,
-                new List<UpdateRequirementForCommand>(),
-                new List<RequirementForCommand>(), 
+                null,
+                null,
+                null,
                 RowVersion);
 
             // Act
@@ -360,8 +364,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 AreaTagId,
                 newDescription,
                 StepId1,
-                new List<UpdateRequirementForCommand>(),
-                new List<RequirementForCommand>(), 
+                null,
+                null,
+                null,
                 RowVersion);
 
             // Act
@@ -380,8 +385,9 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                 StandardTagId1,
                 "NewDescription",
                 StepId1,
-                new List<UpdateRequirementForCommand>(),
-                new List<RequirementForCommand>(), 
+                null,
+                null,
+                null,
                 RowVersion);
 
             // Act
@@ -390,6 +396,72 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             // Assert
             Assert.AreEqual(0, result.Errors.Count);
             Assert.AreEqual(Description, _areaTagWithOneRequirement.Description);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldBeAbleToDeleteRequirement_WhenRequirementIsUpdatedAsVoided()
+        {
+            // Arrange
+            var tagRequirement1 = _standardTagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId1);
+
+            Assert.AreEqual(2, _standardTagWithTwoRequirements.Requirements.Count);
+            
+            var updatedRequirements = new List<UpdateRequirementForCommand>
+            {
+                new UpdateRequirementForCommand(tagRequirement1.Id, ThreeWeekInterval, true, RowVersion)
+            };
+
+            var deleteRequirements = new List<DeleteRequirementForCommand>
+            {
+                new DeleteRequirementForCommand(tagRequirement1.Id, RowVersion)
+            };
+
+            var command = new UpdateTagStepAndRequirementsCommand(
+                StandardTagId2,
+                null,
+                StepId2,
+                updatedRequirements,
+                null,
+                deleteRequirements, 
+                RowVersion);
+
+            // Act
+            var result = await _dut.Handle(command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(1, _standardTagWithTwoRequirements.Requirements.Count);
+        }
+
+        [TestMethod]
+        public async Task HandlingUpdateTagStepAndRequirementsCommand_ShouldBeAbleToDeleteRequirement_WhenRequirementIsAlreadyVoided()
+        {
+            // Arrange
+            var tagRequirement1 = _standardTagWithTwoRequirements.Requirements.Single(r => r.RequirementDefinitionId == ReqDefId1);
+            tagRequirement1.IsVoided = true;
+
+            Assert.AreEqual(2, _standardTagWithTwoRequirements.Requirements.Count);
+
+            var deleteRequirements = new List<DeleteRequirementForCommand>
+            {
+                new DeleteRequirementForCommand(tagRequirement1.Id, RowVersion)
+            };
+
+            var command = new UpdateTagStepAndRequirementsCommand(
+                StandardTagId2,
+                null,
+                StepId2,
+                null,
+                null,
+                deleteRequirements, 
+                RowVersion);
+
+            // Act
+            var result = await _dut.Handle(command, default);
+
+            // Assert
+            Assert.AreEqual(0, result.Errors.Count);
+            Assert.AreEqual(1, _standardTagWithTwoRequirements.Requirements.Count);
         }
     }
 }

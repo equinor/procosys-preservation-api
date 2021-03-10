@@ -48,6 +48,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 tag.UpdateRequirement(update.TagRequirementId, update.IsVoided, update.IntervalWeeks, update.RowVersion);
             }
 
+            foreach (var delete in request.DeletedRequirements)
+            {
+                tag.RemoveRequirement(delete.TagRequirementId, delete.RowVersion);
+            }
+
             foreach (var newRequirement in request.NewRequirements)
             {
                 var reqDef = await _requirementTypeRepository.GetRequirementDefinitionByIdAsync(newRequirement.RequirementDefinitionId);
