@@ -10,26 +10,26 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             int tagId, 
             string description,
             int stepId,
-            IList<UpdateRequirementForCommand> updateRequirements,
+            IList<UpdateRequirementForCommand> updatedRequirements,
             IList<RequirementForCommand> newRequirements,
-            IList<DeleteRequirementForCommand> deleteRequirements,
+            IList<DeleteRequirementForCommand> deletedRequirements,
             string rowVersion)
         {
             TagId = tagId;
             Description = description;
             StepId = stepId;
-            UpdateRequirements = updateRequirements ?? new List<UpdateRequirementForCommand>();
+            UpdatedRequirements = updatedRequirements ?? new List<UpdateRequirementForCommand>();
             NewRequirements = newRequirements ?? new List<RequirementForCommand>();
-            DeleteRequirements = deleteRequirements ?? new List<DeleteRequirementForCommand>();
+            DeletedRequirements = deletedRequirements ?? new List<DeleteRequirementForCommand>();
             RowVersion = rowVersion;
         }
 
         public int TagId { get; }
         public string Description { get; }
         public int StepId { get; }
-        public IList<UpdateRequirementForCommand> UpdateRequirements { get; }
+        public IList<UpdateRequirementForCommand> UpdatedRequirements { get; }
         public IList<RequirementForCommand> NewRequirements { get; }
-        public IList<DeleteRequirementForCommand> DeleteRequirements { get; }
+        public IList<DeleteRequirementForCommand> DeletedRequirements { get; }
         public string RowVersion { get; }
     }
 }

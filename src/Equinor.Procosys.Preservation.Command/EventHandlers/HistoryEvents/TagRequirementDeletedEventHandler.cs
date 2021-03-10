@@ -8,23 +8,23 @@ using MediatR;
 
 namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
 {
-    public class RequirementDeletedEventHandler : INotificationHandler<RequirementDeletedEvent>
+    public class TagRequirementDeletedEventHandler : INotificationHandler<TagRequirementDeletedEvent>
     {
         private readonly IHistoryRepository _historyRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
 
-        public RequirementDeletedEventHandler(IHistoryRepository historyRepository, IRequirementTypeRepository requirementTypeRepository)
+        public TagRequirementDeletedEventHandler(IHistoryRepository historyRepository, IRequirementTypeRepository requirementTypeRepository)
         {
             _historyRepository = historyRepository;
             _requirementTypeRepository = requirementTypeRepository;
         }
 
-        public Task Handle(RequirementDeletedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(TagRequirementDeletedEvent notification, CancellationToken cancellationToken)
         {
             var requirementDefinition =
                 _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.RequirementDefinitionId);
 
-            var eventType = EventType.RequirementDeleted;
+            var eventType = EventType.TagRequirementDeleted;
             var description = $"{eventType.GetDescription()} - '{requirementDefinition.Result.Title}'";
             var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
 

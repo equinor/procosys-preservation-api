@@ -3,9 +3,9 @@ using MediatR;
 
 namespace Equinor.Procosys.Preservation.Domain.Events
 {
-    public class RequirementDeletedEvent : INotification
+    public class TagRequirementVoidedEvent : INotification
     {
-        public RequirementDeletedEvent(
+        public TagRequirementVoidedEvent(
             string plant,
             Guid objectGuid,
             int requirementDefinitionId)

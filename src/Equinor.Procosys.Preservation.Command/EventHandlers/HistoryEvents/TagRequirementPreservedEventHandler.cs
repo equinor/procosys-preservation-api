@@ -8,25 +8,29 @@ using MediatR;
 
 namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
 {
-    public class RequirementAddedEventHandler : INotificationHandler<RequirementAddedEvent>
+    public class TagRequirementPreservedEventHandler : INotificationHandler<TagRequirementPreservedEvent>
     {
         private readonly IHistoryRepository _historyRepository;
         private readonly IRequirementTypeRepository _requirementTypeRepository;
 
-        public RequirementAddedEventHandler(IHistoryRepository historyRepository, IRequirementTypeRepository requirementTypeRepository)
+        public TagRequirementPreservedEventHandler(IHistoryRepository historyRepository, IRequirementTypeRepository requirementTypeRepository)
         {
             _historyRepository = historyRepository;
             _requirementTypeRepository = requirementTypeRepository;
         }
 
-        public Task Handle(RequirementAddedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(TagRequirementPreservedEvent notification, CancellationToken cancellationToken)
         {
             var requirementDefinition =
                 _requirementTypeRepository.GetRequirementDefinitionByIdAsync(notification.RequirementDefinitionId);
 
-            var eventType = EventType.RequirementAdded;
+            var eventType = EventType.TagRequirementPreserved;
             var description = $"{eventType.GetDescription()} - '{requirementDefinition.Result.Title}'";
-            var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType);
+            var history = new History(notification.Plant, description, notification.ObjectGuid, ObjectType.Tag, eventType)
+            {
+                DueInWeeks = notification.DueInWeeks,
+                PreservationRecordGuid = notification.PreservationRecordGuid
+            };
 
             _historyRepository.Add(history);
 

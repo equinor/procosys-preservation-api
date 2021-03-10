@@ -309,7 +309,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dutWithOneReqNotNeedInputTwoWeekInterval.AddRequirement(_reqNeedInputThreeWeekInterval);
 
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
-            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(RequirementAddedEvent));
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(TagRequirementAddedEvent));
         }
 
         #endregion
@@ -344,7 +344,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.RemoveRequirement(requirement.Id, "AAAAAAAAABA=");
 
             Assert.AreEqual(3, dut.DomainEvents.Count);
-            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementDeletedEvent));
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(TagRequirementDeletedEvent));
         }
 
         [TestMethod]
@@ -733,7 +733,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             dut.Preserve(_person, dut.Requirements.Single().Id);
 
             Assert.AreEqual(3, dut.DomainEvents.Count);
-            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementPreservedEvent));
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(TagRequirementPreservedEvent));
         }
 
         #endregion
@@ -1739,7 +1739,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Assert
             Assert.AreEqual(2, dut.DomainEvents.Count);
-            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementVoidedEvent));
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(TagRequirementVoidedEvent));
         }
 
         [TestMethod]
@@ -1771,7 +1771,7 @@ namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
             // Assert
             Assert.AreEqual(3, dut.DomainEvents.Count);
-            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(RequirementUnvoidedEvent));
+            Assert.IsInstanceOfType(dut.DomainEvents.Last(), typeof(TagRequirementUnvoidedEvent));
         }
 
         [TestMethod]

@@ -18,7 +18,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
         private Mock<IRequirementTypeRepository> _requirementTypeRepositoryMock;
         private Mock<IHistoryRepository> _historyRepositoryMock;
-        private RequirementVoidedEventHandler _dut;
+        private TagRequirementVoidedEventHandler _dut;
         private History _historyAdded;
         private RequirementDefinition _requirementDefinition;
 
@@ -41,7 +41,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
                 .Setup(repo => repo.GetRequirementDefinitionByIdAsync(_requirementDefinitionId))
                 .Returns(Task.FromResult(_requirementDefinition));
 
-            _dut = new RequirementVoidedEventHandler(_historyRepositoryMock.Object, _requirementTypeRepositoryMock.Object);
+            _dut = new TagRequirementVoidedEventHandler(_historyRepositoryMock.Object, _requirementTypeRepositoryMock.Object);
         }
 
         [TestMethod]
@@ -52,16 +52,16 @@ namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers.HistoryEvent
 
             // Act
             var objectGuid = Guid.NewGuid();
-            _dut.Handle(new RequirementVoidedEvent(_plant, objectGuid, _requirementDefinitionId), default);
+            _dut.Handle(new TagRequirementVoidedEvent(_plant, objectGuid, _requirementDefinitionId), default);
 
             // Assert
-            var expectedDescription = $"{EventType.RequirementVoided.GetDescription()} - '{_requirementDefinition.Title}'";
+            var expectedDescription = $"{EventType.TagRequirementVoided.GetDescription()} - '{_requirementDefinition.Title}'";
 
             Assert.IsNotNull(_historyAdded);
             Assert.AreEqual(_plant, _historyAdded.Plant);
             Assert.AreEqual(objectGuid, _historyAdded.ObjectGuid);
             Assert.IsNotNull(_historyAdded.Description);
-            Assert.AreEqual(EventType.RequirementVoided, _historyAdded.EventType);
+            Assert.AreEqual(EventType.TagRequirementVoided, _historyAdded.EventType);
             Assert.AreEqual(ObjectType.Tag, _historyAdded.ObjectType);
             Assert.AreEqual(expectedDescription, _historyAdded.Description);
             Assert.IsFalse(_historyAdded.PreservationRecordGuid.HasValue);
