@@ -23,6 +23,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpPost("/SavedFilter")]
+        [HttpPost("SavedFilter")]
         public async Task<ActionResult<int>> CreateSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
@@ -35,6 +36,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
          
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpGet("/SavedFilters")]
+        [HttpGet("SavedFilters")]
         public async Task<ActionResult<List<SavedFilterDto>>> GetSavedFiltersInProject(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
@@ -47,6 +49,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpDelete("/SavedFilters/{id}")]
+        [HttpDelete("SavedFilters/{id}")]
         public async Task<ActionResult> DeleteSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
@@ -60,6 +63,7 @@ namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
 
         [Authorize(Roles = Permissions.PRESERVATION_READ)]
         [HttpPut("/SavedFilters/{id}")]
+        [HttpPut("SavedFilters/{id}")]
         public async Task<ActionResult> UpdateSavedFilter(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
