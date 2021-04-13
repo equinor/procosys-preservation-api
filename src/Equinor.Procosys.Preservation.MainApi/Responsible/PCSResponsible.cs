@@ -1,6 +1,6 @@
-﻿namespace Equinor.ProCoSys.Preservation.MainApi.Discipline
+﻿namespace Equinor.ProCoSys.Preservation.MainApi.Responsible
 {
-    public class ProcosysDiscipline
+    public class PCSResponsible
     {
         public int Id { get; set; }
         public string Code { get; set; }

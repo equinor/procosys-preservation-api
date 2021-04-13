@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace Equinor.ProCoSys.Preservation.MainApi.Tag
 {
     [DebuggerDisplay("{TagNo}")]
-    public class ProcosysPreservedTag
+    public class PCSPreservedTag
     {
         public long Id { get; set; }
         public string CommPkgNo { get; set; }

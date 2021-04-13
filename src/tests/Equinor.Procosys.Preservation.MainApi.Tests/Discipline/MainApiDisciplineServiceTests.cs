@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
         private const string _plant = "PCS$TESTPLANT";
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
-        private ProcosysDiscipline _procosysDiscipline;
+        private PCSDiscipline _procosysDiscipline;
         private MainApiDisciplineService _dut;
 
         [TestInitialize]
@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
 
-            _procosysDiscipline = new ProcosysDiscipline
+            _procosysDiscipline = new PCSDiscipline
             {
                 Id = 1,
                 Code = "CodeA",
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProcosysDiscipline>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSDiscipline>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_procosysDiscipline));
 
             // Act

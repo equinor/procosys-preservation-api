@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         private Mock<IJourneyRepository> _journeyRepositoryMock;
         private Mock<Mode> _modeMock;
         private Responsible _responsible;
-        private Mock<ProcosysResponsible> _pcsResponsibleMock;
+        private Mock<PCSResponsible> _pcsResponsibleMock;
         private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IResponsibleRepository> _responsibleRepositoryMock;
         private Mock<IResponsibleApiService> _responsibleApiServiceMock;
@@ -60,7 +60,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleRepositoryMock.Setup(r => r.Add(It.IsAny<Responsible>()))
                 .Callback<Responsible>(c => _addedResponsible = c);
 
-            _pcsResponsibleMock = new Mock<ProcosysResponsible>();
+            _pcsResponsibleMock = new Mock<PCSResponsible>();
 
             _responsibleApiServiceMock = new Mock<IResponsibleApiService>();
             _responsibleApiServiceMock.Setup(r => r.TryGetResponsibleAsync(TestPlant, ResponsibleCode))
@@ -99,7 +99,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
             _responsibleRepositoryMock
                 .Setup(r => r.GetByCodeAsync(ResponsibleCode)).Returns(Task.FromResult((Responsible)null));
             _responsibleApiServiceMock.Setup(s => s.TryGetResponsibleAsync(TestPlant, ResponsibleCode))
-                .Returns(Task.FromResult((ProcosysResponsible)null));
+                .Returns(Task.FromResult((PCSResponsible)null));
 
             // Act
             var result = await _dut.Handle(_command, default);

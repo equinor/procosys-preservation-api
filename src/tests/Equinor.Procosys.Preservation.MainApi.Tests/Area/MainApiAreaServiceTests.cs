@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
         private Mock<IOptionsMonitor<MainApiOptions>> _mainApiOptions;
         private Mock<IBearerTokenApiClient> _mainApiClient;
         private MainApiAreaService _dut;
-        private ProcosysArea _procosysArea;
+        private PCSArea _procosysArea;
 
         [TestInitialize]
         public void Setup()
@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             _mainApiClient = new Mock<IBearerTokenApiClient>();
 
-            _procosysArea = new ProcosysArea
+            _procosysArea = new PCSArea
             {
                 Id = 1,
                 Code = "CodeA",
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Area
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProcosysArea>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSArea>(It.IsAny<string>()))
                 .Returns(Task.FromResult(_procosysArea));
             // Act
             var result = await _dut.TryGetAreaAsync(_plant, _procosysArea.Code);

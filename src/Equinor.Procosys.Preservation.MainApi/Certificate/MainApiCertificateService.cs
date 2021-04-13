@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysCertificateTagsModel> TryGetCertificateTagsAsync(string plant, string projectName, string certificateNo, string certificateType)
+        public async Task<PCSCertificateTagsModel> TryGetCertificateTagsAsync(string plant, string projectName, string certificateNo, string certificateType)
         {
             var url = $"{_baseAddress}Certificate/Tags" +
                       $"?plantId={plant}" +
@@ -30,17 +30,17 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
                       $"&certificateType={WebUtility.UrlEncode(certificateType)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysCertificateTagsModel>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSCertificateTagsModel>(url);
         }
 
-        public async Task<IEnumerable<ProcosysCertificateModel>> GetAcceptedCertificatesAsync(string plant, DateTime cutoffAcceptedTime)
+        public async Task<IEnumerable<PCSCertificateModel>> GetAcceptedCertificatesAsync(string plant, DateTime cutoffAcceptedTime)
         {
             var url = $"{_baseAddress}Certificate/Accepted" +
                       $"?plantId={plant}" +
                       $"&cutoffAcceptedTime={cutoffAcceptedTime:O}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysCertificateModel>>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<List<PCSCertificateModel>>(url);
         }
     }
 }

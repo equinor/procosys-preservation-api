@@ -4,9 +4,9 @@ using System.Diagnostics;
 namespace Equinor.ProCoSys.Preservation.MainApi.Tag
 {
     [DebuggerDisplay("{Items.Count} of {MaxAvailable} available tags")]
-    public class ProcosysTagSearchResult
+    public class PCSTagSearchResult
     {
         public int MaxAvailable { get; set; }
-        public List<ProcosysTagOverview> Items { get; set; }
+        public List<PCSTagOverview> Items { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
 {
-    public class SearchTagsByTagNoQuery : IRequest<Result<List<ProcosysTagDto>>>, IProjectRequest
+    public class SearchTagsByTagNoQuery : IRequest<Result<List<PCSTagDto>>>, IProjectRequest
     {
         public SearchTagsByTagNoQuery(string projectName, string startsWithTagNo)
         {

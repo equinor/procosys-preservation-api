@@ -1,6 +1,6 @@
 ﻿namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
 {
-    public class ProcosysCertificateModel
+    public class PCSCertificateModel
     {
         public string CertificateNo { get; set; }
         

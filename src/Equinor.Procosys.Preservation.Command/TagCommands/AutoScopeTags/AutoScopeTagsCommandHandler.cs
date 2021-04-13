@@ -107,13 +107,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
             return new SuccessResult<List<int>>(addedTags.Select(t => t.Id).ToList());
         }
 
-        private string Key(ProcosysTagDetails details) => $"{details.TagFunctionCode}|{details.RegisterCode}";
+        private string Key(PCSTagDetails details) => $"{details.TagFunctionCode}|{details.RegisterCode}";
         
         private string Key(TagFunction tagFunction) => $"{tagFunction.Code}|{tagFunction.RegisterCode}";
 
-        private async Task<List<TagFunction>> GetNeededTagFunctionsWithRequirementsAsync(IList<ProcosysTagDetails> tagDetailList)
+        private async Task<List<TagFunction>> GetNeededTagFunctionsWithRequirementsAsync(IList<PCSTagDetails> tagDetailList)
         {
-            var uniqueTagFunctionCodesRegisterCodes = tagDetailList.Distinct(new ProcosysTagDetailsComparer()).Select(Key);
+            var uniqueTagFunctionCodesRegisterCodes = tagDetailList.Distinct(new PCSTagDetailsComparer()).Select(Key);
 
             var tagFunctionsWithRequirements = await _tagFunctionRepository.GetAllNonVoidedWithRequirementsAsync();
 
@@ -125,7 +125,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
         private Tag CreateTag(
             AutoScopeTagsCommand request, 
             Step step,
-            ProcosysTagDetails tagDetails,
+            PCSTagDetails tagDetails,
             TagFunction tagFunctionWithRequirements,
             IList<RequirementDefinition> reqDefs)
         {

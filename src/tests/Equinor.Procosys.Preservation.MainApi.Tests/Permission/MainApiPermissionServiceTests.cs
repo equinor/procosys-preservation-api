@@ -71,8 +71,8 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Permission
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserializeAsync<List<ProcosysProject>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(new List<ProcosysProject>{ new ProcosysProject(), new ProcosysProject() }));
+                .SetupSequence(x => x.QueryAndDeserializeAsync<List<PCSProject>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<PCSProject>{ new PCSProject(), new PCSProject() }));
             // Act
             var result = await _dut.GetAllOpenProjectsAsync(_plant);
 
@@ -85,8 +85,8 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Permission
         {
             // Arrange
             _mainApiClient
-                .SetupSequence(x => x.QueryAndDeserializeAsync<List<ProcosysProject>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(new List<ProcosysProject>()));
+                .SetupSequence(x => x.QueryAndDeserializeAsync<List<PCSProject>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<PCSProject>()));
             // Act
             var result = await _dut.GetAllOpenProjectsAsync(_plant);
 

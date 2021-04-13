@@ -41,8 +41,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
         private Mock<IRequirementTypeRepository> _rtRepositoryMock;
         private Mock<ITagApiService> _tagApiServiceMock;
 
-        private ProcosysTagDetails _mainTagDetails1;
-        private ProcosysTagDetails _mainTagDetails2;
+        private PCSTagDetails _mainTagDetails1;
+        private PCSTagDetails _mainTagDetails2;
         
         private AutoScopeTagsCommand _command;
         private AutoScopeTagsCommandHandler _dut;
@@ -116,7 +116,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 .Setup(x => x.GetAllNonVoidedWithRequirementsAsync())
                 .Returns(Task.FromResult(new List<TagFunction>{tf1, tf2, tf3}));
 
-            _mainTagDetails1 = new ProcosysTagDetails
+            _mainTagDetails1 = new PCSTagDetails
             {
                 AreaCode = "AreaCode1",
                 AreaDescription = "AreaDescription1",
@@ -132,7 +132,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 TagNo = TestTagNo1,
                 ProjectDescription = TestProjectDescription
             };
-            _mainTagDetails2 = new ProcosysTagDetails
+            _mainTagDetails2 = new PCSTagDetails
             {
                 AreaCode = "AreaCode2",
                 AreaDescription = "AreaDescription2",
@@ -149,7 +149,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
                 ProjectDescription = TestProjectDescription
             };
 
-            IList<ProcosysTagDetails> mainTagDetailList = new List<ProcosysTagDetails> {_mainTagDetails1, _mainTagDetails2};
+            IList<PCSTagDetails> mainTagDetailList = new List<PCSTagDetails> {_mainTagDetails1, _mainTagDetails2};
             _tagApiServiceMock = new Mock<ITagApiService>();
             _tagApiServiceMock
                 .Setup(x => x.GetTagDetailsAsync(TestPlant, TestProjectName, new List<string>{TestTagNo1, TestTagNo2}))
@@ -278,7 +278,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoScopeTags
             Assert.AreEqual($"Purchase Order for {_mainTagDetails1.TagNo} not found in project {TestProjectName}.", result.Errors[0]);
         }
 
-        private void AssertTagProperties(AutoScopeTagsCommand command, ProcosysTagDetails mainTagDetails, Tag tagAddedToProject, int regDefId, int interval)
+        private void AssertTagProperties(AutoScopeTagsCommand command, PCSTagDetails mainTagDetails, Tag tagAddedToProject, int regDefId, int interval)
         {
             Assert.AreEqual(mainTagDetails.AreaCode, tagAddedToProject.AreaCode);
             Assert.AreEqual(mainTagDetails.AreaDescription, tagAddedToProject.AreaDescription);

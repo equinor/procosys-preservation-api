@@ -4,6 +4,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Responsible
 {
     public interface IResponsibleApiService
     {
-        Task<ProcosysResponsible> TryGetResponsibleAsync(string plant, string code);
+        Task<PCSResponsible> TryGetResponsibleAsync(string plant, string code);
     }
 }

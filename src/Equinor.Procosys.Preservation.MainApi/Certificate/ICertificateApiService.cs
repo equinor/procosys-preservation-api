@@ -6,13 +6,13 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
 {
     public interface ICertificateApiService
     {
-        Task<ProcosysCertificateTagsModel> TryGetCertificateTagsAsync(
+        Task<PCSCertificateTagsModel> TryGetCertificateTagsAsync(
             string plant, 
             string projectName,
             string certificateNo,
             string certificateType);
         
-        Task<IEnumerable<ProcosysCertificateModel>> GetAcceptedCertificatesAsync(
+        Task<IEnumerable<PCSCertificateModel>> GetAcceptedCertificatesAsync(
             string plant, 
             DateTime cutoffAcceptedTime);
     }

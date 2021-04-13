@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
             _cacheManager.Remove(ContentRestrictionsCacheKey(plantId, userOid));
         }
 
-        private async Task<IList<ProcosysProject>> GetAllProjectsForUserAsync(string plantId, Guid userOid)
+        private async Task<IList<PCSProject>> GetAllProjectsForUserAsync(string plantId, Guid userOid)
             => await _cacheManager.GetOrCreate(
                 ProjectsCacheKey(plantId, userOid),
                 async () => await _permissionApiService.GetAllOpenProjectsAsync(plantId),

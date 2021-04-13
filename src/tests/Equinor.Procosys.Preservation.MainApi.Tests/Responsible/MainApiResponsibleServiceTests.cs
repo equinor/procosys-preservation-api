@@ -31,14 +31,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Responsible
         public async Task TryGetResponsibleCode_ShouldReturnResponsibleCode()
         {
             // Arrange
-            var procosysResponsible = new ProcosysResponsible
+            var procosysResponsible = new PCSResponsible
             {
                 Id = 1,
                 Code = "CodeA",
                 Description = "Description1",
             };
             _mainApiClient
-                .SetupSequence(x => x.TryQueryAndDeserializeAsync<ProcosysResponsible>(It.IsAny<string>()))
+                .SetupSequence(x => x.TryQueryAndDeserializeAsync<PCSResponsible>(It.IsAny<string>()))
                 .Returns(Task.FromResult(procosysResponsible));
             // Act
             var result = await _dut.TryGetResponsibleAsync(_plant, procosysResponsible.Code);

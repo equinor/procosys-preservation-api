@@ -2,9 +2,9 @@
 
 namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
 {
-    public class ProcosysPreservedTagDto
+    public class PCSPreservedTagDto
     {
-        public ProcosysPreservedTagDto(
+        public PCSPreservedTagDto(
             long id,
             string tagNo, 
             string description, 

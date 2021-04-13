@@ -1,6 +1,6 @@
-﻿namespace Equinor.ProCoSys.Preservation.MainApi.Responsible
+﻿namespace Equinor.ProCoSys.Preservation.MainApi.Area
 {
-    public class ProcosysResponsible
+    public class PCSArea
     {
         public int Id { get; set; }
         public string Code { get; set; }

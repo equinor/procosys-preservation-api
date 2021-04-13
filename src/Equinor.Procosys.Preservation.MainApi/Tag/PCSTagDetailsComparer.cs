@@ -2,9 +2,9 @@
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Tag
 {
-    public class ProcosysTagDetailsComparer : IEqualityComparer<ProcosysTagDetails>
+    public class PCSTagDetailsComparer : IEqualityComparer<PCSTagDetails>
     {
-        public bool Equals(ProcosysTagDetails d1, ProcosysTagDetails d2)
+        public bool Equals(PCSTagDetails d1, PCSTagDetails d2)
         {
             if (d2 == null && d1 == null)
             {
@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             return false;
         }
 
-        public int GetHashCode(ProcosysTagDetails d)
+        public int GetHashCode(PCSTagDetails d)
         {
             var hCode = d.RegisterCode.GetHashCode() ^ d.TagFunctionCode.GetHashCode();
             return hCode.GetHashCode();

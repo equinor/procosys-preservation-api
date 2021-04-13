@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
         private Mock<ILogger<AutoTransferCommandHandler>> _loggerMock;
         private Mock<ICertificateApiService> _certificateApiServiceMock;
         private Mock<IProjectRepository> _projectRepoMock;
-        private ProcosysCertificateTagsModel _procosysCertificateTagsModel;
+        private PCSCertificateTagsModel _procosysCertificateTagsModel;
         private Journey _journey;
         private string _rfcc;
 
@@ -81,12 +81,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             _commandForRfoc = new AutoTransferCommand(_testProjectName, _certificateNo, rfoc);
             _commandForOther = new AutoTransferCommand(_testProjectName, _certificateNo, tac);
 
-            _procosysCertificateTagsModel = new ProcosysCertificateTagsModel()
+            _procosysCertificateTagsModel = new PCSCertificateTagsModel()
             {
                 CertificateIsAccepted = true,
-                Tags = new List<ProcosysCertificateTag>
+                Tags = new List<PCSCertificateTag>
                 {
-                    new ProcosysCertificateTag
+                    new PCSCertificateTag
                     {
                         TagNo = _testTagNo
                     }
@@ -193,7 +193,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.AutoTransfer
             // Arrange
             _certificateApiServiceMock.Setup(c =>
                     c.TryGetCertificateTagsAsync(TestPlant, _testProjectName, _certificateNo, _rfcc))
-                .Returns(Task.FromResult<ProcosysCertificateTagsModel>(null));
+                .Returns(Task.FromResult<PCSCertificateTagsModel>(null));
 
             // Act
             var result = await _dut.Handle(_commandForRfcc, default);

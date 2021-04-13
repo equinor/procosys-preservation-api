@@ -20,14 +20,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Area
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysArea> TryGetAreaAsync(string plant, string code)
+        public async Task<PCSArea> TryGetAreaAsync(string plant, string code)
         {
             var url = $"{_baseAddress}Library/Area" +
                       $"?plantId={plant}" +
                       $"&code={WebUtility.UrlEncode(code)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysArea>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSArea>(url);
         }
     }
 }

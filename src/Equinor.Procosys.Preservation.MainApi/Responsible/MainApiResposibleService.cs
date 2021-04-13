@@ -20,14 +20,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Responsible
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysResponsible> TryGetResponsibleAsync(string plant, string code)
+        public async Task<PCSResponsible> TryGetResponsibleAsync(string plant, string code)
         {
             var url = $"{_baseAddress}Library/Responsible" +
                       $"?plantId={plant}" +
                       $"&code={WebUtility.UrlEncode(code)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysResponsible>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSResponsible>(url);
         }
     }
 }

@@ -27,8 +27,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncTagFuncti
         private SyncTagFunctionsCommandHandler _dut;
         private TagFunction _tagFunction1;
         private TagFunction _tagFunction2;
-        private ProcosysTagFunction _mainTagFunction1;
-        private ProcosysTagFunction _mainTagFunction2;
+        private PCSTagFunction _mainTagFunction1;
+        private PCSTagFunction _mainTagFunction2;
 
         [TestInitialize]
         public void Setup()
@@ -43,13 +43,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncTagFuncti
                 .Returns(Task.FromResult(new List<TagFunction> {_tagFunction1, _tagFunction2}));
 
             // Assert tagFunctions in main
-            _mainTagFunction1 = new ProcosysTagFunction
+            _mainTagFunction1 = new PCSTagFunction
             {
                 Code = TagFunctionCode1,
                 Description = NewTagFunctionDescription1,
                 RegisterCode = TagFunctionRegCode1
             };
-            _mainTagFunction2 = new ProcosysTagFunction
+            _mainTagFunction2 = new PCSTagFunction
             {
                 Code = TagFunctionCode2,
                 Description = NewTagFunctionDescription2,
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncTagFuncti
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
-        private void AssertTagFunctionProperties(ProcosysTagFunction mainTagFunction, TagFunction tagFunction)
+        private void AssertTagFunctionProperties(PCSTagFunction mainTagFunction, TagFunction tagFunction)
             => Assert.AreEqual(mainTagFunction.Description, tagFunction.Description);
     }
 }

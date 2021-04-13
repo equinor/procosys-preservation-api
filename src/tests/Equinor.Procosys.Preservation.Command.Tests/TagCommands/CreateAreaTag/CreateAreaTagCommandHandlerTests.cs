@@ -76,12 +76,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
             _projectApiServiceMock = new Mock<IProjectApiService>();
             _projectApiServiceMock.Setup(s => s.TryGetProjectAsync(TestPlant, TestProjectName))
-                .Returns(Task.FromResult(new ProcosysProject {Description = "ProjectDescription"}));
+                .Returns(Task.FromResult(new PCSProject {Description = "ProjectDescription"}));
 
             var disciplineCode = "D";
             _disciplineApiServiceMock = new Mock<IDisciplineApiService>();
             _disciplineApiServiceMock.Setup(s => s.TryGetDisciplineAsync(TestPlant, disciplineCode))
-                .Returns(Task.FromResult(new ProcosysDiscipline
+                .Returns(Task.FromResult(new PCSDiscipline
                 {
                     Code = disciplineCode,
                     Description = DisciplineDescription
@@ -90,7 +90,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             var areaCode = "A";
             _areaApiServiceMock = new Mock<IAreaApiService>();
             _areaApiServiceMock.Setup(s => s.TryGetAreaAsync(TestPlant, areaCode))
-                .Returns(Task.FromResult(new ProcosysArea
+                .Returns(Task.FromResult(new PCSArea
                 {
                     Code = areaCode,
                     Description = AreaDescription

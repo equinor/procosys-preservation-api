@@ -66,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             TestFactory.Instance
                 .DisciplineApiServiceMock
                 .Setup(service => service.TryGetDisciplineAsync(TestFactory.PlantWithAccess, KnownDisciplineCode))
-                .Returns(Task.FromResult(new ProcosysDiscipline
+                .Returns(Task.FromResult(new PCSDiscipline
                 {
                     Code = KnownDisciplineCode, Description = $"{KnownDisciplineCode} - Description"
                 }));
@@ -74,7 +74,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             TestFactory.Instance
                 .AreaApiServiceMock
                 .Setup(service => service.TryGetAreaAsync(TestFactory.PlantWithAccess, KnownAreaCode))
-                .Returns(Task.FromResult(new ProcosysArea
+                .Returns(Task.FromResult(new PCSArea
                 {
                     Code = KnownAreaCode, Description = $"{KnownAreaCode} - Description"
                 }));

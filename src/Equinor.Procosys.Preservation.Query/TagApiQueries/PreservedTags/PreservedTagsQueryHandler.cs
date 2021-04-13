@@ -11,7 +11,7 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
 {
-    public class PreservedTagsQueryHandler : IRequestHandler<PreservedTagsQuery, Result<List<ProcosysPreservedTagDto>>>
+    public class PreservedTagsQueryHandler : IRequestHandler<PreservedTagsQuery, Result<List<PCSPreservedTagDto>>>
     {
         private readonly IReadOnlyContext _context;
         private readonly ITagApiService _tagApiService;
@@ -24,11 +24,11 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
             _plantProvider = plantProvider;
         }
 
-        public async Task<Result<List<ProcosysPreservedTagDto>>> Handle(PreservedTagsQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<PCSPreservedTagDto>>> Handle(PreservedTagsQuery request, CancellationToken cancellationToken)
         {
             var apiTags = await _tagApiService
                 .GetPreservedTagsAsync(_plantProvider.Plant, request.ProjectName)
-                ?? new List<ProcosysPreservedTag>();
+                ?? new List<PCSPreservedTag>();
 
             var presTagNos = await (from tag in _context.QuerySet<Tag>()
                 join p in _context.QuerySet<Project>() on EF.Property<int>(tag, "ProjectId") equals p.Id
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
                         new {ApiTag = x, PresTagNo = y})
                 .SelectMany(x => x.PresTagNo.DefaultIfEmpty(),
                     (x, y) =>
-                        new ProcosysPreservedTagDto(
+                        new PCSPreservedTagDto(
                             x.ApiTag.Id,
                             x.ApiTag.TagNo,
                             x.ApiTag.Description,
@@ -64,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
                             y != null))
                 .ToList();
 
-            return new SuccessResult<List<ProcosysPreservedTagDto>>(combinedTags);
+            return new SuccessResult<List<PCSPreservedTagDto>>(combinedTags);
         }
     }
 }

@@ -25,8 +25,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncResponsib
         private SyncResponsiblesCommandHandler _dut;
         private Responsible _responsible1;
         private Responsible _responsible2;
-        private ProcosysResponsible _mainResponsible1;
-        private ProcosysResponsible _mainResponsible2;
+        private PCSResponsible _mainResponsible1;
+        private PCSResponsible _mainResponsible2;
 
         [TestInitialize]
         public void Setup()
@@ -41,12 +41,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncResponsib
                 .Returns(Task.FromResult(new List<Responsible> {_responsible1, _responsible2}));
 
             // Assert responsibles in main
-            _mainResponsible1 = new ProcosysResponsible
+            _mainResponsible1 = new PCSResponsible
             {
                 Code = ResponsibleCode1,
                 Description = NewResponsibleDescription1
             };
-            _mainResponsible2 = new ProcosysResponsible
+            _mainResponsible2 = new PCSResponsible
             {
                 Code = ResponsibleCode2,
                 Description = NewResponsibleDescription2
@@ -92,7 +92,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncResponsib
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
-        private void AssertResponsibleProperties(ProcosysResponsible mainResponsible, Responsible responsible)
+        private void AssertResponsibleProperties(PCSResponsible mainResponsible, Responsible responsible)
             => Assert.AreEqual(mainResponsible.Description, responsible.Description);
     }
 }

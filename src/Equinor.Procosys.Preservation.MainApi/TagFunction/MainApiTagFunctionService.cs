@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.TagFunction
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysTagFunction> TryGetTagFunctionAsync(string plant, string tagFunctionCode, string registerCode)
+        public async Task<PCSTagFunction> TryGetTagFunctionAsync(string plant, string tagFunctionCode, string registerCode)
         {
             var url = $"{_baseAddress}Library/TagFunction" +
                 $"?plantId={plant}" +
@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.TagFunction
                 $"&registerCode={WebUtility.UrlEncode(registerCode)}" +
                 $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysTagFunction>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSTagFunction>(url);
         }
     }
 }
