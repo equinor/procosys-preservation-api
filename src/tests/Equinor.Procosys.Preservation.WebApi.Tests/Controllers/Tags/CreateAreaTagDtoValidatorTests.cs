@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
     public class CreateAreaTagDtoValidatorTests

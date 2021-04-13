@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRequirementType
 {
     public class CreateRequirementTypeCommand : IRequest<Result<int>>
     {

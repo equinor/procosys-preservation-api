@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Command.TagCommands.Transfer;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Transfer
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Transfer
 {
     [TestClass]
     public class TransferCommandTests

@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode;
+﻿using Equinor.ProCoSys.Preservation.Command.ModeCommands.UnvoidMode;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UnvoidMode
 {
     [TestClass]
     public class UnvoidModeCommandTests

@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.SavedFilterValidators;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Infrastructure;
+using Equinor.ProCoSys.Preservation.Command.Validators.SavedFilterValidators;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Test.Common;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.Validators
+namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 {
     [TestClass]
     public class SavedFilterValidatorTests : ReadOnlyTestsBase

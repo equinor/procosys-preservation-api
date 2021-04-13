@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
-using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
-using Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode;
-using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
-using Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.ModeAggregate;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.CreateMode;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.DeleteMode;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.UnvoidMode;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.UpdateMode;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.VoidMode;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Query.ModeAggregate;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Modes
 {
     [ApiController]
     [Route("Modes")]

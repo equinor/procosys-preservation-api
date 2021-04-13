@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag;
+﻿using Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTag
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTag
 {
     [TestClass]
     public class UpdateTagCommandTests

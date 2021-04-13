@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.UnvoidMode
 {
     public class UnvoidModeCommand : IRequest<Result<string>>
     {

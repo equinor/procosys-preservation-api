@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRequirementDefinition;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.DeleteRequirementDefinition
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.DeleteRequirementDefinition
 {
     [TestClass]
     public class DeleteRequirementDefinitionCommandValidatorTests

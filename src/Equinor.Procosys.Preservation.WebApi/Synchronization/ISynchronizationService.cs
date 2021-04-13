@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.WebApi.Synchronization
+namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public interface ISynchronizationService
     {

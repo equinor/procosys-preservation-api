@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.Json.Serialization;
 
-namespace Equinor.Procosys.Preservation.Command
+namespace Equinor.ProCoSys.Preservation.Command
 {
     public abstract class UploadAttachmentCommand : IDisposable
     {

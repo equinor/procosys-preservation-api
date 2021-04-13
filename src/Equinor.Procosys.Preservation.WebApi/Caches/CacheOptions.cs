@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.Caches
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.Caches
 {
     public class CacheOptions
     {

@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.BlobStorage
+namespace Equinor.ProCoSys.Preservation.BlobStorage
 {
     public interface IBlobStorage
     {

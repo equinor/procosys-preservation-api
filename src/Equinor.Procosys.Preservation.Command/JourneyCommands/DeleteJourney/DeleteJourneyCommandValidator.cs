@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney
 {
     public class DeleteJourneyCommandValidator : AbstractValidator<DeleteJourneyCommand>
     {

@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
+﻿using Equinor.ProCoSys.Preservation.Command.ModeCommands.CreateMode;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
 {
     [TestClass]
     public class CreateModeCommandTests

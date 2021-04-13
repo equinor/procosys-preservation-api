@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
+namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 {
     internal class RequirementTypeRepository : TestRepository<RequirementType>, IRequirementTypeRepository
     {

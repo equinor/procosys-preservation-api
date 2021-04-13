@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate
 {
     public class Setting : PlantEntityBase, IAggregateRoot
     {

@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.ResponsibleValidators
 {
     public interface IResponsibleValidator
     {

@@ -6,11 +6,11 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tag
+namespace Equinor.ProCoSys.Preservation.MainApi.Tag
 {
     public class MainApiTagService : ITagApiService
     {

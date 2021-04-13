@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
+﻿using Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJourney
+namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJourney
 {
     [TestClass]
     public class CreateJourneyCommandTests

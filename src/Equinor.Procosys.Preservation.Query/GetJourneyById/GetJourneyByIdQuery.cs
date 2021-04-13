@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetJourneyById
+namespace Equinor.ProCoSys.Preservation.Query.GetJourneyById
 {
     public class GetJourneyByIdQuery : IRequest<Result<JourneyDetailsDto>>
     {

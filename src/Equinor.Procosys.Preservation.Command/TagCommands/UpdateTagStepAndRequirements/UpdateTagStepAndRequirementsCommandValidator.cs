@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
-using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.StepValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
 {
     public class UpdateTagStepAndRequirementsCommandValidator : AbstractValidator<UpdateTagStepAndRequirementsCommand>
     {

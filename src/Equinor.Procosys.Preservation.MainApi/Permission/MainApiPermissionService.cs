@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.MainApi.Permission
+namespace Equinor.ProCoSys.Preservation.MainApi.Permission
 {
     public class MainApiPermissionService : IPermissionApiService
     {

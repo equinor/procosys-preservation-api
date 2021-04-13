@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
 {
     public class RequirementDefinitionDetailDto
     {

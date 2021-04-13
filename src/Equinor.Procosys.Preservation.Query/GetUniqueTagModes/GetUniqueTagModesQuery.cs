@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagModes
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagModes
 {
     public class GetUniqueTagModesQuery : IRequest<Result<List<ModeDto>>>, IProjectRequest
     {

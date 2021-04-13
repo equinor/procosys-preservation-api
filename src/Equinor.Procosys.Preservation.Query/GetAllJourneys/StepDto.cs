@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Query.ModeAggregate;
-using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Query.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Query.ResponsibleAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.GetAllJourneys
+namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
 {
     public class StepDto
     {

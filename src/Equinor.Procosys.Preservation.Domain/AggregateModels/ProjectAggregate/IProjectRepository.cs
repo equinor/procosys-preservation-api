@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public interface IProjectRepository : IRepository<Project>
     {

@@ -1,7 +1,7 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.MainApi.Client
+namespace Equinor.ProCoSys.Preservation.MainApi.Client
 {
     public interface IBearerTokenApiClient
     {

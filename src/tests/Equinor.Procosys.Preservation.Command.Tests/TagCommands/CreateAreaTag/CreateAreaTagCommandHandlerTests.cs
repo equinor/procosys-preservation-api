@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.MainApi.Area;
-using Equinor.Procosys.Preservation.MainApi.Discipline;
-using Equinor.Procosys.Preservation.MainApi.Project;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Area;
+using Equinor.ProCoSys.Preservation.MainApi.Discipline;
+using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 {
     [TestClass]
     public class CreateAreaTagCommandHandlerTests : CommandHandlerTestsBase

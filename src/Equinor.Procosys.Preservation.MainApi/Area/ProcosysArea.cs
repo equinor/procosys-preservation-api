@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.MainApi.Area
+﻿namespace Equinor.ProCoSys.Preservation.MainApi.Area
 {
     public class ProcosysArea
     {

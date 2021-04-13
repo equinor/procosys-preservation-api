@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands
+namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands
 {
     public class FieldsForCommand
     {

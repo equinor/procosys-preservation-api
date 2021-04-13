@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.VoidMode
 {
     public class VoidModeCommandHandler : IRequestHandler<VoidModeCommand, Result<string>>
     {

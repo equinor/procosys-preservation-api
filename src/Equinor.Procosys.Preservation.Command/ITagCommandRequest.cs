@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command
+﻿namespace Equinor.ProCoSys.Preservation.Command
 {
     public interface ITagCommandRequest
     {

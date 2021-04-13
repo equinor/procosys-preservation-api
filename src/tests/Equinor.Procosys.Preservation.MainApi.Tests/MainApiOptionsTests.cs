@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tests
+namespace Equinor.ProCoSys.Preservation.MainApi.Tests
 {
     [TestClass]
     public class MainApiOptionsTests

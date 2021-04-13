@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
+namespace Equinor.ProCoSys.Preservation.Query.GetTagFunctionDetails
 {
     public class GetTagFunctionDetailsQueryHandler : IRequestHandler<GetTagFunctionDetailsQuery, Result<TagFunctionDetailsDto>>
     {

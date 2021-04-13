@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 {
     public class RequirementDefinitionDto
     {

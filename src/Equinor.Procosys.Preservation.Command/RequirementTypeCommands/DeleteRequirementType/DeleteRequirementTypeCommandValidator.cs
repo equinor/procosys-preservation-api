@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType
 {
     public class DeleteRequirementTypeCommandValidator : AbstractValidator<DeleteRequirementTypeCommand>
     {

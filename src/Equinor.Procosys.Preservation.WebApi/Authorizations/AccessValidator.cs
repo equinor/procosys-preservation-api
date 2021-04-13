@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.Command;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Query;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Equinor.Procosys.Preservation.WebApi.Authorizations
+namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
     public class AccessValidator : IAccessValidator
     {

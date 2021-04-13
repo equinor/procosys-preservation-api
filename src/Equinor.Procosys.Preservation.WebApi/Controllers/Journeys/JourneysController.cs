@@ -1,28 +1,28 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.DuplicateJourney;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidStep;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateStep;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.GetAllJourneys;
-using Equinor.Procosys.Preservation.Query.GetJourneyById;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteStep;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.DuplicateJourney;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UnvoidJourney;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UnvoidStep;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidJourney;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidStep;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Query.GetAllJourneys;
+using Equinor.ProCoSys.Preservation.Query.GetJourneyById;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Journeys
 {
     [ApiController]
     [Route("Journeys")]

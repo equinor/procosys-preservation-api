@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
     public class RequirementDefinitionDetailDto
     {

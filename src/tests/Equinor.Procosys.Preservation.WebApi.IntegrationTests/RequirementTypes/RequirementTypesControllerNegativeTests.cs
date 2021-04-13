@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 {
     [TestClass]
     public class RequirementTypesControllerNegativeTests :  RequirementTypesControllerTestsBase

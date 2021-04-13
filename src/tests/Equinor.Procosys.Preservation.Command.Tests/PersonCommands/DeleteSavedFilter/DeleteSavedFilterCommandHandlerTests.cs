@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.PersonCommands.DeleteSavedFilter;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Command.PersonCommands.DeleteSavedFilter;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.DeleteSavedFilter
+namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.DeleteSavedFilter
 {
     [TestClass]
     public class DeleteSavedFilterCommandHandlerTests : CommandHandlerTestsBase

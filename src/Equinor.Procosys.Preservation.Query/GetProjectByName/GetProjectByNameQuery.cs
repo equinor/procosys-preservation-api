@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetProjectByName
+namespace Equinor.ProCoSys.Preservation.Query.GetProjectByName
 {
     public class GetProjectByNameQuery : IRequest<Result<ProjectDetailsDto>>, IProjectRequest
     {

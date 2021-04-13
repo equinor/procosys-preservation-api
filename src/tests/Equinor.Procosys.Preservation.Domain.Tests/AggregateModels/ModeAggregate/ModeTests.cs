@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ModeAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ModeAggregate
 {
     [TestClass]
     public class ModeTests

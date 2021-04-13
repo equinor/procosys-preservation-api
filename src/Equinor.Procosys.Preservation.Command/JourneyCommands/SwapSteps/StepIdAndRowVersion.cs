@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
+﻿namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps
 {
     public class StepIdAndRowVersion
     {

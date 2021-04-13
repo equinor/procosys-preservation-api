@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag;
+﻿using Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UnvoidTag
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UnvoidTag
 {
     [TestClass]
     public class UnvoidTagCommandTests

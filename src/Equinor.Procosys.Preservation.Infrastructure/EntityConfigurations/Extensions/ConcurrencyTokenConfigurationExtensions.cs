@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using Equinor.ProCoSys.Preservation.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions
+namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations.Extensions
 {
     public static class ConcurrencyTokenConfigurationExtensions
     {

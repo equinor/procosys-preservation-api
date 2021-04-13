@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tests.Plant
+namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Plant
 {
     [TestClass]
     public class MainApiPlantServiceTests

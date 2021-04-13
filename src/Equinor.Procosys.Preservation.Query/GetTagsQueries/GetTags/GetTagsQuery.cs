@@ -1,9 +1,9 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
+namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
 {
     public class GetTagsQuery : IRequest<Result<TagsResult>>, IProjectRequest
     {

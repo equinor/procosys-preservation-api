@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetUniqueTagModes
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagModes
 {
     public class ModeDto
     {

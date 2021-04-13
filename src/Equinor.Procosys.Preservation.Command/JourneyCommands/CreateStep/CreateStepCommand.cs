@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep
 {
     public class CreateStepCommand : IRequest<Result<int>>
     {

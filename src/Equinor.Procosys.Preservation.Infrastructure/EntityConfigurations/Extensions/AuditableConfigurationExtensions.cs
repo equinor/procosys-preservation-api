@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.Audit;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions
+namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations.Extensions
 {
     public static class AuditableConfigurationExtensions
     {

@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.UpdateRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.UpdateRequirementType
 {
     [TestClass]
     public class UpdateRequirementTypeCommandTests

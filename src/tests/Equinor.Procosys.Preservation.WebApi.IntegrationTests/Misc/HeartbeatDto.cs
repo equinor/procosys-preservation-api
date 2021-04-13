@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
 {
     public class HeartbeatDto
     {

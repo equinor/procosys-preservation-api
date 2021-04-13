@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteStep
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteStep
 {
     public class DeleteStepCommand : IRequest<Result<Unit>>
     {

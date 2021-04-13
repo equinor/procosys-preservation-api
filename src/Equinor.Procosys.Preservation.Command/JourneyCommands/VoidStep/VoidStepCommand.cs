@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidStep
 {
     public class VoidStepCommand : IRequest<Result<string>>
     {

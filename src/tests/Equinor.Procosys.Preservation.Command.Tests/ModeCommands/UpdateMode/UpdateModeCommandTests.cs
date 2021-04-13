@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
+﻿using Equinor.ProCoSys.Preservation.Command.ModeCommands.UpdateMode;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
 {
     [TestClass]
     public class UpdateModeCommandTests

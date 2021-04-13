@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements
+namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements
 {
     public class UpdateRequirementsCommandValidator : AbstractValidator<UpdateRequirementsCommand>
     {

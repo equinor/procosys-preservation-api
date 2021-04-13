@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.VoidTag
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.VoidTag
 {
     public class VoidTagCommand : IRequest<Result<string>>, ITagCommandRequest
     {

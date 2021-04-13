@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
 {
     public class DuplicateAreaTagCommandValidator : AbstractValidator<DuplicateAreaTagCommand>
     {

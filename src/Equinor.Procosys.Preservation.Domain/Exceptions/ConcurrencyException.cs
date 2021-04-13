@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Domain.Exceptions
+namespace Equinor.ProCoSys.Preservation.Domain.Exceptions
 {
     public class ConcurrencyException : Exception
     {

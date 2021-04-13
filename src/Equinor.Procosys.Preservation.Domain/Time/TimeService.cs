@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Domain.Time
+namespace Equinor.ProCoSys.Preservation.Domain.Time
 {
     public static class TimeService
     {

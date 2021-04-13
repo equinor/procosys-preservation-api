@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.CreateRequirementDefinition
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.CreateRequirementDefinition
 {
     [TestClass]
     public class CreateRequirementDefinitionCommandTests

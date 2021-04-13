@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetTagDetails;
+﻿using Equinor.ProCoSys.Preservation.Query.GetTagDetails;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagDetails
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
 {
     [TestClass]
     public class GetTagDetailsQueryTests

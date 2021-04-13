@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
+namespace Equinor.ProCoSys.Preservation.Query.GetRequirementTypeById
 {
     public class RequirementDefinitionDetailDto
     {

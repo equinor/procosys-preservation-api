@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.Validators;
+﻿using Equinor.ProCoSys.Preservation.Command.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.Validators
+namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
 {
     [TestClass]
     public class RowVersionValidatorTests

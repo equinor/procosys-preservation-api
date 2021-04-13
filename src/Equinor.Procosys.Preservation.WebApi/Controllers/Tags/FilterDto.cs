@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Query.GetTagsQueries;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Query.GetTagsQueries;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     public class FilterDto
     {

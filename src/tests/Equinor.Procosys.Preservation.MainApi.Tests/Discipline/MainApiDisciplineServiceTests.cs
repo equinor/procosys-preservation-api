@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Discipline;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Discipline;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tests.Discipline
+namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Discipline
 {
     [TestClass]
     public class MainApiDisciplineServiceTests

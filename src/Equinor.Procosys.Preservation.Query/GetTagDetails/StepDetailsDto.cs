@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetTagDetails
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
 {
     public class StepDetailsDto
     {

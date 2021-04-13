@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UnvoidJourney;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UnvoidJourney
+namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UnvoidJourney
 {
     [TestClass]
     public class UnvoidJourneyCommandHandlerTests : CommandHandlerTestsBase

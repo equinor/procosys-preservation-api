@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 
-namespace Equinor.Procosys.Preservation.Test.Common.ExtensionMethods
+namespace Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods
 {
     public static class EntityBaseTestExtensions
     {

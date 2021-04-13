@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.DeleteMode;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.DeleteMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.DeleteMode
 {
     [TestClass]
     public class DeleteModeCommandHandlerTests : CommandHandlerTestsBase

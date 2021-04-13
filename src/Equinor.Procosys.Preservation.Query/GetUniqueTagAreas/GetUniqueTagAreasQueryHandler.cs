@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagAreas
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagAreas
 {
     public class GetUniqueTagAreasQueryHandler : IRequestHandler<GetUniqueTagAreasQuery, Result<List<AreaDto>>>
     {

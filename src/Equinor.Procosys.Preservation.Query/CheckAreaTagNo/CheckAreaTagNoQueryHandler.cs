@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.CheckAreaTagNo
+namespace Equinor.ProCoSys.Preservation.Query.CheckAreaTagNo
 {
     public class CheckAreaTagNoQueryHandler : IRequestHandler<CheckAreaTagNoQuery, Result<AreaTagDto>>
     {

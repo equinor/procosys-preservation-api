@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.Command
+namespace Equinor.ProCoSys.Preservation.Command
 {
     public static class TagListExtension
     {

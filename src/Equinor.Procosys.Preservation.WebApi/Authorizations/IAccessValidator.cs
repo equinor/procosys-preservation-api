@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.WebApi.Authorizations
+namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
     public interface IAccessValidator
     {

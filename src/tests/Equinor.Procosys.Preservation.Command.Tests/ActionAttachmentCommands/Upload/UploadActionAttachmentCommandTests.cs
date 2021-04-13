@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Upload;
+using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Upload;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.Upload
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.Upload
 {
     [TestClass]
     public class UploadActionAttachmentCommandTests

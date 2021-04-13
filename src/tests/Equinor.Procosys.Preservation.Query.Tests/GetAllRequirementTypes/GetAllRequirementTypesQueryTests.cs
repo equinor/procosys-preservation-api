@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetAllRequirementTypes;
+﻿using Equinor.ProCoSys.Preservation.Query.GetAllRequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetAllRequirementTypes
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetAllRequirementTypes
 {
     [TestClass]
     public class GetAllRequirementTypesQueryTests

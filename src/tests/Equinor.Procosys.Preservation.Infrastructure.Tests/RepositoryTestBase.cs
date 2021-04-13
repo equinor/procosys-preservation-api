@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Tests
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests
 {
     [TestClass]
     public class RepositoryTestBase

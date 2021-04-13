@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.JourneyValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators
 {
     public interface IJourneyValidator
     {

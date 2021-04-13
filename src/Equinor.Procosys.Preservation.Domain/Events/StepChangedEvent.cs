@@ -1,7 +1,7 @@
 ﻿using System;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.Domain.Events
+namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
     public class StepChangedEvent : INotification
     {

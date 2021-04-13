@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 {
     public class HistoryRepository : RepositoryBase<History>, IHistoryRepository
     {

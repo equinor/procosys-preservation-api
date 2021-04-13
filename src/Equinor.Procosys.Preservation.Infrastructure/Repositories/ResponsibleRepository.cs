@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 {
     public class ResponsibleRepository : RepositoryBase<Responsible>, IResponsibleRepository
     {

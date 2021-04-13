@@ -1,7 +1,7 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
+namespace Equinor.ProCoSys.Preservation.Query.GetTagRequirements
 {
     public class NumberDetailsDto
     {

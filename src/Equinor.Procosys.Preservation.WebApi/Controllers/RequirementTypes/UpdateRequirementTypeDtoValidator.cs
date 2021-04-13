@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes
 {
     public class UpdateRequirementTypeDtoValidator : AbstractValidator<UpdateRequirementTypeDto>
     {

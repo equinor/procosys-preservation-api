@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetUniqueTagAreas;
+﻿using Equinor.ProCoSys.Preservation.Query.GetUniqueTagAreas;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagAreas
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagAreas
 {
     [TestClass]
     public class GetUniqueTagAreasQueryTests

@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes
 {
     public class UpdateRequirementTypeDto
     {

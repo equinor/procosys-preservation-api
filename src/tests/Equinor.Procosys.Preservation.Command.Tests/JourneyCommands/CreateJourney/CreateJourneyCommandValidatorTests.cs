@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney;
-using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney;
+using Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.CreateJourney
+namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateJourney
 {
     [TestClass]
     public class CreateJourneyCommandValidatorTests

@@ -1,12 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
-using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
-using Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ResponsibleValidators;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep
 {
     public class CreateStepCommandValidator : AbstractValidator<CreateStepCommand>
     {

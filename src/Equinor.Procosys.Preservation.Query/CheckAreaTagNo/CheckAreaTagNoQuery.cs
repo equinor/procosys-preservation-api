@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.CheckAreaTagNo
+namespace Equinor.ProCoSys.Preservation.Query.CheckAreaTagNo
 {
     public class CheckAreaTagNoQuery : AbstractAreaTag, IRequest<Result<AreaTagDto>>, IProjectRequest
     {

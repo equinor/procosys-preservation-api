@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete
+namespace Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Delete
 {
     public class DeleteTagAttachmentCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {

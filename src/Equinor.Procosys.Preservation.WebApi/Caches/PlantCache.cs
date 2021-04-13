@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Infrastructure.Caching;
-using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Infrastructure.Caching;
+using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.WebApi.Caches
+namespace Equinor.ProCoSys.Preservation.WebApi.Caches
 {
     public class PlantCache : IPlantCache
     {

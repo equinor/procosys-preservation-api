@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.BlobStorage;
-using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Delete;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Delete;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using MediatR;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Delete
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Delete
 {
     [TestClass]
     public class DeleteTagAttachmentCommandHandlerTests : CommandHandlerTestsBase

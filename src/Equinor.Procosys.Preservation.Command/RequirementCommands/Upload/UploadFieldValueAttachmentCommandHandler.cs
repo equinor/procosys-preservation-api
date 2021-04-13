@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.BlobStorage;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using Microsoft.Extensions.Options;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Upload
+namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
 {
     public class UploadFieldValueAttachmentCommandHandler : IRequestHandler<UploadFieldValueAttachmentCommand, Result<int>>
     {

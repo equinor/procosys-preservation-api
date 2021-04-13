@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Domain
+namespace Equinor.ProCoSys.Preservation.Domain
 {
     public interface IRepository<TEntity> where TEntity : EntityBase, IAggregateRoot
     {

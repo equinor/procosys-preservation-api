@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
+namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
 {
     public class PreservationRecordDto
     {

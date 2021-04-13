@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.StartPreservation
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.StartPreservation
 {
     [TestClass]
     public class StartPreservationCommandTests

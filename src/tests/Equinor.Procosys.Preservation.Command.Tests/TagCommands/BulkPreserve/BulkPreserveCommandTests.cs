@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.BulkPreserve
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
 {
     [TestClass]
     public class BulkPreserveCommandTests

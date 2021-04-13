@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.PersonCommands.UpdateSavedFilter
+namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.UpdateSavedFilter
 {
     public class UpdateSavedFilterCommand : IRequest<Result<string>>
     {

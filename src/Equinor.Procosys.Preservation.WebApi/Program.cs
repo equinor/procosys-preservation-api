@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.WebApi.Misc;
+﻿using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
-namespace Equinor.Procosys.Preservation.WebApi
+namespace Equinor.ProCoSys.Preservation.WebApi
 {
     public class Program
     {

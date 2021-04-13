@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Equinor.Procosys.Preservation.MainApi.TagFunction
+namespace Equinor.ProCoSys.Preservation.MainApi.TagFunction
 {
     [DebuggerDisplay("{Code}/{RegisterCode}")]
     public class ProcosysTagFunction

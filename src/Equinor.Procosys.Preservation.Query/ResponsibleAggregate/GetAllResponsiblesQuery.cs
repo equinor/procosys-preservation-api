@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.ResponsibleAggregate
+namespace Equinor.ProCoSys.Preservation.Query.ResponsibleAggregate
 {
     public class GetAllResponsiblesQuery : IRequest<Result<IEnumerable<ResponsibleDto>>>
     {

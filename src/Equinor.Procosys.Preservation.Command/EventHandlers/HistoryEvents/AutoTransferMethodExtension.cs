@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
-namespace Equinor.Procosys.Preservation.Command.EventHandlers.HistoryEvents
+namespace Equinor.ProCoSys.Preservation.Command.EventHandlers.HistoryEvents
 {
     public static class AutoTransferMethodExtension
     {

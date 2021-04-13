@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
+using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.UpdateRequirements
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.UpdateRequirements
 {
     [TestClass]
     public class UpdateRequirementsCommandTests

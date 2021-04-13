@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 {
     public class ModeRepository : RepositoryBase<Mode>, IModeRepository
     {

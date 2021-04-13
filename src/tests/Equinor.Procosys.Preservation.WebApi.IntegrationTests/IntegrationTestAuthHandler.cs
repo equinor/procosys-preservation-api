@@ -4,13 +4,13 @@ using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.WebApi.Authorizations;
+using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
     internal class IntegrationTestAuthHandler : AuthenticationHandler<IntegrationTestAuthOptions>
     {

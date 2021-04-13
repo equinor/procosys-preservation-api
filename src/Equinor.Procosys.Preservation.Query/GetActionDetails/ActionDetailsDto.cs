@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Query.GetActionDetails
+namespace Equinor.ProCoSys.Preservation.Query.GetActionDetails
 {
     public class ActionDetailsDto
     {

@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.MainApi.Certificate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Certificate;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer
 {
     public class AutoTransferCommandHandler : IRequestHandler<AutoTransferCommand, Result<Unit>>
     {

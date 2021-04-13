@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.TagFunctions
 {
     public class UpdateRequirementsValidator : AbstractValidator<UpdateRequirementsDto>
     {

@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
+﻿using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     public class PagingDto
     {

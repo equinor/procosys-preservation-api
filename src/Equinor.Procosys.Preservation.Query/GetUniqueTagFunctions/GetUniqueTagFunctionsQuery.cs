@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagFunctions
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagFunctions
 {
     public class GetUniqueTagFunctionsQuery : IRequest<Result<List<TagFunctionCodeDto>>>, IProjectRequest
     {

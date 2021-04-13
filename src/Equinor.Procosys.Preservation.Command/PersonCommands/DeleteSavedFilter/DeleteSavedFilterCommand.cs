@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.PersonCommands.DeleteSavedFilter
+namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.DeleteSavedFilter
 {
     public class DeleteSavedFilterCommand : IRequest<Result<Unit>>
     {

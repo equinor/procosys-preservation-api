@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.CreateMode
 {
     public class CreateModeCommand : IRequest<Result<int>>
     {

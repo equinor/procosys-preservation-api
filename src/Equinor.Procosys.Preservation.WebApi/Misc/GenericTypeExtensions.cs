@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Equinor.Procosys.Preservation.WebApi.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.Misc
 {
     public static class GenericTypeExtensions
     {

@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.MiscCommands.UpdateDateTimeSetting;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.Command.MiscCommands.UpdateDateTimeSetting;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.UpdateDateTimeSetting
+namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.UpdateDateTimeSetting
 {
     [TestClass]
     public class UpdateDateTimeSettingCommandTests : CommandHandlerTestsBase

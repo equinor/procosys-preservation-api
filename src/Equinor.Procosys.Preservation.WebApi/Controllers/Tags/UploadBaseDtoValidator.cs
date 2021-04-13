@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     public class UploadBaseDtoValidator<T> : AbstractValidator<T> where T: UploadBaseDto
     {

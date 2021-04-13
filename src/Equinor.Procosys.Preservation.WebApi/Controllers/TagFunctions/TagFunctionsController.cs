@@ -1,19 +1,19 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command;
-using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UnvoidTagFunction;
-using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
-using Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.GetTagFunctionDetails;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Command;
+using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UnvoidTagFunction;
+using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
+using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Query.GetTagFunctionDetails;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.TagFunctions
 {
     [ApiController]
     [Route("TagFunctions")]

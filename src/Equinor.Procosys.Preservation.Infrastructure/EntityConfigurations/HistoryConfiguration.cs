@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Microsoft.EntityFrameworkCore;
-using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
+using Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using System;
 using System.Linq;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
+namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 {
     internal class HistoryConfiguration : IEntityTypeConfiguration<History>
     {

@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using Equinor.ProCoSys.Preservation.Domain;
 
-namespace Equinor.Procosys.Preservation.WebApi.Seeding
+namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
 {
     public class SeedingPlantProvider : IPlantProvider
     {

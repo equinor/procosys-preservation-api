@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DuplicateJourney
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DuplicateJourney
 {
     public class DuplicateJourneyCommand : IRequest<Result<int>>
     {

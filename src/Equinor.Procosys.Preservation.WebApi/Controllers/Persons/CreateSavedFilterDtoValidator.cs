@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Persons
 {
     public class CreateSavedFilterDtoValidator : AbstractValidator<CreateSavedFilterDto>
     {

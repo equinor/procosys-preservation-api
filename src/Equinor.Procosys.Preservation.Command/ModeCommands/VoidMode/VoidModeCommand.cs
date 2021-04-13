@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.VoidMode
 {
     public class VoidModeCommand : IRequest<Result<string>>
     {

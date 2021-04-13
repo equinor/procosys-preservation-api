@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementDefinition
+namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRequirementDefinition
 {
     public class DeleteRequirementDefinitionCommand : IRequest<Result<Unit>>
     {

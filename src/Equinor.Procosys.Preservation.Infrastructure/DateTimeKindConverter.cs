@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Equinor.Procosys.Preservation.Infrastructure
+namespace Equinor.ProCoSys.Preservation.Infrastructure
 {
     public class DateTimeKindConverter : ValueConverter<DateTime, DateTime>
     {

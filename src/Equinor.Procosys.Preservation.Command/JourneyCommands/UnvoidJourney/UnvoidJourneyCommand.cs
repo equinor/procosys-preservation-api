@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidJourney
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UnvoidJourney
 {
     public class UnvoidJourneyCommand : IRequest<Result<string>>
     {

@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetTagAttachment;
+﻿using Equinor.ProCoSys.Preservation.Query.GetTagAttachment;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagAttachment
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagAttachment
 {
     [TestClass]
     public class GetTagAttachmentQueryTests

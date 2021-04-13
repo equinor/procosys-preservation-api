@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.Validators;
+﻿using Equinor.ProCoSys.Preservation.Command.Validators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
     [TestClass]
     public abstract class TestBase

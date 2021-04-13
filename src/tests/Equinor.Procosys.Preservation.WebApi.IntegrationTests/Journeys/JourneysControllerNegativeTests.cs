@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 {
     [TestClass]
     public class JourneysControllerNegativeTests : JourneysControllerTestsBase

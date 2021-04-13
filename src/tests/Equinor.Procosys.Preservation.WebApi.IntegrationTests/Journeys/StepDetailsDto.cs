@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 {
     public class StepDetailsDto
     {

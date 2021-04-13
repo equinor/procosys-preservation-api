@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve;
+﻿using Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Preserve
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preserve
 {
     [TestClass]
     public class PreserveCommandTests

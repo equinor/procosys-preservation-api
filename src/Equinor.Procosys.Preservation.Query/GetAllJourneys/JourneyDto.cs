@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.Query.GetAllJourneys
+namespace Equinor.ProCoSys.Preservation.Query.GetAllJourneys
 {
     public class JourneyDto
     {

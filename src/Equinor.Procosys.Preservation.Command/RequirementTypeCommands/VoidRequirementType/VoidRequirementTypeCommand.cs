@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.VoidRequirementType
 {
     public class VoidRequirementTypeCommand : IRequest<Result<string>>
     {

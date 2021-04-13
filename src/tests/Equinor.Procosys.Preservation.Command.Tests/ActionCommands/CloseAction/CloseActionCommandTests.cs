@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction;
+﻿using Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CloseAction
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
 {
     [TestClass]
     public class CloseActionCommandTests

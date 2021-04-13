@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Equinor.Procosys.Preservation.Query.GetTagsQueries;
-using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags;
+using Equinor.ProCoSys.Preservation.Query.GetTagsQueries;
+using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries.GetTags
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
 {
     [TestClass]
     public class GetTagsQueryTests

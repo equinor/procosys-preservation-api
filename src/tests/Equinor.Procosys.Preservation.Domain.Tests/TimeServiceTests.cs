@@ -1,8 +1,8 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Domain.Time;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests
+namespace Equinor.ProCoSys.Preservation.Domain.Tests
 {
     [TestClass]
     public class TimeServiceTests

@@ -1,15 +1,15 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.MainApi.Project;
-using Equinor.Procosys.Preservation.MainApi.Tag;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Project;
+using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
+namespace Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncProjects
 {
     public class SyncProjectsCommandHandler : IRequestHandler<SyncProjectsCommand, Result<Unit>>
     {

@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.UpdateJourney
+namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateJourney
 {
     [TestClass]
     public class UpdateJourneyCommandHandlerTests : CommandHandlerTestsBase

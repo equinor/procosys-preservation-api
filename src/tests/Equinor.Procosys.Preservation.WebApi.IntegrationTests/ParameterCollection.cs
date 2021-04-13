@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
     public class ParameterCollection : NameValueCollection
     {

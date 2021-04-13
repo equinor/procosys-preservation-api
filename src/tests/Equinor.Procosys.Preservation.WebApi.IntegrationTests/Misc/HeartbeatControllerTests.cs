@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
 {
     [TestClass]
     public class HeartbeatControllerTests : TestBase

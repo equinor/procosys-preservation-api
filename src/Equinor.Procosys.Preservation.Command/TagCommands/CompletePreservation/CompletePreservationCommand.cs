@@ -4,7 +4,7 @@ using System.Linq;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.CompletePreservation
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CompletePreservation
 {
     public class CompletePreservationCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
     {

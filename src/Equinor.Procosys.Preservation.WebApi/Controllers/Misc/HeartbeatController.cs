@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Domain.Time;
+﻿using Equinor.ProCoSys.Preservation.Domain.Time;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 {
     [ApiController]
     [Route("Heartbeat")]

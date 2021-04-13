@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.TagFunctionValidators;
+using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunction;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagFunctionValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.VoidTagFunction
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.VoidTagFunction
 {
     [TestClass]
     public class VoidTagFunctionCommandValidatorTests

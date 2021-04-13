@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Equinor.Procosys.Preservation.WebApi.Telemetry
+namespace Equinor.ProCoSys.Preservation.WebApi.Telemetry
 {
     public class ConsoleTelemetryClient : ITelemetryClient
     {

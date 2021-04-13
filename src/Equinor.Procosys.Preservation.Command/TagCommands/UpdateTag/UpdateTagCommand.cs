@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTag
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTag
 {
     public class UpdateTagCommand : IRequest<Result<string>>, ITagCommandRequest
     {

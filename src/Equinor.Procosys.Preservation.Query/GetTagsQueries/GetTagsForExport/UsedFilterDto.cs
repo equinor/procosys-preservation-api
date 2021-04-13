@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport
+namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
 {
     public class UsedFilterDto
     {

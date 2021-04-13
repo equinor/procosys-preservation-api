@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.StepValidators
 {
     public interface IStepValidator
     {

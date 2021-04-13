@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
+﻿using Equinor.ProCoSys.Preservation.Query.GetUniqueTagResponsibles;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagResponsibles
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagResponsibles
 {
     [TestClass]
     public class GetUniqueTagResponsiblesQueryTests

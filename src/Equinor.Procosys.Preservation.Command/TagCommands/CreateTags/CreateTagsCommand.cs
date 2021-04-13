@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
 {
     public class CreateTagsCommand : IRequest<Result<List<int>>>, IProjectRequest
     {

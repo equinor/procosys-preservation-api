@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.UpdateMode;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UpdateMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UpdateMode
 {
     [TestClass]
     public class UpdateModeCommandValidatorTests

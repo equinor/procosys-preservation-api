@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests
+namespace Equinor.ProCoSys.Preservation.Domain.Tests
 {
     [TestClass]
     public class EntityBaseTests

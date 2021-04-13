@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType
 {
     public class UnvoidRequirementTypeCommand : IRequest<Result<string>>
     {

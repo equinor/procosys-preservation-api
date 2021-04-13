@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject
+namespace Equinor.ProCoSys.Preservation.Query.GetSavedFiltersInProject
 {
     public class GetSavedFiltersInProjectQuery : IRequest<Result<List<SavedFilterDto>>> // not necessary to secure SavedFilters on Project
     {

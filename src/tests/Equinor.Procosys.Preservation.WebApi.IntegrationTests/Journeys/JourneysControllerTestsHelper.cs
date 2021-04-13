@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 {
     public static class JourneysControllerTestsHelper
     {

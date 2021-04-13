@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetTagAttachments
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetTagAttachments
 {
     public class TagAttachmentDto
     {

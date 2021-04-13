@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.Audit;
-using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Audit;
+using Equinor.ProCoSys.Preservation.Domain.Time;
 
-namespace Equinor.Procosys.Preservation.Domain
+namespace Equinor.ProCoSys.Preservation.Domain
 {
     public abstract class Attachment : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {

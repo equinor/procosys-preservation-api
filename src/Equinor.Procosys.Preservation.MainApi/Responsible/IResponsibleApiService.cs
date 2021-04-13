@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.MainApi.Responsible
+namespace Equinor.ProCoSys.Preservation.MainApi.Responsible
 {
     public interface IResponsibleApiService
     {

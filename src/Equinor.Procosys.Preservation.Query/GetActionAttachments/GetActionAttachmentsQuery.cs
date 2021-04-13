@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetActionAttachments
+namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachments
 {
     public class GetActionAttachmentsQuery : IRequest<Result<List<ActionAttachmentDto>>>, ITagQueryRequest
     {

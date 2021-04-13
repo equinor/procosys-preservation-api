@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 
-namespace Equinor.Procosys.Preservation.WebApi.Middleware
+namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
 {
     public static class MiddlewareExtensions
     {

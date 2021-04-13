@@ -2,27 +2,27 @@
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Query.GetAllRequirementTypes;
-using Equinor.Procosys.Preservation.Query.GetRequirementTypeById;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRequirementDefinition;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRequirementDefinition;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.DeleteRequirementType;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementDefinition;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UnvoidRequirementType;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.VoidRequirementDefinition;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Query.GetAllRequirementTypes;
+using Equinor.ProCoSys.Preservation.Query.GetRequirementTypeById;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes
 {
     [ApiController]
     [Route("RequirementTypes")]

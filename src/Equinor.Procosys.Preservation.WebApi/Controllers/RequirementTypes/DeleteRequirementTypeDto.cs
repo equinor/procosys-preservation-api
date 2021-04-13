@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes
 {
     public class DeleteRequirementTypeDto
     {

@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues
+﻿namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues
 {
     public class CheckBoxFieldValue
     {

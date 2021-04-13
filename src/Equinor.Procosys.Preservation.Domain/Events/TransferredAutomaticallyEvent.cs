@@ -1,8 +1,8 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.Domain.Events
+namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
     public class TransferredAutomaticallyEvent : INotification
     {

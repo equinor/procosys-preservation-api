@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.MainApi.TagFunction
+namespace Equinor.ProCoSys.Preservation.MainApi.TagFunction
 {
     public interface ITagFunctionApiService
     {

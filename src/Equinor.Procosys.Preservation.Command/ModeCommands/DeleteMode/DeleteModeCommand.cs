@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.DeleteMode
 {
     public class DeleteModeCommand : IRequest<Result<Unit>>
     {

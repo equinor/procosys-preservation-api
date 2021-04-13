@@ -2,16 +2,16 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateTags;
-using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
-using Equinor.Procosys.Preservation.WebApi.Excel;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
     public class TagsControllerForCreateTagsTests

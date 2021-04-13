@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Domain
+namespace Equinor.ProCoSys.Preservation.Domain
 {
     public interface IUnitOfWork
     {

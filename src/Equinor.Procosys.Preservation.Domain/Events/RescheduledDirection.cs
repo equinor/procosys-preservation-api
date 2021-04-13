@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain.Events
+﻿namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
     public enum RescheduledDirection
     {

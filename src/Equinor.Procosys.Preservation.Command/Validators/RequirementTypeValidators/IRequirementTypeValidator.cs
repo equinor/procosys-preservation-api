@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValidators
 {
     public interface IRequirementTypeValidator
     {

@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetHistory
+namespace Equinor.ProCoSys.Preservation.Query.GetHistory
 {
     public class GetHistoryQuery : IRequest<Result<List<HistoryDto>>>, ITagQueryRequest
     {

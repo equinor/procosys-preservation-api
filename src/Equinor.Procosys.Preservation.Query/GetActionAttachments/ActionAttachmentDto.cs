@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetActionAttachments
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachments
 {
     public class ActionAttachmentDto
     {

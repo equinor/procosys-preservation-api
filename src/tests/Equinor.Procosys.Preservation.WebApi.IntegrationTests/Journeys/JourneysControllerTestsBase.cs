@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Responsible;
+using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 {
     [TestClass]
     public class JourneysControllerTestsBase : TestBase

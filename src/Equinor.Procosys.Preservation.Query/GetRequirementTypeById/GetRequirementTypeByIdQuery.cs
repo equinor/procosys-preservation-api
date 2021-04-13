@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetRequirementTypeById
+namespace Equinor.ProCoSys.Preservation.Query.GetRequirementTypeById
 {
     public class GetRequirementTypeByIdQuery : IRequest<Result<RequirementTypeDetailsDto>>
     {
