@@ -56,6 +56,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new List<int> {_rdForSupplierId, _rdForOtherThanSupplierId},
                     default))
                 .Returns(Task.FromResult(true));
+            _tagValidatorMock.Setup(t => t.RequirementUsageWillCoversForSuppliersAsync(
+                    _tagId,
+                    new List<int>(),
+                    new List<int>(),
+                    new List<int> {_rdForSupplierId, _rdForOtherThanSupplierId},
+                    default))
+                .Returns(Task.FromResult(true));
             _tagValidatorMock.Setup(t => t.HasStepAsync(_tagId, _stepId, default)).Returns(Task.FromResult(true));
 
             _stepValidatorMock = new Mock<IStepValidator>();
@@ -517,6 +524,41 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldBeValid_ForPoAreaTag_WhenTargetStepForSupplier()
+        {
+            // Arrange
+            _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
+
+            // Act
+            var result = _dut.Validate(_addTwoReqsCommand);
+
+            // Assert
+            Assert.IsTrue(result.IsValid);
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_ForPoAreaTag_WhenNoRequirementForSupplier()
+        {
+            // Arrange
+            _tagValidatorMock.Setup(t => t.RequirementUsageWillCoversForSuppliersAsync(
+                    _tagId,
+                    new List<int>(),
+                    new List<int>(),
+                    new List<int> {_rdForSupplierId, _rdForOtherThanSupplierId},
+                    default))
+                .Returns(Task.FromResult(false));
+            _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
+
+            // Act
+            var result = _dut.Validate(_addTwoReqsCommand);
+
+            // Assert
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for supplier!"));
         }
 
         [TestMethod]

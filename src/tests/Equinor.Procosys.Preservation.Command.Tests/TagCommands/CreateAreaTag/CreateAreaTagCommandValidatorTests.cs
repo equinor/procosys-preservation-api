@@ -329,6 +329,11 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementsNotUnique()
         {
+            _rdValidatorMock
+                .Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(
+                    new List<int> {_rdForSupplierId, _rdForOtherThanSupplierId, _rdForSupplierId}, default))
+                .Returns(Task.FromResult(true));
+            
             var command = new CreateAreaTagCommand(
                 _projectName,
                 TagType.PreArea,
@@ -340,6 +345,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 new List<RequirementForCommand>
                 {
                     new RequirementForCommand(_rdForSupplierId, 1),
+                    new RequirementForCommand(_rdForOtherThanSupplierId, 1),
                     new RequirementForCommand(_rdForSupplierId, 1)
                 },
                 "DescriptionA",

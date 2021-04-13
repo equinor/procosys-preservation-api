@@ -24,22 +24,18 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {
                 RuleFor(command => command)
-                    .Must(command => BeUniqueRequirements(command.Requirements))
-                    .WithMessage(_ => "Requirement definitions must be unique!")
-                    .MustAsync((command, token) => RequirementUsageIsForSupplierAsync(command.Requirements, token))
-                    .WithMessage(_ => "Requirements must include requirements to be used for supplier!")
-                        .When(command => command.TagType == TagType.PoArea, ApplyConditionTo.CurrentValidator)
                     .MustAsync((command, token) => RequirementUsageIsForAllJourneysAsync(command.Requirements, token))
                     .WithMessage(_ => "Requirements must include requirements to be used both for supplier and other than suppliers!")
-                        .When(command => command.TagType != TagType.PoArea, ApplyConditionTo.CurrentValidator);
+                    .When(command => command.TagType != TagType.PoArea, ApplyConditionTo.CurrentValidator)
+                    .MustAsync((command, token) => RequirementUsageIsForSupplierAsync(command.Requirements, token))
+                    .WithMessage(_ => "Requirements must include requirements to be used for supplier!")
+                        .When(command => command.TagType == TagType.PoArea, ApplyConditionTo.CurrentValidator);
 
             }).Otherwise(() =>
             {
                 RuleFor(command => command)
                     .Must(command => command.TagType != TagType.PoArea)
                     .WithMessage(_ => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!")
-                    .Must(command => BeUniqueRequirements(command.Requirements))
-                    .WithMessage(_ => "Requirement definitions must be unique!")
                     .MustAsync((command, token) => RequirementUsageIsForJourneysWithoutSupplierAsync(command.Requirements, token))
                     .WithMessage(_ => "Requirements must include requirements to be used for other than suppliers!")
                     .MustAsync((command, token) => RequirementUsageIsNotForSupplierStepOnlyAsync(command.Requirements, token))
@@ -47,6 +43,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             });
 
             RuleFor(command => command)
+                .Must(command => BeUniqueRequirements(command.Requirements))
+                .WithMessage(_ => "Requirement definitions must be unique!")
                 .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
                 .WithMessage(command => $"Project is closed! Project={command.ProjectName}")
                 .MustAsync((command, token) => NotBeAnExistingTagWithinProjectAsync(command.GetTagNo(), command.ProjectName, token))
