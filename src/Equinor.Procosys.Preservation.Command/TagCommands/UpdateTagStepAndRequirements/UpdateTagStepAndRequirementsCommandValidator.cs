@@ -46,7 +46,14 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                                 command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
                                 command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
                                 token))
-                        .WithMessage(_ => "Requirements must include requirements to be used for supplier!");
+                        .WithMessage(_ => "Requirements must include requirements to be used for supplier!")
+                        .MustAsync((command, token) => RequirementUsageIsNotForOtherThanSupplierAsync(
+                            command.TagId,
+                            command.UpdatedRequirements.Where(u => !u.IsVoided).Select(u => u.TagRequirementId).ToList(),
+                            command.UpdatedRequirements.Where(u => u.IsVoided).Select(u => u.TagRequirementId).ToList(),
+                            command.NewRequirements.Select(r => r.RequirementDefinitionId).ToList(),
+                            token))
+                        .WithMessage(_ => "Requirements can not include requirements for other than suppliers!");
                 });
             }).Otherwise(() =>
             {
@@ -122,6 +129,19 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 CancellationToken token)
                 => requirementDefinitionIdsToBeAdded.Count == 0 || 
                    await tagValidator.AllRequirementsWillBeUniqueAsync(tagId, requirementDefinitionIdsToBeAdded, token);
+            
+            async Task<bool> RequirementUsageIsNotForOtherThanSupplierAsync(
+                int tagId, 
+                List<int> tagRequirementIdsToBeUnvoided,
+                List<int> tagRequirementIdsToBeVoided,
+                List<int> requirementDefinitionIdsToBeAdded,
+                CancellationToken token)
+                => !await tagValidator.RequirementHasAnyForForOtherThanSuppliersUsageAsync(
+                    tagId, 
+                    tagRequirementIdsToBeUnvoided, 
+                    tagRequirementIdsToBeVoided, 
+                    requirementDefinitionIdsToBeAdded, 
+                    token);
             
             async Task<bool> RequirementUsageIsForSupplierAsync(
                 int tagId, 
