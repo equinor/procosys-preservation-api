@@ -1,13 +1,13 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
 {
     public class UpdateTagStepAndRequirementsCommandHandler : IRequestHandler<UpdateTagStepAndRequirementsCommand, Result<string>>
     {

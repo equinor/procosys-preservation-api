@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.MainApi.Permission;
-using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.MainApi.Permission;
+using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 {
     [ApiController]
     [Route("Cache")]

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Equinor.Procosys.Preservation.Command;
-using Equinor.Procosys.Preservation.Query;
-using Equinor.Procosys.Preservation.WebApi.DIModules;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
-using Equinor.Procosys.Preservation.WebApi.Seeding;
+using Equinor.ProCoSys.Preservation.Command;
+using Equinor.ProCoSys.Preservation.Query;
+using Equinor.ProCoSys.Preservation.WebApi.DIModules;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.WebApi.Seeding;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +22,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace Equinor.Procosys.Preservation.WebApi
+namespace Equinor.ProCoSys.Preservation.WebApi
 {
     public class Startup
     {

@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.TagFunctionValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.TagFunctionValidators
 {
     public class TagFunctionValidator : ITagFunctionValidator
     {

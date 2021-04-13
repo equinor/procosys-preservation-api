@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.MainApi
+﻿namespace Equinor.ProCoSys.Preservation.MainApi
 {
     public class MainApiOptions
     {

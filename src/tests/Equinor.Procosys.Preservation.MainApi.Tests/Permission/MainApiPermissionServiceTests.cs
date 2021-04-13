@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Permission;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Permission;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tests.Permission
+namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Permission
 {
     [TestClass]
     public class MainApiPermissionServiceTests

@@ -1,14 +1,14 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.Events;
-using Equinor.Procosys.Preservation.Domain.Time;
-using Equinor.Procosys.Preservation.Test.Common;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggregate
 {
     [TestClass]
     public class PreservationPeriodTests

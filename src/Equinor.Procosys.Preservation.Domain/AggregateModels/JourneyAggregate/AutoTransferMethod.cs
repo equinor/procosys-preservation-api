@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
+﻿namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
     public enum AutoTransferMethod
     {

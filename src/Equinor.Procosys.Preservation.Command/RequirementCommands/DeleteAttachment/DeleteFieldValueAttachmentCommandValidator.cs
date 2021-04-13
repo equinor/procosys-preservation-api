@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.FieldValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementCommands.DeleteAttachment
+namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttachment
 {
     public class DeleteFieldValueAttachmentCommandValidator : AbstractValidator<DeleteFieldValueAttachmentCommand>
     {

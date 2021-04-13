@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     public class RescheduleTagsDto
     {

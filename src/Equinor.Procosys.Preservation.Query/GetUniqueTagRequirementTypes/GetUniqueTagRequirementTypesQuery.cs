@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagRequirementTypes
 {
     public class GetUniqueTagRequirementTypesQuery : IRequest<Result<List<RequirementTypeDto>>>, IProjectRequest
     {

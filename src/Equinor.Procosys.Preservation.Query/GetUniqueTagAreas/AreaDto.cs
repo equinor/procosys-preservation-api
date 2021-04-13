@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetUniqueTagAreas
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagAreas
 {
     public class AreaDto
     {

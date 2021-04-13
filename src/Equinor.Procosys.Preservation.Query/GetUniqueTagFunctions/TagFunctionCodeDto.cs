@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetUniqueTagFunctions
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagFunctions
 {
     public class TagFunctionCodeDto
     {

@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.UpdateRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.UpdateRequirementType
 {
     [TestClass]
     public class UpdateRequirementTypeCommandHandlerTests : CommandHandlerTestsBase

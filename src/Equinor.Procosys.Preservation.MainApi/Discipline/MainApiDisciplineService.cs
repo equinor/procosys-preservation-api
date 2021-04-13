@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.MainApi.Discipline
+namespace Equinor.ProCoSys.Preservation.MainApi.Discipline
 {
     public class MainApiDisciplineService : IDisciplineApiService
     {

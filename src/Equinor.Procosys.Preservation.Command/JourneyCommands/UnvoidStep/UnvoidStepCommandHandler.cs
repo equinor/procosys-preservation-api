@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UnvoidStep
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UnvoidStep
 {
     public class UnvoidStepCommandHandler : IRequestHandler<UnvoidStepCommand, Result<string>>
     {

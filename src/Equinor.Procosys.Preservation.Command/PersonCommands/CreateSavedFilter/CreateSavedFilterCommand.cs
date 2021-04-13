@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter
+namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreateSavedFilter
 {
     public class CreateSavedFilterCommand : IRequest<Result<int>>
     {

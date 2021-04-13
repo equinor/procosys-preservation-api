@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.Time;
-using Equinor.Procosys.Preservation.Infrastructure.Caching;
-using Equinor.Procosys.Preservation.MainApi.Permission;
-using Equinor.Procosys.Preservation.Test.Common;
-using Equinor.Procosys.Preservation.WebApi.Caches;
+using Equinor.ProCoSys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Infrastructure.Caching;
+using Equinor.ProCoSys.Preservation.MainApi.Permission;
+using Equinor.ProCoSys.Preservation.Test.Common;
+using Equinor.ProCoSys.Preservation.WebApi.Caches;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Caches
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
 {
     [TestClass]
     public class PermissionCacheTests

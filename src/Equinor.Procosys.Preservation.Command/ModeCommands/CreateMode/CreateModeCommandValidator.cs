@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.CreateMode
 {
     public class CreateModeCommandValidator : AbstractValidator<CreateModeCommand>
     {

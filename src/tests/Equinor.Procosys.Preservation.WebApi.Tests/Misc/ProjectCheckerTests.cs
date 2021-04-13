@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc
 {
     [TestClass]
     public class ProjectCheckerTests

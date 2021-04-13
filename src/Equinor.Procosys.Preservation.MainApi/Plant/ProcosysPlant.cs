@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Equinor.Procosys.Preservation.MainApi.Plant
+namespace Equinor.ProCoSys.Preservation.MainApi.Plant
 {
     [DebuggerDisplay("{Title} {Id} {HasAccess}")]
     public class ProcosysPlant

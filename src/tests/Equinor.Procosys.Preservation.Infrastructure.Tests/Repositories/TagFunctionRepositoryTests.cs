@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.Procosys.Preservation.Infrastructure.Repositories;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Infrastructure.Repositories;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MockQueryable.Moq;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 {
     [TestClass]
     public class TagFunctionRepositoryTests : RepositoryTestBase

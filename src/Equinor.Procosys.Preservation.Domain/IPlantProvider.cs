@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain
+﻿namespace Equinor.ProCoSys.Preservation.Domain
 {
     public interface IPlantProvider
     {

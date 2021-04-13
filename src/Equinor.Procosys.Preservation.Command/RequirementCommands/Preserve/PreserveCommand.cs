@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Preserve
+namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Preserve
 {
     public class PreserveCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {

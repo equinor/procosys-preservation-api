@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.WebApi.Misc;
-using Equinor.Procosys.Preservation.WebApi.Authorizations;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Equinor.Procosys.Preservation.WebApi.Behaviors
+namespace Equinor.ProCoSys.Preservation.WebApi.Behaviors
 {
     public class CheckAccessBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
     {

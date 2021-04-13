@@ -1,7 +1,7 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.GetHistory
+namespace Equinor.ProCoSys.Preservation.Query.GetHistory
 {
     public class HistoryDto
     {

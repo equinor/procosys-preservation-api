@@ -1,7 +1,7 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Domain.Time;
 
-namespace Equinor.Procosys.Preservation.Test.Common
+namespace Equinor.ProCoSys.Preservation.Test.Common
 {
     public class ManualTimeProvider : ITimeProvider
     {

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
+namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 {
     internal class RequirementDefinitionConfiguration : IEntityTypeConfiguration<RequirementDefinition>
     {

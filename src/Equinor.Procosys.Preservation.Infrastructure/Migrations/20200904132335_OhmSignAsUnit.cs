@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Migrations
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Migrations
 {
     public partial class OhmSignAsUnit : Migration
     {

@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetFieldValueAttachment
+namespace Equinor.ProCoSys.Preservation.Query.GetFieldValueAttachment
 {
     public class GetFieldValueAttachmentQuery : IRequest<Result<Uri>>, ITagQueryRequest
     {

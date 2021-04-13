@@ -1,9 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace Equinor.Procosys.Preservation.WebApi.Middleware
+namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
 {
     public class CurrentBearerTokenMiddleware
     {

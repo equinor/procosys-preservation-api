@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.DeleteMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.DeleteMode
 {
     public class DeleteModeCommandValidator : AbstractValidator<DeleteModeCommand>
     {

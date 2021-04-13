@@ -1,15 +1,15 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject;
-using Equinor.Procosys.Preservation.Test.Common;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Infrastructure;
+using Equinor.ProCoSys.Preservation.Query.GetSavedFiltersInProject;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetSavedFiltersInProject
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetSavedFiltersInProject
 {
     [TestClass]
     public class GetSavedFiltersInProjectQueryHandlerTests : ReadOnlyTestsBase

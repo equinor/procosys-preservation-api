@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
 {
     public class StartPreservationCommandHandler : IRequestHandler<StartPreservationCommand, Result<Unit>>
     {

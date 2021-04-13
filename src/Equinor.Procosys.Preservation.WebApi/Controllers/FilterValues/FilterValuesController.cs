@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagAreas;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagDisciplines;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagFunctions;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagModes;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Query.GetUniqueTagAreas;
+using Equinor.ProCoSys.Preservation.Query.GetUniqueTagDisciplines;
+using Equinor.ProCoSys.Preservation.Query.GetUniqueTagFunctions;
+using Equinor.ProCoSys.Preservation.Query.GetUniqueTagJourneys;
+using Equinor.ProCoSys.Preservation.Query.GetUniqueTagModes;
+using Equinor.ProCoSys.Preservation.Query.GetUniqueTagRequirementTypes;
+using Equinor.ProCoSys.Preservation.Query.GetUniqueTagResponsibles;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.FilterValues
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.FilterValues
 {
     [ApiController]
     [Route("FilterValues")]

@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Query.GetTagRequirements;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Query.GetTagRequirements;
 
-namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
+namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
 {
     public class FieldDetailsDto
     {

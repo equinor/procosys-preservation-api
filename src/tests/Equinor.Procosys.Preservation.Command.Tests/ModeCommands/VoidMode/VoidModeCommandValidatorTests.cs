@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.VoidMode;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.VoidMode
 {
     [TestClass]
     public class VoidModeCommandValidatorTests

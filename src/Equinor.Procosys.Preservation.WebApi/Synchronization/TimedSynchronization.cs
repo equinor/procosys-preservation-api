@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.WebApi.Synchronization
+namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public class TimedSynchronization : IHostedService, IDisposable
     {

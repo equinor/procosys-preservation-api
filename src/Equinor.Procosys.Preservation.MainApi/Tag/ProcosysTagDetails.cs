@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tag
+namespace Equinor.ProCoSys.Preservation.MainApi.Tag
 {
     [DebuggerDisplay("{TagNo}")]
     public class ProcosysTagDetails

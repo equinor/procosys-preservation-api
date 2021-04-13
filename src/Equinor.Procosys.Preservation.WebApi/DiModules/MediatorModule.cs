@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
-using Equinor.Procosys.Preservation.Command;
-using Equinor.Procosys.Preservation.Query;
-using Equinor.Procosys.Preservation.WebApi.Behaviors;
+using Equinor.ProCoSys.Preservation.Command;
+using Equinor.ProCoSys.Preservation.Query;
+using Equinor.ProCoSys.Preservation.WebApi.Behaviors;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Equinor.Procosys.Preservation.WebApi.DIModules
+namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 {
     public static class MediatorModule
     {

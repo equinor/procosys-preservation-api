@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi
+﻿namespace Equinor.ProCoSys.Preservation.WebApi
 {
     public class Permissions
     {

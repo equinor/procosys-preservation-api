@@ -1,9 +1,9 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
+namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
 {
     public class CloneCommandValidator : AbstractValidator<CloneCommand>
     {

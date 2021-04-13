@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Equinor.Procosys.Preservation.Infrastructure
+namespace Equinor.ProCoSys.Preservation.Infrastructure
 {
     public static class TypeProvider
     {

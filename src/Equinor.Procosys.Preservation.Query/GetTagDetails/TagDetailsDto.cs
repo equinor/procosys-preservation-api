@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagDetails
+namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
 {
     public class TagDetailsDto
     {

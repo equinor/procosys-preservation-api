@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ActionCommands.CreateAction;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Command.ActionCommands.CreateAction;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.CreateAction
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CreateAction
 {
     [TestClass]
     public class CreateActionCommandValidatorTests

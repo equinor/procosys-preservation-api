@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.Procosys.Preservation.MainApi.TagFunction;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.MiscCommands.Clone
+namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone
 {
     public class CloneCommandHandler : IRequestHandler<CloneCommand, Result<Unit>>
     {

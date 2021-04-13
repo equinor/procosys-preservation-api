@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
+using Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequirements;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagFunctionCommands.UpdateRequirements
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.UpdateRequirements
 {
     [TestClass]
     public class UpdateRequirementsCommandValidatorTests

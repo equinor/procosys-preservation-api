@@ -1,7 +1,7 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 
-namespace Equinor.Procosys.Preservation.Domain.Audit
+namespace Equinor.ProCoSys.Preservation.Domain.Audit
 {
     /// <summary>
     /// Interface to get and set creation data on an entity.

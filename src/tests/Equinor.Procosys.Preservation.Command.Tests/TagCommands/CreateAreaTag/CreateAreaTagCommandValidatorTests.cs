@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementDefinitionValidators;
-using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementDefinitionValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.StepValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 {
     [TestClass]
     public class CreateAreaTagCommandValidatorTests

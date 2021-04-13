@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetTagsQueries;
+﻿using Equinor.ProCoSys.Preservation.Query.GetTagsQueries;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagsQueries
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries
 {
     [TestClass]
     public class FilterTests

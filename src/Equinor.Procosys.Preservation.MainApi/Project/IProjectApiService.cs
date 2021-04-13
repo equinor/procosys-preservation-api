@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.MainApi.Project
+namespace Equinor.ProCoSys.Preservation.MainApi.Project
 {
     public interface IProjectApiService
     {

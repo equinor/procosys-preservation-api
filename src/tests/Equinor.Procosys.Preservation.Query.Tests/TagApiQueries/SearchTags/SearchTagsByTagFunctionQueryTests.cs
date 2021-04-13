@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
+﻿using Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.TagApiQueries.SearchTags
+namespace Equinor.ProCoSys.Preservation.Query.Tests.TagApiQueries.SearchTags
 {
     [TestClass]
     public class SearchTagsByTagFunctionQueryTests

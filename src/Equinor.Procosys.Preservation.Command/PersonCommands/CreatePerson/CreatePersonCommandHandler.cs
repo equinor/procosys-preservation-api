@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreatePerson
+namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson
 {
     public class CreatePersonCommandHandler : IRequestHandler<CreatePersonCommand, Result<Unit>>
     {

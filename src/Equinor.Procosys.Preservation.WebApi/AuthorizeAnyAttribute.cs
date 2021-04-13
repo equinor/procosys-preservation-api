@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
-namespace Equinor.Procosys.Preservation.WebApi
+namespace Equinor.ProCoSys.Preservation.WebApi
 {
     public class AuthorizeAnyAttribute : AuthorizeAttribute
     {

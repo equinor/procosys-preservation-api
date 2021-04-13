@@ -1,13 +1,13 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Query.GetUniqueTagModes;
-using Equinor.Procosys.Preservation.Test.Common;
+using Equinor.ProCoSys.Preservation.Infrastructure;
+using Equinor.ProCoSys.Preservation.Query.GetUniqueTagModes;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagModes
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagModes
 {
     [TestClass]
     public class GetUniqueTagModesQueryHandlerTests : ReadOnlyTestsBase

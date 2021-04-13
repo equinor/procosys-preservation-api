@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace Equinor.Procosys.Preservation.WebApi.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.Misc
 {
     public static class HttpContextExtension
     {

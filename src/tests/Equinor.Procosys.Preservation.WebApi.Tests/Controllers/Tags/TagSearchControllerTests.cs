@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
-using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
     public class TagSearchControllerTests

@@ -1,12 +1,12 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.Query.GetTagRequirements;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Query.GetTagRequirements;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagRequirements
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
 {
     [TestClass]
     public class FieldDtoTests

@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.DeleteTag
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag
 {
     public class DeleteTagCommandValidator : AbstractValidator<DeleteTagCommand>
     {

@@ -1,8 +1,8 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.DuplicateAreaTag
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DuplicateAreaTag
 {
     public class DuplicateAreaTagCommand : AbstractAreaTag, IRequest<Result<int>>, ITagCommandRequest
     {

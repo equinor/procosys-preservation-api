@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Infrastructure.Repositories;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.Infrastructure.Repositories;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MockQueryable.Moq;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 {
     [TestClass]
     public class ResponsibleRepositoryTests : RepositoryTestBase

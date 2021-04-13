@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Domain.Events
+namespace Equinor.ProCoSys.Preservation.Domain.Events
 {
     public interface IEventDispatcher
     {

@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
+﻿namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
 {
     public interface IHistoryRepository : IRepository<History>
     {

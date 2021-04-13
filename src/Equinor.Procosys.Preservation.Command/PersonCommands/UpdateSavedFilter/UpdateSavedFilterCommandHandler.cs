@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.PersonCommands.UpdateSavedFilter
+namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.UpdateSavedFilter
 {
     public class UpdateSavedFilterCommandHandler : IRequestHandler<UpdateSavedFilterCommand, Result<string>>
     {

@@ -1,9 +1,9 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.Audit;
-using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Audit;
+using Equinor.ProCoSys.Preservation.Domain.Time;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate
 {
     public class Mode : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable, IVoidable
     {

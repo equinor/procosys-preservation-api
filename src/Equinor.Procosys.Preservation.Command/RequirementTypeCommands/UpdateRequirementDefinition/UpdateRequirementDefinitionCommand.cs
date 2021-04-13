@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition
+namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementDefinition
 {
     public class UpdateRequirementDefinitionCommand : IRequest<Result<string>>
     {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests
+namespace Equinor.ProCoSys.Preservation.Command.Tests
 {
     [TestClass]
     public class RequirementTests

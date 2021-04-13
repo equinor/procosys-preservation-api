@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagRequirements
+namespace Equinor.ProCoSys.Preservation.Query.GetTagRequirements
 {
     public class RequirementDetailsDto
     {

@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using System.Security.Claims;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 
-namespace Equinor.Procosys.Preservation.WebApi.Authorizations
+namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
     public class ProjectAccessChecker : IProjectAccessChecker
     {

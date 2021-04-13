@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.Preserve
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve
 {
     public class PreserveCommandValidator : AbstractValidator<PreserveCommand>
     {

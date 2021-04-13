@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.JourneyAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.JourneyAggregate
 {
     [TestClass]
     public class JourneyTests

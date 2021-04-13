@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidJourney;
+﻿using Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidJourney;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidJourney
+namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.VoidJourney
 {
     [TestClass]
     public class VoidJourneyCommandTests

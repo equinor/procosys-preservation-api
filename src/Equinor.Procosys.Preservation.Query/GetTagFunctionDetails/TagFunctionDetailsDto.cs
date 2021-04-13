@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagFunctionDetails
+namespace Equinor.ProCoSys.Preservation.Query.GetTagFunctionDetails
 {
     public class TagFunctionDetailsDto
     {

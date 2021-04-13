@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Journeys
 {
     public class CreateStepDtoValidator : AbstractValidator<CreateStepDto>
     {

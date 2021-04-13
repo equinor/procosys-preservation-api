@@ -1,16 +1,16 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
-using Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles;
-using Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncProjects;
+using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncResponsibles;
+using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncTagFunctions;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Synchronize
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Synchronize
 {
     [ApiController]
     [Route("Synchronize")]

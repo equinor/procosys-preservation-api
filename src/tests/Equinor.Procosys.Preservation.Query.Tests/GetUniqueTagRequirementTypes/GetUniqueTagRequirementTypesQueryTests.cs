@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes;
+﻿using Equinor.ProCoSys.Preservation.Query.GetUniqueTagRequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagRequirementTypes
 {
     [TestClass]
     public class GetUniqueTagRequirementTypesQueryTests

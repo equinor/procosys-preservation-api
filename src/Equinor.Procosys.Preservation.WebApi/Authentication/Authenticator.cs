@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
 
-namespace Equinor.Procosys.Preservation.WebApi.Authentication
+namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 {
     public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IApplicationAuthenticator
     {

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
-using Equinor.Procosys.Preservation.Domain.Events;
-using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
     [TestClass]
     public class TagsControllerTests : TagsControllerTestsBase

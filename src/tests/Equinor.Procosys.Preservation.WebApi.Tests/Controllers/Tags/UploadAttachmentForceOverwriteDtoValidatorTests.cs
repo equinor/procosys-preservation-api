@@ -1,14 +1,14 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
     public class UploadAttachmentForceOverwriteDtoValidatorTests

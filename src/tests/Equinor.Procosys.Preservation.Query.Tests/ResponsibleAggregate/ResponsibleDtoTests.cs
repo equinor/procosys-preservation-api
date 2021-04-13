@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.ResponsibleAggregate;
+﻿using Equinor.ProCoSys.Preservation.Query.ResponsibleAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.ResponsibleAggregate
+namespace Equinor.ProCoSys.Preservation.Query.Tests.ResponsibleAggregate
 {
     [TestClass]
     public class ResponsibleDtoTests

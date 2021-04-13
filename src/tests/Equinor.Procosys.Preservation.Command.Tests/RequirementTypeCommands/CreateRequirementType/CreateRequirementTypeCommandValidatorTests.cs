@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.CreateRequirementType;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValidators;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.CreateRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.CreateRequirementType
 {
     [TestClass]
     public class CreateRequirementTypeCommandValidatorTests

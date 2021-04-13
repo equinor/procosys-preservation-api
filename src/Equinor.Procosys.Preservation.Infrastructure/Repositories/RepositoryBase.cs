@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 {
     public abstract class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : EntityBase, IAggregateRoot
     {

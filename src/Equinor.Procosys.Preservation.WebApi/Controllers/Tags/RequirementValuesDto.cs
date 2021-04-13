@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     public class RequirementValuesDto
     {

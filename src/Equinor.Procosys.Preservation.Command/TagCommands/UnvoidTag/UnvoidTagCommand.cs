@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.UnvoidTag
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UnvoidTag
 {
     public class UnvoidTagCommand : IRequest<Result<string>>, ITagCommandRequest
     {

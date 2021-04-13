@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tag
+namespace Equinor.ProCoSys.Preservation.MainApi.Tag
 {
     public class ProcosysTagDetailsComparer : IEqualityComparer<ProcosysTagDetails>
     {

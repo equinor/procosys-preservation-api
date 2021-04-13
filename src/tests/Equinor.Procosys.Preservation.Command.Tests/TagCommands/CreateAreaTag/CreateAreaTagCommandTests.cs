@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.CreateAreaTag;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 {
     [TestClass]
     public class CreateAreaTagCommandTests

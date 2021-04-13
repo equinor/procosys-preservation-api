@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
 {
     public static class ModesControllerTestsHelper
     {

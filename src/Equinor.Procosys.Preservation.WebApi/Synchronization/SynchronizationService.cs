@@ -4,27 +4,27 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.MiscCommands.UpdateDateTimeSetting;
-using Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects;
-using Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles;
-using Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions;
-using Equinor.Procosys.Preservation.Command.TagCommands.AutoTransfer;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate;
-using Equinor.Procosys.Preservation.Domain.Time;
-using Equinor.Procosys.Preservation.MainApi.Certificate;
-using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.Query.GetDateTimeSetting;
-using Equinor.Procosys.Preservation.WebApi.Authentication;
-using Equinor.Procosys.Preservation.WebApi.Authorizations;
-using Equinor.Procosys.Preservation.WebApi.Misc;
-using Equinor.Procosys.Preservation.WebApi.Telemetry;
+using Equinor.ProCoSys.Preservation.Command.MiscCommands.UpdateDateTimeSetting;
+using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncProjects;
+using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncResponsibles;
+using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncTagFunctions;
+using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.MainApi.Certificate;
+using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Preservation.Query.GetDateTimeSetting;
+using Equinor.ProCoSys.Preservation.WebApi.Authentication;
+using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Equinor.Procosys.Preservation.WebApi.Synchronization
+namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public class SynchronizationService : ISynchronizationService
     {

@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
+﻿namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public static class TagTypeExtension
     {

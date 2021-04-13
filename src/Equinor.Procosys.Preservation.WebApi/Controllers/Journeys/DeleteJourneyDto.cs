@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Journeys
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Journeys
 {
     public class DeleteJourneyDto
     {

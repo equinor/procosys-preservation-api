@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.Procosys.Preservation.MainApi.TagFunction;
+using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncTagFunctions;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncTagFunctions
+namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncTagFunctions
 {
     [TestClass]
     public class SyncTagFunctionsCommandHandlerTests : CommandHandlerTestsBase

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class ActionAttachment : Attachment
     {

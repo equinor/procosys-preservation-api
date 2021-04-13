@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
-using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.StepValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps
 {
     public class SwapStepsCommandValidator : AbstractValidator<SwapStepsCommand>
     {

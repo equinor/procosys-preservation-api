@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.WebApi.Telemetry
+namespace Equinor.ProCoSys.Preservation.WebApi.Telemetry
 {
     public interface ITelemetryClient
     {

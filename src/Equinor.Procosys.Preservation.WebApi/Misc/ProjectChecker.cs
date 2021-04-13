@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.WebApi.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.Misc
 {
     public class ProjectChecker : IProjectChecker
     {

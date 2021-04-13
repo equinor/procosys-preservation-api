@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
     public interface IRequirementTypeRepository : IRepository<RequirementType>
     {

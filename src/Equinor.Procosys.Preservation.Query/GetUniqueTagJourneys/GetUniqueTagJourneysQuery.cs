@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagJourneys
 {
     public class GetUniqueTagJourneysQuery : IRequest<Result<List<JourneyDto>>>, IProjectRequest
     {

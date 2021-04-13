@@ -1,12 +1,12 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.JourneyCommands.VoidStep;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
-using Equinor.Procosys.Preservation.Command.Validators.StepValidators;
+using Equinor.ProCoSys.Preservation.Command.JourneyCommands.VoidStep;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.StepValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.VoidStep
+namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.VoidStep
 {
     [TestClass]
     public class VoidStepCommandValidatorTests

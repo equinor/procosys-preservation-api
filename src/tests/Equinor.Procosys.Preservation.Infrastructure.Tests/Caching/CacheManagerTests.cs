@@ -1,10 +1,10 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.Time;
-using Equinor.Procosys.Preservation.Infrastructure.Caching;
-using Equinor.Procosys.Preservation.Test.Common;
+using Equinor.ProCoSys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Infrastructure.Caching;
+using Equinor.ProCoSys.Preservation.Test.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Caching
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Caching
 {
     [TestClass]
     public class CacheManagerTests

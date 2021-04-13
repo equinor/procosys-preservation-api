@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tag
+namespace Equinor.ProCoSys.Preservation.MainApi.Tag
 {
     [DebuggerDisplay("{Items.Count} of {MaxAvailable} available tags")]
     public class ProcosysTagSearchResult

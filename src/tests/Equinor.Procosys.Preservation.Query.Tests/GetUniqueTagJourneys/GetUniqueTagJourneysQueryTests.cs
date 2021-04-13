@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys;
+﻿using Equinor.ProCoSys.Preservation.Query.GetUniqueTagJourneys;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagJourneys
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagJourneys
 {
     [TestClass]
     public class GetUniqueTagJourneysQueryTests

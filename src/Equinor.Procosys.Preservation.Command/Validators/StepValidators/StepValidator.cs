@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.StepValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.StepValidators
 {
     public class StepValidator : IStepValidator
     {

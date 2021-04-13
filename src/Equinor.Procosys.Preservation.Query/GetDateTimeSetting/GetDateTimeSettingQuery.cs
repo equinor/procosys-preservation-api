@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetDateTimeSetting
+namespace Equinor.ProCoSys.Preservation.Query.GetDateTimeSetting
 {
     public class GetDateTimeSettingQuery : IRequest<Result<DateTime?>>
     {

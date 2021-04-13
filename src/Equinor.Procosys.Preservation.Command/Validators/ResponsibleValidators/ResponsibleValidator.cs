@@ -1,11 +1,11 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.ResponsibleValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.ResponsibleValidators
 {
     public class ResponsibleValidator : IResponsibleValidator
     {

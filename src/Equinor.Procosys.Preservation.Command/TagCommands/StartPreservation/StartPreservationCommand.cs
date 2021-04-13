@@ -4,7 +4,7 @@ using System.Linq;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.StartPreservation
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
 {
     public class StartPreservationCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {

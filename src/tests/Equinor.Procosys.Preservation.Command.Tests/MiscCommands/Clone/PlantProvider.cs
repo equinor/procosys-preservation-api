@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain;
+﻿using Equinor.ProCoSys.Preservation.Domain;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
+namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 {
     public class PlantProvider : IPlantProvider, IPlantSetter
     {

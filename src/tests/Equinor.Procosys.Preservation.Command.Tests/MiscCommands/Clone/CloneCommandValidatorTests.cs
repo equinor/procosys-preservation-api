@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.MiscCommands.Clone;
-using Equinor.Procosys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Preservation.Command.MiscCommands.Clone;
+using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
+namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 {
     [TestClass]
     public class CloneCommandValidatorTests

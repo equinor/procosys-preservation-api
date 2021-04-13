@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementCommands.Upload;
-using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload;
+using Equinor.ProCoSys.Preservation.Command.Validators.FieldValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.Upload
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
 {
     [TestClass]
     public class UploadFieldValueAttachmentCommandValidatorTests

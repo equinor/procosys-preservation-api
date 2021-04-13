@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations.Extensions;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.EntityConfigurations
+namespace Equinor.ProCoSys.Preservation.Infrastructure.EntityConfigurations
 {
     internal class FieldValueConfiguration : IEntityTypeConfiguration<FieldValue>
     {

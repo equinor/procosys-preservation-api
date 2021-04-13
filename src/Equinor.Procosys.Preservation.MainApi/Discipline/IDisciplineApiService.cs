@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.MainApi.Discipline
+namespace Equinor.ProCoSys.Preservation.MainApi.Discipline
 {
     public interface IDisciplineApiService
     {

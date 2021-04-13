@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetTagFunctionDetails;
+﻿using Equinor.ProCoSys.Preservation.Query.GetTagFunctionDetails;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetTagFunctionDetails
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagFunctionDetails
 {
     [TestClass]
     public class RequirementDtoTests

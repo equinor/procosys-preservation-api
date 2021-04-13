@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementCommands.Upload
+namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
 {
     public class UploadFieldValueAttachmentCommand : UploadAttachmentCommand, IRequest<Result<int>>, ITagCommandRequest
     {

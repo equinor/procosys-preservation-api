@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.Procosys.Preservation.WebApi.Controllers.RequirementTypes;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.RequirementTypes
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.RequirementTypes
 {
     [TestClass]
     public class UpdateRequirementDefinitionDtoValidatorTests

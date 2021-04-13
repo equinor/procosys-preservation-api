@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 {
     public static class RequirementTypesControllerTestsHelper
     {

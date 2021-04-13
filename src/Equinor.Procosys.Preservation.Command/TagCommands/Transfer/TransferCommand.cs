@@ -4,7 +4,7 @@ using System.Linq;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.Transfer
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer
 {
     public class TransferCommand : IRequest<Result<IEnumerable<IdAndRowVersion>>>, ITagCommandRequest
     {

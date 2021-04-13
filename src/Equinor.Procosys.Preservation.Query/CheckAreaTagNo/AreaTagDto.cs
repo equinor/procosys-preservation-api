@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.CheckAreaTagNo
+﻿namespace Equinor.ProCoSys.Preservation.Query.CheckAreaTagNo
 {
     public class AreaTagDto
     {

@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.Authorizations
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
     public interface IContentRestrictionsChecker
     {

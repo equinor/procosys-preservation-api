@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
+﻿namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
 {
     public class ProcosysTagDto
     {

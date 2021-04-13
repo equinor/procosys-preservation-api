@@ -1,9 +1,9 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.Audit;
-using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Audit;
+using Equinor.ProCoSys.Preservation.Domain.Time;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
 {
     public class History : PlantEntityBase, IAggregateRoot, ICreationAuditable
     {

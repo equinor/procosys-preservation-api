@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.MainApi.Exceptions
+namespace Equinor.ProCoSys.Preservation.MainApi.Exceptions
 {
     public class InvalidResultException : Exception
     {

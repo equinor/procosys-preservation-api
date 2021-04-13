@@ -1,7 +1,7 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 
-namespace Equinor.Procosys.Preservation.WebApi.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.Misc
 {
     public class CurrentUserProvider : ICurrentUserProvider, ICurrentUserSetter
     {

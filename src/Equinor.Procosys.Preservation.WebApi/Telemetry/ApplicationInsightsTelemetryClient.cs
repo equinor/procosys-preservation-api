@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.Extensibility;
 
-namespace Equinor.Procosys.Preservation.WebApi.Telemetry
+namespace Equinor.ProCoSys.Preservation.WebApi.Telemetry
 {
     public class ApplicationInsightsTelemetryClient : ITelemetryClient
     {

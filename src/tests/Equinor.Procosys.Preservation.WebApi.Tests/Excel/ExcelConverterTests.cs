@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ClosedXML.Excel;
-using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
-using Equinor.Procosys.Preservation.WebApi.Excel;
+using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport;
+using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Excel
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Excel
 {
     [TestClass]
     public class ExcelConverterTests

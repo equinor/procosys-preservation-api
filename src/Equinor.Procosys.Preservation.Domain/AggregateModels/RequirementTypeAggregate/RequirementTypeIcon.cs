@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
+﻿namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate
 {
     public enum RequirementTypeIcon
     {

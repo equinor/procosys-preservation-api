@@ -1,9 +1,9 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Domain.Time;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Internal;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Caching
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Caching
 {
     public class CacheManager : ICacheManager
     {

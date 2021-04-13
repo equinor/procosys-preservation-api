@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.TagFunctions
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.TagFunctions
 {
     public class UnvoidTagFunctionDto
     {

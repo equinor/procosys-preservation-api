@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain
+﻿namespace Equinor.ProCoSys.Preservation.Domain
 {
     /// <summary>
     /// Marker interface for all aggregate roots

@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
+﻿namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequirements
 {
     public class UpdateRequirementForCommand
     {

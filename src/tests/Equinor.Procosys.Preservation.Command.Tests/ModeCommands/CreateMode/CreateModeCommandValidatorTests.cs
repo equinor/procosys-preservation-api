@@ -1,10 +1,10 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ModeCommands.CreateMode;
-using Equinor.Procosys.Preservation.Command.Validators.ModeValidators;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.CreateMode;
+using Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.CreateMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.CreateMode
 {
     [TestClass]
     public class CreateModeCommandValidatorTests

@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.MainApi.Project
+﻿namespace Equinor.ProCoSys.Preservation.MainApi.Project
 {
     public class ProcosysProject
     {

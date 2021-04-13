@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRequirementType
 {
     public class UpdateRequirementTypeCommandHandler : IRequestHandler<UpdateRequirementTypeCommand, Result<string>>
     {

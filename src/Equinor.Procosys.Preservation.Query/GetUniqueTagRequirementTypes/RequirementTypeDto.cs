@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagRequirementTypes
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagRequirementTypes
 {
     public class RequirementTypeDto
     {

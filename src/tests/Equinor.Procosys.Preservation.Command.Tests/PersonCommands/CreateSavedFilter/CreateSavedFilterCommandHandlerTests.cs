@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Test.Common.ExtensionMethods;
+using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreateSavedFilter;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreateSavedFilter
+namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSavedFilter
 {
     [TestClass]
     public class CreateSavedFilterCommandHandlerTests : CommandHandlerTestsBase

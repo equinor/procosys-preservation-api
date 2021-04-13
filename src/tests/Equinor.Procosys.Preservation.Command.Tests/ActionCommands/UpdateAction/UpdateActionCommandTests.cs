@@ -1,8 +1,8 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction;
+using Equinor.ProCoSys.Preservation.Command.ActionCommands.UpdateAction;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ActionCommands.UpdateAction
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.UpdateAction
 {
     [TestClass]
     public class UpdateActionCommandTests

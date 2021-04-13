@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.TagFunctionValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagFunctionValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunction
+namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunction
 {
     public class VoidTagFunctionCommandValidator : AbstractValidator<VoidTagFunctionCommand>
     {

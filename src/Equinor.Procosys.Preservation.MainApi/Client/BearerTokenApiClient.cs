@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Equinor.Procosys.Preservation.MainApi.Client
+namespace Equinor.ProCoSys.Preservation.MainApi.Client
 {
     public class BearerTokenApiClient : IBearerTokenApiClient
     {

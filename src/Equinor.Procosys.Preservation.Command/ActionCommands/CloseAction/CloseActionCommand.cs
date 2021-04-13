@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ActionCommands.CloseAction
+namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction
 {
     public class CloseActionCommand : IRequest<Result<string>>, ITagCommandRequest
     {

@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetUniqueTagJourneys
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagJourneys
 {
     public class JourneyDto
     {

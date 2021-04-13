@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.TagFunction;
-using Equinor.Procosys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tests.TagFunction
+namespace Equinor.ProCoSys.Preservation.MainApi.Tests.TagFunction
 {
     [TestClass]
     public class MainApiTagFunctionServiceTests

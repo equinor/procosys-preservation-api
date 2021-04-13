@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.UpdateMode
 {
     public class UpdateModeCommandHandler : IRequestHandler<UpdateModeCommand, Result<string>>
     {

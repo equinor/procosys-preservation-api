@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.Test.Common;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.Infrastructure;
+using Equinor.ProCoSys.Preservation.Test.Common;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Misc
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Misc
 {
     [TestClass]
     public class TagHelperTests : ReadOnlyTestsBase

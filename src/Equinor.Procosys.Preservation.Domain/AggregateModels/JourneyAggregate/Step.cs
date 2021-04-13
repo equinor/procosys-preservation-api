@@ -1,11 +1,11 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.Domain.Audit;
-using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Audit;
+using Equinor.ProCoSys.Preservation.Domain.Time;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
     public class Step : PlantEntityBase, ICreationAuditable, IModificationAuditable, IVoidable
     {

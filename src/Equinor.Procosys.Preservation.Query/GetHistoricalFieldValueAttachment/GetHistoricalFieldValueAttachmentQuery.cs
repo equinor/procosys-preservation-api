@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetHistoricalFieldValueAttachment
+namespace Equinor.ProCoSys.Preservation.Query.GetHistoricalFieldValueAttachment
 {
     public class GetHistoricalFieldValueAttachmentQuery : IRequest<Result<Uri>>, ITagQueryRequest
     {

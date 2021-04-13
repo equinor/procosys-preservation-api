@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.AutoScopeTags
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
 {
     public class AutoScopeTagsCommand : IRequest<Result<List<int>>>, IProjectRequest
     {

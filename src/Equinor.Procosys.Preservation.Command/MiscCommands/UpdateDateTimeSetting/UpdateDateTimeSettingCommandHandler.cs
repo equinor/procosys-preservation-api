@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.MiscCommands.UpdateDateTimeSetting
+namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.UpdateDateTimeSetting
 {
     public class UpdateDateTimeSettingCommandHandler : IRequestHandler<UpdateDateTimeSettingCommand, Result<Unit>>
     {

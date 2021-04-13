@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     public abstract class UploadBaseDto
     {

@@ -1,12 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
-using Equinor.Procosys.Preservation.MainApi.TagFunction;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.TagFunction;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncTagFunctions
+namespace Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncTagFunctions
 {
     public class SyncTagFunctionsCommandHandler : IRequestHandler<SyncTagFunctionsCommand, Result<Unit>>
     {

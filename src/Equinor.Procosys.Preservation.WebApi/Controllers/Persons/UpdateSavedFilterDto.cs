@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Persons
 {
     public class UpdateSavedFilterDto
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests
+namespace Equinor.ProCoSys.Preservation.Domain.Tests
 {
     [TestClass]
     public class TimeSpanExtensionsTests

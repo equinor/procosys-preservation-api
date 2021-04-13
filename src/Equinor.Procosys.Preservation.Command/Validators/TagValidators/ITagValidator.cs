@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 {
     public interface ITagValidator
     {

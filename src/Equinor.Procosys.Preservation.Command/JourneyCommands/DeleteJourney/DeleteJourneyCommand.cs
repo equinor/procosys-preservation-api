@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.DeleteJourney
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DeleteJourney
 {
     public class DeleteJourneyCommand : IRequest<Result<Unit>>
     {

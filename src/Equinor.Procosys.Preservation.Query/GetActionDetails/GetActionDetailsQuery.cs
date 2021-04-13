@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetActionDetails
+namespace Equinor.ProCoSys.Preservation.Query.GetActionDetails
 {
     public class GetActionDetailsQuery : IRequest<Result<ActionDetailsDto>>, ITagQueryRequest
     {

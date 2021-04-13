@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Domain
+﻿namespace Equinor.ProCoSys.Preservation.Domain
 {
     /// <summary>
     /// Base class for entities to be filtered by plant

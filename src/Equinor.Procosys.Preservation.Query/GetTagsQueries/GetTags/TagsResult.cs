@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTags
+namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
 {
     public class TagsResult
     {

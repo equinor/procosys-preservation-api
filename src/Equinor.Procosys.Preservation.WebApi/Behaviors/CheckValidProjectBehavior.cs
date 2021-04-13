@@ -1,10 +1,10 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
-namespace Equinor.Procosys.Preservation.WebApi.Behaviors
+namespace Equinor.ProCoSys.Preservation.WebApi.Behaviors
 {
     public class CheckValidProjectBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse> 
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
     public class KnownTestData
     {

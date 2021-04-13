@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagAreas
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagAreas
 {
     public class GetUniqueTagAreasQuery : IRequest<Result<List<AreaDto>>>, IProjectRequest
     {

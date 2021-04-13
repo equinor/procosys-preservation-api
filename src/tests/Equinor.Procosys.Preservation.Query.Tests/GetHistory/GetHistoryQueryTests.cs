@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetHistory;
+﻿using Equinor.ProCoSys.Preservation.Query.GetHistory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetHistory
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistory
 {
     [TestClass]
     public class GetHistoryQueryTests

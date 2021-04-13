@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Modes
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Modes
 {
     public class CreateModeDtoValidator : AbstractValidator<CreateModeDto>
     {

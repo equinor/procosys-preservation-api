@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetPreservationRecord
+namespace Equinor.ProCoSys.Preservation.Query.GetPreservationRecord
 {
     public class GetPreservationRecordQuery : IRequest<Result<PreservationRecordDto>>, ITagQueryRequest
     {

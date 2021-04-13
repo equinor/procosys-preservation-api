@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
-using Equinor.Procosys.Preservation.Command.PersonCommands.DeleteSavedFilter;
-using Equinor.Procosys.Preservation.Command.PersonCommands.UpdateSavedFilter;
-using Equinor.Procosys.Preservation.Query.GetSavedFiltersInProject;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreateSavedFilter;
+using Equinor.ProCoSys.Preservation.Command.PersonCommands.DeleteSavedFilter;
+using Equinor.ProCoSys.Preservation.Command.PersonCommands.UpdateSavedFilter;
+using Equinor.ProCoSys.Preservation.Query.GetSavedFiltersInProject;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Persons
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Persons
 {
     [ApiController]
     [Route("Persons")]

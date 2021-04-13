@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries
 {
     public static class VoidedFilterTypeExtension
     {

@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.ModeCommands.VoidMode;
+﻿using Equinor.ProCoSys.Preservation.Command.ModeCommands.VoidMode;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.VoidMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.VoidMode
 {
     [TestClass]
     public class VoidModeCommandTests

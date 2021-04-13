@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 {
     public class FieldDetailsDto : FieldDto
     {

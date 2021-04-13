@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.TagFunctionAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.TagFunctionAggregate
 {
     [TestClass]
     public class TagFunctionTests

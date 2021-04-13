@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
-using Equinor.Procosys.Preservation.Command.TagAttachmentCommands.Upload;
+using Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Upload;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagAttachmentCommands.Upload
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Upload
 {
     [TestClass]
     public class UploadTagAttachmentCommandTests

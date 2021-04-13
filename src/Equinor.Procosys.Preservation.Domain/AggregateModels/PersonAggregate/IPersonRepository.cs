@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 {
     public interface IPersonRepository : IRepository<Person>
     {

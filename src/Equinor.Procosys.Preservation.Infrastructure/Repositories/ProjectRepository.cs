@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.EntityFrameworkCore;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 {
     public class ProjectRepository : RepositoryBase<Project>, IProjectRepository
     {

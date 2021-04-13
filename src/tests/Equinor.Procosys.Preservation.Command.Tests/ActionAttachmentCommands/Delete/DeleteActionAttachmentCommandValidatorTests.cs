@@ -1,13 +1,13 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ActionAttachmentCommands.Delete;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ActionValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ActionAttachmentCommands.Delete
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.Delete
 {
     [TestClass]
     public class DeleteActionAttachmentCommandValidatorTests

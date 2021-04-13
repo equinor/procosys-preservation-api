@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetUniqueTagDisciplines
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagDisciplines
 {
     public class DisciplineDto
     {

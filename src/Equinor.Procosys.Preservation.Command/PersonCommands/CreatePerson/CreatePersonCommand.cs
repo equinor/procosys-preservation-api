@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.PersonCommands.CreatePerson
+namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson
 {
     public class CreatePersonCommand : IRequest<Result<Unit>>
     {

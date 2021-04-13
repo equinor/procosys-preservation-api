@@ -1,8 +1,8 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.Query.GetTagsQueries
+namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries
 {
     public class TagForQueryDto
     {

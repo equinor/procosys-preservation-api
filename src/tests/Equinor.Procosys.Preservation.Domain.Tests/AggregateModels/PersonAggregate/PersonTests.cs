@@ -1,9 +1,9 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Domain.Tests.AggregateModels.PersonAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.PersonAggregate
 {
     [TestClass]
     public class PersonTests

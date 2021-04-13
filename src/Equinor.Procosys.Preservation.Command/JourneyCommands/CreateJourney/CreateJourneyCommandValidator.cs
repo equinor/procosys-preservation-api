@@ -1,9 +1,9 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.Validators.JourneyValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.JourneyValidators;
 using FluentValidation;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateJourney
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateJourney
 {
     public class CreateJourneyCommandValidator : AbstractValidator<CreateJourneyCommand>
     {

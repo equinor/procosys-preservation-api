@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.SyncCommands.SyncResponsibles;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.MainApi.Responsible;
+using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncResponsibles;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.SyncCommands.SyncResponsibles
+namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncResponsibles
 {
     [TestClass]
     public class SyncResponsiblesCommandHandlerTests : CommandHandlerTestsBase

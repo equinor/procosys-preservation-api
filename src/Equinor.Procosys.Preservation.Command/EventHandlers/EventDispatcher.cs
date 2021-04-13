@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.Command.EventHandlers
+namespace Equinor.ProCoSys.Preservation.Command.EventHandlers
 {
     public class EventDispatcher : IEventDispatcher
     {

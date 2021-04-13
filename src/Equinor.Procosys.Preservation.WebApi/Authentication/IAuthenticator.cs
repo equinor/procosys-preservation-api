@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.WebApi.Authentication
+namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 {
     public interface IApplicationAuthenticator
     {

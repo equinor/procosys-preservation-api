@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ModeCommands.UpdateMode
+namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.UpdateMode
 {
     public class UpdateModeCommand : IRequest<Result<string>>
     {

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
     public static class TestsHelper
     {

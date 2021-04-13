@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.BlobStorage
+﻿namespace Equinor.ProCoSys.Preservation.BlobStorage
 {
     public class BlobStorageOptions
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Command.Validators
+namespace Equinor.ProCoSys.Preservation.Command.Validators
 {
     public class RowVersionValidator : IRowVersionValidator
     {

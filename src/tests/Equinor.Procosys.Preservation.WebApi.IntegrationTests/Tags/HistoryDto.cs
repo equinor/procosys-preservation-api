@@ -1,7 +1,7 @@
 ﻿using System;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
     public class HistoryDto
     {

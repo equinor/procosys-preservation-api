@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.MiscCommands.UpdateDateTimeSetting
+namespace Equinor.ProCoSys.Preservation.Command.MiscCommands.UpdateDateTimeSetting
 {
     public class UpdateDateTimeSettingCommand : IRequest<Result<Unit>>
     {

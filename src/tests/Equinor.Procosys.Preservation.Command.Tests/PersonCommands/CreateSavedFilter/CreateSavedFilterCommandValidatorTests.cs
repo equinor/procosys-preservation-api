@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.PersonCommands.CreateSavedFilter;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.SavedFilterValidators;
+using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreateSavedFilter;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.SavedFilterValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreateSavedFilter
+namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreateSavedFilter
 {
     [TestClass]
     public class CreateSavedFilterCommandValidatorTests

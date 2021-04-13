@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Responsible;
-using Equinor.Procosys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Responsible;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tests.Responsible
+namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Responsible
 {
     [TestClass]
     public class MainApiResponsibleServiceTests

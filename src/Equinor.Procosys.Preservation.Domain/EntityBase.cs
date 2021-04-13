@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using MediatR;
 
-namespace Equinor.Procosys.Preservation.Domain
+namespace Equinor.ProCoSys.Preservation.Domain
 {
     /// <summary>
     /// Base class for all entities

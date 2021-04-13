@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 {
     [TestClass]
     public class RequirementTypesControllerTestsBase : TestBase

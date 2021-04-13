@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.ModeCommands.UnvoidMode;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Command.ModeCommands.UnvoidMode;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.ModeCommands.UnvoidMode
+namespace Equinor.ProCoSys.Preservation.Command.Tests.ModeCommands.UnvoidMode
 {
     [TestClass]
     public class UnvoidModeCommandHandlerTests : CommandHandlerTestsBase

@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags
+namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
 {
     public class SearchTagsByTagNoQuery : IRequest<Result<List<ProcosysTagDto>>>, IProjectRequest
     {

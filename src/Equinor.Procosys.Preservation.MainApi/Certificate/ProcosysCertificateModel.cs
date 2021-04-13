@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.MainApi.Certificate
+﻿namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
 {
     public class ProcosysCertificateModel
     {

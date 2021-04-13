@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 
-namespace Equinor.Procosys.Preservation.Command.Validators.FieldValidators
+namespace Equinor.ProCoSys.Preservation.Command.Validators.FieldValidators
 {
     public interface IFieldValidator
     {

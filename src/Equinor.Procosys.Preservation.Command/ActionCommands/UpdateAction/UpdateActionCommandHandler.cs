@@ -1,12 +1,12 @@
 ﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
+namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.UpdateAction
 {
     public class UpdateActionCommandHandler : IRequestHandler<UpdateActionCommand, Result<string>>
     {

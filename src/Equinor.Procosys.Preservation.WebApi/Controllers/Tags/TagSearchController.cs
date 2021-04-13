@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags;
-using Equinor.Procosys.Preservation.Query.TagApiQueries.SearchTags;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags;
+using Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ServiceResult.ApiExtensions;
 
-namespace Equinor.Procosys.Preservation.WebApi.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     /// <summary>
     /// Handles requests that deal with all ProCoSys tags, not just preservation

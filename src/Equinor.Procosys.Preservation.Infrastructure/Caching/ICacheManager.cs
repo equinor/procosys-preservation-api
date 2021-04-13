@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Caching
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Caching
 {
     public interface ICacheManager
     {

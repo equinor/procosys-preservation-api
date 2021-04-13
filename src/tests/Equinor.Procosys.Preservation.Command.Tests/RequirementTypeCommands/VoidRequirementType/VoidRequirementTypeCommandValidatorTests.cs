@@ -1,11 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
-using Equinor.Procosys.Preservation.Command.Validators;
-using Equinor.Procosys.Preservation.Command.Validators.RequirementTypeValidators;
+using Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.VoidRequirementType;
+using Equinor.ProCoSys.Preservation.Command.Validators;
+using Equinor.ProCoSys.Preservation.Command.Validators.RequirementTypeValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementTypeCommands.VoidRequirementType
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementTypeCommands.VoidRequirementType
 {
     [TestClass]
     public class VoidRequirementTypeCommandValidatorTests

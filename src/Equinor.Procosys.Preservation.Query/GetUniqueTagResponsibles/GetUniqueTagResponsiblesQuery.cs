@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagResponsibles
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagResponsibles
 {
     public class GetUniqueTagResponsiblesQuery : IRequest<Result<List<ResponsibleDto>>>, IProjectRequest
     {

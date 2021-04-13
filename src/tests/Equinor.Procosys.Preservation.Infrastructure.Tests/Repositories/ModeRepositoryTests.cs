@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Infrastructure.Repositories;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MockQueryable.Moq;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Tests.Repositories
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 {
     [TestClass]
     public class ModeRepositoryTests : RepositoryTestBase

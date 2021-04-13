@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.MiscCommands.Clone
+namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 {
     internal abstract class TestRepository<T> where T : EntityBase
     {

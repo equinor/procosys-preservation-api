@@ -1,9 +1,9 @@
-﻿using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.Events;
+﻿using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Infrastructure.Tests
+namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests
 {
     public class ContextHelper
     {

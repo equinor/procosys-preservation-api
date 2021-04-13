@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.PersonCommands.CreatePerson;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.PersonCommands.CreatePerson
+namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerson
 {
     [TestClass]
     public class CreatePersonCommandHandlerTest : CommandHandlerTestsBase

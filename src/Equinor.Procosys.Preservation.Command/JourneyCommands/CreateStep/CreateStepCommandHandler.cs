@@ -1,14 +1,14 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ModeAggregate;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.MainApi.Responsible;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Responsible;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.CreateStep
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep
 {
     public class CreateStepCommandHandler : IRequestHandler<CreateStepCommand, Result<int>>
     {

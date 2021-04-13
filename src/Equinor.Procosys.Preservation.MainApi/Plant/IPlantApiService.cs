@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.MainApi.Plant
+namespace Equinor.ProCoSys.Preservation.MainApi.Plant
 {
     public interface IPlantApiService
     {

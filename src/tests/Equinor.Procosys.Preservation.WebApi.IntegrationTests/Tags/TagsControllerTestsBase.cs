@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Area;
-using Equinor.Procosys.Preservation.MainApi.Discipline;
-using Equinor.Procosys.Preservation.WebApi.IntegrationTests.Journeys;
-using Equinor.Procosys.Preservation.WebApi.IntegrationTests.RequirementTypes;
+using Equinor.ProCoSys.Preservation.MainApi.Area;
+using Equinor.ProCoSys.Preservation.MainApi.Discipline;
+using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys;
+using Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
     [TestClass]
     public class TagsControllerTestsBase : TestBase

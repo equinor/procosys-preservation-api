@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query
+﻿namespace Equinor.ProCoSys.Preservation.Query
 {
     public interface IQueryMarker
     {

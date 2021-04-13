@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Command.EventHandlers;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Command.EventHandlers;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.EventHandlers
+namespace Equinor.ProCoSys.Preservation.Command.Tests.EventHandlers
 {
     [TestClass]
     public class EventDispatcherTests

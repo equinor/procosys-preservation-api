@@ -4,16 +4,16 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.BlobStorage;
-using Equinor.Procosys.Preservation.Infrastructure;
-using Equinor.Procosys.Preservation.MainApi.Area;
-using Equinor.Procosys.Preservation.MainApi.Discipline;
-using Equinor.Procosys.Preservation.MainApi.Permission;
-using Equinor.Procosys.Preservation.MainApi.Plant;
-using Equinor.Procosys.Preservation.MainApi.Project;
-using Equinor.Procosys.Preservation.MainApi.Responsible;
-using Equinor.Procosys.Preservation.WebApi.Authorizations;
-using Equinor.Procosys.Preservation.WebApi.Middleware;
+using Equinor.ProCoSys.Preservation.BlobStorage;
+using Equinor.ProCoSys.Preservation.Infrastructure;
+using Equinor.ProCoSys.Preservation.MainApi.Area;
+using Equinor.ProCoSys.Preservation.MainApi.Discipline;
+using Equinor.ProCoSys.Preservation.MainApi.Permission;
+using Equinor.ProCoSys.Preservation.MainApi.Plant;
+using Equinor.ProCoSys.Preservation.MainApi.Project;
+using Equinor.ProCoSys.Preservation.MainApi.Responsible;
+using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
+using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -22,9 +22,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using ProcosysProject = Equinor.Procosys.Preservation.MainApi.Permission.ProcosysProject;
+using ProcosysProject = Equinor.ProCoSys.Preservation.MainApi.Permission.ProcosysProject;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
     public sealed class TestFactory : WebApplicationFactory<Startup>
     {

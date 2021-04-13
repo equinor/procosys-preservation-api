@@ -1,7 +1,7 @@
 ﻿using System;
 using DocumentFormat.OpenXml;
 
-namespace Equinor.Procosys.Preservation.WebApi.Synchronization
+namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public class SynchronizationOptions
     {

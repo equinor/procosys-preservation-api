@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.MainApi.Client;
-using Equinor.Procosys.Preservation.MainApi.Tag;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
+using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.MainApi.Tests.Tag
+namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Tag
 {
     [TestClass]
     public class MainApiTagServiceTests

@@ -3,18 +3,18 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.Query.GetTagsQueries;
-using Equinor.Procosys.Preservation.Query.GetTagsQueries.GetTagsForExport;
-using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
-using Equinor.Procosys.Preservation.WebApi.Excel;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.Query.GetTagsQueries;
+using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Excel;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.WebApi.Tests.Controllers.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
 {
     [TestClass]
     public class TagsControllerForGetExcelDocumentTests

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.Procosys.Preservation.Domain.Audit;
-using Equinor.Procosys.Preservation.Domain.Time;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
+using Equinor.ProCoSys.Preservation.Domain.Audit;
+using Equinor.ProCoSys.Preservation.Domain.Time;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 {
     public class Action : PlantEntityBase, ICreationAuditable, IModificationAuditable
     {

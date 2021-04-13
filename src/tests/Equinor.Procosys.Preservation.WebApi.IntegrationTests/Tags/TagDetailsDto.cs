@@ -1,6 +1,6 @@
-﻿using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
     public class TagDetailsDto
     {

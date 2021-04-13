@@ -2,14 +2,14 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.Procosys.Preservation.MainApi.Tag;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags
+namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
 {
     public class PreservedTagsQueryHandler : IRequestHandler<PreservedTagsQuery, Result<List<ProcosysPreservedTagDto>>>
     {

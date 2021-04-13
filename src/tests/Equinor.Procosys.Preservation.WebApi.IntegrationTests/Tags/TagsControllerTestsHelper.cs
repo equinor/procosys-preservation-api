@@ -4,13 +4,13 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.WebApi.Controllers.Tags;
+using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using ClosedXML.Excel;
-using Equinor.Procosys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.Domain.Events;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
     public static class TagsControllerTestsHelper
     {

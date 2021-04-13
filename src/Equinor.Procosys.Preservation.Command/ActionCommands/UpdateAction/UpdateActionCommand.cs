@@ -2,7 +2,7 @@
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.ActionCommands.UpdateAction
+namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.UpdateAction
 {
     public class UpdateActionCommand : IRequest<Result<string>>, ITagCommandRequest
     {

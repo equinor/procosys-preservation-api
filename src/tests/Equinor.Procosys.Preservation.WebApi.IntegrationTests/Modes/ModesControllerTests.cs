@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Modes
+namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
 {
     [TestClass]
     public class ModesControllerTests : TestBase

@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter;
-using Equinor.Procosys.Preservation.Command.RequirementCommands.RecordValues;
-using Equinor.Procosys.Preservation.Command.Validators.FieldValidators;
-using Equinor.Procosys.Preservation.Command.Validators.ProjectValidators;
-using Equinor.Procosys.Preservation.Command.Validators.TagValidators;
+using Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues;
+using Equinor.ProCoSys.Preservation.Command.Validators.FieldValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.ProjectValidators;
+using Equinor.ProCoSys.Preservation.Command.Validators.TagValidators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.RequirementCommands.RecordValues
+namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.RecordValues
 {
     [TestClass]
     public class RecordValuesCommandValidatorTests

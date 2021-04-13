@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetActionAttachment;
+﻿using Equinor.ProCoSys.Preservation.Query.GetActionAttachment;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetActionAttachment
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionAttachment
 {
     [TestClass]
     public class GetActionAttachmentQueryTests

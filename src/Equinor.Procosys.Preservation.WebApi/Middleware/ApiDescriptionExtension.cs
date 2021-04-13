@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
-namespace Equinor.Procosys.Preservation.WebApi.Middleware
+namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
 {
     public static class ApiDescriptionExtension
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Equinor.Procosys.Preservation.Query.TagApiQueries.PreservedTags
+namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.PreservedTags
 {
     public class ProcosysPreservedTagDto
     {

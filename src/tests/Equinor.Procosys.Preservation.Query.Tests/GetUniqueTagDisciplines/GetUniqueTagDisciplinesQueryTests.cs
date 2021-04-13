@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetUniqueTagDisciplines;
+﻿using Equinor.ProCoSys.Preservation.Query.GetUniqueTagDisciplines;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetUniqueTagDisciplines
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetUniqueTagDisciplines
 {
     [TestClass]
     public class GetUniqueTagDisciplinesQueryTests

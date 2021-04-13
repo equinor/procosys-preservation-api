@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.HistoryAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate
 {
     public enum EventType
     {

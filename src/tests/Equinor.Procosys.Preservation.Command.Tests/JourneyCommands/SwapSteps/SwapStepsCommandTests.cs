@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.JourneyCommands.SwapSteps;
+﻿using Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.JourneyCommands.SwapSteps
+namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
 {
     [TestClass]
     public class SwapStepsCommandTests

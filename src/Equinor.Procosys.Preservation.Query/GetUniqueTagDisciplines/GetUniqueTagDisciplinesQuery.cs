@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using Equinor.Procosys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Query.GetUniqueTagDisciplines
+namespace Equinor.ProCoSys.Preservation.Query.GetUniqueTagDisciplines
 {
     public class GetUniqueTagDisciplinesQuery : IRequest<Result<List<DisciplineDto>>>, IProjectRequest
     {

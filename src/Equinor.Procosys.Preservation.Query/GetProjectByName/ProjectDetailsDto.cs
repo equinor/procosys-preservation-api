@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Query.GetProjectByName
+﻿namespace Equinor.ProCoSys.Preservation.Query.GetProjectByName
 {
     public class ProjectDetailsDto
     {

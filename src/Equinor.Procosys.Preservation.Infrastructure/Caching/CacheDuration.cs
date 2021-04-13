@@ -1,4 +1,4 @@
-﻿namespace Equinor.Procosys.Preservation.Infrastructure.Caching
+﻿namespace Equinor.ProCoSys.Preservation.Infrastructure.Caching
 {
     public enum CacheDuration
     {

@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.JourneyCommands.UpdateJourney
+namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateJourney
 {
     public class UpdateJourneyCommand : IRequest<Result<string>>
     {

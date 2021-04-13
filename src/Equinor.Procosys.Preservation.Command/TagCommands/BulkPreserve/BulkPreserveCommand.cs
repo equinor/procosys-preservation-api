@@ -4,7 +4,7 @@ using System.Linq;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagCommands.BulkPreserve
+namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
 {
     public class BulkPreserveCommand : IRequest<Result<Unit>>, ITagCommandRequest
     {

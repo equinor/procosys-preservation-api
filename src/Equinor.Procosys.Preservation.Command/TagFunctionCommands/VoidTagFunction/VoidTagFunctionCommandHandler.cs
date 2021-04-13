@@ -1,11 +1,11 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Equinor.Procosys.Preservation.Domain;
-using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using MediatR;
 using ServiceResult;
 
-namespace Equinor.Procosys.Preservation.Command.TagFunctionCommands.VoidTagFunction
+namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.VoidTagFunction
 {
     public class VoidTagFunctionCommandHandler : IRequestHandler<VoidTagFunctionCommand, Result<string>>
     {

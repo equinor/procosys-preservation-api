@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Query.GetActionDetails;
+﻿using Equinor.ProCoSys.Preservation.Query.GetActionDetails;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Query.Tests.GetActionDetails
+namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionDetails
 {
     [TestClass]
     public class GetActionDetailsQueryTests

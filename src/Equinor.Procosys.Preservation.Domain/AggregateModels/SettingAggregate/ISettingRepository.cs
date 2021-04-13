@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Equinor.Procosys.Preservation.Domain.AggregateModels.SettingAggregate
+namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate
 {
     public interface ISettingRepository : IRepository<Setting>
     {

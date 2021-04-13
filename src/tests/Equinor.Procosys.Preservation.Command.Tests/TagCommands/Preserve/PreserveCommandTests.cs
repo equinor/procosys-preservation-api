@@ -1,7 +1,7 @@
-﻿using Equinor.Procosys.Preservation.Command.TagCommands.Preserve;
+﻿using Equinor.ProCoSys.Preservation.Command.TagCommands.Preserve;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.Preserve
+namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Preserve
 {
     [TestClass]
     public class PreserveCommandTests
