@@ -209,6 +209,78 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
             }
         }
 
+
+        [TestMethod]
+        public async Task HasAnyForForOtherThanSuppliersUsageAsync_UsageForAllRequirement_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var reqIds = new List<int> {_reqDefForAll.Id};
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasAnyForForOtherThanSuppliersUsageAsync_UsageForOtherRequirement_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var reqIds = new List<int> {_reqDefForOther.Id};
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasAnyForForOtherThanSuppliersUsageAsync_UsageForSupplierRequirement_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var reqIds = new List<int> {_reqDefForSupplier.Id};
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasAnyForForOtherThanSuppliersUsageAsync_UsageForSupplierAndOtherAndForAllRequirement_ShouldReturnTrue()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var reqIds = new List<int> {_reqDefForSupplier.Id, _reqDefForOther.Id, _reqDefForAll.Id};
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, default);
+                Assert.IsTrue(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasAnyForForOtherThanSuppliersUsageAsync_UnknownRequirement_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var reqIds = new List<int> {0};
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, default);
+                Assert.IsFalse(result);
+            }
+        }
+
+        [TestMethod]
+        public async Task HasAnyForForOtherThanSuppliersUsageAsync_NoRequirements_ShouldReturnFalse()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var reqIds = new List<int>();
+                var dut = new RequirementDefinitionValidator(context);
+                var result = await dut.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, default);
+                Assert.IsFalse(result);
+            }
+        }
         [TestMethod]
         public async Task UsageCoversForOtherThanSuppliersAsync_UsageForAllRequirement_ShouldReturnTrue()
         {

@@ -24,8 +24,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
 
         private string _projectName = "Project";
         private int _stepId = 1;
-        private int _rdForSupplierId = 2;
-        private int _rdForOtherThanSupplierId = 3;
+        private int _rdId = 2;
 
         [TestInitialize]
         public void Setup_OkState()
@@ -39,10 +38,10 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
             _projectValidatorMock = new Mock<IProjectValidator>();
 
             _rdValidatorMock = new Mock<IRequirementDefinitionValidator>();
-            _rdValidatorMock.Setup(r => r.ExistsAsync(_rdForSupplierId, default)).Returns(Task.FromResult(true));
-            _rdValidatorMock.Setup(r => r.ExistsAsync(_rdForOtherThanSupplierId, default)).Returns(Task.FromResult(true));
-            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rdForSupplierId, _rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(true));
-            _rdValidatorMock.Setup(r => r.UsageCoversForSuppliersAsync(new List<int>{_rdForSupplierId}, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.ExistsAsync(_rdId, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.UsageCoversForSuppliersAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(true));
 
             _createPreAreaTagCommand = new CreateAreaTagCommand(
                 _projectName,
@@ -54,8 +53,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 _stepId,
                 new List<RequirementForCommand>
                 {
-                    new RequirementForCommand(_rdForSupplierId, 1),
-                    new RequirementForCommand(_rdForOtherThanSupplierId, 1)
+                    new RequirementForCommand(_rdId, 1)
                 },
                 "Desc",
                 "Remark",
@@ -71,7 +69,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 _stepId,
                 new List<RequirementForCommand>
                 {
-                    new RequirementForCommand(_rdForSupplierId, 1)
+                    new RequirementForCommand(_rdId, 1)
                 },
                 "Desc",
                 "Remark",
@@ -85,19 +83,103 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForPreArea_WhenOkState()
+        public void Validate_ShouldBeValid_ForPreArea_InSupplierStep()
         {
             var result = _dut.Validate(_createPreAreaTagCommand);
 
             Assert.IsTrue(result.IsValid);
         }
+        
+        [TestMethod]
+        public void Validate_ShouldBeValid_ForPreArea_InNonSupplierStep()
+        {
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_createPreAreaTagCommand);
+
+            Assert.IsTrue(result.IsValid);
+        }
+        
+        [TestMethod]
+        public void Validate_ShouldFail_ForPreArea_InSupplierStep_WhenRequirementUsageIsNotForAllJourneys()
+        {
+            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_createPreAreaTagCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used both for supplier and other than suppliers!"));
+        }
+        
+        [TestMethod]
+        public void Validate_ShouldFail_ForPreArea_InNonSupplierStep_WhenRequirementUsageIsNotForJourneysWithoutSupplier()
+        {
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+            _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_createPreAreaTagCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for other than suppliers!"));
+        }
+        
+        [TestMethod]
+        public void Validate_ShouldFail_ForPreArea_InNonSupplierStep_WhenAnyRequirementForSupplierOnlyGiven()
+        {
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+            _rdValidatorMock.Setup(r => r.HasAnyForSupplierOnlyUsageAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(true));
+
+            var result = _dut.Validate(_createPreAreaTagCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements can not include requirements just for suppliers!"));
+        }
 
         [TestMethod]
-        public void Validate_ShouldBeValid_ForPoArea_WhenOkState()
+        public void Validate_ShouldBeValid_ForPoArea_InSupplierStep()
         {
             var result = _dut.Validate(_createPoAreaTagCommand);
 
             Assert.IsTrue(result.IsValid);
+        }
+        
+        [TestMethod]
+        public void Validate_ShouldFail_ForPoArea_InSupplierStep_WhenRequirementUsageIsNotForSupplier()
+        {
+            _rdValidatorMock.Setup(r => r.UsageCoversForSuppliersAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(false));
+
+            var result = _dut.Validate(_createPoAreaTagCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for supplier!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_ForPoArea_InSupplierStep_WhenRequirementUsageIsForOtherThanSupplier()
+        {
+            _rdValidatorMock.Setup(r => r.HasAnyForForOtherThanSuppliersUsageAsync(new List<int>{_rdId}, default)).Returns(Task.FromResult(true));
+            
+            var result = _dut.Validate(_createPoAreaTagCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements can not include requirements for other than suppliers!"));
+        }
+
+        [TestMethod]
+        public void Validate_ShouldFail_ForPoArea_InNonSupplierStep()
+        {
+            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
+            
+            var result = _dut.Validate(_createPoAreaTagCommand);
+
+            Assert.IsFalse(result.IsValid);
+            Assert.AreEqual(1, result.Errors.Count);
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!"));
         }
 
         [TestMethod]
@@ -151,187 +233,33 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyRequirementDefinitionNotExists()
         {
-            _rdValidatorMock.Setup(r => r.ExistsAsync(_rdForOtherThanSupplierId, default)).Returns(Task.FromResult(false));
+            _rdValidatorMock.Setup(r => r.ExistsAsync(_rdId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition doesn't exist!"));
-            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(_rdForOtherThanSupplierId.ToString()));
         }
 
         [TestMethod]
         public void Validate_ShouldFail_WhenAnyRequirementDefinitionIsVoided()
         {
-            _rdValidatorMock.Setup(r => r.IsVoidedAsync(_rdForOtherThanSupplierId, default)).Returns(Task.FromResult(true));
+            _rdValidatorMock.Setup(r => r.IsVoidedAsync(_rdId, default)).Returns(Task.FromResult(true));
             
             var result = _dut.Validate(_createPreAreaTagCommand);
 
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirement definition is voided!"));
-            Assert.IsTrue(result.Errors[0].ErrorMessage.Contains(_rdForOtherThanSupplierId.ToString()));
         }
-
-        #region special validation for PreArea tags
-
-        [TestMethod]
-        public void Validate_ShouldFailForNonSupplierStep_ForPreArea_WhenNoRequirementsGiven()
-        {
-            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
-            var command = new CreateAreaTagCommand(
-                _projectName,
-                TagType.PreArea,
-                "DisciplineA",
-                "AreaA",
-                null,
-                null,
-                _stepId,
-                new List<RequirementForCommand>(),
-                "DescriptionA",
-                "RemarkA",
-                "SA_A");
-            
-            var result = _dut.Validate(command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for other than suppliers!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldBeValidForNonSupplierStep_ForPreArea_WhenRequirementsForOtherGiven()
-        {
-            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
-            _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rdForSupplierId, _rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(true));
-
-            var result = _dut.Validate(_createPreAreaTagCommand);
-
-            Assert.IsTrue(result.IsValid);
-        }
-        
-        [TestMethod]
-        public void Validate_ShouldFailForNonSupplierStep_ForPreArea_WhenRequirementForSupplierOnlyGiven()
-        {
-            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
-            _rdValidatorMock.Setup(r => r.UsageCoversForOtherThanSuppliersAsync(new List<int>{_rdForSupplierId, _rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(true));
-            _rdValidatorMock.Setup(r => r.HasAnyForSupplierOnlyUsageAsync(new List<int>{_rdForSupplierId, _rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(true));
-
-            var result = _dut.Validate(_createPreAreaTagCommand);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements can not include requirements just for suppliers!"));
-        }
-        
-        [TestMethod]
-        public void Validate_ShouldFailForNonSupplierStep_ForPreArea_WhenRequirementForOtherNotGiven()
-        {
-            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
-            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rdForSupplierId, _rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_createPreAreaTagCommand);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for other than suppliers!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFailForSupplierStep_ForPreArea_WhenNoRequirementsGiven()
-        {
-            var command = new CreateAreaTagCommand(
-                _projectName,
-                TagType.PreArea,
-                "DisciplineA",
-                "AreaA",
-                null,
-                null,
-                _stepId,
-                new List<RequirementForCommand>(),
-                "DescriptionA",
-                "RemarkA",
-                "SA_A");
-            
-            var result = _dut.Validate(command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used both for supplier and other than suppliers!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFailForSupplierStep_ForPreArea_WhenRequirementForSupplierNotGiven()
-        {
-            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rdForSupplierId, _rdForOtherThanSupplierId}, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_createPreAreaTagCommand);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used both for supplier and other than suppliers!"));
-        }
-
-        #endregion
-
-        #region Special validation for PoArea tags
-
-        [TestMethod]
-        public void Validate_ShouldFailForNonSupplierStep_WhenPoArea()
-        {
-            _stepValidatorMock.Setup(r => r.IsForSupplierAsync(_stepId, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_createPoAreaTagCommand);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFailForSupplierStep_ForPoArea_WhenNoRequirementsGiven()
-        {
-            var command = new CreateAreaTagCommand(
-                _projectName,
-                TagType.PoArea,
-                "DisciplineA",
-                "AreaA",
-                null,
-                null,
-                _stepId,
-                new List<RequirementForCommand>(),
-                "DescriptionA",
-                "RemarkA",
-                "SA_A");
-            
-            var result = _dut.Validate(command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for supplier!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFailForSupplierStep_ForPoArea_WhenRequirementForSupplierNotGiven()
-        {
-            _rdValidatorMock.Setup(r => r.UsageCoversForSuppliersAsync(new List<int>{_rdForSupplierId}, default)).Returns(Task.FromResult(false));
-            
-            var result = _dut.Validate(_createPoAreaTagCommand);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Requirements must include requirements to be used for supplier!"));
-        }
-
-        #endregion
 
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementsNotUnique()
         {
             _rdValidatorMock
                 .Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(
-                    new List<int> {_rdForSupplierId, _rdForOtherThanSupplierId, _rdForSupplierId}, default))
+                    new List<int> {_rdId, _rdId}, default))
                 .Returns(Task.FromResult(true));
             
             var command = new CreateAreaTagCommand(
@@ -344,9 +272,8 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
                 _stepId,
                 new List<RequirementForCommand>
                 {
-                    new RequirementForCommand(_rdForSupplierId, 1),
-                    new RequirementForCommand(_rdForOtherThanSupplierId, 1),
-                    new RequirementForCommand(_rdForSupplierId, 1)
+                    new RequirementForCommand(_rdId, 1),
+                    new RequirementForCommand(_rdId, 2)
                 },
                 "DescriptionA",
                 "RemarkA",
@@ -375,7 +302,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateAreaTag
         public void Validate_ShouldFailWith1Error_WhenErrorsInDifferentRules()
         {
             _tagValidatorMock.Setup(r => r.ExistsAsync(_createPreAreaTagCommand.GetTagNo(), _projectName, default)).Returns(Task.FromResult(true));
-            _rdValidatorMock.Setup(r => r.ExistsAsync(_rdForOtherThanSupplierId, default)).Returns(Task.FromResult(false));
+            _rdValidatorMock.Setup(r => r.ExistsAsync(_rdId, default)).Returns(Task.FromResult(false));
             
             var result = _dut.Validate(_createPreAreaTagCommand);
 

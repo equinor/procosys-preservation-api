@@ -26,9 +26,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 RuleFor(command => command)
                     .MustAsync((command, token) => RequirementUsageIsForAllJourneysAsync(command.Requirements, token))
                     .WithMessage(_ => "Requirements must include requirements to be used both for supplier and other than suppliers!")
-                    .When(command => command.TagType != TagType.PoArea, ApplyConditionTo.CurrentValidator)
+                        .When(command => command.TagType != TagType.PoArea, ApplyConditionTo.CurrentValidator)
                     .MustAsync((command, token) => RequirementUsageIsForSupplierAsync(command.Requirements, token))
                     .WithMessage(_ => "Requirements must include requirements to be used for supplier!")
+                        .When(command => command.TagType == TagType.PoArea, ApplyConditionTo.CurrentValidator)
+                    .MustAsync((command, token) => RequirementUsageIsNotForOtherThanSupplierStepAsync(command.Requirements, token))
+                    .WithMessage(_ => "Requirements can not include requirements for other than suppliers!")
                         .When(command => command.TagType == TagType.PoArea, ApplyConditionTo.CurrentValidator);
 
             }).Otherwise(() =>
@@ -82,6 +85,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(reqIds, token);
+            }                        
+
+            async Task<bool> RequirementUsageIsNotForOtherThanSupplierStepAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
+            {
+                var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
+                return !await requirementDefinitionValidator.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, token);
             }                        
 
             async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)

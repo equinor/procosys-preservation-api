@@ -29,15 +29,11 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {
                 RuleFor(command => command.Requirements)
-                    .Must(BeUniqueRequirements)
-                    .WithMessage(_ => "Requirement definitions must be unique!")
                     .MustAsync((_, requirements, token) => RequirementUsageIsForAllJourneysAsync(requirements, token))
                     .WithMessage(_ => "Requirements must include requirements to be used both for supplier and other than suppliers!");
             }).Otherwise(() =>
             {
                 RuleFor(command => command.Requirements)
-                    .Must(BeUniqueRequirements)
-                    .WithMessage(_ => "Requirement definitions must be unique!")
                     .MustAsync((_, requirements, token) => RequirementUsageIsForJourneysWithoutSupplierAsync(requirements, token))
                     .WithMessage(_ => "Requirements must include requirements to be used for other than suppliers!")
                     .MustAsync((_, requirements, token) => RequirementUsageIsNotForSupplierStepOnlyAsync(requirements, token))
@@ -49,6 +45,8 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 .WithMessage((_, tagNo) => $"Tag already exists in scope for project! Tag={tagNo}");
 
             RuleFor(command => command)
+                .Must(command => BeUniqueRequirements(command.Requirements))
+                .WithMessage(_ => "Requirement definitions must be unique!")
                 .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
                 .WithMessage(command => $"Project is closed! Project={command.ProjectName}")
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))

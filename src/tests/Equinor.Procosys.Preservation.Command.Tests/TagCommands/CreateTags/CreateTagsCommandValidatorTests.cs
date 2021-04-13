@@ -272,6 +272,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.CreateTags
         [TestMethod]
         public void Validate_ShouldFail_WhenRequirementsNotUnique()
         {
+            _rdValidatorMock.Setup(r => r.UsageCoversBothForSupplierAndOtherAsync(new List<int>{_rd1Id, _rd1Id}, default)).Returns(Task.FromResult(true));
             var command = new CreateTagsCommand(
                 new List<string>{_tagNo1}, 
                 _projectName,
