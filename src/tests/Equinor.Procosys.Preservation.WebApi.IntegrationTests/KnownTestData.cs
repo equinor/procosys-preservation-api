@@ -7,7 +7,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string Plant => "PCS$PLANT1";
         public static string ProjectName => "TestProject";
         public static string ProjectDescription => "Test - Project";
-        public static string Mode => "TestMode";
         public static string ResponsibleCode => "TestResp";
         public static string ResponsibleDescription => "Test - Responsible";
         public static string ReqTypeA => "TestRT-A";
@@ -24,7 +23,6 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
         public static string StepInJourneyNotInUse => "TestStepB";
         public static string StandardTagNo => "Std-Test";
         public static string SiteTagNo => "#SITE-Test";
-        public static string SiteTagDescription => "Test - SiteTag";
         public static string Action => "TestAction";
         public static Guid ActionAttachmentBlobStorageId = new Guid("{11111111-1111-1111-1111-111111111111}");
         public static Guid TagAttachmentBlobStorageId = new Guid("{22222222-2222-2222-2222-222222222222}");

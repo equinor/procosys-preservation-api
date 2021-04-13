@@ -45,8 +45,9 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
 
             var plant = plantProvider.Plant;
 
-            var mode = SeedMode(dbContext, plant);
-            knownTestData.ModeId = mode.Id;
+            var supplierMode = SeedMode(dbContext, plant, "SUP", true);
+            var otherMode = SeedMode(dbContext, plant, "FAB", false);
+            knownTestData.ModeId = otherMode.Id;
 
             var responsible = SeedResponsible(dbContext, plant);
 
@@ -66,11 +67,11 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
             
             var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.JourneyWithTags);
-            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepAInJourneyWithTags, mode, responsible);
-            SeedStep(dbContext, journeyWithTags, KnownTestData.StepBInJourneyWithTags, mode, responsible);
+            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepAInJourneyWithTags, supplierMode, responsible);
+            SeedStep(dbContext, journeyWithTags, KnownTestData.StepBInJourneyWithTags, otherMode, responsible);
             
             var journeyWithoutTags = SeedJourney(dbContext, plant, KnownTestData.JourneyNotInUse);
-            SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, mode, responsible);
+            SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, supplierMode, responsible);
 
             var project = SeedProject(dbContext, plant);
             var standardTagReadyForBulkPreserveNotStarted = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);
@@ -290,10 +291,10 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests
             return responsible;
         }
 
-        private static Mode SeedMode(PreservationContext dbContext, string plant)
+        private static Mode SeedMode(PreservationContext dbContext, string plant, string title, bool forSupplier)
         {
             var modeRepository = new ModeRepository(dbContext);
-            var mode = new Mode(plant, KnownTestData.Mode, false);
+            var mode = new Mode(plant, title, forSupplier);
             modeRepository.Add(mode);
             dbContext.SaveChangesAsync().Wait();
             return mode;

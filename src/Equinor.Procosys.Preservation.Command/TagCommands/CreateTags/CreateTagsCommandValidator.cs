@@ -30,23 +30,23 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
             {
                 RuleFor(command => command.Requirements)
                     .Must(BeUniqueRequirements)
-                    .WithMessage(command => "Requirement definitions must be unique!")
+                    .WithMessage(_ => "Requirement definitions must be unique!")
                     .MustAsync((_, requirements, token) => RequirementUsageIsForAllJourneysAsync(requirements, token))
-                    .WithMessage(command => "Requirements must include requirements to be used both for supplier and other than suppliers!");
+                    .WithMessage(_ => "Requirements must include requirements to be used both for supplier and other than suppliers!");
             }).Otherwise(() =>
             {
                 RuleFor(command => command.Requirements)
                     .Must(BeUniqueRequirements)
-                    .WithMessage(command => "Requirement definitions must be unique!")
+                    .WithMessage(_ => "Requirement definitions must be unique!")
                     .MustAsync((_, requirements, token) => RequirementUsageIsForJourneysWithoutSupplierAsync(requirements, token))
-                    .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!")
+                    .WithMessage(_ => "Requirements must include requirements to be used for other than suppliers!")
                     .MustAsync((_, requirements, token) => RequirementUsageIsNotForSupplierStepOnlyAsync(requirements, token))
-                    .WithMessage(command => "Requirements can not include requirements just for suppliers!");
+                    .WithMessage(_ => "Requirements can not include requirements just for suppliers!");
             });
 
             RuleForEach(command => command.TagNos)
                 .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProjectAsync(tagNo, command.ProjectName, token))
-                .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo}");
+                .WithMessage((_, tagNo) => $"Tag already exists in scope for project! Tag={tagNo}");
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
@@ -57,10 +57,10 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateTags
                 .WithMessage(command => $"Step is voided! Step={command.StepId}");
 
             RuleForEach(command => command.Requirements)
-                .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
+                .MustAsync((_, req, _, token) => BeAnExistingRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) =>
                     $"Requirement definition doesn't exist! Requirement definition={req.RequirementDefinitionId}")
-                .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
+                .MustAsync((_, req, _, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) =>
                     $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
                         

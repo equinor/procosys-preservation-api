@@ -548,6 +548,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
             string description,
             string remark,
             string storageArea,
+            string purchaseOrderCalloffCode,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -562,7 +563,8 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 stepId,
                 description,
                 remark,
-                storageArea
+                storageArea,
+                purchaseOrderCalloffCode
             };
 
             var serializePayload = JsonConvert.SerializeObject(bodyPayload);

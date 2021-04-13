@@ -47,6 +47,13 @@ namespace Equinor.Procosys.Preservation.Command.Validators.RequirementDefinition
                        reqDefs.Any(rd => rd.Usage == RequirementUsage.ForOtherThanSuppliers));
         }
 
+        public async Task<bool> UsageCoversForSuppliersAsync(List<int> requirementDefinitionIds, CancellationToken token)
+        {
+            var reqDefs = await GetRequirementDefinitionsAsync(requirementDefinitionIds, token);
+            return reqDefs.Any(rd => rd.Usage == RequirementUsage.ForAll) ||
+                   reqDefs.Any(rd => rd.Usage == RequirementUsage.ForSuppliersOnly);
+        }
+
         public async Task<bool> UsageCoversForOtherThanSuppliersAsync(
             List<int> requirementDefinitionIds,
             CancellationToken token)
