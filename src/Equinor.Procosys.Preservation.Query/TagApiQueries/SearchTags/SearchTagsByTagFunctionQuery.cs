@@ -5,7 +5,7 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
 {
-    public class SearchTagsByTagFunctionQuery : IRequest<Result<List<ProcosysTagDto>>>, IProjectRequest
+    public class SearchTagsByTagFunctionQuery : IRequest<Result<List<PCSTagDto>>>, IProjectRequest
     {
         public SearchTagsByTagFunctionQuery(string projectName) => ProjectName = projectName;
 

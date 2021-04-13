@@ -84,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("AllProjectsFromMain")]
-        public async Task<IList<ProcosysProject>> GetProjectsFromMain(
+        public async Task<IList<PCSProject>> GetProjectsFromMain(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             string plant)
@@ -104,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         [Authorize]
         [HttpGet("AllPlantsFromMain")]
-        public async Task<IList<ProcosysPlant>> GetPlantsFromMain()
+        public async Task<IList<PCSPlant>> GetPlantsFromMain()
         {
             var plants = await _plantApiService.GetAllPlantsAsync();
             return plants;

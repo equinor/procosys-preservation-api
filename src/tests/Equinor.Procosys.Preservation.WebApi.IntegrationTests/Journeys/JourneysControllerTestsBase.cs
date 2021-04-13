@@ -29,7 +29,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             TestFactory.Instance
                 .ResponsibleApiServiceMock
                 .Setup(service => service.TryGetResponsibleAsync(TestFactory.PlantWithAccess, KnownTestData.ResponsibleCode))
-                .Returns(Task.FromResult(new ProcosysResponsible
+                .Returns(Task.FromResult(new PCSResponsible
                 {
                     Code = KnownTestData.ResponsibleCode, Description = KnownTestData.ResponsibleDescription
                 }));

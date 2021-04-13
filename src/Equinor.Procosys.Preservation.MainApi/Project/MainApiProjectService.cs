@@ -20,14 +20,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Project
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysProject> TryGetProjectAsync(string plant, string name)
+        public async Task<PCSProject> TryGetProjectAsync(string plant, string name)
         {
             var url = $"{_baseAddress}ProjectByName" +
                 $"?plantId={plant}" +
                 $"&projectName={WebUtility.UrlEncode(name)}" +
                 $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysProject>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSProject>(url);
         }
     }
 }

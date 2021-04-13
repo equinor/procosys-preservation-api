@@ -16,10 +16,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
     {
         private readonly Mock<IMediator> _mediatorMock = new Mock<IMediator>();
         private TagSearchController _dut;
-        private readonly List<ProcosysTagDto> _listWithTwoItems = new List<ProcosysTagDto>
+        private readonly List<PCSTagDto> _listWithTwoItems = new List<PCSTagDto>
         {
-            new ProcosysTagDto("TagNo1", "Desc1", "PO1", "CommPkg1", "McPkg1", "TagFuncCode1", "RegCode1", "R1", true),
-            new ProcosysTagDto("TagNo2", "Desc2", "PO2", "CommPkg2", "McPkg2", "TagFuncCode2", "RegCode2", "R2", false)
+            new PCSTagDto("TagNo1", "Desc1", "PO1", "CommPkg1", "McPkg1", "TagFuncCode1", "RegCode1", "R1", true),
+            new PCSTagDto("TagNo2", "Desc2", "PO2", "CommPkg2", "McPkg2", "TagFuncCode2", "RegCode2", "R2", false)
         };
 
         [TestInitialize]
@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         {
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(null) as Result<List<ProcosysTagDto>>));
+                .Returns(Task.FromResult(new SuccessResult<List<PCSTagDto>>(null) as Result<List<PCSTagDto>>));
 
             await _dut.SearchTagsByTagNo("", "", "");
             _mediatorMock.Verify(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()), Times.Once);
@@ -42,8 +42,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
             SearchTagsByTagNoQuery query = null;
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(null) as Result<List<ProcosysTagDto>>))
-                .Callback<IRequest<Result<List<ProcosysTagDto>>>, CancellationToken>((request, cancellationToken) =>
+                .Returns(Task.FromResult(new SuccessResult<List<PCSTagDto>>(null) as Result<List<PCSTagDto>>))
+                .Callback<IRequest<Result<List<PCSTagDto>>>, CancellationToken>((request, cancellationToken) =>
                 {
                     query = request as SearchTagsByTagNoQuery;
                 });
@@ -59,12 +59,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         {
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(_listWithTwoItems) as Result<List<ProcosysTagDto>>));
+                .Returns(Task.FromResult(new SuccessResult<List<PCSTagDto>>(_listWithTwoItems) as Result<List<PCSTagDto>>));
 
             var result = await _dut.SearchTagsByTagNo("", "ProjectName", "TagNo");
 
             Assert.IsNotNull(result);
-            Assert.IsInstanceOfType(result, typeof(ActionResult<List<ProcosysTagDto>>));
+            Assert.IsInstanceOfType(result, typeof(ActionResult<List<PCSTagDto>>));
 
             Assert.IsNotNull(result.Result);
             Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
@@ -75,15 +75,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         {
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new SuccessResult<List<ProcosysTagDto>>(_listWithTwoItems) as Result<List<ProcosysTagDto>>));
+                .Returns(Task.FromResult(new SuccessResult<List<PCSTagDto>>(_listWithTwoItems) as Result<List<PCSTagDto>>));
 
             var result = await _dut.SearchTagsByTagNo("", "ProjectName", "TagNo");
 
             Assert.IsNotNull(result);
             Assert.IsNotNull(result.Result);
             Assert.IsNotNull(((OkObjectResult)result.Result).Value);
-            Assert.IsInstanceOfType(((OkObjectResult)result.Result).Value, typeof(List<ProcosysTagDto>));
-            Assert.AreEqual(2, (((OkObjectResult)result.Result).Value as List<ProcosysTagDto>).Count);
+            Assert.IsInstanceOfType(((OkObjectResult)result.Result).Value, typeof(List<PCSTagDto>));
+            Assert.AreEqual(2, (((OkObjectResult)result.Result).Value as List<PCSTagDto>).Count);
         }
 
         [TestMethod]
@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
         {
             _mediatorMock
                 .Setup(x => x.Send(It.IsAny<SearchTagsByTagNoQuery>(), It.IsAny<CancellationToken>()))
-                .Returns(Task.FromResult(new NotFoundResult<List<ProcosysTagDto>>(string.Empty) as Result<List<ProcosysTagDto>>));
+                .Returns(Task.FromResult(new NotFoundResult<List<PCSTagDto>>(string.Empty) as Result<List<PCSTagDto>>));
 
             var result = await _dut.SearchTagsByTagNo("", "ProjectName", "TagNo");
 

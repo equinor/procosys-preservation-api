@@ -37,17 +37,17 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncProjects
         private Mock<IProjectApiService> _projectApiServiceMock;
         private Mock<IPermissionCache> _permissionCacheMock;
 
-        private ProcosysTagDetails _mainTagDetails1;
-        private ProcosysTagDetails _mainTagDetails2;
+        private PCSTagDetails _mainTagDetails1;
+        private PCSTagDetails _mainTagDetails2;
         
         private SyncProjectsCommand _command;
         private SyncProjectsCommandHandler _dut;
         private Project _project1;
         private Project _project2;
         private Project _projectNoAccess;
-        private ProcosysProject _mainProject1;
-        private ProcosysProject _mainProject2;
-        private ProcosysProject _mainProjectNoAccess;
+        private PCSProject _mainProject1;
+        private PCSProject _mainProject2;
+        private PCSProject _mainProjectNoAccess;
         private Mock<ILogger<SyncProjectsCommandHandler>> _loggerMock;
         private Tag _tag1;
         private Tag _tag2;
@@ -88,19 +88,19 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncProjects
                 .Returns(Task.FromResult(new List<Project>{ _project1, _project2, _projectNoAccess}));
 
             // Assert projects in main
-            _mainProject1 = new ProcosysProject
+            _mainProject1 = new PCSProject
             {
                 Name = ProjectName1,
                 Description = NewProjectDescription1,
                 IsClosed = true
             };
-            _mainProject2 = new ProcosysProject
+            _mainProject2 = new PCSProject
             {
                 Name = ProjectName2,
                 Description = NewProjectDescription2,
                 IsClosed = false
             };
-            _mainProjectNoAccess = new ProcosysProject
+            _mainProjectNoAccess = new PCSProject
             {
                 Name = ProjectNameNoAccess,
                 Description = ProjectDescriptionNoAccess,
@@ -119,7 +119,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncProjects
                 .Returns(Task.FromResult(_mainProjectNoAccess));
 
             // Assert tags in preservation
-            _mainTagDetails1 = new ProcosysTagDetails
+            _mainTagDetails1 = new PCSTagDetails
             {
                 AreaCode = "AreaCode1",
                 AreaDescription = "AreaDescription1",
@@ -133,7 +133,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncProjects
                 TagFunctionCode = "TagFunctionCode1",
                 TagNo = TagNo1
             };
-            _mainTagDetails2 = new ProcosysTagDetails
+            _mainTagDetails2 = new PCSTagDetails
             {
                 AreaCode = "AreaCode2",
                 AreaDescription = "AreaDescription2",
@@ -148,14 +148,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncProjects
                 TagNo = TagNo2
             };
 
-            IList<ProcosysTagDetails> mainTagDetailList = new List<ProcosysTagDetails> {_mainTagDetails1, _mainTagDetails2};
+            IList<PCSTagDetails> mainTagDetailList = new List<PCSTagDetails> {_mainTagDetails1, _mainTagDetails2};
             _tagApiServiceMock = new Mock<ITagApiService>();
             _tagApiServiceMock
                 .Setup(x => x.GetTagDetailsAsync(TestPlant, ProjectName1, new List<string>{TagNo1, TagNo2}))
                 .Returns(Task.FromResult(mainTagDetailList));
             _tagApiServiceMock
                 .Setup(x => x.GetTagDetailsAsync(TestPlant, ProjectName2, new List<string>()))
-                .Returns(Task.FromResult(new List<ProcosysTagDetails>() as IList<ProcosysTagDetails>));
+                .Returns(Task.FromResult(new List<PCSTagDetails>() as IList<PCSTagDetails>));
             
             // Assert other interfaces and device in test (dut)
             _permissionCacheMock = new Mock<IPermissionCache>();
@@ -223,13 +223,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.SyncCommands.SyncProjects
             UnitOfWorkMock.Verify(u => u.SaveChangesAsync(default), Times.Once);
         }
 
-        private void AssertProjectProperties(ProcosysProject mainProject, Project project)
+        private void AssertProjectProperties(PCSProject mainProject, Project project)
         {
             Assert.AreEqual(mainProject.Description, project.Description);
             Assert.AreEqual(mainProject.IsClosed, project.IsClosed);
         }
 
-        private void AssertTagProperties(ProcosysTagDetails mainTag, Tag tag)
+        private void AssertTagProperties(PCSTagDetails mainTag, Tag tag)
         {
             Assert.AreEqual(mainTag.AreaCode, tag.AreaCode);
             Assert.AreEqual(mainTag.AreaDescription, tag.AreaDescription);

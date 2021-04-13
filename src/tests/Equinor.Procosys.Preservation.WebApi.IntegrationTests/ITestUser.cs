@@ -8,8 +8,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     public interface ITestUser
     {
         TestProfile Profile { get; set; }
-        List<ProcosysPlant> ProCoSysPlants { get; set; }
-        List<ProcosysProject> ProCoSysProjects { get; set; }
+        List<PCSPlant> ProCoSysPlants { get; set; }
+        List<PCSProject> ProCoSysProjects { get; set; }
         List<string> ProCoSysPermissions { get; set; }
         List<string> ProCoSysRestrictions { get; set; }
         HttpClient HttpClient { get; set; }

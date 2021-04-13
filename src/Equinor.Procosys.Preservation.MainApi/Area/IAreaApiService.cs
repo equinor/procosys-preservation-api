@@ -4,6 +4,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Area
 {
     public interface IAreaApiService
     {
-        Task<ProcosysArea> TryGetAreaAsync(string plant, string code);
+        Task<PCSArea> TryGetAreaAsync(string plant, string code);
     }
 }

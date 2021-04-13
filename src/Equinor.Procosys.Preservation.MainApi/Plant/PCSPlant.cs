@@ -3,7 +3,7 @@
 namespace Equinor.ProCoSys.Preservation.MainApi.Plant
 {
     [DebuggerDisplay("{Title} {Id} {HasAccess}")]
-    public class ProcosysPlant
+    public class PCSPlant
     {
         public string Id { get; set; }
         public string Title { get; set; }

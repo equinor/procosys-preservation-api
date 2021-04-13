@@ -284,7 +284,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             return null;
         }
 
-        private async Task AutoTransferTagAffectedByCertificatesAsync(string plant, List<ProcosysCertificateModel> certificates)
+        private async Task AutoTransferTagAffectedByCertificatesAsync(string plant, List<PCSCertificateModel> certificates)
         {
             foreach (var certificate in certificates)
             {

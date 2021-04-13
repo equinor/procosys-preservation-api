@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             }
         }
 
-        public async Task<IList<ProcosysTagDetails>> GetTagDetailsAsync(string plant, string projectName, IList<string> allTagNos)
+        public async Task<IList<PCSTagDetails>> GetTagDetailsAsync(string plant, string projectName, IList<string> allTagNos)
         {
             if (allTagNos == null)
             {
@@ -55,7 +55,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
                 $"&projectName={WebUtility.UrlEncode(projectName)}" +
                 $"&api-version={_apiVersion}";
 
-            var tagDetails = new List<ProcosysTagDetails>();
+            var tagDetails = new List<PCSTagDetails>();
             var page = 0;
             // Use relative small page size since TagNos are added to querystring of url and maxlength is 2000
             var pageSize = 50;
@@ -72,7 +72,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
                         url += $"&tagNos={WebUtility.UrlEncode(tagNo)}";
                     }
 
-                    var tagDetailsPage = await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysTagDetails>>(url);
+                    var tagDetailsPage = await _mainApiClient.QueryAndDeserializeAsync<List<PCSTagDetails>>(url);
                     tagDetails.AddRange(tagDetailsPage);
                 }
 
@@ -82,20 +82,20 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             return tagDetails;
         }
 
-        public async Task<IList<ProcosysPreservedTag>> GetPreservedTagsAsync(string plant, string projectName)
+        public async Task<IList<PCSPreservedTag>> GetPreservedTagsAsync(string plant, string projectName)
         {
             var url = $"{_baseAddress}PreservationTags" +
                       $"?plantId={plant}" +
                       $"&projectName={WebUtility.UrlEncode(projectName)}" +
                       $"&api-version={_apiVersion}";
-            return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysPreservedTag>>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<List<PCSPreservedTag>>(url);
         }
 
-        public async Task<IList<ProcosysTagOverview>> SearchTagsByTagNoAsync(string plant, string projectName, string startsWithTagNo)
+        public async Task<IList<PCSTagOverview>> SearchTagsByTagNoAsync(string plant, string projectName, string startsWithTagNo)
         {
-            var items = new List<ProcosysTagOverview>();
+            var items = new List<PCSTagOverview>();
             var currentPage = 0;
-            ProcosysTagSearchResult tagSearchResult;
+            PCSTagSearchResult tagSearchResult;
             do
             {
                 var url = $"{_baseAddress}Tag/Search" +
@@ -105,7 +105,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
                     $"&currentPage={currentPage++}" +
                     $"&itemsPerPage={_tagSearchPageSize}" +
                     $"&api-version={_apiVersion}";
-                tagSearchResult = await _mainApiClient.QueryAndDeserializeAsync<ProcosysTagSearchResult>(url);
+                tagSearchResult = await _mainApiClient.QueryAndDeserializeAsync<PCSTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
                 {
                     items.AddRange(tagSearchResult.Items);
@@ -114,11 +114,11 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
             return items;
         }
 
-        public async Task<IList<ProcosysTagOverview>> SearchTagsByTagFunctionsAsync(string plant, string projectName, IList<string> tagFunctionCodeRegisterCodePairs)
+        public async Task<IList<PCSTagOverview>> SearchTagsByTagFunctionsAsync(string plant, string projectName, IList<string> tagFunctionCodeRegisterCodePairs)
         {
-            var items = new List<ProcosysTagOverview>();
+            var items = new List<PCSTagOverview>();
             var currentPage = 0;
-            ProcosysTagSearchResult tagSearchResult;
+            PCSTagSearchResult tagSearchResult;
             do
             {
                 var url = $"{_baseAddress}Tag/Search/ByTagFunction" +
@@ -132,7 +132,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tag
                     url += $"&tagFunctionCodeRegisterCodePairs={tagFunctionCodeRegisterCodePair}";
                 }
 
-                tagSearchResult = await _mainApiClient.QueryAndDeserializeAsync<ProcosysTagSearchResult>(url);
+                tagSearchResult = await _mainApiClient.QueryAndDeserializeAsync<PCSTagSearchResult>(url);
                 if (tagSearchResult?.Items != null && tagSearchResult.Items.Any())
                 {
                     items.AddRange(tagSearchResult.Items);

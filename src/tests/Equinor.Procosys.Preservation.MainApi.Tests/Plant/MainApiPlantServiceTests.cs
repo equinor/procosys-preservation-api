@@ -26,13 +26,13 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Tests.Plant
                 .Returns(new MainApiOptions { ApiVersion = "4.0", BaseAddress = "http://example.com" });
             var mainApiClient = new Mock<IBearerTokenApiClient>();
             mainApiClient
-                .Setup(x => x.QueryAndDeserializeAsync<List<ProcosysPlant>>(It.IsAny<string>()))
-                .Returns(Task.FromResult(new List<ProcosysPlant>
+                .Setup(x => x.QueryAndDeserializeAsync<List<PCSPlant>>(It.IsAny<string>()))
+                .Returns(Task.FromResult(new List<PCSPlant>
                 {
-                    new ProcosysPlant { Id = _plantId, Title = _plantTitle },
-                    new ProcosysPlant { Id = "PCS$ASGARD", Title = "Åsgard" },
-                    new ProcosysPlant { Id = "PCS$ASGARD_A", Title = "ÅsgardA" },
-                    new ProcosysPlant { Id = "PCS$ASGARD_B", Title = "ÅsgardB" },
+                    new PCSPlant { Id = _plantId, Title = _plantTitle },
+                    new PCSPlant { Id = "PCS$ASGARD", Title = "Åsgard" },
+                    new PCSPlant { Id = "PCS$ASGARD_A", Title = "ÅsgardA" },
+                    new PCSPlant { Id = "PCS$ASGARD_B", Title = "ÅsgardB" },
                 }));
 
             _dut = new MainApiPlantService(mainApiClient.Object, mainApiOptions.Object);

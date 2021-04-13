@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
         private Responsible _addedResponsible;
         private Journey _journey;
         private Mock<Mode> _modeMock;
-        private Mock<ProcosysResponsible> _pcsResponsibleMock;
+        private Mock<PCSResponsible> _pcsResponsibleMock;
         private Mock<IModeRepository> _modeRepositoryMock;
         private Mock<IResponsibleRepository> _responsibleRepositoryMock;
         private Mock<IResponsibleApiService> _responsibleApiServiceMock;
@@ -79,7 +79,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _responsibleRepositoryMock.Setup(r => r.Add(It.IsAny<Responsible>()))
                 .Callback<Responsible>(c => _addedResponsible = c);
 
-            _pcsResponsibleMock = new Mock<ProcosysResponsible>();
+            _pcsResponsibleMock = new Mock<PCSResponsible>();
 
             _responsibleApiServiceMock = new Mock<IResponsibleApiService>();
             _responsibleApiServiceMock.Setup(r => r.TryGetResponsibleAsync(TestPlant, _responsibleCode))
@@ -93,7 +93,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _journey.AddStep(_step);
 
             _responsibleApiServiceMock.Setup(s => s.TryGetResponsibleAsync(TestPlant, _responsibleCode))
-                .Returns(Task.FromResult(new ProcosysResponsible { Description = "ResponsibleTitle" }));
+                .Returns(Task.FromResult(new PCSResponsible { Description = "ResponsibleTitle" }));
 
             journeyRepositoryMock.Setup(s => s.GetByIdAsync(_journeyId))
                 .Returns(Task.FromResult(_journey));
@@ -147,7 +147,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _responsibleRepositoryMock
                 .Setup(r => r.GetByCodeAsync(_responsibleCode)).Returns(Task.FromResult((Responsible)null));
             _responsibleApiServiceMock.Setup(s => s.TryGetResponsibleAsync(TestPlant, _responsibleCode))
-                .Returns(Task.FromResult((ProcosysResponsible)null));
+                .Returns(Task.FromResult((PCSResponsible)null));
 
             // Act
             var result = await _dut.Handle(_command, default);

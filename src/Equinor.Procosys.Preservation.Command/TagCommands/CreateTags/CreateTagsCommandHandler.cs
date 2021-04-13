@@ -91,7 +91,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CreateTags
         private Tag CreateTag(
             CreateTagsCommand request, 
             Step step,
-            ProcosysTagDetails tagDetails,
+            PCSTagDetails tagDetails,
             IList<RequirementDefinition> reqDefs)
         {
             var requirements = new List<TagRequirement>();

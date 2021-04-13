@@ -21,10 +21,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Plant
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<List<ProcosysPlant>> GetAllPlantsAsync()
+        public async Task<List<PCSPlant>> GetAllPlantsAsync()
         {
             var url = $"{_baseAddress}Plants?includePlantsWithoutAccess=true&api-version={_apiVersion}";
-            return await _mainApiClient.QueryAndDeserializeAsync<List<ProcosysPlant>>(url);
+            return await _mainApiClient.QueryAndDeserializeAsync<List<PCSPlant>>(url);
         }
     }
 }

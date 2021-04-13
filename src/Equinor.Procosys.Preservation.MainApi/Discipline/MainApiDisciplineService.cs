@@ -20,14 +20,14 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Discipline
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
         }
 
-        public async Task<ProcosysDiscipline> TryGetDisciplineAsync(string plant, string code)
+        public async Task<PCSDiscipline> TryGetDisciplineAsync(string plant, string code)
         {
             var url = $"{_baseAddress}Library/Discipline" +
                       $"?plantId={plant}" +
                       $"&code={WebUtility.UrlEncode(code)}" +
                       $"&api-version={_apiVersion}";
 
-            return await _mainApiClient.TryQueryAndDeserializeAsync<ProcosysDiscipline>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSDiscipline>(url);
         }
     }
 }

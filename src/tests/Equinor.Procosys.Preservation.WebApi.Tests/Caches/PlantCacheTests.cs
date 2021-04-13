@@ -41,11 +41,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
 
             _plantApiServiceMock = new Mock<IPlantApiService>();
             _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(
-                new List<ProcosysPlant>
+                new List<PCSPlant>
                 {
-                    new ProcosysPlant {Id = Plant1WithAccess, HasAccess = true}, 
-                    new ProcosysPlant {Id = Plant2WithAccess, HasAccess = true},
-                    new ProcosysPlant {Id = PlantWithoutAccess}
+                    new PCSPlant {Id = Plant1WithAccess, HasAccess = true}, 
+                    new PCSPlant {Id = Plant2WithAccess, HasAccess = true},
+                    new PCSPlant {Id = PlantWithoutAccess}
                 }));
 
             _dut = new PlantCache(new CacheManager(), _currentUserProviderMock.Object, _plantApiServiceMock.Object, optionsMock.Object);

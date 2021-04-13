@@ -1,8 +1,8 @@
 ﻿namespace Equinor.ProCoSys.Preservation.Query.TagApiQueries.SearchTags
 {
-    public class ProcosysTagDto
+    public class PCSTagDto
     {
-        public ProcosysTagDto(
+        public PCSTagDto(
             string tagNo, 
             string description, 
             string purchaseOrderTitle,

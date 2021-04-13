@@ -3,7 +3,7 @@
 namespace Equinor.ProCoSys.Preservation.MainApi.TagFunction
 {
     [DebuggerDisplay("{Code}/{RegisterCode}")]
-    public class ProcosysTagFunction
+    public class PCSTagFunction
     {
         public int Id { get; set; }
         public string Code { get; set; }

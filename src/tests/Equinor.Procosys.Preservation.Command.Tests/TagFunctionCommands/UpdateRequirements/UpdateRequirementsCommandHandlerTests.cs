@@ -16,7 +16,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
     {
         private readonly string TagFunctionCode = "TFC";
         private readonly string RegisterCode = "RC";
-        private readonly string ProcosysDescription = "ProcosysDescription";
+        private readonly string PCSDescription = "PCSDescription";
         private RequirementDefinition _reqDef1;
         private RequirementDefinition _reqDef2;
         private const int ReqDefId1 = 99;
@@ -54,10 +54,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
 
             _tagFunctionApiServiceMock = new Mock<ITagFunctionApiService>();
             _tagFunctionApiServiceMock.Setup(t => t.TryGetTagFunctionAsync(TestPlant, TagFunctionCode, RegisterCode))
-                .Returns(Task.FromResult(new ProcosysTagFunction
+                .Returns(Task.FromResult(new PCSTagFunction
                 {
                     Code = TagFunctionCode,
-                    Description = ProcosysDescription,
+                    Description = PCSDescription,
                     RegisterCode = RegisterCode
                 }));
             _commandWithTwoRequirements = new UpdateRequirementsCommand(TagFunctionCode, RegisterCode,
@@ -96,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagFunctionCommands.Update
 
             // Assert
             Assert.AreEqual(TagFunctionCode, _tfAddedToRepository.Code);
-            Assert.AreEqual(ProcosysDescription, _tfAddedToRepository.Description);
+            Assert.AreEqual(PCSDescription, _tfAddedToRepository.Description);
             Assert.AreEqual(RegisterCode, _tfAddedToRepository.RegisterCode);
             Assert.AreEqual(2, _tfAddedToRepository.Requirements.Count);
         }

@@ -2,9 +2,9 @@
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Certificate
 {
-    public class ProcosysCertificateTagsModel
+    public class PCSCertificateTagsModel
     {
         public bool CertificateIsAccepted { get; set; }
-        public IEnumerable<ProcosysCertificateTag> Tags { get; set; }
+        public IEnumerable<PCSCertificateTag> Tags { get; set; }
     }
 }

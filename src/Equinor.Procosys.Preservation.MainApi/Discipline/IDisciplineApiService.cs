@@ -4,6 +4,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Discipline
 {
     public interface IDisciplineApiService
     {
-        Task<ProcosysDiscipline> TryGetDisciplineAsync(string plant, string code);
+        Task<PCSDiscipline> TryGetDisciplineAsync(string plant, string code);
     }
 }
