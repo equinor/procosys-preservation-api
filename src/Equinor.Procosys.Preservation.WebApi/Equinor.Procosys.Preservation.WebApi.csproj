@@ -34,12 +34,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.BlobStorage\Equinor.Procosys.Preservation.BlobStorage.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Command\Equinor.Procosys.Preservation.Command.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Infrastructure\Equinor.Procosys.Preservation.Infrastructure.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.MainApi\Equinor.Procosys.Preservation.MainApi.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Query\Equinor.Procosys.Preservation.Query.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.BlobStorage\Equinor.ProCoSys.Preservation.BlobStorage.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Command\Equinor.ProCoSys.Preservation.Command.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Domain\Equinor.ProCoSys.Preservation.Domain.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Infrastructure\Equinor.ProCoSys.Preservation.Infrastructure.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.MainApi\Equinor.ProCoSys.Preservation.MainApi.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Query\Equinor.ProCoSys.Preservation.Query.csproj" />
   </ItemGroup>
 
   <ItemGroup>

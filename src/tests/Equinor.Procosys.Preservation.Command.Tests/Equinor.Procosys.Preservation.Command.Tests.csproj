@@ -19,9 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Command\Equinor.Procosys.Preservation.Command.csproj" />
-    <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Test.Common\Equinor.Procosys.Preservation.Test.Common.csproj" />
+    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.Command\Equinor.ProCoSys.Preservation.Command.csproj" />
+    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.Domain\Equinor.ProCoSys.Preservation.Domain.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Test.Common\Equinor.ProCoSys.Preservation.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>
