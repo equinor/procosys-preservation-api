@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="5.0.4" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.9.1" />
     <PackageReference Include="Moq" Version="4.16.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="2.2.3" />
@@ -19,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.Query\Equinor.ProCoSys.Preservation.Query.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Test.Common\Equinor.ProCoSys.Preservation.Test.Common.csproj" />
+    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.WebApi\Equinor.ProCoSys.Preservation.WebApi.csproj" />
+    <ProjectReference Include="..\Equinor.ProCoSys.Preservation.Test.Common\Equinor.ProCoSys.Preservation.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>
