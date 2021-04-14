@@ -12,6 +12,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
     [TestClass]
     public class TagsControllerTestsBase : TestBase
     {
+        protected readonly string KnownPOCode = "PO";
         protected readonly string KnownAreaCode = "A";
         protected readonly string KnownDisciplineCode = "D";
 

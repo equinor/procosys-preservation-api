@@ -23,23 +23,31 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             
             WhenAsync((command, token) => BeASupplierStepAsync(command.StepId, token), () =>
             {
-                RuleFor(command => command.Requirements)
-                    .Must(BeUniqueRequirements)
-                    .WithMessage(command => "Requirement definitions must be unique!")
-                    .MustAsync((_, requirements, token) => RequirementUsageIsForAllJourneysAsync(requirements, token))
-                    .WithMessage(command => "Requirements must include requirements to be used both for supplier and other than suppliers!");
+                RuleFor(command => command)
+                    .MustAsync((command, token) => RequirementUsageIsForAllJourneysAsync(command.Requirements, token))
+                    .WithMessage(_ => "Requirements must include requirements to be used both for supplier and other than suppliers!")
+                        .When(command => command.TagType != TagType.PoArea, ApplyConditionTo.CurrentValidator)
+                    .MustAsync((command, token) => RequirementUsageIsForSupplierAsync(command.Requirements, token))
+                    .WithMessage(_ => "Requirements must include requirements to be used for supplier!")
+                        .When(command => command.TagType == TagType.PoArea, ApplyConditionTo.CurrentValidator)
+                    .MustAsync((command, token) => RequirementUsageIsNotForOtherThanSupplierAsync(command.Requirements, token))
+                    .WithMessage(_ => "Requirements can not include requirements for other than suppliers!")
+                        .When(command => command.TagType == TagType.PoArea, ApplyConditionTo.CurrentValidator);
+
             }).Otherwise(() =>
             {
-                RuleFor(command => command.Requirements)
-                    .Must(BeUniqueRequirements)
-                    .WithMessage(command => "Requirement definitions must be unique!")
-                    .MustAsync((_, requirements, token) => RequirementUsageIsForJourneysWithoutSupplierAsync(requirements, token))
-                    .WithMessage(command => "Requirements must include requirements to be used for other than suppliers!")
-                    .MustAsync((_, requirements, token) => RequirementUsageIsNotForSupplierStepOnlyAsync(requirements, token))
-                    .WithMessage(command => "Requirements can not include requirements just for suppliers!");
+                RuleFor(command => command)
+                    .Must(command => command.TagType != TagType.PoArea)
+                    .WithMessage(_ => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!")
+                    .MustAsync((command, token) => RequirementUsageIsForJourneysWithoutSupplierAsync(command.Requirements, token))
+                    .WithMessage(_ => "Requirements must include requirements to be used for other than suppliers!")
+                    .MustAsync((command, token) => RequirementUsageIsNotForSupplierOnlyAsync(command.Requirements, token))
+                    .WithMessage(_ => "Requirements can not include requirements just for suppliers!");
             });
 
             RuleFor(command => command)
+                .Must(command => BeUniqueRequirements(command.Requirements))
+                .WithMessage(_ => "Requirement definitions must be unique!")
                 .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))
                 .WithMessage(command => $"Project is closed! Project={command.ProjectName}")
                 .MustAsync((command, token) => NotBeAnExistingTagWithinProjectAsync(command.GetTagNo(), command.ProjectName, token))
@@ -47,15 +55,12 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.StepId, token))
                 .WithMessage(command => $"Step doesn't exist! Step={command.StepId}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
-                .WithMessage(command => $"Step is voided! Step={command.StepId}")
-                .MustAsync((command, token) => BeASupplierStepAsync(command.StepId, token))
-                .WithMessage(command => $"Step for a {TagType.PoArea.GetTagNoPrefix()} need to be for supplier!")
-                    .When(command => command.TagType == TagType.PoArea, ApplyConditionTo.CurrentValidator);
+                .WithMessage(command => $"Step is voided! Step={command.StepId}");
 
             RuleForEach(command => command.Requirements)
-                .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
+                .MustAsync((_, req, _, token) => BeAnExistingRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) => $"Requirement definition doesn't exist! Requirement definition={req.RequirementDefinitionId}")
-                .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
+                .MustAsync((_, req, _, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                 .WithMessage((_, req) => $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
 
             bool BeUniqueRequirements(IEnumerable<RequirementForCommand> requirements)
@@ -70,13 +75,25 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
                 return await requirementDefinitionValidator.UsageCoversBothForSupplierAndOtherAsync(reqIds, token);
             }                        
 
+            async Task<bool> RequirementUsageIsForSupplierAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
+            {
+                var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
+                return await requirementDefinitionValidator.UsageCoversForSuppliersAsync(reqIds, token);
+            }                        
+
             async Task<bool> RequirementUsageIsForJourneysWithoutSupplierAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return await requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(reqIds, token);
             }                        
 
-            async Task<bool> RequirementUsageIsNotForSupplierStepOnlyAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
+            async Task<bool> RequirementUsageIsNotForOtherThanSupplierAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
+            {
+                var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
+                return !await requirementDefinitionValidator.HasAnyForForOtherThanSuppliersUsageAsync(reqIds, token);
+            }                        
+
+            async Task<bool> RequirementUsageIsNotForSupplierOnlyAsync(IEnumerable<RequirementForCommand> requirements, CancellationToken token)
             {
                 var reqIds = requirements.Select(dto => dto.RequirementDefinitionId).ToList();
                 return !await requirementDefinitionValidator.HasAnyForSupplierOnlyUsageAsync(reqIds, token);

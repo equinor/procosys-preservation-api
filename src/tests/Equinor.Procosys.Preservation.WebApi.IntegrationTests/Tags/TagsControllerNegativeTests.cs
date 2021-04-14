@@ -1515,6 +1515,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 stepId,
                 "Desc",
                 null,
+                null,
                 null);
             await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
 
@@ -1603,6 +1604,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Desc",
                 null,
                 null,
+                null,
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
@@ -1617,6 +1619,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 678,
                 "Desc",
+                null,
                 null,
                 null,
                 HttpStatusCode.BadRequest,
@@ -1636,6 +1639,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Desc",
                 null,
                 null,
+                null,
                 HttpStatusCode.BadRequest,
                 "is not a valid plant");
 
@@ -1651,6 +1655,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 678,
                 "Desc",
+                null,
                 null,
                 null,
                 HttpStatusCode.Forbidden);
@@ -1669,6 +1674,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 "Desc",
                 null,
                 null,
+                null,
                 HttpStatusCode.Forbidden);
 
         [TestMethod]
@@ -1683,6 +1689,7 @@ namespace Equinor.Procosys.Preservation.WebApi.IntegrationTests.Tags
                 null,
                 678,
                 "Desc",
+                null,
                 null,
                 null,
                 HttpStatusCode.Forbidden);
