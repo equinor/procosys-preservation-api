@@ -1253,13 +1253,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task RequirementUsageWillCoversForSuppliersAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
+        public async Task RequirementUsageWillCoverForSuppliersAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.RequirementUsageWillCoversForSuppliersAsync(
+                var result = await dut.RequirementUsageWillCoverForSuppliersAsync(
                     tag.Id,
                     new List<int>(),
                     new List<int>(),
@@ -1270,13 +1270,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task RequirementUsageWillCoversForSuppliersAsync_ShouldReturnFalse_WhenVoidingRequirementsForAllAndForSupplier()
+        public async Task RequirementUsageWillCoverForSuppliersAsync_ShouldReturnFalse_WhenVoidingRequirementsForAllAndForSupplier()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.RequirementUsageWillCoversForSuppliersAsync(
+                var result = await dut.RequirementUsageWillCoverForSuppliersAsync(
                     tag.Id, 
                     new List<int>(),
                     new List<int>{_tagReqForAll1Id, _tagReqForSupplierId},
@@ -1287,13 +1287,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task RequirementUsageWillCoversForSuppliersAsync_ShouldReturnTrue_WhenVoidingRequirementsForAllAndForOther()
+        public async Task RequirementUsageWillCoverForSuppliersAsync_ShouldReturnTrue_WhenVoidingRequirementsForAllAndForOther()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.RequirementUsageWillCoversForSuppliersAsync(
+                var result = await dut.RequirementUsageWillCoverForSuppliersAsync(
                     tag.Id,
                     new List<int>(),
                     new List<int>{_tagReqForAll1Id, _tagReqForOther1Id}, 
@@ -1304,13 +1304,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task RequirementUsageWillCoversForSuppliersAsync_ShouldReturnTrue_WhenVoidingAllRequirementsAndAddingNew()
+        public async Task RequirementUsageWillCoverForSuppliersAsync_ShouldReturnTrue_WhenVoidingAllRequirementsAndAddingNew()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.RequirementUsageWillCoversForSuppliersAsync(
+                var result = await dut.RequirementUsageWillCoverForSuppliersAsync(
                     tag.Id,
                     new List<int>(),
                     new List<int>{_tagReqForAll1Id, _tagReqForSupplierId}, 
@@ -1401,13 +1401,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task RequirementHasAnyForForOtherThanSuppliersUsageAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
+        public async Task RequirementHasAnyForOtherThanSuppliersUsageAsync_ShouldReturnTrue_WhenRequirementsCoversAll()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.RequirementHasAnyForForOtherThanSuppliersUsageAsync(
+                var result = await dut.RequirementHasAnyForOtherThanSuppliersUsageAsync(
                     tag.Id,
                     new List<int>(),
                     new List<int>(),
@@ -1418,13 +1418,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task RequirementHasAnyForForOtherThanSuppliersUsageAsync_ShouldReturnFalse_WhenVoidingRequirementsForOther()
+        public async Task RequirementHasAnyForOtherThanSuppliersUsageAsync_ShouldReturnFalse_WhenVoidingRequirementsForOther()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.RequirementHasAnyForForOtherThanSuppliersUsageAsync(
+                var result = await dut.RequirementHasAnyForOtherThanSuppliersUsageAsync(
                     tag.Id, 
                     new List<int>(),
                     new List<int>{_tagReqForOther1Id}, 
@@ -1435,13 +1435,13 @@ namespace Equinor.Procosys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task RequirementHasAnyForForOtherThanSuppliersUsageAsync_ShouldReturnTrue_WhenVoidinOtherRequirementsAndAddingNew()
+        public async Task RequirementHasAnyForOtherThanSuppliersUsageAsync_ShouldReturnTrue_WhenVoidinOtherRequirementsAndAddingNew()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagWithAllReqsId);
                 var dut = new TagValidator(context, new RequirementDefinitionValidator(context));
-                var result = await dut.RequirementHasAnyForForOtherThanSuppliersUsageAsync(
+                var result = await dut.RequirementHasAnyForOtherThanSuppliersUsageAsync(
                     tag.Id, 
                     new List<int>(),
                     new List<int>{_tagReqForOther1Id}, 
