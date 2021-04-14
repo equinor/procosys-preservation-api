@@ -21,25 +21,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{DFB50BC5-5201-42FD-A049-CF0259AA7AE8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.Command.Tests", "tests\Equinor.Procosys.Preservation.Command.Tests\Equinor.Procosys.Preservation.Command.Tests.csproj", "{C8B4C7EF-8564-4D9A-8F12-118CB5B0C8BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.Command.Tests", "tests\Equinor.Procosys.Preservation.Command.Tests\Equinor.ProCoSys.Preservation.Command.Tests.csproj", "{C8B4C7EF-8564-4D9A-8F12-118CB5B0C8BA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.Domain.Tests", "tests\Equinor.Procosys.Preservation.Domain.Tests\Equinor.Procosys.Preservation.Domain.Tests.csproj", "{91E20BF7-866A-435D-8146-01A1CA827B19}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.Domain.Tests", "tests\Equinor.Procosys.Preservation.Domain.Tests\Equinor.ProCoSys.Preservation.Domain.Tests.csproj", "{91E20BF7-866A-435D-8146-01A1CA827B19}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.Infrastructure.Tests", "tests\Equinor.Procosys.Preservation.Infrastructure.Tests\Equinor.Procosys.Preservation.Infrastructure.Tests.csproj", "{8AEAA372-6AE4-46F4-9CBD-BC46B722CC79}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.Infrastructure.Tests", "tests\Equinor.Procosys.Preservation.Infrastructure.Tests\Equinor.ProCoSys.Preservation.Infrastructure.Tests.csproj", "{8AEAA372-6AE4-46F4-9CBD-BC46B722CC79}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.Query.Tests", "tests\Equinor.Procosys.Preservation.Query.Tests\Equinor.Procosys.Preservation.Query.Tests.csproj", "{F8610A00-6320-46AD-AC74-70F2311DC062}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.Query.Tests", "tests\Equinor.Procosys.Preservation.Query.Tests\Equinor.ProCoSys.Preservation.Query.Tests.csproj", "{F8610A00-6320-46AD-AC74-70F2311DC062}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.WebApi.Tests", "tests\Equinor.Procosys.Preservation.WebApi.Tests\Equinor.Procosys.Preservation.WebApi.Tests.csproj", "{065C9A62-0885-4238-8893-B10BE15E5201}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.WebApi.Tests", "tests\Equinor.Procosys.Preservation.WebApi.Tests\Equinor.ProCoSys.Preservation.WebApi.Tests.csproj", "{065C9A62-0885-4238-8893-B10BE15E5201}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.MainApi", "Equinor.ProCoSys.Preservation.MainApi\Equinor.ProCoSys.Preservation.MainApi.csproj", "{CFF1281F-84A3-4A73-B32E-ED6A666C187F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.MainApi.Tests", "tests\Equinor.Procosys.Preservation.MainApi.Tests\Equinor.Procosys.Preservation.MainApi.Tests.csproj", "{3628443D-47B4-4D7A-AB08-3E0F613E5015}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.MainApi.Tests", "tests\Equinor.Procosys.Preservation.MainApi.Tests\Equinor.ProCoSys.Preservation.MainApi.Tests.csproj", "{3628443D-47B4-4D7A-AB08-3E0F613E5015}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.Test.Common", "tests\Equinor.Procosys.Preservation.Test.Common\Equinor.Procosys.Preservation.Test.Common.csproj", "{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.Test.Common", "tests\Equinor.Procosys.Preservation.Test.Common\Equinor.ProCoSys.Preservation.Test.Common.csproj", "{AF5AC8E5-6A5F-4560-86BC-7E35FE1F01F3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.BlobStorage", "Equinor.ProCoSys.Preservation.BlobStorage\Equinor.ProCoSys.Preservation.BlobStorage.csproj", "{F2ECB765-2E38-43B3-BB94-050F9D1E2CB3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.Procosys.Preservation.WebApi.IntegrationTests", "tests\Equinor.Procosys.Preservation.WebApi.IntegrationTests\Equinor.Procosys.Preservation.WebApi.IntegrationTests.csproj", "{62CE4391-513D-4A23-ACB2-9245A0D039AF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Equinor.ProCoSys.Preservation.WebApi.IntegrationTests", "tests\Equinor.Procosys.Preservation.WebApi.IntegrationTests\Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.csproj", "{62CE4391-513D-4A23-ACB2-9245A0D039AF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -21,7 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.Infrastructure\Equinor.ProCoSys.Preservation.Infrastructure.csproj" />
-    <ProjectReference Include="..\Equinor.Procosys.Preservation.Test.Common\Equinor.Procosys.Preservation.Test.Common.csproj" />
+    <ProjectReference Include="..\Equinor.Procosys.Preservation.Test.Common\Equinor.ProCoSys.Preservation.Test.Common.csproj" />
   </ItemGroup>
 
 </Project>
