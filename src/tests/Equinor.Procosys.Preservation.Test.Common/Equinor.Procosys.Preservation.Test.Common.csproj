@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Domain\Equinor.Procosys.Preservation.Domain.csproj" />
-    <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Infrastructure\Equinor.Procosys.Preservation.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.Domain\Equinor.ProCoSys.Preservation.Domain.csproj" />
+    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.Infrastructure\Equinor.ProCoSys.Preservation.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

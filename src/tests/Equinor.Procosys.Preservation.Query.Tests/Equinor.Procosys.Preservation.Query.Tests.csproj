@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Query\Equinor.Procosys.Preservation.Query.csproj" />
+    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.Query\Equinor.ProCoSys.Preservation.Query.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Test.Common\Equinor.Procosys.Preservation.Test.Common.csproj" />
   </ItemGroup>
 

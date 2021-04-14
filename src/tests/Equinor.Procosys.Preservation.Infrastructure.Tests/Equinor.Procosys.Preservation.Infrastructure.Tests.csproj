@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Equinor.Procosys.Preservation.Infrastructure\Equinor.Procosys.Preservation.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Equinor.ProCoSys.Preservation.Infrastructure\Equinor.ProCoSys.Preservation.Infrastructure.csproj" />
     <ProjectReference Include="..\Equinor.Procosys.Preservation.Test.Common\Equinor.Procosys.Preservation.Test.Common.csproj" />
   </ItemGroup>
 
