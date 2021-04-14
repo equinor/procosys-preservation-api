@@ -253,7 +253,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return allRequirementDefinitionIds.Count == allRequirementDefinitionIds.Distinct().Count();
         }
 
-        public async Task<bool> RequirementUsageWillCoversForSuppliersAsync(
+        public async Task<bool> RequirementUsageWillCoverForSuppliersAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
@@ -326,7 +326,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
         }
 
-        public async Task<bool> RequirementHasAnyForForOtherThanSuppliersUsageAsync(int tagId,
+        public async Task<bool> RequirementHasAnyForOtherThanSuppliersUsageAsync(int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token)
         {

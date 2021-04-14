@@ -55,7 +55,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
         
         Task<bool> AllRequirementsWillBeUniqueAsync(int tagId, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token);
 
-        Task<bool> RequirementUsageWillCoversForSuppliersAsync(
+        Task<bool> RequirementUsageWillCoverForSuppliersAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,
@@ -76,7 +76,7 @@ namespace Equinor.Procosys.Preservation.Command.Validators.TagValidators
             List<int> requirementDefinitionIdsToBeAdded,
             CancellationToken token);
 
-        Task<bool> RequirementHasAnyForForOtherThanSuppliersUsageAsync(
+        Task<bool> RequirementHasAnyForOtherThanSuppliersUsageAsync(
             int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
             List<int> tagRequirementIdsToBeVoided,

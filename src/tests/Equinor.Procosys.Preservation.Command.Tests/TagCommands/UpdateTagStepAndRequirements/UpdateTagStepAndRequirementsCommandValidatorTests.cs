@@ -56,7 +56,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
                     new List<int> {_rdForSupplierId, _rdForOtherThanSupplierId},
                     default))
                 .Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.RequirementUsageWillCoversForSuppliersAsync(
+            _tagValidatorMock.Setup(t => t.RequirementUsageWillCoverForSuppliersAsync(
                     _tagId,
                     new List<int>(),
                     new List<int>(),
@@ -523,7 +523,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
             // Assert
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!"));
+            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith($"Step for a {TagType.PoArea.GetTagNoPrefix()} tag needs to be for supplier!"));
         }
 
         [TestMethod]
@@ -544,7 +544,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.RequirementUsageWillCoversForSuppliersAsync(
+            _tagValidatorMock.Setup(t => t.RequirementUsageWillCoverForSuppliersAsync(
                     _tagId,
                     new List<int>(),
                     new List<int>(),
@@ -566,7 +566,7 @@ namespace Equinor.Procosys.Preservation.Command.Tests.TagCommands.UpdateTagStepA
         {
             // Arrange
             _tagValidatorMock.Setup(t => t.VerifyTagTypeAsync(_tagId, TagType.PoArea, default)).Returns(Task.FromResult(true));
-            _tagValidatorMock.Setup(t => t.RequirementHasAnyForForOtherThanSuppliersUsageAsync(
+            _tagValidatorMock.Setup(t => t.RequirementHasAnyForOtherThanSuppliersUsageAsync(
                     _tagId,
                     new List<int>(),
                     new List<int>(),

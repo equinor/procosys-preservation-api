@@ -38,7 +38,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.CreateAreaTag
             {
                 RuleFor(command => command)
                     .Must(command => command.TagType != TagType.PoArea)
-                    .WithMessage(_ => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!")
+                    .WithMessage(_ => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag needs to be for supplier!")
                     .MustAsync((command, token) => RequirementUsageIsForJourneysWithoutSupplierAsync(command.Requirements, token))
                     .WithMessage(_ => "Requirements must include requirements to be used for other than suppliers!")
                     .MustAsync((command, token) => RequirementUsageIsNotForSupplierOnlyAsync(command.Requirements, token))

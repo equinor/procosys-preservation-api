@@ -59,7 +59,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
             {
                 RuleFor(command => command)
                     .MustAsync((command, token) => NotBeAPoAreaTagAsync(command.TagId, token))
-                    .WithMessage(_ => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag need to be for supplier!")
+                    .WithMessage(_ => $"Step for a {TagType.PoArea.GetTagNoPrefix()} tag needs to be for supplier!")
                     .MustAsync((_, command, token) =>
                         RequirementUsageIsForJourneysWithoutSupplierAsync(
                             command.TagId,
@@ -136,7 +136,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
-                => !await tagValidator.RequirementHasAnyForForOtherThanSuppliersUsageAsync(
+                => !await tagValidator.RequirementHasAnyForOtherThanSuppliersUsageAsync(
                     tagId, 
                     tagRequirementIdsToBeUnvoided, 
                     tagRequirementIdsToBeVoided, 
@@ -149,7 +149,7 @@ namespace Equinor.Procosys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 List<int> tagRequirementIdsToBeVoided,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
-                => await tagValidator.RequirementUsageWillCoversForSuppliersAsync(
+                => await tagValidator.RequirementUsageWillCoverForSuppliersAsync(
                     tagId, 
                     tagRequirementIdsToBeUnvoided, 
                     tagRequirementIdsToBeVoided, 
