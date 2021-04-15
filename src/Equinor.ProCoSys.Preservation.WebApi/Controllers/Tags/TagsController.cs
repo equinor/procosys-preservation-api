@@ -365,7 +365,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 
         [Authorize(Roles = Permissions.PRESERVATION_PLAN_CREATE)]
         [HttpPost("Standard")]
-        public async Task<ActionResult<int>> CreateTags(
+        public async Task<ActionResult<List<int>>> CreateTags(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
