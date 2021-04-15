@@ -31,7 +31,7 @@ stages:
   variables:
     envName: 'runtests'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
-    testPath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.sln'
+    testPath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.sln'
 
   jobs:
   # Run Test
@@ -52,7 +52,7 @@ stages:
     containerRegistry: '${{ variables.containerRegistryName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     dockerRegistryServiceConnection: '$(dockerRegistryServiceConnectionName)'
-    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.Procosys.Preservation.WebApi/Dockerfile'
+    dockerfilePath: '$(Build.SourcesDirectory)/src/Equinor.ProCoSys.Preservation.WebApi/Dockerfile'
 
   jobs:
   # Docker Build

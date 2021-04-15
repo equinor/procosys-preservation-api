@@ -6,6 +6,6 @@ services:
     image: preservationapi
     build:
       context: .
-      dockerfile: Equinor.Procosys.Preservation.WebApi/Dockerfile
+      dockerfile: Equinor.ProCoSys.Preservation.WebApi/Dockerfile
     ports:
       - "8080:5000"

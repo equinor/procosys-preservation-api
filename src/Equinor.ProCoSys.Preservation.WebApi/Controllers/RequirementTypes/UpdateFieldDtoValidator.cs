@@ -1,0 +1,24 @@
+﻿using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
+using FluentValidation;
+
+namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.RequirementTypes
+{
+    public class UpdateFieldDtoValidator : AbstractValidator<UpdateFieldDto>
+    {
+        public UpdateFieldDtoValidator()
+        {
+            RuleFor(x => x.Label)
+                .NotNull()
+                .MaximumLength(Field.LabelLengthMax);
+
+            RuleFor(x => x.Unit)
+                .MaximumLength(Field.UnitLengthMax);
+
+            RuleFor(x => x.SortKey)
+                .Must(BePositive)
+                .WithMessage("Sort key must be positive");
+
+            bool BePositive(int arg) => arg > 0;
+        }
+    }
+}
