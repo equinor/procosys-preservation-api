@@ -93,7 +93,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
             var req2OnTag1WithFourWeekIntervalInitialPeriod = _req2OnTag1WithFourWeekInterval.ActivePeriod;
             var req2OnTag2WithFourWeekIntervalInitialPeriod = _req2OnTag2WithFourWeekInterval.ActivePeriod;
 
-            TimeService.SetConstant(TimeService.Now.AddDays(7 * TwoWeeksInterval));
+            TimeService.SetConstant(TimeService.Now.AddWeeks(TwoWeeksInterval));
             await _dut.Handle(_command, default);
 
             var expectedNextDueTimeUtcForTwoWeeksInterval = TimeService.Now.AddWeeks(TwoWeeksInterval);
