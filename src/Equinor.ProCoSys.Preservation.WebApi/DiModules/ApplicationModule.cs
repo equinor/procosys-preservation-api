@@ -24,7 +24,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Infrastructure.Caching;
 using Equinor.ProCoSys.Preservation.Infrastructure.Repositories;
@@ -57,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
     {
         public static void AddApplicationModules(this IServiceCollection services, IConfiguration configuration)
         {
-            TimeService.SetProvider(new SystemTimeProvider());
+            TimeService.Set(TimeProviders.SystemTimeUtc);
 
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
             services.Configure<TagOptions>(configuration.GetSection("ApiOptions"));

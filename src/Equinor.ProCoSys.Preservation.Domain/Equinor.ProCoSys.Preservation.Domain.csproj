@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="HeboTech.TimeService" Version="1.1.0" />
     <PackageReference Include="MediatR" Version="9.0.0" />
   </ItemGroup>
 

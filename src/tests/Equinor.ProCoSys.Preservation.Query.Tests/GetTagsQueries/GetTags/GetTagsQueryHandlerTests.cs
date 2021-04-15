@@ -8,6 +8,7 @@ using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetTagsQueries;
 using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags;
 using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -234,7 +235,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldReturnReadyToBePreserved_WhenDue()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
+            TimeService.SetConstant(TimeService.Now.AddDays(7 * _testDataSet.IntervalWeeks));
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -431,7 +432,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             {
                 var tag = context.Tags.First();
                 var action = new Action(TestPlant, "A", "Desc", null);
-                action.Close(_timeProvider.UtcNow, context.Persons.First());
+                action.Close(TimeService.Now, context.Persons.First());
                 tag.AddAction(action);
                 context.SaveChangesAsync().Wait();
             }
@@ -458,7 +459,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var tag = context.Tags.First();
-                var action = new Action(TestPlant, "A", "Desc", _timeProvider.UtcNow.AddDays(-1));
+                var action = new Action(TestPlant, "A", "Desc", TimeService.Now.AddDays(-1));
                 tag.AddAction(action);
                 context.SaveChangesAsync().Wait();
             }
@@ -495,7 +496,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 AssertCount(result.Data, 0);
             }
 
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
+            TimeService.SetConstant(TimeService.Now.AddDays(7 * _testDataSet.IntervalWeeks));
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -510,7 +511,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsDueInThreeWeeks_WhenFilterOnDueWeekPlusThree()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-3);
+            TimeService.SetConstant(TimeService.Now.AddDays(7 * (_testDataSet.IntervalWeeks - 3)));
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -547,7 +548,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsDueInTwoWeeks_WhenFilterOnDueWeekPlusTwo()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-2);
+            TimeService.SetConstant(TimeService.Now.AddDays(7 * (_testDataSet.IntervalWeeks - 2)));
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -584,7 +585,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsDueNextWeek_WhenFilterOnDueNextWeek()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks-1);
+            TimeService.SetConstant(TimeService.Now.AddDays(7 * (_testDataSet.IntervalWeeks - 1)));
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -621,7 +622,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsDueThisWeek_WhenFilterOnDueThisWeek()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
+            TimeService.SetConstant(TimeService.Now.AddDays(7 * _testDataSet.IntervalWeeks));
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -658,7 +659,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldGetTagsOverdue_WhenFilterOnOverdue()
         {
             StartPreservationOnAllTags();
-            _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks+1);
+            TimeService.SetConstant(TimeService.Now.AddDays(7 * (_testDataSet.IntervalWeeks + 1)));
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -935,7 +936,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
         public async Task HandleGetTagsQuery_ShouldNotSetIsNew_AfterNewPeriodHasElapsed()
         {
             var timeSpan = new TimeSpan(_tagIsNewHours+1, 0, 0);
-            _timeProvider.Elapse(timeSpan);
+            TimeService.SetConstant(TimeService.Now.Add(timeSpan));
  
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {

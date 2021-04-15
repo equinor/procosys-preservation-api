@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachment
                 return new NotFoundResult<Uri>($"Action with ID {request.ActionId} or Attachment with ID {request.AttachmentId} not found");
             }
 
-            var now = TimeService.UtcNow;
+            var now = TimeService.Now;
             var fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
 
             var uri = _blobStorage.GetDownloadSasUri(

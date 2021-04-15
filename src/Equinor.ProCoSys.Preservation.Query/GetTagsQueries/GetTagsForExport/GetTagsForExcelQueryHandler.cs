@@ -12,7 +12,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport
         {
             _context = context;
             _plantProvider = plantProvider;
-            _utcNow = TimeService.UtcNow;
+            _utcNow = TimeService.Now;
         }
 
         public async Task<Result<ExportDto>> Handle(GetTagsForExportQuery request, CancellationToken cancellationToken)

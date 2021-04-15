@@ -6,7 +6,7 @@ using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetFieldValueAttachment
                 return new NotFoundResult<Uri>($"{nameof(Tag)} with ID {request.TagId} or attachment not found for field {request.FieldId}");
             }
 
-            var now = TimeService.UtcNow;
+            var now = TimeService.Now;
             var fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
             
             var uri = _blobStorage.GetDownloadSasUri(

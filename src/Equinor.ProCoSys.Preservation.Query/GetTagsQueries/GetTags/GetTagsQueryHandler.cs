@@ -9,7 +9,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
         {
             _context = context;
             _tagIsNewHours = options.CurrentValue.IsNewHours;
-            _utcNow = TimeService.UtcNow;
+            _utcNow = TimeService.Now;
         }
 
         public async Task<Result<TagsResult>> Handle(GetTagsQuery request, CancellationToken cancellationToken)
@@ -187,7 +187,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags
         private bool IsNew(Tag tag)
         {
             var lastTimeIsNew = tag.CreatedAtUtc.AddHours(_tagIsNewHours);
-            return TimeService.UtcNow < lastTimeIsNew;
+            return TimeService.Now < lastTimeIsNew;
         }
 
         private IQueryable<TagForQueryDto> AddPaging(Paging paging, IQueryable<TagForQueryDto> queryable)

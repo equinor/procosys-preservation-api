@@ -3,7 +3,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 {
@@ -71,7 +71,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public void SetCreated(Person createdBy)
         {
-            CreatedAtUtc = TimeService.UtcNow;
+            CreatedAtUtc = TimeService.Now;
             if (createdBy == null)
             {
                 throw new ArgumentNullException(nameof(createdBy));
@@ -82,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate
 
         public void SetModified(Person modifiedBy)
         {
-            ModifiedAtUtc = TimeService.UtcNow;
+            ModifiedAtUtc = TimeService.Now;
             if (modifiedBy == null)
             {
                 throw new ArgumentNullException(nameof(modifiedBy));

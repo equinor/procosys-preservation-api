@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetTagDetails;
 using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
@@ -40,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagDetails
             
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _timeProvider.ElapseWeeks(_testDataSet.IntervalWeeks);
+                TimeService.SetConstant(TimeService.Now.AddWeeks(_testDataSet.IntervalWeeks));
 
                 var query = new GetTagDetailsQuery(_testTagId);
                 var dut = new GetTagDetailsQueryHandler(context);

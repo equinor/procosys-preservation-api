@@ -6,6 +6,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetActionDetails;
 using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ServiceResult;
@@ -77,7 +78,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionDetails
             {
                 var openAction = context.Actions.Single(a => a.Id == _openActionId);
                 openAction.Title = "Changed title";
-                _timeProvider.Elapse(new TimeSpan(1, 1, 1, 1));
+                TimeService.SetConstant(TimeService.Now.Add(new TimeSpan(1, 1, 1, 1)));
                 context.SaveChangesAsync().Wait();
                 modifiedTime = openAction.ModifiedAtUtc;
             }

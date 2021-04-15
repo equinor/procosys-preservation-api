@@ -1,4 +1,4 @@
-﻿using Equinor.ProCoSys.Preservation.Domain.Time;
+﻿using HeboTech.TimeService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -17,7 +17,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
         [HttpGet("IsAlive")]
         public IActionResult IsAlive()
         {
-            var timestampString = $"{TimeService.UtcNow:yyyy-MM-dd HH:mm:ss} UTC";
+            var timestampString = $"{TimeService.Now:yyyy-MM-dd HH:mm:ss} UTC";
             _logger.LogDebug($"The application is running at {timestampString}");
             return new JsonResult(new
             {

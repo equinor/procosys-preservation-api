@@ -11,6 +11,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
+using HeboTech.TimeService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -90,11 +91,11 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Preser
             _commandForSupplierRequirement = new PreserveCommand(TagInSupplierStepId, RequirementForSupplierId);
             _commandForOtherRequirement = new PreserveCommand(TagInOtherStepId, RequirementForOtherId);
 
-            _timeProvider.Elapse(TimeSpan.FromDays(-1));
+            TimeService.SetConstant(TimeService.Now.Add(TimeSpan.FromDays(-1)));
             _tagInSupplierStep.StartPreservation();
             _tagInOtherStep.StartPreservation();
-            
-            _timeProvider.SetTime(_utcNow);
+
+            TimeService.SetConstant(_utcNow);
             
             _initialPreservationPeriodForSupplierRequirement = _requirementForSupplier.PreservationPeriods.Single();
             _initialPreservationPeriodForOtherRequirement = _requirementForOther.PreservationPeriods.Single();

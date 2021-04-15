@@ -9,6 +9,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Query.GetTagRequirements;
 using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -266,7 +267,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                _timeProvider.ElapseWeeks(_requestTimeAfterPreservationStartedInWeeks);
+                TimeService.SetConstant(TimeService.Now.AddWeeks(_requestTimeAfterPreservationStartedInWeeks));
 
                 var query = new GetTagRequirementsQuery(_tagId, false, false);
                 var dut = new GetTagRequirementsQueryHandler(context);
@@ -505,7 +506,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagRequirements
                     requirementDefinition);
                 context.SaveChangesAsync().Wait();
 
-                _timeProvider.ElapseWeeks(_interval);
+                TimeService.SetConstant(TimeService.Now.AddWeeks(_interval));
                 tag.Preserve(new Mock<Person>().Object);
                 context.SaveChangesAsync().Wait();
             }

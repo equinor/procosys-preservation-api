@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 {
@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 
         public void SetModified(Person modifiedBy)
         {
-            ModifiedAtUtc = TimeService.UtcNow;
+            ModifiedAtUtc = TimeService.Now;
             if (modifiedBy == null)
             {
                 throw new ArgumentNullException(nameof(modifiedBy));

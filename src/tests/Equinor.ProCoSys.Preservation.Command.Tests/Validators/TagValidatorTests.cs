@@ -10,6 +10,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -635,7 +636,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, null);
-                _timeProvider.ElapseWeeks(IntervalWeeks);
+                TimeService.SetConstant(TimeService.Now.AddWeeks(IntervalWeeks));
                 var result = await dut.IsReadyToBePreservedAsync(_standardTagNotStartedInFirstStepId, default);
                 Assert.IsFalse(result);
             }
@@ -647,7 +648,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, null);
-                _timeProvider.ElapseWeeks(IntervalWeeks);
+                TimeService.SetConstant(TimeService.Now.AddWeeks(IntervalWeeks));
                 var result = await dut.IsReadyToBePreservedAsync(_standardTagStartedAndInLastStepId, default);
                 Assert.IsTrue(result);
             }

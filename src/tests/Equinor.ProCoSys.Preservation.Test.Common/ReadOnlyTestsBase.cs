@@ -11,7 +11,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggreg
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using Equinor.ProCoSys.Preservation.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -28,7 +28,6 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
         protected IPlantProvider _plantProvider;
         protected ICurrentUserProvider _currentUserProvider;
         protected IEventDispatcher _eventDispatcher;
-        protected ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void SetupBase()
@@ -44,8 +43,7 @@ namespace Equinor.ProCoSys.Preservation.Test.Common
             var eventDispatcher = new Mock<IEventDispatcher>();
             _eventDispatcher = eventDispatcher.Object;
 
-            _timeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
-            TimeService.SetProvider(_timeProvider);
+            TimeService.SetConstant(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
 
             _dbContextOptions = new DbContextOptionsBuilder<PreservationContext>()
                 .UseInMemoryDatabase(Guid.NewGuid().ToString())

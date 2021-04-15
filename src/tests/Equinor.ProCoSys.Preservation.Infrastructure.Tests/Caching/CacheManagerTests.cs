@@ -1,7 +1,6 @@
 ﻿using System;
-using Equinor.ProCoSys.Preservation.Domain.Time;
 using Equinor.ProCoSys.Preservation.Infrastructure.Caching;
-using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Caching
@@ -10,13 +9,11 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Caching
     public class CacheManagerTests
     {
         private CacheManager _dut;
-        private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void Setup()
         {
-            _timeProvider = new ManualTimeProvider(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-            TimeService.SetProvider(_timeProvider);
+            TimeService.SetConstant(new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc));
             _dut = new CacheManager();
         }
 
@@ -50,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Caching
         {
             // Arrange
             _dut.GetOrCreate("A", () => "C", CacheDuration.Seconds, 1);
-            _timeProvider.Elapse(TimeSpan.FromSeconds(2));
+            TimeService.SetConstant(TimeService.Now.Add(TimeSpan.FromSeconds(2)));
 
             // Act
             var result = _dut.GetOrCreate("A", () => "B", CacheDuration.Minutes, 2);

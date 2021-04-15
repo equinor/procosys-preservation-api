@@ -1,7 +1,7 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 
 namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 {
@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate
 
         public void SetCreated(Person createdBy)
         {
-            CreatedAtUtc = TimeService.UtcNow;
+            CreatedAtUtc = TimeService.Now;
             if (createdBy == null)
             {
                 throw new ArgumentNullException(nameof(createdBy));

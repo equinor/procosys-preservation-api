@@ -2,8 +2,7 @@
 using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
-using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Action = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
@@ -18,7 +17,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private Mock<Person> _personMock;
         private DateTime _utcNow;
         private Action _dut;
-        private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void Setup()
@@ -26,8 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(PersonId);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeProvider = new ManualTimeProvider(_utcNow);
-            TimeService.SetProvider(_timeProvider);
+            TimeService.SetConstant(_utcNow);
             _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
         }
 
@@ -216,7 +213,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             // Arrange
             _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
-            _timeProvider.Elapse(new TimeSpan(1, 0, 0));
+            TimeService.SetConstant(TimeService.Now.Add(new TimeSpan(1, 0, 0)));
 
             // Act
             var overDue = _dut.IsOverDue();
@@ -230,7 +227,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         {
             // Arrange
             _dut = new Action(TestPlant, "TitleA", "DescA", _utcNow);
-            _timeProvider.Elapse(new TimeSpan(1, 0, 0));
+            TimeService.SetConstant(TimeService.Now.Add(new TimeSpan(1, 0, 0)));
             _dut.Close(_utcNow, _personMock.Object);
 
             // Act

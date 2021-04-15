@@ -11,7 +11,7 @@ using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncTagFunctions;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using Equinor.ProCoSys.Preservation.MainApi.Certificate;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Equinor.ProCoSys.Preservation.Query.GetDateTimeSetting;
@@ -92,7 +92,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     _plantSetter.SetPlant(plant);
                     await _claimsTransformation.TransformAsync(currentUser);
 
-                    var startTime = TimeService.UtcNow;
+                    var startTime = TimeService.Now;
                     if (_options.CurrentValue.AutoTransferTags)
                     {
                         await AutoTransferTagsAsync(plant);
@@ -113,7 +113,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                         await SynchronizeTagFunctionsAsync(plant);
                     }
                 
-                    var endTime = TimeService.UtcNow;
+                    var endTime = TimeService.Now;
 
                     _logger.LogInformation($"Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
                     _telemetryClient.TrackMetric("Synchronization Time", (endTime - startTime).TotalSeconds, "Plant", plant);
@@ -239,7 +239,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         private async Task UpdateLastAcceptedCertificatesRead(string plant)
         {
-            var result = await _mediator.Send(new UpdateDateTimeSettingCommand(Setting.LastAcceptedCertificatesReadCode, TimeService.UtcNow));
+            var result = await _mediator.Send(new UpdateDateTimeSettingCommand(Setting.LastAcceptedCertificatesReadCode, TimeService.Now));
 
             if (result.ResultType != ServiceResult.ResultType.Ok)
             {
@@ -268,7 +268,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             if (dateTimeResult.ResultType == ServiceResult.ResultType.NotFound
                 || (dateTimeResult.ResultType == ServiceResult.ResultType.Ok && !dateTimeResult.Data.HasValue))
             {
-                return TimeService.UtcNow;
+                return TimeService.Now;
             }
 
             _logger.LogWarning(

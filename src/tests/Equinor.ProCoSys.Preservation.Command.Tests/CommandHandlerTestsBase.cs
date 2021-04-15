@@ -1,7 +1,6 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Domain;
-using Equinor.ProCoSys.Preservation.Domain.Time;
-using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -15,7 +14,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests
         protected const string TestPlant = "TestPlant";
         protected Mock<IUnitOfWork> UnitOfWorkMock;
         protected Mock<IPlantProvider> PlantProviderMock;
-        protected ManualTimeProvider _timeProvider;
         protected DateTime _utcNow;
 
         [TestInitialize]
@@ -31,8 +29,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests
                 .Setup(x => x.Plant)
                 .Returns(TestPlant);
             _utcNow = new DateTime(2020, 1, 1, 1, 1, 1, DateTimeKind.Utc);
-            _timeProvider = new ManualTimeProvider(_utcNow);
-            TimeService.SetProvider(_timeProvider);
+            TimeService.SetConstant(_utcNow);
         }
     }
 }

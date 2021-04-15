@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using MediatR;
 using ServiceResult;
 
@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction
             var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
 
-            var action = tag.CloseAction(request.ActionId, currentUser, TimeService.UtcNow, request.RowVersion);
+            var action = tag.CloseAction(request.ActionId, currentUser, TimeService.Now, request.RowVersion);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

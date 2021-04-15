@@ -1,5 +1,5 @@
 ﻿using System;
-using Equinor.ProCoSys.Preservation.Domain.Time;
+using HeboTech.TimeService;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Internal;
 
@@ -38,7 +38,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Caching
                 return;
             }
 
-            _cache.Set(key, instance, TimeService.UtcNow.Add(GetExpirationTime(duration, expiration)));
+            _cache.Set(key, instance, TimeService.Now.Add(GetExpirationTime(duration, expiration)));
         }
 
         private static TimeSpan GetExpirationTime(CacheDuration duration, long expiration)
@@ -52,7 +52,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Caching
 
         private class CacheClock : ISystemClock
         {
-            public DateTimeOffset UtcNow => TimeService.UtcNow;
+            public DateTimeOffset UtcNow => TimeService.Now;
         }
     }
 }

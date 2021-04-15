@@ -4,8 +4,7 @@ using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ModeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
-using Equinor.ProCoSys.Preservation.Domain.Time;
-using Equinor.ProCoSys.Preservation.Test.Common;
+using HeboTech.TimeService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -22,7 +21,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests
         private Mock<IPlantProvider> _plantProviderMock;
         private Mock<IEventDispatcher> _eventDispatcherMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
-        private ManualTimeProvider _timeProvider;
 
         [TestInitialize]
         public void Setup()
@@ -39,8 +37,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests
 
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
 
-            _timeProvider = new ManualTimeProvider(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
-            TimeService.SetProvider(_timeProvider);
+            TimeService.SetConstant(new DateTime(2020, 2, 1, 0, 0, 0, DateTimeKind.Utc));
         }
 
         [TestMethod]
