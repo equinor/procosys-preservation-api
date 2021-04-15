@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.HistoryAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Events;
+using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -89,7 +90,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldChangeDescriptionOnAreaTag()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
+            var tagIdUnderTest = await CreateAreaTagAsync(
+                AreaTagType.SiteArea, 
+                JourneyWithTags.Steps.Last().Id,
+                null,
+                false);
             var tag = await TagsControllerTestsHelper.GetTagAsync(
                 UserType.Planner, TestFactory.PlantWithAccess, 
                 tagIdUnderTest);
@@ -118,7 +123,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldKeepSameDescriptionOnStandardTag()
         {
             // Arrange
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
+            var tagIdUnderTest = await CreateStandardTagAsync(JourneyWithTags.Steps.Last().Id, false);
+
             var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
             var oldDescription = tag.Description;
             var currentRowVersion = tag.RowVersion;
@@ -143,14 +149,39 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             // Arrange
             var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
 
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
-            var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess,
+            var tagIdUnderTest = await CreateAreaTagAsync(AreaTagType.PreArea,
+                JourneyWithTags.Steps.First().Id,
+                null,
+                false);
+            var tag = await TagsControllerTestsHelper.GetTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
                 tagIdUnderTest);
             var oldDescription = tag.Description;
-            var oldRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner,
-                TestFactory.PlantWithAccess, tagIdUnderTest);
+            var oldRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                tagIdUnderTest);
             var requirementToUpdate = oldRequirements.First();
             var updatedIntervalWeeks = requirementToUpdate.IntervalWeeks + 1;
+            var requirementsToAdd = new List<TagRequirementDto>
+            {
+                new TagRequirementDto
+                {
+                    IntervalWeeks = 4,
+                    RequirementDefinitionId = newReqDefId
+                }
+            };
+            var requirementsToUpdate = new List<UpdatedTagRequirementDto>
+            {
+                new UpdatedTagRequirementDto
+                {
+                    IntervalWeeks = updatedIntervalWeeks,
+                    IsVoided = false,
+                    RequirementId = requirementToUpdate.Id,
+                    RowVersion = requirementToUpdate.RowVersion
+                }
+            };
 
             // Act
             await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
@@ -159,31 +190,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 oldDescription,
                 tag.Step.Id,
                 tag.RowVersion,
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
-                new List<UpdatedTagRequirementDto>
-                {
-                    new UpdatedTagRequirementDto
-                    {
-                        IntervalWeeks = updatedIntervalWeeks,
-                        IsVoided = false,
-                        RequirementId = requirementToUpdate.Id,
-                        RowVersion = requirementToUpdate.RowVersion
-                    }
-                });
+                requirementsToAdd,
+                requirementsToUpdate);
 
             // Assert
-            var newRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
-            Assert.AreEqual(oldRequirements.Count+1, newRequirements.Count);
-            var newRequirement = newRequirements.SingleOrDefault(r => r.RequirementDefinition.Id == newReqDefId);
-            Assert.IsNotNull(newRequirement);
-            var updatedRequirement = newRequirements.SingleOrDefault(r => r.RequirementDefinition.Id == requirementToUpdate.Id);
+            var updatedRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
+            Assert.AreEqual(oldRequirements.Count+1, updatedRequirements.Count);
+            var addedRequirement = updatedRequirements.SingleOrDefault(r => r.RequirementDefinition.Id == newReqDefId);
+            Assert.IsNotNull(addedRequirement);
+            var updatedRequirement = updatedRequirements.SingleOrDefault(r => r.Id == requirementToUpdate.Id);
             Assert.IsNotNull(updatedRequirement);
             Assert.AreEqual(updatedIntervalWeeks, updatedRequirement.IntervalWeeks);
        
@@ -197,57 +212,63 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             // Arrange
             var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
 
-            var tagIdUnderTest = TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted;
+            var tagIdUnderTest = await CreateAreaTagAsync(AreaTagType.PreArea,
+                JourneyWithTags.Steps.First().Id,
+                null,
+                false);
             var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess,
                 tagIdUnderTest);
+            var requirementsToAdd = new List<TagRequirementDto>
+            {
+                new TagRequirementDto
+                {
+                    IntervalWeeks = 4,
+                    RequirementDefinitionId = newReqDefId
+                }
+            };
             await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 tag.Id,
                 tag.Description,
                 tag.Step.Id,
                 tag.RowVersion,
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                });
+                requirementsToAdd);
             var oldRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner,
                 TestFactory.PlantWithAccess, tagIdUnderTest);
             Assert.IsTrue(oldRequirements.Count > 1);
             var requirementToDelete = oldRequirements.First();
 
             // Act
+            var requirementsToUpdate = new List<UpdatedTagRequirementDto>
+            {
+                new UpdatedTagRequirementDto
+                {
+                    IntervalWeeks = requirementToDelete.IntervalWeeks,
+                    IsVoided = true,
+                    RequirementId = requirementToDelete.Id,
+                    RowVersion = requirementToDelete.RowVersion
+                }
+            };
+            var requirementsToDelete = new List<DeletedTagRequirementDto>
+            {
+                new DeletedTagRequirementDto
+                {
+                    RequirementId = requirementToDelete.Id,
+                    RowVersion = requirementToDelete.RowVersion
+                }
+            };
             await TagsControllerTestsHelper.UpdateTagStepAndRequirementsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 tag.Id,
                 tag.Description,
                 tag.Step.Id,
                 tag.RowVersion,
-                updatedRequirements: new List<UpdatedTagRequirementDto>
-                {
-                    new UpdatedTagRequirementDto
-                    {
-                        IntervalWeeks = requirementToDelete.IntervalWeeks,
-                        IsVoided = true,
-                        RequirementId = requirementToDelete.Id,
-                        RowVersion = requirementToDelete.RowVersion
-                    }
-                },
-                deletedRequirements: new List<DeletedTagRequirementDto>
-                {
-                    new DeletedTagRequirementDto
-                    {
-                        RequirementId = requirementToDelete.Id,
-                        RowVersion = requirementToDelete.RowVersion
-                    }
-                });
+                updatedRequirements: requirementsToUpdate,
+                deletedRequirements: requirementsToDelete);
 
             // Assert
-            var newRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
-            Assert.AreEqual(oldRequirements.Count-1, newRequirements.Count);
+            var updatedRequirements = await TagsControllerTestsHelper.GetTagRequirementsAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
+            Assert.AreEqual(oldRequirements.Count-1, updatedRequirements.Count);
             await AssertInHistoryAsLatestEventAsync(tagIdUnderTest, UserType.Planner, EventType.RequirementDeleted);
             await AssertInHistoryAsExistingEventAsync(tagIdUnderTest, UserType.Planner, EventType.RequirementVoided);
         }
@@ -256,30 +277,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldUpdateStep()
         {
             // Arrange
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var supplierStepId = JourneyWithTags.Steps.First(s => s.Mode.ForSupplier).Id;
             var otherStepId = JourneyWithTags.Steps.First(s => !s.Mode.ForSupplier).Id;
 
-            var tagIdUnderTest = await TagsControllerTestsHelper.CreateAreaTagAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
+            var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                KnownDisciplineCode,
-                KnownAreaCode,
-                Guid.NewGuid().ToString(),
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
-                supplierStepId,
-                "Desc",
+                JourneyWithTags.Steps.First().Id,
                 null,
-                null,
-                null);
+                false);
             var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
 
             // Act
@@ -660,35 +664,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task Transfer_AsPlanner_ShouldTransferTags()
         {
             // Arrange 
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var stepId = JourneyWithTags.Steps.First().Id;
-
-            var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
+            var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                KnownDisciplineCode,
-                KnownAreaCode,
-                Guid.NewGuid().ToString(),
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
-                stepId,
-                "Desc",
+                JourneyWithTags.Steps.First().Id,
                 null,
-                null,
-                null);
-            await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
+                true);
 
             var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
-            var tagToTransfer = tagsResult.Tags.Single(t => t.Id == newTagId);
+            var tagToTransfer = tagsResult.Tags.Single(t => t.Id == tagIdUnderTest);
             Assert.IsTrue(tagToTransfer.ReadyToBeTransferred, "Bad test setup: Didn't find tag ready to be transferred");
             var currentRowVersion = tagToTransfer.RowVersion;
             
@@ -699,7 +684,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 {
                     new IdAndRowVersion
                     {
-                        Id = tagToTransfer.Id,
+                        Id = tagIdUnderTest,
                         RowVersion = currentRowVersion
                     }
                 });
@@ -714,38 +699,36 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         [TestMethod]
-        public async Task CreatePreAreaTag_AsPlanner_ShouldCreatePreAreaTag()
+        public async Task CreateStandardTag_AsPlanner_ShouldCreateStandardTag()
         {
             // Arrange
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var stepId = JourneyWithTags.Steps.Last().Id;
-
             var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
             var initialTagsCount = tagsResult.Tags.Count;
 
             // Act
-            var id = await TagsControllerTestsHelper.CreateAreaTagAsync(
+            var id = await CreateStandardTagAsync(JourneyWithTags.Steps.First().Id, false);
+
+            // Assert
+            await AssertNewTagCreatedAsync(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
+        }
+
+        [TestMethod]
+        public async Task CreatePreAreaTag_AsPlanner_ShouldCreatePreAreaTag()
+        {
+            // Arrange
+            var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
+                TestFactory.ProjectWithAccess);
+            var initialTagsCount = tagsResult.Tags.Count;
+
+            // Act
+            var id = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                KnownDisciplineCode,
-                KnownAreaCode,
-                Guid.NewGuid().ToString(),
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
-                stepId,
-                "Desc",
+                JourneyWithTags.Steps.Last().Id,
                 null,
-                null,
-                null);
+                false);
 
             // Assert
             await AssertNewTagCreatedAsync(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
@@ -755,35 +738,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task CreatePoAreaTag_AsPlanner_ShouldCreatePoAreaTag()
         {
             // Arrange
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var supplierStepId = JourneyWithTags.Steps.First(s => s.Mode.ForSupplier).Id;
-
             var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
             var initialTagsCount = tagsResult.Tags.Count;
+            var supplierStepId = JourneyWithTags.Steps.First(s => s.Mode.ForSupplier).Id;
 
             // Act
-            var id = await TagsControllerTestsHelper.CreateAreaTagAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
+            var id = await CreateAreaTagAsync(
                 AreaTagType.PoArea,
-                KnownDisciplineCode,
-                KnownAreaCode,
-                Guid.NewGuid().ToString(),
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
                 supplierStepId,
-                "Desc",
-                null,
-                null,
-                KnownPOCode);
+                KnownPOCode,
+                false);
 
             // Assert
             await AssertNewTagCreatedAsync(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
@@ -793,36 +759,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task GetHistory_AsPreserver_ShouldGetHistory()
         {
             // Arrange
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var stepId = JourneyWithTags.Steps.First().Id;
-
-            var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
-                UserType.Planner, 
-                TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
+            var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                KnownDisciplineCode,
-                KnownAreaCode,
-                Guid.NewGuid().ToString(),
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
-                stepId,
-                "Desc",
+                JourneyWithTags.Steps.First().Id,
                 null,
-                null,
-                null);
-            await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
+                true);
 
             // Act
             var historyDtos = await TagsControllerTestsHelper.GetHistoryAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
-                newTagId);
+                tagIdUnderTest);
 
             // Assert
             Assert.IsNotNull(historyDtos);
@@ -842,35 +788,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task Reschedule_AsPlanner_ShouldRescheduleTags()
         {
             // Arrange 
-            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var stepId = JourneyWithTags.Steps.First().Id;
-
-            var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
-                UserType.Planner, TestFactory.PlantWithAccess,
-                TestFactory.ProjectWithAccess,
+            var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                KnownDisciplineCode,
-                KnownAreaCode,
-                Guid.NewGuid().ToString(),
-                new List<TagRequirementDto>
-                {
-                    new TagRequirementDto
-                    {
-                        IntervalWeeks = 4,
-                        RequirementDefinitionId = newReqDefId
-                    }
-                },
-                stepId,
-                "Desc",
+                JourneyWithTags.Steps.First().Id,
                 null,
-                null,
-                null);
-            await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
+                true);
 
             var tagsResult = await TagsControllerTestsHelper.GetAllTagsAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
-            var tagToReschedule = tagsResult.Tags.Single(t => t.Id == newTagId);
+            var tagToReschedule = tagsResult.Tags.Single(t => t.Id == tagIdUnderTest);
             
             // Act
             var currentRowVersion = tagToReschedule.RowVersion;
@@ -880,7 +807,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 {
                     new IdAndRowVersion
                     {
-                        Id = tagToReschedule.Id,
+                        Id = tagIdUnderTest,
                         RowVersion = currentRowVersion
                     }
                 },
@@ -946,6 +873,102 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var historyDto = historyDtos.First();
             Assert.IsTrue(historyDto.Description.StartsWith(eventType.GetDescription()));
             AssertCreatedBy(userType, historyDto);
+        }
+
+        private async Task<int> CreateAreaTagAsync(
+            AreaTagType areaTagType,
+            int stepId,
+            string purchaseOrderCalloffCode,
+            bool startPreservation)
+        {
+            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+
+            var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                areaTagType,
+                KnownDisciplineCode,
+                KnownAreaCode,
+                $"Title_{Guid.NewGuid()}",
+                new List<TagRequirementDto>
+                {
+                    new TagRequirementDto
+                    {
+                        IntervalWeeks = 4,
+                        RequirementDefinitionId = newReqDefId
+                    }
+                },
+                stepId,
+                $"Desc_{Guid.NewGuid()}",
+                null,
+                null,
+                purchaseOrderCalloffCode);
+
+            if (startPreservation)
+            {
+                await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, new List<int> {newTagId});
+            }
+            return newTagId;
+        }
+
+        private async Task<int> CreateStandardTagAsync(
+            int stepId,
+            bool startPreservation)
+        {
+            var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
+
+            var tagNo = Guid.NewGuid().ToString();
+            MockMainApiDataForTag(tagNo);
+
+            var newTagIds = await TagsControllerTestsHelper.CreateStandardTagAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                new []{ tagNo },
+                new List<TagRequirementDto>
+                {
+                    new TagRequirementDto
+                    {
+                        IntervalWeeks = 4,
+                        RequirementDefinitionId = newReqDefId
+                    }
+                },
+                stepId,
+                null,
+                null);
+
+            if (startPreservation)
+            {
+                await TagsControllerTestsHelper.StartPreservationAsync(UserType.Planner, TestFactory.PlantWithAccess, newTagIds);
+            }
+            return newTagIds.Single();
+        }
+
+        private void MockMainApiDataForTag(string tagNo)
+        {
+            var mainTagDetails = new PCSTagDetails
+            {
+                AreaCode = "ACode",
+                AreaDescription = "ADesc",
+                CallOffNo = "CalloffNo",
+                CommPkgNo = "CommPkgNo",
+                Description = $"{tagNo}Description",
+                DisciplineCode = "DCode",
+                DisciplineDescription = "DDesc",
+                McPkgNo = "McPkgNo",
+                PurchaseOrderNo = "PurchaseOrderNo",
+                TagFunctionCode = "TFCode",
+                TagNo = tagNo
+            };
+
+            IList<PCSTagDetails> mainTagDetailList = new List<PCSTagDetails> {mainTagDetails};
+            TestFactory.Instance
+                .TagApiServiceMock
+                .Setup(service => service.GetTagDetailsAsync(
+                    TestFactory.PlantWithAccess,
+                    TestFactory.ProjectWithAccess,
+                    new List<string> {tagNo}))
+                .Returns(Task.FromResult(mainTagDetailList));
         }
     }
 }

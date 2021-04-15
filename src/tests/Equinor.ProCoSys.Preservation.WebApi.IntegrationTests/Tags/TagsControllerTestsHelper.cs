@@ -537,7 +537,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         }
 
         public static async Task<int> CreateAreaTagAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             string projectName,
             AreaTagType areaTagType,
             string disciplineCode,
@@ -579,6 +580,42 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 
             var jsonString = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<int>(jsonString);
+        }
+
+        public static async Task<List<int>> CreateStandardTagAsync(
+            UserType userType,
+            string plant,
+            string projectName,
+            IEnumerable<string> tagNos,
+            List<TagRequirementDto> requirements,
+            int stepId,
+            string remark,
+            string storageArea,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                projectName,
+                tagNos,
+                requirements,
+                stepId,
+                remark,
+                storageArea
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PostAsync($"{_route}/Standard", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return new List<int> {-1};
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<int>>(jsonString);
         }
 
         public static async Task<List<HistoryDto>> GetHistoryAsync(
