@@ -1,4 +1,6 @@
-﻿using Equinor.Procosys.Preservation.BlobStorage;
+﻿using Equinor.ProCoSys.IPO.WebApi.Synchronization;
+using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
+using Equinor.Procosys.Preservation.BlobStorage;
 using Equinor.Procosys.Preservation.Command.EventHandlers;
 using Equinor.Procosys.Preservation.Command.Validators;
 using Equinor.Procosys.Preservation.Command.Validators.ActionValidators;
@@ -130,6 +132,7 @@ namespace Equinor.Procosys.Preservation.WebApi.DIModules
             services.AddScoped<IPermissionApiService, MainApiPermissionService>();
             services.AddScoped<ICertificateApiService, MainApiCertificateService>();
             services.AddScoped<IBlobStorage, AzureBlobService>();
+            services.AddScoped<IBusReceiverService, BusReceiverService>();
 
             services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
             services.AddScoped<ITagValidator, TagValidator>();
