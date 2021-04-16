@@ -12,6 +12,7 @@ using Equinor.ProCoSys.Preservation.MainApi.Permission;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
+using Equinor.ProCoSys.Preservation.MainApi.Tag;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -46,6 +47,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public readonly Mock<IDisciplineApiService> DisciplineApiServiceMock = new Mock<IDisciplineApiService>();
         public readonly Mock<IAreaApiService> AreaApiServiceMock = new Mock<IAreaApiService>();
         public readonly Mock<IBlobStorage> BlobStorageMock = new Mock<IBlobStorage>();
+        public readonly Mock<ITagApiService> TagApiServiceMock = new Mock<ITagApiService>();
 
         public static string PlantWithAccess => KnownTestData.Plant;
         public static string PlantWithoutAccess => "PCS$PLANT999";
@@ -142,18 +144,19 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             {
                 services.AddAuthentication()
                     .AddScheme<IntegrationTestAuthOptions, IntegrationTestAuthHandler>(
-                        IntegrationTestAuthHandler.TestAuthenticationScheme, opts => { });
+                        IntegrationTestAuthHandler.TestAuthenticationScheme, _ => { });
 
                 services.PostConfigureAll<JwtBearerOptions>(jwtBearerOptions =>
                     jwtBearerOptions.ForwardAuthenticate = IntegrationTestAuthHandler.TestAuthenticationScheme);
 
-                services.AddScoped(serviceProvider => _plantApiServiceMock.Object);
-                services.AddScoped(serviceProvider => _projectApiServiceMock.Object);
-                services.AddScoped(serviceProvider => _permissionApiServiceMock.Object);
-                services.AddScoped(serviceProvider => ResponsibleApiServiceMock.Object);
-                services.AddScoped(serviceProvider => DisciplineApiServiceMock.Object);
-                services.AddScoped(serviceProvider => AreaApiServiceMock.Object);
-                services.AddScoped(serviceProvider => BlobStorageMock.Object);
+                services.AddScoped(_ => _plantApiServiceMock.Object);
+                services.AddScoped(_ => _projectApiServiceMock.Object);
+                services.AddScoped(_ => TagApiServiceMock.Object);
+                services.AddScoped(_ => _permissionApiServiceMock.Object);
+                services.AddScoped(_ => ResponsibleApiServiceMock.Object);
+                services.AddScoped(_ => DisciplineApiServiceMock.Object);
+                services.AddScoped(_ => AreaApiServiceMock.Object);
+                services.AddScoped(_ => BlobStorageMock.Object);
             });
 
             builder.ConfigureServices(services =>
@@ -286,7 +289,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var webHostBuilder = WithWebHostBuilder(builder =>
             {
                 builder.UseEnvironment(_integrationTestEnvironment);
-                builder.ConfigureAppConfiguration((context, conf) => conf.AddJsonFile(_configPath));
+                builder.ConfigureAppConfiguration((_, conf) => conf.AddJsonFile(_configPath));
             });
 
             foreach (var testUser in _testUsers.Values)

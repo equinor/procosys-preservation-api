@@ -1695,6 +1695,86 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 HttpStatusCode.Forbidden);
         #endregion
         
+        #region CreateStandardTag
+        [TestMethod]
+        public async Task CreateStandardTag_AsAnonymous_ShouldReturnUnauthorized()
+            => await TagsControllerTestsHelper.CreateStandardTagAsync(
+                UserType.Anonymous,
+                TestFactory.UnknownPlant,
+                TestFactory.ProjectWithAccess,
+                new List<string>{ "XX" },
+                null,
+                678,
+                null,
+                null,
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task CreateStandardTag_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.CreateStandardTagAsync(
+                UserType.Hacker,
+                TestFactory.UnknownPlant,
+                TestFactory.ProjectWithAccess,
+                new List<string>{ "XX" },
+                null,
+                678,
+                null,
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task CreateStandardTag_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await TagsControllerTestsHelper.CreateStandardTagAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                TestFactory.ProjectWithAccess,
+                new List<string>{ "XX" },
+                null,
+                678,
+                null,
+                null,
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task CreateStandardTag_AsHacker_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.CreateStandardTagAsync(
+                UserType.Hacker,
+                TestFactory.PlantWithAccess,
+                TestFactory.ProjectWithAccess,
+                new List<string>{ "XX" },
+                null,
+                678,
+                null,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task CreateStandardTag_AsAdmin_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.CreateStandardTagAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess, 
+                TestFactory.ProjectWithAccess,
+                new List<string>{ "XX" },
+                null,
+                678,
+                null,
+                null,
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task CreateStandardTag_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await TagsControllerTestsHelper.CreateStandardTagAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess, 
+                TestFactory.ProjectWithAccess,
+                new List<string>{ "XX" },
+                null,
+                678,
+                null,
+                null,
+                HttpStatusCode.Forbidden);
+        #endregion
+        
         #region GetHistory
         [TestMethod]
         public async Task GetHistory_AsAnonymous_ShouldReturnUnauthorized()
