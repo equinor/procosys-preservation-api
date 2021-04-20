@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.IPO.WebApi.Synchronization;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
-using Equinor.Procosys.Preservation.WebApi.Authentication;
-using Equinor.Procosys.Preservation.WebApi.Misc;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.WebApi.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -17,20 +16,29 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
     [TestClass]
     public class BusReceiverServiceTests
     {
+        #region Variables and setup
         private BusReceiverService _dut;
         private Mock<IUnitOfWork> _unitOfWork;
         private Mock<IPlantSetter> _plantSetter;
         private Mock<ITelemetryClient> _telemetryClient;
-        private Mock<IReadOnlyContext> _readOnlyContext;
-        private Mock<IApplicationAuthenticator> _applicationAuthenticator;
-        private Mock<IBearerTokenSetter> _bearerTokenSetter;
         private Responsible _responsible;
         private Mock<IResponsibleRepository> _responsibleRepository;
+        private Mock<IProjectRepository> _projectRepository;
+        private Project _project1, _project2;
+        private Mock<ITagFunctionRepository> _tagFunctionRepository;
+        private TagFunction _tagFunction;
 
         private const string plant = "PCS$HEIMDAL";
         private const string code = "Resp_Code";
         private const string description = "789";
         private const string newDescription = "Odfjeld Drilling Instalation";
+        private const string project1Name = "Project 1";
+        private const string project2Name = "Project 2";
+        private const string project1Description = "Description 1";
+        private const string project2Description = "Description 2";
+        private const string tagFunctionCode = "Code9";
+        private const string registerCode = "ElRegisterCode";
+        private const string tagFunctionDescription = "Tag function description";
 
         [TestInitialize]
         public void Setup()
@@ -38,33 +46,197 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _plantSetter = new Mock<IPlantSetter>();
             _unitOfWork = new Mock<IUnitOfWork>();
             _telemetryClient = new Mock<ITelemetryClient>();
-            _readOnlyContext = new Mock<IReadOnlyContext>();
-            _applicationAuthenticator = new Mock<IApplicationAuthenticator>();
-            _bearerTokenSetter = new Mock<IBearerTokenSetter>();
             _responsibleRepository = new Mock<IResponsibleRepository>();
+            _projectRepository = new Mock<IProjectRepository>();
+            _tagFunctionRepository = new Mock<ITagFunctionRepository>();
             
             _responsible = new Responsible(plant, code, description);
             _responsibleRepository.Setup(r => r.GetByCodeAsync(code)).Returns(Task.FromResult(_responsible));
 
+            _project1 = new Project(plant, project1Name, project1Description);
+            _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(project1Name))
+                .Returns(Task.FromResult(_project1));
+            _project2 = new Project(plant, project2Name, project2Description);
+            _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(project2Name))
+                .Returns(Task.FromResult(_project2));
+
+            _tagFunction = new TagFunction(plant, tagFunctionCode, tagFunctionDescription, registerCode);
+            _tagFunctionRepository.Setup(t => t.GetByCodesAsync(tagFunctionCode, registerCode))
+                .Returns(Task.FromResult(_tagFunction));
+
             _dut = new BusReceiverService(_plantSetter.Object,
                                           _unitOfWork.Object,
                                           _telemetryClient.Object,
-                                          _readOnlyContext.Object,
-                                          _applicationAuthenticator.Object,
-                                          _bearerTokenSetter.Object,
-                                          _responsibleRepository.Object);
+                                          _responsibleRepository.Object,
+                                          _projectRepository.Object,
+                                          _tagFunctionRepository.Object);
+        }
+        #endregion
 
-            var list = new List<Responsible> {_responsible};
+        #region Project
+        [TestMethod]
+        public async Task HandlingProjectTopicWithoutFailure()
+        {
+            // Arrange
+            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{project1Name}\", \"IsClosed\" : true, \"Description\" : \"{newDescription}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
+
+            // Assert
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(project1Name), Times.Once);
+            Assert.AreEqual(newDescription, _project1.Description);
+            Assert.AreEqual(true, _project1.IsClosed);
         }
 
         [TestMethod]
+        public async Task HandlingProjectTopic_WhenProjectNotFound_ShouldNotAffectAnyProjects()
+        {
+            // Arrange
+            var unknownProjectDescription = "UnknownProjectDescription";
+            var unknownProjectName = "Project";
+            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{unknownProjectName}\", \"IsClosed\" : true, \"Description\" : \"{unknownProjectDescription}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
+
+            // Assert
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(project1Name), Times.Never);
+            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(unknownProjectName), Times.Once);
+            Assert.AreNotEqual(unknownProjectDescription, _project1.Description);
+            Assert.AreNotEqual(unknownProjectDescription, _project2.Description);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingProjectTopic_ShouldFailIfMissingPlan()
+        {
+            // Arrange
+            var messageWithoutPlant = $"{{\"ProjectName\" : \"{project1Name}\", \"IsClosed\" : true, \"Description\" : \"{newDescription}\"}}";
+            
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutPlant, new CancellationToken(false));
+        }
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingProjectTopic_ShouldFailIfMissingPlantOrProjectName()
+        {
+            // Arrange
+            var messageWithoutProjectName = $"{{\"Plant\" : \"{plant}\", \"IsClosed\" : true, \"Description\" : \"{newDescription}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutProjectName, new CancellationToken(false));
+        }
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingProjectTopic_ShouldFailIfEmpty()
+        {
+            // Arrange
+            var message = $"{{}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
+        }
+        #endregion
+
+        #region TagFunction
+        [TestMethod]
+        public async Task HandlingTagFunctionTopicWithoutFailure()
+        {
+            // Arrange
+            var message = $"{{ \"Plant\" : \"{plant}\", \"RegisterCode\" : \"{registerCode}\", \"Code\" : \"{tagFunctionCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : true}}";
+            Assert.AreNotEqual(newDescription, _tagFunction.Description);
+            Assert.AreNotEqual(true, _tagFunction.IsVoided);
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
+
+            // Assert
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(tagFunctionCode, registerCode), Times.Once);
+            Assert.AreEqual(newDescription, _tagFunction.Description);
+            Assert.AreEqual(true, _tagFunction.IsVoided);
+        }
+
+        [TestMethod]
+        public async Task HandlingTagFunctionTopic_WhenCodeNotFound_ShouldNotAffectAnyTagFunctions()
+        {
+            // Arrange
+            var unknownCode = "UnknownCode";
+            var message = $"{{ \"Plant\" : \"{plant}\", \"RegisterCode\" : \"{registerCode}\", \"Code\" : \"{unknownCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : false}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
+
+            // Assert
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(tagFunctionCode, registerCode), Times.Never);
+            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(unknownCode, registerCode), Times.Once);
+            Assert.AreNotEqual(newDescription, _tagFunction.Description);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingTagFunctionTopic_ShouldFailIfMissingPlant()
+        {
+            // Arrange
+            var messageWithoutPlant = $"{{ \"RegisterCode\" : \"{registerCode}\", \"Code\" : \"{tagFunctionCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : false}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutPlant, new CancellationToken(false));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingTagFunctionTopic_ShouldFailIfMissingTagFunctionCode()
+        {
+            // Arrange
+            var messageWithoutTagFunctionCode = $"{{ \"Plant\" : \"{plant}\", \"RegisterCode\" : \"{registerCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : false}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutTagFunctionCode, new CancellationToken(false));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingTagFunctionTopic_ShouldFailIfMissingRegisterCode()
+        {
+            // Arrange
+            var messageWithoutRegisterCode = $"{{ \"Plant\" : \"{plant}\", \"Code\" : \"{tagFunctionCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : false}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutRegisterCode, new CancellationToken(false));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingTagFunctionTopic_ShouldFailIfEmpty()
+        {
+            // Arrange
+            var message = $"{{}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
+        }
+        #endregion
+
+        #region Responsible
+        [TestMethod]
         public async Task HandlingResponsibleTopicWithoutFailure()
         {
-            
-
+            // Arrange
             var message = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{code}\", \"Description\" : \"{newDescription}\"}}";
+
+            // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
 
+            // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
             _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
             _responsibleRepository.Verify(i => i.GetByCodeAsync(code), Times.Once);
@@ -72,12 +244,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        public async Task HandlingResponsibleTopi_WhenCodeNotFound_ShouldNotAffectAnyResponsibles()
+        public async Task HandlingResponsibleTopic_WhenCodeNotFound_ShouldNotAffectAnyResponsibles()
         {
+            // Arrange
             var unknownCode = "UnknownCode";
             var message = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{unknownCode}\", \"Description\" : \"{newDescription}\"}}";
+
+            // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
 
+            // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
             _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
             _responsibleRepository.Verify(i => i.GetByCodeAsync(code), Times.Never);
@@ -85,35 +261,38 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreNotEqual(newDescription, _responsible.Description);
         }
 
+       
         [TestMethod]
-        public async Task HandlingResponsibleTopi_WhenNoResponsiblesInPlant_ShouldNotFail()
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingResponsibleTopic_ShouldFailIfMissingPlant()
         {
-            var busReceiverUnderTest = new BusReceiverService(_plantSetter.Object,
-                _unitOfWork.Object,
-                _telemetryClient.Object,
-                _readOnlyContext.Object,
-                _applicationAuthenticator.Object,
-                _bearerTokenSetter.Object,
-                new Mock<IResponsibleRepository>().Object);
+            // Arrange
+            var messageWithoutPlant = $"{{ \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{code}\", \"Description\" : \"{newDescription}\"}}";
 
-            var message = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{code}\", \"Description\" : \"{newDescription}\"}}";
-            await busReceiverUnderTest.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
-
-            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _responsibleRepository.Verify(i => i.GetByCodeAsync(code), Times.Never);
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutPlant, new CancellationToken(false));
         }
 
         [TestMethod]
         [ExpectedException(typeof(Exception))]
+        public async Task HandlingResponsibleTopic_ShouldFailIfMissingResponsibleCode()
+        {
+            // Arrange
+            var messageWithoutResponsibleCode = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Description\" : \"{newDescription}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutResponsibleCode, new CancellationToken(false));
+        }
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
         public async Task HandlingResponsibleTopic_ShouldFailIfEmpty()
         {
-
+            // Arrange
             var message = $"{{}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
         }
-
+        #endregion
     }
 }
