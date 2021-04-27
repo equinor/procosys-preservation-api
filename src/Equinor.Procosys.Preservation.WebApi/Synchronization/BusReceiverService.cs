@@ -70,13 +70,29 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
 
             _plantSetter.SetPlant(tagFunctionEvent.Plant);
 
-            var tagFunction =
-                await _tagFunctionRepository.GetByCodesAsync(tagFunctionEvent.Code, tagFunctionEvent.RegisterCode);
-            if (tagFunction != null)
+            if (!string.IsNullOrWhiteSpace(tagFunctionEvent.CodeOld) ||
+                !string.IsNullOrWhiteSpace(tagFunctionEvent.RegisterCodeOld))
             {
-                tagFunction.Description = tagFunctionEvent.Description;
-                tagFunction.IsVoided = tagFunctionEvent.IsVoided;
+                var tagFunction =
+                    await _tagFunctionRepository.GetByCodesAsync(tagFunctionEvent.CodeOld, tagFunctionEvent.RegisterCodeOld);
+                if (tagFunction != null)
+                {
+                    tagFunction.RenameTagFunction(tagFunctionEvent.Code, tagFunctionEvent.RegisterCode);
+                    tagFunction.Description = tagFunctionEvent.Description;
+                    tagFunction.IsVoided = tagFunctionEvent.IsVoided;
+                }
             }
+            else
+            {
+                var tagFunction =
+                    await _tagFunctionRepository.GetByCodesAsync(tagFunctionEvent.Code, tagFunctionEvent.RegisterCode);
+                if (tagFunction != null)
+                {
+                    tagFunction.Description = tagFunctionEvent.Description;
+                    tagFunction.IsVoided = tagFunctionEvent.IsVoided;
+                }
+            }
+            
         }
 
         private async Task ProcessProjectEvent(string messageJson)
@@ -111,10 +127,22 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
 
             _plantSetter.SetPlant(responsibleEvent.Plant);
 
-            var responsible = await _responsibleRepository.GetByCodeAsync(responsibleEvent.Code);
-            if (responsible != null)
+            if (!string.IsNullOrWhiteSpace(responsibleEvent.CodeOld))
             {
-                responsible.Description = responsibleEvent.Description;
+                var responsible = await _responsibleRepository.GetByCodeAsync(responsibleEvent.CodeOld);
+                if (responsible != null)
+                {
+                    responsible.Description = responsibleEvent.Description;
+                    responsible.RenameResponsible(responsibleEvent.Code);
+                }
+            }
+            else
+            {
+                var responsible = await _responsibleRepository.GetByCodeAsync(responsibleEvent.Code);
+                if (responsible != null)
+                {
+                    responsible.Description = responsibleEvent.Description;
+                }
             }
         }
 

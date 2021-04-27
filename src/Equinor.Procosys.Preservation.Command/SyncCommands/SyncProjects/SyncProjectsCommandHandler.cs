@@ -71,9 +71,6 @@ namespace Equinor.Procosys.Preservation.Command.SyncCommands.SyncProjects
                 var pcsProject = await _projectApiService.TryGetProjectAsync(plant, project.Name);
                 if (pcsProject != null)
                 {
-                    project.IsClosed = pcsProject.IsClosed;
-                    project.Description = pcsProject.Description;
-
                     await SyncTagData(plant, project.Name);
                 }
             }

@@ -164,6 +164,28 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
+        public async Task HandlingTagFunctionTopic_WithRenameWithoutFailure()
+        {
+            // Arrange
+            var newRegisterCode = "A new register";
+            var newTagFunctionCode = "And a new tag function Code";
+            var message = $"{{ \"Plant\" : \"{plant}\", \"Code\" : \"{newTagFunctionCode}\", \"CodeOld\" : \"{tagFunctionCode}\", \"RegisterCode\" : \"{newRegisterCode}\", \"RegisterCodeOld\" : \"{registerCode}\", \"IsVoided\" : true, \"Description\" : \"{newDescription}\"}}";
+            Assert.AreEqual(false, _tagFunction.IsVoided);
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
+
+            // Assert
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(tagFunctionCode, registerCode), Times.Once);
+            Assert.AreEqual(newDescription, _tagFunction.Description);
+            Assert.AreEqual(true, _tagFunction.IsVoided);
+            Assert.AreEqual(newRegisterCode, _tagFunction.RegisterCode);
+            Assert.AreEqual(newTagFunctionCode, _tagFunction.Code);
+        }
+
+        [TestMethod]
         public async Task HandlingTagFunctionTopic_WhenCodeNotFound_ShouldNotAffectAnyTagFunctions()
         {
             // Arrange
@@ -244,6 +266,24 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
+        public async Task HandlingResponsibleTopic_WithChangedCode()
+        {
+            // Arrange
+            var codeNew = "Code2";
+
+            var message = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{codeNew}\", \"CodeOld\" : \"{code}\", \"IsVoided\" : false, \"Description\" : \"{newDescription}\"}}";
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
+
+            // Assert
+            _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            _responsibleRepository.Verify(i => i.GetByCodeAsync(code), Times.Once);
+            Assert.AreEqual(codeNew, _responsible.Code);
+            Assert.AreEqual(newDescription, _responsible.Description);
+        }
+
+        [TestMethod]
         public async Task HandlingResponsibleTopic_WhenCodeNotFound_ShouldNotAffectAnyResponsibles()
         {
             // Arrange
@@ -261,7 +301,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreNotEqual(newDescription, _responsible.Description);
         }
 
-       
         [TestMethod]
         [ExpectedException(typeof(Exception))]
         public async Task HandlingResponsibleTopic_ShouldFailIfMissingPlant()
