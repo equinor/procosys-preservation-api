@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -42,6 +43,12 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
         public Task<List<Project>> GetAllProjectsOnlyAsync()
             => Set.ToListAsync();
 
+        public Task<Tag> GetStandardTagInProjectAsync(string projectName, string tagNo)
+            => Set.Where(project => project.Name == projectName)
+                .SelectMany(project => project.Tags)
+                .Where(tag => tag.TagType == TagType.Standard && tag.TagNo == tagNo)
+                .SingleOrDefaultAsync();
+
         public Task<List<Tag>> GetStandardTagsInProjectOnlyAsync(string projectName)
             => Set.Where(project => project.Name == projectName)
                 .SelectMany(project => project.Tags)
@@ -72,5 +79,24 @@ namespace Equinor.Procosys.Preservation.Infrastructure.Repositories
             => Set
                 .Where(project => project.Tags.Any(tag => tag.Id == tagId))
                 .SingleOrDefaultAsync();
+
+        public async Task MoveCommPkgAsync(string commPkgNo, string fromProjectName, string toProjectName)
+        {
+            var fromProject = await GetProjectOnlyByNameAsync(fromProjectName);
+            if (fromProject == null)
+            {
+                throw new ArgumentException($"Can't find project {fromProjectName} ");
+            }
+            var toProject = await GetProjectOnlyByNameAsync(toProjectName);
+            if (toProject == null)
+            {
+                throw new ArgumentException($"Can't find project {toProjectName} ");
+            }
+
+            var tagsToMove = fromProject.Tags.Where(t => t.CommPkgNo == commPkgNo).ToList();
+
+            tagsToMove.ForEach(t => toProject.AddTag(t));
+            tagsToMove.ForEach(t => fromProject.DetachFromProject(t));
+        }
     }
 }

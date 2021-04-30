@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.IPO.WebApi.Synchronization;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.Procosys.Preservation.Domain;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ProjectAggregate;
+using Equinor.Procosys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.Procosys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.Procosys.Preservation.WebApi.Telemetry;
@@ -40,6 +43,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private const string registerCode = "ElRegisterCode";
         private const string tagFunctionDescription = "Tag function description";
 
+        private Tag _tag1;
+        private Tag _tag2;
+        private Mock<Project> _project3;
+        private const string TagNo1 = "TagNo1";
+        private const string TagNo2 = "TagNo2";
+        private const string OldTagDescription1 = "OldTagDescription1";
+        private const string OldTagDescription2 = "OldTagDescription2";
+        private const string NewTagDescription1 = "NewTagDescription1";
+        private const string NewTagDescription2 = "NewTagDescription2";
+
+        private const string ProjectName1 = "Project1";
+        private const string ProjectName2 = "Project2";
+        private const string ProjectName3 = "Project3";
+
+        private const string CommPkg1 = "Comm1";
+        private const string CommPkg2 = "Comm2";
+        private const string McPkg1 = "MC1";
+        private const string McPkg2 = "MC2";
+
         [TestInitialize]
         public void Setup()
         {
@@ -49,11 +71,39 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _responsibleRepository = new Mock<IResponsibleRepository>();
             _projectRepository = new Mock<IProjectRepository>();
             _tagFunctionRepository = new Mock<ITagFunctionRepository>();
-            
+
+            // Assert tags in preservation
+            var rdMock = new Mock<RequirementDefinition>();
+            rdMock.SetupGet(rd => rd.Plant).Returns(plant);
+
+            var stepMock = new Mock<Step>();
+            stepMock.SetupGet(s => s.Plant).Returns(plant);
+            _tag1 = new Tag(plant, TagType.Standard, TagNo1, OldTagDescription1, stepMock.Object, new List<TagRequirement>
+            {
+                new TagRequirement(plant, 4, rdMock.Object)
+            });
+            _tag1.McPkgNo = McPkg1;
+            _tag1.CommPkgNo = CommPkg1;
+
+            _tag2 = new Tag(plant, TagType.Standard, TagNo2, OldTagDescription2, stepMock.Object, new List<TagRequirement>
+            {
+                new TagRequirement(plant, 4, rdMock.Object)
+            });
+            _tag2.McPkgNo = McPkg2;
+            _tag2.CommPkgNo = CommPkg2;
+
+            var tags = new List<Tag>
+            {
+                _tag1, _tag2
+            };
+
             _responsible = new Responsible(plant, code, description);
             _responsibleRepository.Setup(r => r.GetByCodeAsync(code)).Returns(Task.FromResult(_responsible));
 
             _project1 = new Project(plant, project1Name, project1Description);
+            _project1.AddTag(_tag1);
+            _project1.AddTag(_tag2);
+
             _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(project1Name))
                 .Returns(Task.FromResult(_project1));
             _project2 = new Project(plant, project2Name, project2Description);
@@ -331,6 +381,85 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
+        }
+        #endregion
+
+        #region CommPkg
+        [TestMethod]
+        public async Task HandlingCommPkgTopic_Move_WithoutFailure()
+        {
+            // Arrange
+            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{ProjectName2}\", \"ProjectNameOld\" : \"{ProjectName1}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{description}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+
+            // Assert
+            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            _projectRepository.Verify(p => p.MoveCommPkgAsync(CommPkg1, ProjectName1, ProjectName2), Times.Once);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingCommPkgTopic_ShouldFailIfEmpty()
+        {
+            // Arrange
+            var message = $"{{}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+        }
+        #endregion
+
+        #region McPkg
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingMcPkgTopicMove_ShouldFailIfNotBothOldValuesEitherNullOrNot()
+        {
+            var message = $"{{\"Plant\" : \"Planten\", \"ProjectName\" : \"P1\", \"CommPkgNo\" :\"C1\", \"McPkgNo\" : \"M2\", \"McPkgNoOld\" : \"M2\", \"Description\" : \"Desc\"}}";
+
+            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
+        }
+
+        [TestMethod]
+        public async Task HandlingMcPkgTopicMove_ShouldChangeAffectedTags()
+        {
+            // Arrange
+            var toMcPkg = "B";
+            var toCommPkg = "D";
+            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{project1Name}\", \"CommPkgNo\" :\"{toCommPkg}\", \"CommPkgNoOld\" :\"{_tag1.CommPkgNo}\", \"McPkgNo\" : \"{toMcPkg}\", \"McPkgNoOld\" : \"{_tag1.McPkgNo}\", \"Description\" : \"Desc\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
+
+            // Assert
+            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            Assert.AreEqual(toMcPkg, _tag1.McPkgNo);
+            Assert.AreEqual(toCommPkg, _tag1.CommPkgNo);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingMcPkgTopic_ShouldFailIfEmpty()
+        {
+            // Arrange
+            var message = $"{{}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
+        }
+        #endregion
+
+        #region Tag
+        [TestMethod]
+        [ExpectedException(typeof(Exception))]
+        public async Task HandlingTagTopic_ShouldFailIfEmpty()
+        {
+            // Arrange
+            var message = $"{{}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
         }
         #endregion
     }
