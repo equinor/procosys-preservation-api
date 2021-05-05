@@ -546,5 +546,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void UpdateNextDueTimeUtc()
             => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
+
+        public void Rename(string newTagNo)
+        {
+            if (string.IsNullOrWhiteSpace(newTagNo))
+            {
+                throw new Exception("Not allowed to blank out tag no!");
+            }
+
+            TagNo = newTagNo;
+        }
     }
 }

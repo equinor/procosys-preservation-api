@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.IPO.WebApi.Synchronization;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -10,6 +9,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -50,12 +50,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private const string TagNo2 = "TagNo2";
         private const string OldTagDescription1 = "OldTagDescription1";
         private const string OldTagDescription2 = "OldTagDescription2";
-        private const string NewTagDescription1 = "NewTagDescription1";
-        private const string NewTagDescription2 = "NewTagDescription2";
-
-        private const string ProjectName1 = "Project1";
-        private const string ProjectName2 = "Project2";
-        private const string ProjectName3 = "Project3";
 
         private const string CommPkg1 = "Comm1";
         private const string CommPkg2 = "Comm2";
@@ -103,7 +97,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _project1 = new Project(plant, project1Name, project1Description);
             _project1.AddTag(_tag1);
             _project1.AddTag(_tag2);
-
+            _projectRepository.Setup(p => p.GetStandardTagsInProjectOnlyAsync(project1Name))
+                .Returns(Task.FromResult(tags));
             _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(project1Name))
                 .Returns(Task.FromResult(_project1));
             _project2 = new Project(plant, project2Name, project2Description);
@@ -162,7 +157,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingProjectTopic_ShouldFailIfMissingPlan()
         {
             // Arrange
@@ -172,7 +167,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutPlant, new CancellationToken(false));
         }
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingProjectTopic_ShouldFailIfMissingPlantOrProjectName()
         {
             // Arrange
@@ -182,7 +177,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutProjectName, new CancellationToken(false));
         }
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingProjectTopic_ShouldFailIfEmpty()
         {
             // Arrange
@@ -254,7 +249,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingTagFunctionTopic_ShouldFailIfMissingPlant()
         {
             // Arrange
@@ -265,7 +260,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingTagFunctionTopic_ShouldFailIfMissingTagFunctionCode()
         {
             // Arrange
@@ -276,7 +271,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingTagFunctionTopic_ShouldFailIfMissingRegisterCode()
         {
             // Arrange
@@ -287,7 +282,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingTagFunctionTopic_ShouldFailIfEmpty()
         {
             // Arrange
@@ -352,7 +347,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingResponsibleTopic_ShouldFailIfMissingPlant()
         {
             // Arrange
@@ -363,7 +358,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingResponsibleTopic_ShouldFailIfMissingResponsibleCode()
         {
             // Arrange
@@ -373,7 +368,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutResponsibleCode, new CancellationToken(false));
         }
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingResponsibleTopic_ShouldFailIfEmpty()
         {
             // Arrange
@@ -389,18 +384,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingCommPkgTopic_Move_WithoutFailure()
         {
             // Arrange
-            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{ProjectName2}\", \"ProjectNameOld\" : \"{ProjectName1}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{description}\"}}";
+            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{project2Name}\", \"ProjectNameOld\" : \"{project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{description}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
 
             // Assert
             _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _projectRepository.Verify(p => p.MoveCommPkgAsync(CommPkg1, ProjectName1, ProjectName2), Times.Once);
+            _projectRepository.Verify(p => p.MoveCommPkgAsync(CommPkg1, project1Name, project2Name), Times.Once);
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingCommPkgTopic_ShouldFailIfEmpty()
         {
             // Arrange
@@ -413,7 +408,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
         #region McPkg
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingMcPkgTopicMove_ShouldFailIfNotBothOldValuesEitherNullOrNot()
         {
             var message = $"{{\"Plant\" : \"Planten\", \"ProjectName\" : \"P1\", \"CommPkgNo\" :\"C1\", \"McPkgNo\" : \"M2\", \"McPkgNoOld\" : \"M2\", \"Description\" : \"Desc\"}}";
@@ -439,7 +434,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingMcPkgTopic_ShouldFailIfEmpty()
         {
             // Arrange
@@ -452,7 +447,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
         #region Tag
         [TestMethod]
-        [ExpectedException(typeof(Exception))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingTagTopic_ShouldFailIfEmpty()
         {
             // Arrange
@@ -460,6 +455,101 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task HandleTagTopic_ShouldFailIfMissingTagNo()
+        {
+            // Arrange
+            string message =
+                $"{{\"ProjectName\" : \"{project1Name}\",\"Plant\" : \"{plant}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task HandleTagTopic_ShouldFailIfMissingProjectName()
+        {
+            // Arrange
+            string message =
+                $"{{\"TagNo\" : \"{TagNo1}\",\"Plant\" : \"{plant}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public async Task HandleTagTopic_ShouldFailIfMissingPlant()
+        {
+            // Arrange
+            string message =
+                $"{{\"TagNo\" : \"{TagNo1}\",\"ProjectName\" : \"{project1Name}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+        }
+
+        [TestMethod]
+        public async Task HandleTagTopic_ShouldUpdateTag()
+        {
+            // Arrange
+            var area = "Area69";
+            var areaDescription = "Area69 Description";
+            var discipline = "ABC";
+            var disciplineDescription = "ABC Desc";
+            var callOffNo = "123";
+            var poNo = "321";
+            var tagFuncionCodeNew = "FCS123";
+            string message =
+                $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFuncionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{plant}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+
+
+            // Assert
+            Assert.AreEqual(area, _tag1.AreaCode);
+            Assert.AreEqual(areaDescription, _tag1.AreaDescription);
+            Assert.AreEqual(discipline,_tag1.DisciplineCode);
+            Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
+            Assert.AreEqual(callOffNo, _tag1.Calloff);
+            Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
+            Assert.IsTrue(_tag1.IsVoided);
+            Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
+        }
+
+        [TestMethod]
+        public async Task HandleTagTopic_ShouldUpdateTagAndChageTagNo()
+        {
+            // Arrange
+            var tagNew = "123";
+            var area = "Area69";
+            var areaDescription = "Area69 Description";
+            var discipline = "ABC";
+            var disciplineDescription = "ABC Desc";
+            var callOffNo = "123";
+            var poNo = "321";
+            var tagFuncionCodeNew = "FCS123";
+            string message =
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFuncionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{plant}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+
+            // Assert
+            Assert.AreEqual(tagNew, _tag1.TagNo);
+            Assert.AreEqual(area, _tag1.AreaCode);
+            Assert.AreEqual(areaDescription, _tag1.AreaDescription);
+            Assert.AreEqual(discipline, _tag1.DisciplineCode);
+            Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
+            Assert.AreEqual(callOffNo, _tag1.Calloff);
+            Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
+            Assert.IsTrue(_tag1.IsVoided);
+            Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
         }
         #endregion
     }

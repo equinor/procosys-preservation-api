@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Text.Json;
 using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.ProCoSys.PcsServiceBus.Topics;
@@ -12,7 +13,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
 
-namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
+namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public class BusReceiverService : IBusReceiverService
     {
@@ -59,11 +60,47 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
                     await ProcessMcPkgEvent(messageJson);
                     break;
                 case PcsTopic.Tag:
-                    // TODO: Handle Tag
-                    throw new NotImplementedException();
-
+                    await ProcessTagEvent(messageJson);
+                    break;
             }
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+
+        private async Task ProcessTagEvent(string messageJson)
+        {
+            var tagEvent = JsonSerializer.Deserialize<TagTopic>(messageJson);
+            if (string.IsNullOrWhiteSpace(tagEvent.Plant) ||
+                string.IsNullOrWhiteSpace(tagEvent.TagNo) ||
+                string.IsNullOrWhiteSpace(tagEvent.ProjectName))
+            {
+                throw new ArgumentNullException($"Unable to deserialize JSON to TagEvent {messageJson}");
+            }
+
+            TrackTagEvent(tagEvent);
+
+            _plantSetter.SetPlant(tagEvent.Plant);
+
+            var standardTagsInProject = await _projectRepository.GetStandardTagsInProjectOnlyAsync(tagEvent.ProjectName);
+
+            var tagNo = string.IsNullOrWhiteSpace(tagEvent.TagNoOld) ? tagEvent.TagNo : tagEvent.TagNoOld;
+            var tagToUpdate = standardTagsInProject.SingleOrDefault(t => t.TagNo == tagNo);
+
+            if (tagToUpdate != null)
+            {
+                if (tagToUpdate.TagNo!=tagEvent.TagNo)
+                {
+                    tagToUpdate.Rename(tagEvent.TagNo);
+                }
+                tagToUpdate.SetArea(tagEvent.AreaCode, tagEvent.AreaDescription);
+                tagToUpdate.SetDiscipline(tagEvent.DisciplineCode, tagEvent.DisciplineDescription);
+                tagToUpdate.Calloff = tagEvent.CallOffNo;
+                tagToUpdate.PurchaseOrderNo = tagEvent.PurchaseOrderNo;
+                tagToUpdate.CommPkgNo = tagEvent.CommPkgNo;
+                tagToUpdate.Description = tagEvent.Description;
+                tagToUpdate.McPkgNo = tagEvent.McPkgNo;
+                tagToUpdate.TagFunctionCode = tagEvent.TagFunctionCode;
+                tagToUpdate.IsVoided = tagEvent.IsVoided;
+            }
         }
 
         private async Task ProcessMcPkgEvent(string messageJson)
@@ -76,7 +113,7 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
                 string.IsNullOrWhiteSpace(mcPkgEvent.ProjectName) ||
                 (string.IsNullOrWhiteSpace(mcPkgEvent.McPkgNoOld) != (string.IsNullOrWhiteSpace(mcPkgEvent.CommPkgNoOld))))
             {
-                throw new Exception($"Unable to deserialize JSON to McPkgEvent {messageJson}");
+                throw new ArgumentNullException($"Unable to deserialize JSON to McPkgEvent {messageJson}");
             }
 
             if (string.IsNullOrWhiteSpace(mcPkgEvent.McPkgNoOld) || string.IsNullOrWhiteSpace(mcPkgEvent.CommPkgNoOld))
@@ -109,7 +146,7 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
                 string.IsNullOrWhiteSpace(commPkgEvent.CommPkgNo) ||
                 string.IsNullOrWhiteSpace(commPkgEvent.ProjectName))
             {
-                throw new Exception($"Unable to deserialize JSON to CommPkgEvent {messageJson}");
+                throw new ArgumentNullException($"Unable to deserialize JSON to CommPkgEvent {messageJson}");
             }
 
             if (string.IsNullOrWhiteSpace(commPkgEvent.ProjectNameOld))
@@ -135,7 +172,7 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
                 string.IsNullOrWhiteSpace(tagFunctionEvent.Code) ||
                 string.IsNullOrWhiteSpace(tagFunctionEvent.RegisterCode))
             {
-                throw new Exception($"Unable to deserialize JSON to TagFunctionEven {messageJson}");
+                throw new ArgumentNullException($"Unable to deserialize JSON to TagFunctionEven {messageJson}");
             }
 
             TrackTagFunctionEvent(tagFunctionEvent);
@@ -172,7 +209,7 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
             var projectEvent = JsonSerializer.Deserialize<ProjectTopic>(messageJson);
             if (string.IsNullOrWhiteSpace(projectEvent.Plant) || string.IsNullOrWhiteSpace(projectEvent.ProjectName))
             {
-                throw new Exception($"Unable to deserialize JSON to ProjectEvent {messageJson}");
+                throw new ArgumentNullException($"Unable to deserialize JSON to ProjectEvent {messageJson}");
             }
 
             TrackProjectEvent(projectEvent);
@@ -192,7 +229,7 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
             var responsibleEvent = JsonSerializer.Deserialize<ResponsibleTopic>(messageJson);
             if (string.IsNullOrWhiteSpace(responsibleEvent.Plant) || string.IsNullOrWhiteSpace(responsibleEvent.Code))
             {
-                throw new Exception($"Unable to deserialize JSON to ResponsibleEvent {messageJson}");
+                throw new ArgumentNullException($"Unable to deserialize JSON to ResponsibleEvent {messageJson}");
             }
 
             TrackResponsibleEvent(responsibleEvent);
@@ -222,51 +259,61 @@ namespace Equinor.ProCoSys.IPO.WebApi.Synchronization
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {PcsServiceBusTelemetryConstants.Event, ResponsibleTopic.TopicName},
-                    {PcsServiceBusTelemetryConstants.ResponsibleCode, responsibleEvent.Code},
-                    {PcsServiceBusTelemetryConstants.Plant, responsibleEvent.Plant[4..]},
+                    {"Event", ResponsibleTopic.TopicName},
+                    {nameof(responsibleEvent.Code), responsibleEvent.Code},
+                    {nameof(responsibleEvent.Plant), responsibleEvent.Plant[4..]},
                 });
 
         private void TrackCommPkgEvent(CommPkgTopic commPkgEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {PcsServiceBusTelemetryConstants.Event, IpoTopic.TopicName},
-                    {PcsServiceBusTelemetryConstants.CommPkgNo, commPkgEvent.CommPkgNo},
-                    {PcsServiceBusTelemetryConstants.Plant, commPkgEvent.Plant[4..]},
-                    {PcsServiceBusTelemetryConstants.ProjectName, commPkgEvent.ProjectName.Replace('$', '_')},
-                    {PcsServiceBusTelemetryConstants.ProjectNameOld, commPkgEvent.ProjectNameOld.Replace('$', '_')}
+                    {"Event", IpoTopic.TopicName},
+                    {nameof(commPkgEvent.CommPkgNo), commPkgEvent.CommPkgNo},
+                    {nameof(commPkgEvent.Plant), commPkgEvent.Plant[4..]},
+                    {nameof(commPkgEvent.ProjectName), commPkgEvent.ProjectName.Replace('$', '_')},
+                    {nameof(commPkgEvent.ProjectNameOld), commPkgEvent.ProjectNameOld.Replace('$', '_')}
                 });
 
         private void TrackTagFunctionEvent(TagFunctionTopic tagFunctionEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {PcsServiceBusTelemetryConstants.Event, TagFunctionTopic.TopicName},
-                    {PcsServiceBusTelemetryConstants.Code, tagFunctionEvent.Code},
-                    {PcsServiceBusTelemetryConstants.RegisterCode, tagFunctionEvent.RegisterCode},
-                    {PcsServiceBusTelemetryConstants.IsVoided, tagFunctionEvent.IsVoided.ToString()},
-                    {PcsServiceBusTelemetryConstants.Plant, tagFunctionEvent.Plant[4..]},
+                    {"Event", TagFunctionTopic.TopicName},
+                    {nameof(tagFunctionEvent.Code), tagFunctionEvent.Code},
+                    {nameof(tagFunctionEvent.RegisterCode), tagFunctionEvent.RegisterCode},
+                    {nameof(tagFunctionEvent.IsVoided), tagFunctionEvent.IsVoided.ToString()},
+                    {nameof(tagFunctionEvent.Plant), tagFunctionEvent.Plant[4..]},
                 });
 
         private void TrackProjectEvent(ProjectTopic projectEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {PcsServiceBusTelemetryConstants.Event, ProjectTopic.TopicName},
-                    {PcsServiceBusTelemetryConstants.ProjectName, projectEvent.ProjectName},
-                    {PcsServiceBusTelemetryConstants.IsVoided, projectEvent.IsClosed.ToString()},
-                    {PcsServiceBusTelemetryConstants.Plant, projectEvent.Plant[4..]},
+                    {"Event", ProjectTopic.TopicName},
+                    {nameof(projectEvent.ProjectName), projectEvent.ProjectName},
+                    {nameof(projectEvent.IsClosed), projectEvent.IsClosed.ToString()},
+                    {nameof(projectEvent.Plant), projectEvent.Plant[4..]},
                 });
 
         private void TrackMcPkgEvent(McPkgTopic mcPkgEvent) =>
             _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
                 new Dictionary<string, string>
                 {
-                    {PcsServiceBusTelemetryConstants.Event, McPkgTopic.TopicName},
-                    {PcsServiceBusTelemetryConstants.McPkgNo, mcPkgEvent.McPkgNo},
-                    {PcsServiceBusTelemetryConstants.Plant, mcPkgEvent.Plant[4..]},
-                    {PcsServiceBusTelemetryConstants.ProjectName, mcPkgEvent.ProjectName.Replace('$', '_')}
+                    {"Event", McPkgTopic.TopicName},
+                    {nameof(mcPkgEvent.McPkgNo), mcPkgEvent.McPkgNo},
+                    {nameof(mcPkgEvent.Plant), mcPkgEvent.Plant[4..]},
+                    {nameof(mcPkgEvent.ProjectName), mcPkgEvent.ProjectName.Replace('$', '_')}
+                });
+
+        private void TrackTagEvent(TagTopic tagEvent) =>
+            _telemetryClient.TrackEvent(PreservationBusReceiverTelemetryEvent,
+                new Dictionary<string, string>
+                {
+                    {"Event", TagTopic.TopicName},
+                    {nameof(tagEvent.TagNo), tagEvent.TagNo},
+                    {nameof(tagEvent.Plant), tagEvent.Plant[4..]},
+                    {nameof(tagEvent.ProjectName), tagEvent.ProjectName.Replace('$', '_')}
                 });
     }
 }

@@ -1950,5 +1950,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         #endregion
+
+        #region Rename
+        [TestMethod]
+        public void Rename_ShouldUpdateTagNo()
+        {
+            var newTagNo = "A-Brand-new-tag-no";
+            Assert.AreNotEqual(newTagNo, _dutWithOneReqNotNeedInputTwoWeekInterval.TagNo);
+
+            _dutWithOneReqNotNeedInputTwoWeekInterval.Rename(newTagNo);
+
+            Assert.AreEqual(newTagNo, _dutWithOneReqNotNeedInputTwoWeekInterval.TagNo);
+        }
+        #endregion
     }
 }

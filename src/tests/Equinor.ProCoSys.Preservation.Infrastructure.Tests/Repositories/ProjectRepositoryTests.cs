@@ -33,6 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         private const string CommPkg2 = "CommPkg2";
         private const string McPkg2 = "McPkg2";
 
+
         private ProjectRepository _dut;
         private Tag _standardTag1With3Reqs, _standardTag2;
         private Mock<DbSet<Tag>> _tagsSetMock;
@@ -58,7 +59,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var req2 = new TagRequirement(TestPlant, 2, rdMock.Object);
             var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
             _standardTag1With3Reqs = new Tag(TestPlant, TagType.Standard, StandardTagNo1, "Desc", step,
-                new List<TagRequirement> { req1, req2, req3 })
+               new List<TagRequirement> { req1, req2, req3 })
             { CommPkgNo = CommPkg1, McPkgNo = McPkg1 };
             _standardTag1With3Reqs.SetProtectedIdForTesting(StandardTagId1);
             project1.AddTag(_standardTag1With3Reqs);
@@ -181,14 +182,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             Assert.AreEqual(2, result.Count);
             Assert.IsTrue(result.Contains(_standardTag1With3Reqs));
             // Not able to test that Tags don't have children. BuildMockDbSet seem to build Set as a graph with all children
-        }
-
-        [TestMethod]
-        public async Task GetStandardTagInProjectAsync_ShouldReturnTag()
-        {
-            var result = await _dut.GetStandardTagInProjectAsync(ProjectNameWithTags, StandardTagNo1);
-
-            Assert.AreEqual(_standardTag1With3Reqs, result);
         }
 
         [TestMethod]

@@ -1,5 +1,4 @@
-﻿using Equinor.ProCoSys.IPO.WebApi.Synchronization;
-using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
+﻿using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers;
 using Equinor.ProCoSys.Preservation.Command.Validators;
