@@ -103,5 +103,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggreg
             }
             ModifiedById = modifiedBy.Id;
         }
+        public void RenameTagFunction(string newCode, string newRegisterCode)
+        {
+            Code = newCode;
+            RegisterCode = newRegisterCode;
+        }
     }
 }

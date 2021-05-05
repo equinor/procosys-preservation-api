@@ -50,5 +50,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggreg
             }
             ModifiedById = modifiedBy.Id;
         }
+
+        public void RenameResponsible(string newCode) => Code = newCode;
     }
 }

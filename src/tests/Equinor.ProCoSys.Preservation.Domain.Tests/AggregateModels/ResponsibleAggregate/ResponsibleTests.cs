@@ -15,5 +15,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.Responsible
             Assert.AreEqual("CodeA", dut.Code);
             Assert.AreEqual("DescA", dut.Description);
         }
+
+        [TestMethod]
+        public void RenameResponsible_ShouldSetNewCode()
+        {
+            Assert.Fail("Not implemented yet");
+        }
     }
 }

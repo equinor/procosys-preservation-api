@@ -82,5 +82,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.TagFunction
         [TestMethod]
         public void RemoveRequirement_ShouldThrowException_WhenRequirementNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveRequirement(null));
+
+        [TestMethod]
+        public void RenameTagFunction_ShouldUpdateCodeAndRegisterCode()
+        {
+            Assert.Fail("Not implemented!");
+        }
     }
 }

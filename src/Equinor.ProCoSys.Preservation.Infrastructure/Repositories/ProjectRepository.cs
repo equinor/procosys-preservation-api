@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -55,6 +56,25 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 _context.TagRequirements.Remove(tagRequirement);
             }
             _context.Tags.Remove(tag);
+        }
+
+        public async Task MoveCommPkgAsync(string commPkgNo, string fromProjectName, string toProjectName)
+        {
+            var fromProject = await GetProjectOnlyByNameAsync(fromProjectName);
+            if (fromProject == null)
+            {
+                throw new ArgumentException($"Can't find project {fromProjectName} ");
+            }
+            var toProject = await GetProjectOnlyByNameAsync(toProjectName);
+            if (toProject == null)
+            {
+                throw new ArgumentException($"Can't find project {toProjectName} ");
+            }
+
+            var tagsToMove = fromProject.Tags.Where(t => t.CommPkgNo == commPkgNo).ToList();
+
+            tagsToMove.ForEach(t => toProject.AddTag(t));
+            tagsToMove.ForEach(t => fromProject.DetachFromProject(t));
         }
 
         public Task<List<Tag>> GetStandardTagsInProjectInStepsAsync(string projectName, IEnumerable<string> tagNos, IEnumerable<int> stepIds)
