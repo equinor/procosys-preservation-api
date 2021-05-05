@@ -105,6 +105,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggreg
         }
         public void RenameTagFunction(string newCode, string newRegisterCode)
         {
+            if (string.IsNullOrWhiteSpace(newCode) || string.IsNullOrWhiteSpace(newRegisterCode))
+            {
+                throw new ArgumentNullException($"RenameTagFunction: Missing arguments {newCode} - {newRegisterCode}");
+            }
             Code = newCode;
             RegisterCode = newRegisterCode;
         }
