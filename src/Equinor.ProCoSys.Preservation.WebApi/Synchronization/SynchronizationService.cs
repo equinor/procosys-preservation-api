@@ -221,6 +221,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private async Task AutoTransferTagsAsync(string plant)
         {
             _logger.LogInformation("Autotransfer tags");
+            await UpdateLastAcceptedCertificatesRead(plant, Setting.LastAcceptedCertificatesReadingCode);
 
             var lastAcceptedCertificatesRead = await GetLastAcceptedCertificatesRead(plant);
             if (!lastAcceptedCertificatesRead.HasValue)
@@ -234,17 +235,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             await AutoTransferTagAffectedByCertificatesAsync(plant, acceptedCertificatesSinceLastTransfer.Where(c => c.CertificateType == "RFCC").ToList());
             await AutoTransferTagAffectedByCertificatesAsync(plant, acceptedCertificatesSinceLastTransfer.Where(c => c.CertificateType == "RFOC").ToList());
 
-            await UpdateLastAcceptedCertificatesRead(plant);
+            await UpdateLastAcceptedCertificatesRead(plant, Setting.LastAcceptedCertificatesReadCode);
         }
 
-        private async Task UpdateLastAcceptedCertificatesRead(string plant)
+        private async Task UpdateLastAcceptedCertificatesRead(string plant, string code)
         {
-            var result = await _mediator.Send(new UpdateDateTimeSettingCommand(Setting.LastAcceptedCertificatesReadCode, TimeService.UtcNow));
+            var result = await _mediator.Send(new UpdateDateTimeSettingCommand(code, TimeService.UtcNow));
 
             if (result.ResultType != ServiceResult.ResultType.Ok)
             {
                 _logger.LogWarning(
-                    $"Autotransfer tags functions failed. Could not update {Setting.LastAcceptedCertificatesReadCode}. ResultType {result.ResultType}");
+                    $"Autotransfer tags functions failed. Could not update {code}. ResultType {result.ResultType}");
                 _telemetryClient.TrackEvent("Synchronization Status",
                     new Dictionary<string, string>
                     {
