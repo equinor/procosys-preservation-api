@@ -171,7 +171,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsQueries.GetTags
                 Assert.IsFalse(tagNotStartedDto.ReadyToBePreserved);
                 Assert.IsFalse(tagNotStartedDto.ReadyToBeRescheduled);
                 Assert.IsTrue(tagNotStartedDto.ReadyToBeStarted);
-                Assert.IsFalse(tagNotStartedDto.ReadyToBeTransferred);
+                Assert.IsTrue(tagNotStartedDto.ReadyToBeTransferred);
             }
         }
 
