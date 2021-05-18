@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,12 @@ using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
+using Equinor.ProCoSys.Preservation.MainApi.Project;
+using Equinor.ProCoSys.Preservation.WebApi.Authentication;
+using Microsoft.Extensions.Options;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
@@ -23,6 +29,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IResponsibleRepository _responsibleRepository;
         private readonly IProjectRepository _projectRepository;
         private readonly ITagFunctionRepository _tagFunctionRepository;
+        private readonly ICurrentUserSetter _currentUserSetter;
+        private readonly IClaimsProvider _claimsProvider;
+        private readonly IBearerTokenSetter _bearerTokenSetter;
+        private readonly IApplicationAuthenticator _authenticator;
+        private readonly IProjectApiService _projectApiService;
+        private Guid _synchronizationUserOid;
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
 
         public BusReceiverService(IPlantSetter plantSetter,
@@ -30,7 +42,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ITelemetryClient telemetryClient,
             IResponsibleRepository responsibleRepository,
             IProjectRepository projectRepository,
-            ITagFunctionRepository tagFunctionRepository)
+            ITagFunctionRepository tagFunctionRepository,
+            ICurrentUserSetter currentUserSetter,
+            IClaimsProvider claimsProvider,
+            IBearerTokenSetter bearerTokenSetter,
+            IApplicationAuthenticator authenticator,
+            IOptionsMonitor<SynchronizationOptions> options,
+            IProjectApiService projectApiService)
         {
             _plantSetter = plantSetter;
             _unitOfWork = unitOfWork;
@@ -38,10 +56,23 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _responsibleRepository = responsibleRepository;
             _projectRepository = projectRepository;
             _tagFunctionRepository = tagFunctionRepository;
+            _currentUserSetter = currentUserSetter;
+            _claimsProvider = claimsProvider;
+            _bearerTokenSetter = bearerTokenSetter;
+            _authenticator = authenticator;
+            _projectApiService = projectApiService;
+            _synchronizationUserOid = options.CurrentValue.UserOid;
         }
 
         public async Task ProcessMessageAsync(PcsTopic pcsTopic, string messageJson, CancellationToken cancellationToken)
         {
+            _currentUserSetter.SetCurrentUserOid(_synchronizationUserOid);
+
+            var currentUser = _claimsProvider.GetCurrentUser();
+            var claimsIdentity = new ClaimsIdentity();
+            claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _synchronizationUserOid.ToString()));
+            currentUser.AddIdentity(claimsIdentity);
+
             switch (pcsTopic)
             {
                 case PcsTopic.Project:
@@ -80,10 +111,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _plantSetter.SetPlant(tagEvent.Plant);
 
-            var standardTagsInProject = await _projectRepository.GetStandardTagsInProjectOnlyAsync(tagEvent.ProjectName);
+            var tagToUpdateProjectName = !string.IsNullOrWhiteSpace(tagEvent.ProjectNameOld)
+                ? tagEvent.ProjectNameOld
+                : tagEvent.ProjectName;
+            var tagToUpdateTagNo = !string.IsNullOrWhiteSpace(tagEvent.TagNoOld)
+                ? tagEvent.TagNoOld
+                : tagEvent.TagNo;
 
-            var tagNo = string.IsNullOrWhiteSpace(tagEvent.TagNoOld) ? tagEvent.TagNo : tagEvent.TagNoOld;
-            var tagToUpdate = standardTagsInProject.SingleOrDefault(t => t.TagNo == tagNo);
+            var project = await _projectRepository.GetProjectWithTagsByNameAsync(tagToUpdateProjectName);
+            if (project == null)
+            {
+                return;
+            }
+
+            var tagToUpdate = project.Tags.SingleOrDefault(t => t.TagNo == tagToUpdateTagNo);
 
             if (tagToUpdate != null)
             {
@@ -91,6 +132,26 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {
                     tagToUpdate.Rename(tagEvent.TagNo);
                 }
+
+                if (!string.IsNullOrWhiteSpace(tagEvent.ProjectNameOld) &&
+                    tagEvent.ProjectName != tagEvent.ProjectNameOld)
+                {
+                    var projectToMoveTagInto = await _projectRepository.GetProjectOnlyByNameAsync(tagEvent.ProjectName);
+                    if (projectToMoveTagInto == null)
+                    {
+                        var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
+                        _bearerTokenSetter.SetBearerToken(bearerToken, false);
+
+                        _currentUserSetter.SetCurrentUserOid(_synchronizationUserOid);
+                        var pcsProject = await _projectApiService.TryGetProjectAsync(tagEvent.Plant, tagEvent.ProjectName);
+                        projectToMoveTagInto = new Project(tagEvent.Plant, pcsProject.Name, pcsProject.Description);
+                        _projectRepository.Add(projectToMoveTagInto);
+                    }
+
+                    project.DetachFromProject(tagToUpdate);
+                    projectToMoveTagInto.AddTag(tagToUpdate);
+                }
+
                 tagToUpdate.SetArea(tagEvent.AreaCode, tagEvent.AreaDescription);
                 tagToUpdate.SetDiscipline(tagEvent.DisciplineCode, tagEvent.DisciplineDescription);
                 tagToUpdate.Calloff = tagEvent.CallOffNo;
@@ -126,11 +187,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _plantSetter.SetPlant(mcPkgEvent.Plant);
 
-            var project = await _projectRepository.GetProjectOnlyByNameAsync(mcPkgEvent.ProjectName);
+            var project = await _projectRepository.GetProjectWithTagsByNameAsync(mcPkgEvent.ProjectName);
 
             if (!string.IsNullOrWhiteSpace(mcPkgEvent.McPkgNoOld))
             {
-                project.RenameMcPkg(mcPkgEvent.McPkgNoOld, mcPkgEvent.McPkgNo, mcPkgEvent.CommPkgNoOld);
+                if (mcPkgEvent.McPkgNoOld != mcPkgEvent.McPkgNo)
+                {
+                    project.RenameMcPkg(mcPkgEvent.McPkgNoOld, mcPkgEvent.McPkgNo, mcPkgEvent.CommPkgNoOld);
+                }
                 if (mcPkgEvent.CommPkgNoOld != mcPkgEvent.CommPkgNo)
                 {
                     project.MoveMcPkg(mcPkgEvent.McPkgNo, mcPkgEvent.CommPkgNoOld, mcPkgEvent.CommPkgNo);

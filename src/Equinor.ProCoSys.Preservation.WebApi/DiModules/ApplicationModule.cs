@@ -1,4 +1,5 @@
-﻿using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
+﻿using Equinor.ProCoSys.PcsServiceBus.Receiver;
+using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
 using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers;
 using Equinor.ProCoSys.Preservation.Command.Validators;
@@ -149,6 +150,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ICacheManager, CacheManager>();
+            services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();
         }
     }
 }

@@ -29,6 +29,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
         public Task<Project> GetProjectOnlyByNameAsync(string projectName)
             => Set.SingleOrDefaultAsync(p => p.Name == projectName);
 
+        public Task<Project> GetProjectWithTagsByNameAsync(string projectName)
+            => Set.Include(p => p.Tags).SingleOrDefaultAsync(p => p.Name == projectName);
+
         public Task<Tag> GetTagByTagIdAsync(int tagId)
             => DefaultQuery
                 .SelectMany(project => project.Tags)
@@ -60,7 +63,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 
         public async Task MoveCommPkgAsync(string commPkgNo, string fromProjectName, string toProjectName)
         {
-            var fromProject = await GetProjectOnlyByNameAsync(fromProjectName);
+            var fromProject = await GetProjectWithTagsByNameAsync(fromProjectName);
             if (fromProject == null)
             {
                 throw new ArgumentException($"Can't find project {fromProjectName} ");

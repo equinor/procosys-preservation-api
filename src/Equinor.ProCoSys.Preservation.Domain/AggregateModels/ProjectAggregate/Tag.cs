@@ -108,6 +108,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             get => _isVoided;
             set
             {
+                if (_isVoided == value)
+                {
+                    return;
+                }
+
                 _isVoided = value;
                 if (_isVoided)
                 {

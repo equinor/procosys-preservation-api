@@ -155,6 +155,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             {
                 services.AddPcsServiceBusIntegration(options => options
                     .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
+                    .WithSubscription(PcsTopic.Tag, "preservation_tag")
+                    .WithSubscription(PcsTopic.TagFunction, "preservation_tagfunction")
+                    .WithSubscription(PcsTopic.Project, "preservation_project")
+                    .WithSubscription(PcsTopic.CommPkg, "preservation_commpkg")
+                    .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
                     .WithSubscription(PcsTopic.Responsible, "preservation_responsible"));
             }
         }

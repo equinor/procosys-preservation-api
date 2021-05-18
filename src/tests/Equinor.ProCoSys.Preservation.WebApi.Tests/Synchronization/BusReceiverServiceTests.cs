@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.PcsServiceBus;
@@ -9,8 +11,12 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Project;
+using Equinor.ProCoSys.Preservation.WebApi.Authentication;
+using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Synchronization;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 
@@ -45,7 +51,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
         private Tag _tag1;
         private Tag _tag2;
-        private Mock<Project> _project3;
+        private Project _newProjectCreated;
+        private string _projectNotInPreservation ="ProjectNotInPres";
+
         private const string TagNo1 = "TagNo1";
         private const string TagNo2 = "TagNo2";
         private const string OldTagDescription1 = "OldTagDescription1";
@@ -99,22 +107,40 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _project1.AddTag(_tag2);
             _projectRepository.Setup(p => p.GetStandardTagsInProjectOnlyAsync(project1Name))
                 .Returns(Task.FromResult(tags));
+            _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(project1Name))
+                .Returns(Task.FromResult(_project1));
             _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(project1Name))
                 .Returns(Task.FromResult(_project1));
             _project2 = new Project(plant, project2Name, project2Description);
+            _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(project2Name))
+                .Returns(Task.FromResult(_project2));
             _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(project2Name))
                 .Returns(Task.FromResult(_project2));
+            _projectRepository.Setup(p => p.Add(It.IsAny<Project>())).Callback((Project p) => _newProjectCreated = p);
 
             _tagFunction = new TagFunction(plant, tagFunctionCode, tagFunctionDescription, registerCode);
             _tagFunctionRepository.Setup(t => t.GetByCodesAsync(tagFunctionCode, registerCode))
                 .Returns(Task.FromResult(_tagFunction));
+            var synchronizationOptions = new Mock<IOptionsMonitor<SynchronizationOptions>>();
+            synchronizationOptions.Setup(s => s.CurrentValue).Returns(new SynchronizationOptions{UserOid = Guid.NewGuid()});
+            var currentUserSetter = new Mock<ICurrentUserSetter>();
+            var claimsProvider = new Mock<IClaimsProvider>();
+            claimsProvider.Setup(c => c.GetCurrentUser()).Returns(new ClaimsPrincipal());
+            var projectApiService = new Mock<IProjectApiService>();
+            projectApiService.Setup(p => p.TryGetProjectAsync(plant, _projectNotInPreservation)).Returns(Task.FromResult(new PCSProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
 
             _dut = new BusReceiverService(_plantSetter.Object,
                                           _unitOfWork.Object,
                                           _telemetryClient.Object,
                                           _responsibleRepository.Object,
                                           _projectRepository.Object,
-                                          _tagFunctionRepository.Object);
+                                          _tagFunctionRepository.Object,
+                                          currentUserSetter.Object,
+                                          claimsProvider.Object,
+                                          new Mock<IBearerTokenSetter>().Object,
+                                          new Mock<IApplicationAuthenticator>().Object,
+                                          synchronizationOptions.Object,
+                                          projectApiService.Object);
         }
         #endregion
 
@@ -523,7 +549,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
-        public async Task HandleTagTopic_ShouldUpdateTagAndChageTagNo()
+        public async Task HandleTagTopic_ShouldUpdateTagAndChangeTagNo()
         {
             // Arrange
             var tagNew = "123";
@@ -551,6 +577,79 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.IsTrue(_tag1.IsVoided);
             Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
         }
+
+        [TestMethod]
+        public async Task HandleTagTopic_ShouldMoveTagAndChangeTagNo()
+        {
+            // Arrange
+            var tagNew = "123";
+            var area = "Area69";
+            var areaDescription = "Area69 Description";
+            var discipline = "ABC";
+            var disciplineDescription = "ABC Desc";
+            var callOffNo = "123";
+            var poNo = "321";
+            var tagFuncionCodeNew = "FCS123";
+            string message =
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{project1Name}\",\"ProjectName\" : \"{project2Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFuncionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{plant}\"}}";
+
+            // Assert
+            Assert.IsTrue(_project1.Tags.Contains(_tag1));
+            Assert.IsFalse(_project2.Tags.Contains(_tag1));
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+
+            // Assert
+            Assert.AreEqual(tagNew, _tag1.TagNo);
+            Assert.AreEqual(area, _tag1.AreaCode);
+            Assert.AreEqual(areaDescription, _tag1.AreaDescription);
+            Assert.AreEqual(discipline, _tag1.DisciplineCode);
+            Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
+            Assert.AreEqual(callOffNo, _tag1.Calloff);
+            Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
+            Assert.IsTrue(_tag1.IsVoided);
+            Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
+            Assert.IsTrue( _project2.Tags.Contains(_tag1));
+        }
+
+        [TestMethod]
+        public async Task HandleTagTopic_ShouldCreateProjectMoveTagAndChangeTagNo()
+        {
+            // Arrange
+            var tagNew = "123";
+            var area = "Area69";
+            var areaDescription = "Area69 Description";
+            var discipline = "ABC";
+            var disciplineDescription = "ABC Desc";
+            var callOffNo = "123";
+            var poNo = "321";
+            var tagFuncionCodeNew = "FCS123";
+
+            string message =
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{project1Name}\",\"ProjectName\" : \"{_projectNotInPreservation}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFuncionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{plant}\"}}";
+
+            // Assert
+            Assert.IsTrue(_project1.Tags.Contains(_tag1));
+            Assert.IsNull(_newProjectCreated);
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+
+            // Assert
+            Assert.AreEqual(tagNew, _tag1.TagNo);
+            Assert.AreEqual(area, _tag1.AreaCode);
+            Assert.AreEqual(areaDescription, _tag1.AreaDescription);
+            Assert.AreEqual(discipline, _tag1.DisciplineCode);
+            Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
+            Assert.AreEqual(callOffNo, _tag1.Calloff);
+            Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
+            Assert.IsTrue(_tag1.IsVoided);
+            Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
+            Assert.IsNotNull(_newProjectCreated);
+            Assert.IsTrue(_newProjectCreated.Tags.Contains(_tag1));
+        }
+
         #endregion
     }
 }
