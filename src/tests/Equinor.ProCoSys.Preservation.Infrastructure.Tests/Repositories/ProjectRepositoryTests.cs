@@ -258,18 +258,14 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public async Task MoveCommPkg_WhenFromProjectDoesNotExist_ShouldFail()
-        {
-            // Act
+        // Act
+        public async Task MoveCommPkg_WhenFromProjectDoesNotExist_ShouldFail() =>
             await _dut.MoveCommPkgAsync(CommPkg1, "Unknown from project", ProjectNameWithTags);
-        }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentException))]
-        public async Task MoveCommPkg_WhenToProjectDoesNotExist_ShouldFail()
-        {
-            // Act
+        // Act
+        public async Task MoveCommPkg_WhenToProjectDoesNotExist_ShouldFail() =>
             await _dut.MoveCommPkgAsync(CommPkg1, ProjectNameWithTags, "Unknown project");
-        }
     }
 }

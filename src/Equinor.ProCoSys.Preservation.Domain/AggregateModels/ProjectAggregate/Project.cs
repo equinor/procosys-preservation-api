@@ -117,7 +117,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             affectedTags.ForEach(t => t.CommPkgNo = toCommPkg);
         }
 
-        public void RenameMcPkg(string fromMcPkgNo, string toMcPkgNo, string commPkgNo)
+        public void RenameMcPkg(string commPkgNo, string fromMcPkgNo, string toMcPkgNo)
         {
             if (string.IsNullOrWhiteSpace(fromMcPkgNo) || string.IsNullOrWhiteSpace(toMcPkgNo) || string.IsNullOrWhiteSpace(commPkgNo))
             {
@@ -129,5 +129,4 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             affectedTags.ForEach(t => t.McPkgNo = toMcPkgNo);
         }
     }
-
 }

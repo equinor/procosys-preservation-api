@@ -37,17 +37,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         private Mock<ITagFunctionRepository> _tagFunctionRepository;
         private TagFunction _tagFunction;
 
-        private const string plant = "PCS$HEIMDAL";
-        private const string code = "Resp_Code";
-        private const string description = "789";
-        private const string newDescription = "Odfjeld Drilling Instalation";
-        private const string project1Name = "Project 1";
-        private const string project2Name = "Project 2";
-        private const string project1Description = "Description 1";
-        private const string project2Description = "Description 2";
-        private const string tagFunctionCode = "Code9";
-        private const string registerCode = "ElRegisterCode";
-        private const string tagFunctionDescription = "Tag function description";
+        private const string Plant = "PCS$HEIMDAL";
+        private const string Code = "Resp_Code";
+        private const string Description = "789";
+        private const string NewDescription = "Odfjeld Drilling Instalation";
+        private const string Project1Name = "Project 1";
+        private const string Project2Name = "Project 2";
+        private const string Project1Description = "Description 1";
+        private const string Project2Description = "Description 2";
+        private const string TagFunctionCode = "Code9";
+        private const string RegisterCode = "ElRegisterCode";
+        private const string TagFunctionDescription = "Tag function description";
 
         private Tag _tag1;
         private Tag _tag2;
@@ -76,20 +76,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             // Assert tags in preservation
             var rdMock = new Mock<RequirementDefinition>();
-            rdMock.SetupGet(rd => rd.Plant).Returns(plant);
+            rdMock.SetupGet(rd => rd.Plant).Returns(Plant);
 
             var stepMock = new Mock<Step>();
-            stepMock.SetupGet(s => s.Plant).Returns(plant);
-            _tag1 = new Tag(plant, TagType.Standard, TagNo1, OldTagDescription1, stepMock.Object, new List<TagRequirement>
+            stepMock.SetupGet(s => s.Plant).Returns(Plant);
+            _tag1 = new Tag(Plant, TagType.Standard, TagNo1, OldTagDescription1, stepMock.Object, new List<TagRequirement>
             {
-                new TagRequirement(plant, 4, rdMock.Object)
+                new TagRequirement(Plant, 4, rdMock.Object)
             });
             _tag1.McPkgNo = McPkg1;
             _tag1.CommPkgNo = CommPkg1;
 
-            _tag2 = new Tag(plant, TagType.Standard, TagNo2, OldTagDescription2, stepMock.Object, new List<TagRequirement>
+            _tag2 = new Tag(Plant, TagType.Standard, TagNo2, OldTagDescription2, stepMock.Object, new List<TagRequirement>
             {
-                new TagRequirement(plant, 4, rdMock.Object)
+                new TagRequirement(Plant, 4, rdMock.Object)
             });
             _tag2.McPkgNo = McPkg2;
             _tag2.CommPkgNo = CommPkg2;
@@ -99,27 +99,27 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                 _tag1, _tag2
             };
 
-            _responsible = new Responsible(plant, code, description);
-            _responsibleRepository.Setup(r => r.GetByCodeAsync(code)).Returns(Task.FromResult(_responsible));
+            _responsible = new Responsible(Plant, Code, Description);
+            _responsibleRepository.Setup(r => r.GetByCodeAsync(Code)).Returns(Task.FromResult(_responsible));
 
-            _project1 = new Project(plant, project1Name, project1Description);
+            _project1 = new Project(Plant, Project1Name, Project1Description);
             _project1.AddTag(_tag1);
             _project1.AddTag(_tag2);
-            _projectRepository.Setup(p => p.GetStandardTagsInProjectOnlyAsync(project1Name))
+            _projectRepository.Setup(p => p.GetStandardTagsInProjectOnlyAsync(Project1Name))
                 .Returns(Task.FromResult(tags));
-            _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(project1Name))
+            _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(Project1Name))
                 .Returns(Task.FromResult(_project1));
-            _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(project1Name))
+            _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project1Name))
                 .Returns(Task.FromResult(_project1));
-            _project2 = new Project(plant, project2Name, project2Description);
-            _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(project2Name))
+            _project2 = new Project(Plant, Project2Name, Project2Description);
+            _projectRepository.Setup(p => p.GetProjectWithTagsByNameAsync(Project2Name))
                 .Returns(Task.FromResult(_project2));
-            _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(project2Name))
+            _projectRepository.Setup(p => p.GetProjectOnlyByNameAsync(Project2Name))
                 .Returns(Task.FromResult(_project2));
             _projectRepository.Setup(p => p.Add(It.IsAny<Project>())).Callback((Project p) => _newProjectCreated = p);
 
-            _tagFunction = new TagFunction(plant, tagFunctionCode, tagFunctionDescription, registerCode);
-            _tagFunctionRepository.Setup(t => t.GetByCodesAsync(tagFunctionCode, registerCode))
+            _tagFunction = new TagFunction(Plant, TagFunctionCode, TagFunctionDescription, RegisterCode);
+            _tagFunctionRepository.Setup(t => t.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));
             var synchronizationOptions = new Mock<IOptionsMonitor<SynchronizationOptions>>();
             synchronizationOptions.Setup(s => s.CurrentValue).Returns(new SynchronizationOptions{UserOid = Guid.NewGuid()});
@@ -127,7 +127,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var claimsProvider = new Mock<IClaimsProvider>();
             claimsProvider.Setup(c => c.GetCurrentUser()).Returns(new ClaimsPrincipal());
             var projectApiService = new Mock<IProjectApiService>();
-            projectApiService.Setup(p => p.TryGetProjectAsync(plant, _projectNotInPreservation)).Returns(Task.FromResult(new PCSProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
+            projectApiService.Setup(p => p.TryGetProjectAsync(Plant, _projectNotInPreservation)).Returns(Task.FromResult(new PCSProject{Description = "Project Description", IsClosed = false, Name = _projectNotInPreservation}));
 
             _dut = new BusReceiverService(_plantSetter.Object,
                                           _unitOfWork.Object,
@@ -149,16 +149,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingProjectTopicWithoutFailure()
         {
             // Arrange
-            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{project1Name}\", \"IsClosed\" : true, \"Description\" : \"{newDescription}\"}}";
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"IsClosed\" : true, \"Description\" : \"{NewDescription}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(project1Name), Times.Once);
-            Assert.AreEqual(newDescription, _project1.Description);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(Project1Name), Times.Once);
+            Assert.AreEqual(NewDescription, _project1.Description);
             Assert.AreEqual(true, _project1.IsClosed);
         }
 
@@ -168,15 +168,15 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             // Arrange
             var unknownProjectDescription = "UnknownProjectDescription";
             var unknownProjectName = "Project";
-            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{unknownProjectName}\", \"IsClosed\" : true, \"Description\" : \"{unknownProjectDescription}\"}}";
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{unknownProjectName}\", \"IsClosed\" : true, \"Description\" : \"{unknownProjectDescription}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(project1Name), Times.Never);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(Project1Name), Times.Never);
             _projectRepository.Verify(i => i.GetProjectOnlyByNameAsync(unknownProjectName), Times.Once);
             Assert.AreNotEqual(unknownProjectDescription, _project1.Description);
             Assert.AreNotEqual(unknownProjectDescription, _project2.Description);
@@ -187,7 +187,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingProjectTopic_ShouldFailIfMissingPlan()
         {
             // Arrange
-            var messageWithoutPlant = $"{{\"ProjectName\" : \"{project1Name}\", \"IsClosed\" : true, \"Description\" : \"{newDescription}\"}}";
+            var messageWithoutPlant = $"{{\"ProjectName\" : \"{Project1Name}\", \"IsClosed\" : true, \"Description\" : \"{NewDescription}\"}}";
             
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutPlant, new CancellationToken(false));
@@ -197,7 +197,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingProjectTopic_ShouldFailIfMissingPlantOrProjectName()
         {
             // Arrange
-            var messageWithoutProjectName = $"{{\"Plant\" : \"{plant}\", \"IsClosed\" : true, \"Description\" : \"{newDescription}\"}}";
+            var messageWithoutProjectName = $"{{\"Plant\" : \"{Plant}\", \"IsClosed\" : true, \"Description\" : \"{NewDescription}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Project, messageWithoutProjectName, new CancellationToken(false));
@@ -207,7 +207,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingProjectTopic_ShouldFailIfEmpty()
         {
             // Arrange
-            var message = $"{{}}";
+            var message = "{}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Project, message, new CancellationToken(false));
@@ -219,8 +219,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingTagFunctionTopicWithoutFailure()
         {
             // Arrange
-            var message = $"{{ \"Plant\" : \"{plant}\", \"RegisterCode\" : \"{registerCode}\", \"Code\" : \"{tagFunctionCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : true}}";
-            Assert.AreNotEqual(newDescription, _tagFunction.Description);
+            var message = $"{{ \"Plant\" : \"{Plant}\", \"RegisterCode\" : \"{RegisterCode}\", \"Code\" : \"{TagFunctionCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : true}}";
+            Assert.AreNotEqual(NewDescription, _tagFunction.Description);
             Assert.AreNotEqual(true, _tagFunction.IsVoided);
 
             // Act
@@ -228,9 +228,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(tagFunctionCode, registerCode), Times.Once);
-            Assert.AreEqual(newDescription, _tagFunction.Description);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(TagFunctionCode, RegisterCode), Times.Once);
+            Assert.AreEqual(NewDescription, _tagFunction.Description);
             Assert.AreEqual(true, _tagFunction.IsVoided);
         }
 
@@ -240,7 +240,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             // Arrange
             var newRegisterCode = "A new register";
             var newTagFunctionCode = "And a new tag function Code";
-            var message = $"{{ \"Plant\" : \"{plant}\", \"Code\" : \"{newTagFunctionCode}\", \"CodeOld\" : \"{tagFunctionCode}\", \"RegisterCode\" : \"{newRegisterCode}\", \"RegisterCodeOld\" : \"{registerCode}\", \"IsVoided\" : true, \"Description\" : \"{newDescription}\"}}";
+            var message = $"{{ \"Plant\" : \"{Plant}\", \"Code\" : \"{newTagFunctionCode}\", \"CodeOld\" : \"{TagFunctionCode}\", \"RegisterCode\" : \"{newRegisterCode}\", \"RegisterCodeOld\" : \"{RegisterCode}\", \"IsVoided\" : true, \"Description\" : \"{NewDescription}\"}}";
             Assert.AreEqual(false, _tagFunction.IsVoided);
 
             // Act
@@ -248,9 +248,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(tagFunctionCode, registerCode), Times.Once);
-            Assert.AreEqual(newDescription, _tagFunction.Description);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(TagFunctionCode, RegisterCode), Times.Once);
+            Assert.AreEqual(NewDescription, _tagFunction.Description);
             Assert.AreEqual(true, _tagFunction.IsVoided);
             Assert.AreEqual(newRegisterCode, _tagFunction.RegisterCode);
             Assert.AreEqual(newTagFunctionCode, _tagFunction.Code);
@@ -261,17 +261,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         {
             // Arrange
             var unknownCode = "UnknownCode";
-            var message = $"{{ \"Plant\" : \"{plant}\", \"RegisterCode\" : \"{registerCode}\", \"Code\" : \"{unknownCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : false}}";
+            var message = $"{{ \"Plant\" : \"{Plant}\", \"RegisterCode\" : \"{RegisterCode}\", \"Code\" : \"{unknownCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : false}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(tagFunctionCode, registerCode), Times.Never);
-            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(unknownCode, registerCode), Times.Once);
-            Assert.AreNotEqual(newDescription, _tagFunction.Description);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(TagFunctionCode, RegisterCode), Times.Never);
+            _tagFunctionRepository.Verify(i => i.GetByCodesAsync(unknownCode, RegisterCode), Times.Once);
+            Assert.AreNotEqual(NewDescription, _tagFunction.Description);
         }
 
         [TestMethod]
@@ -279,7 +279,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingTagFunctionTopic_ShouldFailIfMissingPlant()
         {
             // Arrange
-            var messageWithoutPlant = $"{{ \"RegisterCode\" : \"{registerCode}\", \"Code\" : \"{tagFunctionCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : false}}";
+            var messageWithoutPlant = $"{{ \"RegisterCode\" : \"{RegisterCode}\", \"Code\" : \"{TagFunctionCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : false}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutPlant, new CancellationToken(false));
@@ -290,7 +290,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingTagFunctionTopic_ShouldFailIfMissingTagFunctionCode()
         {
             // Arrange
-            var messageWithoutTagFunctionCode = $"{{ \"Plant\" : \"{plant}\", \"RegisterCode\" : \"{registerCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : false}}";
+            var messageWithoutTagFunctionCode = $"{{ \"Plant\" : \"{Plant}\", \"RegisterCode\" : \"{RegisterCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : false}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutTagFunctionCode, new CancellationToken(false));
@@ -301,7 +301,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingTagFunctionTopic_ShouldFailIfMissingRegisterCode()
         {
             // Arrange
-            var messageWithoutRegisterCode = $"{{ \"Plant\" : \"{plant}\", \"Code\" : \"{tagFunctionCode}\", \"Description\" : \"{newDescription}\", \"IsVoided\" : false}}";
+            var messageWithoutRegisterCode = $"{{ \"Plant\" : \"{Plant}\", \"Code\" : \"{TagFunctionCode}\", \"Description\" : \"{NewDescription}\", \"IsVoided\" : false}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.TagFunction, messageWithoutRegisterCode, new CancellationToken(false));
@@ -312,7 +312,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingTagFunctionTopic_ShouldFailIfEmpty()
         {
             // Arrange
-            var message = $"{{}}";
+            var message = "{}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.TagFunction, message, new CancellationToken(false));
@@ -324,16 +324,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingResponsibleTopicWithoutFailure()
         {
             // Arrange
-            var message = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{code}\", \"Description\" : \"{newDescription}\"}}";
+            var message = $"{{ \"Plant\" : \"{Plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{Code}\", \"Description\" : \"{NewDescription}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _responsibleRepository.Verify(i => i.GetByCodeAsync(code), Times.Once);
-            Assert.AreEqual(newDescription, _responsible.Description);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _responsibleRepository.Verify(i => i.GetByCodeAsync(Code), Times.Once);
+            Assert.AreEqual(NewDescription, _responsible.Description);
         }
 
         [TestMethod]
@@ -342,16 +342,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             // Arrange
             var codeNew = "Code2";
 
-            var message = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{codeNew}\", \"CodeOld\" : \"{code}\", \"IsVoided\" : false, \"Description\" : \"{newDescription}\"}}";
+            var message = $"{{ \"Plant\" : \"{Plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{codeNew}\", \"CodeOld\" : \"{Code}\", \"IsVoided\" : false, \"Description\" : \"{NewDescription}\"}}";
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _responsibleRepository.Verify(i => i.GetByCodeAsync(code), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _responsibleRepository.Verify(i => i.GetByCodeAsync(Code), Times.Once);
             Assert.AreEqual(codeNew, _responsible.Code);
-            Assert.AreEqual(newDescription, _responsible.Description);
+            Assert.AreEqual(NewDescription, _responsible.Description);
         }
 
         [TestMethod]
@@ -359,17 +359,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         {
             // Arrange
             var unknownCode = "UnknownCode";
-            var message = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{unknownCode}\", \"Description\" : \"{newDescription}\"}}";
+            var message = $"{{ \"Plant\" : \"{Plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{unknownCode}\", \"Description\" : \"{NewDescription}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
 
             // Assert
             _unitOfWork.Verify(u => u.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _responsibleRepository.Verify(i => i.GetByCodeAsync(code), Times.Never);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _responsibleRepository.Verify(i => i.GetByCodeAsync(Code), Times.Never);
             _responsibleRepository.Verify(i => i.GetByCodeAsync(unknownCode), Times.Once);
-            Assert.AreNotEqual(newDescription, _responsible.Description);
+            Assert.AreNotEqual(NewDescription, _responsible.Description);
         }
 
         [TestMethod]
@@ -377,7 +377,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingResponsibleTopic_ShouldFailIfMissingPlant()
         {
             // Arrange
-            var messageWithoutPlant = $"{{ \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{code}\", \"Description\" : \"{newDescription}\"}}";
+            var messageWithoutPlant = $"{{ \"ResponsibleGroup\" : \"INSTALLATION\", \"Code\" : \"{Code}\", \"Description\" : \"{NewDescription}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutPlant, new CancellationToken(false));
@@ -388,7 +388,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingResponsibleTopic_ShouldFailIfMissingResponsibleCode()
         {
             // Arrange
-            var messageWithoutResponsibleCode = $"{{ \"Plant\" : \"{plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Description\" : \"{newDescription}\"}}";
+            var messageWithoutResponsibleCode = $"{{ \"Plant\" : \"{Plant}\", \"ResponsibleGroup\" : \"INSTALLATION\", \"Description\" : \"{NewDescription}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, messageWithoutResponsibleCode, new CancellationToken(false));
@@ -398,7 +398,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingResponsibleTopic_ShouldFailIfEmpty()
         {
             // Arrange
-            var message = $"{{}}";
+            var message = "{}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Responsible, message, new CancellationToken(false));
@@ -410,14 +410,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingCommPkgTopic_Move_WithoutFailure()
         {
             // Arrange
-            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{project2Name}\", \"ProjectNameOld\" : \"{project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{description}\"}}";
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project2Name}\", \"ProjectNameOld\" : \"{Project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
 
             // Assert
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
-            _projectRepository.Verify(p => p.MoveCommPkgAsync(CommPkg1, project1Name, project2Name), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            _projectRepository.Verify(p => p.MoveCommPkgAsync(CommPkg1, Project1Name, Project2Name), Times.Once);
         }
 
         [TestMethod]
@@ -425,7 +425,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingCommPkgTopic_ShouldFailIfEmpty()
         {
             // Arrange
-            var message = $"{{}}";
+            var message = "{}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
@@ -437,7 +437,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingMcPkgTopicMove_ShouldFailIfNotBothOldValuesEitherNullOrNot()
         {
-            var message = $"{{\"Plant\" : \"Planten\", \"ProjectName\" : \"P1\", \"CommPkgNo\" :\"C1\", \"McPkgNo\" : \"M2\", \"McPkgNoOld\" : \"M2\", \"Description\" : \"Desc\"}}";
+            var message = "{\"Plant\" : \"OnePlant\", \"ProjectName\" : \"P1\", \"CommPkgNo\" :\"C1\", \"McPkgNo\" : \"M2\", \"McPkgNoOld\" : \"M2\", \"Description\" : \"Desc\"}";
 
             await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
         }
@@ -448,13 +448,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             // Arrange
             var toMcPkg = "B";
             var toCommPkg = "D";
-            var message = $"{{\"Plant\" : \"{plant}\", \"ProjectName\" : \"{project1Name}\", \"CommPkgNo\" :\"{toCommPkg}\", \"CommPkgNoOld\" :\"{_tag1.CommPkgNo}\", \"McPkgNo\" : \"{toMcPkg}\", \"McPkgNoOld\" : \"{_tag1.McPkgNo}\", \"Description\" : \"Desc\"}}";
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"CommPkgNo\" :\"{toCommPkg}\", \"CommPkgNoOld\" :\"{_tag1.CommPkgNo}\", \"McPkgNo\" : \"{toMcPkg}\", \"McPkgNoOld\" : \"{_tag1.McPkgNo}\", \"Description\" : \"Desc\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
 
             // Assert
-            _plantSetter.Verify(p => p.SetPlant(plant), Times.Once);
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
             Assert.AreEqual(toMcPkg, _tag1.McPkgNo);
             Assert.AreEqual(toCommPkg, _tag1.CommPkgNo);
         }
@@ -464,7 +464,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingMcPkgTopic_ShouldFailIfEmpty()
         {
             // Arrange
-            var message = $"{{}}";
+            var message = "{}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
@@ -477,7 +477,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandlingTagTopic_ShouldFailIfEmpty()
         {
             // Arrange
-            var message = $"{{}}";
+            var message = "{}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
@@ -488,8 +488,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandleTagTopic_ShouldFailIfMissingTagNo()
         {
             // Arrange
-            string message =
-                $"{{\"ProjectName\" : \"{project1Name}\",\"Plant\" : \"{plant}\"}}";
+            var message =
+                $"{{\"ProjectName\" : \"{Project1Name}\",\"Plant\" : \"{Plant}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
@@ -500,8 +500,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandleTagTopic_ShouldFailIfMissingProjectName()
         {
             // Arrange
-            string message =
-                $"{{\"TagNo\" : \"{TagNo1}\",\"Plant\" : \"{plant}\"}}";
+            var message =
+                $"{{\"TagNo\" : \"{TagNo1}\",\"Plant\" : \"{Plant}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
@@ -512,8 +512,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         public async Task HandleTagTopic_ShouldFailIfMissingPlant()
         {
             // Arrange
-            string message =
-                $"{{\"TagNo\" : \"{TagNo1}\",\"ProjectName\" : \"{project1Name}\"}}";
+            var message =
+                $"{{\"TagNo\" : \"{TagNo1}\",\"ProjectName\" : \"{Project1Name}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
@@ -529,9 +529,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var disciplineDescription = "ABC Desc";
             var callOffNo = "123";
             var poNo = "321";
-            var tagFuncionCodeNew = "FCS123";
-            string message =
-                $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFuncionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{plant}\"}}";
+            var tagFunctionCodeNew = "FCS123";
+            var message =
+                $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
@@ -545,7 +545,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
             Assert.IsTrue(_tag1.IsVoided);
-            Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
+            Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
         }
 
         [TestMethod]
@@ -559,9 +559,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var disciplineDescription = "ABC Desc";
             var callOffNo = "123";
             var poNo = "321";
-            var tagFuncionCodeNew = "FCS123";
-            string message =
-                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFuncionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{plant}\"}}";
+            var tagFunctionCodeNew = "FCS123";
+            var message =
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
@@ -575,7 +575,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
             Assert.IsTrue(_tag1.IsVoided);
-            Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
+            Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
         }
 
         [TestMethod]
@@ -589,9 +589,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var disciplineDescription = "ABC Desc";
             var callOffNo = "123";
             var poNo = "321";
-            var tagFuncionCodeNew = "FCS123";
-            string message =
-                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{project1Name}\",\"ProjectName\" : \"{project2Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFuncionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{plant}\"}}";
+            var tagFunctionCodeNew = "FCS123";
+            var message =
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{Project1Name}\",\"ProjectName\" : \"{Project2Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Assert
             Assert.IsTrue(_project1.Tags.Contains(_tag1));
@@ -609,7 +609,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
             Assert.IsTrue(_tag1.IsVoided);
-            Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
+            Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
             Assert.IsTrue( _project2.Tags.Contains(_tag1));
         }
 
@@ -624,10 +624,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var disciplineDescription = "ABC Desc";
             var callOffNo = "123";
             var poNo = "321";
-            var tagFuncionCodeNew = "FCS123";
+            var tagFunctionCodeNew = "FCS123";
 
-            string message =
-                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{project1Name}\",\"ProjectName\" : \"{_projectNotInPreservation}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFuncionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{plant}\"}}";
+            var message =
+                $"{{\"TagNo\" : \"{tagNew}\",\"TagNoOld\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectNameOld\" : \"{Project1Name}\",\"ProjectName\" : \"{_projectNotInPreservation}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
             // Assert
             Assert.IsTrue(_project1.Tags.Contains(_tag1));
@@ -645,7 +645,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
             Assert.IsTrue(_tag1.IsVoided);
-            Assert.AreEqual(tagFuncionCodeNew, _tag1.TagFunctionCode);
+            Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
             Assert.IsNotNull(_newProjectCreated);
             Assert.IsTrue(_newProjectCreated.Tags.Contains(_tag1));
         }

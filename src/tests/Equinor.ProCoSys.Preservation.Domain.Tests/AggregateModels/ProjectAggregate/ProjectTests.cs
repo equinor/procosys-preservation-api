@@ -110,14 +110,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void RenameMcPkg_ShouldRenameOnAffectedTags()
         {
-            // Assert 
+            // Arrange & Assert
             Assert.AreEqual(McPkgNo, _tag.McPkgNo);
             Assert.AreEqual(CommPkgNo, _tag.CommPkgNo);
             Assert.AreEqual(McPkgNo2, _tag2.McPkgNo);
             Assert.AreEqual(CommPkgNo2, _tag2.CommPkgNo);
-
-            // Arrange
             var toMcPkg = "New name";
+
             // Act
             _dut.RenameMcPkg(McPkgNo, toMcPkg, CommPkgNo);
 
@@ -141,14 +140,13 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         [TestMethod]
         public void MoveMcPkg_ShouldRenameOnAffectedTags()
         {
-            // Assert 
+            // Arrange & Assert 
             Assert.AreEqual(McPkgNo, _tag.McPkgNo);
             Assert.AreEqual(CommPkgNo, _tag.CommPkgNo);
             Assert.AreEqual(McPkgNo2, _tag2.McPkgNo);
             Assert.AreEqual(CommPkgNo2, _tag2.CommPkgNo);
-
-            // Arrange
             var toCommPkg = "New name";
+
             // Act
             _dut.MoveMcPkg(McPkgNo, CommPkgNo, toCommPkg);
 

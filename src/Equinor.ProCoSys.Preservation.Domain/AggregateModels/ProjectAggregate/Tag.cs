@@ -556,7 +556,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
         {
             if (string.IsNullOrWhiteSpace(newTagNo))
             {
-                throw new Exception("Not allowed to blank out tag no!");
+                throw new ArgumentNullException("{nameof(newTagNo)}");
             }
 
             TagNo = newTagNo;
