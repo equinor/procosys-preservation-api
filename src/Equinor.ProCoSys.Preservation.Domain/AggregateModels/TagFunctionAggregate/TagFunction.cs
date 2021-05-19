@@ -107,7 +107,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggreg
         {
             if (string.IsNullOrWhiteSpace(newCode) || string.IsNullOrWhiteSpace(newRegisterCode))
             {
-                throw new ArgumentNullException($"{nameof(newCode)} or {nameof(newRegisterCode)}";
+                throw new ArgumentNullException($"{nameof(newCode)} or {nameof(newRegisterCode)}");
             }
             Code = newCode;
             RegisterCode = newRegisterCode;

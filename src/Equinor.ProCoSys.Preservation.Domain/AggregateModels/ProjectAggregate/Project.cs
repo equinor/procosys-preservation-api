@@ -47,6 +47,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"Can't relate item in {tag.Plant} to item in {Plant}");
             }
 
+            if (_tags.Any(t => t.TagNo == tag.TagNo))
+            {
+                throw new ArgumentException($"Tag {tag.TagNo} already exists in project");
+            }
+
             _tags.Add(tag);
         }
 
@@ -127,6 +132,22 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             var affectedTags = _tags.Where(t => t.CommPkgNo == commPkgNo && t.McPkgNo == fromMcPkgNo).ToList();
 
             affectedTags.ForEach(t => t.McPkgNo = toMcPkgNo);
+        }
+
+        public void MoveToProject(Tag tag, Project toProject)
+        {
+            if (tag == null)
+            {
+                throw new ArgumentNullException(nameof(tag));
+            }
+
+            if (toProject == null)
+            {
+                throw new ArgumentNullException(nameof(toProject));
+            }
+
+            _tags.Remove(tag);
+            toProject.AddTag(tag);
         }
     }
 }

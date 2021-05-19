@@ -409,7 +409,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         [TestMethod]
         public async Task HandlingCommPkgTopic_Move_WithoutFailure()
         {
-            // Arrange
+            // Arrange & Assert
+            Assert.IsFalse(_project2.Tags.Contains(_tag1));
             var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project2Name}\", \"ProjectNameOld\" : \"{Project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
 
             // Act
@@ -417,7 +418,36 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             // Assert
             _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
-            _projectRepository.Verify(p => p.MoveCommPkgAsync(CommPkg1, Project1Name, Project2Name), Times.Once);
+            Assert.IsTrue(_project2.Tags.Contains(_tag1));
+        }
+
+        [TestMethod]
+        public async Task HandlingCommPkgTopic_Move_ShouldCreateWhenProjectIsNotFoundLocallyButInMain()
+        {
+            // Arrange & Assert
+            Assert.IsTrue(_project1.Tags.Contains(_tag1));
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{_projectNotInPreservation}\", \"ProjectNameOld\" : \"{Project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+
+            // Assert
+            _projectRepository.Verify(p => p.Add(It.IsAny<Project>()));
+            Assert.IsTrue(_newProjectCreated.Tags.Contains(_tag1));
+            Assert.IsFalse(_project1.Tags.Contains(_tag1));
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public async Task HandlingCommPkgTopic_Move_ShouldFailWhenProjectIsNotFoundInMain()
+        {
+            // Arrange & Assert
+            var unknownProject = "NotKnown";
+            Assert.IsFalse(_project2.Tags.Contains(_tag1));
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{unknownProject}\", \"ProjectNameOld\" : \"{Project1Name}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
         }
 
         [TestMethod]

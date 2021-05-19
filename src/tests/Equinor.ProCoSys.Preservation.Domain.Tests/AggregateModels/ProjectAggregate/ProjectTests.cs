@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _tag = new Tag(TestPlant, TagType.Standard, "Tag1", "", _stepMock.Object,
                 new List<TagRequirement> { _reqMock.Object })
             { McPkgNo = McPkgNo, CommPkgNo = CommPkgNo };
-            _tag2 = new Tag(TestPlant, TagType.Standard, "Tag1", "", _stepMock.Object,
+            _tag2 = new Tag(TestPlant, TagType.Standard, "Tag2", "", _stepMock.Object,
                     new List<TagRequirement> { _reqMock.Object })
             { McPkgNo = McPkgNo2, CommPkgNo = CommPkgNo2 };
             _dut = new Project(TestPlant, "ProjectNameA", "DescA");
@@ -118,7 +118,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             var toMcPkg = "New name";
 
             // Act
-            _dut.RenameMcPkg(McPkgNo, toMcPkg, CommPkgNo);
+            _dut.RenameMcPkg(CommPkgNo, McPkgNo, toMcPkg);
 
             // Assert
             Assert.AreEqual(toMcPkg, _tag.McPkgNo);
@@ -132,9 +132,9 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RenameMcPkg_ShouldFailIfEmptyParameter()
         {
             // Act
-            _dut.RenameMcPkg("", "NewName", CommPkgNo);
-            _dut.RenameMcPkg(McPkgNo, "", CommPkgNo);
-            _dut.RenameMcPkg(McPkgNo, "NewName", "");
+            _dut.RenameMcPkg(CommPkgNo, "", "NewName");
+            _dut.RenameMcPkg(CommPkgNo, McPkgNo, "");
+            _dut.RenameMcPkg("", McPkgNo, "NewName");
         }
 
         [TestMethod]
@@ -167,5 +167,18 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dut.MoveMcPkg(McPkgNo, CommPkgNo, " ");
         }
 
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentException))]
+        public void AddTag_ShouldFailIfAlreadyExists()
+        {
+            // Arrange
+            var aNewTag = new Tag(TestPlant, TagType.Standard, "Tag1", "", _stepMock.Object,
+                new List<TagRequirement> {_reqMock.Object});
+
+            // Act
+            _dut.AddTag(aNewTag);
+
+
+        }
     }
 }

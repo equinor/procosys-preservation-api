@@ -59,33 +59,27 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             var req2 = new TagRequirement(TestPlant, 2, rdMock.Object);
             var req3 = new TagRequirement(TestPlant, 4, rdMock.Object);
             _standardTag1With3Reqs = new Tag(TestPlant, TagType.Standard, StandardTagNo1, "Desc", step,
-               new List<TagRequirement> { req1, req2, req3 })
-            { CommPkgNo = CommPkg1, McPkgNo = McPkg1 };
+                new List<TagRequirement> {req1, req2, req3}) {CommPkgNo = CommPkg1, McPkgNo = McPkg1};
             _standardTag1With3Reqs.SetProtectedIdForTesting(StandardTagId1);
             project1.AddTag(_standardTag1With3Reqs);
 
             var reqTag2 = new TagRequirement(TestPlant, 1, rdMock.Object);
             _standardTag2 = new Tag(TestPlant, TagType.Standard, StandardTagNo2, "Desc2", step,
-                    new List<TagRequirement> { reqTag2 })
-            { CommPkgNo = CommPkg2, McPkgNo = McPkg2 };
+                new List<TagRequirement> {reqTag2}) {CommPkgNo = CommPkg2, McPkgNo = McPkg2};
             _standardTag2.SetProtectedIdForTesting(StandardTagId2);
             project1.AddTag(_standardTag2);
 
             var req4 = new TagRequirement(TestPlant, 1, rdMock.Object);
             var req5 = new TagRequirement(TestPlant, 2, rdMock.Object);
             var req6 = new TagRequirement(TestPlant, 4, rdMock.Object);
-            var poTag = new Tag(TestPlant, TagType.PoArea, PoTagNo, "Desc", step, new List<TagRequirement>
-            {
-                req4,
-                req5,
-                req6
-            });
+            var poTag = new Tag(TestPlant, TagType.PoArea, PoTagNo, "Desc", step,
+                new List<TagRequirement> {req4, req5, req6});
             poTag.SetProtectedIdForTesting(PoTagId);
             project1.AddTag(poTag);
 
             var project2 = new Project(TestPlant, ProjectNameWithoutTags, "Desc2");
 
-            var projects = new List<Project> { project1, project2 };
+            var projects = new List<Project> {project1, project2};
             var projectsSetMock = projects.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -93,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 .Setup(x => x.Projects)
                 .Returns(projectsSetMock.Object);
 
-            var tags = new List<Tag> { _standardTag1With3Reqs, poTag };
+            var tags = new List<Tag> {_standardTag1With3Reqs, poTag};
             _tagsSetMock = tags.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -101,7 +95,16 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
                 .Setup(x => x.Tags)
                 .Returns(_tagsSetMock.Object);
 
-            var reqs = new List<TagRequirement> { req1, req2, req3, req4, req5, req6, reqTag2 };
+            var reqs = new List<TagRequirement>
+            {
+                req1,
+                req2,
+                req3,
+                req4,
+                req5,
+                req6,
+                reqTag2
+            };
             _reqsSetMock = reqs.AsQueryable().BuildMockDbSet();
 
             ContextHelper
@@ -151,7 +154,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetTagsByTagIdsAsync_KnownTag_ShouldReturnTag()
         {
-            var result = await _dut.GetTagsByTagIdsAsync(new List<int> { StandardTagId1 });
+            var result = await _dut.GetTagsByTagIdsAsync(new List<int> {StandardTagId1});
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(StandardTagId1, result.First().Id);
@@ -160,7 +163,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetTagsByTagIdsAsync_UnknownTag_ShouldReturnEmptyList()
         {
-            var result = await _dut.GetTagsByTagIdsAsync(new List<int> { 9187 });
+            var result = await _dut.GetTagsByTagIdsAsync(new List<int> {9187});
 
             Assert.AreEqual(0, result.Count);
         }
@@ -168,7 +171,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         [TestMethod]
         public async Task GetStandardTagsInProjectInStepsAsync_ShouldReturnTags()
         {
-            var result = await _dut.GetStandardTagsInProjectInStepsAsync(ProjectNameWithTags, new List<string> { StandardTagNo1, PoTagNo }, new List<int> { StepId });
+            var result = await _dut.GetStandardTagsInProjectInStepsAsync(ProjectNameWithTags,
+                new List<string> {StandardTagNo1, PoTagNo}, new List<int> {StepId});
 
             Assert.AreEqual(1, result.Count);
             Assert.AreEqual(StandardTagNo1, result.Single().TagNo);
@@ -220,52 +224,5 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
             // Assert
             Assert.IsNull(project);
         }
-
-        [TestMethod]
-        public async Task MoveCommPkg_ShouldMoveToOtherProject()
-        {
-            // Assert
-            Assert.IsTrue(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithTags).Tags.Contains(_standardTag1With3Reqs));
-            Assert.IsTrue(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithTags).Tags.Contains(_standardTag2));
-            Assert.IsFalse(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithoutTags).Tags.Contains(_standardTag1With3Reqs));
-            Assert.IsFalse(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithoutTags).Tags.Contains(_standardTag2));
-
-            // Act
-            await _dut.MoveCommPkgAsync(CommPkg1, ProjectNameWithTags, ProjectNameWithoutTags);
-
-            // Assert
-            Assert.IsFalse(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithTags).Tags.Contains(_standardTag1With3Reqs));
-            Assert.IsTrue(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithTags).Tags.Contains(_standardTag2));
-            Assert.IsTrue(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithoutTags).Tags.Contains(_standardTag1With3Reqs));
-            Assert.IsFalse(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithoutTags).Tags.Contains(_standardTag2));
-        }
-
-        [TestMethod]
-        public async Task MoveCommPkg_WhenCommPkgNotExist_ShouldDoNothing()
-        {
-            // Assert
-            Assert.IsTrue(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithTags).Tags.Contains(_standardTag1With3Reqs));
-            Assert.IsTrue(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithTags).Tags.Contains(_standardTag2));
-
-            // Act
-            await _dut.MoveCommPkgAsync("Unknow comm pkg", ProjectNameWithTags, ProjectNameWithoutTags);
-
-
-            // Assert
-            Assert.IsTrue(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithTags).Tags.Contains(_standardTag1With3Reqs));
-            Assert.IsTrue(_dut.GetAllProjectsOnlyAsync().Result.Single(p => p.Name == ProjectNameWithTags).Tags.Contains(_standardTag2));
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        // Act
-        public async Task MoveCommPkg_WhenFromProjectDoesNotExist_ShouldFail() =>
-            await _dut.MoveCommPkgAsync(CommPkg1, "Unknown from project", ProjectNameWithTags);
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        // Act
-        public async Task MoveCommPkg_WhenToProjectDoesNotExist_ShouldFail() =>
-            await _dut.MoveCommPkgAsync(CommPkg1, ProjectNameWithTags, "Unknown project");
     }
 }

@@ -100,9 +100,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private async Task ProcessTagEvent(string messageJson)
         {
             var tagEvent = JsonSerializer.Deserialize<TagTopic>(messageJson);
-            if (string.IsNullOrWhiteSpace(tagEvent.Plant) ||
-                string.IsNullOrWhiteSpace(tagEvent.TagNo) ||
-                string.IsNullOrWhiteSpace(tagEvent.ProjectName))
+            if (tagEvent.Plant.IsEmpty() ||
+                tagEvent.TagNo.IsEmpty() ||
+                tagEvent.ProjectName.IsEmpty())
             {
                 throw new ArgumentNullException($"Unable to deserialize JSON to TagEvent {messageJson}");
             }
@@ -111,10 +111,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _plantSetter.SetPlant(tagEvent.Plant);
 
-            var tagToUpdateProjectName = !string.IsNullOrWhiteSpace(tagEvent.ProjectNameOld)
+            var tagToUpdateProjectName = !tagEvent.ProjectNameOld.IsEmpty()
                 ? tagEvent.ProjectNameOld
                 : tagEvent.ProjectName;
-            var tagToUpdateTagNo = !string.IsNullOrWhiteSpace(tagEvent.TagNoOld)
+            var tagToUpdateTagNo = !tagEvent.TagNoOld.IsEmpty()
                 ? tagEvent.TagNoOld
                 : tagEvent.TagNo;
 
@@ -133,23 +133,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     tagToUpdate.Rename(tagEvent.TagNo);
                 }
 
-                if (!string.IsNullOrWhiteSpace(tagEvent.ProjectNameOld) &&
+                if (!tagEvent.ProjectNameOld.IsEmpty() &&
                     tagEvent.ProjectName != tagEvent.ProjectNameOld)
                 {
-                    var projectToMoveTagInto = await _projectRepository.GetProjectOnlyByNameAsync(tagEvent.ProjectName);
-                    if (projectToMoveTagInto == null)
-                    {
-                        var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
-                        _bearerTokenSetter.SetBearerToken(bearerToken, false);
+                    var projectToMoveTagInto = await FindOrCreatePreservationCopyOfProjectAsync(tagEvent.Plant, tagEvent.ProjectName);
 
-                        _currentUserSetter.SetCurrentUserOid(_synchronizationUserOid);
-                        var pcsProject = await _projectApiService.TryGetProjectAsync(tagEvent.Plant, tagEvent.ProjectName);
-                        projectToMoveTagInto = new Project(tagEvent.Plant, pcsProject.Name, pcsProject.Description);
-                        _projectRepository.Add(projectToMoveTagInto);
-                    }
-
-                    project.DetachFromProject(tagToUpdate);
-                    projectToMoveTagInto.AddTag(tagToUpdate);
+                    project.MoveToProject(tagToUpdate, projectToMoveTagInto);
                 }
 
                 tagToUpdate.SetArea(tagEvent.AreaCode, tagEvent.AreaDescription);
@@ -164,20 +153,41 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             }
         }
 
+        private async Task<Project> FindOrCreatePreservationCopyOfProjectAsync(string plant, string projectName)
+        {
+            var projectToMoveTagInto = await _projectRepository.GetProjectWithTagsByNameAsync(projectName);
+            if (projectToMoveTagInto == null)
+            {
+                var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
+                _bearerTokenSetter.SetBearerToken(bearerToken, false);
+
+                _currentUserSetter.SetCurrentUserOid(_synchronizationUserOid);
+                var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName);
+                if (pcsProject == null)
+                {
+                    throw new ArgumentException($"Unable to create local copy of {projectName}, not found.");
+                }
+                projectToMoveTagInto = new Project(plant, pcsProject.Name, pcsProject.Description);
+                _projectRepository.Add(projectToMoveTagInto);
+            }
+
+            return projectToMoveTagInto;
+        }
+
         private async Task ProcessMcPkgEvent(string messageJson)
         {
             var mcPkgEvent = JsonSerializer.Deserialize<McPkgTopic>(messageJson);
 
-            if (string.IsNullOrWhiteSpace(mcPkgEvent.Plant) ||
-                string.IsNullOrWhiteSpace(mcPkgEvent.McPkgNo) ||
-                string.IsNullOrWhiteSpace(mcPkgEvent.CommPkgNo) ||
-                string.IsNullOrWhiteSpace(mcPkgEvent.ProjectName) ||
-                (string.IsNullOrWhiteSpace(mcPkgEvent.McPkgNoOld) != (string.IsNullOrWhiteSpace(mcPkgEvent.CommPkgNoOld))))
+            if (mcPkgEvent.Plant.IsEmpty() ||
+                mcPkgEvent.McPkgNo.IsEmpty() ||
+                mcPkgEvent.CommPkgNo.IsEmpty() ||
+                mcPkgEvent.ProjectName.IsEmpty() ||
+                (mcPkgEvent.McPkgNoOld.IsEmpty() != mcPkgEvent.CommPkgNoOld.IsEmpty()))
             {
                 throw new ArgumentNullException($"Unable to deserialize JSON to McPkgEvent {messageJson}");
             }
 
-            if (string.IsNullOrWhiteSpace(mcPkgEvent.McPkgNoOld) || string.IsNullOrWhiteSpace(mcPkgEvent.CommPkgNoOld))
+            if (mcPkgEvent.McPkgNoOld.IsEmpty() || mcPkgEvent.CommPkgNoOld.IsEmpty())
             {
                 // Nothing to do
                 return;
@@ -189,11 +199,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             var project = await _projectRepository.GetProjectWithTagsByNameAsync(mcPkgEvent.ProjectName);
 
-            if (!string.IsNullOrWhiteSpace(mcPkgEvent.McPkgNoOld))
+            if (!mcPkgEvent.McPkgNoOld.IsEmpty())
             {
                 if (mcPkgEvent.McPkgNoOld != mcPkgEvent.McPkgNo)
                 {
-                    project.RenameMcPkg(mcPkgEvent.McPkgNoOld, mcPkgEvent.McPkgNo, mcPkgEvent.CommPkgNoOld);
+                    project.RenameMcPkg(mcPkgEvent.CommPkgNoOld, mcPkgEvent.McPkgNoOld, mcPkgEvent.McPkgNo);
                 }
                 if (mcPkgEvent.CommPkgNoOld != mcPkgEvent.CommPkgNo)
                 {
@@ -206,14 +216,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         {
             var commPkgEvent = JsonSerializer.Deserialize<CommPkgTopic>(messageJson);
 
-            if (string.IsNullOrWhiteSpace(commPkgEvent.Plant) ||
-                string.IsNullOrWhiteSpace(commPkgEvent.CommPkgNo) ||
-                string.IsNullOrWhiteSpace(commPkgEvent.ProjectName))
+            if (commPkgEvent.Plant.IsEmpty() ||
+                commPkgEvent.CommPkgNo.IsEmpty() ||
+                commPkgEvent.ProjectName.IsEmpty())
             {
                 throw new ArgumentNullException($"Unable to deserialize JSON to CommPkgEvent {messageJson}");
             }
 
-            if (string.IsNullOrWhiteSpace(commPkgEvent.ProjectNameOld))
+            if (commPkgEvent.ProjectNameOld.IsEmpty())
             {
                 // Nothing to process
                 return;
@@ -223,18 +233,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _plantSetter.SetPlant(commPkgEvent.Plant);
 
-            await _projectRepository.MoveCommPkgAsync(
-                commPkgEvent.CommPkgNo,
-                commPkgEvent.ProjectNameOld,
-                commPkgEvent.ProjectName);
+            var fromProject = await _projectRepository.GetProjectWithTagsByNameAsync(commPkgEvent.ProjectNameOld);
+            if (fromProject == null)
+            {
+                throw new ArgumentException($"Unable to find project {commPkgEvent.ProjectNameOld}");
+            }
+
+            var toProject = await FindOrCreatePreservationCopyOfProjectAsync(commPkgEvent.Plant, commPkgEvent.ProjectName);
+
+            var tagsToMove = fromProject.Tags.Where(t => t.CommPkgNo == commPkgEvent.CommPkgNo).ToList();
+
+            tagsToMove.ForEach(t => fromProject.MoveToProject(t, toProject));
         }
 
         private async Task ProcessTagFunctionEvent(string messageJson)
         {
             var tagFunctionEvent = JsonSerializer.Deserialize<TagFunctionTopic>(messageJson);
-            if (string.IsNullOrWhiteSpace(tagFunctionEvent.Plant) ||
-                string.IsNullOrWhiteSpace(tagFunctionEvent.Code) ||
-                string.IsNullOrWhiteSpace(tagFunctionEvent.RegisterCode))
+            if (tagFunctionEvent.Plant.IsEmpty() ||
+                tagFunctionEvent.Code.IsEmpty() ||
+                tagFunctionEvent.RegisterCode.IsEmpty())
             {
                 throw new ArgumentNullException($"Unable to deserialize JSON to TagFunctionEven {messageJson}");
             }
@@ -243,8 +260,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _plantSetter.SetPlant(tagFunctionEvent.Plant);
 
-            if (!string.IsNullOrWhiteSpace(tagFunctionEvent.CodeOld) ||
-                !string.IsNullOrWhiteSpace(tagFunctionEvent.RegisterCodeOld))
+            if (!tagFunctionEvent.CodeOld.IsEmpty() ||
+                !tagFunctionEvent.RegisterCodeOld.IsEmpty())
             {
                 var tagFunction =
                     await _tagFunctionRepository.GetByCodesAsync(tagFunctionEvent.CodeOld, tagFunctionEvent.RegisterCodeOld);
@@ -265,13 +282,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     tagFunction.IsVoided = tagFunctionEvent.IsVoided;
                 }
             }
-            
         }
 
         private async Task ProcessProjectEvent(string messageJson)
         {
             var projectEvent = JsonSerializer.Deserialize<ProjectTopic>(messageJson);
-            if (string.IsNullOrWhiteSpace(projectEvent.Plant) || string.IsNullOrWhiteSpace(projectEvent.ProjectName))
+            if (projectEvent.Plant.IsEmpty() || projectEvent.ProjectName.IsEmpty())
             {
                 throw new ArgumentNullException($"Unable to deserialize JSON to ProjectEvent {messageJson}");
             }
@@ -291,7 +307,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private async Task ProcessResponsibleEvent(string messageJson)
         {
             var responsibleEvent = JsonSerializer.Deserialize<ResponsibleTopic>(messageJson);
-            if (string.IsNullOrWhiteSpace(responsibleEvent.Plant) || string.IsNullOrWhiteSpace(responsibleEvent.Code))
+            if (responsibleEvent.Plant.IsEmpty() || responsibleEvent.Code.IsEmpty())
             {
                 throw new ArgumentNullException($"Unable to deserialize JSON to ResponsibleEvent {messageJson}");
             }
@@ -300,7 +316,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             _plantSetter.SetPlant(responsibleEvent.Plant);
 
-            if (!string.IsNullOrWhiteSpace(responsibleEvent.CodeOld))
+            if (!responsibleEvent.CodeOld.IsEmpty())
             {
                 var responsible = await _responsibleRepository.GetByCodeAsync(responsibleEvent.CodeOld);
                 if (responsible != null)
