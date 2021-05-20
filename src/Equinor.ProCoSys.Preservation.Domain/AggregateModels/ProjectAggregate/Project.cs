@@ -97,19 +97,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             _tags.Remove(tag);
         }
 
-        public void DetachFromProject(Tag tag)
-        {
-            if (tag == null)
-            {
-                throw new ArgumentNullException(nameof(tag));
-            }
-
-            if (!_tags.Remove(tag))
-            {
-                throw new ArgumentException($"Can't detach tag {tag.TagNo} from project {Name} since it is not attached to the project");
-            }
-        }
-
         public void MoveMcPkg(string mcPkgNo, string fromCommPkg, string toCommPkg)
         {
             if (string.IsNullOrWhiteSpace(mcPkgNo) || string.IsNullOrWhiteSpace(fromCommPkg) || string.IsNullOrWhiteSpace(toCommPkg))
