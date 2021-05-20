@@ -1670,12 +1670,33 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region Void
 
         [TestMethod]
-        public void Void_ShouldAddTagVoidedEvent()
+        public void Void_ShouldAddTagVoidedEvent_WhenUnvoided()
         {
+            // Arrange
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+
+            // Act
             _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided = true;
 
+            // Assert
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
             Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
             Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(TagVoidedEvent));
+        }
+
+        [TestMethod]
+        public void Void_ShouldNotAddAnotherTagVoidedEvent_WhenAlreadyVoided()
+        {
+            // Arrange
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided = true;
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided = true;
+
+            // Assert
+            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
         }
 
         #endregion
@@ -1683,12 +1704,35 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region Unvoid
 
         [TestMethod]
-        public void Void_ShouldAddTagUnvoidedEvent()
+        public void Unvoid_ShouldAddTagUnvoidedEvent_WhenVoided()
         {
+            // Arrange
             _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided = true;
+            Assert.IsTrue(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+            
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided = false;
 
-            Assert.AreEqual(2, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
-            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(TagVoidedEvent));
+            // Assert
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            Assert.IsInstanceOfType(_dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Last(), typeof(TagUnvoidedEvent));
+        }
+
+        [TestMethod]
+        public void Unvoid_ShouldNotAddAnotherTagUnvoidedEvent_WhenAlreadyUnvoided()
+        {
+            // Arrange
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided = true;
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided = false;
+            Assert.IsFalse(_dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided);
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
+            
+            // Act
+            _dutWithOneReqNotNeedInputTwoWeekInterval.IsVoided = false;
+
+            // Assert
+            Assert.AreEqual(3, _dutWithOneReqNotNeedInputTwoWeekInterval.DomainEvents.Count);
         }
 
         #endregion
