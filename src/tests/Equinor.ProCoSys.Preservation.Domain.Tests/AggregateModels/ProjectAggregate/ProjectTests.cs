@@ -86,20 +86,6 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         }
 
         [TestMethod]
-        public void DetachTag_ShouldRemoveTagFromTagsList()
-        {
-            // Arrange
-            Assert.AreEqual(2, _dut.Tags.Count);
-            _tag.IsVoided = true;
-
-            // Act
-            _dut.DetachFromProject(_tag);
-
-            // Assert
-            Assert.AreEqual(1, _dut.Tags.Count);
-        }
-
-        [TestMethod]
         public void Close_ShouldCloseProject()
         {
             _dut.Close();
