@@ -1,4 +1,6 @@
-﻿using Equinor.ProCoSys.Preservation.BlobStorage;
+﻿using Equinor.ProCoSys.PcsServiceBus.Receiver;
+using Equinor.ProCoSys.PcsServiceBus.Receiver.Interfaces;
+using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.EventHandlers;
 using Equinor.ProCoSys.Preservation.Command.Validators;
 using Equinor.ProCoSys.Preservation.Command.Validators.ActionValidators;
@@ -130,6 +132,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IPermissionApiService, MainApiPermissionService>();
             services.AddScoped<ICertificateApiService, MainApiCertificateService>();
             services.AddScoped<IBlobStorage, AzureBlobService>();
+            services.AddScoped<IBusReceiverService, BusReceiverService>();
 
             services.AddScoped<IRequirementDefinitionValidator, RequirementDefinitionValidator>();
             services.AddScoped<ITagValidator, TagValidator>();
@@ -147,6 +150,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
 
             // Singleton - Created the first time they are requested
             services.AddSingleton<ICacheManager, CacheManager>();
+            services.AddSingleton<IBusReceiverServiceFactory, ScopedBusReceiverServiceFactory>();
         }
     }
 }

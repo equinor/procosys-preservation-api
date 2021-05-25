@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -27,6 +28,9 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 
         public Task<Project> GetProjectOnlyByNameAsync(string projectName)
             => Set.SingleOrDefaultAsync(p => p.Name == projectName);
+
+        public Task<Project> GetProjectWithTagsByNameAsync(string projectName)
+            => Set.Include(p => p.Tags).SingleOrDefaultAsync(p => p.Name == projectName);
 
         public Task<Tag> GetTagByTagIdAsync(int tagId)
             => DefaultQuery

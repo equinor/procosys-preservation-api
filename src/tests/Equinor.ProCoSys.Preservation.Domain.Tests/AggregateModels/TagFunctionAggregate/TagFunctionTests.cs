@@ -10,7 +10,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.TagFunction
     public class TagFunctionTests
     {
         private const string TestPlant = "PlantA";
-        private TagFunction _dut = new TagFunction(TestPlant, "CodeA", "DescA", "CodeR");
+        const string NewCode = "ANewCode";
+        const string NewRegisterCode = "ANewRegisterCode";
+
+        private readonly TagFunction _dut = new TagFunction(TestPlant, "CodeA", "DescA", "CodeR");
 
         [TestMethod]
         public void Constructor_ShouldSetProperties()
@@ -82,5 +85,34 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.TagFunction
         [TestMethod]
         public void RemoveRequirement_ShouldThrowException_WhenRequirementNotGiven() =>
             Assert.ThrowsException<ArgumentNullException>(() => _dut.RemoveRequirement(null));
+
+        [TestMethod]
+        public void RenameTagFunction_ShouldUpdateCodeAndRegisterCode()
+        {
+            _dut.RenameTagFunction(NewCode, NewRegisterCode);
+
+            Assert.AreEqual(NewCode, _dut.Code);
+            Assert.AreEqual(NewRegisterCode, _dut.RegisterCode);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void RenameTagFunction_ShouldFailOnEmptyCode() =>
+            _dut.RenameTagFunction(" ", NewRegisterCode);
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void RenameTagFunction_ShouldFailOnNullCode() =>
+            _dut.RenameTagFunction(null, NewRegisterCode);
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void RenameTagFunction_ShouldFailOnEmptyRegisterCode() =>
+            _dut.RenameTagFunction(NewCode, " ");
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentNullException))]
+        public void RenameTagFunction_ShouldFailOnNullRegisterCode() =>
+            _dut.RenameTagFunction(NewCode, null);
     }
 }

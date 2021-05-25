@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Audit;
 using Equinor.ProCoSys.Preservation.Domain.Time;
@@ -9,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
     public class Project : PlantEntityBase, IAggregateRoot, ICreationAuditable, IModificationAuditable
     {
         private readonly List<Tag> _tags = new List<Tag>();
-        
+
         public const int NameLengthMax = 30;
         public const int DescriptionLengthMax = 1000;
 
@@ -46,6 +47,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"Can't relate item in {tag.Plant} to item in {Plant}");
             }
 
+            if (_tags.Any(t => t.TagNo == tag.TagNo))
+            {
+                throw new ArgumentException($"Tag {tag.TagNo} already exists in project");
+            }
+
             _tags.Add(tag);
         }
 
@@ -77,7 +83,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             {
                 throw new ArgumentNullException(nameof(tag));
             }
-            
+
             if (!tag.IsVoided)
             {
                 throw new Exception($"{nameof(tag)} must be voided before delete");
@@ -89,6 +95,46 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             }
 
             _tags.Remove(tag);
+        }
+
+        public void MoveMcPkg(string mcPkgNo, string fromCommPkg, string toCommPkg)
+        {
+            if (string.IsNullOrWhiteSpace(mcPkgNo) || string.IsNullOrWhiteSpace(fromCommPkg) || string.IsNullOrWhiteSpace(toCommPkg))
+            {
+                throw new ArgumentNullException($"Unable to move pkg {mcPkgNo} from {fromCommPkg} to {toCommPkg}.");
+            }
+
+            var affectedTags = _tags.Where(t => t.CommPkgNo == fromCommPkg && t.McPkgNo == mcPkgNo).ToList();
+
+            affectedTags.ForEach(t => t.CommPkgNo = toCommPkg);
+        }
+
+        public void RenameMcPkg(string commPkgNo, string fromMcPkgNo, string toMcPkgNo)
+        {
+            if (string.IsNullOrWhiteSpace(fromMcPkgNo) || string.IsNullOrWhiteSpace(toMcPkgNo) || string.IsNullOrWhiteSpace(commPkgNo))
+            {
+                throw new ArgumentNullException($"Unable to rename mc pkg from {fromMcPkgNo} to {toMcPkgNo} on comm pkg {commPkgNo}.");
+            }
+
+            var affectedTags = _tags.Where(t => t.CommPkgNo == commPkgNo && t.McPkgNo == fromMcPkgNo).ToList();
+
+            affectedTags.ForEach(t => t.McPkgNo = toMcPkgNo);
+        }
+
+        public void MoveToProject(Tag tag, Project toProject)
+        {
+            if (tag == null)
+            {
+                throw new ArgumentNullException(nameof(tag));
+            }
+
+            if (toProject == null)
+            {
+                throw new ArgumentNullException(nameof(toProject));
+            }
+
+            _tags.Remove(tag);
+            toProject.AddTag(tag);
         }
     }
 }

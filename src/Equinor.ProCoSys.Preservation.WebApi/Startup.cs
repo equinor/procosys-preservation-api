@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Equinor.ProCoSys.PcsServiceBus;
 using Equinor.ProCoSys.Preservation.Command;
 using Equinor.ProCoSys.Preservation.Query;
 using Equinor.ProCoSys.Preservation.WebApi.DIModules;
@@ -149,6 +150,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             services.AddApplicationInsightsTelemetry();
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration);
+
+            if (Configuration.GetValue<bool>("EnableServiceBus"))
+            {
+                services.AddPcsServiceBusIntegration(options => options
+                    .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
+                    .WithSubscription(PcsTopic.Tag, "preservation_tag")
+                    .WithSubscription(PcsTopic.TagFunction, "preservation_tagfunction")
+                    .WithSubscription(PcsTopic.Project, "preservation_project")
+                    .WithSubscription(PcsTopic.CommPkg, "preservation_commpkg")
+                    .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
+                    .WithSubscription(PcsTopic.Responsible, "preservation_responsible"));
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

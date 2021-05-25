@@ -5,9 +5,6 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.MiscCommands.UpdateDateTimeSetting;
-using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncProjects;
-using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncResponsibles;
-using Equinor.ProCoSys.Preservation.Command.SyncCommands.SyncTagFunctions;
 using Equinor.ProCoSys.Preservation.Command.TagCommands.AutoTransfer;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
@@ -98,21 +95,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                         await AutoTransferTagsAsync(plant);
                     }
 
-                    if (_options.CurrentValue.SynchronizeProjects)
-                    {
-                        await SynchronizeProjectsAsync(plant);
-                    }
-
-                    if (_options.CurrentValue.SynchronizeResponsibles)
-                    {
-                        await SynchronizeResponsiblesAsync(plant);
-                    }
-
-                    if (_options.CurrentValue.SynchronizeTagFunctions)
-                    {
-                        await SynchronizeTagFunctionsAsync(plant);
-                    }
-                
                     var endTime = TimeService.UtcNow;
 
                     _logger.LogInformation($"Plant {plant} synchronized. Duration: {(endTime - startTime).TotalSeconds}s.");
@@ -122,99 +104,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 {
                     _logger.LogError(ex, $"Error synchronizing plant {plant}...");
                 }
-            }
-        }
-
-        private async Task SynchronizeProjectsAsync(string plant)
-        {
-            _logger.LogInformation("Synchronizing projects");
-
-            var result = await _mediator.Send(new SyncProjectsCommand());
-
-            if (result.ResultType == ServiceResult.ResultType.Ok)
-            {
-                _logger.LogInformation("Synchronizing projects complete.");
-                _telemetryClient.TrackEvent("Synchronization Status",
-                    new Dictionary<string, string>
-                    {
-                        {"Status", "Succeeded"}, 
-                        {"Plant", plant},
-                        {"Type", "Projects"}
-                    });
-            }
-            else
-            {
-                _logger.LogWarning($"Synchronizing projects failed. ResultType {result.ResultType}");
-                _telemetryClient.TrackEvent("Synchronization Status",
-                    new Dictionary<string, string>
-                    {
-                        {"Status", "Failed"},
-                        {"Plant", plant},
-                        {"Type", "Projects"},
-                        {"ResultType", result.ResultType.ToString()}
-                    });
-            }
-        }
-
-        private async Task SynchronizeResponsiblesAsync(string plant)
-        {
-            _logger.LogInformation("Synchronizing responsibles");
-
-            var result = await _mediator.Send(new SyncResponsiblesCommand());
-
-            if (result.ResultType == ServiceResult.ResultType.Ok)
-            {
-                _logger.LogInformation("Synchronizing responsibles complete.");
-                _telemetryClient.TrackEvent("Synchronization Status",
-                    new Dictionary<string, string>
-                    {
-                        {"Status", "Succeeded"},
-                        {"Plant", plant},
-                        {"Type", "Responsibles"}
-                    });
-            }
-            else
-            {
-                _logger.LogWarning($"Synchronizing responsibles failed. ResultType {result.ResultType}");
-                _telemetryClient.TrackEvent("Synchronization Status",
-                    new Dictionary<string, string>
-                    {
-                        {"Status", "Failed"}, 
-                        {"Plant", plant}, 
-                        {"Type", "Responsibles"},
-                        {"ResultType", result.ResultType.ToString()}
-                    });
-            }
-        }
-
-        private async Task SynchronizeTagFunctionsAsync(string plant)
-        {
-            _logger.LogInformation("Synchronizing tag functions");
-
-            var result = await _mediator.Send(new SyncTagFunctionsCommand());
-
-            if (result.ResultType == ServiceResult.ResultType.Ok)
-            {
-                _logger.LogInformation("Synchronizing tag functions complete.");
-                _telemetryClient.TrackEvent("Synchronization Status",
-                    new Dictionary<string, string>
-                    {
-                        {"Status", "Succeeded"},
-                        {"Plant", plant}, 
-                        {"Type", "Tag Functions"}
-                    });
-            }
-            else
-            {
-                _logger.LogWarning($"Synchronizing tag functions failed. ResultType {result.ResultType}");
-                _telemetryClient.TrackEvent("Synchronization Status",
-                    new Dictionary<string, string>
-                    {
-                        {"Status", "Failed"},
-                        {"Plant", plant},
-                        {"Type", "Tag Functions"},
-                        {"ResultType", result.ResultType.ToString()}
-                    });
             }
         }
 

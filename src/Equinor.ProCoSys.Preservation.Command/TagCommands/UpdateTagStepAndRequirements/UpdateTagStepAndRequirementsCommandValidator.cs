@@ -127,7 +127,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
                 int tagId,
                 List<int> requirementDefinitionIdsToBeAdded,
                 CancellationToken token)
-                => requirementDefinitionIdsToBeAdded.Count == 0 || 
+                => requirementDefinitionIdsToBeAdded.Count == 0 ||
                    await tagValidator.AllRequirementsWillBeUniqueAsync(tagId, requirementDefinitionIdsToBeAdded, token);
             
             async Task<bool> RequirementUsageIsNotForOtherThanSupplierAsync(

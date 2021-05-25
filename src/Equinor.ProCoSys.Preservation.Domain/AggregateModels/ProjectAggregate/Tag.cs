@@ -108,6 +108,11 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
             get => _isVoided;
             set
             {
+                if (_isVoided == value)
+                {
+                    return;
+                }
+
                 _isVoided = value;
                 if (_isVoided)
                 {
@@ -548,5 +553,15 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
 
         private void UpdateNextDueTimeUtc()
             => NextDueTimeUtc = OrderedRequirements().FirstOrDefault()?.NextDueTimeUtc;
+
+        public void Rename(string newTagNo)
+        {
+            if (string.IsNullOrWhiteSpace(newTagNo))
+            {
+                throw new ArgumentNullException("{nameof(newTagNo)}");
+            }
+
+            TagNo = newTagNo;
+        }
     }
 }

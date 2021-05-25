@@ -24,6 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         private const string TagNo1 = "PA-13";
         private const string TagNo2 = "PA-14";
         private const string TagNo3 = "PA-15";
+        private const string TagNo4 = "PA-16";
         private const string _tagDescription = "Tag description";
         private int _tagWithOneReqsId;
         private int _tagWithTwoReqsId;
@@ -74,8 +75,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var standardTagNotStartedInFirstStep = AddTag(context, project, TagType.Standard, TagNo1,
                     _tagDescription, firstStep, new List<TagRequirement>
                     {
-                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1), 
-                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier), 
+                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1),
+                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier),
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1)
                     });
 
@@ -83,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     journey.Steps.Last(), new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 standardTagCompleted.StartPreservation();
                 standardTagCompleted.CompletePreservation(journey);
-                var standardTagStartedInLastStep = AddTag(context, project, TagType.Standard, TagNo2, "",
+                var standardTagStartedInLastStep = AddTag(context, project, TagType.Standard, TagNo4, "",
                     journey.Steps.Last(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 standardTagStartedInLastStep.StartPreservation();
                 var standardTagWithTwoReqsInLastStep = AddTag(context, project, TagType.Standard, TagNo3, "",
