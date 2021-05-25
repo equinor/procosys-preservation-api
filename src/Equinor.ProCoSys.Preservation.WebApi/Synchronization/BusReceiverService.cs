@@ -94,6 +94,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                     await ProcessTagEvent(messageJson);
                     break;
             }
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
