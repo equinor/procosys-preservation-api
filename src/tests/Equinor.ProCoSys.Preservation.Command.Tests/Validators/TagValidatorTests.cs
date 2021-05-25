@@ -75,8 +75,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 var standardTagNotStartedInFirstStep = AddTag(context, project, TagType.Standard, TagNo1,
                     _tagDescription, firstStep, new List<TagRequirement>
                     {
-                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1), 
-                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier), 
+                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1),
+                        new TagRequirement(TestPlant, IntervalWeeks, reqDefForSupplier),
                         new TagRequirement(TestPlant, IntervalWeeks, reqDefForOther1)
                     });
 
@@ -84,7 +84,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                     journey.Steps.Last(), new List<TagRequirement> { new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1) });
                 standardTagCompleted.StartPreservation();
                 standardTagCompleted.CompletePreservation(journey);
-                La til taggen under med nytt tagno siden jeg la på regel om at tagno ikke kan eksistere fra før.  er dette korrekt?
                 var standardTagStartedInLastStep = AddTag(context, project, TagType.Standard, TagNo4, "",
                     journey.Steps.Last(), new List<TagRequirement> {new TagRequirement(TestPlant, IntervalWeeks, reqDefForAll1)});
                 standardTagStartedInLastStep.StartPreservation();

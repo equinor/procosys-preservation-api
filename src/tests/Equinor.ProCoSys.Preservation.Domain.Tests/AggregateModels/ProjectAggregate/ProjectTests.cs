@@ -19,7 +19,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         private Project _dut;
         private Mock<Step> _stepMock;
         private Mock<TagRequirement> _reqMock;
-        private Tag _tag, _tag2;
+        private Tag _tag1;
+        private Tag _tag2;
 
         [TestInitialize]
         public void Setup()
@@ -28,14 +29,14 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
             _reqMock = new Mock<TagRequirement>();
             _reqMock.SetupGet(r => r.Plant).Returns(TestPlant);
-            _tag = new Tag(TestPlant, TagType.Standard, "Tag1", "", _stepMock.Object,
+            _tag1 = new Tag(TestPlant, TagType.Standard, "Tag1", "", _stepMock.Object,
                 new List<TagRequirement> { _reqMock.Object })
             { McPkgNo = McPkgNo, CommPkgNo = CommPkgNo };
             _tag2 = new Tag(TestPlant, TagType.Standard, "Tag2", "", _stepMock.Object,
                     new List<TagRequirement> { _reqMock.Object })
             { McPkgNo = McPkgNo2, CommPkgNo = CommPkgNo2 };
             _dut = new Project(TestPlant, "ProjectNameA", "DescA");
-            _dut.AddTag(_tag);
+            _dut.AddTag(_tag1);
             _dut.AddTag(_tag2);
         }
 
@@ -69,17 +70,17 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
 
         [TestMethod]
         public void RemoveTag_ShouldThrowExceptionTest_WhenTagIsNotVoided()
-            => Assert.ThrowsException<Exception>(() => _dut.RemoveTag(_tag));
+            => Assert.ThrowsException<Exception>(() => _dut.RemoveTag(_tag1));
 
         [TestMethod]
         public void RemoveTag_ShouldRemoveTagFromTagsList()
         {
             // Arrange
             Assert.AreEqual(2, _dut.Tags.Count);
-            _tag.IsVoided = true;
+            _tag1.IsVoided = true;
 
             // Act
-            _dut.RemoveTag(_tag);
+            _dut.RemoveTag(_tag1);
 
             // Assert
             Assert.AreEqual(1, _dut.Tags.Count);
@@ -97,8 +98,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void RenameMcPkg_ShouldRenameOnAffectedTags()
         {
             // Arrange & Assert
-            Assert.AreEqual(McPkgNo, _tag.McPkgNo);
-            Assert.AreEqual(CommPkgNo, _tag.CommPkgNo);
+            Assert.AreEqual(McPkgNo, _tag1.McPkgNo);
+            Assert.AreEqual(CommPkgNo, _tag1.CommPkgNo);
             Assert.AreEqual(McPkgNo2, _tag2.McPkgNo);
             Assert.AreEqual(CommPkgNo2, _tag2.CommPkgNo);
             var toMcPkg = "New name";
@@ -107,8 +108,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dut.RenameMcPkg(CommPkgNo, McPkgNo, toMcPkg);
 
             // Assert
-            Assert.AreEqual(toMcPkg, _tag.McPkgNo);
-            Assert.AreEqual(CommPkgNo, _tag.CommPkgNo);
+            Assert.AreEqual(toMcPkg, _tag1.McPkgNo);
+            Assert.AreEqual(CommPkgNo, _tag1.CommPkgNo);
             Assert.AreEqual(McPkgNo2, _tag2.McPkgNo);
             Assert.AreEqual(CommPkgNo2, _tag2.CommPkgNo);
         }
@@ -127,8 +128,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         public void MoveMcPkg_ShouldRenameOnAffectedTags()
         {
             // Arrange & Assert 
-            Assert.AreEqual(McPkgNo, _tag.McPkgNo);
-            Assert.AreEqual(CommPkgNo, _tag.CommPkgNo);
+            Assert.AreEqual(McPkgNo, _tag1.McPkgNo);
+            Assert.AreEqual(CommPkgNo, _tag1.CommPkgNo);
             Assert.AreEqual(McPkgNo2, _tag2.McPkgNo);
             Assert.AreEqual(CommPkgNo2, _tag2.CommPkgNo);
             var toCommPkg = "New name";
@@ -137,8 +138,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
             _dut.MoveMcPkg(McPkgNo, CommPkgNo, toCommPkg);
 
             // Assert
-            Assert.AreEqual(McPkgNo, _tag.McPkgNo);
-            Assert.AreEqual(toCommPkg, _tag.CommPkgNo);
+            Assert.AreEqual(McPkgNo, _tag1.McPkgNo);
+            Assert.AreEqual(toCommPkg, _tag1.CommPkgNo);
             Assert.AreEqual(McPkgNo2, _tag2.McPkgNo);
             Assert.AreEqual(CommPkgNo2, _tag2.CommPkgNo);
         }

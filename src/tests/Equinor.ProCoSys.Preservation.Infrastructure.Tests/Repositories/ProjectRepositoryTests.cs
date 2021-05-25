@@ -35,7 +35,8 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
 
 
         private ProjectRepository _dut;
-        private Tag _standardTag1With3Reqs, _standardTag2;
+        private Tag _standardTag1With3Reqs;
+        private Tag _standardTag2;
         private Mock<DbSet<Tag>> _tagsSetMock;
         private Mock<DbSet<TagRequirement>> _reqsSetMock;
 

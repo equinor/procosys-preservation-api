@@ -104,7 +104,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 tagEvent.TagNo.IsEmpty() ||
                 tagEvent.ProjectName.IsEmpty())
             {
-                throw new ArgumentNullException($"Unable to deserialize JSON to TagEvent {messageJson}");
+                throw new ArgumentNullException($"Deserialized JSON is not a valid TagEvent {messageJson}");
             }
 
             TrackTagEvent(tagEvent);
@@ -184,7 +184,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 mcPkgEvent.ProjectName.IsEmpty() ||
                 (mcPkgEvent.McPkgNoOld.IsEmpty() != mcPkgEvent.CommPkgNoOld.IsEmpty()))
             {
-                throw new ArgumentNullException($"Unable to deserialize JSON to McPkgEvent {messageJson}");
+                throw new ArgumentNullException($"Deserialized JSON is not a valid McPkgEvent {messageJson}");
             }
 
             if (mcPkgEvent.McPkgNoOld.IsEmpty() || mcPkgEvent.CommPkgNoOld.IsEmpty())
@@ -220,7 +220,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 commPkgEvent.CommPkgNo.IsEmpty() ||
                 commPkgEvent.ProjectName.IsEmpty())
             {
-                throw new ArgumentNullException($"Unable to deserialize JSON to CommPkgEvent {messageJson}");
+                throw new ArgumentNullException($"Deserialized JSON is not a valid CommPkgEvent {messageJson}");
             }
 
             if (commPkgEvent.ProjectNameOld.IsEmpty())
@@ -253,7 +253,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 tagFunctionEvent.Code.IsEmpty() ||
                 tagFunctionEvent.RegisterCode.IsEmpty())
             {
-                throw new ArgumentNullException($"Unable to deserialize JSON to TagFunctionEven {messageJson}");
+                throw new ArgumentNullException($"Deserialized JSON is not a valid TagFunctionEvent {messageJson}");
             }
 
             TrackTagFunctionEvent(tagFunctionEvent);
@@ -289,7 +289,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var projectEvent = JsonSerializer.Deserialize<ProjectTopic>(messageJson);
             if (projectEvent.Plant.IsEmpty() || projectEvent.ProjectName.IsEmpty())
             {
-                throw new ArgumentNullException($"Unable to deserialize JSON to ProjectEvent {messageJson}");
+                throw new ArgumentNullException($"Deserialized JSON is not a valid ProjectEvent {messageJson}");
             }
 
             TrackProjectEvent(projectEvent);
@@ -309,7 +309,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var responsibleEvent = JsonSerializer.Deserialize<ResponsibleTopic>(messageJson);
             if (responsibleEvent.Plant.IsEmpty() || responsibleEvent.Code.IsEmpty())
             {
-                throw new ArgumentNullException($"Unable to deserialize JSON to ResponsibleEvent {messageJson}");
+                throw new ArgumentNullException($"Deserialized JSON is not a valid ResponsibleEvent {messageJson}");
             }
 
             TrackResponsibleEvent(responsibleEvent);
