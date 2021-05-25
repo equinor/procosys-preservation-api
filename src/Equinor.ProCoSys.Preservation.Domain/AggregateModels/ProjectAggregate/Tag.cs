@@ -168,6 +168,7 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentException($"Can't relate item in {tagRequirement.Plant} to item in {Plant}");
             }
             
+            // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
             if (_requirements.Any(r => r.RequirementDefinitionId == tagRequirement.RequirementDefinitionId))
             {
                 throw new ArgumentException($"{nameof(Tag)} {TagNo} already has a requirement with definition {tagRequirement.RequirementDefinitionId}");
@@ -346,7 +347,8 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
                 throw new ArgumentNullException(nameof(journey));
             }
 
-            return Status == PreservationStatus.Active && FollowsAJourney && journey.GetNextStep(StepId) != null;
+            return (Status == PreservationStatus.NotStarted || Status == PreservationStatus.Active)
+                   && FollowsAJourney && journey.GetNextStep(StepId) != null;
         }
 
         public bool IsReadyToBeCompleted(Journey journey)

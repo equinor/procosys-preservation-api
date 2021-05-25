@@ -750,13 +750,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
         
         [TestMethod]
-        public async Task IsReadyToBeTransferredAsync_StandardTagNotStarted_ShouldReturnFalse()
+        public async Task IsReadyToBeTransferredAsync_StandardTagNotStarted_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.IsReadyToBeTransferredAsync(_standardTagNotStartedInFirstStepId, default);
-                Assert.IsFalse(result);
+                Assert.IsTrue(result);
             }
         }
 
@@ -772,13 +772,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsReadyToBeTransferredAsync_PreAreaTagNotStarted_ShouldReturnFalse()
+        public async Task IsReadyToBeTransferredAsync_PreAreaTagNotStarted_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 var dut = new TagValidator(context, null);
                 var result = await dut.IsReadyToBeTransferredAsync(_preAreaTagNotStartedInFirstStepId, default);
-                Assert.IsFalse(result);
+                Assert.IsTrue(result);
             }
         }
 

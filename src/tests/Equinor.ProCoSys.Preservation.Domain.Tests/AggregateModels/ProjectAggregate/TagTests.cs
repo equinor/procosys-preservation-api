@@ -1307,20 +1307,31 @@ namespace Equinor.ProCoSys.Preservation.Domain.Tests.AggregateModels.ProjectAggr
         #region IsReadyToBeTransferred
 
         [TestMethod]
-        public void IsReadyToBeTransferred_ShouldBeFalse_BeforePreservationStarted()
+        public void IsReadyToBeTransferred_ShouldBeTrue_BeforePreservationStarted()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
 
-            Assert.IsFalse(dut.IsReadyToBeTransferred(_journey));
+            Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
         }
         
         [TestMethod]
-        public void IsReadyToBeTransferred_ShouldBeTrue_AfterPreservationStarted()
+        public void IsReadyToBeTransferred_ShouldBeTrue_WhenPreservationActive()
         {
             var dut = new Tag(TestPlant, TagType.Standard, "", "", _supplierStep, _oneReq_NotNeedInputTwoWeekInterval);
             dut.StartPreservation();
 
             Assert.IsTrue(dut.IsReadyToBeTransferred(_journey));
+        }
+        
+        [TestMethod]
+        public void IsReadyToBeTransferred_ShouldBeFalse_WhenPreservationCompleted()
+        {
+            var dut = new Tag(TestPlant, TagType.Standard, "", "", _otherStep, _oneReq_NotNeedInputTwoWeekInterval);
+            dut.StartPreservation();
+
+            dut.CompletePreservation(_journey);
+
+            Assert.IsFalse(dut.IsReadyToBeTransferred(_journey));
         }
         
         [TestMethod]
