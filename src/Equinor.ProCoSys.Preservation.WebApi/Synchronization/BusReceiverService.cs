@@ -200,6 +200,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
             var project = await _projectRepository.GetProjectWithTagsByNameAsync(mcPkgEvent.ProjectName);
 
+            if (project == null)
+            {
+                // Project is not in the preservation database and hence no preservation tags to update
+                return;
+            }
+
             if (!mcPkgEvent.McPkgNoOld.IsEmpty())
             {
                 if (mcPkgEvent.McPkgNoOld != mcPkgEvent.McPkgNo)
@@ -237,7 +243,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var fromProject = await _projectRepository.GetProjectWithTagsByNameAsync(commPkgEvent.ProjectNameOld);
             if (fromProject == null)
             {
-                throw new ArgumentException($"Unable to find project {commPkgEvent.ProjectNameOld}");
+                // Project is not in the preservation database and hence no preservation tags to update
+                return;
             }
 
             var toProject = await FindOrCreatePreservationCopyOfProjectAsync(commPkgEvent.Plant, commPkgEvent.ProjectName);

@@ -451,6 +451,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
         }
 
         [TestMethod]
+        public async Task HandlingCommPkgTopic_Move_ShouldDoNothingIfFromProjectIsUnknown()
+        {
+            // Arrange & Assert
+            var unknownProject = "NotKnown";
+            Assert.IsFalse(_project2.Tags.Contains(_tag1));
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{Project1Name}\", \"ProjectNameOld\" : \"{unknownProject}\", \"CommPkgNo\" :\"{CommPkg1}\", \"Description\" : \"{Description}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+        }
+
+        [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public async Task HandlingCommPkgTopic_ShouldFailIfEmpty()
         {
@@ -487,6 +499,24 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
             Assert.AreEqual(toMcPkg, _tag1.McPkgNo);
             Assert.AreEqual(toCommPkg, _tag1.CommPkgNo);
+        }
+
+        [TestMethod]
+        public async Task HandlingMcPkgTopicMove_ShouldNotFailIfProjectIsUnknowToPreservation()
+        {
+            // Arrange
+            var toMcPkg = "B";
+            var toCommPkg = "D";
+            var unknowProject = "ProjectUnknown";
+            var message = $"{{\"Plant\" : \"{Plant}\", \"ProjectName\" : \"{unknowProject}\", \"CommPkgNo\" :\"{toCommPkg}\", \"CommPkgNoOld\" :\"{_tag1.CommPkgNo}\", \"McPkgNo\" : \"{toMcPkg}\", \"McPkgNoOld\" : \"{_tag1.McPkgNo}\", \"Description\" : \"Desc\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.McPkg, message, new CancellationToken(false));
+
+            // Assert
+            _plantSetter.Verify(p => p.SetPlant(Plant), Times.Once);
+            Assert.AreNotEqual(toMcPkg, _tag1.McPkgNo);
+            Assert.AreNotEqual(toCommPkg, _tag1.CommPkgNo);
         }
 
         [TestMethod]
