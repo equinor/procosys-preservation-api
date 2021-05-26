@@ -460,6 +460,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
 
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.CommPkg, message, new CancellationToken(false));
+
+            // Assert
+            _projectRepository.Verify(p => p.GetProjectWithTagsByNameAsync(unknownProject), Times.Once);
+            _projectRepository.Verify(p => p.GetProjectWithTagsByNameAsync(Project1Name), Times.Never);
         }
 
         [TestMethod]
