@@ -13,6 +13,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
     {
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProjectAccessChecker _projectAccessChecker;
+        private readonly ICrossPlantAccessChecker _crossPlantAccessChecker;
         private readonly IContentRestrictionsChecker _contentRestrictionsChecker;
         private readonly ITagHelper _tagHelper;
         private readonly ILogger<AccessValidator> _logger;
@@ -20,12 +21,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
         public AccessValidator(
             ICurrentUserProvider currentUserProvider, 
             IProjectAccessChecker projectAccessChecker,
+            ICrossPlantAccessChecker crossPlantAccessChecker,
             IContentRestrictionsChecker contentRestrictionsChecker,
             ITagHelper tagHelper, 
             ILogger<AccessValidator> logger)
         {
             _currentUserProvider = currentUserProvider;
             _projectAccessChecker = projectAccessChecker;
+            _crossPlantAccessChecker = crossPlantAccessChecker;
             _contentRestrictionsChecker = contentRestrictionsChecker;
             _tagHelper = tagHelper;
             _logger = logger;
@@ -65,6 +68,27 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
                 {
                     return false;
                 }
+            }
+
+            if (request is ICrossPlantQueryRequest)
+            {
+                if (!IsUserCrossPlantUser(userOid))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool IsUserCrossPlantUser(Guid userOid)
+        {
+            var accessCrossPlant = _crossPlantAccessChecker.HasCurrentUserAccessToCrossPlant();
+
+            if (!accessCrossPlant)
+            {
+                _logger.LogWarning($"Current user {userOid} don't have cross plant access");
+                return false;
             }
 
             return true;
