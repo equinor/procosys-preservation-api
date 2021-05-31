@@ -28,7 +28,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
             _options = options;
         }
 
-        public async Task<IList<string>> GetPlantWithAccessForUserAsync(Guid userOid)
+        public async Task<IList<string>> GetPlantIdsWithAccessForUserAsync(Guid userOid)
         {
             var allPlants = await GetAllPlantsForUserAsync(userOid);
             return allPlants?.Where(p => p.HasAccess).Select(p => p.Id).ToList();
@@ -36,7 +36,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
 
         public async Task<bool> HasUserAccessToPlantAsync(string plantId, Guid userOid)
         {
-            var plantIds = await GetPlantWithAccessForUserAsync(userOid);
+            var plantIds = await GetPlantIdsWithAccessForUserAsync(userOid);
             return plantIds.Contains(plantId);
         }
 
@@ -52,6 +52,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
             var userOid = _currentUserProvider.GetCurrentUserOid();
             var allPlants = await GetAllPlantsForUserAsync(userOid);
             return allPlants != null && allPlants.Any(p => p.Id == plantId);
+        }
+
+        public async Task<PCSPlant> GetPlantAsync(string plantId)
+        {
+            var userOid = _currentUserProvider.GetCurrentUserOid();
+            var allPlants = await GetAllPlantsForUserAsync(userOid);
+            return allPlants?.Where(p => p.Id == plantId).SingleOrDefault();
         }
 
         public void Clear(Guid userOid) => _cacheManager.Remove(PlantsCacheKey(userOid));

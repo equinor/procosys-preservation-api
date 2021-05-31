@@ -20,7 +20,8 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete
         public DeleteActionAttachmentCommandHandler(
             IProjectRepository projectRepository,
             IUnitOfWork unitOfWork,
-            IBlobStorage blobStorage, IOptionsMonitor<AttachmentOptions> attachmentOptions)
+            IBlobStorage blobStorage,
+            IOptionsMonitor<AttachmentOptions> attachmentOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
