@@ -32,6 +32,7 @@ using Equinor.ProCoSys.Preservation.Query.GetActionAttachment;
 using Equinor.ProCoSys.Preservation.Query.GetActionAttachments;
 using Equinor.ProCoSys.Preservation.Query.GetActionDetails;
 using Equinor.ProCoSys.Preservation.Query.GetActions;
+using Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant;
 using Equinor.ProCoSys.Preservation.Query.GetProjectByName;
 using Equinor.ProCoSys.Preservation.Query.GetTagAttachment;
 using Equinor.ProCoSys.Preservation.Query.GetTagAttachments;
@@ -62,6 +63,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         private AccessValidator _dut;
         private Mock<IContentRestrictionsChecker> _contentRestrictionsCheckerMock;
         private Mock<IProjectAccessChecker> _projectAccessCheckerMock;
+        private Mock<ICrossPlantAccessChecker> _crossPlantAccessCheckerMock;
         private Mock<ILogger<AccessValidator>> _loggerMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
         private const int TagIdWithAccessToProject = 1;
@@ -76,6 +78,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
 
             _projectAccessCheckerMock = new Mock<IProjectAccessChecker>();
+            _crossPlantAccessCheckerMock = new Mock<ICrossPlantAccessChecker>();
             _contentRestrictionsCheckerMock = new Mock<IContentRestrictionsChecker>();
             
             _projectAccessCheckerMock.Setup(p => p.HasCurrentUserAccessToProject(ProjectWithoutAccess)).Returns(false);
@@ -94,6 +97,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _dut = new AccessValidator(
                 _currentUserProviderMock.Object,
                 _projectAccessCheckerMock.Object,
+                _crossPlantAccessCheckerMock.Object,
                 _contentRestrictionsCheckerMock.Object,
                 tagHelperMock.Object,
                 _loggerMock.Object);
@@ -1848,6 +1852,30 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnGetProjectByNameQuery_ShouldReturnFalse_WhenNoAccessToProject()
         {
             var query = new GetProjectByNameQuery(ProjectWithoutAccess);
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetAllActionsCrossPlantQuery_ShouldReturnTrue_WhenUserHaveCrossPlantAccess()
+        {
+            var query = new GetAllActionsCrossPlantQuery();
+            _crossPlantAccessCheckerMock.Setup(x => x.HasCurrentUserAccessToCrossPlant()).Returns(true);
+            
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetAllActionsCrossPlantQuery_ShouldReturnFalse_WhenUserHaveNotCrossPlantAccess()
+        {
+            var query = new GetAllActionsCrossPlantQuery();
             // act
             var result = await _dut.ValidateAsync(query);
 

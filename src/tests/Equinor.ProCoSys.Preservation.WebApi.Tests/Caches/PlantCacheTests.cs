@@ -20,9 +20,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         private readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
         private Mock<IPlantApiService> _plantApiServiceMock;
         private Mock<ICurrentUserProvider> _currentUserProviderMock;
-        private readonly string Plant1WithAccess = "P1";
-        private readonly string Plant2WithAccess = "P2";
-        private readonly string PlantWithoutAccess = "P3";
+        private readonly string Plant1IdWithAccess = "P1";
+        private readonly string Plant2IdWithAccess = "P2";
+        private readonly string PlantIdWithoutAccess = "P3";
+        private readonly string Plant1DescWithAccess = "P1-Desc";
+        private readonly string Plant2DescWithAccess = "P2-Desc";
+        private readonly string PlantDescWithoutAccess = "P3-Desc";
 
         private PlantCache _dut;
 
@@ -43,19 +46,33 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(
                 new List<PCSPlant>
                 {
-                    new PCSPlant {Id = Plant1WithAccess, HasAccess = true}, 
-                    new PCSPlant {Id = Plant2WithAccess, HasAccess = true},
-                    new PCSPlant {Id = PlantWithoutAccess}
+                    new PCSPlant
+                    {
+                        Id = Plant1IdWithAccess,
+                        Title = Plant1DescWithAccess,
+                        HasAccess = true
+                    }, 
+                    new PCSPlant
+                    {
+                        Id = Plant2IdWithAccess,
+                        Title = Plant2DescWithAccess,
+                        HasAccess = true
+                    },
+                    new PCSPlant
+                    {
+                        Id = PlantIdWithoutAccess,
+                        Title = PlantDescWithoutAccess
+                    }
                 }));
 
             _dut = new PlantCache(new CacheManager(), _currentUserProviderMock.Object, _plantApiServiceMock.Object, optionsMock.Object);
         }
 
         [TestMethod]
-        public async Task GetPlantWithAccessForUserAsync_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
+        public async Task GetPlantIdsWithAccessForUserAsync_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
         {
             // Act
-            var result = await _dut.GetPlantWithAccessForUserAsync(_currentUserOid);
+            var result = await _dut.GetPlantIdsWithAccessForUserAsync(_currentUserOid);
 
             // Assert
             AssertPlants(result);
@@ -63,16 +80,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         }
 
         [TestMethod]
-        public async Task GetPlantWithAccessForUserAsync_ShouldReturnPlantsFromCacheSecondTime()
+        public async Task GetPlantIdsWithAccessForUserAsync_ShouldReturnPlantsFromCacheSecondTime()
         {
-            await _dut.GetPlantWithAccessForUserAsync(_currentUserOid);
+            await _dut.GetPlantIdsWithAccessForUserAsync(_currentUserOid);
 
             // Act
-            var result = await _dut.GetPlantWithAccessForUserAsync(_currentUserOid);
+            var result = await _dut.GetPlantIdsWithAccessForUserAsync(_currentUserOid);
 
             // Assert
             AssertPlants(result);
-            // since GetPlantWithAccessForUserAsyncAsync has been called twice, but GetAllPlantsAsync has been called once, the second Get uses cache
+            // since GetPlantIdsWithAccessForUserAsyncAsync has been called twice, but GetAllPlantsAsync has been called once, the second Get uses cache
             _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
         }
 
@@ -80,7 +97,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         public async Task HasCurrentUserAccessToPlant_ShouldReturnTrue_WhenKnownPlant()
         {
             // Act
-            var result = await _dut.HasCurrentUserAccessToPlantAsync(Plant2WithAccess);
+            var result = await _dut.HasCurrentUserAccessToPlantAsync(Plant2IdWithAccess);
 
             // Assert
             Assert.IsTrue(result);
@@ -100,7 +117,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         public async Task HasCurrentUserAccessToPlant_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
         {
             // Act
-            await _dut.HasCurrentUserAccessToPlantAsync(Plant2WithAccess);
+            await _dut.HasCurrentUserAccessToPlantAsync(Plant2IdWithAccess);
 
             // Assert
             _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
@@ -111,7 +128,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         {
             await _dut.HasCurrentUserAccessToPlantAsync("XYZ");
             // Act
-            await _dut.HasCurrentUserAccessToPlantAsync(Plant2WithAccess);
+            await _dut.HasCurrentUserAccessToPlantAsync(Plant2IdWithAccess);
 
             // Assert
             _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
@@ -121,7 +138,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         public async Task HasUserAccessToPlant_ShouldReturnTrue_WhenKnownPlant()
         {
             // Act
-            var result = await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
+            var result = await _dut.HasUserAccessToPlantAsync(Plant2IdWithAccess, _currentUserOid);
 
             // Assert
             Assert.IsTrue(result);
@@ -141,7 +158,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         public async Task HasUserAccessToPlant_ShouldReturnPlantIdsFromPlantApiServiceFirstTime()
         {
             // Act
-            await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
+            await _dut.HasUserAccessToPlantAsync(Plant2IdWithAccess, _currentUserOid);
 
             // Assert
             _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
@@ -152,7 +169,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         {
             await _dut.HasUserAccessToPlantAsync("ABC", _currentUserOid);
             // Act
-            await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
+            await _dut.HasUserAccessToPlantAsync(Plant2IdWithAccess, _currentUserOid);
 
             // Assert
             _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
@@ -162,7 +179,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         public async Task IsAValidPlant_ShouldReturnTrue_WhenKnownPlantWithAccess()
         {
             // Act
-            var result = await _dut.IsAValidPlantAsync(Plant2WithAccess);
+            var result = await _dut.IsAValidPlantAsync(Plant2IdWithAccess);
 
             // Assert
             Assert.IsTrue(result);
@@ -172,7 +189,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         public async Task IsAValidPlant_ShouldReturnTrue_WhenKnownPlantWithoutAccess()
         {
             // Act
-            var result = await _dut.IsAValidPlantAsync(PlantWithoutAccess);
+            var result = await _dut.IsAValidPlantAsync(PlantIdWithoutAccess);
 
             // Assert
             Assert.IsTrue(result);
@@ -189,10 +206,40 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         }
 
         [TestMethod]
+        public async Task GetPlantAsync_ShouldReturnPlant_WhenKnownPlantWithAccess()
+        {
+            // Act
+            var result = await _dut.GetPlantAsync(Plant2IdWithAccess);
+
+            // Assert
+            Assert.AreEqual(Plant2DescWithAccess, result.Title);
+        }
+
+        [TestMethod]
+        public async Task GetPlantAsync_ShouldReturnPlant_WhenKnownPlantWithoutAccess()
+        {
+            // Act
+            var result = await _dut.GetPlantAsync(PlantIdWithoutAccess);
+
+            // Assert
+            Assert.AreEqual(PlantDescWithoutAccess, result.Title);
+        }
+
+        [TestMethod]
+        public async Task GetPlantAsync_ShouldReturnNull_WhenUnknownPlant()
+        {
+            // Act
+            var result = await _dut.GetPlantAsync("XYZ");
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
         public async Task Clear_ShouldForceGettingPlantsFromApiServiceAgain()
         {
             // Arrange
-            var result = await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
+            var result = await _dut.HasUserAccessToPlantAsync(Plant2IdWithAccess, _currentUserOid);
             Assert.IsTrue(result);
             _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Once);
 
@@ -200,7 +247,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             _dut.Clear(_currentUserOid);
 
             // Assert
-            result = await _dut.HasUserAccessToPlantAsync(Plant2WithAccess, _currentUserOid);
+            result = await _dut.HasUserAccessToPlantAsync(Plant2IdWithAccess, _currentUserOid);
             Assert.IsTrue(result);
             _plantApiServiceMock.Verify(p => p.GetAllPlantsAsync(), Times.Exactly(2));
         }
@@ -208,8 +255,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         private void AssertPlants(IList<string> result)
         {
             Assert.AreEqual(2, result.Count);
-            Assert.AreEqual(Plant1WithAccess, result.First());
-            Assert.AreEqual(Plant2WithAccess, result.Last());
+            Assert.AreEqual(Plant1IdWithAccess, result.First());
+            Assert.AreEqual(Plant2IdWithAccess, result.Last());
         }
     }
 }

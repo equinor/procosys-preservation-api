@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant;
+using Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
         [HttpGet("Actions")]
         public async Task<ActionResult<List<ActionDto>>> Actions()
         {
-            var result = await _mediator.Send(new GetAllActionsCrossPlantQuery());
+            var result = await _mediator.Send(new GetActionsCrossPlantQuery());
             return this.FromResult(result);
         }
     }
