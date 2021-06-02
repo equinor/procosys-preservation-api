@@ -32,7 +32,7 @@ using Equinor.ProCoSys.Preservation.Query.GetActionAttachment;
 using Equinor.ProCoSys.Preservation.Query.GetActionAttachments;
 using Equinor.ProCoSys.Preservation.Query.GetActionDetails;
 using Equinor.ProCoSys.Preservation.Query.GetActions;
-using Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant;
+using Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant;
 using Equinor.ProCoSys.Preservation.Query.GetProjectByName;
 using Equinor.ProCoSys.Preservation.Query.GetTagAttachment;
 using Equinor.ProCoSys.Preservation.Query.GetTagAttachments;
@@ -1860,9 +1860,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnGetAllActionsCrossPlantQuery_ShouldReturnTrue_WhenUserHaveCrossPlantAccess()
+        public async Task ValidateAsync_OnGetActionsCrossPlantQuery_ShouldReturnTrue_WhenUserHaveCrossPlantAccess()
         {
-            var query = new GetAllActionsCrossPlantQuery();
+            var query = new GetActionsCrossPlantQuery();
             _crossPlantAccessCheckerMock.Setup(x => x.HasCurrentUserAccessToCrossPlant()).Returns(true);
             
             // act
@@ -1873,9 +1873,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnGetAllActionsCrossPlantQuery_ShouldReturnFalse_WhenUserHaveNotCrossPlantAccess()
+        public async Task ValidateAsync_OnGetActionsCrossPlantQuery_ShouldReturnFalse_WhenUserHaveNotCrossPlantAccess()
         {
-            var query = new GetAllActionsCrossPlantQuery();
+            var query = new GetActionsCrossPlantQuery();
             // act
             var result = await _dut.ValidateAsync(query);
 

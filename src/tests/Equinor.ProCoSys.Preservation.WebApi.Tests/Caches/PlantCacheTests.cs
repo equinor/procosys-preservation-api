@@ -23,9 +23,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         private readonly string Plant1IdWithAccess = "P1";
         private readonly string Plant2IdWithAccess = "P2";
         private readonly string PlantIdWithoutAccess = "P3";
-        private readonly string Plant1DescWithAccess = "P1-Desc";
-        private readonly string Plant2DescWithAccess = "P2-Desc";
-        private readonly string PlantDescWithoutAccess = "P3-Desc";
+        private readonly string Plant1TitleWithAccess = "P1 Title";
+        private readonly string Plant2TitleWithAccess = "P2 Title";
+        private readonly string PlantTitleWithoutAccess = "P3 Title";
 
         private PlantCache _dut;
 
@@ -49,19 +49,19 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
                     new PCSPlant
                     {
                         Id = Plant1IdWithAccess,
-                        Title = Plant1DescWithAccess,
+                        Title = Plant1TitleWithAccess,
                         HasAccess = true
                     }, 
                     new PCSPlant
                     {
                         Id = Plant2IdWithAccess,
-                        Title = Plant2DescWithAccess,
+                        Title = Plant2TitleWithAccess,
                         HasAccess = true
                     },
                     new PCSPlant
                     {
                         Id = PlantIdWithoutAccess,
-                        Title = PlantDescWithoutAccess
+                        Title = PlantTitleWithoutAccess
                     }
                 }));
 
@@ -212,7 +212,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             var result = await _dut.GetPlantAsync(Plant2IdWithAccess);
 
             // Assert
-            Assert.AreEqual(Plant2DescWithAccess, result.Title);
+            Assert.AreEqual(Plant2TitleWithAccess, result.Title);
         }
 
         [TestMethod]
@@ -222,7 +222,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
             var result = await _dut.GetPlantAsync(PlantIdWithoutAccess);
 
             // Assert
-            Assert.AreEqual(PlantDescWithoutAccess, result.Title);
+            Assert.AreEqual(PlantTitleWithoutAccess, result.Title);
         }
 
         [TestMethod]
