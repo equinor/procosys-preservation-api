@@ -30,6 +30,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     public sealed class TestFactory : WebApplicationFactory<Startup>
     {
         private readonly string _libraryAdminOid = "00000000-0000-0000-0000-000000000001";
+        private readonly string _crossPlantUserOid = "00000000-0000-0000-0000-000000000004";
         private readonly string _plannerOid = "00000000-0000-0000-0000-000000000002";
         private readonly string _preserverOid = "00000000-0000-0000-0000-000000000003";
         private readonly string _hackerOid = "00000000-0000-0000-0000-000000000666";
@@ -49,14 +50,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public readonly Mock<IBlobStorage> BlobStorageMock = new Mock<IBlobStorage>();
         public readonly Mock<ITagApiService> TagApiServiceMock = new Mock<ITagApiService>();
 
-        public static string PlantWithAccess => KnownTestData.Plant;
-        public static string PlantWithoutAccess => "PCS$PLANT999";
+        public static string PlantWithAccess => KnownPlantData.PlantA;
+        public static string PlantWithoutAccess => KnownPlantData.PlantB;
         public static string UnknownPlant => "UNKNOWN_PLANT";
         public static string ProjectWithAccess => KnownTestData.ProjectName;
         public static string ProjectWithoutAccess => "Project999";
         public static string AValidRowVersion => "AAAAAAAAAAA=";
 
-        public KnownTestData KnownTestData { get; }
+        public Dictionary<string, KnownTestData> SeededData { get; }
 
         #region singleton implementation
         private static TestFactory s_instance;
@@ -83,7 +84,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private TestFactory()
         {
-            KnownTestData = new KnownTestData();
+            SeededData = new Dictionary<string, KnownTestData>();
 
             var projectDir = Directory.GetCurrentDirectory();
             _connectionString = GetTestDbConnectionString(projectDir);
@@ -188,7 +189,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             {
                 using (var scope = serviceProvider.CreateScope())
                 {
-                    var dbContext = scope.ServiceProvider.GetRequiredService<PreservationContext>();
+                    var scopeServiceProvider = scope.ServiceProvider;
+                    var dbContext = scopeServiceProvider.GetRequiredService<PreservationContext>();
 
                     dbContext.Database.EnsureDeleted();
 
@@ -201,9 +203,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         dbContext.Database.Migrate();
                     }
 
-                    dbContext.Seed(scope.ServiceProvider, KnownTestData);
+                    SeedDataForPlant(dbContext, scopeServiceProvider, KnownPlantData.PlantA);
+                    SeedDataForPlant(dbContext, scopeServiceProvider, KnownPlantData.PlantB);
                 }
             }
+        }
+
+        private void SeedDataForPlant(PreservationContext dbContext, IServiceProvider scopeServiceProvider, string plant)
+        {
+            var knownData = new KnownTestData(plant);
+            SeededData.Add(plant, knownData);
+            dbContext.Seed(scopeServiceProvider, knownData);
         }
 
         private void EnsureTestDatabaseDeletedAtTeardown(IServiceCollection services)
@@ -261,8 +271,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         {
             var commonProCoSysPlants = new List<PCSPlant>
             {
-                new PCSPlant {Id = PlantWithAccess, HasAccess = true},
-                new PCSPlant {Id = PlantWithoutAccess}
+                new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle, HasAccess = true},
+                new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
             };
 
             var commonProCoSysProjects = new List<PCSProject>
@@ -285,6 +295,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             AddPreserverUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
     
             AddHackerUser(commonProCoSysProjects);
+            
+            AddCrossPlantUser();
             
             var webHostBuilder = WithWebHostBuilder(builder =>
             {
@@ -317,8 +329,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         },
                     ProCoSysPlants = new List<PCSPlant>
                     {
-                        new PCSPlant {Id = PlantWithAccess},
-                        new PCSPlant {Id = PlantWithoutAccess}
+                        new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
+                        new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
                     },
                     ProCoSysPermissions = new List<string>(),
                     ProCoSysProjects = commonProCoSysProjects,
@@ -410,6 +422,28 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                     },
                     ProCoSysProjects = commonProCoSysProjects,
                     ProCoSysRestrictions = commonProCoSysRestrictions
+                });
+        
+        // Authenticated client without any roles. Configured in app config to allow using cross plant endpoints
+        private void AddCrossPlantUser()
+            => _testUsers.Add(UserType.CrossPlantUser,
+                new TestUser
+                {
+                    Profile =
+                        new TestProfile
+                        {
+                            FirstName = "Al",
+                            LastName = "Plant", 
+                            Oid = _crossPlantUserOid
+                        },
+                    ProCoSysPlants = new List<PCSPlant>
+                    {
+                        new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
+                        new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
+                    },
+                    ProCoSysPermissions = new List<string>(),
+                    ProCoSysProjects = new List<PCSProject>(),
+                    ProCoSysRestrictions = new List<string>()
                 });
 
         private void AddAnonymousUser() => _testUsers.Add(UserType.Anonymous, new TestUser());
