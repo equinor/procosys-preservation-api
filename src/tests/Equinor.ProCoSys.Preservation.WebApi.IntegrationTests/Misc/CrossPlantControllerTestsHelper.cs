@@ -9,7 +9,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
     {
         private const string _route = "CrossPlant";
 
-        public static async Task<List<ActionDto>> GetAllActionsAsync(
+        public static async Task<List<ActionDto>> GetActionsAsync(
             UserType userType,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)

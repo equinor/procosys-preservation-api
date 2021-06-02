@@ -11,7 +11,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         public async Task GetAllActions_AsCrossPlantUser_ShouldGetActions()
         {
             // Act
-            var actionDtos = await CrossPlantControllerTestsHelper.GetAllActionsAsync(UserType.CrossPlantUser);
+            var actionDtos = await CrossPlantControllerTestsHelper.GetActionsAsync(UserType.CrossPlantUser);
 
             // Assert
             Assert.IsNotNull(actionDtos);
