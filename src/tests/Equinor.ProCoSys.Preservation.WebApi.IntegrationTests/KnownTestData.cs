@@ -4,7 +4,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
     public class KnownTestData
     {
-        public static string Plant => "PCS$PLANT1";
         public static string ProjectName => "TestProject";
         public static string ProjectDescription => "Test - Project";
         public static string ResponsibleCode => "TestResp";
@@ -27,13 +26,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public static Guid ActionAttachmentBlobStorageId = new Guid("{11111111-1111-1111-1111-111111111111}");
         public static Guid TagAttachmentBlobStorageId = new Guid("{22222222-2222-2222-2222-222222222222}");
 
-        public int TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
-        public int TagId_ForStandardTagWithAttachmentsAndActionAttachments_Started;
-        public int TagId_ForStandardTagWithInfoRequirement_Started;
-        public int TagId_ForStandardTagWithCbRequirement_Started;
-        public int TagId_ForStandardTagWithAttachmentRequirement_Started;
-        public int TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
-        public int TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
-        public int ModeId;
+        public KnownTestData(string plant) => Plant = plant;
+
+        public string Plant { get; }
+
+        public int TagId_ForStandardTagReadyForBulkPreserve_NotStarted { get; set; }
+        public int TagId_ForStandardTagWithAttachmentsAndActionAttachments_Started { get; set; }
+        public int TagId_ForStandardTagWithInfoRequirement_Started { get; set; }
+        public int TagId_ForStandardTagWithCbRequirement_Started { get; set; }
+        public int TagId_ForStandardTagWithAttachmentRequirement_Started { get; set; }
+        public int TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted { get; set; }
+        public int TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted { get; set; }
+        public int ModeId { get; set; }
+        public int ActionId_ForActionWithAttachments_Closed { get; set; }
     }
 }

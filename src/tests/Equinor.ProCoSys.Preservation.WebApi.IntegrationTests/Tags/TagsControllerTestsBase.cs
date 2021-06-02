@@ -48,20 +48,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             JourneyWithTags = journeys.Single(j => j.Title == KnownTestData.JourneyWithTags);
 
             TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted
-                = TestFactory.Instance.KnownTestData.TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
+                = TestFactory.Instance.SeededData[KnownPlantData.PlantA].TagId_ForStandardTagReadyForBulkPreserve_NotStarted;
             TagIdUnderTest_ForStandardTagWithAttachmentRequirement_Started
-                = TestFactory.Instance.KnownTestData.TagId_ForStandardTagWithAttachmentRequirement_Started;
+                = TestFactory.Instance.SeededData[KnownPlantData.PlantA].TagId_ForStandardTagWithAttachmentRequirement_Started;
             TagIdUnderTest_ForStandardTagWithInfoRequirement_Started
-                = TestFactory.Instance.KnownTestData.TagId_ForStandardTagWithInfoRequirement_Started;
+                = TestFactory.Instance.SeededData[KnownPlantData.PlantA].TagId_ForStandardTagWithInfoRequirement_Started;
             TagIdUnderTest_ForStandardTagWithCbRequirement_Started
-                = TestFactory.Instance.KnownTestData.TagId_ForStandardTagWithCbRequirement_Started;
+                = TestFactory.Instance.SeededData[KnownPlantData.PlantA].TagId_ForStandardTagWithCbRequirement_Started;
             TagIdUnderTest_ForSiteAreaTagReadyForBulkPreserve_NotStarted
-                = TestFactory.Instance.KnownTestData.TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
+                = TestFactory.Instance.SeededData[KnownPlantData.PlantA].TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted;
 
             TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started
-                = TestFactory.Instance.KnownTestData.TagId_ForStandardTagWithAttachmentsAndActionAttachments_Started;
+                = TestFactory.Instance.SeededData[KnownPlantData.PlantA].TagId_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted
-                = TestFactory.Instance.KnownTestData.TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
+                = TestFactory.Instance.SeededData[KnownPlantData.PlantA].TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
 
             TestFactory.Instance
                 .DisciplineApiServiceMock

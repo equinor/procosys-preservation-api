@@ -35,13 +35,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var userProvider = serviceProvider.GetRequiredService<CurrentUserProvider>();
             var plantProvider = serviceProvider.GetRequiredService<PlantProvider>();
             userProvider.SetCurrentUserOid(new Guid(_seederOid));
-            plantProvider.SetPlant(KnownTestData.Plant);
+            plantProvider.SetPlant(knownTestData.Plant);
             
             /* 
              * Add the initial seeder user. Don't do this through the UnitOfWork as this expects/requires the current user to exist in the database.
              * This is the first user that is added to the database and will not get "Created" and "CreatedBy" data.
              */
-            var seeder = SeedCurrentUserAsPerson(dbContext, userProvider);
+            var seeder = EnsureCurrentUserIsSeededAsync(dbContext, userProvider);
 
             var plant = plantProvider.Plant;
 
@@ -120,6 +120,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             
             SeedActionAttachment(dbContext, closedAreaTagAction);
             SeedActionAttachment(dbContext, closedAreaTagAction);
+            knownTestData.ActionId_ForActionWithAttachments_Closed = closedAreaTagAction.Id;
         }
 
         private static void SeedInfoField(PreservationContext dbContext, RequirementDefinition reqDef)
@@ -165,6 +166,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             tag.AddAction(action);
             dbContext.SaveChangesAsync().Wait();
             return action;
+        }
+
+        private static Person EnsureCurrentUserIsSeededAsync(PreservationContext dbContext, ICurrentUserProvider userProvider)
+        {
+            var personRepository = new PersonRepository(dbContext);
+            var person = personRepository.GetByOidAsync(userProvider.GetCurrentUserOid()).Result ??
+                         SeedCurrentUserAsPerson(dbContext, userProvider);
+            return person;
         }
 
         private static Person SeedCurrentUserAsPerson(PreservationContext dbContext, ICurrentUserProvider userProvider)
