@@ -7,11 +7,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
     [TestClass]
     public class CrossPlantControllerNegativeTests : CrossPlantControllerTestsBase
     {
-        [TestInitialize]
-        public void Setup()
-        {
-        }
-        
         #region GetAllActions
         [TestMethod]
         public async Task GetAllActions_AsAnonymous_ShouldReturnUnauthorized()

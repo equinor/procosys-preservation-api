@@ -1860,7 +1860,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnGetAllActionsCrossPlantQuery_ShouldReturnTrue_WhenUserHaveCrossPlantAccess()
+        public async Task ValidateAsync_OnGetActionsCrossPlantQuery_ShouldReturnTrue_WhenUserHaveCrossPlantAccess()
         {
             var query = new GetActionsCrossPlantQuery();
             _crossPlantAccessCheckerMock.Setup(x => x.HasCurrentUserAccessToCrossPlant()).Returns(true);
@@ -1873,7 +1873,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         }
 
         [TestMethod]
-        public async Task ValidateAsync_OnGetAllActionsCrossPlantQuery_ShouldReturnFalse_WhenUserHaveNotCrossPlantAccess()
+        public async Task ValidateAsync_OnGetActionsCrossPlantQuery_ShouldReturnFalse_WhenUserHaveNotCrossPlantAccess()
         {
             var query = new GetActionsCrossPlantQuery();
             // act
