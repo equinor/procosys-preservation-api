@@ -1,12 +1,12 @@
 ﻿using System;
 
-namespace Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant
+namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
 {
     public class ActionDto
     {
         public ActionDto(
-            string plant,
-            string plantDescription,
+            string plantId,
+            string plantTitle,
             string projectName,
             string projectDescription,
             int tagId,
@@ -18,8 +18,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant
             bool isClosed,
             int attachmentCount)
         {
-            Plant = plant;
-            PlantDescription = plantDescription;
+            PlantId = plantId;
+            PlantTitle = plantTitle;
             ProjectName = projectName;
             ProjectDescription = projectDescription;
             TagId = tagId;
@@ -32,8 +32,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant
             AttachmentCount = attachmentCount;
         }
 
-        public string Plant { get; }
-        public string PlantDescription { get; }
+        public string PlantId { get; }
+        public string PlantTitle { get; }
         public string ProjectName { get; }
         public string ProjectDescription { get; }
         public int TagId { get; }

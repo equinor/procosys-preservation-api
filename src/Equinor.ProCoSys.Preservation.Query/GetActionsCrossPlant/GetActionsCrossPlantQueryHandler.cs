@@ -9,15 +9,15 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
 
-namespace Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant
+namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
 {
-    public class GetAllActionsCrossPlantQueryHandler : IRequestHandler<GetAllActionsCrossPlantQuery, Result<List<ActionDto>>>
+    public class GetActionsCrossPlantQueryHandler : IRequestHandler<GetActionsCrossPlantQuery, Result<List<ActionDto>>>
     {
         private readonly IReadOnlyContext _context;
         private readonly IPlantCache _plantCache;
         private readonly IPlantSetter _plantSetter;
 
-        public GetAllActionsCrossPlantQueryHandler(
+        public GetActionsCrossPlantQueryHandler(
             IReadOnlyContext context,
             IPlantCache plantCache,
             IPlantSetter plantSetter)
@@ -27,9 +27,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant
             _plantSetter = plantSetter;
         }
 
-        public async Task<Result<List<ActionDto>>> Handle(GetAllActionsCrossPlantQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<ActionDto>>> Handle(GetActionsCrossPlantQuery request, CancellationToken cancellationToken)
         {
-            // Get all tags with all actions
             _plantSetter.SetCrossPlantQuery();
             var projects = await
                 (from p in _context.QuerySet<Project>()
@@ -66,7 +65,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetAllActionsCrossPlant
             }
 
             var orderedActions = actions
-                .OrderBy(a => a.Plant)
+                .OrderBy(a => a.PlantId)
                 .ThenBy(a => a.ProjectName)
                 .ThenBy(a => a.TagNo)
                 .ThenBy(a => a.Title).ToList();
