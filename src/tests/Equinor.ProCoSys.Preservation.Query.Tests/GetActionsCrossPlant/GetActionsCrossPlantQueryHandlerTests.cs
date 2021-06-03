@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
         protected ManualTimeProvider _timeProvider;
         protected readonly Guid _currentUserOid = new Guid("12345678-1234-1234-1234-123456789123");
 
-        private readonly PlantProvider _plantProvider = new PlantProvider();
+        private readonly PlantProvider _plantProvider = new PlantProvider(null);
         private readonly Mock<IPlantCache> _plantCacheMock = new Mock<IPlantCache>();
 
         private PCSPlant _plantA = new PCSPlant {Id = "PCS$A", Title = "A"};

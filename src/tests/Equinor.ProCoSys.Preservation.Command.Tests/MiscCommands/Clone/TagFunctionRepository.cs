@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.Test.Common;
 
 namespace Equinor.ProCoSys.Preservation.Command.Tests.MiscCommands.Clone
 {
