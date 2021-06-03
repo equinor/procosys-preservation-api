@@ -25,6 +25,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
     [TestClass]
     public class GetTagsCrossPlantQueryHandlerTests
     {
+        // NB The PlantProvider affects when debugging and locking into DBSets in PreservationContext
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected ICurrentUserProvider _currentUserProvider;
         protected IEventDispatcher _eventDispatcher;
@@ -38,10 +39,10 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         private readonly int _intervalWeeks2 = 2;
         private PCSPlant _plantA = new PCSPlant {Id = "PCS$A", Title = "A"};
         private PCSPlant _plantB = new PCSPlant {Id = "PCS$B", Title = "B"};
-        private Project _projectA;
-        private Project _projectB;
-        private Tag _tagA;
-        private Tag _tagB;
+        private int _projectAId;
+        private int _projectBId;
+        private int _tagAId;
+        private int _tagBId;
         private Person _currentUser;
         private Mode _mode1;
         private Mode _mode2;
@@ -75,101 +76,34 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 context.Persons.Add(_currentUser);
                 context.SaveChangesAsync().Wait();
 
-                (_projectA, _tagA) = CreateTag(context, _plantA.Id, "PrA", _intervalWeeks1);
-                (_projectB, _tagB) = CreateTag(context, _plantB.Id, "PrB", _intervalWeeks2);
-                
-                EnsureProjectIsClosedDiffer(context);
-                EnsureTagIsVoidedDiffer(context);
-                EnsureTagStatusDiffer(context);
-                EnsureActionStatusDifferAndSet(context);
+                _plantProvider.SetPlant(_plantA.Id);
+                (_projectAId, _tagAId) = CreateTag(context, "PrA", _intervalWeeks1);
+                _plantProvider.SetPlant(_plantB.Id);
+                (_projectBId, _tagBId) = CreateTag(context, "PrB", _intervalWeeks2);
+                _plantProvider.SetCrossPlantQuery();
             }
-        }
-
-        private void EnsureActionStatusDifferAndSet(PreservationContext context)
-        {
-            _tagA.AddAction(new Action(_tagA.Plant, "AcA", "AcA desc", null));
-            _tagB.AddAction(new Action(_tagB.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
-            context.SaveChangesAsync().Wait();
-        }
-
-        private void EnsureTagStatusDiffer(PreservationContext context)
-        {
-            _tagB.StartPreservation();
-            context.SaveChangesAsync().Wait();
-        }
-
-        private void EnsureTagIsVoidedDiffer(PreservationContext context)
-        {
-            _tagA.IsVoided = true;
-            context.SaveChangesAsync().Wait();
-        }
-
-        private void EnsureProjectIsClosedDiffer(PreservationContext context)
-        {
-            _projectA.Close();
-            context.SaveChangesAsync().Wait();
-        }
-
-        private (Project, Tag) CreateTag(
-            PreservationContext context,
-            string plantId,
-            string projectName,
-            int intervalWeeks)
-        {
-            _mode1 = new Mode(plantId, "M1", false);
-            _mode2 = new Mode(plantId, "M2", false);
-            context.Modes.Add(_mode1);
-            context.Modes.Add(_mode2);
-
-            _responsible1 = new Responsible(plantId, "Resp1", "Resp1-Desc");
-            _responsible2 = new Responsible(plantId, "Resp2", "Resp2-Desc");
-            context.Responsibles.Add(_responsible1);
-            context.Responsibles.Add(_responsible2);
-            context.SaveChangesAsync().Wait();
-
-            var journey = new Journey(plantId, "J1");
-            var step = new Step(plantId, "S1", _mode1, _responsible1);
-            journey.AddStep(step);
-            journey.AddStep(new Step(plantId, "S2", _mode2, _responsible2));
-            context.Journeys.Add(journey);
-            context.SaveChangesAsync().Wait();
-
-            var requirementType = new RequirementType(plantId, "RT", "RT title", RequirementTypeIcon.Other, 1);
-            context.RequirementTypes.Add(requirementType);
-
-            var requirementDefinition = new RequirementDefinition(plantId, "RD", intervalWeeks, RequirementUsage.ForAll, 1);
-            requirementType.AddRequirementDefinition(requirementDefinition);
-            context.SaveChangesAsync().Wait();
-
-            var project = new Project(plantId, projectName, $"{projectName} Desc");
-            context.Projects.Add(project);
-
-            var tag = new Tag(
-                plantId,
-                TagType.Standard,
-                "Tag A",
-                "Tag desc",
-                step,
-                new List<TagRequirement> {new TagRequirement(plantId, _intervalWeeks1, requirementDefinition)})
-            {
-                Calloff = "C",
-                CommPkgNo = "Cp",
-                McPkgNo = "Mp",
-                PurchaseOrderNo = "PO",
-                TagFunctionCode = "TF"
-            };
-            tag.SetArea("A", "A desc");
-            tag.SetDiscipline("D", "D desc");
-            project.AddTag(tag);
-            context.SaveChangesAsync().Wait();
-
-            return (project, tag);
         }
 
         [TestMethod]
         public async Task Handler_ShouldReturnTags_WithAllPropertiesSet()
         {
-            _timeProvider.ElapseWeeks(_intervalWeeks1);
+            Project projectA;
+            Project projectB;
+            Tag tagA;
+            Tag tagB;
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                EnsureProjectIsClosedDiffer(context);
+                EnsureTagIsVoidedDiffer(context);
+                EnsureTagStatusDiffer(context);
+                EnsureActionStatusDifferAndSet(context);
+                EnsureReadyToBePreservedDiffer(context);
+
+                projectA = context.Projects.Single(p => p.Id == _projectAId);
+                projectB = context.Projects.Single(p => p.Id == _projectBId);
+                tagA = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagAId);
+                tagB = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagBId);
+            }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
@@ -179,8 +113,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 var result = await dut.Handle(query, default);
                 var tagDtos = result.Data;
 
-                AssertTag(tagDtos.Single(t => t.Id == _tagA.Id), _tagA, _plantA, _projectA);
-                AssertTag(tagDtos.Single(t => t.Id == _tagB.Id), _tagB, _plantB, _projectB);
+                AssertTag(tagDtos.Single(t => t.Id == tagA.Id), tagA, _plantA, projectA);
+                AssertTag(tagDtos.Single(t => t.Id == tagB.Id), tagB, _plantB, projectB);
 
                 AssertDifferentValues(tagDtos.Select(tag => tag.IsProjectClosed).Cast<object>());
                 AssertDifferentValues(tagDtos.Select(tag => tag.IsVoided).Cast<object>());
@@ -246,6 +180,98 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             AssertEqualAndNotNull(tag.TagFunctionCode, tagDto.TagFunctionCode);
             AssertEqualAndNotNull(tag.TagNo, tagDto.TagNo);
             Assert.AreEqual(tag.TagType, tagDto.TagType);
+        }
+
+        private void EnsureActionStatusDifferAndSet(PreservationContext context)
+        {
+            var tagA = context.Tags.First();
+            var tagB = context.Tags.Last();
+            tagA.AddAction(new Action(tagA.Plant, "AcA", "AcA desc", null));
+            tagB.AddAction(new Action(tagB.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
+            context.SaveChangesAsync().Wait();
+        }
+
+        private void EnsureTagStatusDiffer(PreservationContext context)
+        {
+            var tag = context.Tags.Include(t => t.Requirements).First();
+            tag.StartPreservation();
+            context.SaveChangesAsync().Wait();
+        }
+        
+        private void EnsureReadyToBePreservedDiffer(PreservationContext context)
+        {
+            var tag = context.Tags.Include(t => t.Requirements).First();
+            _timeProvider.ElapseWeeks(tag.Requirements.First().IntervalWeeks);
+        }
+
+        private void EnsureTagIsVoidedDiffer(PreservationContext context)
+        {
+            var tag = context.Tags.Last();
+            tag.IsVoided = true;
+            context.SaveChangesAsync().Wait();
+        }
+
+        private void EnsureProjectIsClosedDiffer(PreservationContext context)
+        {
+            var project = context.Projects.Last();
+            project.Close();
+            context.SaveChangesAsync().Wait();
+        }
+
+        private (int, int) CreateTag(
+            PreservationContext context,
+            string projectName,
+            int intervalWeeks)
+        {
+            var plantId = _plantProvider.Plant;
+            _mode1 = new Mode(plantId, "M1", false);
+            _mode2 = new Mode(plantId, "M2", false);
+            context.Modes.Add(_mode1);
+            context.Modes.Add(_mode2);
+
+            _responsible1 = new Responsible(plantId, "Resp1", "Resp1-Desc");
+            _responsible2 = new Responsible(plantId, "Resp2", "Resp2-Desc");
+            context.Responsibles.Add(_responsible1);
+            context.Responsibles.Add(_responsible2);
+            context.SaveChangesAsync().Wait();
+
+            var journey = new Journey(plantId, "J1");
+            var step = new Step(plantId, "S1", _mode1, _responsible1);
+            journey.AddStep(step);
+            journey.AddStep(new Step(plantId, "S2", _mode2, _responsible2));
+            context.Journeys.Add(journey);
+            context.SaveChangesAsync().Wait();
+
+            var requirementType = new RequirementType(plantId, "RT", "RT title", RequirementTypeIcon.Other, 1);
+            context.RequirementTypes.Add(requirementType);
+
+            var requirementDefinition = new RequirementDefinition(plantId, "RD", intervalWeeks, RequirementUsage.ForAll, 1);
+            requirementType.AddRequirementDefinition(requirementDefinition);
+            context.SaveChangesAsync().Wait();
+
+            var project = new Project(plantId, projectName, $"{projectName} Desc");
+            context.Projects.Add(project);
+
+            var tag = new Tag(
+                plantId,
+                TagType.Standard,
+                "Tag A",
+                "Tag desc",
+                step,
+                new List<TagRequirement> {new TagRequirement(plantId, _intervalWeeks1, requirementDefinition)})
+            {
+                Calloff = "C",
+                CommPkgNo = "Cp",
+                McPkgNo = "Mp",
+                PurchaseOrderNo = "PO",
+                TagFunctionCode = "TF"
+            };
+            tag.SetArea("A", "A desc");
+            tag.SetDiscipline("D", "D desc");
+            project.AddTag(tag);
+            context.SaveChangesAsync().Wait();
+
+            return (project.Id, tag.Id);
         }
 
         private void AssertEqualAndNotNull(string expected, string actual)

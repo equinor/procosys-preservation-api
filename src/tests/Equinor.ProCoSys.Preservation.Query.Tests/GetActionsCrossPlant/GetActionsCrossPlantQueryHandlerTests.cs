@@ -26,6 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
     [TestClass]
     public class GetActionsCrossPlantQueryHandlerTests
     {
+        // NB The PlantProvider affects when debugging and locking into DBSets in PreservationContext
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected ICurrentUserProvider _currentUserProvider;
         protected IEventDispatcher _eventDispatcher;
@@ -71,13 +72,17 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
                 context.Persons.Add(_currentUser);
                 context.SaveChangesAsync().Wait();
 
-                (_projectA, _actionA) = CreateAction(context, _plantA.Id, "PrA", false);
-                (_projectB, _actionB) = CreateAction(context, _plantB.Id, "PrB", true);
+                _plantProvider.SetPlant(_plantA.Id);
+                (_projectA, _actionA) = CreateAction(context, "PrA", false);
+                _plantProvider.SetPlant(_plantB.Id);
+                (_projectB, _actionB) = CreateAction(context, "PrB", true);
+                _plantProvider.SetCrossPlantQuery();
             }
         }
 
-        private (Project, Action) CreateAction(PreservationContext context, string plantId, string projectName, bool closeProject)
+        private (Project, Action) CreateAction(PreservationContext context, string projectName, bool closeProject)
         {
+            var plantId = _plantProvider.Plant;
             var mode = new Mode(plantId, "M1", false);
             context.Modes.Add(mode);
                 
