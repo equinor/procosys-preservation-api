@@ -98,8 +98,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChangesAsync().Wait();
 
-            var project = new Project(plantId, projectName, $"{projectName} Desc");
-            project.IsClosed = closeProject;
+            var project = new Project(plantId, projectName, $"{projectName} Desc") {IsClosed = closeProject};
             context.Projects.Add(project);
 
             var tag = new Tag(
@@ -145,18 +144,30 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 
         private void AssertAction(ActionDto actionDto, Action action, PCSPlant plant, Project project)
         {
-            Assert.AreEqual(actionDto.PlantId, plant.Id);
-            Assert.AreEqual(actionDto.PlantTitle, plant.Title);
-            Assert.AreEqual(actionDto.ProjectName, project.Name);
+            AssertEqualAndNotNull(actionDto.PlantId, plant.Id);
+            AssertEqualAndNotNull(actionDto.PlantTitle, plant.Title);
+            AssertEqualAndNotNull(actionDto.ProjectName, project.Name);
             Assert.AreEqual(actionDto.IsProjectClosed, project.IsClosed);
-            Assert.AreEqual(actionDto.ProjectDescription, project.Description);
-            Assert.AreEqual(actionDto.Id, action.Id);
+            AssertEqualAndNotNull(actionDto.ProjectDescription, project.Description);
+            AssertEqualAndNotNull(actionDto.Id, action.Id);
             Assert.AreEqual(actionDto.IsOverDue, action.IsOverDue());
-            Assert.AreEqual(actionDto.Title, action.Title);
-            Assert.AreEqual(actionDto.Description, action.Description);
+            AssertEqualAndNotNull(actionDto.Title, action.Title);
+            AssertEqualAndNotNull(actionDto.Description, action.Description);
             Assert.AreEqual(actionDto.IsClosed, action.IsClosed);
             Assert.AreEqual(actionDto.DueTimeUtc, action.DueTimeUtc);
-            Assert.AreEqual(actionDto.AttachmentCount, action.Attachments.Count);
+            AssertEqualAndNotNull(actionDto.AttachmentCount, action.Attachments.Count);
+        }
+
+        private void AssertEqualAndNotNull(string expected, string actual)
+        {
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(expected, actual);
+        }
+
+        private void AssertEqualAndNotNull(int expected, int actual)
+        {
+            Assert.IsTrue(actual > 0);
+            Assert.AreEqual(expected, actual);
         }
     }
 }
