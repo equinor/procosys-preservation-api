@@ -2,7 +2,6 @@
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
 {
-    [TestClass]
     public class CrossPlantControllerTestsBase : TestBase
     {
         protected int ActionIdUnderTest_WithAttachments_Closed_InPlantA;

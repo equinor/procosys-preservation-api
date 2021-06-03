@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 {
-    [TestClass]
     public class JourneysControllerTestsBase : TestBase
     {
         protected int ModeIdUnderTest;

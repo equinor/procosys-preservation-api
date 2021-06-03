@@ -206,30 +206,30 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Caches
         }
 
         [TestMethod]
-        public async Task GetPlantAsync_ShouldReturnPlant_WhenKnownPlantWithAccess()
+        public async Task GetPlantTitleAsync_ShouldReturnPlant_WhenKnownPlantWithAccess()
         {
             // Act
-            var result = await _dut.GetPlantAsync(Plant2IdWithAccess);
+            var result = await _dut.GetPlantTitleAsync(Plant2IdWithAccess);
 
             // Assert
-            Assert.AreEqual(Plant2TitleWithAccess, result.Title);
+            Assert.AreEqual(Plant2TitleWithAccess, result);
         }
 
         [TestMethod]
-        public async Task GetPlantAsync_ShouldReturnPlant_WhenKnownPlantWithoutAccess()
+        public async Task GetPlantTitleAsync_ShouldReturnPlant_WhenKnownPlantWithoutAccess()
         {
             // Act
-            var result = await _dut.GetPlantAsync(PlantIdWithoutAccess);
+            var result = await _dut.GetPlantTitleAsync(PlantIdWithoutAccess);
 
             // Assert
-            Assert.AreEqual(PlantTitleWithoutAccess, result.Title);
+            Assert.AreEqual(PlantTitleWithoutAccess, result);
         }
 
         [TestMethod]
-        public async Task GetPlantAsync_ShouldReturnNull_WhenUnknownPlant()
+        public async Task GetPlantTitleAsync_ShouldReturnNull_WhenUnknownPlant()
         {
             // Act
-            var result = await _dut.GetPlantAsync("XYZ");
+            var result = await _dut.GetPlantTitleAsync("XYZ");
 
             // Assert
             Assert.IsNull(result);
