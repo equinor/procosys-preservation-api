@@ -9,7 +9,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
 {
-    [TestClass]
     public class TagsControllerTestsBase : TestBase
     {
         protected readonly string KnownPOCode = "PO";
