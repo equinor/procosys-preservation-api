@@ -9,10 +9,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             string plantTitle,
             string projectName,
             string projectDescription,
+            bool isProjectClosed,
             int tagId,
             string tagNo,
             int id,
             string title,
+            string description,
             bool isOverDue,
             DateTime? dueTimeUtc,
             bool isClosed,
@@ -22,10 +24,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             PlantTitle = plantTitle;
             ProjectName = projectName;
             ProjectDescription = projectDescription;
+            IsProjectClosed = isProjectClosed;
             TagId = tagId;
             TagNo = tagNo;
             Id = id;
             Title = title;
+            Description = description;
             IsOverDue = isOverDue;
             DueTimeUtc = dueTimeUtc;
             IsClosed = isClosed;
@@ -36,10 +40,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
         public string PlantTitle { get; }
         public string ProjectName { get; }
         public string ProjectDescription { get; }
+        public bool IsProjectClosed { get; }
         public int TagId { get; }
         public string TagNo { get; }
         public int Id { get; }
         public string Title { get; }
+        public string Description { get; }
         public bool IsOverDue { get; }
         public DateTime? DueTimeUtc { get; }
         public bool IsClosed { get; }
