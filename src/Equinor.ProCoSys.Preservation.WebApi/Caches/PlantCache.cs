@@ -54,11 +54,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
             return allPlants != null && allPlants.Any(p => p.Id == plantId);
         }
 
-        public async Task<PCSPlant> GetPlantAsync(string plantId)
+        public async Task<string> GetPlantTitleAsync(string plantId)
         {
             var userOid = _currentUserProvider.GetCurrentUserOid();
             var allPlants = await GetAllPlantsForUserAsync(userOid);
-            return allPlants?.Where(p => p.Id == plantId).SingleOrDefault();
+            return allPlants?.Where(p => p.Id == plantId).SingleOrDefault()?.Title;
         }
 
         public void Clear(Guid userOid) => _cacheManager.Remove(PlantsCacheKey(userOid));
