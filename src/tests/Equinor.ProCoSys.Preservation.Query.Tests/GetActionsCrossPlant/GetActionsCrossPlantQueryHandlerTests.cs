@@ -71,12 +71,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
                 context.Persons.Add(_currentUser);
                 context.SaveChangesAsync().Wait();
 
-                (_projectA, _actionA) = CreateAction(context, _plantA.Id, "PrA");
-                (_projectB, _actionB) = CreateAction(context, _plantB.Id, "PrB");
+                (_projectA, _actionA) = CreateAction(context, _plantA.Id, "PrA", false);
+                (_projectB, _actionB) = CreateAction(context, _plantB.Id, "PrB", true);
             }
         }
 
-        private (Project, Action) CreateAction(PreservationContext context, string plantId, string projectName)
+        private (Project, Action) CreateAction(PreservationContext context, string plantId, string projectName, bool closeProject)
         {
             var mode = new Mode(plantId, "M1", false);
             context.Modes.Add(mode);
@@ -99,6 +99,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             context.SaveChangesAsync().Wait();
 
             var project = new Project(plantId, projectName, $"{projectName} Desc");
+            project.IsClosed = closeProject;
             context.Projects.Add(project);
 
             var tag = new Tag(
@@ -147,10 +148,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             Assert.AreEqual(actionDto.PlantId, plant.Id);
             Assert.AreEqual(actionDto.PlantTitle, plant.Title);
             Assert.AreEqual(actionDto.ProjectName, project.Name);
+            Assert.AreEqual(actionDto.IsProjectClosed, project.IsClosed);
             Assert.AreEqual(actionDto.ProjectDescription, project.Description);
             Assert.AreEqual(actionDto.Id, action.Id);
             Assert.AreEqual(actionDto.IsOverDue, action.IsOverDue());
             Assert.AreEqual(actionDto.Title, action.Title);
+            Assert.AreEqual(actionDto.Description, action.Description);
             Assert.AreEqual(actionDto.IsClosed, action.IsClosed);
             Assert.AreEqual(actionDto.DueTimeUtc, action.DueTimeUtc);
             Assert.AreEqual(actionDto.AttachmentCount, action.Attachments.Count);
