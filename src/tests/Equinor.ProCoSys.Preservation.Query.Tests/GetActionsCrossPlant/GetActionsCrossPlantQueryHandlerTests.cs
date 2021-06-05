@@ -145,18 +145,30 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 
         private void AssertAction(ActionDto actionDto, Action action, PCSPlant plant, Project project)
         {
-            Assert.AreEqual(plant.Id, actionDto.PlantId);
-            Assert.AreEqual(plant.Title, actionDto.PlantTitle);
-            Assert.AreEqual(project.Name, actionDto.ProjectName);
-            Assert.AreEqual(project.Description, actionDto.ProjectDescription);
+            AssertEqualAndNotNull(plant.Id, actionDto.PlantId);
+            AssertEqualAndNotNull(plant.Title, actionDto.PlantTitle);
+            AssertEqualAndNotNull(project.Name, actionDto.ProjectName);
+            AssertEqualAndNotNull(project.Description, actionDto.ProjectDescription);
             Assert.AreEqual(project.IsClosed, actionDto.ProjectIsClosed);
-            Assert.AreEqual(action.Id, action.Id);
+            AssertEqualAndNotNull(action.Id, actionDto.Id);
             Assert.AreEqual(action.IsOverDue(), actionDto.IsOverDue);
-            Assert.AreEqual(action.Title, actionDto.Title);
-            Assert.AreEqual(action.Description, actionDto.Description);
+            AssertEqualAndNotNull(action.Title, actionDto.Title);
+            AssertEqualAndNotNull(action.Description, actionDto.Description);
             Assert.AreEqual(action.IsClosed, actionDto.IsClosed);
             Assert.AreEqual(action.DueTimeUtc, actionDto.DueTimeUtc);
-            Assert.AreEqual(action.Attachments.Count, actionDto.AttachmentCount);
+            AssertEqualAndNotNull(action.Attachments.Count, actionDto.AttachmentCount);
+        }
+
+        private void AssertEqualAndNotNull(string expected, string actual)
+        {
+            Assert.IsNotNull(actual);
+            Assert.AreEqual(expected, actual);
+        }
+
+        private void AssertEqualAndNotNull(int expected, int actual)
+        {
+            Assert.IsTrue(actual > 0);
+            Assert.AreEqual(expected, actual);
         }
     }
 }
