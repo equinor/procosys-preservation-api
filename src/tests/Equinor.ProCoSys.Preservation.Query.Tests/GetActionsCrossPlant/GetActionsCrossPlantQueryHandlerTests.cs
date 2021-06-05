@@ -166,18 +166,18 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 
         private void AssertAction(ActionDto actionDto, Action action, PCSPlant plant, Project project)
         {
-            AssertEqualAndNotNull(actionDto.PlantId, plant.Id);
-            AssertEqualAndNotNull(actionDto.PlantTitle, plant.Title);
-            AssertEqualAndNotNull(actionDto.ProjectName, project.Name);
-            Assert.AreEqual(actionDto.ProjectIsClosed, project.IsClosed);
-            AssertEqualAndNotNull(actionDto.ProjectDescription, project.Description);
-            AssertEqualAndNotNull(actionDto.Id, action.Id);
-            Assert.AreEqual(actionDto.IsOverDue, action.IsOverDue());
-            AssertEqualAndNotNull(actionDto.Title, action.Title);
-            AssertEqualAndNotNull(actionDto.Description, action.Description);
-            Assert.AreEqual(actionDto.IsClosed, action.IsClosed);
-            Assert.AreEqual(actionDto.DueTimeUtc, action.DueTimeUtc);
-            AssertEqualAndNotNull(actionDto.AttachmentCount, action.Attachments.Count);
+            AssertEqualAndNotNull(plant.Id, actionDto.PlantId);
+            AssertEqualAndNotNull(plant.Title, actionDto.PlantTitle);
+            AssertEqualAndNotNull(project.Name, actionDto.ProjectName);
+            AssertEqualAndNotNull(project.Description, actionDto.ProjectDescription);
+            Assert.AreEqual(project.IsClosed, actionDto.ProjectIsClosed);
+            AssertEqualAndNotNull(action.Id, actionDto.Id);
+            Assert.AreEqual(action.IsOverDue(), actionDto.IsOverDue);
+            AssertEqualAndNotNull(action.Title, actionDto.Title);
+            AssertEqualAndNotNull(action.Description, actionDto.Description);
+            Assert.AreEqual(action.IsClosed, actionDto.IsClosed);
+            Assert.AreEqual(action.DueTimeUtc, actionDto.DueTimeUtc);
+            AssertEqualAndNotNull(action.Attachments.Count, actionDto.AttachmentCount);
         }
 
         private void AssertEqualAndNotNull(string expected, string actual)
