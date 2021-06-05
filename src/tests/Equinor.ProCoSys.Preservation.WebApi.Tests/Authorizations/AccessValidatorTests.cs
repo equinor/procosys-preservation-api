@@ -1862,7 +1862,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public async Task ValidateAsync_OnGetActionsCrossPlantQuery_ShouldReturnTrue_WhenUserHaveCrossPlantAccess()
         {
-            var query = new GetActionsCrossPlantQuery();
+            var query = new GetActionsCrossPlantQuery(0);
             _crossPlantAccessCheckerMock.Setup(x => x.HasCurrentUserAccessToCrossPlant()).Returns(true);
             
             // act

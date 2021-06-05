@@ -41,8 +41,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         private PCSPlant _plantB = new PCSPlant {Id = "PCS$B", Title = "B"};
         private int _projectAId;
         private int _projectBId;
-        private int _tagAId;
-        private int _tagBId;
+        private int _standardTagId;
+        private int _siteTagId;
         private Person _currentUser;
         private Mode _mode1;
         private Mode _mode2;
@@ -77,9 +77,9 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 context.SaveChangesAsync().Wait();
 
                 _plantProvider.SetPlant(_plantA.Id);
-                (_projectAId, _tagAId) = CreateTag(context, "PrA", _intervalWeeks1);
+                (_projectAId, _standardTagId) = CreateTag(context, "PrA", TagType.Standard, _intervalWeeks1);
                 _plantProvider.SetPlant(_plantB.Id);
-                (_projectBId, _tagBId) = CreateTag(context, "PrB", _intervalWeeks2);
+                (_projectBId, _siteTagId) = CreateTag(context, "PrB", TagType.SiteArea, _intervalWeeks2);
                 _plantProvider.SetCrossPlantQuery();
             }
         }
@@ -89,8 +89,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         {
             Project projectA;
             Project projectB;
-            Tag tagA;
-            Tag tagB;
+            Tag standardTag;
+            Tag siteTag;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
                 EnsureProjectIsClosedDiffer(context);
@@ -101,8 +101,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
 
                 projectA = context.Projects.Single(p => p.Id == _projectAId);
                 projectB = context.Projects.Single(p => p.Id == _projectBId);
-                tagA = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagAId);
-                tagB = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _tagBId);
+                standardTag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _standardTagId);
+                siteTag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _siteTagId);
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -113,14 +113,18 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 var result = await dut.Handle(query, default);
                 var tagDtos = result.Data;
 
-                AssertTag(tagDtos.Single(t => t.Id == tagA.Id), tagA, _plantA, projectA);
-                AssertTag(tagDtos.Single(t => t.Id == tagB.Id), tagB, _plantB, projectB);
+                var standardTagDto = tagDtos.Single(t => t.Id == standardTag.Id);
+                AssertTag(standardTagDto, standardTag, _plantA, projectA);
+                AssertJourneySpecificDataOnStandardTag(standardTagDto);
+                var siteTagDto = tagDtos.Single(t => t.Id == siteTag.Id);
+                AssertTag(siteTagDto, siteTag, _plantB, projectB);
+                AssertJourneySpecificDataOnSiteTag(siteTagDto);
 
-                AssertDifferentValues(tagDtos.Select(tag => tag.IsProjectClosed).Cast<object>());
+                AssertDifferentValues(tagDtos.Select(tag => tag.ActionStatus).Cast<object>());
+                AssertDifferentValues(tagDtos.Select(tag => tag.ProjectIsClosed).Cast<object>());
                 AssertDifferentValues(tagDtos.Select(tag => tag.IsVoided).Cast<object>());
                 AssertDifferentValues(tagDtos.Select(tag => tag.Status).Cast<object>());
                 AssertDifferentValues(tagDtos.Select(tag => tag.ReadyToBePreserved).Cast<object>());
-                AssertDifferentValues(tagDtos.Select(tag => tag.ActionStatus).Cast<object>());
             }
         }
 
@@ -134,8 +138,21 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
 
                 var result = await dut.Handle(query, default);
 
-                var tagDtos = result.Data;
-                Assert.AreEqual(2, tagDtos.Count);
+                Assert.AreEqual(2, result.Data.Count);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnTags_LimitedToMax()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagsCrossPlantQuery(1);
+                var dut = new GetTagsCrossPlantQueryHandler(context, _plantCacheMock.Object, _plantProvider);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.AreEqual(1, result.Data.Count);
             }
         }
 
@@ -157,21 +174,18 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             AssertEqualAndNotNull(plant.Title, tagDto.PlantTitle);
             AssertEqualAndNotNull(project.Name, tagDto.ProjectName);
             AssertEqualAndNotNull(project.Description, tagDto.ProjectDescription);
-            Assert.AreEqual(project.IsClosed, project.IsClosed);
+            Assert.AreEqual(project.IsClosed, tagDto.ProjectIsClosed);
             AssertEqualAndNotNull(tag.Id, tagDto.Id);
             Assert.IsTrue(tagDto.ActionStatus.HasValue);
             AssertEqualAndNotNull(tag.AreaCode, tagDto.AreaCode);
             AssertEqualAndNotNull(tag.AreaDescription, tagDto.AreaDescription);
-            AssertEqualAndNotNull(tag.Calloff, tagDto.CallOff);
+            AssertEqualAndNotNull(tag.Calloff, tagDto.Calloff);
             AssertEqualAndNotNull(tag.CommPkgNo, tagDto.CommPkgNo);
             AssertEqualAndNotNull(tag.Description, tagDto.Description);
             AssertEqualAndNotNull(tag.DisciplineCode, tagDto.DisciplineCode);
             Assert.AreEqual(tag.IsVoided, tagDto.IsVoided);
             AssertEqualAndNotNull(tag.McPkgNo, tagDto.McPkgNo);
             AssertEqualAndNotNull(_mode1.Title, tagDto.Mode);
-            AssertEqualAndNotNull(_mode2.Title, tagDto.NextMode);
-            AssertEqualAndNotNull(_responsible2.Code, tagDto.NextResponsibleCode);
-            AssertEqualAndNotNull(_responsible2.Description, tagDto.NextResponsibleDescription);
             AssertEqualAndNotNull(tag.PurchaseOrderNo, tagDto.PurchaseOrderNo);
             Assert.AreEqual(tag.IsReadyToBePreserved(), tagDto.ReadyToBePreserved);
             AssertEqualAndNotNull(_responsible1.Code, tagDto.ResponsibleCode);
@@ -180,6 +194,20 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             AssertEqualAndNotNull(tag.TagFunctionCode, tagDto.TagFunctionCode);
             AssertEqualAndNotNull(tag.TagNo, tagDto.TagNo);
             Assert.AreEqual(tag.TagType, tagDto.TagType);
+        }
+
+        private void AssertJourneySpecificDataOnStandardTag(TagDto tagDto)
+        {
+            AssertEqualAndNotNull(_mode2.Title, tagDto.NextMode);
+            AssertEqualAndNotNull(_responsible2.Code, tagDto.NextResponsibleCode);
+            AssertEqualAndNotNull(_responsible2.Description, tagDto.NextResponsibleDescription);
+        }
+
+        private void AssertJourneySpecificDataOnSiteTag(TagDto tagDto)
+        {
+            Assert.IsNull(tagDto.NextMode);
+            Assert.IsNull(tagDto.NextResponsibleCode);
+            Assert.IsNull(tagDto.NextResponsibleDescription);
         }
 
         private void EnsureActionStatusDifferAndSet(PreservationContext context)
@@ -201,7 +229,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         private void EnsureReadyToBePreservedDiffer(PreservationContext context)
         {
             var tag = context.Tags.Include(t => t.Requirements).First();
-            _timeProvider.ElapseWeeks(tag.Requirements.First().IntervalWeeks);
+            _timeProvider.ElapseWeeks(tag.Requirements.Single().IntervalWeeks);
         }
 
         private void EnsureTagIsVoidedDiffer(PreservationContext context)
@@ -221,6 +249,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         private (int, int) CreateTag(
             PreservationContext context,
             string projectName,
+            TagType tagType,
             int intervalWeeks)
         {
             var plantId = _plantProvider.Plant;
@@ -254,7 +283,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
 
             var tag = new Tag(
                 plantId,
-                TagType.Standard,
+                tagType,
                 "Tag A",
                 "Tag desc",
                 step,

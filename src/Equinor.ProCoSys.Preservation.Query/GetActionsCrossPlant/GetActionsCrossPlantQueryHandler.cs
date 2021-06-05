@@ -70,8 +70,14 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
                 .OrderBy(a => a.PlantId)
                 .ThenBy(a => a.ProjectName)
                 .ThenBy(a => a.TagNo)
-                .ThenBy(a => a.Title).ToList();
-            return new SuccessResult<List<ActionDto>>(orderedActions);
+                .ThenBy(a => a.Title)
+                .AsEnumerable();
+
+            if (request.Max > 0)
+            {
+                orderedActions = orderedActions.Take(request.Max);
+            }
+            return new SuccessResult<List<ActionDto>>(orderedActions.ToList());
         }
     }
 }

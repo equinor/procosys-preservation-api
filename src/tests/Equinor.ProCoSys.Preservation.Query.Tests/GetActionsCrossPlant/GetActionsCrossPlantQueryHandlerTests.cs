@@ -127,6 +127,23 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
         }
 
         [TestMethod]
+        public async Task Handler_ShouldReturnTags_LimitedToMax()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetActionsCrossPlantQuery(1);
+                var dut = new GetActionsCrossPlantQueryHandler(context, _plantCacheMock.Object, _plantProvider);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+                
+                Assert.AreEqual(1, result.Data.Count);
+            }
+        }
+
+        [TestMethod]
         public async Task Handler_ShouldReturnActions_FromDifferentPlants()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -152,7 +169,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             AssertEqualAndNotNull(actionDto.PlantId, plant.Id);
             AssertEqualAndNotNull(actionDto.PlantTitle, plant.Title);
             AssertEqualAndNotNull(actionDto.ProjectName, project.Name);
-            Assert.AreEqual(actionDto.IsProjectClosed, project.IsClosed);
+            Assert.AreEqual(actionDto.ProjectIsClosed, project.IsClosed);
             AssertEqualAndNotNull(actionDto.ProjectDescription, project.Description);
             AssertEqualAndNotNull(actionDto.Id, action.Id);
             Assert.AreEqual(actionDto.IsOverDue, action.IsOverDue());
