@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
             var userOid = _currentUserProvider.GetCurrentUserOid();
             if (request is IProjectRequest projectRequest && !_projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
             {
-                _logger.LogWarning($"Current user {userOid} don't have access to project {projectRequest.ProjectName}");
+                _logger.LogWarning($"Current user {userOid} doesn't have have access to project {projectRequest.ProjectName}");
                 return false;
             }
 
@@ -57,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
                 if (!await HasCurrentUserAccessToContentAsync(tagCommandRequest))
                 {
-                    _logger.LogWarning($"Current user {userOid} don't have access to content {tagCommandRequest.TagId}");
+                    _logger.LogWarning($"Current user {userOid} doesn't have access to content {tagCommandRequest.TagId}");
                     return false;
                 }
             }
@@ -87,7 +87,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
             if (!accessCrossPlant)
             {
-                _logger.LogWarning($"Current user {userOid} don't have cross plant access");
+                _logger.LogWarning($"Current user {userOid} doesn't have cross plant access");
                 return false;
             }
 
@@ -103,7 +103,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
                 if (!accessToProject)
                 {
-                    _logger.LogWarning($"Current user {userOid} don't have access to project {projectName}");
+                    _logger.LogWarning($"Current user {userOid} doesn't have access to project {projectName}");
                     return false;
                 }
             }

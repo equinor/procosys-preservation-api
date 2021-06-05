@@ -145,18 +145,18 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 
         private void AssertAction(ActionDto actionDto, Action action, PCSPlant plant, Project project)
         {
-            Assert.AreEqual(actionDto.PlantId, plant.Id);
-            Assert.AreEqual(actionDto.PlantTitle, plant.Title);
-            Assert.AreEqual(actionDto.ProjectName, project.Name);
-            Assert.AreEqual(actionDto.IsProjectClosed, project.IsClosed);
-            Assert.AreEqual(actionDto.ProjectDescription, project.Description);
-            Assert.AreEqual(actionDto.Id, action.Id);
-            Assert.AreEqual(actionDto.IsOverDue, action.IsOverDue());
-            Assert.AreEqual(actionDto.Title, action.Title);
-            Assert.AreEqual(actionDto.Description, action.Description);
-            Assert.AreEqual(actionDto.IsClosed, action.IsClosed);
-            Assert.AreEqual(actionDto.DueTimeUtc, action.DueTimeUtc);
-            Assert.AreEqual(actionDto.AttachmentCount, action.Attachments.Count);
+            Assert.AreEqual(plant.Id, actionDto.PlantId);
+            Assert.AreEqual(plant.Title, actionDto.PlantTitle);
+            Assert.AreEqual(project.Name, actionDto.ProjectName);
+            Assert.AreEqual(project.Description, actionDto.ProjectDescription);
+            Assert.AreEqual(project.IsClosed, actionDto.ProjectIsClosed);
+            Assert.AreEqual(action.Id, action.Id);
+            Assert.AreEqual(action.IsOverDue(), actionDto.IsOverDue);
+            Assert.AreEqual(action.Title, actionDto.Title);
+            Assert.AreEqual(action.Description, actionDto.Description);
+            Assert.AreEqual(action.IsClosed, actionDto.IsClosed);
+            Assert.AreEqual(action.DueTimeUtc, actionDto.DueTimeUtc);
+            Assert.AreEqual(action.Attachments.Count, actionDto.AttachmentCount);
         }
     }
 }

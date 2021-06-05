@@ -9,7 +9,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             string plantTitle,
             string projectName,
             string projectDescription,
-            bool isProjectClosed,
+            bool projectIsClosed,
             int tagId,
             string tagNo,
             int id,
@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             PlantTitle = plantTitle;
             ProjectName = projectName;
             ProjectDescription = projectDescription;
-            IsProjectClosed = isProjectClosed;
+            ProjectIsClosed = projectIsClosed;
             TagId = tagId;
             TagNo = tagNo;
             Id = id;
@@ -40,7 +40,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
         public string PlantTitle { get; }
         public string ProjectName { get; }
         public string ProjectDescription { get; }
-        public bool IsProjectClosed { get; }
+        public bool ProjectIsClosed { get; }
         public int TagId { get; }
         public string TagNo { get; }
         public int Id { get; }
