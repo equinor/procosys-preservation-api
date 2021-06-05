@@ -29,10 +29,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         private void AssertClosedActionWithAttachments(ActionDto actionDto, string plantId, string plantTitle)
         {
             Assert.IsNotNull(actionDto);
-            Assert.AreEqual(actionDto.PlantId, plantId);
-            Assert.AreEqual(actionDto.PlantTitle, plantTitle);
-            Assert.AreEqual(actionDto.ProjectName, KnownTestData.ProjectName);
-            Assert.AreEqual(actionDto.ProjectDescription, KnownTestData.ProjectDescription);
+            Assert.AreEqual(plantId, actionDto.PlantId);
+            Assert.AreEqual(plantTitle, actionDto.PlantTitle);
+            Assert.AreEqual(KnownTestData.ProjectName, actionDto.ProjectName);
+            Assert.AreEqual(KnownTestData.ProjectDescription, actionDto.ProjectDescription);
             Assert.IsTrue(actionDto.Title.StartsWith(KnownTestData.Action));
             Assert.IsTrue(actionDto.IsClosed);
             Assert.IsNotNull(actionDto.TagNo);
