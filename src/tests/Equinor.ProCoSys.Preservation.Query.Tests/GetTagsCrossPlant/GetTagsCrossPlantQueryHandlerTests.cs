@@ -93,16 +93,20 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             Tag siteTag;
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
             {
-                EnsureProjectIsClosedDiffer(context);
-                EnsureTagIsVoidedDiffer(context);
-                EnsureTagStatusDiffer(context);
-                EnsureActionStatusDifferAndSet(context);
-                EnsureReadyToBePreservedDiffer(context);
-
                 projectA = context.Projects.Single(p => p.Id == _projectAId);
                 projectB = context.Projects.Single(p => p.Id == _projectBId);
+                projectB.Close();
+
                 standardTag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _standardTagId);
+                standardTag.StartPreservation();
                 siteTag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _siteTagId);
+                siteTag.IsVoided = true;
+
+                standardTag.AddAction(new Action(standardTag.Plant, "AcA", "AcA desc", null));
+                siteTag.AddAction(new Action(siteTag.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
+                context.SaveChangesAsync().Wait();
+            
+                _timeProvider.ElapseWeeks(standardTag.Requirements.Single().IntervalWeeks);
             }
 
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
@@ -120,11 +124,15 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 AssertTag(siteTagDto, siteTag, _plantB, projectB);
                 AssertJourneySpecificDataOnSiteTag(siteTagDto);
 
-                AssertDifferentValues(tagDtos.Select(tag => tag.ActionStatus).Cast<object>());
-                AssertDifferentValues(tagDtos.Select(tag => tag.ProjectIsClosed).Cast<object>());
-                AssertDifferentValues(tagDtos.Select(tag => tag.IsVoided).Cast<object>());
-                AssertDifferentValues(tagDtos.Select(tag => tag.Status).Cast<object>());
-                AssertDifferentValues(tagDtos.Select(tag => tag.ReadyToBePreserved).Cast<object>());
+                Assert.IsTrue(siteTagDto.ProjectIsClosed);
+                Assert.AreEqual(ActionStatus.HasOpen, standardTagDto.ActionStatus);
+                Assert.AreEqual(ActionStatus.HasOverdue, siteTagDto.ActionStatus);
+                Assert.IsFalse(standardTagDto.IsVoided);
+                Assert.IsTrue(siteTagDto.IsVoided);
+                Assert.AreEqual(PreservationStatus.Active, standardTagDto.Status);
+                Assert.AreEqual(PreservationStatus.NotStarted, siteTagDto.Status);
+                Assert.IsTrue(standardTagDto.ReadyToBePreserved);
+                Assert.IsFalse(siteTagDto.ReadyToBePreserved);
             }
         }
 
@@ -154,14 +162,6 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
 
                 Assert.AreEqual(1, result.Data.Count);
             }
-        }
-
-        private void AssertDifferentValues(IEnumerable<object> values)
-        {
-            var listOfValues = values.ToList();
-            var expected = listOfValues.Count;
-            var actual = listOfValues.Distinct().Count();
-            Assert.AreEqual(expected, actual);
         }
 
         private void AssertTag(
@@ -203,47 +203,12 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             AssertEqualAndNotNull(_responsible2.Description, tagDto.NextResponsibleDescription);
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         private void AssertJourneySpecificDataOnSiteTag(TagDto tagDto)
         {
             Assert.IsNull(tagDto.NextMode);
             Assert.IsNull(tagDto.NextResponsibleCode);
             Assert.IsNull(tagDto.NextResponsibleDescription);
-        }
-
-        private void EnsureActionStatusDifferAndSet(PreservationContext context)
-        {
-            var tagA = context.Tags.First();
-            var tagB = context.Tags.Last();
-            tagA.AddAction(new Action(tagA.Plant, "AcA", "AcA desc", null));
-            tagB.AddAction(new Action(tagB.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
-            context.SaveChangesAsync().Wait();
-        }
-
-        private void EnsureTagStatusDiffer(PreservationContext context)
-        {
-            var tag = context.Tags.Include(t => t.Requirements).First();
-            tag.StartPreservation();
-            context.SaveChangesAsync().Wait();
-        }
-        
-        private void EnsureReadyToBePreservedDiffer(PreservationContext context)
-        {
-            var tag = context.Tags.Include(t => t.Requirements).First();
-            _timeProvider.ElapseWeeks(tag.Requirements.Single().IntervalWeeks);
-        }
-
-        private void EnsureTagIsVoidedDiffer(PreservationContext context)
-        {
-            var tag = context.Tags.Last();
-            tag.IsVoided = true;
-            context.SaveChangesAsync().Wait();
-        }
-
-        private void EnsureProjectIsClosedDiffer(PreservationContext context)
-        {
-            var project = context.Projects.Last();
-            project.Close();
-            context.SaveChangesAsync().Wait();
         }
 
         private (int, int) CreateTag(
