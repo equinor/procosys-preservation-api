@@ -4,7 +4,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.RequirementTypes
 {
-    [TestClass]
     public class RequirementTypesControllerTestsBase : TestBase
     {
         protected int ReqTypeAIdUnderTest;

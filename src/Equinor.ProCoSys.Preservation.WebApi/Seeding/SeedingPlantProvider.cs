@@ -7,5 +7,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Seeding
         public SeedingPlantProvider(string plant) => Plant = plant;
 
         public string Plant { get; }
+        public bool IsCrossPlantQuery => false;
     }
 }

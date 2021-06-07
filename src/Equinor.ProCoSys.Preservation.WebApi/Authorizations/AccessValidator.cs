@@ -13,6 +13,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
     {
         private readonly ICurrentUserProvider _currentUserProvider;
         private readonly IProjectAccessChecker _projectAccessChecker;
+        private readonly ICrossPlantAccessChecker _crossPlantAccessChecker;
         private readonly IContentRestrictionsChecker _contentRestrictionsChecker;
         private readonly ITagHelper _tagHelper;
         private readonly ILogger<AccessValidator> _logger;
@@ -20,12 +21,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
         public AccessValidator(
             ICurrentUserProvider currentUserProvider, 
             IProjectAccessChecker projectAccessChecker,
+            ICrossPlantAccessChecker crossPlantAccessChecker,
             IContentRestrictionsChecker contentRestrictionsChecker,
             ITagHelper tagHelper, 
             ILogger<AccessValidator> logger)
         {
             _currentUserProvider = currentUserProvider;
             _projectAccessChecker = projectAccessChecker;
+            _crossPlantAccessChecker = crossPlantAccessChecker;
             _contentRestrictionsChecker = contentRestrictionsChecker;
             _tagHelper = tagHelper;
             _logger = logger;
@@ -41,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
             var userOid = _currentUserProvider.GetCurrentUserOid();
             if (request is IProjectRequest projectRequest && !_projectAccessChecker.HasCurrentUserAccessToProject(projectRequest.ProjectName))
             {
-                _logger.LogWarning($"Current user {userOid} don't have access to project {projectRequest.ProjectName}");
+                _logger.LogWarning($"Current user {userOid} doesn't have have access to project {projectRequest.ProjectName}");
                 return false;
             }
 
@@ -54,7 +57,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
                 if (!await HasCurrentUserAccessToContentAsync(tagCommandRequest))
                 {
-                    _logger.LogWarning($"Current user {userOid} don't have access to content {tagCommandRequest.TagId}");
+                    _logger.LogWarning($"Current user {userOid} doesn't have access to content {tagCommandRequest.TagId}");
                     return false;
                 }
             }
@@ -65,6 +68,27 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
                 {
                     return false;
                 }
+            }
+
+            if (request is ICrossPlantQueryRequest)
+            {
+                if (!IsUserCrossPlantUser(userOid))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private bool IsUserCrossPlantUser(Guid userOid)
+        {
+            var accessCrossPlant = _crossPlantAccessChecker.HasCurrentUserAccessToCrossPlant();
+
+            if (!accessCrossPlant)
+            {
+                _logger.LogWarning($"Current user {userOid} doesn't have cross plant access");
+                return false;
             }
 
             return true;
@@ -79,7 +103,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
                 if (!accessToProject)
                 {
-                    _logger.LogWarning($"Current user {userOid} don't have access to project {projectName}");
+                    _logger.LogWarning($"Current user {userOid} doesn't have access to project {projectName}");
                     return false;
                 }
             }

@@ -98,7 +98,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
         public async Task<IList<string>> GetPlantsFromCache()
         {
             var currentUserOid = _currentUserProvider.GetCurrentUserOid();
-            var plants = await _plantCache.GetPlantWithAccessForUserAsync(currentUserOid);
+            var plants = await _plantCache.GetPlantIdsWithAccessForUserAsync(currentUserOid);
             return plants;
         }
 

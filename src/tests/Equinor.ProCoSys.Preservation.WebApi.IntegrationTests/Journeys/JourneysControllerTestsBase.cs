@@ -5,7 +5,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 {
-    [TestClass]
     public class JourneysControllerTestsBase : TestBase
     {
         protected int ModeIdUnderTest;
@@ -17,7 +16,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         [TestInitialize]
         public async Task TestInitialize()
         {
-            ModeIdUnderTest = TestFactory.Instance.KnownTestData.ModeId;
+            ModeIdUnderTest = TestFactory.Instance.SeededData[KnownPlantData.PlantA].ModeId;
+
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
             var journeyWithTags = journeys.Single(j => j.Title == KnownTestData.JourneyWithTags);
             JourneyWithTagsIdUnderTest = journeyWithTags.Id;
