@@ -38,6 +38,7 @@ using Equinor.ProCoSys.Preservation.Query.GetTagAttachment;
 using Equinor.ProCoSys.Preservation.Query.GetTagAttachments;
 using Equinor.ProCoSys.Preservation.Query.GetTagDetails;
 using Equinor.ProCoSys.Preservation.Query.GetTagRequirements;
+using Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant;
 using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTags;
 using Equinor.ProCoSys.Preservation.Query.GetTagsQueries.GetTagsForExport;
 using Equinor.ProCoSys.Preservation.Query.GetUniqueTagAreas;
@@ -1862,7 +1863,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public async Task ValidateAsync_OnGetActionsCrossPlantQuery_ShouldReturnTrue_WhenUserHaveCrossPlantAccess()
         {
-            var query = new GetActionsCrossPlantQuery(0);
+            var query = new GetActionsCrossPlantQuery();
             _crossPlantAccessCheckerMock.Setup(x => x.HasCurrentUserAccessToCrossPlant()).Returns(true);
             
             // act
@@ -1876,6 +1877,32 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         public async Task ValidateAsync_OnGetActionsCrossPlantQuery_ShouldReturnFalse_WhenUserHaveNotCrossPlantAccess()
         {
             var query = new GetActionsCrossPlantQuery();
+
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetTagsCrossPlantQuery_ShouldReturnTrue_WhenUserHaveCrossPlantAccess()
+        {
+            var query = new GetTagsCrossPlantQuery();
+            _crossPlantAccessCheckerMock.Setup(x => x.HasCurrentUserAccessToCrossPlant()).Returns(true);
+            
+            // act
+            var result = await _dut.ValidateAsync(query);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [TestMethod]
+        public async Task ValidateAsync_OnGetTagsCrossPlantQuery_ShouldReturnFalse_WhenUserHaveNotCrossPlantAccess()
+        {
+            var query = new GetTagsCrossPlantQuery();
+
             // act
             var result = await _dut.ValidateAsync(query);
 
