@@ -26,7 +26,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         [TestInitialize]
         public async Task Setup()
         {
-
             _tagId1_WithAttachment = TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
             var attachmentDtos = await TagsControllerTestsHelper.GetAllTagAttachmentsAsync(
                 UserType.Preserver, TestFactory.PlantWithAccess,
@@ -1495,7 +1494,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         {
             // Arrange 
             var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var stepId = JourneyWithTags.Steps.Last().Id;
+            var stepId = TwoStepJourneyWithTags.Steps.Last().Id;
 
             var newTagId = await TagsControllerTestsHelper.CreateAreaTagAsync(
                 UserType.Planner, TestFactory.PlantWithAccess,

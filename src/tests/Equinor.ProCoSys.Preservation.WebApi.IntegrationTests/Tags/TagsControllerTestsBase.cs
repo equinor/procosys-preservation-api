@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         protected int TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started;
         protected int TagIdUnderTest_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted;
 
-        protected JourneyDto JourneyWithTags;
+        protected JourneyDto TwoStepJourneyWithTags;
 
         protected TestFile FileToBeUploaded = new TestFile("test file content", "file.txt");
 
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             Assert.AreEqual(InitialTagsCount, result.Tags.Count);
 
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            JourneyWithTags = journeys.Single(j => j.Title == KnownTestData.JourneyWithTags);
+            TwoStepJourneyWithTags = journeys.Single(j => j.Title == KnownTestData.TwoStepJourneyWithTags);
 
             TagIdUnderTest_ForStandardTagReadyForBulkPreserve_NotStarted
                 = TestFactory.Instance.SeededData[KnownPlantData.PlantA].TagId_ForStandardTagReadyForBulkPreserve_NotStarted;

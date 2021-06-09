@@ -92,7 +92,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             // Arrange
             var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.SiteArea, 
-                JourneyWithTags.Steps.Last().Id,
+                TwoStepJourneyWithTags.Steps.Last().Id,
                 null,
                 false);
             var tag = await TagsControllerTestsHelper.GetTagAsync(
@@ -123,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldKeepSameDescriptionOnStandardTag()
         {
             // Arrange
-            var tagIdUnderTest = await CreateStandardTagAsync(JourneyWithTags.Steps.Last().Id, false);
+            var tagIdUnderTest = await CreateStandardTagAsync(TwoStepJourneyWithTags.Steps.Last().Id, false);
 
             var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
             var oldDescription = tag.Description;
@@ -150,7 +150,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
 
             var tagIdUnderTest = await CreateAreaTagAsync(AreaTagType.PreArea,
-                JourneyWithTags.Steps.First().Id,
+                TwoStepJourneyWithTags.Steps.First().Id,
                 null,
                 false);
             var tag = await TagsControllerTestsHelper.GetTagAsync(
@@ -213,7 +213,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var newReqDefId = await CreateRequirementDefinitionAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
 
             var tagIdUnderTest = await CreateAreaTagAsync(AreaTagType.PreArea,
-                JourneyWithTags.Steps.First().Id,
+                TwoStepJourneyWithTags.Steps.First().Id,
                 null,
                 false);
             var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess,
@@ -277,11 +277,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
         public async Task UpdateTagStepAndRequirements_AsPlanner_ShouldUpdateStep()
         {
             // Arrange
-            var otherStepId = JourneyWithTags.Steps.First(s => !s.Mode.ForSupplier).Id;
+            var otherStepId = TwoStepJourneyWithTags.Steps.First(s => !s.Mode.ForSupplier).Id;
 
             var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                JourneyWithTags.Steps.First().Id,
+                TwoStepJourneyWithTags.Steps.First().Id,
                 null,
                 false);
             var tag = await TagsControllerTestsHelper.GetTagAsync(UserType.Planner, TestFactory.PlantWithAccess, tagIdUnderTest);
@@ -666,7 +666,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             // Arrange 
             var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                JourneyWithTags.Steps.First().Id,
+                TwoStepJourneyWithTags.Steps.First().Id,
                 null,
                 true);
 
@@ -708,7 +708,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             var initialTagsCount = tagsResult.Tags.Count;
 
             // Act
-            var id = await CreateStandardTagAsync(JourneyWithTags.Steps.First().Id, false);
+            var id = await CreateStandardTagAsync(TwoStepJourneyWithTags.Steps.First().Id, false);
 
             // Assert
             await AssertNewTagCreatedAsync(UserType.Planner, TestFactory.PlantWithAccess, id, initialTagsCount);
@@ -726,7 +726,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             // Act
             var id = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                JourneyWithTags.Steps.Last().Id,
+                TwoStepJourneyWithTags.Steps.Last().Id,
                 null,
                 false);
 
@@ -742,7 +742,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
                 UserType.Planner, TestFactory.PlantWithAccess,
                 TestFactory.ProjectWithAccess);
             var initialTagsCount = tagsResult.Tags.Count;
-            var supplierStepId = JourneyWithTags.Steps.First(s => s.Mode.ForSupplier).Id;
+            var supplierStepId = TwoStepJourneyWithTags.Steps.First(s => s.Mode.ForSupplier).Id;
 
             // Act
             var id = await CreateAreaTagAsync(
@@ -761,7 +761,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             // Arrange
             var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                JourneyWithTags.Steps.First().Id,
+                TwoStepJourneyWithTags.Steps.First().Id,
                 null,
                 true);
 
@@ -790,7 +790,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             // Arrange 
             var tagIdUnderTest = await CreateAreaTagAsync(
                 AreaTagType.PreArea,
-                JourneyWithTags.Steps.First().Id,
+                TwoStepJourneyWithTags.Steps.First().Id,
                 null,
                 true);
 

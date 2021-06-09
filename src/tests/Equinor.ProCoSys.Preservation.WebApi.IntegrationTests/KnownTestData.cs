@@ -6,6 +6,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     {
         public static string ProjectName => "TestProject";
         public static string ProjectDescription => "Test - Project";
+        public static string SupModeA => "SUP-A";
+        public static string SupModeB => "SUP-B";
+        public static string OtherMode => "FAB";
         public static string ResponsibleCode => "TestResp";
         public static string ResponsibleDescription => "Test - Responsible";
         public static string ReqTypeA => "TestRT-A";
@@ -15,7 +18,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public static string ReqDefInReqTypeAWithAttachmentField => "TestRD-A-Attachment";
         public static string ReqTypeB => "TestRT-B";
         public static string ReqDefInReqTypeB => "TestRD-B";
-        public static string JourneyWithTags => "TestJourneyA";
+        public static string TwoStepJourneyWithTags => "TestJourneyA";
         public static string StepAInJourneyWithTags => "TestStepA";
         public static string StepBInJourneyWithTags => "TestStepB";
         public static string JourneyNotInUse => "TestJourneyB";
@@ -37,7 +40,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public int TagId_ForStandardTagWithAttachmentRequirement_Started { get; set; }
         public int TagId_ForSiteAreaTagReadyForBulkPreserve_NotStarted { get; set; }
         public int TagId_ForSiteAreaTagWithAttachmentsAndActionAttachments_NotStarted { get; set; }
-        public int ModeId { get; set; }
+        public int SupModeAId { get; set; }
+        public int SupModeBId { get; set; }
+        public int OtherModeId { get; set; }
         public int ActionId_ForActionWithAttachments_Closed { get; set; }
     }
 }

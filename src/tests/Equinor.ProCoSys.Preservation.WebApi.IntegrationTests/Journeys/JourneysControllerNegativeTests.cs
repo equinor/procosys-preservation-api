@@ -273,9 +273,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             => await JourneysControllerTestsHelper.UpdateStepAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyNotInUseIdUnderTest,
-                StepInJourneyWithTagsIdUnderTest, // step in other Journey
+                FirstStepInJourneyWithTagsIdUnderTest, // step in other Journey
                 Guid.NewGuid().ToString(),
-                ModeIdUnderTest,
+                OtherModeIdUnderTest,
                 KnownTestData.ResponsibleCode,
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
@@ -354,7 +354,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             => await JourneysControllerTestsHelper.VoidStepAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyNotInUseIdUnderTest,
-                StepInJourneyWithTagsIdUnderTest, // step in other Journey
+                FirstStepInJourneyWithTagsIdUnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Journey and/or step doesn't exist!");
@@ -431,7 +431,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             => await JourneysControllerTestsHelper.UnvoidStepAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyNotInUseIdUnderTest,
-                StepInJourneyWithTagsIdUnderTest, // step in other Journey
+                FirstStepInJourneyWithTagsIdUnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Journey and/or step doesn't exist!");
@@ -508,10 +508,141 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             => await JourneysControllerTestsHelper.DeleteStepAsync(
                 UserType.LibraryAdmin, TestFactory.PlantWithAccess,
                 JourneyNotInUseIdUnderTest,
-                StepInJourneyWithTagsIdUnderTest, // step in other Journey
+                FirstStepInJourneyWithTagsIdUnderTest, // step in other Journey
                 TestFactory.AValidRowVersion,
                 HttpStatusCode.BadRequest,
                 "Journey and/or step doesn't exist!");
+
+        #endregion
+
+        #region SwapSteps
+        [TestMethod]
+        public async Task SwapSteps_AsAnonymous_ShouldReturnUnauthorized()
+            => await JourneysControllerTestsHelper.SwapStepsAsync(
+                UserType.Anonymous,
+                TestFactory.UnknownPlant,
+                9999,
+                new StepIdWithRowVersionDto
+                {
+                    Id = 2, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                new StepIdWithRowVersionDto
+                {
+                    Id = 12, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task SwapSteps_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.SwapStepsAsync(
+                UserType.Hacker,
+                TestFactory.UnknownPlant,
+                9999,
+                new StepIdWithRowVersionDto
+                {
+                    Id = 2, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                new StepIdWithRowVersionDto
+                {
+                    Id = 12, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task SwapSteps_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.SwapStepsAsync(
+                UserType.LibraryAdmin,
+                TestFactory.UnknownPlant,
+                9999,
+                new StepIdWithRowVersionDto
+                {
+                    Id = 2, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                new StepIdWithRowVersionDto
+                {
+                    Id = 12, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task SwapSteps_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.SwapStepsAsync(
+                UserType.Hacker,
+                TestFactory.PlantWithoutAccess,
+                9999,
+                new StepIdWithRowVersionDto
+                {
+                    Id = 2, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                new StepIdWithRowVersionDto
+                {
+                    Id = 12, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task SwapSteps_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.SwapStepsAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithoutAccess,
+                9999,
+                new StepIdWithRowVersionDto
+                {
+                    Id = 2, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                new StepIdWithRowVersionDto
+                {
+                    Id = 12, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task SwapSteps_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.SwapStepsAsync(
+                UserType.Planner,
+                TestFactory.PlantWithAccess,
+                9999,
+                new StepIdWithRowVersionDto
+                {
+                    Id = 2, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                new StepIdWithRowVersionDto
+                {
+                    Id = 12, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task SwapSteps_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.SwapStepsAsync(
+                UserType.Preserver,
+                TestFactory.PlantWithAccess,
+                9999,
+                new StepIdWithRowVersionDto
+                {
+                    Id = 2, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                new StepIdWithRowVersionDto
+                {
+                    Id = 12, 
+                    RowVersion = TestFactory.AValidRowVersion
+                },
+                HttpStatusCode.Forbidden);
 
         #endregion
     }

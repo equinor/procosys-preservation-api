@@ -12,7 +12,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         private const string _route = "Journeys";
         
         public static async Task<List<JourneyDto>> GetJourneysAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -32,7 +33,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         }
         
         public static async Task<JourneyDetailsDto> GetJourneyAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
@@ -53,7 +55,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         public static async Task<int> CreateStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             string title,
             int modeId,
@@ -83,7 +86,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         public static async Task<string> UpdateStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             int stepId,
             string title,
@@ -116,7 +120,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         public static async Task<string> VoidStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             int stepId,
             string rowVersion,
@@ -131,7 +136,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 expectedMessageOnBadRequest);
 
         public static async Task<string> UnvoidStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             int stepId,
             string rowVersion,
@@ -146,7 +152,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 expectedMessageOnBadRequest);
 
         public static async Task DeleteStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             int stepId,
             string rowVersion,
@@ -165,6 +172,36 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).SendAsync(request);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<string> SwapStepsAsync(
+            UserType userType,
+            string plant,
+            int journeyId,
+            StepIdWithRowVersionDto stepA,
+            StepIdWithRowVersionDto stepB,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                stepA,
+                stepB
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{journeyId}/Steps/SwapSteps", content);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            return await response.Content.ReadAsStringAsync();
+
         }
 
         private static async Task<string> VoidUnvoidStepAsync(
