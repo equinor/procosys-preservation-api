@@ -54,8 +54,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<JourneyDto>>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<JourneyDto>>(jsonString);
         }
         
         public static async Task<JourneyDetailsDto> GetJourneyAsync(
@@ -76,8 +76,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<JourneyDetailsDto>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<JourneyDetailsDto>(jsonString);
         }
 
         public static async Task<int> CreateStepAsync(
@@ -200,12 +200,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
         }
 
-        public static async Task<string> SwapStepsAsync(
+        public static async Task<List<StepIdAndRowVersion>> SwapStepsAsync(
             UserType userType,
             string plant,
             int journeyId,
-            StepIdWithRowVersionDto stepA,
-            StepIdWithRowVersionDto stepB,
+            StepIdAndRowVersion stepA,
+            StepIdAndRowVersion stepB,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -226,7 +226,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 return null;
             }
 
-            return await response.Content.ReadAsStringAsync();
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<StepIdAndRowVersion>>(jsonString);
 
         }
 

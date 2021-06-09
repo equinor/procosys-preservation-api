@@ -576,12 +576,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.Anonymous,
                 TestFactory.UnknownPlant,
                 9999,
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 2, 
                     RowVersion = TestFactory.AValidRowVersion
                 },
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 12, 
                     RowVersion = TestFactory.AValidRowVersion
@@ -594,12 +594,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.Hacker,
                 TestFactory.UnknownPlant,
                 9999,
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 2, 
                     RowVersion = TestFactory.AValidRowVersion
                 },
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 12, 
                     RowVersion = TestFactory.AValidRowVersion
@@ -613,12 +613,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.LibraryAdmin,
                 TestFactory.UnknownPlant,
                 9999,
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 2, 
                     RowVersion = TestFactory.AValidRowVersion
                 },
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 12, 
                     RowVersion = TestFactory.AValidRowVersion
@@ -632,12 +632,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.Hacker,
                 TestFactory.PlantWithoutAccess,
                 9999,
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 2, 
                     RowVersion = TestFactory.AValidRowVersion
                 },
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 12, 
                     RowVersion = TestFactory.AValidRowVersion
@@ -650,12 +650,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithoutAccess,
                 9999,
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 2, 
                     RowVersion = TestFactory.AValidRowVersion
                 },
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 12, 
                     RowVersion = TestFactory.AValidRowVersion
@@ -668,12 +668,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.Planner,
                 TestFactory.PlantWithAccess,
                 9999,
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 2, 
                     RowVersion = TestFactory.AValidRowVersion
                 },
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 12, 
                     RowVersion = TestFactory.AValidRowVersion
@@ -686,12 +686,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.Preserver,
                 TestFactory.PlantWithAccess,
                 9999,
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 2, 
                     RowVersion = TestFactory.AValidRowVersion
                 },
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
                     Id = 12, 
                     RowVersion = TestFactory.AValidRowVersion

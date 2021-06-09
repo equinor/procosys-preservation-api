@@ -300,8 +300,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 Guid.NewGuid().ToString(),
                 SupModeAIdUnderTest,
                 KnownTestData.ResponsibleCode);
-            var firstStep = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
-            Assert.IsTrue(firstStep.Mode.ForSupplier);
+            var originalFirstStep = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            Assert.IsTrue(originalFirstStep.Mode.ForSupplier);
             stepId = await JourneysControllerTestsHelper.CreateStepAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
@@ -309,38 +309,44 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 Guid.NewGuid().ToString(),
                 OtherModeIdUnderTest,
                 KnownTestData.ResponsibleCode);
-            var secondStep = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
-            Assert.IsFalse(secondStep.Mode.ForSupplier);
+            var originalSecondStep = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            Assert.IsFalse(originalSecondStep.Mode.ForSupplier);
 
             // Act
             var newRowVersions = await JourneysControllerTestsHelper.SwapStepsAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
-                    Id = firstStep.Id,
-                    RowVersion = firstStep.RowVersion
+                    Id = originalFirstStep.Id,
+                    RowVersion = originalFirstStep.RowVersion
                 },
-                new StepIdWithRowVersionDto
+                new StepIdAndRowVersion
                 {
-                    Id = secondStep.Id,
-                    RowVersion = secondStep.RowVersion
+                    Id = originalSecondStep.Id,
+                    RowVersion = originalSecondStep.RowVersion
                 });
 
             // Assert
-            var journey = await JourneysControllerTestsHelper.GetJourneyAsync(
+            var updatedJourney = await JourneysControllerTestsHelper.GetJourneyAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest);
-            var firstStepDto = journey.Steps.ElementAt(0);
-            var secondStepDto = journey.Steps.ElementAt(1);
-            Assert.AreEqual(firstStepDto.Id, secondStep.Id);
-            Assert.IsFalse(firstStepDto.Mode.ForSupplier);
-            Assert.AreEqual(secondStepDto.Id, firstStep.Id);
-            Assert.IsTrue(secondStepDto.Mode.ForSupplier);
+            var swappedStepA = updatedJourney.Steps.ElementAt(0);
+            var swappedStepB = updatedJourney.Steps.ElementAt(1);
+            Assert.AreEqual(originalSecondStep.Id, swappedStepA.Id);
+            Assert.AreEqual(originalFirstStep.Id, swappedStepB.Id);
+            Assert.IsFalse(swappedStepA.Mode.ForSupplier);
+            Assert.IsTrue(swappedStepB.Mode.ForSupplier);
+            
+            var updatedFirstStepRowVersion = updatedJourney.Steps.Single(s => s.Id == originalFirstStep.Id).RowVersion;
+            var updatedSecondStepRowVersion = updatedJourney.Steps.Single(s => s.Id == originalSecondStep.Id).RowVersion;
+            AssertRowVersionChange(originalFirstStep.RowVersion, updatedFirstStepRowVersion);
+            AssertRowVersionChange(originalSecondStep.RowVersion, updatedSecondStepRowVersion);
 
-            // todo AssertRowVersionChange(currentRowVersion, newRowVersions);
+            Assert.AreEqual(updatedFirstStepRowVersion, newRowVersions.Single(r => r.Id == originalFirstStep.Id).RowVersion);
+            Assert.AreEqual(updatedSecondStepRowVersion, newRowVersions.Single(r => r.Id == originalSecondStep.Id).RowVersion);
         }
 
         private async Task<StepDetailsDto> GetStepDetailsAsync(int journeyId, int stepId)
