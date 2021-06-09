@@ -65,7 +65,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         public async Task CreateStep_AsAdmin_ShouldCreateStep()
         {
             // Arrange
-            var journeyIdUnderTest = TwoStepJourneyWithTagsIdUnderTest;
+            var journeyIdUnderTest = await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
             var title = Guid.NewGuid().ToString();
 
             // Act
@@ -80,6 +83,37 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             // Assert
             var step = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
             Assert.IsNotNull(step);
+            Assert.AreEqual(title, step.Title);
+        }
+
+        [TestMethod]
+        public async Task CreateStep_AsAdmin_ShouldCreateTwoSupplierSteps()
+        {
+            // Arrange
+            var journeyIdUnderTest = await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                Guid.NewGuid().ToString());
+            var stepAId = await JourneysControllerTestsHelper.CreateStepAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyIdUnderTest,
+                Guid.NewGuid().ToString(),
+                SupModeAIdUnderTest,
+                KnownTestData.ResponsibleCode);
+
+            // Act
+            var stepBId = await JourneysControllerTestsHelper.CreateStepAsync(
+                UserType.LibraryAdmin,
+                TestFactory.PlantWithAccess,
+                journeyIdUnderTest,
+                Guid.NewGuid().ToString(),
+                SupModeBIdUnderTest,
+                KnownTestData.ResponsibleCode);
+
+            // Assert
+            await AssertStepIsForSupplier(journeyIdUnderTest, stepAId);
+            await AssertStepIsForSupplier(journeyIdUnderTest, stepBId);
         }
 
         [TestMethod]
@@ -316,6 +350,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 TestFactory.PlantWithAccess,
                 journeyId);
             return journey.Steps.SingleOrDefault(s => s.Id == stepId);
+        }
+
+        private async Task AssertStepIsForSupplier(int journeyId, int stepId)
+        {
+            var stepA = await GetStepDetailsAsync(journeyId, stepId);
+            Assert.IsNotNull(stepA);
+            Assert.IsTrue(stepA.Mode.ForSupplier);
         }
     }
 }
