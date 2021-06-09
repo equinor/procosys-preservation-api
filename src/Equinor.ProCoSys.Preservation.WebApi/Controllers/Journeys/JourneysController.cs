@@ -223,7 +223,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Journeys
 
         [Authorize(Roles = Permissions.LIBRARY_PRESERVATION_WRITE)]
         [HttpPut("{id}/Steps/SwapSteps")]
-        public async Task<ActionResult> SwapSteps(
+        public async Task<ActionResult<List<StepIdAndRowVersion>>> SwapSteps(
             [FromHeader(Name = CurrentPlantMiddleware.PlantHeader)]
             [Required]
             [StringLength(PlantEntityBase.PlantLengthMax, MinimumLength = PlantEntityBase.PlantLengthMin)]
