@@ -37,7 +37,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             _journeyValidatorMock.Setup(r => r.ExistsStepAsync(_journeyId, _stepId, default)).Returns(Task.FromResult(true));
 
             _stepValidatorMock = new Mock<IStepValidator>();
-            _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplierAsync(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(true));
             _stepValidatorMock.Setup(r => r.HasModeAsync(_modeId, _stepId, default)).Returns(Task.FromResult(true));
 
             _modeValidatorMock = new Mock<IModeValidator>();
@@ -149,18 +148,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.UpdateStep
             Assert.IsFalse(result.IsValid);
             Assert.AreEqual(1, result.Errors.Count);
             Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Responsible is voided!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenUpdatingToSupplierStepAndTheStepIsNotTheFirstInTheList()
-        {
-            _stepValidatorMock.Setup(r => r.IsFirstStepOrModeIsNotForSupplierAsync(_journeyId, _modeId, _stepId, default)).Returns(Task.FromResult(false));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Only the first step can be supplier step!"));
         }
 
         [TestMethod]

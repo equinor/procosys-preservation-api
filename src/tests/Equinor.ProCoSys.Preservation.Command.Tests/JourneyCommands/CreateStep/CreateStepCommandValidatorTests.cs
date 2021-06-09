@@ -130,30 +130,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.CreateStep
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenSupplierStepIsNotAddedToTop()
-        {
-            _journeyValidatorMock.Setup(r => r.HasAnyStepsAsync(_journeyId, default)).Returns(Task.FromResult(true));
-            _modeValidatorMock.Setup(r => r.IsForSupplierAsync(_modeId, default)).Returns(Task.FromResult(true));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Supplier step can only be chosen as the first step!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldBeValid_WhenSupplierStepIsAddedToTop()
-        {
-            _journeyValidatorMock.Setup(r => r.HasAnyStepsAsync(_journeyId, default)).Returns(Task.FromResult(false));
-            _modeValidatorMock.Setup(r => r.IsForSupplierAsync(_modeId, default)).Returns(Task.FromResult(true));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsTrue(result.IsValid);
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenSettingSameAutoTransferMethod_AsAExistingStep()
         {
             var autoTransferMethod = AutoTransferMethod.OnRfccSign;

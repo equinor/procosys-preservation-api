@@ -30,8 +30,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep
                 .WithMessage(command => $"Responsible is voided! Responsible={command.ResponsibleCode}")
                 .MustAsync((command, token) => HaveUniqueStepTitleAsync(command.JourneyId, command.Title, token))
                 .WithMessage(command => $"Step with title already exists in journey! Step={command.Title}")
-                .MustAsync((command, token) => BeFirstStepWhenSupplierModeAsync(command.JourneyId, command.ModeId, token))
-                .WithMessage(command => $"Supplier step can only be chosen as the first step! Step={command.Title}")
                 .MustAsync((command, token) => NotBeAnyStepWithSameAutoTransferMethodInJourneyAsync(command.JourneyId, command.AutoTransferMethod, token))
                 .WithMessage(command => $"Same auto transfer method can not be set on multiple steps in a journey! Method={command.AutoTransferMethod}");
 
@@ -52,12 +50,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.CreateStep
 
             async Task<bool> NotBeAVoidedModeAsync(int modeId, CancellationToken token)
                 => !await modeValidator.IsVoidedAsync(modeId, token);
-
-            async Task<bool> BeFirstStepWhenSupplierModeAsync(int journeyId, int modeId, CancellationToken token)
-            {
-                var isFirstStep = !await journeyValidator.HasAnyStepsAsync(journeyId, token);
-                return isFirstStep || !await modeValidator.IsForSupplierAsync(modeId, token);
-            }
             
             async Task<bool> NotBeAnyStepWithSameAutoTransferMethodInJourneyAsync(int journeyId, AutoTransferMethod autoTransferMethod, CancellationToken token)
                 => autoTransferMethod == AutoTransferMethod.None || !await journeyValidator.HasAnyStepWithAutoTransferMethodAsync(journeyId, autoTransferMethod, token);

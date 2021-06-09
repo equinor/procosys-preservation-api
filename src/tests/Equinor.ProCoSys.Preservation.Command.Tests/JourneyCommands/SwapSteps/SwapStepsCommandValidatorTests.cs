@@ -89,31 +89,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.JourneyCommands.SwapSteps
         }
 
         [TestMethod]
-        public void Validate_ShouldFail_WhenStepsIncludeSupplierStep()
-        {
-            _stepValidatorMock.Setup(s => s.IsAnyStepForSupplierAsync(_stepAId, _stepBId, default)).Returns(Task.FromResult(true));
-
-            var result = _dut.Validate(_command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Supplier steps cannot be swapped!"));
-        }
-
-        [TestMethod]
-        public void Validate_ShouldFail_WhenInvalidRowVersionForStepA()
-        {
-            var command = new SwapStepsCommand(_journeyId, _stepAId, _invalidRowVersion, _stepBId, _stepBRowVersion);
-            _rowVersionValidatorMock.Setup(r => r.IsValid(_invalidRowVersion)).Returns(false);
-
-            var result = _dut.Validate(command);
-
-            Assert.IsFalse(result.IsValid);
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.IsTrue(result.Errors[0].ErrorMessage.StartsWith("Not a valid row version!"));
-        }
-
-        [TestMethod]
         public void Validate_ShouldFail_WhenInvalidRowVersionForStepB()
         {
             var command = new SwapStepsCommand(_journeyId, _stepAId, _stepARowVersion, _stepBId, _invalidRowVersion);

@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.JourneyId, command.StepId, token))
-                .WithMessage(command => "Journey and/or step doesn't exist!")
+                .WithMessage(_ => "Journey and/or step doesn't exist!")
                 .MustAsync((command, token) => HaveUniqueStepTitleInJourneyAsync(command.JourneyId, command.StepId, command.Title, token))
                 .WithMessage(command => $"Another step with title already exists in a journey! Step={command.Title}")
                 .MustAsync((command, token) => NotBeAVoidedStepAsync(command.StepId, token))
@@ -34,8 +34,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep
                 .WithMessage(command => $"Mode is voided! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotBeAnExistingAndVoidedResponsibleAsync(command.ResponsibleCode, token))
                 .WithMessage(command => $"Responsible is voided! ResponsibleCode={command.ResponsibleCode}")
-                .MustAsync((command, token) => BeFirstStepIfUpdatingToSupplierStep(command.JourneyId, command.ModeId, command.StepId, token))
-                .WithMessage(command => $"Only the first step can be supplier step! Mode={command.ModeId}")
                 .MustAsync((command, token) => NotHaveOtherStepsWithSameAutoTransferMethodInJourneyAsync(command.JourneyId, command.StepId, command.AutoTransferMethod, token))
                 .WithMessage(command => $"Same auto transfer method can not be set on multiple steps in a journey! Method={command.AutoTransferMethod}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))
@@ -59,9 +57,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.UpdateStep
             
             async Task<bool> NotBeAnExistingAndVoidedResponsibleAsync(string responsibleCode, CancellationToken token)
                 => !await responsibleValidator.ExistsAndIsVoidedAsync(responsibleCode, token);
-            
-            async Task<bool> BeFirstStepIfUpdatingToSupplierStep(int journeyId, int modeId, int stepId, CancellationToken token)
-                => await stepValidator.IsFirstStepOrModeIsNotForSupplierAsync(journeyId, modeId, stepId, token);
 
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);

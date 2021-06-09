@@ -102,50 +102,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
         }
 
         [TestMethod]
-        public async Task IsAnyStepForSupplier_IncludesSupplierStep_ShouldReturnTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new StepValidator(context);
-                var result = await dut.IsAnyStepForSupplierAsync(_step2InJourney1.Id, _step1InJourney1ForSupplier.Id, default);
-                Assert.IsTrue(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task IsAnyStepForSupplier_NotIncludesSupplierStep_ShouldReturnFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new StepValidator(context);
-                var result = await dut.IsAnyStepForSupplierAsync(_step2InJourney1.Id, _step3InJourney1.Id, default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task IsFirstStepOrModeIsNotForSupplier_UpdatingFirstStepToSupplierStep_ShouldReturnTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new StepValidator(context);
-                var result = await dut.IsFirstStepOrModeIsNotForSupplierAsync(_journey1.Id, _step1InJourney1ForSupplier.ModeId, _step1InJourney1ForSupplier.Id, default);
-                Assert.IsTrue(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task IsFirstStepOrModeIsNotForSupplier_UpdatingNotFirstStepToSupplierStep_ShouldReturnFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new StepValidator(context);
-                var result = await dut.IsFirstStepOrModeIsNotForSupplierAsync(_journey1.Id, _step1InJourney1ForSupplier.ModeId, _step3InJourney1.Id, default);
-                Assert.IsFalse(result);
-            }
-        }
-
-        [TestMethod]
         public async Task IsForSupplier_KnownForSupplier_ShouldReturnTrue()
         {
             using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))

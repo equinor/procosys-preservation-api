@@ -336,9 +336,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             var firstStepDto = journey.Steps.ElementAt(0);
             var secondStepDto = journey.Steps.ElementAt(1);
             Assert.AreEqual(firstStepDto.Id, secondStep.Id);
-            Assert.IsFalse(firstStep.Mode.ForSupplier);
+            Assert.IsFalse(firstStepDto.Mode.ForSupplier);
             Assert.AreEqual(secondStepDto.Id, firstStep.Id);
-            Assert.IsTrue(secondStep.Mode.ForSupplier);
+            Assert.IsTrue(secondStepDto.Mode.ForSupplier);
 
             // todo AssertRowVersionChange(currentRowVersion, newRowVersions);
         }

@@ -18,13 +18,11 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps
 
             RuleFor(command => command)
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.JourneyId, command.StepAId, token))
-                .WithMessage(command => "Journey and/or step doesn't exist!")
+                .WithMessage(_ => "Journey and/or step doesn't exist!")
                 .MustAsync((command, token) => BeAnExistingStepAsync(command.JourneyId, command.StepBId, token))
-                .WithMessage(command => "Journey and/or step doesn't exist!")
+                .WithMessage(_ => "Journey and/or step doesn't exist!")
                 .MustAsync((command, token) => BeAdjacentStepsInAJourneyAsync(command.JourneyId, command.StepAId, command.StepBId, token))
                 .WithMessage(command => $"Steps are not adjacent! Steps={command.StepAId} and {command.StepBId}")
-                .MustAsync((command, token) => NotIncludeAnySupplierStep(command.StepAId, command.StepBId, token))
-                .WithMessage(command => $"Supplier steps cannot be swapped! Steps={command.StepAId} and {command.StepBId}")
                 .Must(command => HaveAValidRowVersion(command.StepARowVersion))
                 .WithMessage(command => $"Not a valid row version! Row version{command.StepARowVersion}")
                 .Must(command => HaveAValidRowVersion(command.StepBRowVersion))
@@ -35,9 +33,6 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps
             
             async Task<bool> BeAdjacentStepsInAJourneyAsync(int journeyId, int stepAId, int stepBId, CancellationToken token)
                 => await journeyValidator.AreAdjacentStepsInAJourneyAsync(journeyId, stepAId, stepBId, token);
-            
-            async Task<bool> NotIncludeAnySupplierStep(int stepAId, int stepBId, CancellationToken token)
-                => !await stepValidator.IsAnyStepForSupplierAsync(stepAId, stepBId, token);
 
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);
