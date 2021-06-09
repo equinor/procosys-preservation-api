@@ -26,6 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
     [TestClass]
     public class GetActionsCrossPlantQueryHandlerTests
     {
+        // NB The PlantProvider affects when debugging and locking into DBSets in PreservationContext
         protected DbContextOptions<PreservationContext> _dbContextOptions;
         protected ICurrentUserProvider _currentUserProvider;
         protected IEventDispatcher _eventDispatcher;
@@ -71,13 +72,17 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
                 context.Persons.Add(_currentUser);
                 context.SaveChangesAsync().Wait();
 
-                (_projectA, _actionA) = CreateAction(context, _plantA.Id, "PrA", false);
-                (_projectB, _actionB) = CreateAction(context, _plantB.Id, "PrB", true);
+                _plantProvider.SetPlant(_plantA.Id);
+                (_projectA, _actionA) = CreateAction(context, "PrA", false);
+                _plantProvider.SetPlant(_plantB.Id);
+                (_projectB, _actionB) = CreateAction(context, "PrB", true);
+                _plantProvider.SetCrossPlantQuery();
             }
         }
 
-        private (Project, Action) CreateAction(PreservationContext context, string plantId, string projectName, bool closeProject)
+        private (Project, Action) CreateAction(PreservationContext context, string projectName, bool closeProject)
         {
+            var plantId = _plantProvider.Plant;
             var mode = new Mode(plantId, "M1", false);
             context.Modes.Add(mode);
                 
@@ -98,8 +103,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             requirementType.AddRequirementDefinition(requirementDefinition);
             context.SaveChangesAsync().Wait();
 
-            var project = new Project(plantId, projectName, $"{projectName} Desc");
-            project.IsClosed = closeProject;
+            var project = new Project(plantId, projectName, $"{projectName} Desc") {IsClosed = closeProject};
             context.Projects.Add(project);
 
             var tag = new Tag(
@@ -120,6 +124,23 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
 
             context.SaveChangesAsync().Wait();
             return (project, action);
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldReturnTags_LimitedToMax()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetActionsCrossPlantQuery(1);
+                var dut = new GetActionsCrossPlantQueryHandler(context, _plantCacheMock.Object, _plantProvider);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNotNull(result);
+                Assert.AreEqual(ResultType.Ok, result.ResultType);
+                
+                Assert.AreEqual(1, result.Data.Count);
+            }
         }
 
         [TestMethod]

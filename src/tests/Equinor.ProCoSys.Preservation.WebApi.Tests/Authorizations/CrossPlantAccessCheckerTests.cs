@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             var attachmentOptionsMock = new Mock<IOptionsMonitor<AuthorizationOptions>>();
             var options = new AuthorizationOptions
             {
-                CrossPlantUserOids = new[] { _userOidWithAccess }
+                CrossPlantUserOidList =  _userOidWithAccess.ToString()
             };
             attachmentOptionsMock
                 .Setup(x => x.CurrentValue)

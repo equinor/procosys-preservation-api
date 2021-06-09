@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
@@ -7,6 +8,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
     [TestClass]
     public class CrossPlantControllerTests : CrossPlantControllerTestsBase
     {
+        [TestMethod]
+        public async Task GetAllTags_AsCrossPlantUser_ShouldGetTags()
+        {
+            // Act
+            var TagDtos = await CrossPlantControllerTestsHelper.GetTagsAsync(UserType.CrossPlantUser);
+
+            // Assert
+            Assert.IsNotNull(TagDtos);
+            Assert.IsTrue(TagDtos.Count > 0);
+            AssertTag(
+                TagDtos.SingleOrDefault(a => a.Id == TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started_InPlantA),
+                KnownPlantData.PlantA,
+                KnownPlantData.PlantATitle);
+            AssertTag(
+                TagDtos.SingleOrDefault(a => a.Id == TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started_InPlantB),
+                KnownPlantData.PlantB,
+                KnownPlantData.PlantBTitle);
+        }
+
         [TestMethod]
         public async Task GetAllActions_AsCrossPlantUser_ShouldGetActions()
         {
@@ -39,6 +59,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
             Assert.IsTrue(actionDto.Id > 0);
             Assert.IsTrue(actionDto.TagId > 0);
             Assert.IsTrue(actionDto.AttachmentCount > 0);
+        }
+
+        private void AssertTag(TagDto tagDto, string plantId, string plantTitle)
+        {
+            Assert.IsNotNull(tagDto);
+            Assert.AreEqual(plantId, tagDto.PlantId);
+            Assert.AreEqual(plantTitle, tagDto.PlantTitle);
+            Assert.AreEqual(KnownTestData.ProjectName, tagDto.ProjectName);
+            Assert.AreEqual(KnownTestData.ProjectDescription, tagDto.ProjectDescription);
+            Assert.IsTrue(tagDto.TagNo.StartsWith(KnownTestData.StandardTagNo));
+            Assert.IsTrue(tagDto.Id > 0);
+            Assert.AreEqual(TagType.Standard, tagDto.TagType);
         }
     }
 }

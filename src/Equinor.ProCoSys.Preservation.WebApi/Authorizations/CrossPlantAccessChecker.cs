@@ -17,6 +17,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
         }
 
         public bool HasCurrentUserAccessToCrossPlant()
-            => _attachmentOptions.CurrentValue.CrossPlantUserOids.Contains(_currentUserProvider.GetCurrentUserOid());
+            => _attachmentOptions.CurrentValue.CrossPlantUserOids().Contains(_currentUserProvider.GetCurrentUserOid());
     }
 }

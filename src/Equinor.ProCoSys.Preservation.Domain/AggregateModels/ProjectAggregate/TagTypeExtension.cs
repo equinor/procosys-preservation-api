@@ -16,5 +16,16 @@
                     return string.Empty;
             }
         }
+        public static bool FollowsAJourney(this TagType tagType)
+        {
+            switch (tagType)
+            {
+                case TagType.Standard:
+                case TagType.PreArea:
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }

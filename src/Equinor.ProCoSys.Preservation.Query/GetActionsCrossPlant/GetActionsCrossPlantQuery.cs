@@ -6,5 +6,8 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
 {
     public class GetActionsCrossPlantQuery : IRequest<Result<List<ActionDto>>>, ICrossPlantQueryRequest
     {
+        public GetActionsCrossPlantQuery(int max = 0) => Max = max;
+
+        public int Max { get; }
     }
 }
