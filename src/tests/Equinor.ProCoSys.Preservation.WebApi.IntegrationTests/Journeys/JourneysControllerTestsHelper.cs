@@ -11,6 +11,32 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
     {
         private const string _route = "Journeys";
         
+        public static async Task<int> CreateJourneyAsync(
+            UserType userType,
+            string plant,
+            string title,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                title
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PostAsync($"{_route}", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return -1;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<int>(jsonString);
+        }
+
         public static async Task<List<JourneyDto>> GetJourneysAsync(
             UserType userType,
             string plant,

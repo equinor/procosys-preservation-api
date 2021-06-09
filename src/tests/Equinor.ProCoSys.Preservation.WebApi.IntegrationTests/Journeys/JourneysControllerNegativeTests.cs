@@ -8,6 +8,60 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
     [TestClass]
     public class JourneysControllerNegativeTests : JourneysControllerTestsBase
     {
+
+        #region CreateJourney
+        [TestMethod]
+        public async Task CreateJourney_AsAnonymous_ShouldReturnUnauthorized()
+            => await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.Anonymous, TestFactory.UnknownPlant,
+                "Journey1",
+                HttpStatusCode.Unauthorized);
+
+        [TestMethod]
+        public async Task CreateJourney_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.Hacker, TestFactory.UnknownPlant,
+                "Journey1",
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task CreateJourney_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
+            => await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.LibraryAdmin, TestFactory.UnknownPlant,
+                "Journey1",
+                HttpStatusCode.BadRequest,
+                "is not a valid plant");
+
+        [TestMethod]
+        public async Task CreateJourney_AsHacker_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.Hacker, TestFactory.PlantWithoutAccess,
+                "Journey1",
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task CreateJourney_AsAdmin_ShouldReturnForbidden_WhenNoAccessToPlant()
+            => await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.LibraryAdmin, TestFactory.PlantWithoutAccess,
+                "Journey1",
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task CreateJourney_AsPlanner_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.Planner, TestFactory.PlantWithAccess,
+                "Journey1",
+                HttpStatusCode.Forbidden);
+
+        [TestMethod]
+        public async Task CreateJourney_AsPreserver_ShouldReturnForbidden_WhenPermissionMissing()
+            => await JourneysControllerTestsHelper.CreateJourneyAsync(
+                UserType.Preserver, TestFactory.PlantWithAccess,
+                "Journey1",
+                HttpStatusCode.Forbidden);
+        #endregion
+
         #region GetJourneys
         [TestMethod]
         public async Task GetJourneys_AsAnonymous_ShouldReturnUnauthorized()

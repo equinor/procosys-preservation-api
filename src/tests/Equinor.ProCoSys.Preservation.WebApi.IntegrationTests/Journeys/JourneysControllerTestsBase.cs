@@ -12,7 +12,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         protected int SupModeBIdUnderTest;
         protected int TwoStepJourneyWithTagsIdUnderTest;
         protected int FirstStepInJourneyWithTagsIdUnderTest;
-        protected int SecondStepInJourneyWithTagsIdUnderTest;
         protected int JourneyNotInUseIdUnderTest;
         protected int StepInJourneyNotInUseIdUnderTest;
 
@@ -27,7 +26,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
             var journeyWithTags = journeys.Single(j => j.Title == KnownTestData.TwoStepJourneyWithTags);
             TwoStepJourneyWithTagsIdUnderTest = journeyWithTags.Id;
             FirstStepInJourneyWithTagsIdUnderTest = journeyWithTags.Steps.First().Id;
-            SecondStepInJourneyWithTagsIdUnderTest = journeyWithTags.Steps.ElementAt(1).Id;
             var journeyNotInUse = journeys.Single(j => j.Title == KnownTestData.JourneyNotInUse);
             JourneyNotInUseIdUnderTest = journeyNotInUse.Id;
             StepInJourneyNotInUseIdUnderTest = journeyNotInUse.Steps.First().Id;
