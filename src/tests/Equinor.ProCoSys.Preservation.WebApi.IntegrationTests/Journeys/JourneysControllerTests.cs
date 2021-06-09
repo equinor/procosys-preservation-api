@@ -151,23 +151,21 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 Guid.NewGuid().ToString());
-            var stepId = await JourneysControllerTestsHelper.CreateStepAsync(
+            var firstStepId = await JourneysControllerTestsHelper.CreateStepAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 Guid.NewGuid().ToString(),
                 SupModeAIdUnderTest,
                 KnownTestData.ResponsibleCode);
-            var firstStep = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
-            Assert.IsTrue(firstStep.Mode.ForSupplier);
-            stepId = await JourneysControllerTestsHelper.CreateStepAsync(
+            var secondStepId = await JourneysControllerTestsHelper.CreateStepAsync(
                 UserType.LibraryAdmin,
                 TestFactory.PlantWithAccess,
                 journeyIdUnderTest,
                 Guid.NewGuid().ToString(),
                 OtherModeIdUnderTest,
                 KnownTestData.ResponsibleCode);
-            var secondStep = await GetStepDetailsAsync(journeyIdUnderTest, stepId);
+            var secondStep = await GetStepDetailsAsync(journeyIdUnderTest, secondStepId);
             Assert.IsFalse(secondStep.Mode.ForSupplier);
             var currentRowVersion = secondStep.RowVersion;
 
@@ -184,8 +182,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 
             // Assert
             AssertRowVersionChange(currentRowVersion, newRowVersion);
-            secondStep = await GetStepDetailsAsync(journeyIdUnderTest, secondStep.Id);
-            Assert.IsTrue(secondStep.Mode.ForSupplier);
+            await AssertStepIsForSupplier(journeyIdUnderTest, firstStepId);
+            await AssertStepIsForSupplier(journeyIdUnderTest, secondStep.Id);
         }
 
         [TestMethod]
