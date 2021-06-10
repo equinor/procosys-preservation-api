@@ -10,7 +10,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.ModeValidators
         Task<bool> ExistsAnotherModeWithSameTitleAsync(int modeId, string title, CancellationToken token);
         Task<bool> IsVoidedAsync(int modeId, CancellationToken token);
         Task<bool> IsUsedInStepAsync(int modeId, CancellationToken token);
-        Task<bool> IsForSupplierAsync(int modeId, CancellationToken token);
         Task<bool> ExistsModeForSupplierAsync(CancellationToken token);
         Task<bool> ExistsAnotherModeForSupplierAsync(int modeId, CancellationToken token);
     }

@@ -11,8 +11,35 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
     {
         private const string _route = "Journeys";
         
+        public static async Task<int> CreateJourneyAsync(
+            UserType userType,
+            string plant,
+            string title,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                title
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PostAsync($"{_route}", content);
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return -1;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<int>(jsonString);
+        }
+
         public static async Task<List<JourneyDto>> GetJourneysAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
         {
@@ -27,12 +54,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<List<JourneyDto>>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<JourneyDto>>(jsonString);
         }
         
         public static async Task<JourneyDetailsDto> GetJourneyAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
             string expectedMessageOnBadRequest = null)
@@ -48,12 +76,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 return null;
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<JourneyDetailsDto>(content);
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<JourneyDetailsDto>(jsonString);
         }
 
         public static async Task<int> CreateStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             string title,
             int modeId,
@@ -83,7 +112,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         public static async Task<string> UpdateStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             int stepId,
             string title,
@@ -116,7 +146,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
         }
 
         public static async Task<string> VoidStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             int stepId,
             string rowVersion,
@@ -131,7 +162,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 expectedMessageOnBadRequest);
 
         public static async Task<string> UnvoidStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             int stepId,
             string rowVersion,
@@ -146,7 +178,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
                 expectedMessageOnBadRequest);
 
         public static async Task DeleteStepAsync(
-            UserType userType, string plant,
+            UserType userType,
+            string plant,
             int journeyId,
             int stepId,
             string rowVersion,
@@ -165,6 +198,37 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 
             var response = await TestFactory.Instance.GetHttpClient(userType, plant).SendAsync(request);
             await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+        }
+
+        public static async Task<List<StepIdAndRowVersion>> SwapStepsAsync(
+            UserType userType,
+            string plant,
+            int journeyId,
+            StepIdAndRowVersion stepA,
+            StepIdAndRowVersion stepB,
+            HttpStatusCode expectedStatusCode = HttpStatusCode.OK,
+            string expectedMessageOnBadRequest = null)
+        {
+            var bodyPayload = new
+            {
+                stepA,
+                stepB
+            };
+
+            var serializePayload = JsonConvert.SerializeObject(bodyPayload);
+            var content = new StringContent(serializePayload, Encoding.UTF8, "application/json");
+            var response = await TestFactory.Instance.GetHttpClient(userType, plant).PutAsync($"{_route}/{journeyId}/Steps/SwapSteps", content);
+
+            await TestsHelper.AssertResponseAsync(response, expectedStatusCode, expectedMessageOnBadRequest);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                return null;
+            }
+
+            var jsonString = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<List<StepIdAndRowVersion>>(jsonString);
+
         }
 
         private static async Task<string> VoidUnvoidStepAsync(

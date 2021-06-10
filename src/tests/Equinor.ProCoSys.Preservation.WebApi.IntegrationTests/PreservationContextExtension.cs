@@ -45,9 +45,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
             var plant = plantProvider.Plant;
 
-            var supplierMode = SeedMode(dbContext, plant, "SUP", true);
-            var otherMode = SeedMode(dbContext, plant, "FAB", false);
-            knownTestData.ModeId = otherMode.Id;
+            var supplierModeA = SeedMode(dbContext, plant, KnownTestData.SupModeA, true);
+            knownTestData.SupModeAId = supplierModeA.Id;
+            knownTestData.SupModeBId = SeedMode(dbContext, plant, KnownTestData.SupModeB, true).Id;
+            var otherMode = SeedMode(dbContext, plant, KnownTestData.OtherMode, false);
+            knownTestData.OtherModeId = otherMode.Id;
 
             var responsible = SeedResponsible(dbContext, plant);
 
@@ -66,12 +68,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             var reqTypeB = SeedReqType(dbContext, plant, KnownTestData.ReqTypeB);
             SeedReqDef(dbContext, reqTypeB, KnownTestData.ReqDefInReqTypeB);
             
-            var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.JourneyWithTags);
-            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepAInJourneyWithTags, supplierMode, responsible);
+            var journeyWithTags = SeedJourney(dbContext, plant, KnownTestData.TwoStepJourneyWithTags);
+            var stepInJourneyWithTags = SeedStep(dbContext, journeyWithTags, KnownTestData.StepAInJourneyWithTags, supplierModeA, responsible);
             SeedStep(dbContext, journeyWithTags, KnownTestData.StepBInJourneyWithTags, otherMode, responsible);
             
             var journeyWithoutTags = SeedJourney(dbContext, plant, KnownTestData.JourneyNotInUse);
-            SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, supplierMode, responsible);
+            SeedStep(dbContext, journeyWithoutTags, KnownTestData.StepInJourneyNotInUse, supplierModeA, responsible);
 
             var project = SeedProject(dbContext, plant);
             var standardTagReadyForBulkPreserveNotStarted = SeedStandardTag(dbContext, project, stepInJourneyWithTags, reqDefANoField);

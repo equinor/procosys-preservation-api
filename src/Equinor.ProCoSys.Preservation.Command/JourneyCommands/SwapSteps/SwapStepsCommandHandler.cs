@@ -32,10 +32,10 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.SwapSteps
             stepA.SetRowVersion(request.StepARowVersion);
             stepB.SetRowVersion(request.StepBRowVersion);
 
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
             stepsWithUpdatedRowVersion.Add(new StepIdAndRowVersion(stepA.Id, stepA.RowVersion.ConvertToString()));
             stepsWithUpdatedRowVersion.Add(new StepIdAndRowVersion(stepB.Id, stepB.RowVersion.ConvertToString()));
-
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return new SuccessResult<IEnumerable<StepIdAndRowVersion>>(stepsWithUpdatedRowVersion);
         }

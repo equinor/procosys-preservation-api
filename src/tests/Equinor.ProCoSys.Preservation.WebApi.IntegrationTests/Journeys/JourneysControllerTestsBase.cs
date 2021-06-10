@@ -7,21 +7,25 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Journeys
 {
     public class JourneysControllerTestsBase : TestBase
     {
-        protected int ModeIdUnderTest;
-        protected int JourneyWithTagsIdUnderTest;
-        protected int StepInJourneyWithTagsIdUnderTest;
+        protected int OtherModeIdUnderTest;
+        protected int SupModeAIdUnderTest;
+        protected int SupModeBIdUnderTest;
+        protected int TwoStepJourneyWithTagsIdUnderTest;
+        protected int FirstStepInJourneyWithTagsIdUnderTest;
         protected int JourneyNotInUseIdUnderTest;
         protected int StepInJourneyNotInUseIdUnderTest;
 
         [TestInitialize]
         public async Task TestInitialize()
         {
-            ModeIdUnderTest = TestFactory.Instance.SeededData[KnownPlantData.PlantA].ModeId;
+            OtherModeIdUnderTest = TestFactory.Instance.SeededData[KnownPlantData.PlantA].OtherModeId;
+            SupModeAIdUnderTest = TestFactory.Instance.SeededData[KnownPlantData.PlantA].SupModeAId;
+            SupModeBIdUnderTest = TestFactory.Instance.SeededData[KnownPlantData.PlantA].SupModeBId;
 
             var journeys = await JourneysControllerTestsHelper.GetJourneysAsync(UserType.LibraryAdmin, TestFactory.PlantWithAccess);
-            var journeyWithTags = journeys.Single(j => j.Title == KnownTestData.JourneyWithTags);
-            JourneyWithTagsIdUnderTest = journeyWithTags.Id;
-            StepInJourneyWithTagsIdUnderTest = journeyWithTags.Steps.First().Id;
+            var journeyWithTags = journeys.Single(j => j.Title == KnownTestData.TwoStepJourneyWithTags);
+            TwoStepJourneyWithTagsIdUnderTest = journeyWithTags.Id;
+            FirstStepInJourneyWithTagsIdUnderTest = journeyWithTags.Steps.First().Id;
             var journeyNotInUse = journeys.Single(j => j.Title == KnownTestData.JourneyNotInUse);
             JourneyNotInUseIdUnderTest = journeyNotInUse.Id;
             StepInJourneyNotInUseIdUnderTest = journeyNotInUse.Steps.First().Id;

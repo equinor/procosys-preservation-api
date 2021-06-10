@@ -165,27 +165,5 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.Validators
                 Assert.IsTrue(result);
             }
         }
-
-        [TestMethod]
-        public async Task IsForSupplierAsync_ShouldReturnTrue()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new ModeValidator(context);
-                var result = await dut.IsForSupplierAsync(_supplierModeId, default);
-                Assert.IsTrue(result);
-            }
-        }
-
-        [TestMethod]
-        public async Task IsForSupplierAsync_ShouldReturnFalse()
-        {
-            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
-            {
-                var dut = new ModeValidator(context);
-                var result = await dut.IsForSupplierAsync(_modeId, default);
-                Assert.IsFalse(result);
-            }
-        }
     }
 }
