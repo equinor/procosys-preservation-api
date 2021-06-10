@@ -1,29 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 {
     public class AuthorizationOptions
     {
-        public List<Guid> CrossPlantUserOids()
-        {
-            var userOids = new List<Guid>();
-            if (CrossPlantUserOidList == null)
-            {
-                return userOids;
-            }
+        private readonly List<Guid> _userOids = new List<Guid>();
+        private string _crossPlantUserOidList;
 
-            foreach (var oid in CrossPlantUserOidList.Split(","))
+        public List<Guid> CrossPlantUserOids() => _userOids;
+
+        public override string ToString()
+            => string.Join(",", _userOids.Select(oid => oid.ToString("B")));
+
+        public string CrossPlantUserOidList
+        {
+            get => _crossPlantUserOidList;
+            set
+            {
+                _crossPlantUserOidList = value;
+                Transform();
+            }
+        }
+
+        private void Transform()
+        {
+            if (string.IsNullOrEmpty(_crossPlantUserOidList))
+            {
+                return;
+            }
+            foreach (var oid in _crossPlantUserOidList.Split(",", StringSplitOptions.TrimEntries))
             {
                 if (Guid.TryParse(oid, out var guid))
                 {
-                    userOids.Add(guid);
+                    _userOids.Add(guid);
                 }
             }
-
-            return userOids;
         }
-
-        public string CrossPlantUserOidList { get; set; }
     }
 }
