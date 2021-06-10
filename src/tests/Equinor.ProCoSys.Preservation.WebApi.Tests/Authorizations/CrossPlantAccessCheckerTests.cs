@@ -1,6 +1,7 @@
 ﻿using System;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
@@ -24,6 +25,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
 
             var attachmentOptionsMock = new Mock<IOptionsMonitor<AuthorizationOptions>>();
+            var loggerMock = new Mock<ILogger<CrossPlantAccessChecker>>();
             var options = new AuthorizationOptions
             {
                 CrossPlantUserOidList =  _userOidWithAccess.ToString()
@@ -32,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
 
-            _dut = new CrossPlantAccessChecker(_currentUserProviderMock.Object, attachmentOptionsMock.Object);
+            _dut = new CrossPlantAccessChecker(_currentUserProviderMock.Object, attachmentOptionsMock.Object, loggerMock.Object);
         }
 
         [TestMethod]
