@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
 
         private void Transform()
         {
-            if (_crossPlantUserOidList == null)
+            if (string.IsNullOrEmpty(_crossPlantUserOidList))
             {
                 return;
             }
