@@ -31,14 +31,14 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer
             When(command => command.Tags.Any() && BeUniqueTags(command.Tags), () =>
             {
                 RuleForEach(command => command.Tags)
-                    .MustAsync((_, tag, __, token) => BeAnExistingTagAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
-                    .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}")
-                    .MustAsync((_, tag, __, token) => TagHasRequirementInNextStepAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag doesn't have any requirement in next step! Tag={id}")
+                    .MustAsync((_, tag, _, token) => BeAnExistingTagAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag doesn't exist! Tag={tag.Id}")
+                    .MustAsync((_, tag, _, token) => NotBeAVoidedTagAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag is voided! Tag={tag.Id}")
+                    .MustAsync((_, tag, _, token) => IsReadyToBeTransferredAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag can not be transferred! Tag={tag.Id}")
+                    .MustAsync((_, tag, _, token) => TagHasRequirementInNextStepAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag doesn't have any requirement in next step! Tag={tag.Id}")
                     .Must(tag => HaveAValidRowVersion(tag.RowVersion))
                     .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });

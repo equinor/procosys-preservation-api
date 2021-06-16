@@ -15,7 +15,7 @@ namespace Equinor.ProCoSys.Preservation.Command.JourneyCommands.DuplicateJourney
                 .MustAsync((command, token) => BeAnExistingJourneyAsync(command.JourneyId, token))
                 .WithMessage(command => $"Journey doesn't exist! Journey={command.JourneyId}")
                 .MustAsync((command, token) => HaveUniqueJourneyTitleForDuplicateAsync(command.JourneyId, token))
-                .WithMessage(command => "Journey with title for the copy already exists!");
+                .WithMessage(_ => "Journey with title for the copy already exists!");
 
             async Task<bool> BeAnExistingJourneyAsync(int journeyId, CancellationToken token)
                 => await journeyValidator.ExistsAsync(journeyId, token);

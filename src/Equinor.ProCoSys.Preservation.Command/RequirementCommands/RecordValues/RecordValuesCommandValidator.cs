@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues
                 .MustAsync((command, token) => NotBeAClosedProjectForTagAsync(command.TagId, token))
                 .WithMessage(command => $"Project for tag is closed! Tag={command.TagId}")
                 .MustAsync(BeAnExistingRequirementAsync)
-                .WithMessage(command => "Tag and/or requirement doesn't exist!")
+                .WithMessage(_ => "Tag and/or requirement doesn't exist!")
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .MustAsync((command, token) => HasRequirementWithActivePeriodAsync(command.TagId, command.RequirementId, token))
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues
             {
                 RuleForEach(command => command.NumberValues)
                     .MustAsync((command, fv, token) => BeAnExistingFieldForRequirementAsync(command, fv.FieldId, token))
-                    .WithMessage(command => "Field doesn't exist in requirement!")
+                    .WithMessage(_ => "Field doesn't exist in requirement!")
                     .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))
@@ -43,7 +43,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.RecordValues
             {
                 RuleForEach(command => command.CheckBoxValues)
                     .MustAsync((command, fv, token) => BeAnExistingFieldForRequirementAsync(command, fv.FieldId, token))
-                    .WithMessage(command => "Field doesn't exist in requirement!")
+                    .WithMessage(_ => "Field doesn't exist in requirement!")
                     .MustAsync((_, fv, token) => BeAFieldForRecordingAsync(fv.FieldId, token))
                     .WithMessage((_, fv) => $"Field values can not be recorded for field type! Field={fv.FieldId}")
                     .MustAsync((_, fv, token) => NotBeAVoidedFieldAsync(fv.FieldId, token))

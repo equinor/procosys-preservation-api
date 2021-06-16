@@ -30,14 +30,14 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.BulkPreserve
             When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
             {
                 RuleForEach(command => command.TagIds)
-                    .MustAsync((_, tagId, __, token) => BeAnExistingTagAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => PreservationIsStartedAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => BeReadyToBePreservedAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag is not ready to be bulk preserved! Tag={id}");
+                    .MustAsync((_, tagId, _, token) => BeAnExistingTagAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Tag doesn't exist! Tag={tagId}")
+                    .MustAsync((_, tagId, _, token) => NotBeAVoidedTagAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Tag is voided! Tag={tagId}")
+                    .MustAsync((_, tagId, _, token) => PreservationIsStartedAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Tag must have status {PreservationStatus.Active} to preserve! Tag={tagId}")
+                    .MustAsync((_, tagId, _, token) => BeReadyToBePreservedAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Tag is not ready to be bulk preserved! Tag={tagId}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)

@@ -31,12 +31,12 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.CompletePreservation
             When(command => command.Tags.Any() && BeUniqueTags(command.Tags), () =>
             {
                 RuleForEach(command => command.Tags)
-                    .MustAsync((_, tag, __, token) => BeAnExistingTagAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
-                    .MustAsync((_, tag, __, token) => NotBeAVoidedTagAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tag, __, token) => IsReadyToBeCompletedAsync(tag.Id, token))
-                    .WithMessage((_, id) => $"Preservation on tag can not be completed! Tag={id}")
+                    .MustAsync((_, tag, _, token) => BeAnExistingTagAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag doesn't exist! Tag={tag.Id}")
+                    .MustAsync((_, tag, _, token) => NotBeAVoidedTagAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Tag is voided! Tag={tag.Id}")
+                    .MustAsync((_, tag, _, token) => IsReadyToBeCompletedAsync(tag.Id, token))
+                    .WithMessage((_, tag) => $"Preservation on tag can not be completed! Tag={tag.Id}")
                     .Must(tag => HaveAValidRowVersion(tag.RowVersion))
                     .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });

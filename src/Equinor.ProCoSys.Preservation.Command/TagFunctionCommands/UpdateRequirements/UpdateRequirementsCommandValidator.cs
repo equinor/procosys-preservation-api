@@ -19,13 +19,13 @@ namespace Equinor.ProCoSys.Preservation.Command.TagFunctionCommands.UpdateRequir
                     .Must(BeUniqueRequirements)
                     .WithMessage("Requirement definitions must be unique!")
                     .MustAsync((_, requirements, token) => RequirementUsageIsForAllJourneysAsync(requirements, token))
-                    .WithMessage(command => "Requirements must include requirements to be used both for supplier and other than suppliers!");
+                    .WithMessage(_ => "Requirements must include requirements to be used both for supplier and other than suppliers!");
 
                 RuleForEach(command => command.Requirements)
-                    .MustAsync((_, req, __, token) => BeAnExistingRequirementDefinitionAsync(req, token))
+                    .MustAsync((_, req, _, token) => BeAnExistingRequirementDefinitionAsync(req, token))
                     .WithMessage((_, req) =>
                         $"Requirement definition doesn't exist! Requirement definition={req.RequirementDefinitionId}")
-                    .MustAsync((_, req, __, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
+                    .MustAsync((_, req, _, token) => NotBeAVoidedRequirementDefinitionAsync(req, token))
                     .WithMessage((_, req) =>
                         $"Requirement definition is voided! Requirement definition={req.RequirementDefinitionId}");
             });
