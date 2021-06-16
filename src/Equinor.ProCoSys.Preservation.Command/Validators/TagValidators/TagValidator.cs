@@ -328,7 +328,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> RequirementHasAnyForOtherThanSuppliersUsageAsync(int tagId,
             List<int> tagRequirementIdsToBeUnvoided,
-            List<int> tagRequirementIdsToBeVoided, List<int> requirementDefinitionIdsToBeAdded, CancellationToken token)
+            List<int> tagRequirementIdsToBeVoided,
+            List<int> requirementDefinitionIdsToBeAdded,
+            CancellationToken token)
         {
             List<int> requirementDefinitionIds;
             Tag tag;
@@ -365,6 +367,42 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
             var requirement = tag.Requirements.SingleOrDefault(r => r.Id == requirementId);
 
             return requirement != null && requirement.IsVoided;
+        }
+
+        public async Task<bool> HasRequirementCoverageInNextStepAsync(int tagId, CancellationToken token)
+        {
+            List<int> requirementDefinitionIds;
+            Tag tag;
+            var emptyList = new List<int>();
+            (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIds(
+                tagId,
+                emptyList,
+                emptyList,
+                emptyList,
+                token);
+
+            if (tag == null)
+            {
+                return false;
+            }
+                                    
+            var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
+                where j.Steps.Any(s => s.Id == tag.StepId)
+                select j).SingleOrDefaultAsync(token);
+
+            var nextStep = journey.GetNextStep(tag.StepId);
+
+            if (nextStep == null)
+            {
+                return false;
+            }
+
+            if (nextStep.IsSupplierStep)
+            {
+                return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(requirementDefinitionIds, token);
+            }
+            
+            return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
         }
 
         public async Task<bool> IsInUseAsync(long tagId, CancellationToken token)

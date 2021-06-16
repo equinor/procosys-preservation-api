@@ -37,6 +37,8 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer
                     .WithMessage((_, id) => $"Tag is voided! Tag={id}")
                     .MustAsync((_, tag, __, token) => IsReadyToBeTransferredAsync(tag.Id, token))
                     .WithMessage((_, id) => $"Tag can not be transferred! Tag={id}")
+                    .MustAsync((_, tag, __, token) => TagHasRequirementInNextStepAsync(tag.Id, token))
+                    .WithMessage((_, id) => $"Tag doesn't have any requirement in next step! Tag={id}")
                     .Must(tag => HaveAValidRowVersion(tag.RowVersion))
                     .WithMessage((_, tag) => $"Not a valid row version! Row version={tag.RowVersion}");
             });
@@ -61,6 +63,9 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.Transfer
 
             async Task<bool> IsReadyToBeTransferredAsync(int tagId, CancellationToken token)
                 => await tagValidator.IsReadyToBeTransferredAsync(tagId, token);
+
+            async Task<bool> TagHasRequirementInNextStepAsync(int tagId, CancellationToken token)
+                => await tagValidator.HasRequirementCoverageInNextStepAsync(tagId, token);
 
             bool HaveAValidRowVersion(string rowVersion)
                 => rowVersionValidator.IsValid(rowVersion);

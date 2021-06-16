@@ -90,5 +90,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
         Task<bool> VerifyTagDescriptionAsync(int tagId, string description, CancellationToken token);
 
         Task<bool> IsRequirementVoidedAsync(int tagId, int requirementId, CancellationToken token);
+        
+        Task<bool> HasRequirementCoverageInNextStepAsync(int tagId, CancellationToken token);
     }
 }
