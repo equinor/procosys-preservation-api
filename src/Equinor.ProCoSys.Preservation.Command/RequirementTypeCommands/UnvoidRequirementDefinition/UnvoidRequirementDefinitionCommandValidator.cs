@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UnvoidRe
 
             RuleFor(command => command)
                 .MustAsync(BeAnExistingRequirementDefinitionAsync)
-                .WithMessage(command => "Requirement type and/or requirement definition doesn't exist!")
+                .WithMessage(_ => "Requirement type and/or requirement definition doesn't exist!")
                 .MustAsync((command, token) => BeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition is not voided! Requirement definition={command.RequirementDefinitionId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))

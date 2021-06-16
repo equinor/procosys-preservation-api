@@ -26,7 +26,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.AutoScopeTags
 
             RuleForEach(command => command.TagNos)
                 .MustAsync((command, tagNo, _, token) => NotBeAnExistingTagWithinProjectAsync(tagNo, command.ProjectName, token))
-                .WithMessage((command, tagNo) => $"Tag already exists in scope for project! Tag={tagNo}");
+                .WithMessage((_, tagNo) => $"Tag already exists in scope for project! Tag={tagNo}");
 
             RuleFor(command => command)
                 .MustAsync((command, token) => NotBeAnExistingAndClosedProjectAsync(command.ProjectName, token))

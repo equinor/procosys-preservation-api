@@ -29,14 +29,14 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.StartPreservation
             When(command => command.TagIds.Any() && BeUniqueTags(command.TagIds), () =>
             {
                 RuleForEach(command => command.TagIds)
-                    .MustAsync((_, tagId, __, token) => BeAnExistingTagAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag doesn't exist! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => NotBeAVoidedTagAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag is voided! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => IsReadyToBeStartedAsync(tagId, token))
-                    .WithMessage((_, id) => $"Preservation on tag can not be started! Tag={id}")
-                    .MustAsync((_, tagId, __, token) => HaveAtLeastOneNonVoidedRequirementAsync(tagId, token))
-                    .WithMessage((_, id) => $"Tag do not have any non voided requirement! Tag={id}");
+                    .MustAsync((_, tagId, _, token) => BeAnExistingTagAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Tag doesn't exist! Tag={tagId}")
+                    .MustAsync((_, tagId, _, token) => NotBeAVoidedTagAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Tag is voided! Tag={tagId}")
+                    .MustAsync((_, tagId, _, token) => IsReadyToBeStartedAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Preservation on tag can not be started! Tag={tagId}")
+                    .MustAsync((_, tagId, _, token) => HaveAtLeastOneNonVoidedRequirementAsync(tagId, token))
+                    .WithMessage((_, tagId) => $"Tag do not have any non voided requirement! Tag={tagId}");
             });
 
             bool BeUniqueTags(IEnumerable<int> tagIds)

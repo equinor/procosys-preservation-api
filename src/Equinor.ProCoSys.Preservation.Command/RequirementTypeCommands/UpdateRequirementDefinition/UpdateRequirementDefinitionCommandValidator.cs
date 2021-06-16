@@ -20,7 +20,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
 
             RuleFor(command => command)
                 .MustAsync(BeAnExistingRequirementDefinitionAsync)
-                .WithMessage(command => "Requirement type and/or requirement definition doesn't exist!")
+                .WithMessage(_ => "Requirement type and/or requirement definition doesn't exist!")
                 .MustAsync((command, token) => NotBeAVoidedRequirementDefinitionAsync(command.RequirementDefinitionId, token))
                 .WithMessage(command => $"Requirement definition is voided! Requirement definition={command.Title}")
                 .MustAsync(RequirementDefinitionTitleMustBeUniqueOnType)
@@ -31,9 +31,9 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementTypeCommands.UpdateRe
                 .WithMessage(command => $"Fields to be deleted can not be in use! Requirement definition={command.Title}");
 
             RuleForEach(command => command.UpdateFields)
-                .MustAsync((command, field, __, token) => BeAnExistingField(command, field.Id, token))
-                .WithMessage(command => "Field doesn't exist in requirement!")
-                .MustAsync((command, field, __, token) => BeSameFieldTypeOnExistingFieldsAsync(field, token))
+                .MustAsync((command, field, _, token) => BeAnExistingField(command, field.Id, token))
+                .WithMessage(_ => "Field doesn't exist in requirement!")
+                .MustAsync((_, field, _, token) => BeSameFieldTypeOnExistingFieldsAsync(field, token))
                 .WithMessage((_, field) => $"Cannot change field type on existing fields! Field={field.Id}");
             
             async Task<bool> BeAnExistingRequirementDefinitionAsync(UpdateRequirementDefinitionCommand command, CancellationToken token)

@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction
                 .MustAsync((command, token) => NotBeAVoidedTagAsync(command.TagId, token))
                 .WithMessage(command => $"Tag is voided! Tag={command.TagId}")
                 .MustAsync(BeAnExistingActionAsync)
-                .WithMessage(command => "Tag and/or action doesn't exist!")
+                .WithMessage(_ => "Tag and/or action doesn't exist!")
                 .MustAsync((command, token) => NotBeAClosedActionAsync(command.ActionId, token))
                 .WithMessage(command => $"Action is already closed! Action={command.ActionId}")
                 .Must(command => HaveAValidRowVersion(command.RowVersion))

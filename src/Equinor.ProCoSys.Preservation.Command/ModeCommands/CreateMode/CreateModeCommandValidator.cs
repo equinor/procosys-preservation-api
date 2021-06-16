@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ModeCommands.CreateMode
             RuleFor(command => command)
                 .MustAsync((command, token) => HaveUniqueTitleAsync(command.Title, token))
                 .WithMessage(command => $"Mode with title already exists! Mode={command.Title}")
-                .MustAsync((command, token) => NotExistForSupplierAsync(token))
+                .MustAsync((_, token) => NotExistForSupplierAsync(token))
                 .WithMessage(command => $"Another mode for supplier already exists! Mode={command.Title}")
                 .When(command => command.ForSupplier, ApplyConditionTo.CurrentValidator);
 
