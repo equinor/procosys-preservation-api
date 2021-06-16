@@ -371,20 +371,16 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
         public async Task<bool> HasRequirementCoverageInNextStepAsync(int tagId, CancellationToken token)
         {
-            List<int> requirementDefinitionIds;
-            Tag tag;
-            var emptyList = new List<int>();
-            (tag, requirementDefinitionIds) = await GetNonVoidedRequirementDefinitionIds(
-                tagId,
-                emptyList,
-                emptyList,
-                emptyList,
-                token);
-
+            var tag = await GetTagWithRequirements(tagId, token);
             if (tag == null)
             {
                 return false;
             }
+
+            var nonVoidedTagRequirementIds =
+                tag.Requirements
+                    .Where(r => !r.IsVoided)
+                    .Select(r => r.RequirementDefinitionId).ToList();
                                     
             var journey = await (from j in _context.QuerySet<Journey>().Include(j => j.Steps)
                 where j.Steps.Any(s => s.Id == tag.StepId)
@@ -399,10 +395,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Validators.TagValidators
 
             if (nextStep.IsSupplierStep)
             {
-                return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(requirementDefinitionIds, token);
+                return await _requirementDefinitionValidator.UsageCoversForSuppliersAsync(nonVoidedTagRequirementIds, token);
             }
             
-            return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(requirementDefinitionIds, token);
+            return await _requirementDefinitionValidator.UsageCoversForOtherThanSuppliersAsync(nonVoidedTagRequirementIds, token);
         }
 
         public async Task<bool> IsInUseAsync(long tagId, CancellationToken token)
