@@ -9,6 +9,7 @@ using Equinor.ProCoSys.Preservation.Infrastructure;
 using Equinor.ProCoSys.Preservation.MainApi.Area;
 using Equinor.ProCoSys.Preservation.MainApi.Discipline;
 using Equinor.ProCoSys.Preservation.MainApi.Permission;
+using Equinor.ProCoSys.Preservation.MainApi.Person;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.MainApi.Responsible;
@@ -41,6 +42,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         private readonly List<Action> _teardownList = new List<Action>();
         private readonly List<IDisposable> _disposables = new List<IDisposable>();
 
+        private readonly Mock<IPersonApiService> _personApiServiceMock = new Mock<IPersonApiService>();
         private readonly Mock<IPlantApiService> _plantApiServiceMock = new Mock<IPlantApiService>();
         private readonly Mock<IProjectApiService> _projectApiServiceMock = new Mock<IProjectApiService>();
         private readonly Mock<IPermissionApiService> _permissionApiServiceMock = new Mock<IPermissionApiService>();
@@ -150,6 +152,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 services.PostConfigureAll<JwtBearerOptions>(jwtBearerOptions =>
                     jwtBearerOptions.ForwardAuthenticate = IntegrationTestAuthHandler.TestAuthenticationScheme);
 
+                services.AddScoped(_ => _personApiServiceMock.Object);
                 services.AddScoped(_ => _plantApiServiceMock.Object);
                 services.AddScoped(_ => _projectApiServiceMock.Object);
                 services.AddScoped(_ => TagApiServiceMock.Object);
@@ -311,6 +314,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 if (testUser.Profile != null)
                 {
                     AuthenticateUser(testUser);
+
+                    _personApiServiceMock.Setup(p => p.GetPersonsByOidsAsync(
+                            It.IsAny<string>(),
+                            new List<string>{testUser.Profile.Oid}))
+                        .Returns(Task.FromResult<IList<PCSPerson>>(new List<PCSPerson>{ new PCSPerson
+                        {
+                            AzureOid = testUser.Profile.Oid,
+                            FirstName = testUser.Profile.FirstName,
+                            LastName = testUser.Profile.LastName
+                        }}));
                 }
             }
         }
