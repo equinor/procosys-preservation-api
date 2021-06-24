@@ -6,15 +6,8 @@ namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson
 {
     public class CreatePersonCommand : IRequest<Result<Unit>>
     {
-        public CreatePersonCommand(Guid oid, string firstName, string lastName)
-        {
-            Oid = oid;
-            FirstName = firstName;
-            LastName = lastName;
-        }
+        public CreatePersonCommand(Guid oid) => Oid = oid;
 
         public Guid Oid { get; }
-        public string FirstName { get; }
-        public string LastName { get; }
     }
 }
