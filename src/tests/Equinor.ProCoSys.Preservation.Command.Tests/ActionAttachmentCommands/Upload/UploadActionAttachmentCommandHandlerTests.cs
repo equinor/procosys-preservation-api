@@ -58,7 +58,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.U
                 .Setup(r => r.GetTagByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
-
             _dut = new UploadActionAttachmentCommandHandler(
                 _projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,

@@ -21,43 +21,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
             ILogger<VerifyOidInDbMiddleware> logger)
         {
             logger.LogInformation($"----- {GetType().Name} start");
-            var httpContextUser = httpContextAccessor.HttpContext.User;
-            var oid = httpContextUser.Claims.TryGetOid();
+            var httpContextUser = httpContextAccessor?.HttpContext?.User;
+            var oid = httpContextUser?.Claims.TryGetOid();
             if (oid.HasValue)
             {
-                var givenName = httpContextUser.Claims.TryGetGivenName();
-                var surName = httpContextUser.Claims.TryGetSurName();
-
-                if (string.IsNullOrEmpty(givenName) && string.IsNullOrEmpty(surName))
-                {
-                    var fullName = httpContextUser.Claims.TryGetFullName();
-
-                    if (string.IsNullOrEmpty(fullName))
-                    {
-                        throw new Exception("Not able to resolve user info for " + oid);
-                    }
-
-                    if (fullName.Contains(","))
-                    {
-                        // A naming error in Azure sometimes cause DisplayName to be formatted "Lastname, Firstname".
-                        // The following is a best effort fix this.
-                        surName = fullName.Substring(0, fullName.IndexOf(",", StringComparison.InvariantCulture));
-                        var nameToFix = fullName.Remove(0, surName.Length);
-                        nameToFix = nameToFix.Replace(",", string.Empty);
-                        nameToFix = nameToFix.TrimStart();
-                        givenName = nameToFix;
-                    }
-                    else
-                    {
-                        // Last name will be set to the last part of the name, regardless of any middle-name variants (best effort).
-                        var indexOfLastSpace = fullName.LastIndexOf(" ", StringComparison.InvariantCulture);
-
-                        givenName = fullName.Substring(0, indexOfLastSpace);
-                        surName = fullName.Substring(indexOfLastSpace + 1);
-                    }
-                }
-
-                var command = new CreatePersonCommand(oid.Value, givenName, surName);
+                var command = new CreatePersonCommand(oid.Value);
                 try
                 {
                     await mediator.Send(command);
@@ -68,6 +36,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Middleware
                     // For a user accessing preservation for the first time, there will probably be multiple
                     // requests in parallel.
                     logger.LogError($"Exception handling {nameof(CreatePersonCommand)}", e);
+                    throw;
                 }
             }
             
