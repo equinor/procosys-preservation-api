@@ -19,7 +19,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPlantProvider _plantProvider;
         private readonly IBlobStorage _blobStorage;
-        private readonly IOptionsMonitor<AttachmentOptions> _attachmentOptions;
+        private readonly IOptionsMonitor<BlobStorageOptions> _blobStorageOptions;
 
         public UploadFieldValueAttachmentCommandHandler(
             IProjectRepository projectRepository, 
@@ -27,13 +27,13 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
             IUnitOfWork unitOfWork,
             IPlantProvider plantProvider,
             IBlobStorage blobStorage,
-            IOptionsMonitor<AttachmentOptions> attachmentOptions)
+            IOptionsMonitor<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
             _plantProvider = plantProvider;
             _blobStorage = blobStorage;
-            _attachmentOptions = attachmentOptions;
+            _blobStorageOptions = blobStorageOptions;
             _requirementTypeRepository = requirementTypeRepository;
         }
 
@@ -54,12 +54,12 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
             }
             else
             {
-                fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
+                fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.CurrentValue.BlobContainer);
                 await _blobStorage.DeleteAsync(fullBlobPath, cancellationToken);
                 attachment.SetFileName(request.FileName);
             }
 
-            fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
+            fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.CurrentValue.BlobContainer);
 
             await _blobStorage.UploadAsync(fullBlobPath, request.Content, true, cancellationToken);
 

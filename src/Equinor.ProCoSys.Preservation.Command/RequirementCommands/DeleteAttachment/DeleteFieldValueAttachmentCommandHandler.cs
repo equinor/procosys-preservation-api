@@ -17,18 +17,18 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttach
         private readonly IRequirementTypeRepository _requirementTypeRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBlobStorage _blobStorage;
-        private readonly IOptionsMonitor<AttachmentOptions> _attachmentOptions;
+        private readonly IOptionsMonitor<BlobStorageOptions> _blobStorageOptions;
 
         public DeleteFieldValueAttachmentCommandHandler(
             IProjectRepository projectRepository, 
             IRequirementTypeRepository requirementTypeRepository,
             IUnitOfWork unitOfWork,
-            IBlobStorage blobStorage, IOptionsMonitor<AttachmentOptions> attachmentOptions)
+            IBlobStorage blobStorage, IOptionsMonitor<BlobStorageOptions> blobStorageOptions)
         {
             _projectRepository = projectRepository;
             _unitOfWork = unitOfWork;
             _blobStorage = blobStorage;
-            _attachmentOptions = attachmentOptions;
+            _blobStorageOptions = blobStorageOptions;
             _requirementTypeRepository = requirementTypeRepository;
         }
 
@@ -44,7 +44,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttach
             
             if (attachment != null)
             {
-                var fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
+                var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.CurrentValue.BlobContainer);
                 await _blobStorage.DeleteAsync(fullBlobPath, cancellationToken);
             }
 

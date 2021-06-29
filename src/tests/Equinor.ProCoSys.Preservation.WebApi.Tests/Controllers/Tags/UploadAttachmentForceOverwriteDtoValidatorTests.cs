@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags;
 using Microsoft.AspNetCore.Http;
@@ -14,22 +15,22 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Controllers.Tags
     public class UploadAttachmentForceOverwriteDtoValidatorTests
     {
         private UploadAttachmentForceOverwriteDtoValidator _dut;
-        private AttachmentOptions _options;
+        private BlobStorageOptions _options;
 
         [TestInitialize]
         public void Setup()
         {
-            var attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
-            _options = new AttachmentOptions
+            var blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            _options = new BlobStorageOptions
             {
                 MaxSizeMb = 2,
                 BlobContainer = "bc",
-                ValidFileSuffixes = new[] {".gif", ".jpg"}
+                BlockedFileSuffixes = new[] {".exe", ".zip"}
             };
-            attachmentOptionsMock
+            blobStorageOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(_options);
-            _dut = new UploadAttachmentForceOverwriteDtoValidator(attachmentOptionsMock.Object);
+            _dut = new UploadAttachmentForceOverwriteDtoValidator(blobStorageOptionsMock.Object);
         }
 
         [TestMethod]

@@ -18,13 +18,13 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachment
     {
         private readonly IReadOnlyContext _context;
         private readonly IBlobStorage _blobStorage;
-        private readonly IOptionsMonitor<AttachmentOptions> _attachmentOptions;
+        private readonly IOptionsMonitor<BlobStorageOptions> _blobStorageOptions;
 
-        public GetActionAttachmentQueryHandler(IReadOnlyContext context, IBlobStorage blobStorage, IOptionsMonitor<AttachmentOptions> attachmentOptions)
+        public GetActionAttachmentQueryHandler(IReadOnlyContext context, IBlobStorage blobStorage, IOptionsMonitor<BlobStorageOptions> blobStorageOptions)
         {
             _context = context;
             _blobStorage = blobStorage;
-            _attachmentOptions = attachmentOptions;
+            _blobStorageOptions = blobStorageOptions;
         }
 
         public async Task<Result<Uri>> Handle(GetActionAttachmentQuery request, CancellationToken cancellationToken)
@@ -43,12 +43,12 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionAttachment
             }
 
             var now = TimeService.UtcNow;
-            var fullBlobPath = attachment.GetFullBlobPath(_attachmentOptions.CurrentValue.BlobContainer);
+            var fullBlobPath = attachment.GetFullBlobPath(_blobStorageOptions.CurrentValue.BlobContainer);
 
             var uri = _blobStorage.GetDownloadSasUri(
                 fullBlobPath,
-                new DateTimeOffset(now.AddMinutes(_attachmentOptions.CurrentValue.BlobClockSkewMinutes * -1)),
-                new DateTimeOffset(now.AddMinutes(_attachmentOptions.CurrentValue.BlobClockSkewMinutes)));
+                new DateTimeOffset(now.AddMinutes(_blobStorageOptions.CurrentValue.BlobClockSkewMinutes * -1)),
+                new DateTimeOffset(now.AddMinutes(_blobStorageOptions.CurrentValue.BlobClockSkewMinutes)));
             return new SuccessResult<Uri>(uri);
         }
     }

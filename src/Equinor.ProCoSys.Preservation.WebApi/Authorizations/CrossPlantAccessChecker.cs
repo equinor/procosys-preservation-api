@@ -8,21 +8,21 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
     {
         private readonly ILogger<CrossPlantAccessChecker> _logger;
         private readonly ICurrentUserProvider _currentUserProvider;
-        private readonly IOptionsMonitor<AuthorizationOptions> _attachmentOptions;
+        private readonly IOptionsMonitor<AuthorizationOptions> _authorizationOptions;
 
         public CrossPlantAccessChecker(ICurrentUserProvider currentUserProvider,
-            IOptionsMonitor<AuthorizationOptions> attachmentOptions,
+            IOptionsMonitor<AuthorizationOptions> authorizationOptions,
             ILogger<CrossPlantAccessChecker> logger)
         {
             _currentUserProvider = currentUserProvider;
-            _attachmentOptions = attachmentOptions;
+            _authorizationOptions = authorizationOptions;
             _logger = logger;
         }
 
         public bool HasCurrentUserAccessToCrossPlant()
         {
-            _logger.LogInformation($"Allowed CrossPlantUserOids: '{_attachmentOptions.CurrentValue}'");
-            return _attachmentOptions.CurrentValue.CrossPlantUserOids()
+            _logger.LogInformation($"Allowed CrossPlantUserOids: '{_authorizationOptions.CurrentValue}'");
+            return _authorizationOptions.CurrentValue.CrossPlantUserOids()
                 .Contains(_currentUserProvider.GetCurrentUserOid());
         }
     }

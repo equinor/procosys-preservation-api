@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq;
+using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Domain;
 using FluentValidation;
 using Microsoft.Extensions.Options;
@@ -8,7 +9,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
 {
     public class UploadBaseDtoValidator<T> : AbstractValidator<T> where T: UploadBaseDto
     {
-        public UploadBaseDtoValidator(IOptionsMonitor<AttachmentOptions> options)
+        public UploadBaseDtoValidator(IOptionsMonitor<BlobStorageOptions> blobStorageOptions)
         {
             CascadeMode = CascadeMode.Stop;
 
@@ -30,17 +31,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Tags
             RuleFor(x => x.File.Length)
                 .Must(BeSmallerThanMaxSize)
                 .When(x => x.File != null)
-                .WithMessage($"Maximum file size is {options.CurrentValue.MaxSizeMb}MB!");
+                .WithMessage($"Maximum file size is {blobStorageOptions.CurrentValue.MaxSizeMb}MB!");
 
             bool BeAValidFile(string fileName)
             {
                 var suffix = Path.GetExtension(fileName?.ToLower());
-                return suffix != null && options.CurrentValue.ValidFileSuffixes.Contains(suffix) && fileName?.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
+                return suffix != null && !blobStorageOptions.CurrentValue.BlockedFileSuffixes.Contains(suffix) && fileName?.IndexOfAny(Path.GetInvalidFileNameChars()) == -1;
             }
             
             bool BeSmallerThanMaxSize(long fileSizeInBytes)
             {
-                var maxSizeInBytes = options.CurrentValue.MaxSizeMb * 1024 * 1024;
+                var maxSizeInBytes = blobStorageOptions.CurrentValue.MaxSizeMb * 1024 * 1024;
                 return fileSizeInBytes < maxSizeInBytes;
             }
         }

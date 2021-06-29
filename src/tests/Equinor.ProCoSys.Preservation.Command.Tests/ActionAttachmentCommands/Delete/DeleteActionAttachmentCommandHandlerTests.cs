@@ -3,7 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.ActionAttachmentCommands.Delete;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
 using MediatR;
@@ -35,14 +34,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
 
-            var attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
-            var options = new AttachmentOptions
+            var blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            var options = new BlobStorageOptions
             {
                 MaxSizeMb = 2,
                 BlobContainer = BlobContainer,
-                ValidFileSuffixes = new[] { ".gif", ".jpg" }
+                BlockedFileSuffixes = new[] {".exe", ".zip"}
             };
-            attachmentOptionsMock
+            blobStorageOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
 
@@ -65,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionAttachmentCommands.D
                 _projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 _blobStorageMock.Object,
-                attachmentOptionsMock.Object);
+                blobStorageOptionsMock.Object);
         }
 
         [TestMethod]

@@ -28,17 +28,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _userOidWithoutAccess = new Guid("00000000-0000-0000-0000-00000000000D");
             _currentUserProviderMock = new Mock<ICurrentUserProvider>();
 
-            var attachmentOptionsMock = new Mock<IOptionsMonitor<AuthorizationOptions>>();
+            var blobStorageOptionsMock = new Mock<IOptionsMonitor<AuthorizationOptions>>();
             var loggerMock = new Mock<ILogger<CrossPlantAccessChecker>>();
             var options = new AuthorizationOptions
             {
                 CrossPlantUserOidList = $"{_userOidWithAccessA},{_userOidWithAccessB},{_userOidWithAccessC}"
             };
-            attachmentOptionsMock
+            blobStorageOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
 
-            _dut = new CrossPlantAccessChecker(_currentUserProviderMock.Object, attachmentOptionsMock.Object, loggerMock.Object);
+            _dut = new CrossPlantAccessChecker(_currentUserProviderMock.Object, blobStorageOptionsMock.Object, loggerMock.Object);
         }
 
         [TestMethod]
