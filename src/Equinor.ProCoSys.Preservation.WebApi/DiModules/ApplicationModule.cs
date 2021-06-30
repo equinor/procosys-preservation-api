@@ -66,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.Configure<TagOptions>(configuration.GetSection("ApiOptions"));
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
-            services.Configure<AttachmentOptions>(configuration.GetSection("AttachmentOptions"));
+            services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorageOptions"));
             services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
             services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
             services.Configure<AuthorizationOptions>(configuration.GetSection("Authorization"));

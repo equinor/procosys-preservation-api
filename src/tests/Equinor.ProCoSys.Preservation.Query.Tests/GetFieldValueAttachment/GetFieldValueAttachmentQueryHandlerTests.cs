@@ -23,7 +23,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
         private Mock<IBlobStorage> _blobStorageMock;
         private Uri _uri;
         private string BlobContainer = "bc";
-        private Mock<IOptionsMonitor<AttachmentOptions>> _attachmentOptionsMock;
+        private Mock<IOptionsMonitor<BlobStorageOptions>> _blobStorageOptionsMock;
 
         private int _requirementId;
         private int _tagId;
@@ -34,13 +34,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
             using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             _uri = new Uri("http://whatever/file.txt");
-            _attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
-            var options = new AttachmentOptions
+            _blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            var options = new BlobStorageOptions
             {
                 BlobContainer = BlobContainer
             };
 
-            _attachmentOptionsMock
+            _blobStorageOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
 
@@ -86,7 +86,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             var query = new GetFieldValueAttachmentQuery(_tagId, _requirementId, _attachmentFieldId);
-            var dut = new GetFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
+            var dut = new GetFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _blobStorageOptionsMock.Object);
 
             var result = await dut.Handle(query, default);
 
@@ -102,7 +102,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetFieldValueAttachment
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             var query = new GetFieldValueAttachmentQuery(0, _requirementId, _attachmentFieldId);
-            var dut = new GetFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
+            var dut = new GetFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _blobStorageOptionsMock.Object);
 
             var result = await dut.Handle(query, default);
 

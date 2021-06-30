@@ -24,7 +24,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
         private Mock<IBlobStorage> _blobStorageMock;
         private Uri _uri;
         private string BlobContainer = "bc";
-        private Mock<IOptionsMonitor<AttachmentOptions>> _attachmentOptionsMock;
+        private Mock<IOptionsMonitor<BlobStorageOptions>> _blobStorageOptionsMock;
 
         private int _requirementIdWithAttachment;
         private int _requirementIdWithCheckbox;
@@ -39,13 +39,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             using var context = new PreservationContext(dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             _uri = new Uri("http://whatever/file.txt");
-            _attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
-            var options = new AttachmentOptions
+            _blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            var options = new BlobStorageOptions
             {
                 BlobContainer = BlobContainer
             };
 
-            _attachmentOptionsMock
+            _blobStorageOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
 
@@ -130,7 +130,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             var query = new GetHistoricalFieldValueAttachmentQuery(_tagId, _requirementIdWithAttachment, _preservationRecordGuidAttachment);
-            var dut = new GetHistoricalFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
+            var dut = new GetHistoricalFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _blobStorageOptionsMock.Object);
 
             var result = await dut.Handle(query, default);
 
@@ -145,7 +145,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             var query = new GetHistoricalFieldValueAttachmentQuery(_tagId, _requirementIdWithCheckbox, _preservationRecordGuidCheckbox);
-            var dut = new GetHistoricalFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
+            var dut = new GetHistoricalFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _blobStorageOptionsMock.Object);
 
             var result = await dut.Handle(query, default);
 
@@ -162,7 +162,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             var query = new GetHistoricalFieldValueAttachmentQuery(_tagId, _requirementIdWithAttachment, new Guid());
-            var dut = new GetHistoricalFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
+            var dut = new GetHistoricalFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _blobStorageOptionsMock.Object);
 
             var result = await dut.Handle(query, default);
 
@@ -179,7 +179,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetHistoricalFieldValueAttac
             await using var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider);
 
             var query = new GetHistoricalFieldValueAttachmentQuery(0, _requirementIdWithAttachment, _preservationRecordGuidAttachment);
-            var dut = new GetHistoricalFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _attachmentOptionsMock.Object);
+            var dut = new GetHistoricalFieldValueAttachmentQueryHandler(context, _blobStorageMock.Object, _blobStorageOptionsMock.Object);
 
             var result = await dut.Handle(query, default);
 

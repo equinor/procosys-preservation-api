@@ -1,6 +1,8 @@
-﻿using Equinor.ProCoSys.Preservation.WebApi.Misc;
+﻿using System;
+using Azure.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.AzureAppConfiguration;
 using Microsoft.Extensions.Hosting;
 
 namespace Equinor.ProCoSys.Preservation.WebApi
@@ -17,11 +19,26 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    var kvSettings = new KeyVaultSettings();
-                    config.Build().GetSection("KeyVault").Bind(kvSettings);
-                    if (kvSettings.Enabled)
+                    var settings = config.Build();
+                    var azConfig = settings.GetValue<bool>("UseAzureAppConfiguration");
+                    if (azConfig)
                     {
-                        config.AddAzureKeyVault(kvSettings.Uri, kvSettings.ClientId, kvSettings.ClientSecret);
+                        config.AddAzureAppConfiguration(options =>
+                        {
+                            var connectionString = settings["ConnectionStrings:AppConfig"];
+                            options.Connect(connectionString)
+                                .ConfigureKeyVault(kv =>
+                                {
+                                    kv.SetCredential(new DefaultAzureCredential());
+                                })
+                                .ConfigureRefresh(refreshOptions =>
+                                {
+                                    refreshOptions.Register("Sentinel", true);
+                                    refreshOptions.SetCacheExpiration(TimeSpan.FromMinutes(5));
+                                })
+                                .Select(KeyFilter.Any)
+                                .Select(KeyFilter.Any, context.HostingEnvironment.EnvironmentName);
+                        });
                     }
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
@@ -32,6 +49,5 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                         options.Limits.MaxRequestBodySize = null;
                     });
                     webBuilder.UseStartup<Startup>();
-                });
-    }
+                });    }
 }

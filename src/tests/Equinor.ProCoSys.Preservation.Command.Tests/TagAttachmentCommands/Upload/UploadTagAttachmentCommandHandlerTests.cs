@@ -36,14 +36,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
             _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
 
-            var attachmentOptionsMock = new Mock<IOptionsMonitor<AttachmentOptions>>();
-            var options = new AttachmentOptions
+            var blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
+            var options = new BlobStorageOptions
             {
                 MaxSizeMb = 2,
                 BlobContainer = _blobContainer,
-                ValidFileSuffixes = new[] {".gif", ".jpg"}
+                BlockedFileSuffixes = new[] {".exe", ".zip"}
             };
-            attachmentOptionsMock
+            blobStorageOptionsMock
                 .Setup(x => x.CurrentValue)
                 .Returns(options);
 
@@ -64,7 +64,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object,
                 _blobStorageMock.Object,
-                attachmentOptionsMock.Object);
+                blobStorageOptionsMock.Object);
         }
 
         [TestMethod]
