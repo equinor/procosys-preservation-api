@@ -10,6 +10,7 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'equinor'
+    ref: infra/preservation_app_config
 
 # Global variables for the pipeline
 variables:
@@ -66,7 +67,7 @@ stages:
     parameters:
       deploymentName: 'docker_build'
       dependsOn: ''
-      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       buildCommand: build
@@ -82,7 +83,7 @@ stages:
     parameters:
       deploymentName: 'docker_build_and_push_master_only'
       dependsOn: ''
-      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       buildCommand: buildAndPush
@@ -105,7 +106,7 @@ stages:
 - stage: dev
   displayName: 'Deploy to Dev'
   dependsOn: 'build'
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'
@@ -144,6 +145,8 @@ stages:
       kvUriName: '${{ variables.kvUriName }}'
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
+      kvTenantIdSecret: '${{ variables.kvTenantIdSecret }}'
+      kvConnStringsSecret: '${{ variables.kvConnStringsSecret }}'
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
@@ -192,6 +195,8 @@ stages:
       kvUriName: '${{ variables.kvUriName }}'
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
+      kvTenantIdSecret: '${{ variables.kvTenantIdSecret }}'
+      kvConnStringsSecret: '${{ variables.kvConnStringsSecret }}'
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
@@ -237,6 +242,8 @@ stages:
       kvUriName: '${{ variables.kvUriName }}'
       kvClientSecretName: '${{ variables.kvClientSecretName }}'
       kvIkeySecretName: '${{ variables.kvIkeySecretName }}'
+      kvTenantIdSecret: '${{ variables.kvTenantIdSecret }}'
+      kvConnStringsSecret: '${{ variables.kvConnStringsSecret }}'
       kvName: '${{ variables.kvName }}'
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
