@@ -105,7 +105,7 @@ stages:
 - stage: dev
   displayName: 'Deploy to Dev'
   dependsOn: 'build'
-  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'
