@@ -163,7 +163,7 @@ stages:
     serviceConnection: '${{ variables.nonProdServiceConnection }}'
     appServicePlan: '${{ variables.nonProdappServicePlanName }}'
     containerRegistry: '${{ variables.containerRegistryName }}' 
-    aspNetCoreEnvironment: 'Production'
+    aspNetCoreEnvironment: 'Test'
 
   jobs:
   # Run Migration Script (Predeploy)
@@ -211,6 +211,7 @@ stages:
     envRg: '${{ variables.envRgName }}'
     envGroupName: '$(globalPrefix)-$(fullAppName)-api-${{ variables.envName }}'
     serviceConnection: '${{ variables.prodServiceConnection }}'
+    aspNetCoreEnvironment: 'Production'
 
   jobs:
   # Run Migration Script (Predeploy)
