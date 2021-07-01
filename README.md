@@ -65,3 +65,9 @@ run
 ```console
 docker-compose -f .\Docker-compose.yml -f .\Docker-compose.development.yml up
 ```
+
+## Environment variables
+These need to exists in the docker container to be able to authenticate as service priciple
+- AZURE_CLIENT_ID
+- AZURE_TENANT_ID
+- AZURE_CLIENT_SECRET
