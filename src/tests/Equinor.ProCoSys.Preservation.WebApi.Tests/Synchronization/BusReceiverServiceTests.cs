@@ -600,7 +600,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
 
-
             // Assert
             Assert.AreEqual(area, _tag1.AreaCode);
             Assert.AreEqual(areaDescription, _tag1.AreaDescription);
@@ -608,7 +607,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
-            Assert.IsTrue(_tag1.IsVoided);
             Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
         }
 
@@ -638,8 +636,28 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
-            Assert.IsTrue(_tag1.IsVoided);
             Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
+        }
+
+        [TestMethod]
+        public async Task HandleTagTopic_ShouldNotUpdateIsVoidedProperty()
+        {
+            // Arrange
+            var area = "Area69";
+            var areaDescription = "Area69 Description";
+            var discipline = "ABC";
+            var disciplineDescription = "ABC Desc";
+            var callOffNo = "123";
+            var poNo = "321";
+            var tagFunctionCodeNew = "FCS123";
+            var message =
+                $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
+
+            // Act
+            await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
+
+            // Assert
+            Assert.IsFalse(_tag1.IsVoided);
         }
 
         [TestMethod]
@@ -672,7 +690,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
-            Assert.IsTrue(_tag1.IsVoided);
             Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
             Assert.IsTrue( _project2.Tags.Contains(_tag1));
         }
@@ -708,7 +725,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             Assert.AreEqual(disciplineDescription, _tag1.DisciplineDescription);
             Assert.AreEqual(callOffNo, _tag1.Calloff);
             Assert.AreEqual(poNo, _tag1.PurchaseOrderNo);
-            Assert.IsTrue(_tag1.IsVoided);
             Assert.AreEqual(tagFunctionCodeNew, _tag1.TagFunctionCode);
             Assert.IsNotNull(_newProjectCreated);
             Assert.IsTrue(_newProjectCreated.Tags.Contains(_tag1));

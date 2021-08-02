@@ -150,7 +150,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 tagToUpdate.Description = tagEvent.Description;
                 tagToUpdate.McPkgNo = tagEvent.McPkgNo;
                 tagToUpdate.TagFunctionCode = tagEvent.TagFunctionCode;
-                tagToUpdate.IsVoided = tagEvent.IsVoided;
             }
         }
 
