@@ -653,6 +653,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             var message =
                 $"{{\"TagNo\" : \"{TagNo1}\",\"Description\" : \"Test 123\",\"ProjectName\" : \"{Project1Name}\",\"McPkgNo\" : \"{McPkg1}\",\"CommPkgNo\" : \"{CommPkg1}\",\"AreaCode\" : \"{area}\",\"AreaDescription\" : \"{areaDescription}\",\"DisciplineCode\" : \"{discipline}\",\"DisciplineDescription\" : \"{disciplineDescription}\",\"CallOffNo\" : \"{callOffNo}\",\"PurchaseOrderNo\" : \"{poNo}\",\"TagFunctionCode\" : \"{tagFunctionCodeNew}\",\"IsVoided\" : true,\"Plant\" : \"{Plant}\"}}";
 
+            Assert.IsFalse(_tag1.IsVoided);
+
             // Act
             await _dut.ProcessMessageAsync(PcsTopic.Tag, message, new CancellationToken(false));
 
