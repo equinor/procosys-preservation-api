@@ -28,7 +28,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.1.15" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.31.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.36.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="ServiceResult" Version="1.0.1" />
     <PackageReference Include="ServiceResult.ApiExtensions" Version="1.0.1" />
