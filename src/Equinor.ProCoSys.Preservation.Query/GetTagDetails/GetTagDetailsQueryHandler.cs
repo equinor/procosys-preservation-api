@@ -9,6 +9,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ServiceResult;
+using PreservationAction = Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate.Action;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
 {
@@ -22,19 +23,21 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagDetails
         {
             // Requirements and it's PreservationPeriods needs to be included so tag.IsReadyToBePreserved calculates as it should
             var tagDetails = await (from tag in _context.QuerySet<Tag>()
-                                                .Include(t => t.Actions)
-                                                .Include(t => t.Attachments)
                                                 .Include(t => t.Requirements)
                                                     .ThenInclude(r => r.PreservationPeriods)
                                     join step in _context.QuerySet<Step>() on tag.StepId equals step.Id
                                     join journey in _context.QuerySet<Journey>() on EF.Property<int>(step, "JourneyId") equals journey.Id
                                     join mode in _context.QuerySet<Mode>() on step.ModeId equals mode.Id
                                     join responsible in _context.QuerySet<Responsible>() on step.ResponsibleId equals responsible.Id
+                                    let anyActions = (from a in _context.QuerySet<PreservationAction>()
+                                        where EF.Property<int>(a, "TagId") == tag.Id select a.Id).Any()
+                                    let anyAttachments = (from a in _context.QuerySet<TagAttachment>()
+                                        where EF.Property<int>(a, "TagId") == tag.Id select a.Id).Any()
                                     where tag.Id == request.TagId
                                     select new TagDetailsDto(
                                         tag.Id,
                                         tag.TagNo,
-                                        tag.Status != PreservationStatus.NotStarted || tag.Actions.Any() || tag.Attachments.Any(),
+                                        tag.Status != PreservationStatus.NotStarted || anyActions || anyAttachments,
                                         tag.IsVoided,
                                         tag.Description,
                                         tag.Status.GetDisplayValue(),
