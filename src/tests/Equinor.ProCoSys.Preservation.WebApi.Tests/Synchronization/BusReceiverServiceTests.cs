@@ -121,8 +121,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
             _tagFunction = new TagFunction(Plant, TagFunctionCode, TagFunctionDescription, RegisterCode);
             _tagFunctionRepository.Setup(t => t.GetByCodesAsync(TagFunctionCode, RegisterCode))
                 .Returns(Task.FromResult(_tagFunction));
-            var synchronizationOptions = new Mock<IOptionsMonitor<SynchronizationOptions>>();
-            synchronizationOptions.Setup(s => s.CurrentValue).Returns(new SynchronizationOptions{UserOid = Guid.NewGuid()});
+            var options = new Mock<IOptionsMonitor<AuthenticatorOptions>>();
+            options.Setup(s => s.CurrentValue).Returns(new AuthenticatorOptions{PreservationApiObjectId = Guid.NewGuid()});
             var currentUserSetter = new Mock<ICurrentUserSetter>();
             var claimsProvider = new Mock<IClaimsProvider>();
             claimsProvider.Setup(c => c.GetCurrentUser()).Returns(new ClaimsPrincipal());
@@ -139,7 +139,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           claimsProvider.Object,
                                           new Mock<IBearerTokenSetter>().Object,
                                           new Mock<IApplicationAuthenticator>().Object,
-                                          synchronizationOptions.Object,
+                                          options.Object,
                                           projectApiService.Object);
         }
         #endregion

@@ -51,6 +51,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IApplicationAuthenticator authenticator,
             IPlantCache plantCache,
             IOptionsMonitor<SynchronizationOptions> options,
+            IOptionsMonitor<AuthenticatorOptions> authenticatorOptions,
             ICertificateApiService certificateApiService)
         {
             _logger = logger;
@@ -65,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _plantCache = plantCache;
             _options = options;
             _certificateApiService = certificateApiService;
-            _synchronizationUserOid = options.CurrentValue.UserOid;
+            _synchronizationUserOid = authenticatorOptions.CurrentValue.PreservationApiObjectId;
         }
 
         public async Task Synchronize(CancellationToken cancellationToken)
