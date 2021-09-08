@@ -30,11 +30,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
             {
                 if (_onBehalfOfUserToken == null)
                 {
-                    var app = ConfidentialClientApplicationBuilder
-                        .Create(_options.Value.PreservationApiClientId)
-                        .WithClientSecret(_options.Value.PreservationApiSecret)
-                        .WithAuthority(new Uri(_options.Value.Instance))
-                        .Build();
+                    var app = CreateConfidentialPreservationClient();
 
                     var tokenResult = await app
                         .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken))
@@ -52,11 +48,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
         {
             if (_applicationToken == null)
             {
-                var app = ConfidentialClientApplicationBuilder
-                    .Create(_options.Value.MainApiClientId)
-                    .WithClientSecret(_options.Value.MainApiSecret)
-                    .WithAuthority(new Uri(_options.Value.Instance))
-                    .Build();
+                var app = CreateConfidentialPreservationClient();
 
                 var tokenResult = await app
                     .AcquireTokenForClient(new List<string> { _options.Value.MainApiScope })
@@ -66,5 +58,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
             }
             return _applicationToken;
         }
+
+        private IConfidentialClientApplication CreateConfidentialPreservationClient()
+            => ConfidentialClientApplicationBuilder
+                .Create(_options.Value.PreservationApiClientId)
+                .WithClientSecret(_options.Value.PreservationApiSecret)
+                .WithAuthority(new Uri(_options.Value.Instance))
+                .Build();
     }
 }

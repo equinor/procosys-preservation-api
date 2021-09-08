@@ -47,7 +47,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IClaimsProvider claimsProvider,
             IBearerTokenSetter bearerTokenSetter,
             IApplicationAuthenticator authenticator,
-            IOptionsMonitor<SynchronizationOptions> options,
+            IOptionsMonitor<AuthenticatorOptions> options,
             IProjectApiService projectApiService)
         {
             _plantSetter = plantSetter;
@@ -61,7 +61,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _bearerTokenSetter = bearerTokenSetter;
             _authenticator = authenticator;
             _projectApiService = projectApiService;
-            _synchronizationUserOid = options.CurrentValue.UserOid;
+            _synchronizationUserOid = options.CurrentValue.PreservationApiObjectId;
         }
 
         public async Task ProcessMessageAsync(PcsTopic pcsTopic, string messageJson, CancellationToken cancellationToken)
