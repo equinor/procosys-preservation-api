@@ -36,6 +36,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
             {
                 if (_onBehalfOfUserToken == null)
                 {
+                    _logger.LogInformation($"Global setting=[{_options.Value.GlobalSetting}]");
+                    _logger.LogInformation($"Scoped setting=[{_options.Value.ScopedSetting}]");
                     var apiSecret = _options.Value.PreservationApiSecret;
                     var secret = $"{apiSecret.Substring(0, 3)}***{apiSecret.Substring(apiSecret.Length - 3, 3)}";
                     _logger.LogInformation($"Getting onbehalf of token using {secret} for {_options.Value.PreservationApiClientId}");

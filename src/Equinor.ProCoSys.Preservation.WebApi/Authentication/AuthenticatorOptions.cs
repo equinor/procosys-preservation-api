@@ -11,5 +11,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
         public string PreservationApiSecret { get; set; }
 
         public string MainApiScope { get; set; }
+        
+        public string GlobalSetting { get; set; }
+        public string ScopedSetting { get; set; }
     }
 }
