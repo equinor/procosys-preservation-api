@@ -17,11 +17,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
         private string _requestToken;
         private string _onBehalfOfUserToken;
         private string _applicationToken;
+        private readonly string _secretInfo;
 
         public Authenticator(IOptions<AuthenticatorOptions> options, ILogger<BearerTokenApiClient> logger)
         {
             _options = options;
             _logger = logger;
+            var apiSecret = _options.Value.PreservationApiSecret;
+            _secretInfo = $"{apiSecret.Substring(0, 2)}***{apiSecret.Substring(apiSecret.Length - 1, 1)}";
         }
 
         public void SetBearerToken(string token, bool isUserToken = true)
@@ -38,15 +41,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
                 {
                     _logger.LogInformation($"Global setting=[{_options.Value.GlobalSetting}]");
                     _logger.LogInformation($"Scoped setting=[{_options.Value.ScopedSetting}]");
-                    var apiSecret = _options.Value.PreservationApiSecret;
-                    var secret = $"{apiSecret.Substring(0, 3)}***{apiSecret.Substring(apiSecret.Length - 3, 3)}";
-                    _logger.LogInformation($"Getting onbehalf of token using {secret} for {_options.Value.PreservationApiClientId}");
                     var app = CreateConfidentialPreservationClient();
 
                     var tokenResult = await app
                         .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken))
                         .ExecuteAsync();
-                    _logger.LogInformation("Got onbehalf of token");
+                    _logger.LogInformation("Got token on behalf of");
 
                     _onBehalfOfUserToken = tokenResult.AccessToken;
                 }
@@ -65,6 +65,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
                 var tokenResult = await app
                     .AcquireTokenForClient(new List<string> { _options.Value.MainApiScope })
                     .ExecuteAsync();
+                _logger.LogInformation("Got token for client");
 
                 _applicationToken = tokenResult.AccessToken;
             }
@@ -72,10 +73,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
         }
 
         private IConfidentialClientApplication CreateConfidentialPreservationClient()
-            => ConfidentialClientApplicationBuilder
+        {
+            _logger.LogInformation($"Getting client using {_secretInfo} for {_options.Value.PreservationApiClientId}");
+            return ConfidentialClientApplicationBuilder
                 .Create(_options.Value.PreservationApiClientId)
                 .WithClientSecret(_options.Value.PreservationApiSecret)
                 .WithAuthority(new Uri(_options.Value.Instance))
                 .Build();
+        }
     }
 }
