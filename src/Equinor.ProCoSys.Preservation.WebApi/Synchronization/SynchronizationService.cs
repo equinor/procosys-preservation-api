@@ -25,7 +25,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 {
     public class SynchronizationService : ISynchronizationService
     {
-        private readonly Guid _synchronizationUserOid;
+        private readonly Guid _preservationApiOid;
         private readonly ILogger<SynchronizationService> _logger;
         private readonly ITelemetryClient _telemetryClient;
         private readonly IMediator _mediator;
@@ -66,7 +66,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _plantCache = plantCache;
             _options = options;
             _certificateApiService = certificateApiService;
-            _synchronizationUserOid = authenticatorOptions.CurrentValue.PreservationApiObjectId;
+            _preservationApiOid = authenticatorOptions.CurrentValue.PreservationApiObjectId;
         }
 
         public async Task Synchronize(CancellationToken cancellationToken)
@@ -74,14 +74,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
             _bearerTokenSetter.SetBearerToken(bearerToken, false);
 
-            _currentUserSetter.SetCurrentUserOid(_synchronizationUserOid);
+            _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
             var currentUser = _claimsProvider.GetCurrentUser();
             var claimsIdentity = new ClaimsIdentity();
-            claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _synchronizationUserOid.ToString()));
+            claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _preservationApiOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);
 
-            foreach (var plant in await _plantCache.GetPlantIdsWithAccessForUserAsync(_synchronizationUserOid))
+            foreach (var plant in await _plantCache.GetPlantIdsWithAccessForUserAsync(_preservationApiOid))
             {
                 _logger.LogInformation($"Synchronizing plant {plant}...");
 

@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IBearerTokenSetter _bearerTokenSetter;
         private readonly IApplicationAuthenticator _authenticator;
         private readonly IProjectApiService _projectApiService;
-        private Guid _synchronizationUserOid;
+        private Guid _preservationApiOid;
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
 
         public BusReceiverService(IPlantSetter plantSetter,
@@ -61,16 +61,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _bearerTokenSetter = bearerTokenSetter;
             _authenticator = authenticator;
             _projectApiService = projectApiService;
-            _synchronizationUserOid = options.CurrentValue.PreservationApiObjectId;
+            _preservationApiOid = options.CurrentValue.PreservationApiObjectId;
         }
 
         public async Task ProcessMessageAsync(PcsTopic pcsTopic, string messageJson, CancellationToken cancellationToken)
         {
-            _currentUserSetter.SetCurrentUserOid(_synchronizationUserOid);
+            _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
             var currentUser = _claimsProvider.GetCurrentUser();
             var claimsIdentity = new ClaimsIdentity();
-            claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _synchronizationUserOid.ToString()));
+            claimsIdentity.AddClaim(new Claim(ClaimsExtensions.Oid, _preservationApiOid.ToString()));
             currentUser.AddIdentity(claimsIdentity);
 
             switch (pcsTopic)
@@ -161,7 +161,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
                 var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
                 _bearerTokenSetter.SetBearerToken(bearerToken, false);
 
-                _currentUserSetter.SetCurrentUserOid(_synchronizationUserOid);
+                _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
                 var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName);
                 if (pcsProject == null)
                 {
