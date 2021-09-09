@@ -192,7 +192,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseAzureAppConfiguration();
 
             app.UseCurrentPlant();
             app.UseCurrentBearerToken();
