@@ -31,13 +31,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                                 {
                                     kv.SetCredential(new DefaultAzureCredential());
                                 })
+                                .Select(KeyFilter.Any)
+                                .Select(KeyFilter.Any, context.HostingEnvironment.EnvironmentName)
                                 .ConfigureRefresh(refreshOptions =>
                                 {
                                     refreshOptions.Register("Sentinel", true);
                                     refreshOptions.SetCacheExpiration(TimeSpan.FromMinutes(5));
-                                })
-                                .Select(KeyFilter.Any)
-                                .Select(KeyFilter.Any, context.HostingEnvironment.EnvironmentName);
+                                });
                         });
                     }
                 })
