@@ -12,14 +12,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
     public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IApplicationAuthenticator
     {
         private readonly IOptions<AuthenticatorOptions> _options;
-        private readonly ILogger<BearerTokenApiClient> _logger;
+        private readonly ILogger<Authenticator> _logger;
         private bool _canUseOnBehalfOf;
         private string _requestToken;
         private string _onBehalfOfUserToken;
         private string _applicationToken;
         private readonly string _secretInfo;
 
-        public Authenticator(IOptions<AuthenticatorOptions> options, ILogger<BearerTokenApiClient> logger)
+        public Authenticator(IOptions<AuthenticatorOptions> options, ILogger<Authenticator> logger)
         {
             _options = options;
             _logger = logger;
