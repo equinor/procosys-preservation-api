@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Options;
@@ -21,17 +20,13 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Person
             _apiVersion = options.CurrentValue.ApiVersion;
         }
 
-        public async Task<IList<PCSPerson>> GetPersonsByOidsAsync(string plant, IList<string> azureOids)
+        public async Task<PCSPerson> TryGetPersonByOidAsync(string azureOid)
         {
-            var url = $"{_baseAddress}Person/PersonsByOids" +
-                      $"?plantId={plant}" +
+            var url = $"{_baseAddress}Person" +
+                      $"?azureOid={azureOid}" +
                       $"&api-version={_apiVersion}";
-            foreach (var oid in azureOids)
-            {
-                url += $"&azureOids={oid}";
-            }
 
-            return await _mainApiClient.QueryAndDeserializeAsync<List<PCSPerson>>(url);
+            return await _mainApiClient.TryQueryAndDeserializeAsync<PCSPerson>(url);
         }
     }
 }
