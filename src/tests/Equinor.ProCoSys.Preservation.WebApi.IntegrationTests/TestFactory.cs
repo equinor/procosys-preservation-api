@@ -92,8 +92,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             _connectionString = GetTestDbConnectionString(projectDir);
             _configPath = Path.Combine(projectDir, "appsettings.json");
 
+            SetupPreservationApiUser();
+
             SetupTestUsers();
         }
+
         #endregion
 
         public new void Dispose()
@@ -315,17 +318,29 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 {
                     AuthenticateUser(testUser);
 
-                    _personApiServiceMock.Setup(p => p.GetPersonsByOidsAsync(
-                            It.IsAny<string>(),
-                            new List<string>{testUser.Profile.Oid}))
-                        .Returns(Task.FromResult<IList<PCSPerson>>(new List<PCSPerson>{ new PCSPerson
+                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(testUser.Profile.Oid))
+                        .Returns(Task.FromResult( new PCSPerson
                         {
                             AzureOid = testUser.Profile.Oid,
                             FirstName = testUser.Profile.FirstName,
                             LastName = testUser.Profile.LastName
-                        }}));
+                        }));
                 }
             }
+        }
+        
+        private void SetupPreservationApiUser()
+        {
+            var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
+
+            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(preservationApiObjectId))
+                .Returns(Task.FromResult( new PCSPerson
+                {
+                    AzureOid = preservationApiObjectId,
+                    FirstName = "Preservation",
+                    LastName = "API App"
+                }));
         }
 
         // Authenticated client without any roles
