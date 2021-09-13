@@ -138,7 +138,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           currentUserSetter.Object,
                                           claimsProvider.Object,
                                           new Mock<IBearerTokenSetter>().Object,
-                                          new Mock<IApplicationAuthenticator>().Object,
+                                          new Mock<IAuthenticator>().Object,
                                           options.Object,
                                           projectApiService.Object);
         }

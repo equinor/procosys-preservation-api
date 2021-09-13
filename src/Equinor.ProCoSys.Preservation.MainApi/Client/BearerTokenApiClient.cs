@@ -85,7 +85,7 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Client
         private async ValueTask<HttpClient> CreateHttpClientAsync()
         {
             var httpClient = _httpClientFactory.CreateClient();
-            var bearerToken = await _bearerTokenProvider.GetBearerTokenOnBehalfOfCurrentUserAsync();
+            var bearerToken = await _bearerTokenProvider.GetBearerTokenAsync();
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", bearerToken);
             return httpClient;
         }

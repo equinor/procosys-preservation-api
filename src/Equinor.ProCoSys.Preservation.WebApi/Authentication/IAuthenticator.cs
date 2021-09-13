@@ -1,9 +1,7 @@
-﻿using System.Threading.Tasks;
-
-namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
+﻿namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 {
-    public interface IApplicationAuthenticator
+    public interface IAuthenticator
     {
-        ValueTask<string> GetBearerTokenForApplicationAsync();
+        AuthenticationType AuthenticationType { get; set; }
     }
 }

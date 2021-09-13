@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsProvider _claimsProvider;
         private readonly IBearerTokenSetter _bearerTokenSetter;
-        private readonly IApplicationAuthenticator _authenticator;
+        private readonly IAuthenticator _authenticator;
         private readonly IProjectApiService _projectApiService;
         private Guid _preservationApiOid;
         private const string PreservationBusReceiverTelemetryEvent = "Preservation Bus Receiver";
@@ -46,7 +46,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ICurrentUserSetter currentUserSetter,
             IClaimsProvider claimsProvider,
             IBearerTokenSetter bearerTokenSetter,
-            IApplicationAuthenticator authenticator,
+            IAuthenticator authenticator,
             IOptionsMonitor<AuthenticatorOptions> options,
             IProjectApiService projectApiService)
         {
@@ -158,9 +158,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var projectToMoveTagInto = await _projectRepository.GetProjectWithTagsByNameAsync(projectName);
             if (projectToMoveTagInto == null)
             {
-                var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
-                _bearerTokenSetter.SetBearerToken(bearerToken, false);
-
+                _authenticator.SetAuthenticationType(AuthenticationType.AsApplication);
                 _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
                 var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName);
                 if (pcsProject == null)

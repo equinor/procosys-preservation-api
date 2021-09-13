@@ -123,7 +123,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<Authenticator>();
             services.AddScoped<IBearerTokenProvider>(x => x.GetRequiredService<Authenticator>());
             services.AddScoped<IBearerTokenSetter>(x => x.GetRequiredService<Authenticator>());
-            services.AddScoped<IApplicationAuthenticator>(x => x.GetRequiredService<Authenticator>());
+            services.AddScoped<IAuthenticator>(x => x.GetRequiredService<Authenticator>());
             services.AddScoped<IBearerTokenApiClient, BearerTokenApiClient>();
             services.AddScoped<ITagApiService, MainApiTagService>();
             services.AddScoped<IPlantApiService, MainApiPlantService>();

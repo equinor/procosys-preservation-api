@@ -34,7 +34,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IBearerTokenSetter _bearerTokenSetter;
         private readonly IClaimsTransformation _claimsTransformation;
-        private readonly IApplicationAuthenticator _authenticator;
+        private readonly IAuthenticator _authenticator;
         private readonly IPlantCache _plantCache;
         private readonly IOptionsMonitor<SynchronizationOptions> _options;
         private readonly ICertificateApiService _certificateApiService;
@@ -48,7 +48,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ICurrentUserSetter currentUserSetter,
             IBearerTokenSetter bearerTokenSetter,
             IClaimsTransformation claimsTransformation,
-            IApplicationAuthenticator authenticator,
+            IAuthenticator authenticator,
             IPlantCache plantCache,
             IOptionsMonitor<SynchronizationOptions> options,
             IOptionsMonitor<AuthenticatorOptions> authenticatorOptions,
@@ -71,8 +71,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         public async Task Synchronize(CancellationToken cancellationToken)
         {
-            var bearerToken = await _authenticator.GetBearerTokenForApplicationAsync();
-            _bearerTokenSetter.SetBearerToken(bearerToken, false);
+            _authenticator.SetAuthenticationType(AuthenticationType.AsApplication);
 
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
