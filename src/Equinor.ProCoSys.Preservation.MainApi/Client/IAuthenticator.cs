@@ -1,4 +1,4 @@
-﻿namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
+﻿namespace Equinor.ProCoSys.Preservation.MainApi.Client
 {
     public interface IAuthenticator
     {
