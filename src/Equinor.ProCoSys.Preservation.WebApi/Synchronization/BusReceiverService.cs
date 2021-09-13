@@ -12,6 +12,7 @@ using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
 using Equinor.ProCoSys.Preservation.WebApi.Telemetry;
@@ -31,7 +32,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly ITagFunctionRepository _tagFunctionRepository;
         private readonly ICurrentUserSetter _currentUserSetter;
         private readonly IClaimsProvider _claimsProvider;
-        private readonly IBearerTokenSetter _bearerTokenSetter;
         private readonly IAuthenticator _authenticator;
         private readonly IProjectApiService _projectApiService;
         private Guid _preservationApiOid;
@@ -45,7 +45,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             ITagFunctionRepository tagFunctionRepository,
             ICurrentUserSetter currentUserSetter,
             IClaimsProvider claimsProvider,
-            IBearerTokenSetter bearerTokenSetter,
             IAuthenticator authenticator,
             IOptionsMonitor<AuthenticatorOptions> options,
             IProjectApiService projectApiService)
@@ -58,7 +57,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _tagFunctionRepository = tagFunctionRepository;
             _currentUserSetter = currentUserSetter;
             _claimsProvider = claimsProvider;
-            _bearerTokenSetter = bearerTokenSetter;
             _authenticator = authenticator;
             _projectApiService = projectApiService;
             _preservationApiOid = options.CurrentValue.PreservationApiObjectId;
@@ -158,7 +156,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             var projectToMoveTagInto = await _projectRepository.GetProjectWithTagsByNameAsync(projectName);
             if (projectToMoveTagInto == null)
             {
-                _authenticator.SetAuthenticationType(AuthenticationType.AsApplication);
+                _authenticator.AuthenticationType = AuthenticationType.AsApplication;
                 _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
                 var pcsProject = await _projectApiService.TryGetProjectAsync(plant, projectName);
                 if (pcsProject == null)

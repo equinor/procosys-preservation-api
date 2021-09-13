@@ -10,6 +10,7 @@ using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.SettingAggregate;
 using Equinor.ProCoSys.Preservation.Domain.Time;
 using Equinor.ProCoSys.Preservation.MainApi.Certificate;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Equinor.ProCoSys.Preservation.Query.GetDateTimeSetting;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
@@ -32,7 +33,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
         private readonly IClaimsProvider _claimsProvider;
         private readonly IPlantSetter _plantSetter;
         private readonly ICurrentUserSetter _currentUserSetter;
-        private readonly IBearerTokenSetter _bearerTokenSetter;
         private readonly IClaimsTransformation _claimsTransformation;
         private readonly IAuthenticator _authenticator;
         private readonly IPlantCache _plantCache;
@@ -46,7 +46,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             IClaimsProvider claimsProvider,
             IPlantSetter plantSetter,
             ICurrentUserSetter currentUserSetter,
-            IBearerTokenSetter bearerTokenSetter,
             IClaimsTransformation claimsTransformation,
             IAuthenticator authenticator,
             IPlantCache plantCache,
@@ -62,7 +61,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
             _claimsTransformation = claimsTransformation;
             _plantSetter = plantSetter;
             _authenticator = authenticator;
-            _bearerTokenSetter = bearerTokenSetter;
             _plantCache = plantCache;
             _options = options;
             _certificateApiService = certificateApiService;
@@ -71,7 +69,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Synchronization
 
         public async Task Synchronize(CancellationToken cancellationToken)
         {
-            _authenticator.SetAuthenticationType(AuthenticationType.AsApplication);
+            _authenticator.AuthenticationType = AuthenticationType.AsApplication;
 
             _currentUserSetter.SetCurrentUserOid(_preservationApiOid);
 
