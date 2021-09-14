@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -12,6 +13,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         public string LastName { get; set; }
         public string FullName => $"{FirstName} {LastName}";
         public bool IsAppToken { get; set; } = false;
+        public string[] AppRoles { get; set; }
      
         public override string ToString() => $"{FullName} {Oid}";
         

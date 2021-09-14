@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     public sealed class TestFactory : WebApplicationFactory<Startup>
     {
         private readonly string _libraryAdminOid = "00000000-0000-0000-0000-000000000001";
-        private readonly string _crossPlantUserOid = "00000000-0000-0000-0000-000000000004";
+        private readonly string _crossPlantAppOid = "00000000-0000-0000-0000-000000000004";
         private readonly string _plannerOid = "00000000-0000-0000-0000-000000000002";
         private readonly string _preserverOid = "00000000-0000-0000-0000-000000000003";
         private readonly string _hackerOid = "00000000-0000-0000-0000-000000000666";
@@ -296,7 +296,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     
             AddHackerUser(commonProCoSysProjects);
             
-            AddCrossPlantUser();
+            AddCrossPlantApp();
             
             var webHostBuilder = WithWebHostBuilder(builder =>
             {
@@ -450,16 +450,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 });
         
         // Authenticated client without any roles. Configured in app config to allow using cross plant endpoints
-        private void AddCrossPlantUser()
-            => _testUsers.Add(UserType.CrossPlantUser,
+        private void AddCrossPlantApp()
+            => _testUsers.Add(UserType.CrossPlantApp,
                 new TestUser
                 {
                     Profile =
                         new TestProfile
                         {
-                            FirstName = "Al",
-                            LastName = "Plant", 
-                            Oid = _crossPlantUserOid
+                            FirstName = "XPlant",
+                            LastName = "App",
+                            Oid = _crossPlantAppOid,
+                            IsAppToken = true,
+                            AppRoles = new []{AppRoles.CROSSPLANT}
                         },
                     ProCoSysPlants = new List<PCSPlant>
                     {

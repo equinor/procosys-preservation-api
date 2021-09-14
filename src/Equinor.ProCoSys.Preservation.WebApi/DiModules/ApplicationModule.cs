@@ -69,7 +69,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorageOptions"));
             services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
             services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
-            services.Configure<AuthorizationOptions>(configuration.GetSection("Authorization"));
 
             services.AddDbContext<PreservationContext>(options =>
             {
@@ -102,7 +101,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             services.AddScoped<IAccessValidator, AccessValidator>();
             services.AddScoped<IProjectChecker, ProjectChecker>();
             services.AddScoped<IProjectAccessChecker, ProjectAccessChecker>();
-            services.AddScoped<ICrossPlantAccessChecker, CrossPlantAccessChecker>();
             services.AddScoped<IContentRestrictionsChecker, ContentRestrictionsChecker>();
             services.AddScoped<ITagHelper, TagHelper>();
             services.AddScoped<IEventDispatcher, EventDispatcher>();

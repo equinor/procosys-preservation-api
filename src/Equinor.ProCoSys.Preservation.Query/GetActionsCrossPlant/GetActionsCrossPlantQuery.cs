@@ -4,7 +4,7 @@ using ServiceResult;
 
 namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
 {
-    public class GetActionsCrossPlantQuery : IRequest<Result<List<ActionDto>>>, ICrossPlantQueryRequest
+    public class GetActionsCrossPlantQuery : IRequest<Result<List<ActionDto>>>
     {
         public GetActionsCrossPlantQuery(int max = 0) => Max = max;
 

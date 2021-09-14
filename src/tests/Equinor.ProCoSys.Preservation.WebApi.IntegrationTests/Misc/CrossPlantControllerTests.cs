@@ -12,7 +12,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         public async Task GetAllTags_AsCrossPlantUser_ShouldGetTags()
         {
             // Act
-            var tagDtos = await CrossPlantControllerTestsHelper.GetTagsAsync(UserType.CrossPlantUser);
+            var tagDtos = await CrossPlantControllerTestsHelper.GetTagsAsync(UserType.CrossPlantApp);
 
             // Assert
             Assert.IsNotNull(tagDtos);
@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         public async Task GetAllActions_AsCrossPlantUser_ShouldGetActions()
         {
             // Act
-            var actionDtos = await CrossPlantControllerTestsHelper.GetActionsAsync(UserType.CrossPlantUser);
+            var actionDtos = await CrossPlantControllerTestsHelper.GetActionsAsync(UserType.CrossPlantApp);
 
             // Assert
             Assert.IsNotNull(actionDtos);
