@@ -23,10 +23,10 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Person
             _apiVersion = options.CurrentValue.ApiVersion;
         }
 
-        public async Task<PCSPerson> TryGetPersonByOidAsync(string azureOid)
+        public async Task<PCSPerson> TryGetPersonByOidAsync(Guid azureOid)
         {
             var url = $"{_baseAddress}Person" +
-                      $"?azureOid={azureOid}" +
+                      $"?azureOid={azureOid:D}" +
                       $"&api-version={_apiVersion}";
 
             var oldAuthType = _authenticator.AuthenticationType;
@@ -40,6 +40,5 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Person
                 _authenticator.AuthenticationType = oldAuthType;
             }
         }
-
     }
 }

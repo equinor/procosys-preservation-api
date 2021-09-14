@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Equinor.ProCoSys.Preservation.MainApi.Person
 {
     public interface IPersonApiService
     {
-        Task<PCSPerson> TryGetPersonByOidAsync(string azureOid);
+        Task<PCSPerson> TryGetPersonByOidAsync(Guid azureOid);
     }
 }

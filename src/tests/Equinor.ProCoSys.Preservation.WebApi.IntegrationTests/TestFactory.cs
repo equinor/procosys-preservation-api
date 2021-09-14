@@ -129,9 +129,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         {
             var testUser = _testUsers[userType];
             
-            // Need to change what the mock returns each time since the factory share the same registered mocks
-            SetupPlantMock(testUser.ProCoSysPlants);
-            
             SetupPermissionMock(plant, 
                 testUser.ProCoSysPermissions,
                 testUser.ProCoSysProjects,
@@ -252,9 +249,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             // Set Initial Catalog to be able to delete database!
             return $"Server=(LocalDB)\\MSSQLLocalDB;Initial Catalog={dbName};Integrated Security=true;AttachDbFileName={dbPath}";
         }
-
-        private void SetupPlantMock(List<PCSPlant> plants)
-            => _plantApiServiceMock.Setup(p => p.GetAllPlantsAsync()).Returns(Task.FromResult(plants));
         
         private void SetupPermissionMock(
             string plant,
@@ -318,13 +312,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 {
                     AuthenticateUser(testUser);
 
-                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(testUser.Profile.Oid))
+                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(testUser.Profile.AzureOid))
                         .Returns(Task.FromResult( new PCSPerson
                         {
                             AzureOid = testUser.Profile.Oid,
                             FirstName = testUser.Profile.FirstName,
                             LastName = testUser.Profile.LastName
                         }));
+
+                    _plantApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(testUser.Profile.AzureOid))
+                        .Returns(Task.FromResult(testUser.ProCoSysPlants));
                 }
             }
         }
@@ -333,11 +330,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         {
             var config = new ConfigurationBuilder().AddJsonFile(_configPath).Build();
 
-            var preservationApiObjectId = config["Authenticator:PreservationApiObjectId"];
+            var preservationApiObjectId = new Guid(config["Authenticator:PreservationApiObjectId"]);
             _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(preservationApiObjectId))
                 .Returns(Task.FromResult( new PCSPerson
                 {
-                    AzureOid = preservationApiObjectId,
+                    AzureOid = preservationApiObjectId.ToString("N"),
                     FirstName = "Preservation",
                     LastName = "API App"
                 }));

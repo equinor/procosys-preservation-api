@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
-using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Person;
 using MediatR;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +12,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
     [TestClass]
     public class CreatePersonCommandHandlerTest : CommandHandlerTestsBase
     {
-        private Mock<IAuthenticator> _authenticatorMock;
         private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<IPersonApiService> _personApiServiceMock;
         private Person _personAdded;
@@ -27,7 +25,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
         public void Setup()
         {
             // Arrange
-            _authenticatorMock = new Mock<IAuthenticator>();
             _personRepositoryMock = new Mock<IPersonRepository>();
             _personRepositoryMock
                 .Setup(x => x.Add(It.IsAny<Person>()))
@@ -36,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
                     _personAdded = x;
                 });
             _personApiServiceMock = new Mock<IPersonApiService>();
-            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(_oid.ToString("D")))
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(_oid))
                 .Returns(Task.FromResult(new PCSPerson
                 {
                     AzureOid = _oid.ToString("D"),
@@ -46,12 +43,10 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
             _command = new CreatePersonCommand(_oid);
 
             _dut = new CreatePersonCommandHandler(
-                _authenticatorMock.Object,
                 _personApiServiceMock.Object,
                 _personRepositoryMock.Object,
                 UnitOfWorkMock.Object);
         }
-
         
         [TestMethod]
         public async Task HandlingCreatePersonCommand_ShouldAddPersonToRepository()
@@ -81,7 +76,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
         public async Task HandlingCreatePersonCommand_ShouldThrowException_WhenPersonNotFoundInProCoSys()
         {
             // Arrange
-            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(_oid.ToString("D")))
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(_oid))
                 .Returns(Task.FromResult<PCSPerson>(null));
 
             // Act

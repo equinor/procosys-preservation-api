@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson
 
             if (person == null)
             {
-                var pcsPerson = await _personApiService.TryGetPersonByOidAsync(request.Oid.ToString("D"));
+                var pcsPerson = await _personApiService.TryGetPersonByOidAsync(request.Oid);
                 if (pcsPerson == null)
                 {
                     throw new Exception($"Details for user with oid {request.Oid:D} not found in ProCoSys");
