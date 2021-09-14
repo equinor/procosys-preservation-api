@@ -9,7 +9,6 @@ using ServiceResult.ApiExtensions;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 {
-    [Authorize]
     [ApiController]
     [Route("CrossPlant")]
     public class CrossPlantController : ControllerBase
