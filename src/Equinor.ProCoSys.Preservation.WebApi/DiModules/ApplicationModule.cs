@@ -88,6 +88,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             // Scoped - Created once per client request (connection)
             services.AddScoped<IExcelConverter, ExcelConverter>();
             services.AddScoped<ITelemetryClient, ApplicationInsightsTelemetryClient>();
+            services.AddScoped<IPersonCache, PersonCache>();
             services.AddScoped<IPlantCache, PlantCache>();
             services.AddScoped<IPermissionCache, PermissionCache>();
             services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
