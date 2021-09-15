@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.MainApi.Person;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -16,17 +17,20 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
         public static string ContentRestrictionPrefix = "PCS_ContentRestriction##";
         public static string NoRestrictions = "%";
 
+        private readonly IPersonCache _personCache;
         private readonly IPlantProvider _plantProvider;
         private readonly IPlantCache _plantCache;
         private readonly IPermissionCache _permissionCache;
         private readonly ILogger<ClaimsTransformation> _logger;
 
         public ClaimsTransformation(
+            IPersonCache personCache,
             IPlantProvider plantProvider,
             IPlantCache plantCache,
             IPermissionCache permissionCache,
             ILogger<ClaimsTransformation> logger)
         {
+            _personCache = personCache;
             _plantProvider = plantProvider;
             _plantCache = plantCache;
             _permissionCache = permissionCache;
@@ -40,6 +44,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authorizations
             if (!userOid.HasValue)
             {
                 _logger.LogInformation($"----- {GetType().Name} early exit, not authenticated yet");
+                return principal;
+            }
+
+            if (!await _personCache.ExistsAsync(userOid.Value))
+            {
+                _logger.LogInformation($"----- {GetType().Name} early exit, {userOid} don't exists in ProCoSys");
                 return principal;
             }
 
