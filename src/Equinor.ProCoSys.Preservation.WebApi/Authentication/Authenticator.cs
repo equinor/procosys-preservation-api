@@ -9,54 +9,67 @@ using Microsoft.Identity.Client;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
 {
-    public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IApplicationAuthenticator
+    public class Authenticator : IBearerTokenProvider, IBearerTokenSetter, IAuthenticator
     {
         private readonly IOptions<AuthenticatorOptions> _options;
-        private readonly ILogger<BearerTokenApiClient> _logger;
-        private bool _canUseOnBehalfOf;
+        private readonly ILogger<Authenticator> _logger;
         private string _requestToken;
         private string _onBehalfOfUserToken;
         private string _applicationToken;
+        private readonly string _secretInfo;
 
-        public Authenticator(IOptions<AuthenticatorOptions> options, ILogger<BearerTokenApiClient> logger)
+        public Authenticator(IOptions<AuthenticatorOptions> options, ILogger<Authenticator> logger)
         {
             _options = options;
             _logger = logger;
+            var apiSecret = _options.Value.PreservationApiSecret;
+            _secretInfo = $"{apiSecret.Substring(0, 2)}***{apiSecret.Substring(apiSecret.Length - 1, 1)}";
+            AuthenticationType = AuthenticationType.OnBehalfOf;
         }
+        
+        public AuthenticationType AuthenticationType { get; set; }
 
-        public void SetBearerToken(string token, bool isUserToken = true)
-        {
-            _requestToken = token ?? throw new ArgumentNullException(nameof(token));
-            _canUseOnBehalfOf = isUserToken;
-        }
+        public void SetBearerToken(string token) => _requestToken = token;
 
-        public async ValueTask<string> GetBearerTokenOnBehalfOfCurrentUserAsync()
+        public async ValueTask<string> GetBearerTokenAsync()
         {
-            if (_canUseOnBehalfOf)
+            _logger.LogInformation($"Global setting=[{_options.Value.GlobalSetting}]");
+            _logger.LogInformation($"Scoped setting=[{_options.Value.ScopedSetting}]");
+
+            switch (AuthenticationType)
             {
-                if (_onBehalfOfUserToken == null)
-                {
-                    _logger.LogInformation($"Global setting=[{_options.Value.GlobalSetting}]");
-                    _logger.LogInformation($"Scoped setting=[{_options.Value.ScopedSetting}]");
-                    var apiSecret = _options.Value.PreservationApiSecret;
-                    var secret = $"{apiSecret.Substring(0, 3)}***{apiSecret.Substring(apiSecret.Length - 3, 3)}";
-                    _logger.LogInformation($"Getting onbehalf of token using {secret} for {_options.Value.PreservationApiClientId}");
-                    var app = CreateConfidentialPreservationClient();
-
-                    var tokenResult = await app
-                        .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken))
-                        .ExecuteAsync();
-                    _logger.LogInformation("Got onbehalf of token");
-
-                    _onBehalfOfUserToken = tokenResult.AccessToken;
-                }
-                return _onBehalfOfUserToken;
+                case AuthenticationType.OnBehalfOf:
+                    return await GetBearerTokenOnBehalfOfCurrentUserAsync();
+                case AuthenticationType.AsApplication:
+                    return await GetBearerTokenForApplicationAsync();
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            return _requestToken;
         }
 
-        public async ValueTask<string> GetBearerTokenForApplicationAsync()
+        private async ValueTask<string> GetBearerTokenOnBehalfOfCurrentUserAsync()
+        {
+            if (_onBehalfOfUserToken == null)
+            {
+                if (string.IsNullOrEmpty(_requestToken))
+                {
+                    throw new ArgumentNullException(nameof(_requestToken));
+                }
+
+                var app = CreateConfidentialPreservationClient();
+
+                var tokenResult = await app
+                    .AcquireTokenOnBehalfOf(new List<string> { _options.Value.MainApiScope }, new UserAssertion(_requestToken))
+                    .ExecuteAsync();
+                _logger.LogInformation("Got token on behalf of");
+
+                _onBehalfOfUserToken = tokenResult.AccessToken;
+            }
+            return _onBehalfOfUserToken;
+
+        }
+
+        private async ValueTask<string> GetBearerTokenForApplicationAsync()
         {
             if (_applicationToken == null)
             {
@@ -65,6 +78,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
                 var tokenResult = await app
                     .AcquireTokenForClient(new List<string> { _options.Value.MainApiScope })
                     .ExecuteAsync();
+                _logger.LogInformation("Got token for application");
 
                 _applicationToken = tokenResult.AccessToken;
             }
@@ -72,10 +86,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Authentication
         }
 
         private IConfidentialClientApplication CreateConfidentialPreservationClient()
-            => ConfidentialClientApplicationBuilder
+        {
+            _logger.LogInformation($"Getting client using {_secretInfo} for {_options.Value.PreservationApiClientId}");
+            return ConfidentialClientApplicationBuilder
                 .Create(_options.Value.PreservationApiClientId)
                 .WithClientSecret(_options.Value.PreservationApiSecret)
                 .WithAuthority(new Uri(_options.Value.Instance))
                 .Build();
+        }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Microsoft.Extensions.Options;
@@ -8,30 +7,38 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Person
 {
     public class MainApiPersonService : IPersonApiService
     {
+        private readonly IAuthenticator _authenticator;
         private readonly Uri _baseAddress;
         private readonly string _apiVersion;
         private readonly IBearerTokenApiClient _mainApiClient;
 
         public MainApiPersonService(
+            IAuthenticator authenticator,
             IBearerTokenApiClient mainApiClient,
             IOptionsMonitor<MainApiOptions> options)
         {
+            _authenticator = authenticator;
             _mainApiClient = mainApiClient;
             _baseAddress = new Uri(options.CurrentValue.BaseAddress);
             _apiVersion = options.CurrentValue.ApiVersion;
         }
 
-        public async Task<IList<PCSPerson>> GetPersonsByOidsAsync(string plant, IList<string> azureOids)
+        public async Task<PCSPerson> TryGetPersonByOidAsync(Guid azureOid)
         {
-            var url = $"{_baseAddress}Person/PersonsByOids" +
-                      $"?plantId={plant}" +
+            var url = $"{_baseAddress}Person" +
+                      $"?azureOid={azureOid:D}" +
                       $"&api-version={_apiVersion}";
-            foreach (var oid in azureOids)
-            {
-                url += $"&azureOids={oid}";
-            }
 
-            return await _mainApiClient.QueryAndDeserializeAsync<List<PCSPerson>>(url);
+            var oldAuthType = _authenticator.AuthenticationType;
+            _authenticator.AuthenticationType = AuthenticationType.AsApplication;
+            try
+            {
+                return await _mainApiClient.TryQueryAndDeserializeAsync<PCSPerson>(url);
+            }
+            finally
+            {
+                _authenticator.AuthenticationType = oldAuthType;
+            }
         }
     }
 }

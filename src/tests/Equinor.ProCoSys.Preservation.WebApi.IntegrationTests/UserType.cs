@@ -3,7 +3,7 @@
     public enum UserType
     {
         Anonymous,
-        CrossPlantUser,
+        CrossPlantApp,
         LibraryAdmin,
         Planner,
         Preserver,

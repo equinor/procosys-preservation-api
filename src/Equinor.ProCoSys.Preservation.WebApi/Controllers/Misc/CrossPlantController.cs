@@ -9,7 +9,6 @@ using ServiceResult.ApiExtensions;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 {
-    [Authorize]
     [ApiController]
     [Route("CrossPlant")]
     public class CrossPlantController : ControllerBase
@@ -18,6 +17,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
 
         public CrossPlantController(IMediator mediator) => _mediator = mediator;
 
+        [Authorize(Roles = AppRoles.CROSSPLANT)]
         [HttpGet("Actions")]
         public async Task<ActionResult<List<ActionDto>>> Actions([FromQuery] int maxActions = 0)
         {
@@ -25,6 +25,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Controllers.Misc
             return this.FromResult(result);
         }
 
+        [Authorize(Roles = AppRoles.CROSSPLANT)]
         [HttpGet("Tags")]
         public async Task<ActionResult<List<TagDto>>> Tags([FromQuery] int maxTags = 0)
         {

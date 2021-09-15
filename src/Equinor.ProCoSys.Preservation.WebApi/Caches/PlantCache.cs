@@ -68,7 +68,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Caches
                 PlantsCacheKey(userOid),
                 async () =>
                 {
-                    var plants = await _plantApiService.GetAllPlantsAsync();
+                    var plants = await _plantApiService.GetAllPlantsForUserAsync(userOid);
                     return plants;
                 },
                 CacheDuration.Minutes,

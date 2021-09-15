@@ -12,17 +12,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         public async Task GetAllTags_AsCrossPlantUser_ShouldGetTags()
         {
             // Act
-            var TagDtos = await CrossPlantControllerTestsHelper.GetTagsAsync(UserType.CrossPlantUser);
+            var tagDtos = await CrossPlantControllerTestsHelper.GetTagsAsync(UserType.CrossPlantApp);
 
             // Assert
-            Assert.IsNotNull(TagDtos);
-            Assert.IsTrue(TagDtos.Count > 0);
+            Assert.IsNotNull(tagDtos);
+            Assert.IsTrue(tagDtos.Count > 0);
             AssertTag(
-                TagDtos.SingleOrDefault(a => a.Id == TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started_InPlantA),
+                tagDtos.SingleOrDefault(a => a.Id == TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started_InPlantA),
                 KnownPlantData.PlantA,
                 KnownPlantData.PlantATitle);
             AssertTag(
-                TagDtos.SingleOrDefault(a => a.Id == TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started_InPlantB),
+                tagDtos.SingleOrDefault(a => a.Id == TagIdUnderTest_ForStandardTagWithAttachmentsAndActionAttachments_Started_InPlantB),
                 KnownPlantData.PlantB,
                 KnownPlantData.PlantBTitle);
         }
@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         public async Task GetAllActions_AsCrossPlantUser_ShouldGetActions()
         {
             // Act
-            var actionDtos = await CrossPlantControllerTestsHelper.GetActionsAsync(UserType.CrossPlantUser);
+            var actionDtos = await CrossPlantControllerTestsHelper.GetActionsAsync(UserType.CrossPlantApp);
 
             // Assert
             Assert.IsNotNull(actionDtos);

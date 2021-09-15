@@ -11,6 +11,7 @@ using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ResponsibleAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.TagFunctionAggregate;
+using Equinor.ProCoSys.Preservation.MainApi.Client;
 using Equinor.ProCoSys.Preservation.MainApi.Project;
 using Equinor.ProCoSys.Preservation.WebApi.Authentication;
 using Equinor.ProCoSys.Preservation.WebApi.Misc;
@@ -137,8 +138,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Synchronization
                                           _tagFunctionRepository.Object,
                                           currentUserSetter.Object,
                                           claimsProvider.Object,
-                                          new Mock<IBearerTokenSetter>().Object,
-                                          new Mock<IApplicationAuthenticator>().Object,
+                                          new Mock<IAuthenticator>().Object,
                                           options.Object,
                                           projectApiService.Object);
         }

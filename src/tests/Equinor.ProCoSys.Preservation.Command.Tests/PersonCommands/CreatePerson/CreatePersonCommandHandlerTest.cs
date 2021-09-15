@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.PersonAggregate;
@@ -34,20 +33,20 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
                     _personAdded = x;
                 });
             _personApiServiceMock = new Mock<IPersonApiService>();
-            _personApiServiceMock.Setup(p => p.GetPersonsByOidsAsync(TestPlant, new List<string> {_oid.ToString("D")}))
-                .Returns(Task.FromResult<IList<PCSPerson>>(new List<PCSPerson>
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(_oid))
+                .Returns(Task.FromResult(new PCSPerson
                 {
-                    new PCSPerson {AzureOid = _oid.ToString("D"), FirstName = FirstName, LastName = LastName}
+                    AzureOid = _oid.ToString("D"),
+                    FirstName = FirstName,
+                    LastName = LastName
                 }));
             _command = new CreatePersonCommand(_oid);
 
             _dut = new CreatePersonCommandHandler(
-                PlantProviderMock.Object,
                 _personApiServiceMock.Object,
                 _personRepositoryMock.Object,
                 UnitOfWorkMock.Object);
         }
-
         
         [TestMethod]
         public async Task HandlingCreatePersonCommand_ShouldAddPersonToRepository()
@@ -74,18 +73,14 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.PersonCommands.CreatePerso
         }
 
         [TestMethod]
-        public async Task HandlingCreatePersonCommand_ShouldReturnNotFound_WhenPersonNotFoundInProCoSys()
+        public async Task HandlingCreatePersonCommand_ShouldThrowException_WhenPersonNotFoundInProCoSys()
         {
             // Arrange
-            _personApiServiceMock.Setup(p => p.GetPersonsByOidsAsync(TestPlant, new List<string> {_oid.ToString("D")}))
-                .Returns(Task.FromResult<IList<PCSPerson>>(new List<PCSPerson>()));
+            _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(_oid))
+                .Returns(Task.FromResult<PCSPerson>(null));
 
             // Act
-            var result = await _dut.Handle(_command, default);
-            
-            // Assert
-            Assert.AreEqual(1, result.Errors.Count);
-            Assert.AreEqual($"Details for user with oid {_oid:D} not found in ProCoSys", result.Errors[0]);
+            await Assert.ThrowsExceptionAsync<Exception>(() => _dut.Handle(_command, default));
         }
     }
 }

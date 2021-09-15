@@ -4,6 +4,6 @@ namespace Equinor.ProCoSys.Preservation.MainApi.Client
 {
     public interface IBearerTokenProvider
     {
-        ValueTask<string> GetBearerTokenOnBehalfOfCurrentUserAsync();
+        ValueTask<string> GetBearerTokenAsync();
     }
 }

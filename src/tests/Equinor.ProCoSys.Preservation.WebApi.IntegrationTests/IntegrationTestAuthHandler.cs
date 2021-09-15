@@ -82,7 +82,14 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                     claims.Add(new Claim(ClaimTypes.Surname, profile.LastName));
                     break;
                 case AuthType.Application:
-                    throw new Exception($"{authType} authentication not supported yet");
+                    if (profile.AppRoles != null)
+                    {
+                        foreach (var role in profile.AppRoles)
+                        {
+                            claims.Add(new Claim(ClaimTypes.Role, role));
+                        }
+                    }
+                    break;
             }
 
             return Task.FromResult(claims);

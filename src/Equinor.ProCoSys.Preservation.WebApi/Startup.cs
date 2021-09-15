@@ -162,6 +162,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
                     .WithSubscription(PcsTopic.Responsible, "preservation_responsible"));
             }
+       
+            services.AddHostedService<VerifyPreservationApiClientExists>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
