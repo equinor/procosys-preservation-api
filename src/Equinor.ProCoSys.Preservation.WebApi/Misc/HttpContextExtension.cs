@@ -13,7 +13,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Misc
         public static async Task WriteBadRequestAsync(
             this HttpContext context,
             Dictionary<string, string[]> errors,
-            ILogger _logger)
+            ILogger logger)
         {
             context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             context.Response.ContentType = "application/problem+json";
@@ -23,9 +23,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Misc
                 Title = "One or more business validation errors occurred"
             };
             var json = JsonSerializer.Serialize(problems);
-            _logger.LogInformation(json);
+            logger.LogInformation(json);
 
             await context.Response.WriteAsync(json);
+        }
+
+        public static async Task WriteForbidden(this HttpContext context, ILogger logger)
+        {
+            logger.LogWarning("Unauthorized");
+            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            context.Response.ContentType = "application/text";
+            await context.Response.WriteAsync("Unauthorized!");
         }
     }
 }

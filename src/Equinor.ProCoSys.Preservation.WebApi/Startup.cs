@@ -199,6 +199,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             app.UseCurrentBearerToken();
             app.UseAuthentication();
             app.UseCurrentUser();
+            app.UsePersonValidator();
             app.UsePlantValidator();
             app.UseVerifyOidInDb();
             app.UseAuthorization();
