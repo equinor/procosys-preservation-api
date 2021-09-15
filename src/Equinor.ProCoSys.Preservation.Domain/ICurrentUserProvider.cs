@@ -5,5 +5,6 @@ namespace Equinor.ProCoSys.Preservation.Domain
     public interface ICurrentUserProvider
     {
         Guid GetCurrentUserOid();
+        bool HasCurrentUser();
     }
 }
