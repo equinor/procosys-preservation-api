@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -8,7 +7,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
     public class TestProfile
     {
         public string Oid { get; set; }
-        public Guid AzureOid => new Guid(Oid);
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName => $"{FirstName} {LastName}";

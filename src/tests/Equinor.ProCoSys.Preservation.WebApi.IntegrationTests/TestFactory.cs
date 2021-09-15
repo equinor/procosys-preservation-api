@@ -323,7 +323,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
         {
             foreach (var testUser in _testUsers.Values.Where(testUser => testUser.Profile != null))
             {
-                _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(testUser.Profile.AzureOid))
+                _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
                     .Returns(Task.FromResult(new PCSPerson
                     {
                         AzureOid = testUser.Profile.Oid,
@@ -331,7 +331,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         LastName = testUser.Profile.LastName
                     }));
 
-                _plantApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(testUser.Profile.AzureOid))
+                _plantApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
                     .Returns(Task.FromResult(testUser.ProCoSysPlants));
             }
         }
