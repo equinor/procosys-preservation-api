@@ -136,7 +136,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
             return testUser.HttpClient;
         }
 
-        public TestProfile GetTestProfile(UserType userType) => _testUsers[userType].Profile;
+        public TokenProfile GetTestProfile(UserType userType) => _testUsers[userType].Profile;
 
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
@@ -291,7 +291,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
             SetupPreserverUser(commonProCoSysPlants, commonProCoSysProjects, commonProCoSysRestrictions);
     
-            SetupHackerUser(commonProCoSysProjects);
+            SetupHackerUser();
             
             SetupCrossPlantApp();
             
@@ -303,10 +303,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
             SetupProCoSysServiceMocks();
 
-            CreateAutenticatedHttpClients(webHostBuilder);
+            CreateAuthenticatedHttpClients(webHostBuilder);
         }
 
-        private void CreateAutenticatedHttpClients(WebApplicationFactory<Startup> webHostBuilder)
+        private void CreateAuthenticatedHttpClients(WebApplicationFactory<Startup> webHostBuilder)
         {
             foreach (var testUser in _testUsers.Values)
             {
@@ -321,28 +321,35 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 
         private void SetupProCoSysServiceMocks()
         {
-            foreach (var testUser in _testUsers.Values.Where(testUser => testUser.Profile != null))
+            foreach (var testUser in _testUsers.Values.Where(t => t.Profile != null))
             {
-                _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
+                if (testUser.ProCoSysPerson != null)
+                {
+                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
                     .Returns(Task.FromResult(new PCSPerson
                     {
                         AzureOid = testUser.Profile.Oid,
-                        FirstName = testUser.Profile.FirstName,
-                        LastName = testUser.Profile.LastName
+                        FirstName = testUser.ProCoSysPerson.FirstName,
+                        LastName = testUser.ProCoSysPerson.LastName
                     }));
-
+                }
+                else
+                {
+                    _personApiServiceMock.Setup(p => p.TryGetPersonByOidAsync(new Guid(testUser.Profile.Oid)))
+                        .Returns(Task.FromResult((PCSPerson)null));
+                }
                 _plantApiServiceMock.Setup(p => p.GetAllPlantsForUserAsync(new Guid(testUser.Profile.Oid)))
                     .Returns(Task.FromResult(testUser.ProCoSysPlants));
             }
         }
 
         // Authenticated client without any roles
-        private void SetupHackerUser(List<PCSProject> commonProCoSysProjects)
+        private void SetupHackerUser()
             => _testUsers.Add(UserType.Hacker,
                 new TestUser
                 {
                     Profile =
-                        new TestProfile
+                        new TokenProfile
                         {
                             FirstName = "Harry",
                             LastName = "Hacker", 
@@ -354,7 +361,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                         new PCSPlant {Id = KnownPlantData.PlantB, Title = KnownPlantData.PlantBTitle}
                     },
                     ProCoSysPermissions = new List<string>(),
-                    ProCoSysProjects = commonProCoSysProjects,
+                    ProCoSysProjects = new List<PCSProject>(),
                     ProCoSysRestrictions = new List<string>()
                 });
 
@@ -367,12 +374,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 new TestUser
                 {
                     Profile =
-                        new TestProfile
+                        new TokenProfile
                         {
                             FirstName = "Peder",
                             LastName = "Preserver",
                             Oid = _preserverOid
                         },
+                    ProCoSysPerson = new PCSPerson
+                    {
+                        FirstName = "Peder",
+                        LastName = "Preserver"
+                    },
                     ProCoSysPlants = commonProCoSysPlants,
                     ProCoSysPermissions = new List<string>
                     {
@@ -396,12 +408,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 new TestUser
                 {
                     Profile =
-                        new TestProfile
+                        new TokenProfile
                         {
                             FirstName = "Pernilla",
                             LastName = "Planner",
                             Oid = _plannerOid
                         },
+                    ProCoSysPerson = new PCSPerson
+                    {
+                        FirstName = "Pernilla",
+                        LastName = "Planner",
+                    },
                     ProCoSysPlants = commonProCoSysPlants,
                     ProCoSysPermissions = new List<string>
                     {
@@ -426,12 +443,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 new TestUser
                 {
                     Profile =
-                        new TestProfile
+                        new TokenProfile
                         {
                             FirstName = "Arne",
                             LastName = "Admin",
                             Oid = _libraryAdminOid
                         },
+                    ProCoSysPerson = new PCSPerson
+                    {
+                        FirstName = "Arne",
+                        LastName = "Admin",
+                    },
                     ProCoSysPlants = commonProCoSysPlants,
                     ProCoSysPermissions = new List<string>
                     {
@@ -456,14 +478,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 new TestUser
                 {
                     Profile =
-                        new TestProfile
+                        new TokenProfile
                         {
-                            FirstName = "XPlant",
-                            LastName = "App",
+                            // no names in token for app
                             Oid = preservationApiObjectId,
                             IsAppToken = true,
                             AppRoles = new[] {AppRoles.CROSSPLANT}
                         },
+                    ProCoSysPerson = new PCSPerson
+                    {
+                        FirstName = "XPlant",
+                        LastName = "App",
+                    },
                     ProCoSysPlants = new List<PCSPlant>
                     {
                         new PCSPlant {Id = KnownPlantData.PlantA, Title = KnownPlantData.PlantATitle},
