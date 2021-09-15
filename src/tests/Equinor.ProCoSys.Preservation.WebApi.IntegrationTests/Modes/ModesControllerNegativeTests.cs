@@ -15,11 +15,10 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task GetAllModes_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+        public async Task GetAllModes_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
             => await ModesControllerTestsHelper.GetAllModesAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
+                HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetAllModes_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -62,12 +61,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task GetMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+        public async Task GetMode_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
             => await ModesControllerTestsHelper.GetModeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
+                HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task GetMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -122,11 +120,11 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task CreateMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+        public async Task CreateMode_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
             => await ModesControllerTestsHelper.CreateModeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 "Mode1",
-                HttpStatusCode.BadRequest,
+                HttpStatusCode.Forbidden,
                 "is not a valid plant");
 
         [TestMethod]
@@ -177,14 +175,13 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UpdateMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+        public async Task UpdateMode_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
             => await ModesControllerTestsHelper.UpdateModeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 "Mode1",
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
+                HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UpdateMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -243,13 +240,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task VoidMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+        public async Task VoidMode_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
             => await ModesControllerTestsHelper.VoidModeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
+                HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task VoidMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -303,13 +299,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task UnvoidMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+        public async Task UnvoidMode_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
             => await ModesControllerTestsHelper.UnvoidModeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
+                HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task UnvoidMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()
@@ -363,13 +358,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Modes
                 HttpStatusCode.Unauthorized);
 
         [TestMethod]
-        public async Task DeleteMode_AsHacker_ShouldReturnBadRequest_WhenUnknownPlant()
+        public async Task DeleteMode_AsHacker_ShouldReturnForbidden_WhenUnknownPlant()
             => await ModesControllerTestsHelper.DeleteModeAsync(
                 UserType.Hacker, TestFactory.UnknownPlant,
                 9999,
                 TestFactory.AValidRowVersion,
-                HttpStatusCode.BadRequest,
-                "is not a valid plant");
+                HttpStatusCode.Forbidden);
 
         [TestMethod]
         public async Task DeleteMode_AsAdmin_ShouldReturnBadRequest_WhenUnknownPlant()

@@ -824,7 +824,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Tags
             await AssertInHistoryAsLatestEventAsync(tagToReschedule.Id, UserType.Planner, EventType.Rescheduled);
         }
 
-        private void AssertUser(TestProfile profile, PersonDto personDto)
+        private void AssertUser(TokenProfile profile, PersonDto personDto)
         {
             Assert.IsNotNull(personDto);
             Assert.AreEqual(profile.FirstName, personDto.FirstName);

@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
-    public class TestProfile
+    public class TokenProfile
     {
         public string Oid { get; set; }
         public string FirstName { get; set; }

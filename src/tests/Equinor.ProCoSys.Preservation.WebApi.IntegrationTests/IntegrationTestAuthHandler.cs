@@ -57,12 +57,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                 throw new Exception("[Authorization] header missing");
             }
 
-            TestProfile profile;
+            TokenProfile profile;
             var tokenPart = tokens[1];
             try
             {
                 var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(tokenPart));
-                profile = JsonConvert.DeserializeObject<TestProfile>(decoded);
+                profile = JsonConvert.DeserializeObject<TokenProfile>(decoded);
             }
             catch (Exception ex)
             {

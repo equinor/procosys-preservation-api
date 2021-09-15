@@ -11,17 +11,17 @@ namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson
 {
     public class CreatePersonCommandHandler : IRequestHandler<CreatePersonCommand, Result<Unit>>
     {
-        private readonly IPersonApiService _personApiService;
+        private readonly IPersonCache _personCache;
         private readonly IPersonRepository _personRepository;
         private readonly IUnitOfWork _unitOfWork;
 
         public CreatePersonCommandHandler(
-            IPersonApiService personApiService,
+            IPersonCache personCache,
             IPersonRepository personRepository,
             IUnitOfWork unitOfWork
             )
         {
-            _personApiService = personApiService;
+            _personCache = personCache;
             _personRepository = personRepository;
             _unitOfWork = unitOfWork;
         }
@@ -32,7 +32,7 @@ namespace Equinor.ProCoSys.Preservation.Command.PersonCommands.CreatePerson
 
             if (person == null)
             {
-                var pcsPerson = await _personApiService.TryGetPersonByOidAsync(request.Oid);
+                var pcsPerson = await _personCache.GetAsync(request.Oid);
                 if (pcsPerson == null)
                 {
                     throw new Exception($"Details for user with oid {request.Oid:D} not found in ProCoSys");

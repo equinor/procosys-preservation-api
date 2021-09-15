@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain;
+using Equinor.ProCoSys.Preservation.MainApi.Person;
 using Equinor.ProCoSys.Preservation.MainApi.Plant;
 using Equinor.ProCoSys.Preservation.WebApi.Authorizations;
 using Microsoft.Extensions.Logging;
@@ -29,12 +30,16 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         private readonly string Restriction1_Plant1 = "Res1";
         private readonly string Restriction2_Plant1 = "Res2";
         private readonly string Restriction1_Plant2 = "Res3";
+        private Mock<IPersonCache> _personCacheMock;
         private Mock<IPlantProvider> _plantProviderMock;
         private Mock<IPlantCache> _plantCacheMock;
 
         [TestInitialize]
         public void Setup()
         {
+            _personCacheMock = new Mock<IPersonCache>();
+            _personCacheMock.Setup(p => p.ExistsAsync(Oid)).Returns(Task.FromResult(true));
+
             _plantProviderMock = new Mock<IPlantProvider>();
             _plantProviderMock.SetupGet(p => p.Plant).Returns(Plant1);
 
@@ -65,6 +70,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
             _principalWithOid.AddIdentity(claimsIdentity);
             
             _dut = new ClaimsTransformation(
+                _personCacheMock.Object,
                 _plantProviderMock.Object,
                 _plantCacheMock.Object,
                 permissionCacheMock.Object,
@@ -125,6 +131,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.Tests.Authorizations
         [TestMethod]
         public async Task TransformAsync_ShouldNotAddAnyClaims_ForPrincipalWithoutOid()
         {
+            var result = await _dut.TransformAsync(new ClaimsPrincipal());
+
+            Assert.AreEqual(0, GetProjectClaims(result.Claims).Count);
+            Assert.AreEqual(0, GetRoleClaims(result.Claims).Count);
+            Assert.AreEqual(0, GetContentRestrictionClaims(result.Claims).Count);
+        }
+
+        [TestMethod]
+        public async Task TransformAsync_ShouldNotAddAnyClaims_WhenPersonNotFoundInProCoSys()
+        {
+            _personCacheMock.Setup(p => p.ExistsAsync(Oid)).Returns(Task.FromResult(false));
+
             var result = await _dut.TransformAsync(new ClaimsPrincipal());
 
             Assert.AreEqual(0, GetProjectClaims(result.Claims).Count);
