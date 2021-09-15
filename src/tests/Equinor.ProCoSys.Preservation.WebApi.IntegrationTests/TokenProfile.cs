@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
 
 namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
 {
-    public class TestProfile
+    public class TokenProfile
     {
         public string Oid { get; set; }
         public Guid AzureOid => new Guid(Oid);

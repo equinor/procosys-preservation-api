@@ -14,14 +14,18 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         public async Task Get_IsAlive_AsAnonymous_ShouldReturnOk() => await AssertIsAlive(UserType.Anonymous);
 
         [TestMethod]
-        public async Task Get_IsAlive_AsHacker_ShouldReturnOk() => await AssertIsAlive(UserType.Hacker);
+        public async Task Get_IsAlive_AsHacker_ShouldReturnOk() => await AssertIsAlive(UserType.Hacker, HttpStatusCode.Forbidden);
 
-        private static async Task AssertIsAlive(UserType userType)
+        private static async Task AssertIsAlive(UserType userType, HttpStatusCode expectedHttpStatusCode = HttpStatusCode.OK)
         {
             var response = await TestFactory.Instance.GetHttpClient(userType, null).GetAsync($"{_route}/IsAlive");
 
             // Assert
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(expectedHttpStatusCode, response.StatusCode);
+            if (expectedHttpStatusCode != HttpStatusCode.OK)
+            {
+                return;
+            }
             var content = await response.Content.ReadAsStringAsync();
             Assert.IsNotNull(content);
             var dto = JsonConvert.DeserializeObject<HeartbeatDto>(content);
