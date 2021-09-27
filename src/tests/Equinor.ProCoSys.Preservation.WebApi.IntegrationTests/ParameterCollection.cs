@@ -21,6 +21,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests
                     }
                 }
             }
+
             return sb.ToString();
         }
 
