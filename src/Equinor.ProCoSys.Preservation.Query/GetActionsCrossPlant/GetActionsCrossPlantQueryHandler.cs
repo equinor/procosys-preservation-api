@@ -60,6 +60,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
                             action.IsOverDue(),
                             action.DueTimeUtc,
                             action.IsClosed,
+                            action.ClosedAtUtc,
                             action.Attachments.ToList().Count);
                         actions.Add(actionDto);
                     }
