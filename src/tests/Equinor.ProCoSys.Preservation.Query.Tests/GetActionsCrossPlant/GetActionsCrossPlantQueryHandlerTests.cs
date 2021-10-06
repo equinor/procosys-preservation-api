@@ -209,11 +209,11 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             Assert.AreEqual(expectToBeClosed, actionDto.IsClosed);
             if (expectToBeClosed)
             {
-                Assert.IsNotNull(actionDto.ClosedTimeUtc);
+                Assert.IsNotNull(actionDto.ClosedAtUtc);
             }
             else
             {
-                Assert.IsNull(actionDto.ClosedTimeUtc);
+                Assert.IsNull(actionDto.ClosedAtUtc);
             }
             Assert.AreEqual(action.DueTimeUtc, actionDto.DueTimeUtc);
             AssertEqualAndNotNull(action.Attachments.Count, actionDto.AttachmentCount);
