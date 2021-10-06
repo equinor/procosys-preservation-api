@@ -15,6 +15,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
         public bool IsOverDue { get; set; }
         public DateTime? DueTimeUtc { get; set; }
         public bool IsClosed { get; set; }
+        public DateTime? ClosedTimeUtc { get; set; }
         public int AttachmentCount { get; set; }
     }
 }

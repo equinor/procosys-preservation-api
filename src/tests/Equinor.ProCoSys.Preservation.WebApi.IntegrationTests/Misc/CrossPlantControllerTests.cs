@@ -55,6 +55,7 @@ namespace Equinor.ProCoSys.Preservation.WebApi.IntegrationTests.Misc
             Assert.AreEqual(KnownTestData.ProjectDescription, actionDto.ProjectDescription);
             Assert.IsTrue(actionDto.Title.StartsWith(KnownTestData.Action));
             Assert.IsTrue(actionDto.IsClosed);
+            Assert.IsNotNull(actionDto.ClosedTimeUtc);
             Assert.IsNotNull(actionDto.TagNo);
             Assert.IsTrue(actionDto.Id > 0);
             Assert.IsTrue(actionDto.TagId > 0);
