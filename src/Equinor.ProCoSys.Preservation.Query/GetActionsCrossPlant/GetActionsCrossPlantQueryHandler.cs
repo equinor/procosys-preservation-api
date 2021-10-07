@@ -42,7 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             foreach (var project in projects)
             {
                 var plantTitle = await _plantCache.GetPlantTitleAsync(project.Plant);
-                foreach (var tag in project.Tags.Where(t => t.Actions.Count > 0))
+                foreach (var tag in project.Tags.Where(t => !t.IsVoided && t.Actions.Count > 0))
                 {
                     foreach (var action in tag.Actions)
                     {
@@ -60,6 +60,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
                             action.IsOverDue(),
                             action.DueTimeUtc,
                             action.IsClosed,
+                            action.ClosedAtUtc,
                             action.Attachments.ToList().Count);
                         actions.Add(actionDto);
                     }

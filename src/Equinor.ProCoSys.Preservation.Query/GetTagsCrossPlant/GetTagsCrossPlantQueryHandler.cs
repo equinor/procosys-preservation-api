@@ -93,7 +93,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
             foreach (var project in projects)
             {
                 var plantTitle = await _plantCache.GetPlantTitleAsync(project.Plant);
-                foreach (var tag in project.Tags)
+                foreach (var tag in project.Tags.Where(t => !t.IsVoided))
                 {
                     var requirementDtos = tag.OrderedRequirements().Select(
                             r =>
@@ -130,7 +130,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
                         tag.Description,
                         tag.DisciplineCode,
                         tag.DisciplineDescription,
-                        tag.IsVoided,
                         tag.McPkgNo,
                         tag.PurchaseOrderNo,
                         tag.IsReadyToBePreserved(),

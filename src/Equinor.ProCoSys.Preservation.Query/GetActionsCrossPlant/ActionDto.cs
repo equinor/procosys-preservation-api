@@ -18,6 +18,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             bool isOverDue,
             DateTime? dueTimeUtc,
             bool isClosed,
+            DateTime? closedAtUtc,
             int attachmentCount)
         {
             PlantId = plantId;
@@ -33,6 +34,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
             IsOverDue = isOverDue;
             DueTimeUtc = dueTimeUtc;
             IsClosed = isClosed;
+            ClosedAtUtc = closedAtUtc;
             AttachmentCount = attachmentCount;
         }
 
@@ -49,6 +51,7 @@ namespace Equinor.ProCoSys.Preservation.Query.GetActionsCrossPlant
         public bool IsOverDue { get; }
         public DateTime? DueTimeUtc { get; }
         public bool IsClosed { get; }
+        public DateTime? ClosedAtUtc { get; }
         public int AttachmentCount { get; }
     }
 }
