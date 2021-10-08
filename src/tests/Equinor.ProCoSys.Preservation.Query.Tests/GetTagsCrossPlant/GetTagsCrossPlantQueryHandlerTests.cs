@@ -42,6 +42,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
         private int _projectAId;
         private int _projectBId;
         private int _standardTagId;
+        private int _voidedTagId;
         private int _siteTagId;
         private Person _currentUser;
         private Mode _mode1;
@@ -77,9 +78,10 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 context.SaveChangesAsync().Wait();
 
                 _plantProvider.SetPlant(_plantA.Id);
-                (_projectAId, _standardTagId) = CreateTag(context, "PrA", TagType.Standard, _intervalWeeks1);
+                (_projectAId, _standardTagId) = CreateTag(context, "PrA1", TagType.Standard, _intervalWeeks1, false);
+                (_, _voidedTagId) = CreateTag(context, "PrA2", TagType.Standard, _intervalWeeks1, true);
                 _plantProvider.SetPlant(_plantB.Id);
-                (_projectBId, _siteTagId) = CreateTag(context, "PrB", TagType.SiteArea, _intervalWeeks2);
+                (_projectBId, _siteTagId) = CreateTag(context, "PrB", TagType.SiteArea, _intervalWeeks2, false);
                 _plantProvider.SetCrossPlantQuery();
             }
         }
@@ -100,7 +102,6 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 standardTag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _standardTagId);
                 standardTag.StartPreservation();
                 siteTag = context.Tags.Include(t => t.Requirements).Single(t => t.Id == _siteTagId);
-                siteTag.IsVoided = true;
 
                 standardTag.AddAction(new Action(standardTag.Plant, "AcA", "AcA desc", null));
                 siteTag.AddAction(new Action(siteTag.Plant, "AcB", "AcB desc", _timeProvider.UtcNow));
@@ -127,8 +128,6 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 Assert.IsTrue(siteTagDto.ProjectIsClosed);
                 Assert.AreEqual(ActionStatus.HasOpen, standardTagDto.ActionStatus);
                 Assert.AreEqual(ActionStatus.HasOverdue, siteTagDto.ActionStatus);
-                Assert.IsFalse(standardTagDto.IsVoided);
-                Assert.IsTrue(siteTagDto.IsVoided);
                 Assert.AreEqual(PreservationStatus.Active, standardTagDto.Status);
                 Assert.AreEqual(PreservationStatus.NotStarted, siteTagDto.Status);
                 Assert.IsTrue(standardTagDto.ReadyToBePreserved);
@@ -147,6 +146,20 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
                 var result = await dut.Handle(query, default);
 
                 Assert.AreEqual(2, result.Data.Count);
+            }
+        }
+
+        [TestMethod]
+        public async Task Handler_ShouldNotReturnVoidedTags()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetTagsCrossPlantQuery();
+                var dut = new GetTagsCrossPlantQueryHandler(context, _plantCacheMock.Object, _plantProvider);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNull(result.Data.SingleOrDefault(t => t.Id == _voidedTagId));
             }
         }
 
@@ -183,7 +196,6 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             AssertEqualAndNotNull(tag.CommPkgNo, tagDto.CommPkgNo);
             AssertEqualAndNotNull(tag.Description, tagDto.Description);
             AssertEqualAndNotNull(tag.DisciplineCode, tagDto.DisciplineCode);
-            Assert.AreEqual(tag.IsVoided, tagDto.IsVoided);
             AssertEqualAndNotNull(tag.McPkgNo, tagDto.McPkgNo);
             AssertEqualAndNotNull(_mode1.Title, tagDto.Mode);
             AssertEqualAndNotNull(tag.PurchaseOrderNo, tagDto.PurchaseOrderNo);
@@ -215,7 +227,8 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             PreservationContext context,
             string projectName,
             TagType tagType,
-            int intervalWeeks)
+            int intervalWeeks,
+            bool voidTag)
         {
             var plantId = _plantProvider.Plant;
             _mode1 = new Mode(plantId, "M1", false);
@@ -263,6 +276,10 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetTagsCrossPlant
             tag.SetArea("A", "A desc");
             tag.SetDiscipline("D", "D desc");
             project.AddTag(tag);
+            if (voidTag)
+            {
+                tag.IsVoided = true;
+            }
             context.SaveChangesAsync().Wait();
 
             return (project.Id, tag.Id);

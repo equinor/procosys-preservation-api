@@ -20,7 +20,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
             string description,
             string disciplineCode,
             string disciplineDescription,
-            bool isVoided,
             string mcPkgNo,
             string purchaseOrderNo,
             bool readyToBePreserved,
@@ -45,7 +44,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
             Description = description;
             DisciplineCode = disciplineCode;
             DisciplineDescription = disciplineDescription;
-            IsVoided = isVoided;
             McPkgNo = mcPkgNo;
             PurchaseOrderNo = purchaseOrderNo;
             ReadyToBePreserved = readyToBePreserved;
@@ -71,7 +69,6 @@ namespace Equinor.ProCoSys.Preservation.Query.GetTagsCrossPlant
         public string Description { get; }
         public string DisciplineCode { get; }
         public string DisciplineDescription { get; }
-        public bool IsVoided { get; }
         public string McPkgNo { get; }
         public string Mode { get; private set; }
         public string NextMode { get; private set; }

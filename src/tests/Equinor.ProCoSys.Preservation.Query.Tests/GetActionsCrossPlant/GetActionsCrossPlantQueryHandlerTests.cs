@@ -36,12 +36,13 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
         private readonly PlantProvider _plantProvider = new PlantProvider(null);
         private readonly Mock<IPlantCache> _plantCacheMock = new Mock<IPlantCache>();
 
-        private PCSPlant _plantA = new PCSPlant {Id = "PCS$A", Title = "A"};
-        private PCSPlant _plantB = new PCSPlant {Id = "PCS$B", Title = "B"};
+        private readonly PCSPlant _plantA = new PCSPlant {Id = "PCS$A", Title = "A"};
+        private readonly PCSPlant _plantB = new PCSPlant {Id = "PCS$B", Title = "B"};
         private Project _projectA;
         private Project _projectB;
-        private Action _actionA;
-        private Action _actionB;
+        private Action _openAction;
+        private Action _closedAction;
+        private Action _actionInVoidedTag;
 
         private Person _currentUser;
 
@@ -73,14 +74,20 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
                 context.SaveChangesAsync().Wait();
 
                 _plantProvider.SetPlant(_plantA.Id);
-                (_projectA, _actionA) = CreateAction(context, "PrA", false);
+                (_projectA, _openAction) = CreateAction(context, "PrA1", false, false, false);
+                (_, _actionInVoidedTag) = CreateAction(context, "PrA2", false, false, true);
                 _plantProvider.SetPlant(_plantB.Id);
-                (_projectB, _actionB) = CreateAction(context, "PrB", true);
+                (_projectB, _closedAction) = CreateAction(context, "PrB", true, true, false);
                 _plantProvider.SetCrossPlantQuery();
             }
         }
 
-        private (Project, Action) CreateAction(PreservationContext context, string projectName, bool closeProject)
+        private (Project, Action) CreateAction(
+            PreservationContext context,
+            string projectName,
+            bool closeProject,
+            bool closeAction,
+            bool voidTag)
         {
             var plantId = _plantProvider.Plant;
             var mode = new Mode(plantId, "M1", false);
@@ -109,14 +116,23 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             var tag = new Tag(
                 plantId, 
                 TagType.Standard, 
-                "Tag A", 
+                $"Tag in {projectName}", 
                 "Tag desc", 
                 step,
                 new List<TagRequirement> {new TagRequirement(plantId, 2, requirementDefinition)});
             project.AddTag(tag);
+            if (voidTag)
+            {
+                tag.IsVoided = true;
+            }
             context.SaveChangesAsync().Wait();
 
             var action = new Action(plantId, "A", "D", null);
+            if (closeAction)
+            {
+                _timeProvider.Elapse(new TimeSpan(0, 1, 0, 0));
+                action.Close(_timeProvider.UtcNow, _currentUser);
+            }
             tag.AddAction(action);
 
             var attachment = new ActionAttachment(plantId, Guid.Empty, "fil.txt");
@@ -159,12 +175,26 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
                 var actionDtos = result.Data;
                 Assert.AreEqual(2, actionDtos.Count);
 
-                AssertAction(actionDtos.Single(a => a.Id == _actionA.Id), _actionA, _plantA, _projectA);
-                AssertAction(actionDtos.Single(a => a.Id == _actionB.Id), _actionB, _plantB, _projectB);
+                AssertAction(actionDtos.Single(a => a.Id == _openAction.Id), _openAction, _plantA, _projectA, false);
+                AssertAction(actionDtos.Single(a => a.Id == _closedAction.Id), _closedAction, _plantB, _projectB, true);
             }
         }
 
-        private void AssertAction(ActionDto actionDto, Action action, PCSPlant plant, Project project)
+        [TestMethod]
+        public async Task Handler_ShouldNotReturnActions_FromVoidedTags()
+        {
+            using (var context = new PreservationContext(_dbContextOptions, _plantProvider, _eventDispatcher, _currentUserProvider))
+            {
+                var query = new GetActionsCrossPlantQuery();
+                var dut = new GetActionsCrossPlantQueryHandler(context, _plantCacheMock.Object, _plantProvider);
+
+                var result = await dut.Handle(query, default);
+
+                Assert.IsNull(result.Data.SingleOrDefault(a => a.Id == _actionInVoidedTag.Id));
+            }
+        }
+
+        private void AssertAction(ActionDto actionDto, Action action, PCSPlant plant, Project project, bool expectToBeClosed)
         {
             AssertEqualAndNotNull(plant.Id, actionDto.PlantId);
             AssertEqualAndNotNull(plant.Title, actionDto.PlantTitle);
@@ -176,6 +206,15 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.GetActionsCrossPlant
             AssertEqualAndNotNull(action.Title, actionDto.Title);
             AssertEqualAndNotNull(action.Description, actionDto.Description);
             Assert.AreEqual(action.IsClosed, actionDto.IsClosed);
+            Assert.AreEqual(expectToBeClosed, actionDto.IsClosed);
+            if (expectToBeClosed)
+            {
+                Assert.IsNotNull(actionDto.ClosedAtUtc);
+            }
+            else
+            {
+                Assert.IsNull(actionDto.ClosedAtUtc);
+            }
             Assert.AreEqual(action.DueTimeUtc, actionDto.DueTimeUtc);
             AssertEqualAndNotNull(action.Attachments.Count, actionDto.AttachmentCount);
         }
