@@ -28,6 +28,12 @@ variables:
  - name: NUGET.PLUGIN.REQUEST.TIMEOUT.IN.SECONDS
    value: 40
 
+ - name: 'leaderElectorDockerImage'
+   value: '${{ variables.containerRegistryName }}.azurecr.io/leader-elector:9'
+
+ - name: 'leaderElectorLeaseTime'
+   value: '5'
+
 name: '${{ variables.versionNumber }}$(Build.BuildId)-$(Date:MMddyyyy)'
 
 stages:
@@ -150,6 +156,8 @@ stages:
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
       replicas: 2
+      leaderElectorDockerImage: '${{ variables.leaderElectorDockerImage }}'
+      leaderElectorLeaseTime: '${{ variables.leaderElectorLeaseTime }}'
 
 # Test deploy stage
 - stage: test
@@ -200,6 +208,8 @@ stages:
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
       replicas: 2
+      leaderElectorDockerImage: '${{ variables.leaderElectorDockerImage }}'
+      leaderElectorLeaseTime: '${{ variables.leaderElectorLeaseTime }}'
 
 # Prod deploy stage
 - stage: prod
@@ -248,3 +258,5 @@ stages:
       kvRgName: '${{ variables.envRgName }}'
       aspNetCoreEnvironment: '${{ variables.aspNetCoreEnvironment }}'
       replicas: 3
+      leaderElectorDockerImage: '${{ variables.leaderElectorDockerImage }}'
+      leaderElectorLeaseTime: '${{ variables.leaderElectorLeaseTime }}'
