@@ -151,10 +151,12 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration);
 
-            if (Configuration.GetValue<bool>("EnableServiceBus"))
+            if (Configuration.GetValue<bool>("ServiceBus:EnableServiceBus"))
             {
                 services.AddPcsServiceBusIntegration(options => options
                     .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
+                    .WithLeaderElector((Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE") ?? Configuration["ServiceBus:LeaderElectorUrl"]) + "3003")
+                    .WithRenewLeaseInterval(int.Parse(Configuration["ServiceBus:LeaderElectorRenewLeaseInterval"]))
                     .WithSubscription(PcsTopic.Tag, "preservation_tag")
                     .WithSubscription(PcsTopic.TagFunction, "preservation_tagfunction")
                     .WithSubscription(PcsTopic.Project, "preservation_project")
@@ -162,7 +164,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
                     .WithSubscription(PcsTopic.Responsible, "preservation_responsible"));
             }
-       
             services.AddHostedService<VerifyPreservationApiClientExists>();
         }
 
