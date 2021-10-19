@@ -10,7 +10,6 @@ resources:
     type: github
     name: equinor/procosys-infra
     endpoint: 'equinor'
-    ref: 85891_-_Adding_config_map
 
 # Global variables for the pipeline
 variables:
@@ -73,7 +72,7 @@ stages:
     parameters:
       deploymentName: 'docker_build'
       dependsOn: ''
-      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       buildCommand: build
@@ -89,7 +88,7 @@ stages:
     parameters:
       deploymentName: 'docker_build_and_push_master_only'
       dependsOn: ''
-      condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
       env: 'pcs-${{ variables.envName }}'
       envGroup: '${{ variables.envGroupName }}'
       buildCommand: buildAndPush
@@ -112,7 +111,7 @@ stages:
 - stage: dev
   displayName: 'Deploy to Dev'
   dependsOn: 'build'
-  condition: and(succeeded(), ne(variables['Build.SourceBranch'], 'refs/heads/master'))
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
   variables:
     envName: 'dev'
     envRg: '${{ variables.envRgName }}'
