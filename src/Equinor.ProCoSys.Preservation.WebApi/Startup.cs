@@ -151,10 +151,17 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration);
 
-            if (Configuration.GetValue<bool>("EnableServiceBus"))
+            if (Configuration.GetValue<bool>("ServiceBus:Enable"))
             {
+                // Env variable used in kubernetes. Configuration is added for easier use locally
+                // Url will be validated during startup of service bus intergration and give a
+                // Uri exception if invalid.
+                var leaderElectorUrl = "http://" + (Environment.GetEnvironmentVariable("LEADERELECTOR_SERVICE") ?? Configuration["ServiceBus:LeaderElectorUrl"]) + ":3003";
+
                 services.AddPcsServiceBusIntegration(options => options
                     .UseBusConnection(Configuration.GetConnectionString("ServiceBus"))
+                    .WithLeaderElector(leaderElectorUrl)
+                    .WithRenewLeaseInterval(int.Parse(Configuration["ServiceBus:LeaderElectorRenewLeaseInterval"]))
                     .WithSubscription(PcsTopic.Tag, "preservation_tag")
                     .WithSubscription(PcsTopic.TagFunction, "preservation_tagfunction")
                     .WithSubscription(PcsTopic.Project, "preservation_project")
@@ -162,7 +169,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                     .WithSubscription(PcsTopic.McPkg, "preservation_mcpkg")
                     .WithSubscription(PcsTopic.Responsible, "preservation_responsible"));
             }
-       
             services.AddHostedService<VerifyPreservationApiClientExists>();
         }
 
