@@ -10,7 +10,7 @@ namespace Equinor.ProCoSys.Preservation.Query.ModeAggregate
             Title = title;
             IsVoided = isVoided;
             ForSupplier = forSupplier;
-            IsInUse = InUse = isInUse;
+            IsInUse = isInUse;
             RowVersion = rowVersion;
         }
 
@@ -18,8 +18,6 @@ namespace Equinor.ProCoSys.Preservation.Query.ModeAggregate
         public string Title { get; }
         public bool IsVoided { get; }
         public bool ForSupplier { get; }
-        [Obsolete("Use IsInUse")]
-        public bool InUse { get; set; }
         public bool IsInUse { get; set; }
         public string RowVersion { get; }
     }

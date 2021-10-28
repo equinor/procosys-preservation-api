@@ -14,7 +14,7 @@ namespace Equinor.ProCoSys.Preservation.Query.Tests.ModeAggregate
             Assert.AreEqual(3, dut.Id);
             Assert.AreEqual("M", dut.Title);
             Assert.IsTrue(dut.IsVoided);
-            Assert.IsTrue(dut.InUse);
+            Assert.IsTrue(dut.IsInUse);
             Assert.IsTrue(dut.ForSupplier);
             Assert.AreEqual("AAAAAAAAABA=", dut.RowVersion);
         }
