@@ -49,5 +49,6 @@ namespace Equinor.ProCoSys.Preservation.WebApi
                         options.Limits.MaxRequestBodySize = null;
                     });
                     webBuilder.UseStartup<Startup>();
-                });    }
+                });
+    }
 }
