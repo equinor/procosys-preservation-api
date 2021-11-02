@@ -151,7 +151,8 @@ namespace Equinor.ProCoSys.Preservation.WebApi
             services.AddMediatrModules();
             services.AddApplicationModules(Configuration);
 
-            if (Configuration.GetValue<bool>("ServiceBus:Enable"))
+            var serviceBusEnabled = Configuration.GetValue<bool>("ServiceBus:Enable");
+            if (serviceBusEnabled)
             {
                 // Env variable used in kubernetes. Configuration is added for easier use locally
                 // Url will be validated during startup of service bus intergration and give a

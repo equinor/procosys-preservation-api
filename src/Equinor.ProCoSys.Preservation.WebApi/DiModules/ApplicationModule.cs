@@ -63,10 +63,9 @@ namespace Equinor.ProCoSys.Preservation.WebApi.DIModules
             TimeService.SetProvider(new SystemTimeProvider());
 
             services.Configure<MainApiOptions>(configuration.GetSection("MainApi"));
-            services.Configure<TagOptions>(configuration.GetSection("ApiOptions"));
+            services.Configure<TagOptions>(configuration.GetSection("TagOptions"));
             services.Configure<CacheOptions>(configuration.GetSection("CacheOptions"));
             services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorage"));
-            services.Configure<BlobStorageOptions>(configuration.GetSection("BlobStorageOptions"));
             services.Configure<SynchronizationOptions>(configuration.GetSection("Synchronization"));
             services.Configure<AuthenticatorOptions>(configuration.GetSection("Authenticator"));
 
