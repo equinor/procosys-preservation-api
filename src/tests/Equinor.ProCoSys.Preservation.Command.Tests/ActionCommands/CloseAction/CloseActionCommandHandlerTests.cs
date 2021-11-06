@@ -20,17 +20,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
         private CloseActionCommand _command;
         private CloseActionCommandHandler _dut;
 
-        private Mock<IProjectRepository> _projectRepositoryMock;
         private Action _action;
-        private Mock<IPersonRepository> _personRepositoryMock;
         private Mock<Person> _personMock;
 
         [TestInitialize]
         public void Setup()
         {
-            _projectRepositoryMock = new Mock<IProjectRepository>();
-            _personRepositoryMock = new Mock<IPersonRepository>();
-
             var tagId = 2;
             var tagMock = new Mock<Tag>();
             tagMock.SetupGet(t => t.Plant).Returns(TestPlant);
@@ -43,20 +38,22 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CloseAction
             _personMock = new Mock<Person>();
             _personMock.SetupGet(p => p.Id).Returns(_personId);
 
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(tagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagWithActionsByTagIdAsync(tagId))
                 .Returns(Task.FromResult(tagMock.Object));
 
-            _personRepositoryMock
+            var personRepositoryMock = new Mock<IPersonRepository>();
+            personRepositoryMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
                 .Returns(Task.FromResult(_personMock.Object));
 
             _command = new CloseActionCommand(tagId, actionId, _rowVersion);
 
             _dut = new CloseActionCommandHandler(
-                _projectRepositoryMock.Object,
+                projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
-                _personRepositoryMock.Object,
+                personRepositoryMock.Object,
                 CurrentUserProviderMock.Object
             );
         }

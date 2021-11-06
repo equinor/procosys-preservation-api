@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Delete;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Test.Common.ExtensionMethods;
@@ -24,7 +23,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         private DeleteTagAttachmentCommand _command;
         private DeleteTagAttachmentCommandHandler _dut;
 
-        private Mock<IProjectRepository> _projectRepositoryMock;
         private Mock<IBlobStorage> _blobStorageMock;
         private Tag _tag;
 
@@ -33,7 +31,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
         {
             _command = new DeleteTagAttachmentCommand(1, 3, _rowVersion);
 
-            _projectRepositoryMock = new Mock<IProjectRepository>();
             _blobStorageMock = new Mock<IBlobStorage>();
 
             var blobStorageOptionsMock = new Mock<IOptionsMonitor<BlobStorageOptions>>();
@@ -59,12 +56,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
             attachment.SetProtectedIdForTesting(_command.AttachmentId);
             _tag.AddAttachment(attachment);
 
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_command.TagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagWithAttachmentsHistoryByTagIdAsync(_command.TagId))
                 .Returns(Task.FromResult(_tag));
 
             _dut = new DeleteTagAttachmentCommandHandler(
-                _projectRepositoryMock.Object,
+                projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 _blobStorageMock.Object,
                 blobStorageOptionsMock.Object);

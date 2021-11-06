@@ -31,7 +31,7 @@ namespace Equinor.ProCoSys.Preservation.Command.ActionCommands.CloseAction
 
         public async Task<Result<string>> Handle(CloseActionCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagWithActionsByTagIdAsync(request.TagId);
             var currentUser = await _personRepository.GetByOidAsync(_currentUserProvider.GetCurrentUserOid());
 
             var action = tag.CloseAction(request.ActionId, currentUser, TimeService.UtcNow, request.RowVersion);

@@ -30,7 +30,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagAttachmentCommands.Delete
 
         public async Task<Result<Unit>> Handle(DeleteTagAttachmentCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagWithAttachmentsHistoryByTagIdAsync(request.TagId);
 
             var attachment = tag.Attachments.Single(a => a.Id == request.AttachmentId);
             attachment.SetRowVersion(request.RowVersion);

@@ -22,15 +22,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CreateActio
         private CreateActionCommand _command;
         private CreateActionCommandHandler _dut;
 
-        private Mock<IProjectRepository> _projectRepositoryMock;
         private readonly int _rdId1 = 17;
         private readonly int _intervalWeeks = 2;
 
         [TestInitialize]
         public void Setup()
         {
-            _projectRepositoryMock = new Mock<IProjectRepository>();
-
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
@@ -41,14 +38,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.ActionCommands.CreateActio
             var requirement = new TagRequirement(TestPlant, _intervalWeeks, _rdMock.Object);
             _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object, new List<TagRequirement> { requirement });
 
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_tagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagWithActionsByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(_tag));
 
             _command = new CreateActionCommand(_tagId, _title, _description, _dueTimeUtc);
 
             _dut = new CreateActionCommandHandler(
-                _projectRepositoryMock.Object,
+                projectRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object
                 );

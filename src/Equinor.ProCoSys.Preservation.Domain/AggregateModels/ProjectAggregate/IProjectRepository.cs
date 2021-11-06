@@ -6,9 +6,10 @@ namespace Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate
     public interface IProjectRepository : IRepository<Project>
     {
         Task<Project> GetProjectOnlyByNameAsync(string projectName);
-        Task<Tag> GetTagByTagIdAsync(int tagId);
         Task<Tag> GetTagOnlyByTagIdAsync(int tagId);
         Task<Tag> GetTagWithPreservationHistoryByTagIdAsync(int tagId);
+        Task<Tag> GetTagWithActionsByTagIdAsync(int tagId);
+        Task<Tag> GetTagWithAttachmentsHistoryByTagIdAsync(int tagId);
         Task<List<Tag>> GetTagsByTagIdsAsync(IEnumerable<int> tagIds);
         Task<List<Tag>> GetStandardTagsInProjectOnlyAsync(string projectName);
         void RemoveTag(Tag tag);

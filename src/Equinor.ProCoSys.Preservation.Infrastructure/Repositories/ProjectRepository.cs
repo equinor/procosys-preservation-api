@@ -31,11 +31,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
         public Task<Project> GetProjectWithTagsByNameAsync(string projectName)
             => Set.Include(p => p.Tags).SingleOrDefaultAsync(p => p.Name == projectName);
 
-        public Task<Tag> GetTagByTagIdAsync(int tagId)
-            => DefaultQuery
-                .SelectMany(project => project.Tags)
-                .SingleOrDefaultAsync(tag => tag.Id == tagId);
-
         public Task<Tag> GetTagOnlyByTagIdAsync(int tagId)
             => Set
                 .Include(p => p.Tags)
@@ -49,6 +44,21 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                     .ThenInclude(r => r.PreservationPeriods)
                     .ThenInclude(pp => pp.FieldValues)
                     .ThenInclude(fv => fv.FieldValueAttachment)
+                .SelectMany(project => project.Tags)
+                .SingleOrDefaultAsync(tag => tag.Id == tagId);
+
+        public Task<Tag> GetTagWithActionsByTagIdAsync(int tagId)
+            => Set
+                .Include(p => p.Tags)
+                    .ThenInclude(t => t.Actions)
+                    .ThenInclude(a => a.Attachments)
+                .SelectMany(project => project.Tags)
+                .SingleOrDefaultAsync(tag => tag.Id == tagId);
+
+        public Task<Tag> GetTagWithAttachmentsHistoryByTagIdAsync(int tagId)
+            => Set
+                .Include(p => p.Tags)
+                    .ThenInclude(t => t.Attachments)
                 .SelectMany(project => project.Tags)
                 .SingleOrDefaultAsync(tag => tag.Id == tagId);
 

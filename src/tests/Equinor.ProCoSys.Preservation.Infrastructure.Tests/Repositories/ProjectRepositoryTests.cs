@@ -134,9 +134,17 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetTagByTagId_ShouldReturnTag()
+        public async Task GetTagWithActionsByTagId_ShouldReturnTag()
         {
-            var result = await _dut.GetTagByTagIdAsync(StandardTagId1);
+            var result = await _dut.GetTagWithActionsByTagIdAsync(StandardTagId1);
+
+            Assert.AreEqual(StandardTagId1, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagWithAttachmentsHistoryByTagId_ShouldReturnTag()
+        {
+            var result = await _dut.GetTagWithAttachmentsHistoryByTagIdAsync(StandardTagId1);
 
             Assert.AreEqual(StandardTagId1, result.Id);
         }
