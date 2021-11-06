@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -34,6 +33,22 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 
         public Task<Tag> GetTagByTagIdAsync(int tagId)
             => DefaultQuery
+                .SelectMany(project => project.Tags)
+                .SingleOrDefaultAsync(tag => tag.Id == tagId);
+
+        public Task<Tag> GetTagOnlyByTagIdAsync(int tagId)
+            => Set
+                .Include(p => p.Tags)
+                .SelectMany(project => project.Tags)
+                .SingleOrDefaultAsync(tag => tag.Id == tagId);
+
+        public Task<Tag> GetTagWithPreservationHistoryByTagIdAsync(int tagId)
+            => Set
+                .Include(p => p.Tags)
+                    .ThenInclude(t => t.Requirements)
+                    .ThenInclude(r => r.PreservationPeriods)
+                    .ThenInclude(pp => pp.FieldValues)
+                    .ThenInclude(fv => fv.FieldValueAttachment)
                 .SelectMany(project => project.Tags)
                 .SingleOrDefaultAsync(tag => tag.Id == tagId);
 

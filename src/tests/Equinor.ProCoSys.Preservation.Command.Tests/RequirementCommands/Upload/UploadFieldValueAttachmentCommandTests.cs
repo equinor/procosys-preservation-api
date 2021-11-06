@@ -65,13 +65,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
             Assert.AreEqual(PreservationStatus.Active, tag.Status);
             Assert.IsTrue(_requirement.HasActivePeriod);
 
-            var _projectRepositoryMock = new Mock<IProjectRepository>();
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_tagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(tag));
 
-            var _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
-            _rtRepositoryMock
+            var rtRepositoryMock = new Mock<IRequirementTypeRepository>();
+            rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
                 .Returns(Task.FromResult(_requirementDefinition.Object));
             
@@ -89,8 +89,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Upload
                 .Returns(options);
 
             _dut = new UploadFieldValueAttachmentCommandHandler(
-                _projectRepositoryMock.Object,
-                _rtRepositoryMock.Object,
+                projectRepositoryMock.Object,
+                rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 PlantProviderMock.Object,
                 _blobStorageMock.Object,

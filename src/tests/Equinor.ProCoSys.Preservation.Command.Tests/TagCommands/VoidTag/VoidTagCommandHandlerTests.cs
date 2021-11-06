@@ -22,7 +22,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.VoidTag
         public void Setup()
         {
             var tagId = 2;
-            var projectRepositoryMock = new Mock<IProjectRepository>();
 
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
@@ -34,8 +33,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.VoidTag
             _tag = new Tag(TestPlant, TagType.Standard, "", "", stepMock.Object,
                 new List<TagRequirement> {requirement});
 
+            var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(tagId))
+                .Setup(r => r.GetTagOnlyByTagIdAsync(tagId))
                 .Returns(Task.FromResult(_tag));
 
             _command = new VoidTagCommand(tagId, _rowVersion);

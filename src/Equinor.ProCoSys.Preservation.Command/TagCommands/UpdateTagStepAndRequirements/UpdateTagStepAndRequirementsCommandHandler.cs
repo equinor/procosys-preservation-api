@@ -33,7 +33,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.UpdateTagStepAndRequ
 
         public async Task<Result<string>> Handle(UpdateTagStepAndRequirementsCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagWithPreservationHistoryByTagIdAsync(request.TagId);
             var step = await _journeyRepository.GetStepByStepIdAsync(request.StepId);
 
             if (tag.IsAreaTag() && request.Description != null)

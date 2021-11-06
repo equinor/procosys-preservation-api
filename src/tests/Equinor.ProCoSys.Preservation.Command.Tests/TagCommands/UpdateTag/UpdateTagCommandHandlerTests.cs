@@ -26,13 +26,9 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTag
         private UpdateTagCommand _command;
         private UpdateTagCommandHandler _dut;
 
-        private Mock<IProjectRepository> _projectRepositoryMock;
-
         [TestInitialize]
         public void Setup()
         {
-            _projectRepositoryMock = new Mock<IProjectRepository>();
-
             var stepMock = new Mock<Step>();
             stepMock.SetupGet(s => s.Plant).Returns(TestPlant);
 
@@ -48,14 +44,15 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.UpdateTag
             };
 
             var tagId = 2;
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(tagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagOnlyByTagIdAsync(tagId))
                 .Returns(Task.FromResult(_tag));
 
             _command = new UpdateTagCommand(tagId, _newRemark, _newStorageArea, _rowVersion);
 
             _dut = new UpdateTagCommandHandler(
-                _projectRepositoryMock.Object,
+                projectRepositoryMock.Object,
                 UnitOfWorkMock.Object);
         }
 

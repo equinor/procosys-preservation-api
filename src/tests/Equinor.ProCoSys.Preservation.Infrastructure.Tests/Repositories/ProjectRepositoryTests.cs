@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
@@ -138,6 +137,22 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         public async Task GetTagByTagId_ShouldReturnTag()
         {
             var result = await _dut.GetTagByTagIdAsync(StandardTagId1);
+
+            Assert.AreEqual(StandardTagId1, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagOnlyByTagId_ShouldReturnTag()
+        {
+            var result = await _dut.GetTagOnlyByTagIdAsync(StandardTagId1);
+
+            Assert.AreEqual(StandardTagId1, result.Id);
+        }
+
+        [TestMethod]
+        public async Task GetTagWithPreservationHistoryByTagId_ShouldReturnTag()
+        {
+            var result = await _dut.GetTagWithPreservationHistoryByTagIdAsync(StandardTagId1);
 
             Assert.AreEqual(StandardTagId1, result.Id);
         }

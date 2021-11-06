@@ -39,7 +39,7 @@ namespace Equinor.ProCoSys.Preservation.Command.RequirementCommands.Upload
 
         public async Task<Result<int>> Handle(UploadFieldValueAttachmentCommand request, CancellationToken cancellationToken)
         {
-            var tag = await _projectRepository.GetTagByTagIdAsync(request.TagId);
+            var tag = await _projectRepository.GetTagWithPreservationHistoryByTagIdAsync(request.TagId);
             var requirement = tag.Requirements.Single(r => r.Id == request.RequirementId);
 
             var requirementDefinition =

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.BlobStorage;
 using Equinor.ProCoSys.Preservation.Command.RequirementCommands.DeleteAttachment;
-using Equinor.ProCoSys.Preservation.Domain;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.JourneyAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.RequirementTypeAggregate;
@@ -62,13 +61,13 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
             Assert.AreEqual(PreservationStatus.Active, tag.Status);
             Assert.IsTrue(_requirement.HasActivePeriod);
 
-            var _projectRepositoryMock = new Mock<IProjectRepository>();
-            _projectRepositoryMock
-                .Setup(r => r.GetTagByTagIdAsync(_tagId))
+            var projectRepositoryMock = new Mock<IProjectRepository>();
+            projectRepositoryMock
+                .Setup(r => r.GetTagWithPreservationHistoryByTagIdAsync(_tagId))
                 .Returns(Task.FromResult(tag));
 
-            var _rtRepositoryMock = new Mock<IRequirementTypeRepository>();
-            _rtRepositoryMock
+            var rtRepositoryMock = new Mock<IRequirementTypeRepository>();
+            rtRepositoryMock
                 .Setup(r => r.GetRequirementDefinitionByIdAsync(_reqId))
                 .Returns(Task.FromResult(_requirementDefinition.Object));
             
@@ -86,8 +85,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.RequirementCommands.Delete
                 .Returns(options);
 
             _dut = new DeleteFieldValueAttachmentCommandHandler(
-                _projectRepositoryMock.Object,
-                _rtRepositoryMock.Object,
+                projectRepositoryMock.Object,
+                rtRepositoryMock.Object,
                 UnitOfWorkMock.Object,
                 _blobStorageMock.Object,
                 blobStorageOptionsMock.Object);
