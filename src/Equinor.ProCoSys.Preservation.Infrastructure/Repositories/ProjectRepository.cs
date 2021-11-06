@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Equinor.ProCoSys.Preservation.Domain.AggregateModels.ProjectAggregate;
@@ -11,16 +12,12 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
         public ProjectRepository(PreservationContext context)
             : base(context, context.Projects,
                 context.Projects
+                    // include preservation history only in DefaultQuery. Don't add other includes as Actions/Attachments due to performance
                     .Include(p => p.Tags)
-                    .ThenInclude(t => t.Requirements)
-                    .ThenInclude(r => r.PreservationPeriods)
-                    .ThenInclude(pp => pp.FieldValues)
-                    .ThenInclude(fv => fv.FieldValueAttachment)
-                    .Include(p => p.Tags)
-                    .ThenInclude(t => t.Actions)
-                    .ThenInclude(a => a.Attachments)
-                    .Include(p => p.Tags)
-                    .ThenInclude(t => t.Attachments)
+                        .ThenInclude(t => t.Requirements)
+                        .ThenInclude(r => r.PreservationPeriods)
+                        .ThenInclude(pp => pp.FieldValues)
+                        .ThenInclude(fv => fv.FieldValueAttachment)
             )
         {
         }
@@ -38,12 +35,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .SingleOrDefaultAsync(tag => tag.Id == tagId);
 
         public Task<Tag> GetTagWithPreservationHistoryByTagIdAsync(int tagId)
-            => Set
-                .Include(p => p.Tags)
-                    .ThenInclude(t => t.Requirements)
-                    .ThenInclude(r => r.PreservationPeriods)
-                    .ThenInclude(pp => pp.FieldValues)
-                    .ThenInclude(fv => fv.FieldValueAttachment)
+            => DefaultQuery
                 .SelectMany(project => project.Tags)
                 .SingleOrDefaultAsync(tag => tag.Id == tagId);
 
@@ -55,14 +47,21 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .SelectMany(project => project.Tags)
                 .SingleOrDefaultAsync(tag => tag.Id == tagId);
 
-        public Task<Tag> GetTagWithAttachmentsHistoryByTagIdAsync(int tagId)
+        public Task<Tag> GetTagWithAttachmentsByTagIdAsync(int tagId)
             => Set
                 .Include(p => p.Tags)
                     .ThenInclude(t => t.Attachments)
                 .SelectMany(project => project.Tags)
                 .SingleOrDefaultAsync(tag => tag.Id == tagId);
 
-        public Task<List<Tag>> GetTagsByTagIdsAsync(IEnumerable<int> tagIds)
+        public Task<List<Tag>> GetTagsOnlyByTagIdsAsync(IEnumerable<int> tagIds)
+            => Set
+                .Include(p => p.Tags)
+                .SelectMany(project => project.Tags)
+                .Where(tag => tagIds.Contains(tag.Id))
+                .ToListAsync();
+
+        public Task<List<Tag>> GetTagsWithPreservationHistoryByTagIdsAsync(IEnumerable<int> tagIds)
             => DefaultQuery
                 .SelectMany(project => project.Tags)
                 .Where(tag => tagIds.Contains(tag.Id))
@@ -76,6 +75,14 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
 
         public void RemoveTag(Tag tag)
         {
+            if (tag.Actions.Any())
+            {
+                throw new Exception("Can't remove Tag with any actions");
+            }
+            if (tag.Attachments.Any())
+            {
+                throw new Exception("Can't remove Tag with any attachments");
+            }
             foreach (var tagRequirement in tag.Requirements)
             {
                 _context.TagRequirements.Remove(tagRequirement);
@@ -89,7 +96,7 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Repositories
                 .Where(tag => tag.TagType == TagType.Standard && tagNos.Contains(tag.TagNo) && stepIds.Contains(tag.StepId))
                 .ToListAsync();
 
-        public Task<Project> GetProjectByTagIdAsync(int tagId)
+        public Task<Project> GetProjectAndTagWithPreservationHistoryByTagIdAsync(int tagId)
             => DefaultQuery
                 .Where(project => project.Tags.Any(tag => tag.Id == tagId))
                 .SingleOrDefaultAsync();

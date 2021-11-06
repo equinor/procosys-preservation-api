@@ -25,8 +25,6 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
         private const int TwoWeeksInterval = 2;
         private const int FourWeeksInterval = 4;
 
-        private Mock<IProjectRepository> _projectRepoMock;
-        private Mock<IPersonRepository> _personRepoMock;
         private BulkPreserveCommand _command;
         private Tag _tag1;
         private Tag _tag2;
@@ -64,10 +62,12 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
                 _tag1, _tag2
             };
             var tagIds = new List<int> {TagId1, TagId2};
-            _projectRepoMock = new Mock<IProjectRepository>();
-            _projectRepoMock.Setup(r => r.GetTagsByTagIdsAsync(tagIds)).Returns(Task.FromResult(tags));
-            _personRepoMock = new Mock<IPersonRepository>();
-            _personRepoMock
+            var projectRepoMock = new Mock<IProjectRepository>();
+            projectRepoMock.Setup(r => r.GetTagsWithPreservationHistoryByTagIdsAsync(tagIds))
+                .Returns(Task.FromResult(tags));
+            
+            var personRepoMock = new Mock<IPersonRepository>();
+            personRepoMock
                 .Setup(p => p.GetByOidAsync(It.Is<Guid>(x => x == CurrentUserOid)))
                 .Returns(Task.FromResult(new Person(CurrentUserOid, "Test", "User")));
             _command = new BulkPreserveCommand(tagIds);
@@ -76,8 +76,8 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.BulkPreserve
             _tag2.StartPreservation();
 
             _dut = new BulkPreserveCommandHandler(
-                _projectRepoMock.Object,
-                _personRepoMock.Object,
+                projectRepoMock.Object,
+                personRepoMock.Object,
                 UnitOfWorkMock.Object,
                 CurrentUserProviderMock.Object);
         }

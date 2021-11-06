@@ -21,7 +21,7 @@ namespace Equinor.ProCoSys.Preservation.Command.TagCommands.DeleteTag
 
         public async Task<Result<Unit>> Handle(DeleteTagCommand request, CancellationToken cancellationToken)
         {
-            var project = await _projectRepository.GetProjectByTagIdAsync(request.TagId);
+            var project = await _projectRepository.GetProjectAndTagWithPreservationHistoryByTagIdAsync(request.TagId);
             var tag = project.Tags.Single(t => t.Id == request.TagId);
             
             tag.SetRowVersion(request.RowVersion);

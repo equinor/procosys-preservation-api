@@ -54,7 +54,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Uplo
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock
-                .Setup(r => r.GetTagWithAttachmentsHistoryByTagIdAsync(_commandWithoutOverwrite.TagId))
+                .Setup(r => r.GetTagWithAttachmentsByTagIdAsync(_commandWithoutOverwrite.TagId))
                 .Returns(Task.FromResult(_tag));
 
             _dut = new UploadTagAttachmentCommandHandler(

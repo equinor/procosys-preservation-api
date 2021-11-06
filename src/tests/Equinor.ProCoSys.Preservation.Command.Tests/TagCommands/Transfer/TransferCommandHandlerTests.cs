@@ -82,7 +82,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagCommands.Transfer
             var tagIds = new List<int> {tagId1, tagId2};
             var tagIdsWithRowVersion = new List<IdAndRowVersion> {new IdAndRowVersion(tagId1, _rowVersion1), new IdAndRowVersion(tagId2, _rowVersion2)};
             projectRepoMock
-                .Setup(r => r.GetTagsByTagIdsAsync(tagIds))
+                .Setup(r => r.GetTagsOnlyByTagIdsAsync(tagIds))
                 .Returns(Task.FromResult(new List<Tag> {_tag1, _tag2}));
 
             _command = new TransferCommand(tagIdsWithRowVersion);

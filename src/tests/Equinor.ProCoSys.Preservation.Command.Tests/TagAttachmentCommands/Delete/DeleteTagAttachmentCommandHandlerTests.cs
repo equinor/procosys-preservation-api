@@ -58,7 +58,7 @@ namespace Equinor.ProCoSys.Preservation.Command.Tests.TagAttachmentCommands.Dele
 
             var projectRepositoryMock = new Mock<IProjectRepository>();
             projectRepositoryMock
-                .Setup(r => r.GetTagWithAttachmentsHistoryByTagIdAsync(_command.TagId))
+                .Setup(r => r.GetTagWithAttachmentsByTagIdAsync(_command.TagId))
                 .Returns(Task.FromResult(_tag));
 
             _dut = new DeleteTagAttachmentCommandHandler(
