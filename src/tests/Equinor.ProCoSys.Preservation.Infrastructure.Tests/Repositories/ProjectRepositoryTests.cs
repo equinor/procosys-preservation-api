@@ -127,16 +127,6 @@ namespace Equinor.ProCoSys.Preservation.Infrastructure.Tests.Repositories
         }
 
         [TestMethod]
-        public async Task GetAllProjectsOnlyAsync_ShouldReturnProjectsWithoutTags()
-        {
-            var result = await _dut.GetAllProjectsOnlyAsync();
-
-            Assert.AreEqual(2, result.Count);
-            // Not able to test that Projects don't have Tag as children. BuildMockDbSet seem to build Set as a graph with all children
-            //Assert.IsTrue(result.All(p => p.Tags.Count == 0));
-        }
-
-        [TestMethod]
         public async Task GetProjectOnlyByNameAsync_UnknownProject_ShouldReturnNull()
         {
             var result = await _dut.GetProjectOnlyByNameAsync("XYZ");
